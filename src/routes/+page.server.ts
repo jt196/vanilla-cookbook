@@ -1,6 +1,6 @@
 import type { Actions, PageServerLoad } from "./$types"
 import { prisma } from "$lib/server/prisma"
-import { fail } from "@sveltejs/kit"
+import { error, fail, redirect } from "@sveltejs/kit"
 
 export const load: PageServerLoad = async () => {
 	return {
@@ -9,7 +9,12 @@ export const load: PageServerLoad = async () => {
 }
 
 export const actions: Actions = {
-	createArticle: async ({ request }) => {
+	createArticle: async ({ request, locals }) => {
+		const { user, session } = await locals.validateUser()
+		if (!(user && session)) {
+			throw redirect(302, "/")
+		}
+
 		const { title, content } = Object.fromEntries(
 			await request.formData(),
 		) as Record<string, string>
@@ -19,6 +24,7 @@ export const actions: Actions = {
 				data: {
 					title,
 					content,
+					userId: user.userId,
 				},
 			})
 		} catch (err) {
@@ -30,13 +36,27 @@ export const actions: Actions = {
 			status: 201,
 		}
 	},
-	deleteArticle: async ({ url }) => {
+	deleteArticle: async ({ url, locals }) => {
+		const { user, session } = await locals.validateUser()
+		if (!(user && session)) {
+			throw redirect(302, "/")
+		}
 		const id = url.searchParams.get("id")
 		if (!id) {
 			return fail(400, { message: "Invalid request" })
 		}
 
 		try {
+			const article = await prisma.article.findUniqueOrThrow({
+				where: {
+					id: Number(id),
+				},
+			})
+
+			if (article.userId !== user.userId) {
+				throw error(403, "Not authorized")
+			}
+
 			await prisma.article.delete({
 				where: {
 					id: Number(id),
