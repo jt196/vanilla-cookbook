@@ -15,7 +15,6 @@ export const actions: Actions = {
 			string,
 			string
 		>
-
 		try {
 			await auth.createUser({
 				primaryKey: {

@@ -10,9 +10,8 @@ export const load: PageServerLoad = async () => {
 
 export const actions: Actions = {
 	createArticle: async ({ request, locals }) => {
-		const session = await locals.auth.validate()
-		const { user } = await locals.auth.validateUser()
-		if (!session) {
+		const { session, user } = await locals.auth.validateUser()
+		if (!session || !user) {
 			throw redirect(302, '/')
 		}
 

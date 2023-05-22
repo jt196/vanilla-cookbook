@@ -3,9 +3,8 @@ import { prisma } from '$lib/server/prisma'
 import { error, fail } from '@sveltejs/kit'
 
 export const load: PageServerLoad = async ({ params, locals }) => {
-	const session = await locals.auth.validate()
-	const { user } = await locals.auth.validateUser()
-	if (!session) {
+	const { session, user } = await locals.auth.validateUser()
+	if (!session || !user) {
 		throw error(401, 'Unauthorized')
 	}
 
@@ -32,9 +31,8 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 
 export const actions: Actions = {
 	updateArticle: async ({ request, params, locals }) => {
-		const session = await locals.auth.validate()
-		const { user } = await locals.auth.validateUser()
-		if (!session) {
+		const { session, user } = await locals.auth.validateUser()
+		if (!session || !user) {
 			throw error(401, 'Unauthorized')
 		}
 
