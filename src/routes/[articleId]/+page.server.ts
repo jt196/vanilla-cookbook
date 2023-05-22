@@ -1,71 +1,74 @@
-import type { Actions, PageServerLoad } from "./$types"
-import { prisma } from "$lib/server/prisma"
-import { error, fail } from "@sveltejs/kit"
+import type { Actions, PageServerLoad } from './$types'
+import { prisma } from '$lib/server/prisma'
+import { error, fail } from '@sveltejs/kit'
 
 export const load: PageServerLoad = async ({ params, locals }) => {
-	const { user, session } = await locals.validateUser()
-	if (!(user && session)) {
-		throw error(401, "Unauthorized")
+	const session = await locals.auth.validate()
+	const { user } = await locals.auth.validateUser()
+	if (!session) {
+		throw error(401, 'Unauthorized')
 	}
 
 	const getArticle = async (userId: string) => {
 		const article = await prisma.article.findUnique({
 			where: {
-				id: Number(params.articleId),
-			},
+				id: Number(params.articleId)
+			}
 		})
 		if (!article) {
-			throw error(404, "Article not found")
+			throw error(404, 'Article not found')
 		}
 		if (article.userId !== user.userId) {
-			throw error(403, "Unauthorized")
+			throw error(403, 'Unauthorized')
 		}
 
 		return article
 	}
 
 	return {
-		article: getArticle(user.userId),
+		article: getArticle(user.userId)
 	}
 }
 
 export const actions: Actions = {
 	updateArticle: async ({ request, params, locals }) => {
-		const { user, session } = await locals.validateUser()
-		if (!(user && session)) {
-			throw error(401, "Unauthorized")
+		const session = await locals.auth.validate()
+		const { user } = await locals.auth.validateUser()
+		if (!session) {
+			throw error(401, 'Unauthorized')
 		}
 
-		const { title, content } = Object.fromEntries(
-			await request.formData(),
-		) as Record<string, string>
+		const { title, content } = Object.fromEntries(await request.formData()) as Record<
+			string,
+			string
+		>
 
 		try {
 			const article = await prisma.article.findUniqueOrThrow({
 				where: {
-					id: Number(params.articleId),
-				},
+					id: Number(params.articleId)
+				}
 			})
 
 			if (article.userId !== user.userId) {
-				throw error(403, "Forbidden to edit this article.")
+				throw error(403, 'Forbidden to edit this article.')
 			}
 			await prisma.article.update({
 				where: {
-					id: Number(params.articleId),
+					id: Number(params.articleId)
 				},
 				data: {
 					title,
-					content,
-				},
+					content
+				}
 			})
 		} catch (err) {
 			console.error(err)
-			return fail(500, { message: "Could not update article" })
+			return fail(500, { message: 'Could not update article' })
 		}
 
 		return {
-			status: 200,
+			status: 200
 		}
-	},
+	}
 }
