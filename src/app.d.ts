@@ -1,12 +1,10 @@
-import type { PrismaClient } from "@prisma/client"
+import type { PrismaClient } from '@prisma/client'
 
 declare global {
 	namespace App {
 		// interface Error {}
 		interface Locals {
-			validate: import("@lucia-auth/sveltekit").Validate
-			validateUser: import("@lucia-auth/sveltekit").ValidateUser
-			setSession: import("@lucia-auth/sveltekit").SetSession
+			auth: import('lucia-auth').AuthRequest
 		}
 		// interface PageData {}
 		// interface Platform {}
@@ -15,7 +13,7 @@ declare global {
 
 	/// <reference types="lucia-auth" />
 	declare namespace Lucia {
-		type Auth = import("$lib/server/lucia").Auth
+		type Auth = import('$lib/server/lucia').Auth
 		type UserAttributes = {
 			username: string
 			name: string

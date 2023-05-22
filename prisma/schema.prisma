@@ -14,39 +14,40 @@ model Article {
     id      Int    @id @default(autoincrement())
     title   String
     content String
-    User    User   @relation(fields: [userId], references: [id])
+    auth_user    AuthUser   @relation(fields: [userId], references: [id])
     userId  String
 }
 
-model User {
+model AuthUser {
     id       String    @id @unique
     name     String
     username String    @unique
     articles Article[]
-    session  Session[]
-    Key      Key[]
+    auth_session  AuthSession[]
+    auth_key      AuthKey[]
 
-    @@map("user")
+    @@map("auth_user")
 }
 
-model Session {
+model AuthSession {
     id             String @id @unique
     user_id        String
     active_expires BigInt
     idle_expires   BigInt
-    user           User   @relation(references: [id], fields: [user_id], onDelete: Cascade)
+    auth_user           AuthUser   @relation(references: [id], fields: [user_id], onDelete: Cascade)
 
     @@index([user_id])
-    @@map("session")
+    @@map("auth_session")
 }
 
-model Key {
+model AuthKey {
     id              String  @id @unique
     hashed_password String?
     user_id         String
-    primary         Boolean
-    user            User    @relation(references: [id], fields: [user_id], onDelete: Cascade)
+    primary_key     Boolean
+    expires         BigInt?
+    auth_user            AuthUser    @relation(references: [id], fields: [user_id], onDelete: Cascade)
 
     @@index([user_id])
-    @@map("key")
+    @@map("auth_key")
 }

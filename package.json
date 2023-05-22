@@ -24,7 +24,7 @@
 		"eslint-plugin-svelte3": "^4.0.0",
 		"prettier": "^2.8.3",
 		"prettier-plugin-svelte": "^2.9.0",
-		"prisma": "^4.9.0",
+		"prisma": "^4.14.1",
 		"rome": "^11.0.0",
 		"svelte": "^3.55.1",
 		"svelte-check": "^3.0.3",
@@ -35,10 +35,9 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@lucia-auth/adapter-prisma": "^0.4.0",
-		"@lucia-auth/sveltekit": "^0.6.2",
+		"@lucia-auth/adapter-prisma": "^2.0.0",
 		"@picocss/pico": "^1.5.7",
 		"@prisma/client": "^4.9.0",
-		"lucia-auth": "^0.6.0"
+		"lucia-auth": "^1.7.0"
 	}
 }

@@ -1,38 +1,14 @@
-# create-svelte
+# Getting Started
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+1. Clone the repo: `git clone https://github.com/jt196/sveltekit-lucia-prisma.git`
+2. Install the base packages: `npm i`
+3. Initialise the Prisma db: `npx prisma migrate dev --name init`
+4. Generate the Prisma client and types (is this typescript?): `npx prisma generate`
 
-## Creating a project
+# v1.0 Differences
 
-If you're seeing this, you've probably already done this step. Congrats!
+More info [here](https://lucia-auth.com/start-here/migrate-to-version-1?sveltekit)
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
-
-# create a new project in my-app
-npm create svelte@latest my-app
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+1. The **database schema** has been every so slightly tweaked. The basic concepts and relations between models hasn't changed but check the docs for the latest version
+2. The SvelteKit integration has been deprecated. Wait! **SvelteKit support is now built into the main library.** Check the [getting started page](https://lucia-auth.com/start-here/getting-started?sveltekit) for SvelteKit in the docs on how to set up the handle hook!
+3. **API name changes**. There hasn't been any drastic name changes so you should be able to infer it from the autocomplete.
