@@ -38,7 +38,7 @@ export const actions: Actions = {
 		}
 	},
 	deleteArticle: async ({ url, locals }) => {
-		const session = await locals.auth.validate()
+		const { session, user } = await locals.auth.validateUser()
 		if (!session) {
 			throw redirect(302, '/')
 		}
