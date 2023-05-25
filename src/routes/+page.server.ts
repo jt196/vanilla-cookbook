@@ -39,7 +39,7 @@ export const actions: Actions = {
 	},
 	deleteArticle: async ({ url, locals }) => {
 		const { session, user } = await locals.auth.validateUser()
-		if (!session) {
+		if (!session || !user) {
 			throw redirect(302, '/')
 		}
 		const id = url.searchParams.get('id')
