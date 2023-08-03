@@ -11,7 +11,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 	const getRecipe = async (userId: string) => {
 		const recipe = await prisma.recipe.findUnique({
 			where: {
-				id: Number(params.recipeId)
+				id: params.recipeId
 			}
 		})
 		if (!recipe) {
@@ -44,7 +44,7 @@ export const actions: Actions = {
 		try {
 			const recipe = await prisma.recipe.findUniqueOrThrow({
 				where: {
-					id: Number(params.recipeId)
+					id: params.recipeId
 				}
 			})
 
@@ -53,7 +53,7 @@ export const actions: Actions = {
 			}
 			await prisma.recipe.update({
 				where: {
-					id: Number(params.recipeId)
+					id: params.recipeId
 				},
 				data: {
 					title,

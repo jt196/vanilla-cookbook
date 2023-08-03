@@ -11,7 +11,7 @@ datasource db {
 }
 
 model Article {
-    id        Int      @id @default(autoincrement())
+    id        String   @id @default(uuid())
     title     String
     content   String
     auth_user AuthUser @relation(fields: [userId], references: [id])
@@ -19,7 +19,7 @@ model Article {
 }
 
 model Recipe {
-    id        Int      @id @default(autoincrement())
+    id        String   @id @default(uuid())
     title     String
     content   String
     auth_user AuthUser @relation(fields: [userId], references: [id])
@@ -27,9 +27,12 @@ model Recipe {
 }
 
 model AuthUser {
-    id           String        @id @unique
+    id           String        @id @default(uuid())
     name         String
     username     String        @unique
+    email        String        @unique
+    about        String
+    isAdmin      Boolean
     articles     Article[]
     recipes      Recipe[]
     auth_session AuthSession[]

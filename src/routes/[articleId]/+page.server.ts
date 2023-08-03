@@ -11,7 +11,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 	const getArticle = async (userId: string) => {
 		const article = await prisma.article.findUnique({
 			where: {
-				id: Number(params.articleId)
+				id: params.articleId
 			}
 		})
 		if (!article) {
@@ -44,7 +44,7 @@ export const actions: Actions = {
 		try {
 			const article = await prisma.article.findUniqueOrThrow({
 				where: {
-					id: Number(params.articleId)
+					id: params.articleId
 				}
 			})
 
@@ -53,7 +53,7 @@ export const actions: Actions = {
 			}
 			await prisma.article.update({
 				where: {
-					id: Number(params.articleId)
+					id: params.articleId
 				},
 				data: {
 					title,

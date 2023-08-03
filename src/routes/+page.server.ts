@@ -50,7 +50,7 @@ export const actions: Actions = {
 		try {
 			const article = await prisma.article.findUniqueOrThrow({
 				where: {
-					id: Number(id)
+					id
 				}
 			})
 
@@ -60,7 +60,7 @@ export const actions: Actions = {
 
 			await prisma.article.delete({
 				where: {
-					id: Number(id)
+					id
 				}
 			})
 		} catch (err) {

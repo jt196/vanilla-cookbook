@@ -28,10 +28,14 @@
 		"rome": "^11.0.0",
 		"svelte": "^3.55.1",
 		"svelte-check": "^3.0.3",
+		"ts-node": "^10.9.1",
 		"tslib": "^2.5.0",
 		"typescript": "^4.9.5",
 		"vite": "^4.1.1",
 		"vitest": "^0.25.8"
+	},
+	"prisma": {
+		"seed": "node --loader ts-node/esm prisma/seed.ts"
 	},
 	"type": "module",
 	"dependencies": {
