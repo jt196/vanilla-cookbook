@@ -11,7 +11,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 	const getRecipe = async (userId: string) => {
 		const recipe = await prisma.recipe.findUnique({
 			where: {
-				id: params.recipeId
+				uid: params.recipeId
 			}
 		})
 		if (!recipe) {
@@ -36,15 +36,18 @@ export const actions: Actions = {
 			throw error(401, 'Unauthorized')
 		}
 
-		const { title, content } = Object.fromEntries(await request.formData()) as Record<
+		const { name, description } = Object.fromEntries(await request.formData()) as Record<
 			string,
 			string
 		>
 
+		console.log('🚀 ~ file: +page.server.ts:41 ~ updateRecipe: ~ description:', description)
+		console.log('🚀 ~ file: +page.server.ts:41 ~ updateRecipe: ~ name:', name)
+		console.log('🚀 ~ file: +page.server.ts:15 ~ getRecipe ~ uid: updating: ', params.recipeId)
 		try {
 			const recipe = await prisma.recipe.findUniqueOrThrow({
 				where: {
-					id: params.recipeId
+					uid: params.recipeId
 				}
 			})
 
@@ -53,11 +56,11 @@ export const actions: Actions = {
 			}
 			await prisma.recipe.update({
 				where: {
-					id: params.recipeId
+					uid: params.recipeId
 				},
 				data: {
-					title,
-					content
+					name,
+					description
 				}
 			})
 		} catch (err) {

@@ -1,0 +1,51 @@
+[
+	{
+		"rating": 0,
+		"photo_hash": "EBDCF5FCD975AFFC0319626C5EE0D3D80391FCED2B499C49276112CCDB8E64D7",
+		"on_favorites": false,
+		"photo": "9D2D79F1-43B9-48E8-AE85-958ED6DF5C20.jpg",
+		"uid": "00177025-7737-4032-9050-CBE95C22787A",
+		"scale": null,
+		"ingredients": "1/3 cup good-quality tahini\n2–4 tablespoons cold water, or more if needed\n2 tablespoons extra virgin olive oil\n1/2 teaspoon ground cumin\n3/4 teaspoon fine sea salt\n2 medium cloves garlic, peeled and smashed\njuice of 1 lemon (2–3 tablespoons)\n1 (15 ounce) can chickpeas*, rinsed and drained\noptional toppings: extra drizzle of olive oil, chopped fresh parsley, sprinkle of ground sumac or paprika, toasted pine nuts",
+		"is_pinned": false,
+		"source": "Gimmesomeoven.com",
+		"total_time": "",
+		"hash": "4027F3070AB84E503DF444BC6057BC593872120794DB6482499564472E1AE30B",
+		"description": "",
+		"source_url": "https://www.gimmesomeoven.com/classic-hummus/",
+		"difficulty": "",
+		"on_grocery_list": null,
+		"in_trash": false,
+		"directions": "Add tahini, cold water, olive oil, cumin, salt, garlic and lemon juice to a food processor. Puree until smooth.\n\nAdd in the chickpeas. Puree for 3-4 minutes, pausing halfway to scrape down the sides of the bowl, until the hummus is smooth. If it seems too thick, add in another tablespoon or two of water.\n\nTaste and season with additional salt, cumin, and/or lemon juice if needed.\n\nServe immediately, garnished with your desired toppings. Or transfer to a sealed container and refrigerate for up to 3 days.",
+		"categories": [
+			{
+				"order_flag": 4,
+				"uid": "5AAB9D99-31B9-4429-AA9B-C3084462C9C7-81253-000455E953E70EA6",
+				"parent_uid": null,
+				"name": "Pressure Cooker"
+			},
+			{
+				"order_flag": 9,
+				"uid": "733CDB2A-495C-4D20-88DE-03EF38FF606A-72750-00043E9EC7D5D2DF",
+				"parent_uid": "F2EDBC92-F8AF-444B-AC56-3FF4708BDA75-81253-00045D9A496AA004",
+				"name": "Middle East"
+			},
+			{
+				"order_flag": 18,
+				"uid": "74DCC180-8FB6-47BF-A53A-5B6489470C53-42109-0003C3F196BC47F9",
+				"parent_uid": null,
+				"name": "Sauces"
+			}
+		],
+		"photo_url": "http://uploads.paprikaapp.com.s3.amazonaws.com/485128/9D2D79F1-43B9-48E8-AE85-958ED6DF5C20.jpg?Signature=bJfJcgkSVda6lMjf16uttV7Zuv0%3D&Expires=1677853942&AWSAccessKeyId=AKIAQ656ARCHKEP3RMYH",
+		"cook_time": "10 minutes",
+		"name": "Hummus",
+		"created": "2020-10-30 09:06:47",
+		"notes": "Chickpeas that have been cooked from scratch: Either in the Instant Pot or on the stovetop. I recommend overcooking them a bit to slightly soften the chickpeas and loosen up the skins.\n\nCanned chickpeas that have been simmered for 20 minutes: If you have the extra time, just rinse and drain your chickpeas. Transfer them to a saucepan and cover with an extra inch or two of water. Then bring to a simmer, continue simmering for 20 minutes, and drain.",
+		"photo_large": null,
+		"image_url": "https://www.gimmesomeoven.com/wp-content/uploads/2016/03/Homemade-Hummus-Recipe-3-320x480.jpg",
+		"prep_time": "10 minutes",
+		"servings": "Yield: 6 -8 servings",
+		"nutritional_info": ""
+	}
+]

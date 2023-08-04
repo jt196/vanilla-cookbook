@@ -11,15 +11,15 @@
 		<h2>Recipe:</h2>
 		{#each recipes as recipe}
 			<article>
-				<header>{recipe.title}</header>
+				<header>{recipe.name}</header>
 				<p>
-					{recipe.content}
+					{recipe.description}
 				</p>
 				{#if recipe.userId === data.user?.userId}
-					<form action="?/deleteRecipe&id={recipe.id}" method="POST">
+					<form action="?/deleteRecipe&id={recipe.uid}" method="POST">
 						<button type="submit" class="outline secondary">Delete recipe</button>
 					</form>
-					<a href="recipe/{recipe.id}" role="button" class="outline constrast" style="width: 100%;"
+					<a href="recipe/{recipe.uid}" role="button" class="outline constrast" style="width: 100%;"
 						>Edit Recipe</a>
 				{/if}
 			</article>

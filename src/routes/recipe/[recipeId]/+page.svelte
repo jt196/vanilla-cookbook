@@ -6,10 +6,10 @@
 </script>
 
 <form action="?/updateRecipe" method="POST">
-	<h3>Editing: {recipe.title}</h3>
-	<label for="title"> Title </label>
-	<input type="text" id="title" name="title" value={recipe.title} />
-	<label for="title"> Title </label>
-	<textarea id="content" name="content" rows={5} value={recipe.content} />
+	<h3>Editing: {recipe.name}</h3>
+	<label for="name"> Name </label>
+	<input type="text" id="name" name="name" value={recipe.name} />
+	<label for="description"> Description </label>
+	<textarea id="description" name="description" rows={5} value={recipe.description} />
 	<button type="submit">Update Recipe</button>
 </form>

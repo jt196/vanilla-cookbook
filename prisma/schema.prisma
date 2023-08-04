@@ -19,11 +19,56 @@ model Article {
 }
 
 model Recipe {
-    id        String   @id @default(uuid())
-    title     String
-    content   String
-    auth_user AuthUser @relation(fields: [userId], references: [id])
-    userId    String
+    uid              String           @id @default(uuid())
+    auth_user        AuthUser         @relation(fields: [userId], references: [id])
+    userId           String
+    rating           Float?
+    photo_hash       String?
+    on_favorites     Boolean?
+    photo            String?
+    scale            String?
+    ingredients      String?
+    is_pinned        Boolean?
+    source           String?
+    total_time       String?
+    hash             String?
+    description      String?
+    source_url       String?
+    difficulty       String?
+    on_grocery_list  Boolean?
+    in_trash         Boolean?
+    directions       String?
+    photo_url        String?
+    cook_time        String?
+    name             String?
+    created          DateTime
+    notes            String?
+    photo_large      String?
+    image_url        String?
+    prep_time        String?
+    servings         String?
+    nutritional_info String?
+    categories       RecipeCategory[]
+}
+
+model Category {
+    uid        String           @id @default(uuid())
+    order_flag Int?
+    parent_uid String?
+    name       String?
+    parent     Category?        @relation("CategoryToCategory", fields: [parent_uid], references: [uid])
+    children   Category[]       @relation("CategoryToCategory")
+    recipes    RecipeCategory[]
+}
+
+// Join table for many to many relationship between Category and Recipe
+model RecipeCategory {
+    recipeUid   String
+    categoryUid String
+    recipe      Recipe   @relation(fields: [recipeUid], references: [uid])
+    category    Category @relation(fields: [categoryUid], references: [uid])
+
+    @@id([recipeUid, categoryUid])
 }
 
 model AuthUser {
