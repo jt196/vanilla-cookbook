@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { localDateAndTime } from '$lib/utils/dateTime'
 	import type { PageData } from './$types'
 
 	export let data: PageData
@@ -11,6 +12,7 @@
 	Description:
 	{recipe.description}
 </p>
+<p>Created: <i>{localDateAndTime(recipe.created)}</i></p>
 <p>
 	Source:
 	{recipe.source}
