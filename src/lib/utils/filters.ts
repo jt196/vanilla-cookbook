@@ -1,8 +1,4 @@
-// Define an IRecord interface to represent a generic object that has a string as a key and any type as its value.
-// This allows the function to accept arrays of objects with dynamic keys and values.
-interface IRecord {
-	[key: string]: any
-}
+import type { IRecord } from '$lib/types'
 
 // Annotate the searchString parameter with string | null type. This means searchString can be either a string or null.
 // Annotate the data parameter with IRecord[], which is an array of IRecord objects.
