@@ -1,9 +1,14 @@
 <script lang="ts">
 	import type { PageData } from './$types'
+	import { filterSearch } from '$lib/utils/filters'
 
 	export let data: PageData
 
 	$: ({ recipes } = data)
+
+	let search = ''
+
+	$: filteredRecipes = filterSearch(search, recipes, 'name')
 </script>
 
 <div class="grid">
@@ -14,7 +19,10 @@
 				<a href="/recipe/new" role="button">New</a>
 			</div>
 		</div>
-		{#each recipes as recipe}
+		<div class="search-box">
+			<input type="text" name="search" placeholder="Search my recipes" bind:value={search} />
+		</div>
+		{#each filteredRecipes as recipe}
 			<article>
 				<div class="grid">
 					<div>
