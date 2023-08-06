@@ -34,7 +34,7 @@
 	</div>
 </div>
 
-<style>
+<style lang="scss">
 	.align-right {
 		text-align: right;
 	}
