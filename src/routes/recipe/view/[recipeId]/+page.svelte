@@ -1,25 +1,36 @@
 <script lang="ts">
 	import { localDateAndTime } from '$lib/utils/dateTime'
 	import type { PageData } from './$types'
+	import type { Recipe } from '$lib/types'
 
 	export let data: PageData
-	$: ({ recipe } = data)
+	let recipe: Recipe | null = null
+	let ingredients: string[] = []
+
+	$: if (data && data.recipe) {
+		recipe = data.recipe
+		ingredients = recipe.ingredients ? recipe.ingredients.split('\n') : []
+	}
 </script>
 
-<h3>{recipe.name}</h3>
+<h3>{recipe?.name}</h3>
 
 <p>
 	Description:
-	{recipe.description}
+	{recipe?.description}
 </p>
 <p>Created: <i>{localDateAndTime(recipe.created)}</i></p>
 <p>
 	Source:
-	{recipe.source}
+	{recipe?.source}
 </p>
 <p>
 	Source URL:
-	{recipe.source_url}
+	{recipe?.source_url}
 </p>
-
-<a href="/recipe/edit/{recipe.uid}" role="button" class="outline contrast">Edit</a>
+<ul>
+	{#each ingredients as ingredient}
+		<li>{ingredient}</li>
+	{/each}
+</ul>
+<a href="/recipe/edit/{recipe?.uid}" role="button" class="outline contrast">Edit</a>

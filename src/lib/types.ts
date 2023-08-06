@@ -1,14 +1,10 @@
 export interface Recipe {
-	title: string
 	uid: string
-	auth_user: string
-	categories: Category[] | null
-	content: string | null
 	rating: number | null
 	photo_hash: string | null
 	on_favorites: boolean | null
 	photo: string | null
-	scale: number | null
+	scale: string | null
 	ingredients: string | null
 	is_pinned: boolean | null
 	source: string | null
