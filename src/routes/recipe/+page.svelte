@@ -3,7 +3,7 @@
 	import { filterSearch } from '$lib/utils/filters'
 	import { sortByDateAsc, sortByDateDesc, sortByKeyAsc, sortByKeyDesc } from '$lib/utils/sorting'
 	import SortAscDesc from '$lib/components/svg/SortAscDesc.svelte'
-	import { localDateAndTime, stringLocalDateAndTime } from '$lib/utils/dateTime'
+	import { localDateAndTime } from '$lib/utils/dateTime'
 
 	export let data: PageData
 
