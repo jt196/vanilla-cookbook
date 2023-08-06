@@ -6,12 +6,14 @@
 	$: ({ recipes } = data)
 </script>
 
-<a href="/recipe/new" role="button">New</a>
-<br />
-<br />
 <div class="grid">
 	<div>
-		<h2>Recipe:</h2>
+		<div class="grid">
+			<h2>Recipes:</h2>
+			<div class="align-right">
+				<a href="/recipe/new" role="button">New</a>
+			</div>
+		</div>
 		{#each recipes as recipe}
 			<article>
 				<header>{recipe.name}</header>
@@ -29,3 +31,9 @@
 		{/each}
 	</div>
 </div>
+
+<style>
+	.align-right {
+		text-align: right;
+	}
+</style>
