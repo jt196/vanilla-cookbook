@@ -41,6 +41,10 @@ export interface Category {
 
 // Define an IRecord interface to represent a generic object that has a string as a key and any type as its value.
 // This allows the function to accept arrays of objects with dynamic keys and values.
-export interface IRecord {
+export interface IStringDateRecord {
 	[key: string]: string | Date // Assume the keys hold either strings or Dates.
+}
+
+export interface IGenericRecord {
+	[key: string]: any
 }

@@ -1,10 +1,14 @@
-import type { IRecord } from '$lib/types'
+import type { IGenericRecord } from '$lib/types'
 
 // Annotate the searchString parameter with string | null type. This means searchString can be either a string or null.
 // Annotate the data parameter with IRecord[], which is an array of IRecord objects.
 // Annotate the key parameter with string type, since keys in JavaScript objects are strings.
 // Annotate the function's return type with IRecord[].
-export function filterSearch(searchString: string | null, data: IRecord[], key: string): IRecord[] {
+export function filterSearch(
+	searchString: string | null,
+	data: IGenericRecord[],
+	key: string
+): IGenericRecord[] {
 	// copy array
 	let myFilteredArray = data
 	// filter the array with favourites or search criteria
