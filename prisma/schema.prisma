@@ -48,7 +48,7 @@ model Recipe {
     prep_time        String?
     servings         String?
     nutritional_info String?
-    categories       RecipeCategory[]
+    categories       RecipeCategory[] @relation("RecipeToRecipeCategory")
 }
 
 model Category {
@@ -65,7 +65,7 @@ model Category {
 model RecipeCategory {
     recipeUid   String
     categoryUid String
-    recipe      Recipe   @relation(fields: [recipeUid], references: [uid])
+    recipe      Recipe   @relation("RecipeToRecipeCategory", fields: [recipeUid], references: [uid], onDelete: Cascade)
     category    Category @relation(fields: [categoryUid], references: [uid])
 
     @@id([recipeUid, categoryUid])
