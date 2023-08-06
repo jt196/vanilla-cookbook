@@ -31,9 +31,10 @@
 					<div class="align-right">
 						{#if recipe.userId === data.user?.userId}
 							<form action="?/deleteRecipe&uid={recipe.uid}" method="POST">
-								<button type="submit" class="outline secondary">Delete recipe</button>
+								<button type="submit" class="outline secondary">Delete</button>
 							</form>
-							<a href="recipe/{recipe.uid}" role="button" class="outline contrast">Edit Recipe</a>
+							<a href="recipe/edit/{recipe.uid}" role="button" class="outline contrast">Edit</a>
+							<a href="recipe/view/{recipe.uid}" role="button" class="outline contrast">View</a>
 						{/if}
 					</div>
 				</div>

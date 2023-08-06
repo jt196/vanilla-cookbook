@@ -13,3 +13,5 @@
 	<textarea id="description" name="description" rows={5} value={recipe.description} />
 	<button type="submit">Update Recipe</button>
 </form>
+
+<a href="/recipe/view/{recipe.uid}" role="button" class="outline contrast">View</a>
