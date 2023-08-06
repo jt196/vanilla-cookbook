@@ -16,17 +16,19 @@
 		</div>
 		{#each recipes as recipe}
 			<article>
-				<header>{recipe.name}</header>
-				<p>
-					{recipe.description}
-				</p>
-				{#if recipe.userId === data.user?.userId}
-					<form action="?/deleteRecipe&uid={recipe.uid}" method="POST">
-						<button type="submit" class="outline secondary">Delete recipe</button>
-					</form>
-					<a href="recipe/{recipe.uid}" role="button" class="outline constrast" style="width: 100%;"
-						>Edit Recipe</a>
-				{/if}
+				<div class="grid">
+					<div>
+						<header>{recipe.name}</header>
+					</div>
+					<div class="align-right">
+						{#if recipe.userId === data.user?.userId}
+							<form action="?/deleteRecipe&uid={recipe.uid}" method="POST">
+								<button type="submit" class="outline secondary">Delete recipe</button>
+							</form>
+							<a href="recipe/{recipe.uid}" role="button" class="outline contrast">Edit Recipe</a>
+						{/if}
+					</div>
+				</div>
 			</article>
 		{/each}
 	</div>
