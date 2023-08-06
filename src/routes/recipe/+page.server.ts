@@ -9,48 +9,20 @@ export const load: PageServerLoad = async () => {
 }
 
 export const actions: Actions = {
-	createRecipe: async ({ request, locals }) => {
-		const { session, user } = await locals.auth.validateUser()
-		if (!session || !user) {
-			throw redirect(302, '/')
-		}
-
-		const { title, content } = Object.fromEntries(await request.formData()) as Record<
-			string,
-			string
-		>
-
-		try {
-			await prisma.recipe.create({
-				data: {
-					title,
-					content,
-					userId: user.userId
-				}
-			})
-		} catch (err) {
-			console.error(err)
-			return fail(500, { message: 'Could not create the recipe.' })
-		}
-
-		return {
-			status: 201
-		}
-	},
 	deleteRecipe: async ({ url, locals }) => {
 		const { session, user } = await locals.auth.validateUser()
 		if (!session || !user) {
 			throw redirect(302, '/')
 		}
-		const id = url.searchParams.get('id')
-		if (!id) {
+		const uid = url.searchParams.get('uid')
+		if (!uid) {
 			return fail(400, { message: 'Invalid request' })
 		}
 
 		try {
 			const recipe = await prisma.recipe.findUniqueOrThrow({
 				where: {
-					id
+					uid
 				}
 			})
 
@@ -60,7 +32,7 @@ export const actions: Actions = {
 
 			await prisma.recipe.delete({
 				where: {
-					id
+					uid
 				}
 			})
 		} catch (err) {

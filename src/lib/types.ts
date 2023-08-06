@@ -1,6 +1,7 @@
 export interface Recipe {
 	title: string
 	uid: string
+	auth_user: string
 	categories: Category[] | null
 	content: string | null
 	rating: number | null

@@ -1,6 +1,6 @@
 import type { Actions, PageServerLoad } from './$types'
 import { prisma } from '$lib/server/prisma'
-import { error, fail } from '@sveltejs/kit'
+import { error, fail, redirect } from '@sveltejs/kit'
 
 export const load: PageServerLoad = async ({ params, locals }) => {
 	const { session, user } = await locals.auth.validateUser()
@@ -41,9 +41,6 @@ export const actions: Actions = {
 			string
 		>
 
-		console.log('🚀 ~ file: +page.server.ts:41 ~ updateRecipe: ~ description:', description)
-		console.log('🚀 ~ file: +page.server.ts:41 ~ updateRecipe: ~ name:', name)
-		console.log('🚀 ~ file: +page.server.ts:15 ~ getRecipe ~ uid: updating: ', params.recipeId)
 		try {
 			const recipe = await prisma.recipe.findUniqueOrThrow({
 				where: {
@@ -67,9 +64,6 @@ export const actions: Actions = {
 			console.error(err)
 			return fail(500, { message: 'Could not update recipe' })
 		}
-
-		return {
-			status: 200
-		}
+		throw redirect(302, '/recipe')
 	}
 }
