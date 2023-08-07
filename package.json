@@ -34,12 +34,13 @@
 		"svelte-preprocess": "^5.0.4",
 		"ts-node": "^10.9.1",
 		"tslib": "^2.5.0",
+		"tsx": "^3.12.7",
 		"typescript": "^4.9.5",
 		"vite": "^4.1.1",
 		"vitest": "^0.25.8"
 	},
 	"prisma": {
-		"seed": "node --loader ts-node/esm prisma/seed.ts"
+		"seed": "tsx prisma/seed.ts"
 	},
 	"type": "module",
 	"dependencies": {
