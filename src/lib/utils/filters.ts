@@ -1,5 +1,6 @@
 import type { IGenericRecord, IParsedIngredient } from '$lib/types'
 import { parse } from 'recipe-ingredient-parser-v3'
+import he from 'he'
 
 // Annotate the searchString parameter with string | null type. This means searchString can be either a string or null.
 // Annotate the data parameter with IRecord[], which is an array of IRecord objects.
@@ -98,7 +99,41 @@ export function decimalToFraction(decimal: number): string | number {
 	return fractions[decimal.toString()] || decimal
 }
 
+// convert unicode characters to ASCII
+export function unicodeToAscii(str) {
+	return str.replace(/[^\u0000-\u007F]/g, function (char) {
+		return char.normalize('NFKD').replace(/[^\u0000-\u007F]/g, '\uFFFD')
+	})
+}
+
+export function decodeHTMLEntities(str) {
+	return he.decode(str)
+}
+
 // Returns true if a string begins with "http"
 export function startsWithHttp(str: string) {
 	return str.startsWith('http')
+}
+
+export function nutritionProcess(nutritionObject: object): string {
+	if (nutritionObject) {
+		const nutritionArray = []
+
+		// Loop through each key in the nutrition object
+		for (const key in nutritionObject) {
+			// Ignore the @type key
+			if (key !== '@type') {
+				// Convert the key from camelCase to title case for a nicer display
+				const formattedKey = key.replace(/([A-Z])/g, ' $1').replace(/^./, function (str) {
+					return str.toUpperCase()
+				})
+
+				// Push the formatted string to the array
+				nutritionArray.push(`${formattedKey}: ${nutritionObject[key]}`)
+			}
+		}
+
+		// Convert the array to a string
+		return nutritionArray.join('\n')
+	}
 }

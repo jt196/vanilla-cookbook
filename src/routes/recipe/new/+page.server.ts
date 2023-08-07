@@ -10,16 +10,36 @@ export const actions: Actions = {
 			throw redirect(302, '/')
 		}
 
-		const { name, description } = Object.fromEntries(await request.formData()) as Record<
-			string,
-			string
-		>
+		const {
+			name,
+			description,
+			source,
+			source_url,
+			cook_time,
+			image_url,
+			prep_time,
+			ingredients,
+			directions,
+			total_time,
+			servings,
+			nutritional_info
+		} = Object.fromEntries(await request.formData()) as Record<string, string>
 
 		try {
 			await prisma.recipe.create({
 				data: {
 					name,
 					description,
+					source,
+					source_url,
+					cook_time,
+					image_url,
+					prep_time,
+					ingredients,
+					directions,
+					total_time,
+					servings,
+					nutritional_info,
 					created: new Date(),
 					userId: user.userId
 				}

@@ -36,9 +36,20 @@ export const actions: Actions = {
 			throw error(401, 'Unauthorized')
 		}
 
-		const { name, description, source, ingredients } = Object.fromEntries(
-			await request.formData()
-		) as Record<string, string>
+		const {
+			name,
+			description,
+			source,
+			source_url,
+			cook_time,
+			image_url,
+			prep_time,
+			ingredients,
+			directions,
+			total_time,
+			servings,
+			nutritional_info
+		} = Object.fromEntries(await request.formData()) as Record<string, string>
 
 		try {
 			const recipe = await prisma.recipe.findUniqueOrThrow({
@@ -50,6 +61,7 @@ export const actions: Actions = {
 			if (recipe.userId !== user.userId) {
 				throw error(403, 'Forbidden to edit this recipe.')
 			}
+
 			await prisma.recipe.update({
 				where: {
 					uid: params.recipeId
@@ -58,7 +70,15 @@ export const actions: Actions = {
 					name,
 					description,
 					source,
-					ingredients
+					source_url,
+					cook_time,
+					image_url,
+					prep_time,
+					ingredients,
+					directions,
+					total_time,
+					servings,
+					nutritional_info
 				}
 			})
 		} catch (err) {
