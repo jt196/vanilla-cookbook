@@ -4,7 +4,11 @@ import { error, fail, redirect } from '@sveltejs/kit'
 
 export const load: PageServerLoad = async () => {
 	return {
-		recipes: await prisma.recipe.findMany()
+		recipes: await prisma.recipe.findMany({
+			orderBy: {
+				created: 'desc'
+			}
+		})
 	}
 }
 

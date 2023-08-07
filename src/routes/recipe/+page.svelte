@@ -13,10 +13,12 @@
 	let search = ''
 	$: dateSort = ''
 	$: titleSort = ''
+	let activeButton = 'date'
 
 	$: filteredRecipes = filterSearch(search, recipes, 'name')
 
 	function sortDate() {
+		activeButton = 'date'
 		// sort the data by date
 		if (!dateSort || dateSort == 'desc') {
 			dateSort = 'asc'
@@ -29,6 +31,7 @@
 	}
 
 	function sortTitle() {
+		activeButton = 'title'
 		// sort the data by date
 		if (!titleSort || titleSort == 'desc') {
 			titleSort = 'asc'
@@ -49,16 +52,19 @@
 				<a href="/recipe/new" role="button">New</a>
 			</div>
 		</div>
-		<div class="search-box">
-			<input type="text" name="search" placeholder="Search my recipes" bind:value={search} />
-		</div>
-		<div class="grid">
-			<div>Sort By:</div>
-			<div>
-				<button on:click={sortDate}>Date <SortAscDesc sort={dateSort} /></button>
+		<div class="grid recipe-filters">
+			<div class="search-box">
+				<input type="text" name="search" placeholder="Search my recipes" bind:value={search} />
 			</div>
-			<div>
-				<button on:click={sortTitle}>Title<SortAscDesc sort={titleSort} /></button>
+			<div class="sort">
+				<div>
+					<button class={activeButton === 'date' ? 'secondary' : ''} on:click={sortDate}
+						>Date <SortAscDesc sort={dateSort} /></button>
+				</div>
+				<div>
+					<button class={activeButton === 'title' ? 'secondary' : ''} on:click={sortTitle}
+						>Title <SortAscDesc sort={titleSort} /></button>
+				</div>
 			</div>
 		</div>
 		{#each filteredRecipes as recipe}
@@ -98,10 +104,23 @@
 		margin-top: 1rem;
 	}
 
+	.sort {
+		display: flex;
+		justify-content: flex-end;
+		gap: 1rem;
+	}
+
+	.recipe-filters {
+		margin-top: 1rem;
+	}
 	.recipe-thumbnail img {
 		height: 200px; /* Set to your desired height */
 		width: auto; /* This will ensure the width remains proportional */
 		object-fit: cover;
 		display: block; /* To remove any default spacing at the bottom of images */
+	}
+
+	.sort .secondary {
+		border: 1px solid white;
 	}
 </style>
