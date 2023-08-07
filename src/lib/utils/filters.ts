@@ -67,6 +67,7 @@ export function sanitizeForYamlFrontMatter(str: string) {
 	return str
 }
 
+// Take a string and scale the numbers inside it by a specified number
 export function scaleNumbersInString(str: string, scale: number): string {
 	return str.replace(/\d+(\.\d+)?/g, (match) => {
 		const scaledNumber = parseFloat(match) * scale
@@ -74,6 +75,7 @@ export function scaleNumbersInString(str: string, scale: number): string {
 	})
 }
 
+// Convert decimal to fraction for displaying on the recipes.
 export function decimalToFraction(decimal: number): string | number {
 	const fractions: Record<string, string> = {
 		'0.1': '⅒',

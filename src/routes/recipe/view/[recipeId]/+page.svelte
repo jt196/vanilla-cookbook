@@ -45,7 +45,7 @@
 	{#each ingredientsArray as ingredient}
 		<li>
 			{ingredient.quantity ? decimalToFraction(ingredient.quantity * scale) : ''}
-			{ingredient.unit ? ingredient.unit : ''}
+			{ingredient.unit && ingredient.unit !== 'q.b.' ? ingredient.unit : ''}
 			{ingredient.ingredient}
 		</li>
 	{/each}
