@@ -100,9 +100,6 @@
 	.align-right {
 		text-align: right;
 	}
-	.search-box {
-		margin-top: 1rem;
-	}
 
 	.sort {
 		display: flex;
