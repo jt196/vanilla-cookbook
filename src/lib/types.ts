@@ -44,3 +44,13 @@ export interface IStringDateRecord {
 export interface IGenericRecord {
 	[key: string]: any
 }
+
+export interface IParsedIngredient {
+	quantity?: number
+	unit?: string | null
+	unitPlural?: string | null
+	symbol?: string | null
+	ingredient?: string | null
+	minQty?: number
+	maxQty?: number
+}

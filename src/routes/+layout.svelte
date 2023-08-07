@@ -9,7 +9,7 @@
 		<ul>
 			<li>
 				<strong>
-					<a href="/"> Blogly </a>
+					<a href="/"> Bigly Recipes </a>
 				</strong>
 			</li>
 		</ul>

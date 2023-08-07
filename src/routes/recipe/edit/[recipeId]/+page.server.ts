@@ -36,10 +36,9 @@ export const actions: Actions = {
 			throw error(401, 'Unauthorized')
 		}
 
-		const { name, description } = Object.fromEntries(await request.formData()) as Record<
-			string,
-			string
-		>
+		const { name, description, source, ingredients } = Object.fromEntries(
+			await request.formData()
+		) as Record<string, string>
 
 		try {
 			const recipe = await prisma.recipe.findUniqueOrThrow({
@@ -57,13 +56,15 @@ export const actions: Actions = {
 				},
 				data: {
 					name,
-					description
+					description,
+					source,
+					ingredients
 				}
 			})
 		} catch (err) {
 			console.error(err)
 			return fail(500, { message: 'Could not update recipe' })
 		}
-		throw redirect(302, '/recipe')
+		throw redirect(302, '/recipe/view/' + params.recipeId)
 	}
 }
