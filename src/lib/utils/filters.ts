@@ -97,3 +97,8 @@ export function decimalToFraction(decimal: number): string | number {
 
 	return fractions[decimal.toString()] || decimal
 }
+
+// Returns true if a string begins with "http"
+export function startsWithHttp(str: string) {
+	return str.startsWith('http')
+}

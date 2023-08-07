@@ -1,9 +1,10 @@
 <script lang="ts">
 	import type { PageData } from './$types'
-	import { filterSearch } from '$lib/utils/filters'
+	import { filterSearch, startsWithHttp } from '$lib/utils/filters'
 	import { sortByDateAsc, sortByDateDesc, sortByKeyAsc, sortByKeyDesc } from '$lib/utils/sorting'
 	import SortAscDesc from '$lib/components/svg/SortAscDesc.svelte'
 	import { localDateAndTime } from '$lib/utils/dateTime'
+	import FoodBowl from '$lib/components/svg/FoodBowl.svelte'
 
 	export let data: PageData
 
@@ -63,6 +64,13 @@
 		{#each filteredRecipes as recipe}
 			<article>
 				<div class="grid">
+					<div class="recipe-thumbnail">
+						{#if recipe.image_url && startsWithHttp(recipe.image_url)}
+							<img src={recipe.image_url} alt="{recipe.name} thumbnail" />
+						{:else}
+							<FoodBowl height="200px" />
+						{/if}
+					</div>
 					<div>
 						<header>{recipe.name}</header>
 						<p>Created: <i>{localDateAndTime(recipe.created)}</i></p>
@@ -88,5 +96,12 @@
 	}
 	.search-box {
 		margin-top: 1rem;
+	}
+
+	.recipe-thumbnail img {
+		height: 200px; /* Set to your desired height */
+		width: auto; /* This will ensure the width remains proportional */
+		object-fit: cover;
+		display: block; /* To remove any default spacing at the bottom of images */
 	}
 </style>
