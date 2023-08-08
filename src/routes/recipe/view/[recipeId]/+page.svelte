@@ -1,7 +1,5 @@
-<script lang="ts">
+<script>
 	import { localDateAndTime } from '$lib/utils/dateTime'
-	import type { PageData } from './$types'
-	import type { Recipe, IParsedIngredient } from '$lib/types'
 	import {
 		decimalToFraction,
 		ingredientProcess,
@@ -11,14 +9,49 @@
 	import Scale from '$lib/components/Scale.svelte'
 	import FoodBowl from '$lib/components/svg/FoodBowl.svelte'
 
-	export let data: PageData
-	let recipe: Recipe | null = null
-	let ingredients: string[] = []
-	let ingredientsArray: IParsedIngredient[] = []
-	let scale = 1
-	let scaledServings: string | null
-	let directionLines: string[] = []
+	/**
+	 * Data for the current page.
+	 * @type {PageData}
+	 */
+	export let data
 
+	/**
+	 * The current recipe being displayed.
+	 * @type {Recipe | null}
+	 */
+	let recipe = null
+
+	/**
+	 * The list of ingredients in string format.
+	 * @type {string[]}
+	 */
+	let ingredients = []
+
+	/**
+	 * The list of ingredients parsed into a structured format.
+	 * @type {parsedIngredient[]}
+	 */
+	let ingredientsArray = []
+
+	/**
+	 * The scaling factor to adjust the quantity of the ingredients.
+	 * @type {number}
+	 */
+	let scale = 1
+
+	/**
+	 * Scaled servings based on the scaling factor.
+	 * @type {string | null}
+	 */
+	let scaledServings
+
+	/**
+	 * The list of directions for the recipe.
+	 * @type {string[]}
+	 */
+	let directionLines = []
+
+	/** Logic to update various variables based on the recipe data. */
 	$: if (data && data.recipe) {
 		recipe = data.recipe
 		ingredients = recipe.ingredients ? recipe.ingredients.split('\n') : []

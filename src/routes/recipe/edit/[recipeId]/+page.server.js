@@ -1,14 +1,24 @@
-import type { Actions, PageServerLoad } from './$types'
 import { prisma } from '$lib/server/prisma'
 import { error, fail, redirect } from '@sveltejs/kit'
 
-export const load: PageServerLoad = async ({ params, locals }) => {
+/**
+ * Handles loading the page data.
+ *
+ * @function
+ * @async
+ * @param {Object} context - The context of the load.
+ * @param {Object} context.params - Parameters of the request.
+ * @param {AppLocals} context.locals - The locals object.
+ * @throws Will throw an error if unauthorized or the recipe is not found.
+ * @returns {Promise<{ recipe: Object }>} The loaded recipe.
+ */
+export const load = async ({ params, locals }) => {
 	const { session, user } = await locals.auth.validateUser()
 	if (!session || !user) {
 		throw error(401, 'Unauthorized')
 	}
 
-	const getRecipe = async (userId: string) => {
+	const getRecipe = async (userId) => {
 		const recipe = await prisma.recipe.findUnique({
 			where: {
 				uid: params.recipeId
@@ -29,7 +39,24 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 	}
 }
 
-export const actions: Actions = {
+/**
+ * Actions for the page.
+ *
+ * @namespace
+ */
+export const actions = {
+	/**
+	 * Handles updating the recipe.
+	 *
+	 * @function
+	 * @async
+	 * @param {Object} context - The context of the action.
+	 * @param {Object} context.request - The request object.
+	 * @param {Object} context.params - Parameters of the request.
+	 * @param {AppLocals} context.locals - The locals object.
+	 * @throws Will throw an error if unauthorized, forbidden, or on failure.
+	 * @returns {Promise<{ status?: number, location?: string }>}
+	 */
 	updateRecipe: async ({ request, params, locals }) => {
 		const { session, user } = await locals.auth.validateUser()
 		if (!session || !user) {
@@ -49,7 +76,7 @@ export const actions: Actions = {
 			total_time,
 			servings,
 			nutritional_info
-		} = Object.fromEntries(await request.formData()) as Record<string, string>
+		} = Object.fromEntries(await request.formData())
 
 		try {
 			const recipe = await prisma.recipe.findUniqueOrThrow({

@@ -1,8 +1,11 @@
-import type { Actions, PageServerLoad } from './$types'
 import { prisma } from '$lib/server/prisma'
 import { error, fail, redirect } from '@sveltejs/kit'
 
-export const load: PageServerLoad = async () => {
+/**
+ * Server-side logic to load recipes for the page.
+ * @returns {Promise<Object>} An object containing the recipes ordered by their creation date in descending order.
+ */
+export const load = async () => {
 	return {
 		recipes: await prisma.recipe.findMany({
 			orderBy: {
@@ -12,7 +15,18 @@ export const load: PageServerLoad = async () => {
 	}
 }
 
-export const actions: Actions = {
+/**
+ * Server-side actions related to recipes.
+ * @namespace
+ */
+export const actions = {
+	/**
+	 * Delete a specific recipe.
+	 * @param {Object} context - The context for the action.
+	 * @param {URL} context.url - The URL containing the uid of the recipe to be deleted.
+	 * @param {AppLocals} context.locals - The local context which includes authentication data.
+	 * @returns {Promise<Object>} An object representing the result of the deletion.
+	 */
 	deleteRecipe: async ({ url, locals }) => {
 		const { session, user } = await locals.auth.validateUser()
 		if (!session || !user) {

@@ -1,25 +1,66 @@
-<script lang="ts">
-	import type { PageData } from './$types'
+<script>
+	// No need to import types in JSDoc comments.
+
+	/**
+	 * Filters recipes based on search criteria.
+	 * @function
+	 * @module $lib/utils/filters
+	 */
 	import { filterSearch, startsWithHttp } from '$lib/utils/filters'
+
+	/**
+	 * Utility functions for sorting data.
+	 * @module $lib/utils/sorting
+	 */
 	import { sortByDateAsc, sortByDateDesc, sortByKeyAsc, sortByKeyDesc } from '$lib/utils/sorting'
+
+	/**
+	 * Component representing an SVG icon for sorting in ascending or descending order.
+	 * @module $lib/components/svg/SortAscDesc
+	 */
 	import SortAscDesc from '$lib/components/svg/SortAscDesc.svelte'
+
+	/**
+	 * Utility function for formatting date and time.
+	 * @function
+	 * @module $lib/utils/dateTime
+	 */
 	import { localDateAndTime } from '$lib/utils/dateTime'
+
+	/**
+	 * Component representing an SVG icon of a food bowl.
+	 * @module $lib/components/svg/FoodBowl
+	 */
 	import FoodBowl from '$lib/components/svg/FoodBowl.svelte'
 
-	export let data: PageData
+	/** Data object, should adhere to the PageData type structure. */
+	/** @type {PageData} */
+	export let data
 
+	/** Destructure recipes from the provided data. */
 	$: ({ recipes } = data)
 
+	/** Search keyword to filter the recipes list. */
 	let search = ''
+
+	/** Current state of the date sort. */
 	$: dateSort = ''
+
+	/** Current state of the title sort. */
 	$: titleSort = ''
+
+	/** The active button determining which sorting is applied. */
 	let activeButton = 'date'
 
+	/** A list of recipes filtered based on the search criteria. */
 	$: filteredRecipes = filterSearch(search, recipes, 'name')
 
+	/**
+	 * Sorts recipes based on their creation date.
+	 * @returns {string} The current sort direction (asc/desc).
+	 */
 	function sortDate() {
 		activeButton = 'date'
-		// sort the data by date
 		if (!dateSort || dateSort == 'desc') {
 			dateSort = 'asc'
 			filteredRecipes = sortByDateAsc(filteredRecipes, 'created')
@@ -30,9 +71,12 @@
 		return dateSort
 	}
 
+	/**
+	 * Sorts recipes based on their name.
+	 * @returns {string} The current sort direction (asc/desc).
+	 */
 	function sortTitle() {
 		activeButton = 'title'
-		// sort the data by date
 		if (!titleSort || titleSort == 'desc') {
 			titleSort = 'asc'
 			filteredRecipes = sortByKeyAsc(filteredRecipes, 'name')

@@ -1,8 +1,24 @@
-<script lang="ts">
-	import { decodeHTMLEntities } from '$lib/utils/filters'
-	import { nutritionProcess } from '$lib/utils/filters'
+<script>
+	import { decodeHTMLEntities, nutritionProcess } from '$lib/utils/filters'
 
-	$: recipe = {
+	/**
+	 * The scraped recipe object.
+	 * @typedef {Object} Recipe
+	 * @property {string} name - Name of the recipe.
+	 * @property {string} source - Source of the recipe.
+	 * @property {string} source_url - URL source of the recipe.
+	 * @property {string} cook_time - Cook time of the recipe.
+	 * @property {string} image_url - Image URL of the recipe.
+	 * @property {string} prep_time - Preparation time of the recipe.
+	 * @property {string} ingredients - Ingredients of the recipe.
+	 * @property {string} directions - Directions of the recipe.
+	 * @property {string} total_time - Total time of the recipe.
+	 * @property {string} servings - Servings of the recipe.
+	 * @property {string} nutritional_info - Nutritional information of the recipe.
+	 */
+
+	/** @type {Recipe} */
+	let recipe = {
 		name: '',
 		source: '',
 		source_url: '',
@@ -16,9 +32,14 @@
 		nutritional_info: ''
 	}
 
-	async function handleScrape(event: Event) {
+	/**
+	 * Handles the scraping event.
+	 * @param {Event} event - The scrape event.
+	 * @returns {Promise<void>}
+	 */
+	async function handleScrape(event) {
 		event.preventDefault()
-		const formData = new FormData(event.target as HTMLFormElement)
+		const formData = new FormData(event.target)
 		const url = formData.get('url')
 
 		// Make a request to your scrapeRecipe endpoint
@@ -31,6 +52,7 @@
 			let responseText = await response.text()
 			responseText = decodeHTMLEntities(responseText)
 			const primaryData = JSON.parse(responseText)
+
 			// Checking if the data key exists and is of type string
 			if (primaryData && typeof primaryData.data === 'string') {
 				const nestedData = JSON.parse(primaryData.data)

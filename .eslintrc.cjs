@@ -1,13 +1,14 @@
 module.exports = {
 	root: true,
-	parser: '@typescript-eslint/parser',
-	extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended', 'prettier'],
-	plugins: ['svelte3', '@typescript-eslint'],
+	extends: ['eslint:recommended', 'prettier'],
+	plugins: ['svelte3'],
 	ignorePatterns: ['*.cjs'],
-	overrides: [{ files: ['*.svelte'], processor: 'svelte3/svelte3' }],
-	settings: {
-		'svelte3/typescript': () => require('typescript')
-	},
+	overrides: [
+		{
+			files: ['*.svelte'],
+			processor: 'svelte3/svelte3'
+		}
+	],
 	parserOptions: {
 		sourceType: 'module',
 		ecmaVersion: 2020
@@ -17,4 +18,4 @@ module.exports = {
 		es2017: true,
 		node: true
 	}
-};
+}

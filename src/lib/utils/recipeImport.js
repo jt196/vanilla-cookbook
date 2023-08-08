@@ -1,14 +1,18 @@
 import PrismaClientPkg from '@prisma/client'
 import { promises as fsPromises } from 'fs'
 import fs from 'fs'
-import type { PaprikaRecipe, Category } from '../types'
 
-// // Prisma doesn't support ES Modules so we have to do this
+// Prisma doesn't support ES Modules so we have to do this
 const PrismaClient = PrismaClientPkg.PrismaClient
 // Different name of prismaC as the auth is importing prisma from the adapter
 const prismaC = new PrismaClient()
 
-export async function loadPaprikaRecipes(): Promise<PaprikaRecipe[]> {
+/**
+ * Loads Paprika recipes from a JSON file.
+ *
+ * @returns {Promise<PaprikaRecipe[]>} - An array of loaded Paprika recipes.
+ */
+export async function loadPaprikaRecipes() {
 	const filePath = 'src/lib/data/recipes-small.json'
 
 	if (!fs.existsSync(filePath)) {
@@ -25,20 +29,27 @@ export async function loadPaprikaRecipes(): Promise<PaprikaRecipe[]> {
 	}
 }
 
-export async function importPaprikaCategories(recipes: PaprikaRecipe[]) {
+/**
+ * Imports Paprika categories into the database.
+ *
+ * @param {PaprikaRecipe[]} recipes - An array of Paprika recipes containing category data.
+ */
+export async function importPaprikaCategories(recipes) {
 	// Collecting all unique categories
-	const categoriesMap: { [key: string]: Category } = {}
+	/** @type { Record<string, Category> } */
+	const categoriesMap = {}
 
 	recipes.forEach((recipe) => {
-		recipe.categories
-			? recipe.categories.forEach((category) => {
-					categoriesMap[category.uid] = category as Category
-			  })
-			: undefined
+		recipe.categories &&
+			recipe.categories.forEach((category) => {
+				/** @type {Category} */
+				const cat = category
+				categoriesMap[cat.uid] = cat
+			})
 	})
 
 	// Gather all unique parent UIDs
-	const parentUids: Set<string> = new Set()
+	const parentUids = new Set()
 
 	Object.values(categoriesMap).forEach((category) => {
 		if (category.parent_uid) {

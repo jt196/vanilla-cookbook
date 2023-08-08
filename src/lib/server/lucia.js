@@ -1,4 +1,3 @@
-// import { sveltekit } from 'lucia-auth/middleware'
 import lucia from 'lucia-auth'
 import prismaAdapter from '@lucia-auth/adapter-prisma'
 import { sveltekit } from 'lucia-auth/middleware'
@@ -17,5 +16,3 @@ export const auth = lucia({
 		}
 	}
 })
-
-export type Auth = typeof auth

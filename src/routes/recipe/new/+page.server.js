@@ -1,9 +1,18 @@
-import type { Actions } from './$types'
 import { prisma } from '$lib/server/prisma'
 import { fail, redirect } from '@sveltejs/kit'
 import { parseURL } from 'html-recipe-parser'
 
-export const actions: Actions = {
+/**
+ * @typedef {Object} Actions
+ * @property {Function} createRecipe - Function to create a recipe.
+ * @property {Function} scrapeRecipe - Function to scrape a recipe from a given URL.
+ */
+
+/**
+ * Actions for creating and scraping recipes.
+ * @type {Actions}
+ */
+export const actions = {
 	createRecipe: async ({ request, locals }) => {
 		const { session, user } = await locals.auth.validateUser()
 		if (!session || !user) {
@@ -23,7 +32,7 @@ export const actions: Actions = {
 			total_time,
 			servings,
 			nutritional_info
-		} = Object.fromEntries(await request.formData()) as Record<string, string>
+		} = Object.fromEntries(await request.formData())
 
 		try {
 			await prisma.recipe.create({
@@ -56,7 +65,7 @@ export const actions: Actions = {
 			throw redirect(302, '/')
 		}
 
-		const { url } = Object.fromEntries(await request.formData()) as Record<string, string>
+		const { url } = Object.fromEntries(await request.formData())
 
 		try {
 			const recipeArrayText = JSON.stringify(await parseURL(url))

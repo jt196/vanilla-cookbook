@@ -5,7 +5,6 @@ import prisma from '@lucia-auth/adapter-prisma'
 import { fail } from '@sveltejs/kit'
 import fs from 'fs'
 import { importPaprikaCategories, loadPaprikaRecipes } from '../src/lib/utils/recipeImport'
-import type { PaprikaRecipe } from '../src/lib/types'
 
 // // Prisma doesn't support ES Modules so we have to do this
 const PrismaClient = PrismaClientPkg.PrismaClient
@@ -19,7 +18,11 @@ export const auth = lucia({
 	middleware: sveltekit()
 })
 
-async function getUsers(recipes: PaprikaRecipe[]) {
+/**
+ * Process an array of PaprikaRecipes
+ * @param {PaprikaRecipe[]} recipes - An array of PaprikaRecipe objects.
+ */
+async function getUsers(recipes) {
 	recipes.forEach((entry) => {
 		// Convert 'created' string to a datetime object
 		entry.created = new Date(entry.created)

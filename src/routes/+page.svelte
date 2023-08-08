@@ -1,8 +1,12 @@
-<script lang="ts">
-	import type { PageData } from './$types'
+<script>
+	/**
+	 * The main data object, which should conform to the `PageData` type.
+	 *
+	 * @type {PageData}
+	 */
+	export let data
 
-	export let data: PageData
-
+	// Reactively destructure articles from data.
 	$: ({ articles } = data)
 </script>
 
@@ -20,8 +24,7 @@
 						<button type="submit" class="outline secondary">Delete Article</button>
 					</form>
 					<a href="/{article.id}" role="button" class="outline constrast" style="width: 100%;"
-						>Edit Article</a
-					>
+						>Edit Article</a>
 				{/if}
 			</article>
 		{/each}

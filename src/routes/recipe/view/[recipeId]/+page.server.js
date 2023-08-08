@@ -1,14 +1,31 @@
-import type { Actions, PageServerLoad } from './$types'
 import { prisma } from '$lib/server/prisma'
 import { error, fail, redirect } from '@sveltejs/kit'
 
-export const load: PageServerLoad = async ({ params, locals }) => {
+/**
+ * Loads the recipe data.
+ *
+ * @function load
+ * @param {Object} context - The loading context.
+ * @param {Object} context.params - The route parameters.
+ * @param {AppLocals} context.locals - The local variables.
+ * @returns {Promise<Object>} The loaded recipe data.
+ * @async
+ */
+export const load = async ({ params, locals }) => {
 	const { session, user } = await locals.auth.validateUser()
 	if (!session || !user) {
 		throw error(401, 'Unauthorized')
 	}
 
-	const getRecipe = async (userId: string) => {
+	/**
+	 * Fetches the recipe for a given user ID.
+	 *
+	 * @param {string} userId - The ID of the user.
+	 * @returns {Promise<Object>} The recipe data.
+	 * @throws {Error} If the recipe is not found or unauthorized.
+	 * @async
+	 */
+	const getRecipe = async (userId) => {
 		const recipe = await prisma.recipe.findUnique({
 			where: {
 				uid: params.recipeId
@@ -29,17 +46,26 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 	}
 }
 
-export const actions: Actions = {
+/**
+ * Recipe actions object.
+ *
+ * @typedef {Object} Actions
+ * @property {Function} updateRecipe - The function to update the recipe.
+ */
+
+/**
+ * The actions for managing recipes.
+ *
+ * @type {Actions}
+ */
+export const actions = {
 	updateRecipe: async ({ request, params, locals }) => {
 		const { session, user } = await locals.auth.validateUser()
 		if (!session || !user) {
 			throw error(401, 'Unauthorized')
 		}
 
-		const { name, description } = Object.fromEntries(await request.formData()) as Record<
-			string,
-			string
-		>
+		const { name, description } = Object.fromEntries(await request.formData())
 
 		try {
 			const recipe = await prisma.recipe.findUniqueOrThrow({

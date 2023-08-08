@@ -1,7 +1,14 @@
-<script lang="ts">
-	import type { PageData } from './$types'
+<script>
+	/**
+	 * The page data type.
+	 * @typedef {Object} PageData
+	 * @property {Object} article - The article data.
+	 * @property {string} article.title - The title of the article.
+	 * @property {string} article.content - The content of the article.
+	 */
 
-	export let data: PageData
+	/** @type {PageData} */
+	export let data
 	$: ({ article } = data)
 </script>
 

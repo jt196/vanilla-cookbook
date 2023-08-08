@@ -1,7 +1,16 @@
-<script lang="ts">
+<script>
+	/**
+	 * This script is responsible for importing styles and managing page data.
+	 */
+
+	// Imports styles from PicoCSS.
 	import '@picocss/pico'
-	import type { PageData } from './$types'
-	export let data: PageData
+
+	/**
+	 * Data for the page, structure defined by the `PageData` type.
+	 * @type {PageData}
+	 */
+	export let data
 </script>
 
 <div class="container">
@@ -22,7 +31,7 @@
 					<li><a href="/login" role="button">Login</a></li>
 				{:else}
 					<li>
-						<button formaction="/logout" type="submit" role="button">Logout</button>
+						<button formaction="/logout" type="submit">Logout</button>
 					</li>
 				{/if}
 			</form>

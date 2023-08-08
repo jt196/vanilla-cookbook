@@ -1,7 +1,13 @@
-<script lang="ts">
-	import type { PageData } from './$types'
+<script>
+	/**
+	 * The page data type.
+	 * @typedef {Object} PageData
+	 * @property {Recipe} recipe - The recipe data.
+	 * @see src/lib/typeDefinitions.js for the Recipe type definition
+	 */
 
-	export let data: PageData
+	/** @type {PageData} */
+	export let data
 	$: ({ recipe } = data)
 </script>
 
