@@ -51,7 +51,7 @@ export const actions = {
 	default: async ({ request }) => {
 		const formData = await request.formData()
 		const data = Object.fromEntries(formData)
-		const { name, username, password } = data
+		const { name, username, password, about, email } = data
 
 		try {
 			await auth.createUser({
@@ -62,7 +62,10 @@ export const actions = {
 				},
 				attributes: {
 					name,
-					username
+					username,
+					about,
+					email,
+					isAdmin: false
 				}
 			})
 		} catch (err) {
