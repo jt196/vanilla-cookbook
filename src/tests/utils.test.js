@@ -1,0 +1,166 @@
+import {
+	sortByKeyAsc,
+	sortByKeyDesc,
+	sortByDateAsc,
+	sortByDateDesc,
+	randomSortArray
+} from '../lib/utils/sorting.js'
+
+import {
+	filterSearch,
+	ingredientProcess,
+	sanitizeForYamlFrontMatter,
+	scaleNumbersInString,
+	decimalToFraction,
+	unicodeToAscii,
+	decodeHTMLEntities,
+	startsWithHttp,
+	nutritionProcess
+} from '../lib/utils/filters.js'
+
+/* global describe, expect, it, beforeAll, afterAll */
+
+describe('Sorting functions', () => {
+	const sampleData = [
+		{ name: 'John', date: '2023-01-01' },
+		{ name: 'Alice', date: '2022-05-15' },
+		{ name: 'Bob', date: '2021-11-11' }
+	]
+
+	it('should sort by key in ascending order', () => {
+		const result = sortByKeyAsc(sampleData, 'name')
+		expect(result[0].name).toBe('Alice')
+		expect(result[1].name).toBe('Bob')
+		expect(result[2].name).toBe('John')
+	})
+
+	it('should sort by key in descending order', () => {
+		const result = sortByKeyDesc(sampleData, 'name')
+		expect(result[0].name).toBe('John')
+		expect(result[1].name).toBe('Bob')
+		expect(result[2].name).toBe('Alice')
+	})
+
+	it('should sort by date in ascending order', () => {
+		const result = sortByDateAsc(sampleData, 'date')
+		expect(result[0].date).toBe('2021-11-11')
+		expect(result[1].date).toBe('2022-05-15')
+		expect(result[2].date).toBe('2023-01-01')
+	})
+
+	it('should sort by date in descending order', () => {
+		const result = sortByDateDesc(sampleData, 'date')
+		expect(result[0].date).toBe('2023-01-01')
+		expect(result[1].date).toBe('2022-05-15')
+		expect(result[2].date).toBe('2021-11-11')
+	})
+
+	it('should randomly sort the array', () => {
+		const result = randomSortArray([...sampleData])
+		expect(result.length).toBe(sampleData.length)
+		// This test is tricky since the result is random. We can just check if the length is preserved.
+	})
+})
+
+describe('Filter functions', () => {
+	describe('filterSearch', () => {
+		const data = [{ name: 'Apple' }, { name: 'Banana' }, { name: 'Cherry' }]
+
+		it('should filter based on search string', () => {
+			const result = filterSearch('ban', data, 'name')
+			expect(result.length).toBe(1)
+			expect(result[0].name).toBe('Banana')
+		})
+
+		it('should return all items if search string is null', () => {
+			const result = filterSearch(null, data, 'name')
+			expect(result.length).toBe(3)
+		})
+	})
+
+	describe('ingredientProcess', () => {
+		let originalConsoleError
+
+		beforeAll(() => {
+			originalConsoleError = console.error
+			console.error = () => {}
+		})
+
+		afterAll(() => {
+			console.error = originalConsoleError
+		})
+
+		it('should process ingredient strings', () => {
+			const ingredients = ['1 cup sugar', '2 tbsp salt']
+			const result = ingredientProcess(ingredients)
+			expect(result.length).toBe(2)
+		})
+	})
+
+	describe('sanitizeForYamlFrontMatter', () => {
+		it('should sanitize string for YAML front matter', () => {
+			const str = 'Hello: World*'
+			const result = sanitizeForYamlFrontMatter(str)
+			expect(result).toBe('Hello - World')
+		})
+	})
+
+	// ... Continue with other functions ...
+
+	describe('startsWithHttp', () => {
+		it('should return true if string starts with http', () => {
+			const result = startsWithHttp('http://example.com')
+			expect(result).toBe(true)
+		})
+
+		it('should return false if string does not start with http', () => {
+			const result = startsWithHttp('ftp://example.com')
+			expect(result).toBe(false)
+		})
+	})
+
+	describe('nutritionProcess', () => {
+		it('should process nutrition object', () => {
+			const nutrition = {
+				'@type': 'NutritionInformation',
+				calories: '100 kcal',
+				fatContent: '5g'
+			}
+			const result = nutritionProcess(nutrition)
+			expect(result).toContain('Calories: 100 kcal')
+			expect(result).toContain('Fat Content: 5g')
+		})
+	})
+	describe('scaleNumbersInString', () => {
+		it('should scale numbers in a string', () => {
+			const result = scaleNumbersInString('The recipe needs 10 apples and 2.5 cups of water', 2)
+			expect(result).toBe('The recipe needs 20 apples and 5 cups of water')
+		})
+	})
+
+	describe('decimalToFraction', () => {
+		it('should convert decimal to fraction', () => {
+			const result = decimalToFraction(0.5)
+			expect(result).toBe('½')
+		})
+
+		it('should return the original number if no fraction representation is found', () => {
+			const result = decimalToFraction(0.123)
+			expect(result).toBe(0.123)
+		})
+	})
+
+	describe('unicodeToAscii', () => {
+		it('should convert unicode characters to ASCII', () => {
+			const result = unicodeToAscii('café')
+			expect(result).toBe('cafe')
+		})
+	})
+
+	describe('decodeHTMLEntities', () => {
+		it('should decode HTML entities', () => {
+			const result = decodeHTMLEntities('&lt;p&gt;Hello World&lt;/p&gt;')
+			expect(result).toBe('<p>Hello World</p>')
+		})
+	})
+})
