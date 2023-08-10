@@ -123,11 +123,11 @@ export function decimalToFraction(decimal) {
  * @returns {string} - The string with unicode characters converted to ASCII.
  */
 export function unicodeToAscii(str) {
-	// eslint-disable-next-line no-control-regex
-	return str.replace(/[^\u0000-\u007F]/g, function (char) {
-		// eslint-disable-next-line no-control-regex
-		return char.normalize('NFKD').replace(/[^\u0000-\u007F]/g, '\uFFFD')
-	})
+	// eslint-disable-next-line no-misleading-character-class
+	return str
+		.normalize('NFKD')
+		.replace(/[\u0300-\u036F]/g, '')
+		.replace(/[\u0080-\u009F\u0100-\u07FF]/g, '\uFFFD') // Adjusted range
 }
 
 /**

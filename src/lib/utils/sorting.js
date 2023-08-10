@@ -31,7 +31,7 @@ export function sortByKeyDesc(inputArray, inputKey) {
  * @param {string} dateKey - The key by which to sort.
  * @returns {stringDateRecord[]} - Sorted array.
  */
-export function sortByDateDesc(inputArray, dateKey) {
+export function sortByDateAsc(inputArray, dateKey) {
 	return inputArray.sort((a, b) => {
 		return new Date(a[dateKey]).getTime() - new Date(b[dateKey]).getTime()
 	})
@@ -44,7 +44,7 @@ export function sortByDateDesc(inputArray, dateKey) {
  * @param {string} dateKey - The key by which to sort.
  * @returns {stringDateRecord[]} - Sorted array.
  */
-export function sortByDateAsc(inputArray, dateKey) {
+export function sortByDateDesc(inputArray, dateKey) {
 	return inputArray.sort((a, b) => {
 		return new Date(b[dateKey]).getTime() - new Date(a[dateKey]).getTime()
 	})
