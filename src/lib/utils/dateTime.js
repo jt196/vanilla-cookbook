@@ -37,16 +37,12 @@ export function stringToISOString(dateString) {
  */
 export function convertToMinutes(input) {
 	const regex = /(?:(\d+)\s*(hrs?|hours?|h))?\s*(?:(\d+)\s*(mins?|minutes?|m))?/i
-
 	const matches = input.match(regex)
-
-	if (matches) {
+	if (matches && (matches[1] || matches[3])) {
 		const hours = parseInt(matches[1] || '0', 10)
 		const minutes = parseInt(matches[3] || '0', 10)
-
 		return hours * 60 + minutes
 	}
-
 	return null
 }
 

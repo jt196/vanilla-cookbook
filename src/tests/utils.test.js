@@ -18,6 +18,14 @@ import {
 	nutritionProcess
 } from '../lib/utils/filters.js'
 
+import {
+	localDateAndTime,
+	getIsoDateTimeString,
+	stringToISOString,
+	convertToMinutes,
+	convertMinutesToTime
+} from '../lib/utils/dateTime.js'
+
 /* global describe, expect, it, beforeAll, afterAll */
 
 describe('Sorting functions', () => {
@@ -161,6 +169,64 @@ describe('Filter functions', () => {
 		it('should decode HTML entities', () => {
 			const result = decodeHTMLEntities('&lt;p&gt;Hello World&lt;/p&gt;')
 			expect(result).toBe('<p>Hello World</p>')
+		})
+	})
+})
+
+describe('Date and Time utility functions', () => {
+	describe('localDateAndTime', () => {
+		it('should return local date and time format for a date object', () => {
+			const date = new Date('2023-01-01T12:00:00Z')
+			const result = localDateAndTime(date)
+			expect(result).toMatch(/1\/1\/2023 \d{1,2}:\d{2}:\d{2}\u202f(AM|PM)/)
+		})
+
+		it('should return local date and time format for a date string', () => {
+			const result = localDateAndTime('2023-01-01T12:00:00Z')
+			expect(result).toMatch(/1\/1\/2023 \d{1,2}:\d{2}:\d{2}\u202f(AM|PM)/)
+		})
+
+		it('should return an empty string for null input', () => {
+			const result = localDateAndTime(null)
+			expect(result).toBe('')
+		})
+	})
+
+	describe('getIsoDateTimeString', () => {
+		it('should return the current datetime in ISO 8601 format', () => {
+			const result = getIsoDateTimeString()
+			expect(new Date(result).toISOString()).toBe(result)
+		})
+	})
+
+	describe('stringToISOString', () => {
+		it('should convert a date string to ISO format', () => {
+			const result = stringToISOString('2023-01-01T12:00:00Z')
+			expect(result).toBe('2023-01-01T12:00:00.000Z')
+		})
+	})
+
+	describe('convertToMinutes', () => {
+		it('should convert text input into minutes', () => {
+			const result = convertToMinutes('2hr 30m')
+			expect(result).toBe(150)
+		})
+
+		it('should return null for invalid input', () => {
+			const result = convertToMinutes('invalid input')
+			expect(result).toBeNull()
+		})
+	})
+
+	describe('convertMinutesToTime', () => {
+		it('should convert minutes into a readable string', () => {
+			const result = convertMinutesToTime(150)
+			expect(result).toBe('2hr 30 minutes')
+		})
+
+		it('should return only minutes for durations less than an hour', () => {
+			const result = convertMinutesToTime(45)
+			expect(result).toBe('45 minutes')
 		})
 	})
 })
