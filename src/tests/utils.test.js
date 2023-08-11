@@ -6,7 +6,7 @@ import {
 	randomSortArray,
 	sortRecipesByDate,
 	sortRecipesByTitle
-} from '../lib/utils/sorting.js'
+} from '$lib/utils/sorting.js'
 
 import {
 	filterSearch,
@@ -18,7 +18,7 @@ import {
 	decodeHTMLEntities,
 	startsWithHttp,
 	nutritionProcess
-} from '../lib/utils/filters.js'
+} from '$lib/utils/filters.js'
 
 import {
 	localDateAndTime,
@@ -26,7 +26,7 @@ import {
 	stringToISOString,
 	convertToMinutes,
 	convertMinutesToTime
-} from '../lib/utils/dateTime.js'
+} from '$lib/utils/dateTime.js'
 
 /* global describe, expect, it, beforeAll, afterAll */
 
