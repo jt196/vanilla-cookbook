@@ -24,3 +24,19 @@
 		</div>
 	</div>
 </div>
+
+<style lang="scss">
+	.sort {
+		display: flex;
+		justify-content: flex-end;
+		gap: 1rem;
+	}
+
+	.sort .secondary {
+		border: 1px solid white;
+	}
+
+	.recipe-filters {
+		margin-top: 1rem;
+	}
+</style>

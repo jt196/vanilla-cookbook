@@ -59,3 +59,31 @@ export function sortByDateDesc(inputArray, dateKey) {
 export function randomSortArray(inputArray) {
 	return inputArray.sort(() => Math.random() - 0.5)
 }
+
+/**
+ * Sorts recipe array by Date
+ *
+ * @param {Recipe[]} recipes - An array of recipes to sort
+ * @param {string} currentSort - The key by which to sort.
+ */
+export function sortRecipesByDate(recipes, currentSort) {
+	if (!currentSort || currentSort === 'desc') {
+		return { sortedRecipes: sortByDateAsc(recipes, 'created'), newSort: 'asc' }
+	} else {
+		return { sortedRecipes: sortByDateDesc(recipes, 'created'), newSort: 'desc' }
+	}
+}
+
+/**
+ * Sorts recipe array by Title
+ *
+ * @param {Recipe[]} recipes - An array of recipes to sort
+ * @param {string} currentSort - The key by which to sort.
+ */
+export function sortRecipesByTitle(recipes, currentSort) {
+	if (!currentSort || currentSort === 'desc') {
+		return { sortedRecipes: sortByKeyAsc(recipes, 'name'), newSort: 'asc' }
+	} else {
+		return { sortedRecipes: sortByKeyDesc(recipes, 'name'), newSort: 'desc' }
+	}
+}

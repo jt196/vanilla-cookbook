@@ -1,7 +1,7 @@
 <script>
 	// Import only what's needed in the main file
 	import { filterSearch } from '$lib/utils/filters'
-	import { sortByDateAsc, sortByDateDesc, sortByKeyAsc, sortByKeyDesc } from '$lib/utils/sorting'
+	import { sortRecipesByDate, sortRecipesByTitle } from '$lib/utils/sorting'
 
 	import RecipeFilter from '$lib/components/RecipeFilter.svelte'
 	import RecipeList from '$lib/components/RecipeList.svelte'
@@ -18,26 +18,16 @@
 
 	function sortDate() {
 		activeButton = 'date'
-		if (!dateSort || dateSort == 'desc') {
-			dateSort = 'asc'
-			filteredRecipes = sortByDateAsc(filteredRecipes, 'created')
-		} else {
-			dateSort = 'desc'
-			filteredRecipes = sortByDateDesc(filteredRecipes, 'created')
-		}
-		return dateSort
+		const result = sortRecipesByDate(filteredRecipes, dateSort)
+		filteredRecipes = result.sortedRecipes
+		dateSort = result.newSort
 	}
 
 	function sortTitle() {
 		activeButton = 'title'
-		if (!titleSort || titleSort == 'desc') {
-			titleSort = 'asc'
-			filteredRecipes = sortByKeyAsc(filteredRecipes, 'name')
-		} else {
-			titleSort = 'desc'
-			filteredRecipes = sortByKeyDesc(filteredRecipes, 'name')
-		}
-		return titleSort
+		const result = sortRecipesByTitle(filteredRecipes, titleSort)
+		filteredRecipes = result.sortedRecipes
+		titleSort = result.newSort
 	}
 </script>
 
@@ -59,29 +49,3 @@
 		<RecipeList {filteredRecipes} {data} />
 	</div>
 </div>
-
-<style lang="scss">
-	.align-right {
-		text-align: right;
-	}
-
-	.sort {
-		display: flex;
-		justify-content: flex-end;
-		gap: 1rem;
-	}
-
-	.recipe-filters {
-		margin-top: 1rem;
-	}
-	.recipe-thumbnail img {
-		height: 200px; /* Set to your desired height */
-		width: auto; /* This will ensure the width remains proportional */
-		object-fit: cover;
-		display: block; /* To remove any default spacing at the bottom of images */
-	}
-
-	.sort .secondary {
-		border: 1px solid white;
-	}
-</style>

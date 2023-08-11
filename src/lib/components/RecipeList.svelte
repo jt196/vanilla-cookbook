@@ -33,3 +33,12 @@
 		</div>
 	</article>
 {/each}
+
+<style lang="scss">
+	.recipe-thumbnail img {
+		height: 200px; /* Set to your desired height */
+		width: auto; /* This will ensure the width remains proportional */
+		object-fit: cover;
+		display: block; /* To remove any default spacing at the bottom of images */
+	}
+</style>

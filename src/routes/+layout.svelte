@@ -6,6 +6,8 @@
 	// Imports styles from PicoCSS.
 	import '@picocss/pico'
 
+	// Import Global CSS
+	import '$lib/css/global.scss'
 	/**
 	 * Data for the page, structure defined by the `PageData` type.
 	 * @type {PageData}
