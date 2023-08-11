@@ -2,6 +2,7 @@
 	import { startsWithHttp } from '$lib/utils/filters'
 	import { localDateAndTime } from '$lib/utils/dateTime'
 	import FoodBowl from '$lib/components/svg/FoodBowl.svelte'
+	import StarRating from './StarRating.svelte'
 
 	export let filteredRecipes = []
 	export let data
@@ -21,6 +22,7 @@
 				<div>
 					<header>{recipe.name}</header>
 					<p>Created: <i>{localDateAndTime(recipe.created)}</i></p>
+					<StarRating rating={recipe.rating} />
 				</div>
 			</a>
 			<div class="align-right recipe-buttons">

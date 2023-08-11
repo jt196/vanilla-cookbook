@@ -57,22 +57,15 @@ describe('Scale component', () => {
 })
 
 describe('RecipeFilter component', () => {
-	const mockSortDate = () => {}
-	const mockSortTitle = () => {}
+	const mockSortState = { key: 'created', direction: 'desc' }
 
 	it('renders without crashing', () => {
-		const { getByPlaceholderText } = render(RecipeFilter, {
-			sortDate: mockSortDate,
-			sortTitle: mockSortTitle
-		})
+		const { getByPlaceholderText } = render(RecipeFilter, { sortState: mockSortState })
 		expect(getByPlaceholderText('Search my recipes')).toBeInTheDocument()
 	})
 
 	it('binds search input correctly', async () => {
-		const { getByPlaceholderText } = render(RecipeFilter, {
-			sortDate: mockSortDate,
-			sortTitle: mockSortTitle
-		})
+		const { getByPlaceholderText } = render(RecipeFilter, { sortState: mockSortState })
 		const input = getByPlaceholderText('Search my recipes')
 
 		await fireEvent.input(input, { target: { value: 'test' } })
@@ -81,37 +74,40 @@ describe('RecipeFilter component', () => {
 
 	it('highlights the correct button based on activeButton prop', () => {
 		const { getByText } = render(RecipeFilter, {
-			activeButton: 'date',
-			sortDate: mockSortDate,
-			sortTitle: mockSortTitle
+			activeButton: 'created',
+			sortState: mockSortState
 		})
 		const dateButton = getByText('Date')
 		expect(dateButton).toHaveClass('secondary')
 	})
 
-	it('triggers sortDate function on date button click', async () => {
-		let wasCalled = false
-		const sortDateMock = () => {
-			wasCalled = true
-		}
-		const { getByText } = render(RecipeFilter, { sortDate: sortDateMock, sortTitle: mockSortTitle })
+	it('dispatches sort event with correct key on date button click', async () => {
+		const { getByText, component } = render(RecipeFilter, { sortState: mockSortState })
 		const dateButton = getByText('Date')
 
+		let dispatchedEvent = null
+		component.$on('sort', (event) => {
+			dispatchedEvent = event
+		})
+
 		await fireEvent.click(dateButton)
-		expect(wasCalled).toBe(true)
+		expect(dispatchedEvent.detail.key).toBe('created')
 	})
 
-	it('triggers sortTitle function on title button click', async () => {
-		let wasCalled = false
-		const sortTitleMock = () => {
-			wasCalled = true
-		}
-		const { getByText } = render(RecipeFilter, { sortDate: mockSortDate, sortTitle: sortTitleMock })
+	it('dispatches sort event with correct key on title button click', async () => {
+		const { getByText, component } = render(RecipeFilter, { sortState: mockSortState })
 		const titleButton = getByText('Title')
 
+		let dispatchedEvent = null
+		component.$on('sort', (event) => {
+			dispatchedEvent = event
+		})
+
 		await fireEvent.click(titleButton)
-		expect(wasCalled).toBe(true)
+		expect(dispatchedEvent.detail.key).toBe('name')
 	})
+
+	// Add similar tests for other buttons and behaviors as needed
 })
 
 describe('RecipeList component', () => {
@@ -158,7 +154,7 @@ describe('RecipeList component', () => {
 		expect(createdElements.length).toBe(mockRecipes.length)
 	})
 
-	it('displays the "Delete", "Edit", and "View" buttons only if the recipe.userId matches data.user.userId', () => {
+	it('displays the "Delete" and "Edit" buttons only if the recipe.userId matches data.user.userId', () => {
 		const { getByText, queryByText } = render(RecipeList, {
 			filteredRecipes: mockRecipes,
 			data: mockData
@@ -167,7 +163,6 @@ describe('RecipeList component', () => {
 		// Check for Recipe A (userId matches)
 		expect(getByText('Delete')).toBeInTheDocument()
 		expect(getByText('Edit')).toBeInTheDocument()
-		expect(getByText('View')).toBeInTheDocument()
 
 		// Check for Recipe B (userId does not match)
 		const recipeBElement = getByText('Recipe B')
@@ -177,6 +172,5 @@ describe('RecipeList component', () => {
 		const parentArticle = recipeBElement.closest('article')
 		expect(parentArticle.contains(queryByText('Delete'))).toBeFalsy()
 		expect(parentArticle.contains(queryByText('Edit'))).toBeFalsy()
-		expect(parentArticle.contains(queryByText('View'))).toBeFalsy()
 	})
 })

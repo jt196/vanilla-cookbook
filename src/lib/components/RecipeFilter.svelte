@@ -1,12 +1,10 @@
 <script>
-	import SortAscDesc from '$lib/components/svg/SortAscDesc.svelte'
-
-	export let search = ''
-	export let dateSort = ''
-	export let titleSort = ''
-	export let activeButton = ''
-	export let sortDate
-	export let sortTitle
+	import { createEventDispatcher } from 'svelte'
+	import SortAscDesc from '$lib/components/svg/SortAscDesc.svelte' // Adjust the path if needed
+	const dispatch = createEventDispatcher()
+	export let activeButton // default active button
+	export let sortState
+	export let search // default search value
 </script>
 
 <div class="grid recipe-filters">
@@ -15,12 +13,30 @@
 	</div>
 	<div class="sort">
 		<div>
-			<button class={activeButton === 'date' ? 'secondary' : ''} on:click={sortDate}
-				>Date <SortAscDesc sort={dateSort} /></button>
+			<button
+				class={activeButton === 'created' ? 'secondary' : ''}
+				on:click={() => {
+					activeButton = 'created'
+					dispatch('sort', { key: 'created' })
+				}}
+				>Date <SortAscDesc sort={activeButton === 'created' ? sortState.direction : ''} /></button>
 		</div>
 		<div>
-			<button class={activeButton === 'title' ? 'secondary' : ''} on:click={sortTitle}
-				>Title <SortAscDesc sort={titleSort} /></button>
+			<button
+				class={activeButton === 'name' ? 'secondary' : ''}
+				on:click={() => {
+					activeButton = 'name'
+					dispatch('sort', { key: 'name' })
+				}}>Title <SortAscDesc sort={activeButton === 'name' ? sortState.direction : ''} /></button>
+		</div>
+		<div>
+			<button
+				class={activeButton === 'rating' ? 'secondary' : ''}
+				on:click={() => {
+					activeButton = 'rating'
+					dispatch('sort', { key: 'rating' })
+				}}
+				>Rating <SortAscDesc sort={activeButton === 'rating' ? sortState.direction : ''} /></button>
 		</div>
 	</div>
 </div>
