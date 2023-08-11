@@ -4,7 +4,7 @@ import { sveltekit } from 'lucia-auth/middleware'
 import prisma from '@lucia-auth/adapter-prisma'
 import { fail } from '@sveltejs/kit'
 import fs from 'fs'
-import { importPaprikaCategories, loadPaprikaRecipes } from '../src/lib/utils/recipeImport'
+import { importPaprikaCategories, loadPaprikaRecipes } from '../src/lib/utils/recipeImport.js'
 
 // // Prisma doesn't support ES Modules so we have to do this
 const PrismaClient = PrismaClientPkg.PrismaClient
