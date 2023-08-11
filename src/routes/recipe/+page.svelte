@@ -1,64 +1,21 @@
 <script>
-	// No need to import types in JSDoc comments.
-
-	/**
-	 * Filters recipes based on search criteria.
-	 * @function
-	 * @module $lib/utils/filters
-	 */
-	import { filterSearch, startsWithHttp } from '$lib/utils/filters'
-
-	/**
-	 * Utility functions for sorting data.
-	 * @module $lib/utils/sorting
-	 */
+	// Import only what's needed in the main file
+	import { filterSearch } from '$lib/utils/filters'
 	import { sortByDateAsc, sortByDateDesc, sortByKeyAsc, sortByKeyDesc } from '$lib/utils/sorting'
 
-	/**
-	 * Component representing an SVG icon for sorting in ascending or descending order.
-	 * @module $lib/components/svg/SortAscDesc
-	 */
-	import SortAscDesc from '$lib/components/svg/SortAscDesc.svelte'
+	import RecipeFilter from '$lib/components/RecipeFilter.svelte'
+	import RecipeList from '$lib/components/RecipeList.svelte'
 
-	/**
-	 * Utility function for formatting date and time.
-	 * @function
-	 * @module $lib/utils/dateTime
-	 */
-	import { localDateAndTime } from '$lib/utils/dateTime'
-
-	/**
-	 * Component representing an SVG icon of a food bowl.
-	 * @module $lib/components/svg/FoodBowl
-	 */
-	import FoodBowl from '$lib/components/svg/FoodBowl.svelte'
-
-	/** Data object, should adhere to the PageData type structure. */
-	/** @type {PageData} */
 	export let data
 
-	/** Destructure recipes from the provided data. */
 	$: ({ recipes } = data)
 
-	/** Search keyword to filter the recipes list. */
 	let search = ''
-
-	/** Current state of the date sort. */
 	$: dateSort = ''
-
-	/** Current state of the title sort. */
 	$: titleSort = ''
-
-	/** The active button determining which sorting is applied. */
 	let activeButton = 'date'
-
-	/** A list of recipes filtered based on the search criteria. */
 	$: filteredRecipes = filterSearch(search, recipes, 'name')
 
-	/**
-	 * Sorts recipes based on their creation date.
-	 * @returns {string} The current sort direction (asc/desc).
-	 */
 	function sortDate() {
 		activeButton = 'date'
 		if (!dateSort || dateSort == 'desc') {
@@ -71,10 +28,6 @@
 		return dateSort
 	}
 
-	/**
-	 * Sorts recipes based on their name.
-	 * @returns {string} The current sort direction (asc/desc).
-	 */
 	function sortTitle() {
 		activeButton = 'title'
 		if (!titleSort || titleSort == 'desc') {
@@ -96,47 +49,14 @@
 				<a href="/recipe/new" role="button">New</a>
 			</div>
 		</div>
-		<div class="grid recipe-filters">
-			<div class="search-box">
-				<input type="text" name="search" placeholder="Search my recipes" bind:value={search} />
-			</div>
-			<div class="sort">
-				<div>
-					<button class={activeButton === 'date' ? 'secondary' : ''} on:click={sortDate}
-						>Date <SortAscDesc sort={dateSort} /></button>
-				</div>
-				<div>
-					<button class={activeButton === 'title' ? 'secondary' : ''} on:click={sortTitle}
-						>Title <SortAscDesc sort={titleSort} /></button>
-				</div>
-			</div>
-		</div>
-		{#each filteredRecipes as recipe}
-			<article>
-				<div class="grid">
-					<div class="recipe-thumbnail">
-						{#if recipe.image_url && startsWithHttp(recipe.image_url)}
-							<img src={recipe.image_url} alt="{recipe.name} thumbnail" />
-						{:else}
-							<FoodBowl height="200px" />
-						{/if}
-					</div>
-					<div>
-						<header>{recipe.name}</header>
-						<p>Created: <i>{localDateAndTime(recipe.created)}</i></p>
-					</div>
-					<div class="align-right">
-						{#if recipe.userId === data.user?.userId}
-							<form action="?/deleteRecipe&uid={recipe.uid}" method="POST">
-								<button type="submit" class="outline secondary">Delete</button>
-							</form>
-							<a href="recipe/edit/{recipe.uid}" role="button" class="outline contrast">Edit</a>
-							<a href="recipe/view/{recipe.uid}" role="button" class="outline contrast">View</a>
-						{/if}
-					</div>
-				</div>
-			</article>
-		{/each}
+		<RecipeFilter
+			bind:search
+			bind:dateSort
+			bind:titleSort
+			bind:activeButton
+			{sortDate}
+			{sortTitle} />
+		<RecipeList {filteredRecipes} {data} />
 	</div>
 </div>
 
