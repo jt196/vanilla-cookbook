@@ -23,7 +23,7 @@
 					<p>Created: <i>{localDateAndTime(recipe.created)}</i></p>
 				</div>
 			</a>
-			<div class="align-right">
+			<div class="align-right recipe-buttons">
 				{#if recipe.userId === data.user?.userId}
 					<form action="?/deleteRecipe&uid={recipe.uid}" method="POST">
 						<button type="submit" class="outline secondary">Delete</button>
@@ -41,6 +41,20 @@
 		width: auto; /* This will ensure the width remains proportional */
 		object-fit: cover;
 		display: block; /* To remove any default spacing at the bottom of images */
+	}
+
+	.grid {
+		grid-template-columns: 3fr 1fr; /* This means the first column (recipe-card) will take up 3 parts, and the second column will take up 1 part, making the first column 3/4 of the grid */
+	}
+
+	.recipe-card {
+		grid-column: 1;
+		text-decoration: none; /* Removes the underline from the link */
+		color: inherit; /* Ensures the link color doesn't override the text color */
+	}
+
+	.recipe-buttons {
+		grid-column: 2;
 	}
 
 	/* Initial styles for the article */
