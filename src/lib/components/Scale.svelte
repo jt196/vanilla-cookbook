@@ -56,7 +56,7 @@
 		margin: 1rem 0 1rem 0;
 		input {
 			margin: 0;
-			min-width: 3rem;
+			min-width: 5rem;
 		}
 		button {
 			border-width: 0px;

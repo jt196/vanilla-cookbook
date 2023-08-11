@@ -10,24 +10,25 @@
 {#each filteredRecipes as recipe}
 	<article>
 		<div class="grid">
-			<div class="recipe-thumbnail">
-				{#if recipe.image_url && startsWithHttp(recipe.image_url)}
-					<img src={recipe.image_url} alt="{recipe.name} thumbnail" />
-				{:else}
-					<FoodBowl height="200px" />
-				{/if}
-			</div>
-			<div>
-				<header>{recipe.name}</header>
-				<p>Created: <i>{localDateAndTime(recipe.created)}</i></p>
-			</div>
+			<a href="recipe/view/{recipe.uid}" class="recipe-card">
+				<div class="recipe-thumbnail">
+					{#if recipe.image_url && startsWithHttp(recipe.image_url)}
+						<img src={recipe.image_url} alt="{recipe.name} thumbnail" />
+					{:else}
+						<FoodBowl height="200px" />
+					{/if}
+				</div>
+				<div>
+					<header>{recipe.name}</header>
+					<p>Created: <i>{localDateAndTime(recipe.created)}</i></p>
+				</div>
+			</a>
 			<div class="align-right">
 				{#if recipe.userId === data.user?.userId}
 					<form action="?/deleteRecipe&uid={recipe.uid}" method="POST">
 						<button type="submit" class="outline secondary">Delete</button>
 					</form>
 					<a href="recipe/edit/{recipe.uid}" role="button" class="outline contrast">Edit</a>
-					<a href="recipe/view/{recipe.uid}" role="button" class="outline contrast">View</a>
 				{/if}
 			</div>
 		</div>
@@ -40,5 +41,15 @@
 		width: auto; /* This will ensure the width remains proportional */
 		object-fit: cover;
 		display: block; /* To remove any default spacing at the bottom of images */
+	}
+
+	/* Initial styles for the article */
+	article {
+		transition: background-color 0.2s ease; /* Smooth transition for the background color */
+	}
+
+	/* Hover effect for the article */
+	article:hover {
+		background-color: var(--pico-secondary-focus); /* Change this to your desired hover color */
 	}
 </style>

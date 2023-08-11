@@ -80,7 +80,7 @@
 		</p>
 		{#if ingredients}
 			<p>
-				{scaledServings}
+				Servings: {scaledServings}
 			</p>
 			<p>
 				Scale
