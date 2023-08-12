@@ -61,15 +61,47 @@ describe('RecipeFilter component', () => {
 
 	it('renders without crashing', () => {
 		const { getByPlaceholderText } = render(RecipeFilter, { sortState: mockSortState })
-		expect(getByPlaceholderText('Search my recipes')).toBeInTheDocument()
+		expect(getByPlaceholderText('Search my recipes by...')).toBeInTheDocument()
 	})
 
 	it('binds search input correctly', async () => {
 		const { getByPlaceholderText } = render(RecipeFilter, { sortState: mockSortState })
-		const input = getByPlaceholderText('Search my recipes')
+		const input = getByPlaceholderText('Search my recipes by...')
 
 		await fireEvent.input(input, { target: { value: 'test' } })
 		expect(input.value).toBe('test')
+	})
+
+	it('binds search dropdown correctly', async () => {
+		const { getByLabelText } = render(RecipeFilter, { sortState: mockSortState })
+		const dropdown = getByLabelText('selections')
+
+		await fireEvent.select(dropdown, { target: { value: 'ingredients' } })
+		expect(dropdown.value).toBe('ingredients')
+	})
+
+	it('defaults to "name" in the search dropdown', () => {
+		const { getByLabelText } = render(RecipeFilter, { sortState: mockSortState })
+		const dropdown = getByLabelText('selections')
+		expect(dropdown.value).toBe('name')
+	})
+
+	it('updates dropdown value correctly on name selection', async () => {
+		const { getByLabelText } = render(RecipeFilter, { sortState: mockSortState })
+		const dropdown = getByLabelText('selections')
+
+		await fireEvent.select(dropdown, { target: { value: 'name' } })
+
+		expect(dropdown.value).toBe('name')
+	})
+
+	it('updates dropdown value correctly on ingredients selection', async () => {
+		const { getByLabelText } = render(RecipeFilter, { sortState: mockSortState })
+		const dropdown = getByLabelText('selections')
+
+		await fireEvent.select(dropdown, { target: { value: 'ingredients' } })
+
+		expect(dropdown.value).toBe('ingredients')
 	})
 
 	it('highlights the correct button based on activeButton prop', () => {

@@ -7,7 +7,9 @@
 
 	export let data
 
-	let search = ''
+	let searchString = ''
+	let searchKey = 'name'
+	$: console.log('🚀 ~ file: +page.svelte:12 ~ searchKey:', searchKey)
 	// let sortKey = 'created'
 	let sortState = {
 		key: 'created', // default sort key
@@ -20,9 +22,9 @@
 
 	$: {
 		filteredRecipes = filterSearch(
-			search,
+			searchString,
 			sortRecipesByKey(data.recipes, sortState.key, sortState.direction).sortedRecipes,
-			'name'
+			searchKey
 		)
 	}
 
@@ -44,7 +46,12 @@
 				<a href="/recipe/new" role="button">New</a>
 			</div>
 		</div>
-		<RecipeFilter bind:search bind:activeButton bind:sortState on:sort={handleSort} />
+		<RecipeFilter
+			bind:searchString
+			bind:searchKey
+			bind:activeButton
+			bind:sortState
+			on:sort={handleSort} />
 		<RecipeList {filteredRecipes} {data} />
 	</div>
 </div>

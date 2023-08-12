@@ -4,12 +4,25 @@
 	const dispatch = createEventDispatcher()
 	export let activeButton // default active button
 	export let sortState
-	export let search // default search value
+	export let searchString // default search value
+	export let searchKey
 </script>
 
 <div class="grid recipe-filters">
 	<div class="search-box">
-		<input type="text" name="search" placeholder="Search my recipes" bind:value={search} />
+		<input
+			type="text"
+			name="search"
+			placeholder="Search my recipes by..."
+			bind:value={searchString} />
+	</div>
+	<div>
+		<select name="selections" bind:value={searchKey} id="selections" aria-label="selections">
+			<option selected value="name">Name</option>
+			<option value="ingredients">Ingredients</option>
+			<option value="source">Source</option>
+			<option value="notes">Notes</option>
+		</select>
 	</div>
 	<div class="sort">
 		<div>
