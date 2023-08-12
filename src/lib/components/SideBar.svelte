@@ -20,6 +20,7 @@
 		width: 250px;
 		height: 100%;
 		background-color: #333;
+		overflow-y: auto; // Makes the sidebar scrollable
 		color: white;
 		position: fixed;
 		top: 0;
