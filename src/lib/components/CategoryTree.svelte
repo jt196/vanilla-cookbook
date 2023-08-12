@@ -2,26 +2,45 @@
 	import CategoryTree from '$lib/components/CategoryTree.svelte'
 
 	export let categories = []
+	export let onCategoryClick
+	export let selectedCategoryUid
 </script>
 
 <ul>
-	{#each categories as category}
-		<li>
-			{category.name ? category.name : 'Unnamed Cat'}
+	{#each categories as category (category.uid)}
+		<!-- Keep the key for each loop -->
+		<li class="categories">
+			<button
+				on:click={() => onCategoryClick(category)}
+				class:selected={selectedCategoryUid === category.uid}>
+				{category.name ? category.name : 'Unnamed Cat'}
+			</button>
 			{#if category.children && category.children.length}
-				<CategoryTree categories={category.children} />
+				<CategoryTree categories={category.children} {onCategoryClick} {selectedCategoryUid} />
 			{/if}
 		</li>
 	{/each}
 </ul>
 
-<style>
-	ul {
-		list-style-type: none;
-		padding-left: 20px;
+<style lang="scss">
+	.categories button {
+		background: none;
+		border: none;
+		padding: 0.1rem;
+		font: inherit;
+		cursor: pointer;
+		outline: inherit;
+		&:focus {
+			outline: none;
+			box-shadow: 0 0 5px var(--pico-primary); // A blue shadow for example
+		}
 	}
 
 	li {
 		margin: 5px 0;
+	}
+
+	.selected {
+		color: var(--pico-primary); /* or any other color you prefer */
 	}
 </style>

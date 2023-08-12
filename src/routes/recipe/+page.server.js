@@ -10,6 +10,18 @@ export const load = async () => {
 	const recipes = await prisma.recipe.findMany({
 		orderBy: {
 			created: 'desc'
+		},
+		include: {
+			categories: {
+				select: {
+					category: {
+						select: {
+							name: true,
+							uid: true
+						}
+					}
+				}
+			}
 		}
 	})
 

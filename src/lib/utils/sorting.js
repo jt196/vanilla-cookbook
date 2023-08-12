@@ -18,7 +18,6 @@ function sortByKeyGeneric(inputArray, inputKey, direction) {
 }
 
 function sortByDate(inputArray, dateKey, direction) {
-	console.log('🚀 ~ file: sorting.js:22 ~ sortByDate')
 	return [...inputArray].sort((a, b) => {
 		return direction === 'asc'
 			? new Date(a[dateKey]).getTime() - new Date(b[dateKey]).getTime()

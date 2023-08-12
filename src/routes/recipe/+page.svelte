@@ -23,14 +23,30 @@
 	let activeButton = 'created' // default active button
 	let filteredRecipes = [] // Declare it before the reactive statement
 
-	$: {
-		filteredRecipes = filterSearch(
-			searchString,
-			sortRecipesByKey(data.recipes, sortState.key, sortState.direction).sortedRecipes,
-			searchKey
-		)
+	let selectedCategoryUid = null
+
+	function handleCategoryClick(category) {
+		selectedCategoryUid = category.uid // or category.uid, depending on how you want to filter
 	}
 
+	$: {
+		// Step 1: Sort the recipes
+		let sortedRecipes = sortRecipesByKey(
+			data.recipes,
+			sortState.key,
+			sortState.direction
+		).sortedRecipes
+
+		// Step 2: Filter by category
+		let categoryFilteredRecipes = selectedCategoryUid
+			? sortedRecipes.filter((recipe) =>
+					recipe.categories.some((rc) => rc.category.uid === selectedCategoryUid)
+			  )
+			: sortedRecipes
+
+		// Step 3: Filter by search string
+		filteredRecipes = filterSearch(searchString, categoryFilteredRecipes, searchKey)
+	}
 	function handleSort(event) {
 		if (sortState.key === event.detail.key) {
 			sortState.direction = sortState.direction === 'asc' ? 'desc' : 'asc'
@@ -47,10 +63,27 @@
 	function handleSidebarClose() {
 		sidebarOpen = false
 	}
+
+	function clearCategory() {
+		selectedCategoryUid = null
+	}
 </script>
 
-<Sidebar bind:isOpen={sidebarOpen} on:close={handleSidebarClose}
-	><CategoryTree categories={data.categories} /></Sidebar>
+<Sidebar
+	bind:isOpen={sidebarOpen}
+	on:close={handleSidebarClose}
+	let:onCategoryClick={handleCategoryClick}>
+	<div class="clear-button">
+		{#if selectedCategoryUid}
+			<button on:click={clearCategory}>Clear</button>
+		{/if}
+	</div>
+	<CategoryTree
+		categories={data.categories}
+		onCategoryClick={handleCategoryClick}
+		{selectedCategoryUid}
+		on:clearCategory={() => (selectedCategoryUid = null)}
+		isRoot={true} /></Sidebar>
 
 <div class="content" class:sidebar-open={sidebarOpen} on:close={handleSidebarClose}>
 	<div class="grid">
@@ -91,5 +124,11 @@
 				margin-left: 0;
 			}
 		}
+	}
+	.clear-button {
+		display: flex; // Use flexbox
+		justify-content: center; // Center horizontally
+		align-items: center; // Center vertically
+		height: 95px; // Set a fixed height, adjust as needed
 	}
 </style>
