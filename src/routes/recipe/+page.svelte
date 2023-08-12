@@ -6,6 +6,7 @@
 	import RecipeList from '$lib/components/RecipeList.svelte'
 	import Sidebar from '$lib/components/Sidebar.svelte'
 	import Burger from '$lib/components/svg/Burger.svelte'
+	import CategoryTree from '../../lib/components/CategoryTree.svelte'
 
 	export let data
 
@@ -48,7 +49,8 @@
 	}
 </script>
 
-<Sidebar bind:isOpen={sidebarOpen} on:close={handleSidebarClose} />
+<Sidebar bind:isOpen={sidebarOpen} on:close={handleSidebarClose}
+	><CategoryTree categories={data.categories} /></Sidebar>
 
 <div class="content" class:sidebar-open={sidebarOpen} on:close={handleSidebarClose}>
 	<div class="grid">

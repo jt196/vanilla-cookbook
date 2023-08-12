@@ -12,7 +12,7 @@
 
 <div class="sidebar" class:open={isOpen}>
 	<button class="close-btn" on:click={closeSidebar}>X</button>
-	<!-- Your sidebar content goes here -->
+	<slot />
 </div>
 
 <style lang="scss">
