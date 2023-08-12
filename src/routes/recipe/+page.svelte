@@ -4,12 +4,14 @@
 
 	import RecipeFilter from '$lib/components/RecipeFilter.svelte'
 	import RecipeList from '$lib/components/RecipeList.svelte'
+	import Sidebar from '$lib/components/Sidebar.svelte'
+	import Burger from '$lib/components/svg/Burger.svelte'
 
 	export let data
 
+	let sidebarOpen = false
 	let searchString = ''
 	let searchKey = 'name'
-	$: console.log('🚀 ~ file: +page.svelte:12 ~ searchKey:', searchKey)
 	// let sortKey = 'created'
 	let sortState = {
 		key: 'created', // default sort key
@@ -36,22 +38,56 @@
 			sortState.direction = 'desc' // Default to descending when changing sort key
 		}
 	}
+
+	function toggleSidebar() {
+		sidebarOpen = !sidebarOpen
+	}
+
+	function handleSidebarClose() {
+		sidebarOpen = false
+	}
 </script>
 
-<div class="grid">
-	<div>
-		<div class="grid">
-			<h2>Recipes:</h2>
-			<div class="align-right">
-				<a href="/recipe/new" role="button">New</a>
+<Sidebar bind:isOpen={sidebarOpen} on:close={handleSidebarClose} />
+
+<div class="content" class:sidebar-open={sidebarOpen} on:close={handleSidebarClose}>
+	<div class="grid">
+		<div>
+			<div class="grid">
+				<div>
+					<button on:click={toggleSidebar}> <Burger width="1.5rem" /> </button>
+				</div>
+				<div class="align-right">
+					<a href="/recipe/new" role="button">New</a>
+				</div>
 			</div>
+			<RecipeFilter
+				bind:searchString
+				bind:searchKey
+				bind:activeButton
+				bind:sortState
+				on:sort={handleSort} />
+			<RecipeList {filteredRecipes} {data} />
 		</div>
-		<RecipeFilter
-			bind:searchString
-			bind:searchKey
-			bind:activeButton
-			bind:sortState
-			on:sort={handleSort} />
-		<RecipeList {filteredRecipes} {data} />
 	</div>
 </div>
+
+<style lang="scss">
+	.content {
+		transition: margin-left 0.3s ease;
+		padding: 20px; // This is just an example, adjust as needed
+
+		&.sidebar-open {
+			margin-left: 250px;
+
+			@media (max-width: 1279px) {
+				padding-left: 0; // Remove left padding when the sidebar is open
+				margin-left: 220px;
+			}
+
+			@media (max-width: 768px) {
+				margin-left: 0;
+			}
+		}
+	}
+</style>

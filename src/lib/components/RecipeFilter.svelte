@@ -59,13 +59,50 @@
 		display: flex;
 		justify-content: flex-end;
 		gap: 1rem;
+		@media (max-width: 1023px) {
+			grid-column: 1 / 3; // Span the buttons across both columns
+			grid-row: 2; // Place the buttons in the second row
+			justify-content: center; // Center the buttons horizontally
+			flex-wrap: wrap; // Allow the buttons to wrap to the next line
+			gap: 0.5rem; // Add some gap between wrapped buttons for spacing
+		}
+		@media (max-width: 767px) {
+			grid-column: 1; // Ensure buttons take up the full width
+			grid-row: 3; // Place the buttons in the third row
+		}
+
+		button {
+			white-space: nowrap;
+			margin-bottom: var(--pico-spacing);
+			svg {
+				display: inline-block; // or just 'inline' depending on your needs
+				vertical-align: middle; // to align it with the text
+			}
+		}
 	}
 
 	.sort .secondary {
 		border: 1px solid white;
 	}
 
+	.search-box,
+	select {
+		width: 100%;
+	}
+
 	.recipe-filters {
 		margin-top: 1rem;
+		grid-template-columns: 2fr 1fr repeat(3, min-content); // Define the columns
+		gap: 1rem; // Space between grid items
+		align-items: center; // Vertically center the grid items
+		@media (max-width: 1023px) {
+			grid-template-columns: 2fr 1fr; // Let the search and select take up the full width
+			grid-template-rows: repeat(2, auto); // Two rows: one for search and dropdown, one for buttons
+			gap: 0.5rem; // Gap between rows
+		}
+
+		@media (max-width: 767px) {
+			grid-template-columns: 1fr; // Stack items on top of each other
+		}
 	}
 </style>
