@@ -1,12 +1,11 @@
 import { prisma } from '$lib/server/prisma'
 import { error, fail, redirect } from '@sveltejs/kit'
-import { buildHierarchy } from '$lib/utils/categories.js'
 
 /**
  * Server-side logic to load recipes for the page.
  * @returns {Promise<Object>} An object containing the recipes ordered by their creation date in descending order.
  */
-export const load = async () => {
+export const load = async ({ url, fetch }) => {
 	const recipes = await prisma.recipe.findMany({
 		orderBy: {
 			created: 'desc'
@@ -25,12 +24,12 @@ export const load = async () => {
 		}
 	})
 
-	const categories = await prisma.category.findMany()
-	const hierarchicalCategories = buildHierarchy(categories)
+	const hierarchicalCategories = await fetch(`${url.origin}/api/recipe/categories`)
+	const categories = hierarchicalCategories.json()
 
 	return {
 		recipes,
-		categories: hierarchicalCategories
+		categories
 	}
 }
 

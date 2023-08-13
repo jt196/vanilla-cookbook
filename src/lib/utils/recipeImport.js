@@ -34,6 +34,7 @@ export async function loadPaprikaRecipes() {
  *
  * @param {PaprikaRecipe[]} recipes - An array of Paprika recipes containing category data.
  */
+
 export async function importPaprikaCategories(recipes) {
 	// Collecting all unique categories
 	/** @type { Record<string, Category> } */
@@ -42,62 +43,67 @@ export async function importPaprikaCategories(recipes) {
 	recipes.forEach((recipe) => {
 		recipe.categories &&
 			recipe.categories.forEach((category) => {
-				/** @type {Category} */
-				const cat = category
-				categoriesMap[cat.uid] = cat
+				categoriesMap[category.uid] = category
+
+				// If the category has a parent_uid and it's not in the map, add it
+				if (category.parent_uid && !categoriesMap[category.parent_uid]) {
+					categoriesMap[category.parent_uid] = {
+						order_flag: null,
+						uid: category.parent_uid,
+						parent_uid: null,
+						name: '_unnamed'
+					}
+				}
 			})
 	})
 
-	// Gather all unique parent UIDs
-	const parentUids = new Set()
-
-	Object.values(categoriesMap).forEach((category) => {
-		if (category.parent_uid) {
-			parentUids.add(category.parent_uid)
-		}
-	})
-
-	// Create parent categories if they don't exist
-	for (const parentUid of parentUids) {
-		const existingCategory = await prismaC.category.findUnique({
-			where: { uid: parentUid }
-		})
-
-		if (!existingCategory) {
-			await prismaC.category.create({
-				data: { uid: parentUid } // Only the UID is needed
+	// First, create all parent categories
+	for (const category of Object.values(categoriesMap)) {
+		if (!category.parent_uid) {
+			const existingCategory = await prismaC.category.findUnique({
+				where: { uid: category.uid }
 			})
+
+			if (!existingCategory) {
+				await prismaC.category.create({
+					data: {
+						uid: category.uid,
+						order_flag: category.order_flag,
+						name: category.name
+					}
+				})
+			}
 		}
 	}
 
-	// Creating or updating categories, connecting to parents if applicable
+	// Then, create or update each child category
 	for (const category of Object.values(categoriesMap)) {
-		const existingCategory = await prismaC.category.findUnique({
-			where: { uid: category.uid }
-		})
-
-		const categoryData = {
-			uid: category.uid,
-			order_flag: category.order_flag,
-			name: category.name,
-			parent: category.parent_uid
-				? {
-						connect: { uid: category.parent_uid }
-				  }
-				: undefined
-		}
-
-		if (existingCategory) {
-			// Update if it exists
-			await prismaC.category.update({
-				where: { uid: category.uid },
-				data: categoryData
+		if (category.parent_uid) {
+			const existingCategory = await prismaC.category.findUnique({
+				where: { uid: category.uid }
 			})
-		} else {
-			// Create if it doesn't exist
-			await prismaC.category.create({
-				data: categoryData
-			})
+
+			const categoryData = {
+				uid: category.uid,
+				order_flag: category.order_flag,
+				name: category.name,
+				parent: {
+					connect: { uid: category.parent_uid }
+				}
+			}
+
+			if (existingCategory) {
+				// Update if it exists
+				await prismaC.category.update({
+					where: { uid: category.uid },
+					data: categoryData
+				})
+			} else {
+				// Create if it doesn't exist
+				await prismaC.category.create({
+					data: categoryData
+				})
+			}
 		}
 	}
 }

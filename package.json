@@ -51,6 +51,7 @@
 	"dependencies": {
 		"@lucia-auth/adapter-prisma": "^2.0.0",
 		"@prisma/client": "^4.9.0",
-		"lucia-auth": "^1.7.0"
+		"lucia-auth": "^1.7.0",
+		"svelte-dnd-action": "^0.9.24"
 	}
 }
