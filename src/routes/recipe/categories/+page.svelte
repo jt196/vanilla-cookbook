@@ -7,7 +7,6 @@
 	let { myNodes } = data
 
 	let nodes = wrapTopLevelNodes(myNodes)
-	console.log('🚀 ~ file: +page.svelte:10 ~ nodes:', nodes)
 </script>
 
 <h3>Try dragging node2 into node3 and then node4 into node2</h3>

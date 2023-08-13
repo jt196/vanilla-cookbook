@@ -3,9 +3,7 @@
 	import { dndzone, SHADOW_PLACEHOLDER_ITEM_ID } from 'svelte-dnd-action'
 
 	export let nodes = {}
-	console.log('🚀 ~ file: CategoryEdit.svelte:6 ~ nodes:', nodes)
 	export let node
-	console.log('🚀 ~ file: CategoryEdit.svelte:10 ~ node:', node)
 
 	const flipDurationMs = 300
 	function handleDndConsider(e) {
