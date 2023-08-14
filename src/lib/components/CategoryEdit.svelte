@@ -5,6 +5,20 @@
 	export let nodes = {}
 	export let node
 
+	// Sort the items when the node is updated
+	$: {
+		if (node && node.items) {
+			node.items = node.items.filter((item) => nodes[item.uid]) // remove items not in nodes
+			node.items.sort((a, b) => {
+				const nameA = nodes[a.uid].name.toLowerCase()
+				const nameB = nodes[b.uid].name.toLowerCase()
+				if (nameA < nameB) return -1
+				if (nameA > nameB) return 1
+				return 0
+			})
+		}
+	}
+
 	const flipDurationMs = 300
 	function handleDndConsider(e) {
 		node.items = e.detail.items

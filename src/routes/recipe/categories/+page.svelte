@@ -7,6 +7,22 @@
 	let { myNodes } = data
 
 	let nodes = wrapTopLevelNodes(myNodes)
+
+	function sortItemsAlphabetically(nodes) {
+		for (let nodeId in nodes) {
+			if (nodes[nodeId].items) {
+				nodes[nodeId].items.sort((a, b) => {
+					const nameA = nodes[a.uid].name ? nodes[a.uid].name.toUpperCase() : ''
+					const nameB = nodes[b.uid].name ? nodes[b.uid].name.toUpperCase() : ''
+					return nameA.localeCompare(nameB)
+				})
+			}
+		}
+		return nodes
+	}
+
+	// When fetching data
+	nodes = sortItemsAlphabetically(nodes)
 </script>
 
 <h3>Edit Your Categories</h3>
