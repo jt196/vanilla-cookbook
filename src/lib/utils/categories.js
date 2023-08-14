@@ -77,3 +77,22 @@ export function wrapTopLevelNodes(data) {
 
 	return wrappedData
 }
+
+export async function fetchAndTransformCategories(fetch, url) {
+	const catRes = await fetch(`${url.origin}/api/recipe/categories`)
+	const categories = await catRes.json()
+	return transformToNodes(categories)
+}
+
+export function sortItemsAlphabetically(nodes) {
+	for (let nodeId in nodes) {
+		if (nodes[nodeId].items) {
+			nodes[nodeId].items.sort((a, b) => {
+				const nameA = nodes[a.uid].name ? nodes[a.uid].name.toUpperCase() : ''
+				const nameB = nodes[b.uid].name ? nodes[b.uid].name.toUpperCase() : ''
+				return nameA.localeCompare(nameB)
+			})
+		}
+	}
+	return nodes
+}

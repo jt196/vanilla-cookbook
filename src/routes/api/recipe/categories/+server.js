@@ -21,37 +21,53 @@ export async function GET() {
 // Handle POST request
 export const POST = async ({ request }) => {
 	const bodyText = await request.text()
-	const updatedCategory = JSON.parse(bodyText)
+	const categoryData = JSON.parse(bodyText)
+	console.log('🚀 ~ file: +server.js:25 ~ POST ~ categoryData:', categoryData)
 
 	try {
-		let updateData = {}
+		let responseData
 
-		// Check if name is present in the request and add to update data
-		if (updatedCategory.name) {
-			updateData.name = updatedCategory.name
+		// If uid is not present, create a new category
+		if (!categoryData.uid) {
+			const newCategory = await prisma.category.create({
+				data: {
+					name: categoryData.name,
+					// You can set other default values here if needed
+					parent_uid: categoryData.parent_uid || null // This allows for top-level categories
+				}
+			})
+			console.log('🚀 ~ file: +server.js:40 ~ POST ~ newCategory:', newCategory)
+			responseData = newCategory
+		} else {
+			// Update existing category
+			let updateData = {}
+
+			// Check if name is present in the request and add to update data
+			if (categoryData.name) {
+				updateData.name = categoryData.name
+			}
+
+			// Check if parent_uid is present in the request and add to update data
+			if ('parent_uid' in categoryData) {
+				// Using 'in' to allow null values for root items
+				updateData.parent_uid = categoryData.parent_uid
+			}
+
+			await prisma.category.update({
+				where: { uid: categoryData.uid },
+				data: updateData
+			})
+			responseData = updateData
 		}
 
-		// Check if parent_uid is present in the request and add to update data
-		if ('parent_uid' in updatedCategory) {
-			// Using 'in' to allow null values for root items
-			updateData.parent_uid = updatedCategory.parent_uid
-		}
-
-		console.log('🚀 ~ file: +server.js:38 ~ POST ~ updateData:', updateData)
-
-		await prisma.category.update({
-			where: { uid: updatedCategory.uid },
-			data: updateData
-		})
-
-		return new Response(JSON.stringify(updateData), {
+		return new Response(JSON.stringify(responseData), {
 			status: 200,
 			headers: {
 				'Content-Type': 'application/json'
 			}
 		})
 	} catch (error) {
-		return new Response('Failed to update', {
+		return new Response('Failed to process category data', {
 			status: 500,
 			headers: {
 				'Content-Type': 'text/plain'

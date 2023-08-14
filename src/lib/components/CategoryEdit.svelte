@@ -1,6 +1,7 @@
 <script>
 	import { flip } from 'svelte/animate'
 	import { dndzone, SHADOW_PLACEHOLDER_ITEM_ID } from 'svelte-dnd-action'
+	import Ellipsis from './svg/Ellipsis.svelte'
 
 	export let nodes = {}
 	export let node
@@ -24,14 +25,62 @@
 		node.items = e.detail.items
 	}
 
-	function findParentUID(itemUID, nodes) {
-		for (let nodeUID in nodes) {
-			const node = nodes[nodeUID]
-			if (node.items && node.items.some((item) => item.id === itemUID)) {
-				return nodeUID
+	let editingId = null
+	let editedName = ''
+
+	function startEditing(uid, name) {
+		editingId = uid
+		editedName = name
+	}
+
+	async function saveChanges(uid) {
+		if (editedName && nodes[uid].name !== editedName) {
+			try {
+				const response = await fetch('/api/recipe/categories', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({ uid: uid, name: editedName })
+				})
+
+				if (!response.ok) {
+					const errorData = await response.json()
+					throw new Error(errorData.message || 'Error updating category name')
+				}
+
+				nodes[uid].name = editedName // Update the local state
+				nodes = { ...nodes } // Trigger reactivity
+			} catch (error) {
+				console.error('Error updating category name:', error.message)
 			}
 		}
-		return null // No parent found
+		editingId = null
+	}
+
+	async function deleteCategory(uid) {
+		if (!confirm('Are you sure you want to delete this category?')) {
+			return
+		}
+		try {
+			const response = await fetch(`/api/recipe/categories/${uid}`, {
+				method: 'DELETE',
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			})
+
+			if (!response.ok) {
+				const errorData = await response.json()
+				throw new Error(errorData.message || 'Error deleting category')
+			}
+
+			// Remove the category from the local state or refresh the list
+			delete nodes[uid]
+			nodes = { ...nodes } // Trigger reactivity
+		} catch (error) {
+			console.error('Error deleting category:', error.message)
+		}
 	}
 
 	function handleDndFinalize(e) {
@@ -80,13 +129,29 @@
 	}
 </script>
 
-<b>{node.name}</b>
+<div class="category-container">
+	<b>
+		{#if editingId === node.uid}
+			<input
+				bind:value={editedName}
+				on:blur={() => saveChanges(node.uid)}
+				on:keydown={(e) => e.key === 'Enter' && saveChanges(node.uid)} />
+			<button on:click={() => (editingId = null)}>Cancel</button>
+			<button on:click={saveChanges(node.uid)}>Save</button>
+			<button on:click={() => deleteCategory(node.uid)}>Delete</button>
+		{:else}
+			{node.name}
+		{/if}
+	</b>
+	<button on:click={() => startEditing(node.uid, node.name)}
+		><Ellipsis width="20px" fill="var(--pico-secondary)" /></button>
+</div>
+
 {#if node.hasOwnProperty('items')}
 	<section
 		use:dndzone={{ items: node.items, flipDurationMs, centreDraggedOnCursor: true }}
 		on:consider={handleDndConsider}
 		on:finalize={handleDndFinalize}>
-		<!-- WE FILTER THE SHADOW PLACEHOLDER THAT WAS ADDED IN VERSION 0.7.4, filtering this way rather than checking whether 'nodes' have the id became possible in version 0.9.1 -->
 		{#each node.items.filter((item) => item.uid !== SHADOW_PLACEHOLDER_ITEM_ID) as item (item.uid)}
 			<div animate:flip={{ duration: flipDurationMs }} class="item">
 				<svelte:self bind:nodes node={nodes[item.uid]} />
@@ -95,7 +160,7 @@
 	</section>
 {/if}
 
-<style>
+<style lang="scss">
 	section {
 		width: auto;
 		max-width: 400px;
@@ -106,6 +171,19 @@
 		height: auto;
 		background-color: rgba(100, 100, 100, 0.1);
 	}
+
+	.category-container {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		width: 100%;
+		button {
+			padding: 0.2rem;
+			background-color: var(--pico-contrast-focus);
+			border: none;
+		}
+	}
+
 	div {
 		width: 90%;
 		padding: 0.3em;
