@@ -9,7 +9,5 @@
 	let nodes = wrapTopLevelNodes(myNodes)
 </script>
 
-<h3>Try dragging node2 into node3 and then node4 into node2</h3>
-<!-- <CategoryEdit node={nodes.node1} bind:nodes /> -->
-<h3>Testing Categories</h3>
+<h3>Edit Your Categories</h3>
 <CategoryEdit node={nodes.node1} bind:nodes />

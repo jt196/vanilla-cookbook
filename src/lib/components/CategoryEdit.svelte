@@ -9,9 +9,59 @@
 	function handleDndConsider(e) {
 		node.items = e.detail.items
 	}
+
+	function findParentUID(itemUID, nodes) {
+		for (let nodeUID in nodes) {
+			const node = nodes[nodeUID]
+			if (node.items && node.items.some((item) => item.id === itemUID)) {
+				return nodeUID
+			}
+		}
+		return null // No parent found
+	}
+
 	function handleDndFinalize(e) {
+		console.log(e.detail)
+		const movedItemId = e.detail.info.id
+		let parentUid = null
+
+		// Check if the moved item is still present in the current list
+		const isItemInList = node.items.some((item) => item.uid === movedItemId)
+
+		// If the item is not in the list, it's the source list, so skip the API call
+		if (!isItemInList) {
+			return
+		}
+
+		// Find the parent UID of the moved item
+		for (const [nodeId, nodeData] of Object.entries(nodes)) {
+			if (nodeData.items.some((item) => item.uid === movedItemId)) {
+				parentUid = nodeId
+				break
+			}
+		}
+
+		// If the parent UID is 'node1', it means the item is at the root level.
+		if (parentUid === 'node1') {
+			parentUid = null
+		}
+
+		const movedItem = {
+			uid: movedItemId,
+			parent_uid: parentUid
+		}
+
+		// Send the update to the server
+		fetch('/api/recipe/categories', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(movedItem)
+		})
+
+		// Trigger a reactivity update
 		node.items = e.detail.items
-		console.log(e)
 		nodes = { ...nodes }
 	}
 </script>

@@ -19,33 +19,43 @@ export async function GET() {
 }
 
 // Handle POST request
-export async function POST(request) {
-	const updatedNodes = request.body
+export const POST = async ({ request }) => {
+	const bodyText = await request.text()
+	const updatedCategory = JSON.parse(bodyText)
 
 	try {
-		// Implement the logic to update the categories in the database
-		// based on the updatedNodes data structure.
-		// This might involve updating the order_flag, parent_uid, and possibly other fields.
+		let updateData = {}
 
-		// For simplicity, I'm just showing a placeholder logic.
-		// You'll need to expand on this to handle the actual updates.
-		for (let node of updatedNodes) {
-			await prisma.category.update({
-				where: { uid: node.id },
-				data: {
-					// your update data here
-				}
-			})
+		// Check if name is present in the request and add to update data
+		if (updatedCategory.name) {
+			updateData.name = updatedCategory.name
 		}
 
-		return {
+		// Check if parent_uid is present in the request and add to update data
+		if ('parent_uid' in updatedCategory) {
+			// Using 'in' to allow null values for root items
+			updateData.parent_uid = updatedCategory.parent_uid
+		}
+
+		console.log('🚀 ~ file: +server.js:38 ~ POST ~ updateData:', updateData)
+
+		await prisma.category.update({
+			where: { uid: updatedCategory.uid },
+			data: updateData
+		})
+
+		return new Response(JSON.stringify(updateData), {
 			status: 200,
-			body: { message: 'Categories updated successfully.' }
-		}
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		})
 	} catch (error) {
-		return {
+		return new Response('Failed to update', {
 			status: 500,
-			body: { error: 'Failed to update categories.' }
-		}
+			headers: {
+				'Content-Type': 'text/plain'
+			}
+		})
 	}
 }
