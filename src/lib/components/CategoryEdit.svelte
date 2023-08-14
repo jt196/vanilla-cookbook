@@ -35,7 +35,7 @@
 
 		// Find the parent UID of the moved item
 		for (const [nodeId, nodeData] of Object.entries(nodes)) {
-			if (nodeData.items.some((item) => item.uid === movedItemId)) {
+			if (nodeData.items && nodeData.items.some((item) => item.uid === movedItemId)) {
 				parentUid = nodeId
 				break
 			}
