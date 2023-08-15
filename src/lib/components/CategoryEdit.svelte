@@ -39,7 +39,7 @@
 	async function saveChanges(uid) {
 		if (editedName && nodes[uid].name !== editedName) {
 			try {
-				const response = await fetch('/api/recipe/categories', {
+				const response = await fetch(`/api/recipe/categories/${uid}`, {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json'

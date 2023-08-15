@@ -5,7 +5,11 @@ import { error, fail, redirect } from '@sveltejs/kit'
  * Server-side logic to load recipes for the page.
  * @returns {Promise<Object>} An object containing the recipes ordered by their creation date in descending order.
  */
-export const load = async ({ url, fetch }) => {
+export const load = async ({ url, fetch, locals }) => {
+	const { session, user } = await locals.auth.validateUser()
+	if (!session || !user) {
+		throw error(401, 'Unauthorized')
+	}
 	const recipes = await prisma.recipe.findMany({
 		orderBy: {
 			created: 'desc'
@@ -24,8 +28,10 @@ export const load = async ({ url, fetch }) => {
 		}
 	})
 
-	const hierarchicalCategories = await fetch(`${url.origin}/api/recipe/categories`)
-	const categories = hierarchicalCategories.json()
+	const hierarchicalCategories = await fetch(
+		`${url.origin}/api/recipe/categories/user/${user.userId}`
+	)
+	const categories = await hierarchicalCategories.json()
 
 	return {
 		recipes,

@@ -53,6 +53,8 @@ model Recipe {
 
 model Category {
     uid        String           @id @default(uuid())
+    userId     String // This is just a scalar field
+    user       AuthUser         @relation(fields: [userId], references: [id]) // This establishes the relationship
     order_flag Int?
     parent_uid String?
     name       String?
@@ -80,6 +82,7 @@ model AuthUser {
     isAdmin      Boolean
     articles     Article[]
     recipes      Recipe[]
+    categories   Category[]
     auth_session AuthSession[]
     auth_key     AuthKey[]
 

@@ -1,5 +1,6 @@
 import PrismaClientPkg from '@prisma/client'
 import lucia from 'lucia-auth'
+import { LuciaError } from 'lucia-auth'
 import { sveltekit } from 'lucia-auth/middleware'
 import prisma from '@lucia-auth/adapter-prisma'
 import { fail } from '@sveltejs/kit'
@@ -30,51 +31,6 @@ async function getUsers(recipes) {
 
 	return [
 		{
-			name: 'james',
-			username: 'jt196',
-			email: 'jamestorr@gmail.com',
-			about: 'Administrator of the site',
-			password: 'homersdad',
-			isAdmin: true,
-			articles: {
-				create: [
-					{
-						title: 'My best work',
-						content: 'Ipsum, capsicum, dolores etc'
-					},
-					{
-						title: 'A piece of shite',
-						content: "I'm so imbarist this isn't my best work."
-					},
-					{
-						title: 'Oh Dear',
-						content: 'This is even worst than my larst piece.'
-					}
-				]
-			},
-			recipes: {
-				create: recipes.map((recipe) => {
-					// Extract the categories field from the recipe
-					const { categories, ...otherRecipeFields } = recipe
-
-					return {
-						...otherRecipeFields, // Spread the rest of the recipe fields
-						categories: categories
-							? {
-									create: categories.map((category) => {
-										return {
-											category: {
-												connect: { uid: category.uid }
-											}
-										}
-									})
-							  }
-							: undefined // If categories don't exist, leave the field undefined
-					}
-				})
-			}
-		},
-		{
 			name: 'matia',
 			username: 'joyofcodedev',
 			email: 'matia@example.test',
@@ -104,8 +60,70 @@ async function seed() {
 	}
 	// Import the Paprika JSON
 	const recipes = await loadPaprikaRecipes()
-	// Add categories to DB
-	await importPaprikaCategories(recipes)
+	// Create the admin user first
+	const adminUser = {
+		name: 'james',
+		username: 'jt196',
+		password: 'homersdad',
+		email: 'jamestorr@gmail.com',
+		about: 'Administrator of the site',
+		isAdmin: true
+	}
+
+	try {
+		const createdAdmin = await auth.createUser({
+			primaryKey: {
+				providerId: 'username',
+				providerUserId: adminUser.username,
+				password: adminUser.password
+			},
+			attributes: {
+				name: adminUser.name,
+				username: adminUser.username,
+				email: adminUser.email,
+				about: adminUser.about,
+				isAdmin: adminUser.isAdmin
+			}
+		})
+
+		// Get the admin user ID
+		const adminUserId = await createdAdmin.userId
+
+		// Import categories with the admin user ID
+		await importPaprikaCategories(recipes, adminUserId)
+
+		// Associate recipes with the admin user
+		const recipesData = recipes.map((recipe) => {
+			const { categories, ...otherRecipeFields } = recipe
+			return {
+				...otherRecipeFields,
+				userId: adminUserId, // Associate with the admin user
+				categories: categories
+					? {
+							create: categories.map((category) => {
+								return {
+									category: {
+										connect: { uid: category.uid }
+									}
+								}
+							})
+					  }
+					: undefined
+			}
+		})
+
+		for (const recipe of recipesData) {
+			recipe.created = new Date(recipe.created)
+			await prismaC.recipe.create({ data: recipe })
+		}
+	} catch (e) {
+		if (e instanceof LuciaError && e.message === 'DUPLICATE_KEY_ID') {
+			console.error('A user with the same key already exists.')
+		} else {
+			console.error('Error creating user:', e.message)
+		}
+	}
+
 	// Create user object for importing into DB
 	const users = await getUsers(recipes)
 

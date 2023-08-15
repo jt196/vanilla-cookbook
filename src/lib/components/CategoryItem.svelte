@@ -6,11 +6,12 @@
 
 	let isEditing = false
 	let editedName = node.name
+	console.log('🚀 ~ file: CategoryItem.svelte:15 ~ saveChanges ~ node.uid:', node.uid)
 
 	async function saveChanges() {
 		if (editedName !== node.name) {
 			try {
-				const response = await fetch('/api/recipe/categories', {
+				const response = await fetch(`/api/recipe/categories/${node.uid}`, {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json'

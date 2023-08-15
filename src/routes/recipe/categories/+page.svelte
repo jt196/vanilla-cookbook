@@ -5,7 +5,8 @@
 
 	export let data
 
-	let { nodes } = data
+	let { nodes, userId } = data
+	console.log('🚀 ~ file: +page.svelte:9 ~ userId:', userId)
 
 	let newCategoryName = ''
 	let showNewCategoryInput = false
@@ -27,7 +28,7 @@
 
 				// Refresh your categories data here to show the new category
 				if (browser) {
-					nodes = await fetchAndTransformCategories(fetch, window.location)
+					nodes = await fetchAndTransformCategories(fetch, window.location, userId)
 					nodes = { ...nodes }
 				}
 			} else {

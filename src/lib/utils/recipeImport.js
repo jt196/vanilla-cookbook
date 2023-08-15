@@ -35,7 +35,7 @@ export async function loadPaprikaRecipes() {
  * @param {PaprikaRecipe[]} recipes - An array of Paprika recipes containing category data.
  */
 
-export async function importPaprikaCategories(recipes) {
+export async function importPaprikaCategories(recipes, userId) {
 	// Collecting all unique categories
 	/** @type { Record<string, Category> } */
 	const categoriesMap = {}
@@ -69,7 +69,8 @@ export async function importPaprikaCategories(recipes) {
 					data: {
 						uid: category.uid,
 						order_flag: category.order_flag,
-						name: category.name
+						name: category.name,
+						userId: userId // Set the user ID here
 					}
 				})
 			}
@@ -83,13 +84,13 @@ export async function importPaprikaCategories(recipes) {
 				where: { uid: category.uid }
 			})
 
+			// Update the category creation logic to include the user ID
 			const categoryData = {
 				uid: category.uid,
+				userId: userId, // Set the user ID here
 				order_flag: category.order_flag,
 				name: category.name,
-				parent: {
-					connect: { uid: category.parent_uid }
-				}
+				parent_uid: category.parent_uid
 			}
 
 			if (existingCategory) {
