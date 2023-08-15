@@ -81,7 +81,9 @@ export function wrapTopLevelNodes(data) {
 export async function fetchAndTransformCategories(fetch, url) {
 	const catRes = await fetch(`${url.origin}/api/recipe/categories`)
 	const categories = await catRes.json()
-	return transformToNodes(categories)
+	let nodes = transformToNodes(categories)
+	nodes = wrapTopLevelNodes(nodes)
+	return sortItemsAlphabetically(nodes)
 }
 
 export function sortItemsAlphabetically(nodes) {

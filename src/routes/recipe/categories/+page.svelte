@@ -1,15 +1,11 @@
 <script>
 	import CategoryEdit from '$lib/components/CategoryEdit.svelte'
-	import {
-		wrapTopLevelNodes,
-		fetchAndTransformCategories,
-		sortItemsAlphabetically
-	} from '$lib/utils/categories.js'
+	import { fetchAndTransformCategories } from '$lib/utils/categories.js'
 	import { browser } from '$app/environment'
 
 	export let data
 
-	let { myNodes } = data
+	let { nodes } = data
 
 	let newCategoryName = ''
 	let showNewCategoryInput = false
@@ -31,9 +27,7 @@
 
 				// Refresh your categories data here to show the new category
 				if (browser) {
-					myNodes = await fetchAndTransformCategories(fetch, window.location)
-					nodes = wrapTopLevelNodes(myNodes)
-					nodes = sortItemsAlphabetically(nodes)
+					nodes = await fetchAndTransformCategories(fetch, window.location)
 					nodes = { ...nodes }
 				}
 			} else {
@@ -44,11 +38,6 @@
 			console.error('Error adding new category:', error.message)
 		}
 	}
-
-	let nodes = wrapTopLevelNodes(myNodes)
-
-	// When fetching data
-	nodes = sortItemsAlphabetically(nodes)
 </script>
 
 <button on:click={() => (showNewCategoryInput = !showNewCategoryInput)}>Add New Category</button>
