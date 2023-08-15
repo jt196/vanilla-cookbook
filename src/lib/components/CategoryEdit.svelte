@@ -147,18 +147,18 @@
 		><Ellipsis width="20px" fill="var(--pico-secondary)" /></button>
 </div>
 
-{#if node.hasOwnProperty('items')}
-	<section
-		use:dndzone={{ items: node.items, flipDurationMs, centreDraggedOnCursor: true }}
-		on:consider={handleDndConsider}
-		on:finalize={handleDndFinalize}>
+<section
+	use:dndzone={{ items: node.items || [], flipDurationMs, centreDraggedOnCursor: true }}
+	on:consider={handleDndConsider}
+	on:finalize={handleDndFinalize}>
+	{#if node.items}
 		{#each node.items.filter((item) => item.uid !== SHADOW_PLACEHOLDER_ITEM_ID) as item (item.uid)}
 			<div animate:flip={{ duration: flipDurationMs }} class="item">
 				<svelte:self bind:nodes node={nodes[item.uid]} />
 			</div>
 		{/each}
-	</section>
-{/if}
+	{/if}
+</section>
 
 <style lang="scss">
 	section {
@@ -166,6 +166,7 @@
 		max-width: 400px;
 		border: 0px solid black;
 		padding: 0.4em;
+		margin: 0.4rem;
 		/* this will allow the dragged element to scroll the list */
 		overflow-y: auto;
 		height: auto;
