@@ -1,13 +1,10 @@
 <script>
 	import { flip } from 'svelte/animate'
 	import { dndzone, SHADOW_PLACEHOLDER_ITEM_ID } from 'svelte-dnd-action'
-	import Ellipsis from '$lib/components/svg/Ellipsis.svelte'
-	import Chevron from '$lib/components/svg/Chevron.svelte'
-	import { slide } from 'svelte/transition'
+	import Ellipsis from './svg/Ellipsis.svelte'
 
 	export let nodes = {}
 	export let node
-	let collapsedNodes = {}
 
 	// Sort the items when the node is updated
 	$: {
@@ -130,30 +127,9 @@
 		node.items = e.detail.items
 		nodes = { ...nodes }
 	}
-
-	function toggleChevron(uid) {
-		// Toggle the chevron state
-		chevronStates[uid] = !chevronStates[uid]
-
-		// Use the new state to determine if we should collapse or expand
-		if (chevronStates[uid]) {
-			// If chevron is now pointing up, collapse the node
-			collapsedNodes[uid] = true
-		} else {
-			// If chevron is now pointing down, expand the node
-			collapsedNodes[uid] = false
-		}
-	}
-
-	let chevronStates = {}
 </script>
 
 <div class="category-container">
-	{#if node.hasOwnProperty('items') && node.items.length > 0}
-		<button on:click={() => toggleChevron(node.uid)}>
-			<Chevron isExpanded={chevronStates[node.uid]} />
-		</button>
-	{/if}
 	<b>
 		{#if editingId === node.uid}
 			<input
@@ -173,11 +149,9 @@
 
 <section
 	use:dndzone={{ items: node.items || [], flipDurationMs, centreDraggedOnCursor: true }}
-	in:slide={{ duration: 300 }}
-	out:slide={{ duration: 100 }}
 	on:consider={handleDndConsider}
 	on:finalize={handleDndFinalize}>
-	{#if node.items && !collapsedNodes[node.uid]}
+	{#if node.items}
 		{#each node.items.filter((item) => item.uid !== SHADOW_PLACEHOLDER_ITEM_ID) as item (item.uid)}
 			<div animate:flip={{ duration: flipDurationMs }} class="item">
 				<svelte:self bind:nodes node={nodes[item.uid]} />

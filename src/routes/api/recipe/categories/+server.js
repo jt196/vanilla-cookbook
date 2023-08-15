@@ -29,7 +29,7 @@ export const POST = async ({ request, locals }) => {
 			}
 		})
 	} catch (error) {
-		return new Response("Failed to create new category!"), {
+		return new Response('Failed to create new category!', {
 			status: 500,
 			headers: {
 				'Content-Type': 'application/json'
