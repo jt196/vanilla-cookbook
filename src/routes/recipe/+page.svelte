@@ -26,7 +26,11 @@
 	let selectedCategoryUid = null
 
 	function handleCategoryClick(category) {
-		selectedCategoryUid = category.uid // or category.uid, depending on how you want to filter
+		if (selectedCategoryUid == category.uid) {
+			selectedCategoryUid = null
+		} else {
+			selectedCategoryUid = category.uid // or category.uid, depending on how you want to filter
+		}
 	}
 
 	$: {
