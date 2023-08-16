@@ -18,6 +18,7 @@
 <style lang="scss">
 	.sidebar {
 		width: 250px;
+		padding-top: 50px;
 		height: 100%;
 		background-color: #333;
 		overflow-y: auto; // Makes the sidebar scrollable
@@ -49,6 +50,8 @@
 		.close-btn {
 			position: absolute;
 			top: 10px;
+			padding: 0;
+			margin: 0;
 			right: 10px;
 			background: none;
 			border: none;

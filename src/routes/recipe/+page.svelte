@@ -88,10 +88,11 @@
 	bind:isOpen={sidebarOpen}
 	on:close={handleSidebarClose}
 	let:onCategoryClick={handleCategoryClick}>
-	<div class="clear-button">
+	<div class="sidebar-buttons">
 		{#if selectedCategoryUids}
 			<button on:click={clearCategory}>Clear</button>
 		{/if}
+		<a href="/recipe/categories" role="button">Edit</a>
 	</div>
 	<div class="sidebar-check">
 		<label>
@@ -146,11 +147,12 @@
 			}
 		}
 	}
-	.clear-button {
+	.sidebar-buttons {
 		display: flex; // Use flexbox
 		justify-content: center; // Center horizontally
 		align-items: center; // Center vertically
 		height: 95px; // Set a fixed height, adjust as needed
+		gap: 1rem;
 	}
 
 	.sidebar-check {
