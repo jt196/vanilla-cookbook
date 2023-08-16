@@ -3,7 +3,7 @@
 
 	export let categories = []
 	export let onCategoryClick = () => {}
-	export let selectedCategoryUids
+	export let selectedCategoryUids = []
 </script>
 
 <ul>

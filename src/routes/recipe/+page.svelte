@@ -6,7 +6,7 @@
 	import RecipeList from '$lib/components/RecipeList.svelte'
 	import Sidebar from '$lib/components/Sidebar.svelte'
 	import Burger from '$lib/components/svg/Burger.svelte'
-	import CategoryTree from '../../lib/components/CategoryTree.svelte'
+	import CategoryTree from '$lib/components/CategoryTree.svelte'
 
 	export let data
 

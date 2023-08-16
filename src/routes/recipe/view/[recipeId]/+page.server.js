@@ -11,7 +11,7 @@ import { error, fail, redirect } from '@sveltejs/kit'
  * @returns {Promise<Object>} The loaded recipe data.
  * @async
  */
-export const load = async ({ params, locals }) => {
+export const load = async ({ params, locals, fetch, url }) => {
 	const { session, user } = await locals.auth.validateUser()
 	if (!session || !user) {
 		throw error(401, 'Unauthorized')
@@ -25,7 +25,7 @@ export const load = async ({ params, locals }) => {
 	 * @throws {Error} If the recipe is not found or unauthorized.
 	 * @async
 	 */
-	const getRecipe = async (userId) => {
+	const getRecipe = async () => {
 		const recipe = await prisma.recipe.findUnique({
 			where: {
 				uid: params.recipeId
@@ -41,8 +41,13 @@ export const load = async ({ params, locals }) => {
 		return recipe
 	}
 
+	let recipeCategories = await fetch(`${url.origin}/api/recipe/categories/${params.recipeId}`)
+	const categories = await recipeCategories.json()
+	console.log('🚀 ~ file: +page.server.js:48 ~ load ~ categories:', categories)
+
 	return {
-		recipe: getRecipe(user.userId)
+		recipe: getRecipe(),
+		categories
 	}
 }
 

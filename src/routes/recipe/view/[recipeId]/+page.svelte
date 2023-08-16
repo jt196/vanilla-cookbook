@@ -8,6 +8,7 @@
 	} from '$lib/utils/filters'
 	import Scale from '$lib/components/Scale.svelte'
 	import FoodBowl from '$lib/components/svg/FoodBowl.svelte'
+	import CategoryTree from '$lib/components/CategoryTree.svelte'
 
 	/**
 	 * Data for the current page.
@@ -15,11 +16,7 @@
 	 */
 	export let data
 
-	/**
-	 * The current recipe being displayed.
-	 * @type {Recipe | null}
-	 */
-	let recipe = null
+	let { recipe, categories } = data
 
 	/**
 	 * The list of ingredients in string format.
@@ -53,7 +50,6 @@
 
 	/** Logic to update various variables based on the recipe data. */
 	$: if (data && data.recipe) {
-		recipe = data.recipe
 		ingredients = recipe.ingredients ? recipe.ingredients.split('\n') : []
 		ingredientsArray = ingredientProcess(ingredients)
 		recipe.directions ? (directionLines = recipe.directions.split('\n')) : null
@@ -87,6 +83,8 @@
 				<Scale bind:scale />
 			</p>
 		{/if}
+		Categories:
+		<CategoryTree {categories} isRoot={true} />
 	</div>
 	<div>
 		<p>Ingredients:</p>

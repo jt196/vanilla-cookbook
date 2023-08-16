@@ -1,4 +1,5 @@
 import { prisma } from '$lib/server/prisma'
+import { buildHierarchy } from '$lib/utils/categories.js'
 
 // Handle delete request
 export async function DELETE({ params, locals }) {
@@ -116,5 +117,65 @@ export const POST = async ({ request, locals, params }) => {
 				}
 			}
 		)
+	}
+}
+
+// Handle GET request
+export async function GET({ params, locals }) {
+	const { session, user } = await locals.auth.validateUser()
+	const { uid } = params
+
+	if (!session || !user) {
+		return new Response(JSON.stringify({ error: 'User not authenticated.' }), {
+			status: 401,
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		})
+	}
+
+	try {
+		// Fetch the recipe's categories
+		const recipeCategories = await prisma.recipeCategory.findMany({
+			where: {
+				recipeUid: uid
+			},
+			select: {
+				category: true
+			}
+		})
+
+		const categories = recipeCategories.map((rc) => rc.category)
+
+		// Recursively fetch parent categories
+		for (let category of categories) {
+			let currentCategory = category
+			while (currentCategory.parent_uid) {
+				const parentCategory = await prisma.category.findUnique({
+					where: {
+						uid: currentCategory.parent_uid
+					}
+				})
+				if (!parentCategory) break // Stop if parent not found
+				categories.push(parentCategory)
+				currentCategory = parentCategory
+			}
+		}
+
+		const hierarchicalCategories = buildHierarchy(categories)
+
+		return new Response(JSON.stringify(hierarchicalCategories), {
+			status: 200,
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		})
+	} catch (error) {
+		return new Response(JSON.stringify({ error: `Failed to fetch categories: ${error.message}` }), {
+			status: 500,
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		})
 	}
 }
