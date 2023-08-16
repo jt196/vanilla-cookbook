@@ -2,7 +2,7 @@
 	import CategoryTree from '$lib/components/CategoryTree.svelte'
 
 	export let categories = []
-	export let onCategoryClick
+	export let onCategoryClick = () => {}
 	export let selectedCategoryUids
 </script>
 

@@ -12,16 +12,19 @@ import { error, fail, redirect } from '@sveltejs/kit'
  * @throws Will throw an error if unauthorized or the recipe is not found.
  * @returns {Promise<{ recipe: Object }>} The loaded recipe.
  */
-export const load = async ({ params, locals }) => {
+export const load = async ({ url, params, locals, fetch }) => {
 	const { session, user } = await locals.auth.validateUser()
 	if (!session || !user) {
 		throw error(401, 'Unauthorized')
 	}
 
-	const getRecipe = async (userId) => {
+	const getRecipe = async () => {
 		const recipe = await prisma.recipe.findUnique({
 			where: {
 				uid: params.recipeId
+			},
+			include: {
+				categories: true
 			}
 		})
 		if (!recipe) {
@@ -34,8 +37,14 @@ export const load = async ({ params, locals }) => {
 		return recipe
 	}
 
+	const hierarchicalCategories = await fetch(
+		`${url.origin}/api/recipe/categories/user/${user.userId}`
+	)
+	const categories = await hierarchicalCategories.json()
+
 	return {
-		recipe: getRecipe(user.userId)
+		recipe: getRecipe(),
+		allCategories: categories
 	}
 }
 
@@ -62,6 +71,19 @@ export const actions = {
 		if (!session || !user) {
 			throw error(401, 'Unauthorized')
 		}
+		const formData = await request.formData()
+		const entries = [...formData.entries()]
+
+		let recipeCategories = []
+		const data = {}
+
+		for (const [key, value] of entries) {
+			if (key === 'categories[]') {
+				recipeCategories.push(value)
+			} else {
+				data[key] = value
+			}
+		}
 
 		const {
 			name,
@@ -76,7 +98,12 @@ export const actions = {
 			total_time,
 			servings,
 			nutritional_info
-		} = Object.fromEntries(await request.formData())
+		} = data
+
+		console.log(
+			'🚀 ~ file: +page.server.js:89 ~ updateRecipe: ~ recipeCategories:',
+			recipeCategories
+		)
 
 		try {
 			const recipe = await prisma.recipe.findUniqueOrThrow({
@@ -108,6 +135,22 @@ export const actions = {
 					nutritional_info
 				}
 			})
+			// First, remove all existing associations
+			await prisma.recipeCategory.deleteMany({
+				where: {
+					recipeUid: params.recipeId
+				}
+			})
+
+			// Then, add the new associations
+			for (let categoryUid of recipeCategories) {
+				await prisma.recipeCategory.create({
+					data: {
+						recipeUid: params.recipeId,
+						categoryUid: categoryUid
+					}
+				})
+			}
 		} catch (err) {
 			console.error(err)
 			return fail(500, { message: 'Could not update recipe' })
