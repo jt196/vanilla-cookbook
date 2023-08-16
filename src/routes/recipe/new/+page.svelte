@@ -1,5 +1,10 @@
 <script>
 	import { decodeHTMLEntities, nutritionProcess } from '$lib/utils/filters'
+	import { onMount } from 'svelte'
+	import Bookmark from '$lib/components/svg/Bookmark.svelte'
+
+	let baseUrl = ''
+	let bookmarkletCode = ''
 
 	/**
 	 * The scraped recipe object.
@@ -38,14 +43,15 @@
 	 * @returns {Promise<void>}
 	 */
 	async function handleScrape(event) {
-		event.preventDefault()
-		const formData = new FormData(event.target)
-		const url = formData.get('url')
+		if (event) event.preventDefault() // Prevent default form submission
+
+		const urlInput = document.getElementById('url')
+		const url = urlInput.value
 
 		// Make a request to your scrapeRecipe endpoint
 		const response = await fetch('?/scrapeRecipe', {
 			method: 'POST',
-			body: formData
+			body: new FormData(urlInput.closest('form'))
 		})
 
 		if (response.ok) {
@@ -76,14 +82,41 @@
 			// Handle the error (e.g., show an error message)
 		}
 	}
+	onMount(() => {
+		// Set the base URL and generate the bookmarklet code
+		baseUrl = window.location.origin
+		bookmarkletCode = `javascript:(function() {
+        var currentUrl = encodeURIComponent(window.location.href);
+        var newUrl = '${baseUrl}/recipe/new?scrape=' + currentUrl;
+        window.open(newUrl, '_blank');
+    })();`
+
+		// Check for the 'scrape' parameter and populate the form
+		const urlParams = new URLSearchParams(window.location.search)
+		const scrapeUrl = urlParams.get('scrape')
+		if (scrapeUrl) {
+			// Populate the URL input field
+			const urlInput = document.getElementById('url')
+			urlInput.value = decodeURIComponent(scrapeUrl)
+
+			// Call the handleScrape function directly
+			handleScrape()
+		}
+	})
 </script>
 
-<form action="?/scrapeRecipe" method="POST" on:submit={handleScrape}>
-	<h3>Scrape Recipe</h3>
-	<label for="url"> URL </label>
-	<input type="text" id="url" name="url" />
-	<button type="submit">Scrape Recipe</button>
-</form>
+<h3>Scrape Recipe</h3>
+<div class="container">
+	<form action="?/scrapeRecipe" method="POST" on:submit={handleScrape}>
+		<label for="url"> URL </label>
+		<input type="text" id="url" name="url" />
+		<button type="submit">Scrape Recipe</button>
+	</form>
+	<div class="bookmarklet-button">
+		<p>Drag This Bookmark to Your Browser Toolbar to Scrape External Web Pages</p>
+		<a href={bookmarkletCode} role="button"><Bookmark width="25px" /></a>
+	</div>
+</div>
 
 <form action="?/createRecipe" method="POST">
 	<h3>New Recipe</h3>
@@ -127,3 +160,22 @@
 
 	<button type="submit">Add Recipe</button>
 </form>
+
+<style lang="scss">
+	.container {
+		display: flex;
+		align-items: start; // Align items to the top
+		width: 100%; // Ensure the container takes the full width
+
+		form {
+			flex: 1; // Allow the form to take up the remaining space
+			margin-right: 20px; // Add some spacing between the form and the button
+		}
+
+		.bookmarklet-button {
+			max-width: 300px;
+			flex-shrink: 0; // Prevent the button from shrinking
+			flex-grow: 0; // Prevent the button from growing
+		}
+	}
+</style>
