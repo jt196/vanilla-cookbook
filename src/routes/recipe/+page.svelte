@@ -23,32 +23,43 @@
 	let activeButton = 'created' // default active button
 	let filteredRecipes = [] // Declare it before the reactive statement
 
-	let selectedCategoryUid = null
+	let selectedCategoryUids = []
+
+	let useAndLogic = false // Default to OR logic
 
 	function handleCategoryClick(category) {
-		if (selectedCategoryUid == category.uid) {
-			selectedCategoryUid = null
+		if (selectedCategoryUids.includes(category.uid)) {
+			selectedCategoryUids = selectedCategoryUids.filter((uid) => uid !== category.uid)
 		} else {
-			selectedCategoryUid = category.uid // or category.uid, depending on how you want to filter
+			selectedCategoryUids = [...selectedCategoryUids, category.uid]
 		}
 	}
 
 	$: {
-		// Step 1: Sort the recipes
 		let sortedRecipes = sortRecipesByKey(
 			data.recipes,
 			sortState.key,
 			sortState.direction
 		).sortedRecipes
 
-		// Step 2: Filter by category
-		let categoryFilteredRecipes = selectedCategoryUid
-			? sortedRecipes.filter((recipe) =>
-					recipe.categories.some((rc) => rc.category.uid === selectedCategoryUid)
-			  )
-			: sortedRecipes
+		let categoryFilteredRecipes = sortedRecipes
 
-		// Step 3: Filter by search string
+		if (selectedCategoryUids.length > 0) {
+			if (useAndLogic) {
+				categoryFilteredRecipes = sortedRecipes.filter((recipe) =>
+					selectedCategoryUids.every((uid) =>
+						recipe.categories.some((rc) => rc.category.uid === uid)
+					)
+				)
+			} else {
+				categoryFilteredRecipes = sortedRecipes.filter((recipe) =>
+					selectedCategoryUids.some((uid) =>
+						recipe.categories.some((rc) => rc.category.uid === uid)
+					)
+				)
+			}
+		}
+
 		filteredRecipes = filterSearch(searchString, categoryFilteredRecipes, searchKey)
 	}
 	function handleSort(event) {
@@ -69,7 +80,7 @@
 	}
 
 	function clearCategory() {
-		selectedCategoryUid = null
+		selectedCategoryUids = []
 	}
 </script>
 
@@ -78,15 +89,21 @@
 	on:close={handleSidebarClose}
 	let:onCategoryClick={handleCategoryClick}>
 	<div class="clear-button">
-		{#if selectedCategoryUid}
+		{#if selectedCategoryUids}
 			<button on:click={clearCategory}>Clear</button>
 		{/if}
+	</div>
+	<div class="sidebar-check">
+		<label>
+			<input type="checkbox" bind:checked={useAndLogic} />
+			{useAndLogic ? 'Using AND logic' : 'Using OR logic'}
+		</label>
 	</div>
 	<CategoryTree
 		categories={data.categories}
 		onCategoryClick={handleCategoryClick}
-		{selectedCategoryUid}
-		on:clearCategory={() => (selectedCategoryUid = null)}
+		{selectedCategoryUids}
+		on:clearCategory={clearCategory}
 		isRoot={true} /></Sidebar>
 
 <div class="content" class:sidebar-open={sidebarOpen} on:close={handleSidebarClose}>
@@ -134,5 +151,9 @@
 		justify-content: center; // Center horizontally
 		align-items: center; // Center vertically
 		height: 95px; // Set a fixed height, adjust as needed
+	}
+
+	.sidebar-check {
+		margin-left: 1rem;
 	}
 </style>

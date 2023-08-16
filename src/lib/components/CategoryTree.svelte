@@ -3,7 +3,7 @@
 
 	export let categories = []
 	export let onCategoryClick
-	export let selectedCategoryUid
+	export let selectedCategoryUids
 </script>
 
 <ul>
@@ -12,11 +12,11 @@
 		<li class="categories">
 			<button
 				on:click={() => onCategoryClick(category)}
-				class:selected={selectedCategoryUid === category.uid}>
+				class:selected={selectedCategoryUids.includes(category.uid)}>
 				{category.name ? category.name : 'Unnamed Cat'}
 			</button>
 			{#if category.children && category.children.length}
-				<CategoryTree categories={category.children} {onCategoryClick} {selectedCategoryUid} />
+				<CategoryTree categories={category.children} {onCategoryClick} {selectedCategoryUids} />
 			{/if}
 		</li>
 	{/each}

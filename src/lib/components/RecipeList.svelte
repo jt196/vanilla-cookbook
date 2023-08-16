@@ -12,13 +12,6 @@
 	<article>
 		<div class="grid">
 			<a href="recipe/view/{recipe.uid}" class="recipe-card">
-				<div class="recipe-thumbnail">
-					{#if recipe.image_url && startsWithHttp(recipe.image_url)}
-						<img src={recipe.image_url} alt="{recipe.name} thumbnail" />
-					{:else}
-						<FoodBowl height="200px" />
-					{/if}
-				</div>
 				<div>
 					<header>{recipe.name}</header>
 					<p>Created: <i>{localDateAndTime(recipe.created)}</i></p>
@@ -62,6 +55,8 @@
 	/* Initial styles for the article */
 	article {
 		transition: background-color 0.2s ease; /* Smooth transition for the background color */
+		padding: 1rem;
+		margin-bottom: 1rem;
 	}
 
 	/* Hover effect for the article */
