@@ -1,6 +1,6 @@
 import { prisma } from '$lib/server/prisma'
 import { fail, redirect } from '@sveltejs/kit'
-import { parseURL } from 'html-recipe-parser'
+import { parseURL } from '$lib/utils/parse/recipeParse'
 
 /**
  * @typedef {Object} Actions
@@ -66,7 +66,6 @@ export const actions = {
 		}
 
 		const { url } = Object.fromEntries(await request.formData())
-
 		try {
 			const recipeArrayText = JSON.stringify(await parseURL(url))
 			return { body: recipeArrayText }
