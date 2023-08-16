@@ -1,6 +1,7 @@
 import { prisma } from '$lib/server/prisma'
 import { buildHierarchy } from '$lib/utils/categories.js'
 import { json } from '@sveltejs/kit'
+import { sortByNameRecursive } from '$lib/utils/sorting.js'
 
 // Handle GET request
 export async function GET({ params, locals }) {
@@ -18,7 +19,8 @@ export async function GET({ params, locals }) {
 				userId: user.userId // Assuming you have a userId field in your Category model
 			}
 		})
-		const hierarchicalCategories = buildHierarchy(categories)
+		const sortedCategories = sortByNameRecursive(categories)
+		const hierarchicalCategories = buildHierarchy(sortedCategories)
 		return json(hierarchicalCategories)
 	} catch (error) {
 		return {

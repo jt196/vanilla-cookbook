@@ -34,3 +34,27 @@ function sortByDate(inputArray, dateKey, direction) {
 export function randomSortArray(inputArray) {
 	return inputArray.sort(() => Math.random() - 0.5)
 }
+
+export function sortByNameRecursive(data) {
+	// Sort the current level by name
+	data.sort((a, b) => {
+		if (a.name && b.name) {
+			return a.name.localeCompare(b.name)
+		} else if (a.name) {
+			return -1
+		} else if (b.name) {
+			return 1
+		} else {
+			return 0
+		}
+	})
+
+	// Recursively sort children
+	for (let item of data) {
+		if (item.children && item.children.length) {
+			sortByNameRecursive(item.children)
+		}
+	}
+
+	return data
+}
