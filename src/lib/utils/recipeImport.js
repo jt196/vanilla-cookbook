@@ -3,7 +3,6 @@ import { promises as fsPromises } from 'fs'
 import { Open } from 'unzipper'
 import path from 'path'
 import fs from 'fs'
-import { exportRecipes, saveRecipes } from '$lib/utils/paprikaAPI'
 
 // Prisma doesn't support ES Modules so we have to do this
 const PrismaClient = PrismaClientPkg.PrismaClient
