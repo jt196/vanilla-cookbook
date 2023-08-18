@@ -7,6 +7,7 @@ import { promises as fs } from 'fs'
 import { addCategoriesToDB, loadCategories } from '../src/lib/utils/paprikaAPI.js'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import { extractRecipes, filterRecipeData } from '../src/lib/utils/recipeImport.js'
 
 // // Prisma doesn't support ES Modules so we have to do this
 const PrismaClient = PrismaClientPkg.PrismaClient
@@ -21,7 +22,8 @@ export const auth = lucia({
 })
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const recipesPath = path.join(__dirname, '../src/lib/data/firstRecipe.json')
+
+const staticDir = path.join(__dirname, '../static/recipe_photos') // Adjust the path to point to the root /static folder
 
 /**
  * Process an array of PaprikaRecipes
@@ -69,14 +71,11 @@ async function getAdminUserId() {
 // 6. Load Recipes
 async function loadRecipes() {
 	try {
-		const data = await fs.readFile(recipesPath, 'utf-8')
-		return JSON.parse(data)
+		const recipesPath = path.join(__dirname, '../src/lib/data/recipes.paprikarecipes') // Adjust the filename
+		let recipes = await extractRecipes(recipesPath)
+		return recipes
 	} catch (error) {
-		if (error.code === 'ENOENT') {
-			console.log('Unable to read firstRecipe.json file')
-		} else {
-			console.error('Error loading recipes:', error.message)
-		}
+		console.error('Error loading recipes:', error.message)
 		return []
 	}
 }
@@ -113,7 +112,14 @@ async function addUsersToDB(users) {
 async function declareRecipes(recipes, adminUserId) {
 	return Promise.all(
 		recipes.map(async (recipe) => {
-			const { categories, ...otherRecipeFields } = recipe
+			const { categories, photo_data, photo_large, ...otherRecipeFields } = recipe
+
+			// Save the photo_large to the /static folder
+			if (photo_data && photo_large) {
+				const imagePath = path.join(staticDir, photo_large)
+				const imageBuffer = Buffer.from(photo_data, 'base64')
+				await fs.writeFile(imagePath, imageBuffer)
+			}
 
 			// Get uids for each category name
 			const categoryUids = await Promise.all(
@@ -155,7 +161,8 @@ async function declareRecipes(recipes, adminUserId) {
 async function addRecipesToDB(recipes) {
 	for (const recipe of recipes) {
 		recipe.created = new Date(recipe.created)
-		await prismaC.recipe.create({ data: recipe })
+		let filteredRecipe = filterRecipeData(recipe)
+		await prismaC.recipe.create({ data: filteredRecipe })
 	}
 }
 
@@ -181,9 +188,7 @@ async function seed() {
 		await addCategoriesToDB(categories, adminUserId)
 
 		const rawRecipes = await loadRecipes()
-		console.log('🚀 ~ file: seed.js:184 ~ seed ~ rawRecipes:', rawRecipes)
 		const recipes = await declareRecipes(rawRecipes, adminUserId)
-		console.log('🚀 ~ file: seed.js:185 ~ seed ~ recipes:', recipes)
 		await addRecipesToDB(recipes)
 	} catch (error) {
 		console.error('Error in seeding:', error.message)

@@ -21,6 +21,7 @@
 		"@testing-library/svelte": "^4.0.3",
 		"@typescript-eslint/eslint-plugin": "^5.50.0",
 		"@typescript-eslint/parser": "^5.50.0",
+		"adm-zip": "^0.5.10",
 		"axios": "^1.4.0",
 		"eslint": "^8.33.0",
 		"eslint-config-prettier": "^8.6.0",
@@ -31,6 +32,7 @@
 		"humanize-duration": "^3.29.0",
 		"jsdom": "^22.1.0",
 		"node-html-parser": "^6.1.5",
+		"node-stream-zip": "^1.15.0",
 		"parse-iso-duration": "^1.1.0",
 		"prettier": "^2.8.3",
 		"prettier-plugin-svelte": "^2.9.0",
@@ -46,7 +48,9 @@
 		"tsx": "^3.12.7",
 		"unzipper": "^0.10.14",
 		"vite": "^4.4.9",
-		"vitest": "^0.34.1"
+		"vitest": "^0.34.1",
+		"yauzl": "^2.10.0",
+		"zlib": "^1.0.5"
 	},
 	"prisma": {
 		"seed": "node prisma/seed.js"

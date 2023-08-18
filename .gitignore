@@ -14,3 +14,4 @@ migration_lock*
 migration.sql
 *.code-workspace
 package-lock.json
+static/recipe_photos/*
