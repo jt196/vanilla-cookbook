@@ -1,9 +1,20 @@
-import fs from 'fs/promises'
+import { promises as fs } from 'fs'
 import axios from 'axios'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import { config } from 'dotenv'
+import PrismaClientPkg from '@prisma/client'
+
+config()
 
 const BASE_URL = 'https://www.paprikaapp.com/api/v1/sync/'
+const email = process.env.PAPRIKA_EMAIL
+const password = process.env.PAPRIKA_PASSWORD
+
+// // Prisma doesn't support ES Modules so we have to do this
+const PrismaClient = PrismaClientPkg.PrismaClient
+// Different name of prismaC as the auth is importing prisma from the adapter
+const prismaC = new PrismaClient()
 
 const resource = async (endpoint, email, password) => {
 	const options = {
@@ -141,5 +152,56 @@ const getCategories = async (email, password) => {
 		const fetchedCategories = await categories(email, password)
 		await fs.writeFile(categoriesFilePath, JSON.stringify(fetchedCategories, null, 2))
 		return fetchedCategories
+	}
+}
+
+// 1. Load Categories
+export async function loadCategories() {
+	try {
+		if (await fs.access(categoriesFilePath)) {
+			const data = await fs.readFile(categoriesFilePath, 'utf-8')
+			return JSON.parse(data)
+		} else {
+			return await getCategories(email, password)
+		}
+	} catch (error) {
+		console.error('Error loading categories:', error.message)
+		return []
+	}
+}
+
+// 2. Add Categories to DB
+export async function addCategoriesToDB(categories, userId) {
+	// Separate out top-level parents
+	const topLevelParents = categories.filter((cat) => cat.parent_uid === null)
+	const childCategories = categories.filter((cat) => cat.parent_uid !== null)
+
+	// Insert top-level parents first
+	for (const category of topLevelParents) {
+		await prismaC.category.upsert({
+			where: { uid: category.uid },
+			update: { ...category, userId: userId },
+			create: { ...category, userId: userId }
+		})
+	}
+
+	// Keep track of categories that have been processed
+	let processedUids = new Set(topLevelParents.map((cat) => cat.uid))
+
+	// While there are still child categories to process
+	while (childCategories.length > 0) {
+		for (let i = 0; i < childCategories.length; i++) {
+			const category = childCategories[i]
+			if (processedUids.has(category.parent_uid)) {
+				await prismaC.category.upsert({
+					where: { uid: category.uid },
+					update: { ...category, userId: userId },
+					create: { ...category, userId: userId }
+				})
+				processedUids.add(category.uid)
+				childCategories.splice(i, 1) // Remove the processed category
+				i-- // Adjust the index since we've modified the array
+			}
+		}
 	}
 }

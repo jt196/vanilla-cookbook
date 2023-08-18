@@ -6,7 +6,6 @@
 	export let data
 
 	let { nodes, userId } = data
-	console.log('🚀 ~ file: +page.svelte:9 ~ userId:', userId)
 
 	let newCategoryName = ''
 	let showNewCategoryInput = false
