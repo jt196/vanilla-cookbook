@@ -112,11 +112,11 @@ async function addUsersToDB(users) {
 async function declareRecipes(recipes, adminUserId) {
 	return Promise.all(
 		recipes.map(async (recipe) => {
-			const { categories, photo_data, photo_large, ...otherRecipeFields } = recipe
+			const { categories, photo_data, photo, ...otherRecipeFields } = recipe
 
-			// Save the photo_large to the /static folder
-			if (photo_data && photo_large) {
-				const imagePath = path.join(staticDir, photo_large)
+			// Save the photo to the /static folder
+			if (photo_data && photo) {
+				const imagePath = path.join(staticDir, photo)
 				const imageBuffer = Buffer.from(photo_data, 'base64')
 				await fs.writeFile(imagePath, imageBuffer)
 			}
