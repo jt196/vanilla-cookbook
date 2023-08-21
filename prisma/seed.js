@@ -3,7 +3,8 @@ import lucia from 'lucia-auth'
 import { sveltekit } from 'lucia-auth/middleware'
 import prisma from '@lucia-auth/adapter-prisma'
 import { fail } from '@sveltejs/kit'
-import { promises as fs } from 'fs'
+import { promises as fsPromises } from 'fs'
+import fs from 'fs'
 import { addCategoriesToDB, loadCategories } from '../src/lib/utils/paprikaAPI.js'
 import path from 'path'
 import { fileURLToPath } from 'url'
@@ -112,47 +113,66 @@ async function addUsersToDB(users) {
 async function declareRecipes(recipes, adminUserId) {
 	return Promise.all(
 		recipes.map(async (recipe) => {
-			const { categories, photo_data, photo, ...otherRecipeFields } = recipe
+			const { categories, photo_data, photos, photo, ...otherRecipeFields } = recipe
+
+			// photos ? console.log('You need to do something with these photos!') : null
 
 			// Save the photo to the /static folder
 			if (photo_data && photo) {
 				const imagePath = path.join(staticDir, photo)
-				const imageBuffer = Buffer.from(photo_data, 'base64')
-				await fs.writeFile(imagePath, imageBuffer)
+
+				// Check if the photo already exists
+				if (!fs.existsSync(imagePath)) {
+					const imageBuffer = Buffer.from(photo_data, 'base64')
+					await fsPromises.writeFile(imagePath, imageBuffer)
+				} else {
+					console.log(`Photo ${photo} already exists. Skipping...`)
+				}
 			}
 
-			// Get uids for each category name
+			// Ensure all categories exist and get their uids
 			const categoryUids = await Promise.all(
 				categories.map(async (categoryName) => {
-					const category = await prismaC.category.findFirst({
+					let category = await prismaC.category.findFirst({
 						where: { name: categoryName }
 					})
 
 					// If the category doesn't exist in the database, create it
 					if (!category) {
-						const newCategory = await prismaC.category.create({
-							data: { name: categoryName }
+						console.log(`Creating new category: ${categoryName}`)
+						category = await prismaC.category.create({
+							data: { name: categoryName, userId: adminUserId }
 						})
-						return newCategory.uid
 					}
 
 					return category.uid
 				})
 			)
 
-			return {
-				...otherRecipeFields,
-				userId: adminUserId,
-				categories: {
-					create: categoryUids.map((uid) => {
-						return {
-							category: {
-								connect: { uid: uid }
-							}
+			// Create the recipe
+			const createdRecipe = await prismaC.recipe.create({
+				data: {
+					...otherRecipeFields,
+					created: new Date(otherRecipeFields.created),
+					photo,
+					userId: adminUserId
+				}
+			})
+
+			// Link the recipe to its categories in the RecipeCategory join table
+			await Promise.all(
+				categoryUids.map((categoryUid) => {
+					// console.log(`Linking recipe ${createdRecipe.uid} to category ${categoryUid}`)
+					return prismaC.recipeCategory.create({
+						data: {
+							recipeUid: createdRecipe.uid,
+							categoryUid: categoryUid
 						}
 					})
-				}
-			}
+				})
+			)
+
+			return createdRecipe
 		})
 	)
 }
@@ -170,7 +190,7 @@ async function seed() {
 	try {
 		let fileExists = true
 		try {
-			await fs.access('./prisma/dev.db')
+			await fsPromises.access('./prisma/dev.db')
 		} catch (error) {
 			fileExists = false
 		}
@@ -178,6 +198,7 @@ async function seed() {
 			await prismaC.authUser.deleteMany()
 			await prismaC.article.deleteMany()
 			await prismaC.recipe.deleteMany()
+			await prismaC.recipeCategory.deleteMany()
 		}
 
 		const users = getUsers()

@@ -3,6 +3,8 @@
 	import { localDateAndTime } from '$lib/utils/dateTime'
 	import FoodBowl from '$lib/components/svg/FoodBowl.svelte'
 	import StarRating from './StarRating.svelte'
+	import Delete from './svg/Delete.svelte'
+	import Edit from './svg/Edit.svelte'
 
 	export let filteredRecipes = []
 	export let data
@@ -11,6 +13,14 @@
 {#each filteredRecipes as recipe}
 	<article>
 		<div class="grid">
+			{#if recipe.photo}
+				<img
+					class="recipe-thumbnail"
+					src="/recipe_photos/{recipe.photo}"
+					alt="{recipe.name} photo" />
+			{:else}
+				<FoodBowl width="100px" />
+			{/if}
 			<a href="recipe/view/{recipe.uid}" class="recipe-card">
 				<div>
 					<header>{recipe.name}</header>
@@ -21,9 +31,11 @@
 			<div class="align-right recipe-buttons">
 				{#if recipe.userId === data.user?.userId}
 					<form action="?/deleteRecipe&uid={recipe.uid}" method="POST">
-						<button type="submit" class="outline secondary">Delete</button>
+						<button type="submit" class="outline secondary"
+							><Delete width="30px" height="30px" fill="var(--pico-del-color)" /></button>
 					</form>
-					<a href="recipe/edit/{recipe.uid}" role="button" class="outline contrast">Edit</a>
+					<a href="recipe/edit/{recipe.uid}" role="button" class="outline contrast"
+						><Edit width="30px" height="30px" fill="var(--pico-ins-color)" /></a>
 				{/if}
 			</div>
 		</div>
@@ -31,36 +43,44 @@
 {/each}
 
 <style lang="scss">
-	.recipe-thumbnail img {
-		height: 200px; /* Set to your desired height */
-		width: auto; /* This will ensure the width remains proportional */
+	.recipe-thumbnail {
+		width: 100px;
+		height: auto;
 		object-fit: cover;
-		display: block; /* To remove any default spacing at the bottom of images */
+		display: block;
 	}
 
 	.grid {
-		grid-template-columns: 3fr 1fr; /* This means the first column (recipe-card) will take up 3 parts, and the second column will take up 1 part, making the first column 3/4 of the grid */
+		display: grid;
+		grid-template-columns: 100px 3fr 1fr; // 100px for the image, 3 parts for the recipe card, and 1 part for the buttons
+		gap: 1rem; // Spacing between grid items
 	}
 
 	.recipe-card {
-		grid-column: 1;
-		text-decoration: none; /* Removes the underline from the link */
-		color: inherit; /* Ensures the link color doesn't override the text color */
+		grid-column: 2;
+		text-decoration: none;
+		color: inherit;
 	}
 
 	.recipe-buttons {
-		grid-column: 2;
+		grid-column: 3;
+		padding: 0.2rem;
+		display: flex;
+		justify-content: flex-end; // Aligns the buttons to the right side
+		align-items: center; // Vertically centers the buttons if the container has a height
+		gap: 0.5rem; // Adds spacing between the buttons
+		button {
+			margin-bottom: 0;
+		}
 	}
 
-	/* Initial styles for the article */
 	article {
-		transition: background-color 0.2s ease; /* Smooth transition for the background color */
+		transition: background-color 0.2s ease;
 		padding: 1rem;
 		margin-bottom: 1rem;
 	}
 
-	/* Hover effect for the article */
 	article:hover {
-		background-color: var(--pico-secondary-focus); /* Change this to your desired hover color */
+		background-color: var(--pico-secondary-focus);
 	}
 </style>

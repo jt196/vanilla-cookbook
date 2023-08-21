@@ -6,7 +6,6 @@
 
 	let isEditing = false
 	let editedName = node.name
-	console.log('🚀 ~ file: CategoryItem.svelte:15 ~ saveChanges ~ node.uid:', node.uid)
 
 	async function saveChanges() {
 		if (editedName !== node.name) {

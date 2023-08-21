@@ -147,6 +147,8 @@ export async function GET({ params, locals }) {
 
 		const categories = recipeCategories.map((rc) => rc.category)
 
+		const categorySet = new Set()
+
 		// Recursively fetch parent categories
 		for (let category of categories) {
 			let currentCategory = category
@@ -157,12 +159,16 @@ export async function GET({ params, locals }) {
 					}
 				})
 				if (!parentCategory) break // Stop if parent not found
-				categories.push(parentCategory)
+				categorySet.add(parentCategory)
 				currentCategory = parentCategory
 			}
 		}
 
-		const hierarchicalCategories = buildHierarchy(categories)
+		const uniqueCategories = [...categories, ...categorySet]
+
+		const hierarchicalCategories = buildHierarchy(uniqueCategories)
+
+		// TODO: #41 Make this into a get categories function for reuse
 
 		return new Response(JSON.stringify(hierarchicalCategories), {
 			status: 200,
