@@ -24,6 +24,15 @@ export const load = async ({ url, fetch, locals }) => {
 						}
 					}
 				}
+			},
+			photos: {
+				where: {
+					isMain: true
+				},
+				select: {
+					id: true, // or whatever fields you need
+					fileType: true
+				}
 			}
 		}
 	})

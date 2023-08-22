@@ -29,6 +29,17 @@ export const load = async ({ params, locals, fetch, url }) => {
 		const recipe = await prisma.recipe.findUnique({
 			where: {
 				uid: params.recipeId
+			},
+			include: {
+				photos: {
+					where: {
+						isMain: true
+					},
+					select: {
+						id: true, // or whatever fields you need
+						fileType: true
+					}
+				}
 			}
 		})
 		if (!recipe) {
@@ -43,7 +54,6 @@ export const load = async ({ params, locals, fetch, url }) => {
 
 	let recipeCategories = await fetch(`${url.origin}/api/recipe/categories/${params.recipeId}`)
 	const categories = await recipeCategories.json()
-	console.log('🚀 ~ file: +page.server.js:48 ~ load ~ categories:', categories)
 
 	return {
 		recipe: getRecipe(),

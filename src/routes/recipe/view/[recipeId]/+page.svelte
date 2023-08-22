@@ -61,9 +61,11 @@
 
 <div class="grid">
 	<div>
-		<div class="recipe-thumbnail">
-			{#if recipe?.image_url && startsWithHttp(recipe.image_url)}
-				<img src={recipe.image_url} alt="{recipe.name} thumbnail" />
+		<div class="recipe-cover">
+			{#if recipe.photos && recipe.photos.length > 0}
+				<img
+					src="/recipe_photos/{recipe.photos[0].id}.{recipe.photos[0].fileType}"
+					alt="{recipe.name} photo" />
 			{:else}
 				<FoodBowl height="400px" />
 			{/if}
@@ -119,7 +121,7 @@
 <a href="/recipe/edit/{recipe?.uid}" role="button" class="outline contrast">Edit</a>
 
 <style lang="scss">
-	.recipe-thumbnail img {
+	.recipe-cover img {
 		height: 400px; /* Set to your desired height */
 		width: auto; /* This will ensure the width remains proportional */
 		object-fit: cover;

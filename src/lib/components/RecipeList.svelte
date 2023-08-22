@@ -13,10 +13,10 @@
 {#each filteredRecipes as recipe}
 	<article>
 		<div class="grid">
-			{#if recipe.photo}
+			{#if recipe.photos && recipe.photos.length > 0}
 				<img
 					class="recipe-thumbnail"
-					src="/recipe_photos/{recipe.photo}"
+					src="/recipe_photos/{recipe.photos[0].id}.{recipe.photos[0].fileType}"
 					alt="{recipe.name} photo" />
 			{:else}
 				<FoodBowl width="100px" />
