@@ -13,6 +13,7 @@ import { parseURL } from '$lib/utils/parse/recipeParse'
  * @type {Actions}
  */
 export const actions = {
+	// TODO: #42 Add photo when saving recipe
 	createRecipe: async ({ request, locals }) => {
 		const { session, user } = await locals.auth.validateUser()
 		if (!session || !user) {

@@ -110,79 +110,141 @@ async function addUsersToDB(users) {
 	}
 }
 
-async function declareRecipes(recipes, adminUserId) {
-	return Promise.all(
-		recipes.map(async (recipe) => {
-			const { categories, photo_data, photos, photo, ...otherRecipeFields } = recipe
+async function savePhoto(photoData, photoFilename, directory) {
+	const imagePath = path.join(directory, photoFilename)
 
-			// photos ? console.log('You need to do something with these photos!') : null
+	// Check if the photo already exists
+	if (!fs.existsSync(imagePath)) {
+		// <-- This is synchronous and fine as is.
+		const imageBuffer = Buffer.from(photoData, 'base64')
+		await fsPromises.writeFile(imagePath, imageBuffer) // <-- Promise-based approach.
+	}
+}
 
-			// Save the photo to the /static folder
-			if (photo_data && photo) {
-				const imagePath = path.join(staticDir, photo)
+function getFileType(filename) {
+	return filename.split('.').pop()
+}
 
-				// Check if the photo already exists
-				if (!fs.existsSync(imagePath)) {
-					const imageBuffer = Buffer.from(photo_data, 'base64')
-					await fsPromises.writeFile(imagePath, imageBuffer)
-				} else {
-					console.log(`Photo ${photo} already exists. Skipping...`)
-				}
+async function declareRecipes(rawRecipes) {
+	return rawRecipes.map((recipe) => {
+		// eslint-disable-next-line no-unused-vars
+		const { categories, photo_data, photos, photo_url, photo, ...otherRecipeFields } = recipe
+		return {
+			...otherRecipeFields,
+			created: new Date(otherRecipeFields.created)
+		}
+	})
+}
+
+async function addRecipesToDB(declaredRecipes, adminUserId) {
+	const createdRecipes = []
+	for (const recipe of declaredRecipes) {
+		const createdRecipe = await prismaC.recipe.create({
+			data: {
+				...recipe,
+				userId: adminUserId
 			}
+		})
+		createdRecipes.push(createdRecipe)
+	}
+	return createdRecipes
+}
 
-			// Ensure all categories exist and get their uids
-			const categoryUids = await Promise.all(
-				categories.map(async (categoryName) => {
-					let category = await prismaC.category.findFirst({
-						where: { name: categoryName }
-					})
+// Parse a recipe object and create any categories that don't exist
+async function ensureCategoriesExist(rawRecipes, adminUserId) {
+	const allCategoriesFromRecipes = rawRecipes.flatMap((recipe) => recipe.categories)
+	const uniqueCategories = [...new Set(allCategoriesFromRecipes)]
 
-					// If the category doesn't exist in the database, create it
-					if (!category) {
-						console.log(`Creating new category: ${categoryName}`)
-						category = await prismaC.category.create({
-							data: { name: categoryName, userId: adminUserId }
-						})
-					}
+	const existingCategories = await prismaC.category.findMany({
+		where: {
+			name: {
+				in: uniqueCategories
+			}
+		}
+	})
 
-					return category.uid
-				})
-			)
+	const existingCategoryNames = existingCategories.map((cat) => cat.name)
+	const categoriesToCreate = uniqueCategories.filter(
+		(catName) => !existingCategoryNames.includes(catName)
+	)
 
-			// Create the recipe
-			const createdRecipe = await prismaC.recipe.create({
+	await Promise.all(
+		categoriesToCreate.map((catName) => {
+			return prismaC.category.create({
 				data: {
-					...otherRecipeFields,
-					created: new Date(otherRecipeFields.created),
-					photo,
+					name: catName,
 					userId: adminUserId
 				}
 			})
-
-			// Link the recipe to its categories in the RecipeCategory join table
-			await Promise.all(
-				categoryUids.map((categoryUid) => {
-					// console.log(`Linking recipe ${createdRecipe.uid} to category ${categoryUid}`)
-					return prismaC.recipeCategory.create({
-						data: {
-							recipeUid: createdRecipe.uid,
-							categoryUid: categoryUid
-						}
-					})
-				})
-			)
-
-			return createdRecipe
 		})
 	)
+
+	return [...existingCategories, ...categoriesToCreate]
 }
 
-// 8. Add Recipes to DB
-async function addRecipesToDB(recipes) {
-	for (const recipe of recipes) {
-		recipe.created = new Date(recipe.created)
-		let filteredRecipe = filterRecipeData(recipe)
-		await prismaC.recipe.create({ data: filteredRecipe })
+async function addRecipeCategoriesToDB(createdRecipes, rawRecipes) {
+	for (const recipe of createdRecipes) {
+		const originalRecipe = rawRecipes.find((raw) => raw.uid === recipe.uid)
+		const categoryNames = originalRecipe.categories
+
+		const categories = await prismaC.category.findMany({
+			where: {
+				name: {
+					in: categoryNames
+				}
+			}
+		})
+
+		for (const category of categories) {
+			await prismaC.recipeCategory.create({
+				data: {
+					recipeUid: recipe.uid,
+					categoryUid: category.uid
+				}
+			})
+		}
+	}
+}
+
+async function handlePhotosForRecipes(createdRecipes) {
+	for (const recipe of createdRecipes) {
+		// Handle the main photo
+		if (recipe.photo && recipe.photo_data) {
+			await savePhoto(recipe.photo_data, recipe.photo, staticDir)
+			await prismaC.recipePhoto.create({
+				data: {
+					id: recipe.photo.split('.')[0],
+					recipeUid: recipe.uid,
+					isMain: true,
+					fileType: getFileType(recipe.photo)
+				}
+			})
+		}
+
+		// Handle the photos array
+		if (recipe.photos && recipe.photos.length > 0) {
+			for (const photoObj of recipe.photos) {
+				const { data: photoData, filename } = photoObj
+				await savePhoto(photoData, filename, staticDir)
+				await prismaC.recipePhoto.create({
+					data: {
+						id: filename.split('.')[0],
+						recipeUid: recipe.uid,
+						fileType: getFileType(filename)
+					}
+				})
+			}
+		}
+
+		// Handle the photo_url
+		if (recipe.image_url) {
+			await prismaC.recipePhoto.create({
+				data: {
+					recipeUid: recipe.uid,
+					url: recipe.image_url
+				}
+			})
+		}
 	}
 }
 
@@ -209,8 +271,12 @@ async function seed() {
 		await addCategoriesToDB(categories, adminUserId)
 
 		const rawRecipes = await loadRecipes()
-		const recipes = await declareRecipes(rawRecipes, adminUserId)
-		await addRecipesToDB(recipes)
+		await ensureCategoriesExist(rawRecipes, adminUserId)
+		const declaredRecipes = await declareRecipes(rawRecipes)
+		const createdRecipes = await addRecipesToDB(declaredRecipes, adminUserId)
+
+		await addRecipeCategoriesToDB(createdRecipes, rawRecipes)
+		await handlePhotosForRecipes(rawRecipes)
 	} catch (error) {
 		console.error('Error in seeding:', error.message)
 	} finally {

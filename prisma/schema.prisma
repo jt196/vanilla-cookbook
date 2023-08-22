@@ -49,6 +49,16 @@ model Recipe {
     servings         String?
     nutritional_info String?
     categories       RecipeCategory[] @relation("RecipeToRecipeCategory")
+    photos           RecipePhoto[]
+}
+
+model RecipePhoto {
+    id        String  @id @default(uuid())
+    recipeUid String
+    url       String?
+    fileType  String?
+    isMain    Boolean @default(false)
+    recipe    Recipe  @relation(fields: [recipeUid], references: [uid])
 }
 
 model Category {

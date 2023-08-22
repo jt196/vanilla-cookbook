@@ -55,6 +55,7 @@ export function filterRecipeData(recipe) {
 		'photo_hash',
 		'on_favorites',
 		'photo',
+		'photos',
 		'scale',
 		'ingredients',
 		'is_pinned',
