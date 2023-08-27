@@ -52,6 +52,7 @@
 	$: if (data && data.recipe) {
 		ingredients = recipe.ingredients ? recipe.ingredients.split('\n') : []
 		ingredientsArray = ingredientProcess(ingredients)
+		console.log('🚀 ~ file: +page.svelte:55 ~ ingredientsArray:', ingredientsArray)
 		recipe.directions ? (directionLines = recipe.directions.split('\n')) : null
 		scaledServings = recipe.servings ? scaleNumbersInString(recipe.servings, scale) : null
 	}
@@ -92,13 +93,17 @@
 		<p>Ingredients:</p>
 		<ul>
 			{#each ingredientsArray as ingredient}
-				<li>
-					<strong>
-						{ingredient.quantity ? decimalToFraction(ingredient.quantity * scale) : ''}
-					</strong>
-					{ingredient.unit && ingredient.unit !== 'q.b.' ? ingredient.unit : ''}
-					{ingredient.ingredient}
-				</li>
+				{#if ingredient.ingredient.trim().startsWith('#')}
+					<h4>{ingredient.ingredient.trim().replace('# ', '')}</h4>
+				{:else}
+					<li>
+						<strong>
+							{ingredient.quantity ? decimalToFraction(ingredient.quantity * scale) : ''}
+						</strong>
+						{ingredient.unit && ingredient.unit !== 'q.b.' ? ingredient.unit : ''}
+						{ingredient.ingredient}
+					</li>
+				{/if}
 			{/each}
 		</ul>
 	</div>
