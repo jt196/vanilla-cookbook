@@ -132,7 +132,7 @@
 <style lang="scss">
 	.content {
 		transition: margin-left 0.3s ease;
-		padding: 20px; // This is just an example, adjust as needed
+		padding: 0; // This is just an example, adjust as needed
 
 		&.sidebar-open {
 			margin-left: 250px;

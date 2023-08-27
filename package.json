@@ -43,6 +43,7 @@
 		"svelte": "^3.55.1",
 		"svelte-check": "^3.0.3",
 		"svelte-preprocess": "^5.0.4",
+		"svelte-virtual-list": "^3.0.1",
 		"ts-node": "^10.9.1",
 		"tslib": "^2.5.0",
 		"tsx": "^3.12.7",

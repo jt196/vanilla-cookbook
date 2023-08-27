@@ -1,48 +1,61 @@
 <script>
-	import { startsWithHttp } from '$lib/utils/filters'
 	import { localDateAndTime } from '$lib/utils/dateTime'
 	import FoodBowl from '$lib/components/svg/FoodBowl.svelte'
 	import StarRating from './StarRating.svelte'
 	import Delete from './svg/Delete.svelte'
 	import Edit from './svg/Edit.svelte'
+	import VirtualList from 'svelte-virtual-list'
 
 	export let filteredRecipes = []
 	export let data
+
+	let start
+	let end
 </script>
 
-{#each filteredRecipes as recipe}
-	<article>
-		<div class="grid">
-			{#if recipe.photos && recipe.photos.length > 0}
-				<img
-					class="recipe-thumbnail"
-					src="/recipe_photos/{recipe.photos[0].id}.{recipe.photos[0].fileType}"
-					alt="{recipe.name} photo" />
-			{:else}
-				<FoodBowl width="100px" />
-			{/if}
-			<a href="recipe/view/{recipe.uid}" class="recipe-card">
-				<div>
-					<header>{recipe.name}</header>
-					<p>Created: <i>{localDateAndTime(recipe.created)}</i></p>
-					<StarRating rating={recipe.rating} />
-				</div>
-			</a>
-			<div class="align-right recipe-buttons">
-				{#if recipe.userId === data.user?.userId}
-					<form action="?/deleteRecipe&uid={recipe.uid}" method="POST">
-						<button type="submit" class="outline secondary"
-							><Delete width="30px" height="30px" fill="var(--pico-del-color)" /></button>
-					</form>
-					<a href="recipe/edit/{recipe.uid}" role="button" class="outline contrast"
-						><Edit width="30px" height="30px" fill="var(--pico-ins-color)" /></a>
+<div class="container">
+	<VirtualList items={filteredRecipes} bind:start bind:end let:item>
+		<article>
+			<div class="grid">
+				{#if item.photos && item.photos.length > 0}
+					<img
+						class="recipe-thumbnail"
+						loading="lazy"
+						src="/recipe_photos/{item.photos[0].id}.{item.photos[0].fileType}"
+						alt="{item.name} photo" />
+				{:else}
+					<FoodBowl width="100px" />
 				{/if}
+				<a href="recipe/view/{item.uid}" class="recipe-card">
+					<div>
+						<header>{item.name}</header>
+						<p>Created: <i>{localDateAndTime(item.created)}</i></p>
+						<StarRating rating={item.rating} />
+					</div>
+				</a>
+				<div class="align-right recipe-buttons">
+					{#if item.userId === data.user?.userId}
+						<form action="?/deleteRecipe&uid={item.uid}" method="POST">
+							<button type="submit" class="outline secondary">
+								<Delete width="30px" height="30px" fill="var(--pico-del-color)" />
+							</button>
+						</form>
+						<a href="recipe/edit/{item.uid}" role="button" class="outline contrast">
+							<Edit width="30px" height="30px" fill="var(--pico-ins-color)" />
+						</a>
+					{/if}
+				</div>
 			</div>
-		</div>
-	</article>
-{/each}
+		</article>
+	</VirtualList>
+	<p>showing items {start}-{end}</p>
+</div>
 
 <style lang="scss">
+	.container {
+		min-height: 200px;
+		height: calc(100vh - 18em);
+	}
 	.recipe-thumbnail {
 		width: 100px;
 		height: auto;
