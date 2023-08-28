@@ -99,3 +99,21 @@ export function sortItemsAlphabetically(nodes) {
 	}
 	return nodes
 }
+
+// Takes a hierarchical category object and returns an array of selected uids
+export function collectSelectedUids(categories) {
+	const selectedUids = []
+
+	function traverse(category) {
+		if (category.selected) {
+			selectedUids.push(category.uid)
+		}
+		if (category.children) {
+			category.children.forEach(traverse)
+		}
+	}
+
+	categories.forEach(traverse)
+
+	return selectedUids
+}

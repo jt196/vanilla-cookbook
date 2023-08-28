@@ -34,13 +34,17 @@
 			outline: none;
 			box-shadow: 0 0 5px var(--pico-primary); // A blue shadow for example
 		}
+		&:hover {
+			background: var(--pico-primary-focus);
+			transition: background 0.2s;
+		}
 	}
 
 	li {
 		margin: 5px 0;
 	}
 
-	.selected {
-		color: var(--pico-primary); /* or any other color you prefer */
+	button.selected {
+		background: var(--pico-primary);
 	}
 </style>

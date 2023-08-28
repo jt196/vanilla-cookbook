@@ -1,11 +1,7 @@
 <script>
 	import { localDateAndTime } from '$lib/utils/dateTime'
-	import {
-		decimalToFraction,
-		ingredientProcess,
-		scaleNumbersInString,
-		startsWithHttp
-	} from '$lib/utils/filters'
+	import { collectSelectedUids } from '$lib/utils/categories'
+	import { decimalToFraction, ingredientProcess, scaleNumbersInString } from '$lib/utils/filters'
 	import Scale from '$lib/components/Scale.svelte'
 	import FoodBowl from '$lib/components/svg/FoodBowl.svelte'
 	import CategoryTree from '$lib/components/CategoryTree.svelte'
@@ -56,6 +52,9 @@
 		scaledServings = recipe.servings ? scaleNumbersInString(recipe.servings, scale) : null
 	}
 
+	$: recipeCategories =
+		recipe && recipe.categories ? recipe.categories.map((cat) => cat.categoryUid) : []
+
 	function ingredientHeader(ingredient) {
 		let ingredientTitle = ingredient.trim().replace('# ', '')
 		return toTitleCase(ingredientTitle)
@@ -97,7 +96,10 @@
 			</p>
 		{/if}
 		Categories:
-		<CategoryTree {categories} isRoot={true} />
+		<CategoryTree
+			{categories}
+			selectedCategoryUids={collectSelectedUids(categories)}
+			isRoot={true} />
 	</div>
 	<div>
 		<p>Ingredients:</p>

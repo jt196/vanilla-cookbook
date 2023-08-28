@@ -145,7 +145,7 @@ export async function GET({ params, locals }) {
 			}
 		})
 
-		const categories = recipeCategories.map((rc) => rc.category)
+		const categories = recipeCategories.map((rc) => ({ ...rc.category, selected: true }))
 
 		const categorySet = new Set()
 
@@ -159,12 +159,12 @@ export async function GET({ params, locals }) {
 					}
 				})
 				if (!parentCategory) break // Stop if parent not found
-				categorySet.add(parentCategory)
+				categorySet.add({ ...parentCategory, selected: false })
 				currentCategory = parentCategory
 			}
 		}
 
-		const uniqueCategories = [...categories, ...categorySet]
+		const uniqueCategories = [...categories, ...Array.from(categorySet)]
 
 		const hierarchicalCategories = buildHierarchy(uniqueCategories)
 

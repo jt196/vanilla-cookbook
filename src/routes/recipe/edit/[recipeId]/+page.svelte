@@ -18,8 +18,6 @@
 	$: recipeCategories =
 		recipe && recipe.categories ? recipe.categories.map((cat) => cat.categoryUid) : []
 
-	$: console.log('🚀 ~ file: +page.svelte:19 ~ recipeCategories:', recipeCategories)
-
 	function handleCategoryClick(category) {
 		if (recipeCategories.includes(category.uid)) {
 			recipeCategories = recipeCategories.filter((uid) => uid !== category.uid)
