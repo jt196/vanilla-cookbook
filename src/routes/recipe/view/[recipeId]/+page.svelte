@@ -52,9 +52,19 @@
 	$: if (data && data.recipe) {
 		ingredients = recipe.ingredients ? recipe.ingredients.split('\n') : []
 		ingredientsArray = ingredientProcess(ingredients)
-		console.log('🚀 ~ file: +page.svelte:55 ~ ingredientsArray:', ingredientsArray)
 		recipe.directions ? (directionLines = recipe.directions.split('\n')) : null
 		scaledServings = recipe.servings ? scaleNumbersInString(recipe.servings, scale) : null
+	}
+
+	function ingredientHeader(ingredient) {
+		let ingredientTitle = ingredient.trim().replace('# ', '')
+		return toTitleCase(ingredientTitle)
+	}
+
+	function toTitleCase(str) {
+		return str.replace(/\w\S*/g, function (txt) {
+			return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
+		})
 	}
 </script>
 
@@ -94,7 +104,7 @@
 		<ul>
 			{#each ingredientsArray as ingredient}
 				{#if ingredient.ingredient.trim().startsWith('#')}
-					<h4>{ingredient.ingredient.trim().replace('# ', '')}</h4>
+					<h4>{ingredientHeader(ingredient.ingredient)}</h4>
 				{:else}
 					<li>
 						<strong>
@@ -127,9 +137,18 @@
 
 <style lang="scss">
 	.recipe-cover img {
-		height: 400px; /* Set to your desired height */
+		height: 100%; /* Set to your desired height */
+		max-height: 400px;
 		width: auto; /* This will ensure the width remains proportional */
 		object-fit: cover;
 		display: block; /* To remove any default spacing at the bottom of images */
+	}
+
+	// Ingredients headers in the middle of text to have some spacing
+	h4:not(:first-child) {
+		margin-top: 20px;
+	}
+	h4:first-child {
+		margin-top: 0;
 	}
 </style>
