@@ -1,7 +1,10 @@
 <script>
 	import { localDateAndTime } from '$lib/utils/dateTime'
 	import { collectSelectedUids } from '$lib/utils/categories'
+	import { shouldSkipConversion } from '$lib/utils/units'
 	import { decimalToFraction, ingredientProcess, scaleNumbersInString } from '$lib/utils/filters'
+	import { determineSystem, manipulateIngredient } from '$lib/utils/converter'
+	import { onMount } from 'svelte'
 	import Scale from '$lib/components/Scale.svelte'
 	import FoodBowl from '$lib/components/svg/FoodBowl.svelte'
 	import CategoryTree from '$lib/components/CategoryTree.svelte'
@@ -44,16 +47,41 @@
 	 */
 	let directionLines = []
 
+	/**
+	 * Calculated measurement system for the recipe
+	 * @type {string}
+	 */
+	let measurementSystem = {}
+	let selectedSystem
+	let convertedIngredients = {}
+
+	// Initialize the selected system based on the determined system
+	function updateSelectedSystem() {
+		if (measurementSystem.system !== 'inconclusive') {
+			selectedSystem = measurementSystem.system
+			console.log(
+				'🚀 ~ file: +page.svelte:62 ~ updateSelectedSystem ~ selectedSystem:',
+				selectedSystem
+			)
+		}
+	}
+	console.log('🚀 ~ file: +page.svelte:74 ~ selectedSystem:', selectedSystem)
+
 	/** Logic to update various variables based on the recipe data. */
 	$: if (data && data.recipe) {
 		ingredients = recipe.ingredients ? recipe.ingredients.split('\n') : []
 		ingredientsArray = ingredientProcess(ingredients)
+		console.log('🚀 ~ file: +page.svelte:74 ~ ingredientsArray:', ingredientsArray)
+		measurementSystem = determineSystem(ingredientsArray)
+		convertedIngredients = convertIngredients(ingredientsArray, selectedSystem)
+		console.log('🚀 ~ file: +page.svelte:77 ~ convertedIngredients:', convertedIngredients)
+		// Call the function to update selectedSystem based on the initial measurementSystem
+		if (!selectedSystem) {
+			updateSelectedSystem()
+		}
 		recipe.directions ? (directionLines = recipe.directions.split('\n')) : null
 		scaledServings = recipe.servings ? scaleNumbersInString(recipe.servings, scale) : null
 	}
-
-	$: recipeCategories =
-		recipe && recipe.categories ? recipe.categories.map((cat) => cat.categoryUid) : []
 
 	function ingredientHeader(ingredient) {
 		let ingredientTitle = ingredient.trim().replace('# ', '')
@@ -63,6 +91,24 @@
 	function toTitleCase(str) {
 		return str.replace(/(^|\s)\S/g, function (t) {
 			return t.toUpperCase()
+		})
+	}
+
+	// Function to format the system string
+	function formatSystem(system) {
+		return system.charAt(0).toUpperCase() + system.slice(1).replace(/([A-Z])/g, ' $1')
+	}
+
+	function convertIngredients(ingredients, system, toSystem) {
+		return ingredients.map((ingredient) => {
+			if (shouldSkipConversion(ingredient.unit)) {
+				return ingredient
+			}
+			const converted = manipulateIngredient(ingredient, system, toSystem)
+			if (converted === null || converted.error) {
+				return ingredient
+			}
+			return converted
 		})
 	}
 </script>
@@ -103,9 +149,36 @@
 	</div>
 	<div>
 		<p>Ingredients:</p>
+		<details class="dropdown">
+			<summary> Selected system: {formatSystem(selectedSystem)} </summary>
+			<ul>
+				<li>
+					<label>
+						<input type="radio" bind:group={selectedSystem} name="system" value="metric" />
+						Metric
+					</label>
+				</li>
+				<li>
+					<label>
+						<input type="radio" bind:group={selectedSystem} name="system" value="imperial" />
+						Imperial
+					</label>
+				</li>
+				<li>
+					<label>
+						<input
+							type="radio"
+							bind:group={selectedSystem}
+							name="system"
+							value="americanVolumetric" />
+						American Volumetric
+					</label>
+				</li>
+			</ul>
+		</details>
 		<ul>
-			{#each ingredientsArray as ingredient}
-				{#if ingredient.ingredient.trim().startsWith('#')}
+			{#each convertedIngredients as ingredient}
+				{#if ingredient && ingredient.ingredient && ingredient.ingredient.trim().startsWith('#')}
 					<h4>{ingredientHeader(ingredient.ingredient)}</h4>
 				{:else}
 					<li>

@@ -1,5 +1,6 @@
 import { parse } from 'recipe-ingredient-parser-v3'
 import he from 'he'
+import { manipulateIngredient } from './converter'
 
 /**
  * Filters data based on a search string and a key.
@@ -43,10 +44,27 @@ export function ingredientProcess(ingredientArray) {
 		} catch (error) {
 			// Log the error for debugging purposes
 			console.error('Error occurred while processing ingredient:', error)
+			// Add the fallback object
+			parsedIngredients.push({
+				quantity: 0,
+				unit: null,
+				unitPlural: null,
+				symbol: null,
+				ingredient: ingredientStr,
+				minQty: 0,
+				maxQty: 0
+			})
 		}
 	})
 
 	return parsedIngredients
+}
+
+export function ingredientConvertToImperial(fullIngredientObject) {
+	let convertedFullIngredientObject = []
+	fullIngredientObject.forEach((singleIngredientObject) => {
+		const convertedSingleIngredient = manipulateIngredient(singleIngredientObject)
+	})
 }
 
 /**
