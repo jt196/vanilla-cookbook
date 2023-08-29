@@ -1,4 +1,6 @@
 import { units, findSuitableUnit } from '$lib/utils/units'
+import Fuse from 'fuse.js'
+import { dryIngredientsConversion } from '$lib/utils/dryIngredientsConversion'
 
 /**
  * Takes the quantity of the original unit and converts it to another given unit.
@@ -89,40 +91,85 @@ const measurementSystems = Object.keys(systemToUnitsMap).reduce((acc, system) =>
 	return acc
 }, {})
 
-// export function manipulateIngredient(ingredientObj, toUnit) {
-// 	// eslint-disable-next-line no-unused-vars
-// 	const { quantity, unit, unitPlural, symbol, ingredient, minQty, maxQty } = ingredientObj
+const fuseOptions = {
+	keys: ['name'],
+	includeScore: true,
+	caseSensitive: false,
+	threshold: 0.7 // Lower the threshold, the stricter the match. Range [0, 1]
+}
 
-// 	const conversionResult = converter(quantity, unit, toUnit)
+function fuzzyMatch(ingredient, lookupTable) {
+	const words = ingredient.toLowerCase().split(/\W+/) // Split by non-word characters
+	for (const word of words) {
+		for (const item of lookupTable) {
+			if (item.name.toLowerCase().includes(word)) {
+				return item
+			}
+		}
+	}
+	return null
+}
 
-// 	if (conversionResult.error) {
-// 		return { error: conversionResult.error }
-// 	}
+const fuse = new Fuse(dryIngredientsConversion, fuseOptions)
 
-// 	const newQuantity = conversionResult.quantity
-// 	const newUnit = conversionResult.unit
-
-// 	// You might want to add logic here to determine the new unitPlural and symbol based on the new unit
-// 	const newUnitPlural = newUnit + 's' // Simplified example
-// 	const newSymbol = newUnit.charAt(0) // Simplified example
-
-// 	return {
-// 		quantity: newQuantity,
-// 		unit: newUnit,
-// 		unitPlural: newUnitPlural,
-// 		symbol: newSymbol,
-// 		ingredient: `${newQuantity} ${newUnitPlural} of ${ingredient.split(' ')[1]}`,
-// 		minQty: newQuantity, // You might want to convert this too
-// 		maxQty: newQuantity // You might want to convert this too
-// 	}
-// }
-
-export const manipulateIngredient = (ingredientObj, toSystem) => {
-	const { quantity, unit } = ingredientObj
+export const manipulateIngredient = (ingredientObj, fromSystem, toSystem) => {
+	const { quantity, unit, ingredient } = ingredientObj
 
 	// If no unit is provided, return the original ingredientObj
 	if (!unit) {
 		return ingredientObj
+	}
+
+	let dryIngredient = null
+
+	if (toSystem === 'americanVolumetric' || fromSystem === 'americanVolumetric') {
+		const result = fuse.search(ingredient)
+		if (result.length > 0 && result[0].score < 0.7) {
+			dryIngredient = result[0].item
+		} else {
+			dryIngredient = fuzzyMatch(ingredient, dryIngredientsConversion)
+		}
+
+		if (dryIngredient) {
+			if (toSystem === 'americanVolumetric') {
+				let convertedQuantity = quantity / dryIngredient.gramsPerCup
+				const targetUnit = findSuitableUnit(toSystem, convertedQuantity * 236.588) // Convert cups to grams
+
+				// Adjust the convertedQuantity based on the targetUnit
+				let decimalPlaces = 2 // Default for cups
+				if (targetUnit === 'tablespoon') {
+					convertedQuantity *= 16 // 1 cup = 16 tablespoons
+					decimalPlaces = 1
+				} else if (targetUnit === 'teaspoon') {
+					convertedQuantity *= 48 // 1 cup = 48 teaspoons
+					decimalPlaces = 1
+				}
+
+				convertedQuantity = parseFloat(convertedQuantity.toFixed(decimalPlaces))
+
+				return {
+					...ingredientObj,
+					quantity: convertedQuantity,
+					unit: targetUnit,
+					unitPlural: targetUnit + 's',
+					symbol: targetUnit.charAt(0),
+					minQty: convertedQuantity,
+					maxQty: convertedQuantity
+				}
+			} else if (fromSystem === 'americanVolumetric' && unit === 'cup') {
+				const convertedQuantity = quantity * dryIngredient.gramsPerCup
+				const targetUnit = findSuitableUnit(toSystem, convertedQuantity)
+				return {
+					...ingredientObj,
+					quantity: convertedQuantity,
+					unit: targetUnit,
+					unitPlural: targetUnit + 's',
+					symbol: targetUnit.charAt(0),
+					minQty: convertedQuantity,
+					maxQty: convertedQuantity
+				}
+			}
+		}
 	}
 
 	// Step 3: Convert to Intermediate Unit (grams)

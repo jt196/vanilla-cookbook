@@ -289,12 +289,12 @@ export const findSuitableUnit = (system, quantityInGrams) => {
 		}
 	} else if (system === 'americanVolumetric') {
 		const cups = quantityInGrams / 236.588
-		if (cups >= 4) {
-			return 'quart'
-		} else if (cups >= 2) {
-			return 'pint'
-		} else {
+		if (cups >= 1 / 8) {
 			return 'cup'
+		} else if (cups >= 1 / 16) {
+			return 'tablespoon'
+		} else {
+			return 'teaspoon'
 		}
 	}
 	return 'gram' // default

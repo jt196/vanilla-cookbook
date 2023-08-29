@@ -73,7 +73,11 @@
 		ingredientsArray = ingredientProcess(ingredients)
 		console.log('🚀 ~ file: +page.svelte:74 ~ ingredientsArray:', ingredientsArray)
 		measurementSystem = determineSystem(ingredientsArray)
-		convertedIngredients = convertIngredients(ingredientsArray, selectedSystem)
+		convertedIngredients = convertIngredients(
+			ingredientsArray,
+			measurementSystem.system,
+			selectedSystem
+		)
 		console.log('🚀 ~ file: +page.svelte:77 ~ convertedIngredients:', convertedIngredients)
 		// Call the function to update selectedSystem based on the initial measurementSystem
 		if (!selectedSystem) {
