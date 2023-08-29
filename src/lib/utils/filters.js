@@ -139,7 +139,7 @@ export function scaleNumbersInString(str, scale) {
  * @param {number} decimal - The decimal number to convert.
  * @returns {string | number} - The fraction representation or original number.
  */
-export function decimalToFraction(decimal) {
+export function decimalToFraction(decimal, decimalPlaces = 10, tolerance = 1e-10) {
 	const fractions = {
 		0.1: '⅒',
 		0.2: '⅕',
@@ -158,7 +158,26 @@ export function decimalToFraction(decimal) {
 		'2/3': '⅔'
 	}
 
-	return fractions[decimal.toString()] || decimal
+	// Round to a fixed number of decimal places
+	const roundedDecimal = roundToDecimalPlaces(decimal, decimalPlaces)
+
+	// Further round if the number is close to an integer
+	const finalDecimal = roundToTolerance(roundedDecimal, tolerance)
+
+	return fractions[finalDecimal.toString()] || finalDecimal
+}
+
+function roundToDecimalPlaces(num, decimalPlaces) {
+	const factor = Math.pow(10, decimalPlaces)
+	return Math.round(num * factor) / factor
+}
+
+function roundToTolerance(num, tolerance = 1e-10) {
+	const rounded = Math.round(num)
+	if (Math.abs(num - rounded) < tolerance) {
+		return rounded
+	}
+	return num
 }
 
 /**
