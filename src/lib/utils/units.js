@@ -173,15 +173,15 @@ export const units = [
 			'fl.ozs.',
 			'flozs',
 			'fl.ozs',
-			'flozs.',
-			'oz.',
-			'oz',
-			'ozs.',
-			'ozs',
-			'ounce',
-			'ounces'
+			'flozs.'
 		],
-		grams: 29.57,
+		grams: 29.5735, // or 29.57 if you want to round it
+		skipConversion: false,
+		decimalPlaces: 1
+	},
+	{
+		names: ['ounce', 'ounces', 'oz.', 'oz', 'ozs.', 'ozs'],
+		grams: 28.3495,
 		skipConversion: false,
 		decimalPlaces: 1
 	},

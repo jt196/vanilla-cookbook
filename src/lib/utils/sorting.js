@@ -8,7 +8,7 @@ export function sortRecipesByKey(recipes, key, currentSort) {
 	}
 }
 
-function sortByKeyGeneric(inputArray, inputKey, direction) {
+export function sortByKeyGeneric(inputArray, inputKey, direction) {
 	console.log('🚀 ~ file: sorting.js:13 ~ sortByKeyGeneric')
 	return [...inputArray].sort((a, b) => {
 		return direction === 'asc'
@@ -17,7 +17,7 @@ function sortByKeyGeneric(inputArray, inputKey, direction) {
 	})
 }
 
-function sortByDate(inputArray, dateKey, direction) {
+export function sortByDate(inputArray, dateKey, direction) {
 	return [...inputArray].sort((a, b) => {
 		return direction === 'asc'
 			? new Date(a[dateKey]).getTime() - new Date(b[dateKey]).getTime()

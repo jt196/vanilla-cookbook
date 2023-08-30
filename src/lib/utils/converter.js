@@ -10,7 +10,8 @@ import { dryIngredientsConversion } from '$lib/utils/dryIngredientsConversion'
  * @param {string} [to='grams'] - The unit to be converted to.
  * @returns {{quantity: number, unit: string} | {error: string}} - Returns an object containing either the converted quantity and unit or an error message.
  */
-const converter = (quantity, from, to = 'grams') => {
+
+export const converter = (quantity, from, to = 'grams') => {
 	if (quantity <= 0) return { error: 'Quantity must be greater than 0' }
 
 	// Check if 'from' or 'to' is null or undefined
@@ -95,7 +96,7 @@ const fuseOptions = {
 	keys: ['name'],
 	includeScore: true,
 	caseSensitive: false,
-	threshold: 0.7 // Lower the threshold, the stricter the match. Range [0, 1]
+	threshold: 0.5 // Lower the threshold, the stricter the match. Range [0, 1]
 }
 
 function fuzzyMatch(ingredient, lookupTable) {
@@ -124,7 +125,7 @@ export const manipulateIngredient = (ingredientObj, fromSystem, toSystem) => {
 
 	if (toSystem === 'americanVolumetric' || fromSystem === 'americanVolumetric') {
 		const result = fuse.search(ingredient)
-		if (result.length > 0 && result[0].score < 0.7) {
+		if (result.length > 0 && result[0].score < 0.5) {
 			dryIngredient = result[0].item
 		} else {
 			dryIngredient = fuzzyMatch(ingredient, dryIngredientsConversion)

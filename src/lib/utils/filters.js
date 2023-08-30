@@ -1,6 +1,5 @@
 import { parse } from 'recipe-ingredient-parser-v3'
 import he from 'he'
-import { manipulateIngredient } from './converter'
 
 /**
  * Filters data based on a search string and a key.
@@ -58,13 +57,6 @@ export function ingredientProcess(ingredientArray) {
 	})
 
 	return parsedIngredients
-}
-
-export function ingredientConvertToImperial(fullIngredientObject) {
-	let convertedFullIngredientObject = []
-	fullIngredientObject.forEach((singleIngredientObject) => {
-		const convertedSingleIngredient = manipulateIngredient(singleIngredientObject)
-	})
 }
 
 /**
@@ -142,20 +134,29 @@ export function scaleNumbersInString(str, scale) {
 export function decimalToFraction(decimal, decimalPlaces = 10, tolerance = 1e-10) {
 	const fractions = {
 		0.1: '⅒',
+		'1/10': '⅒',
 		0.2: '⅕',
+		'1/5': '⅕',
 		0.25: '¼',
+		'1/4': '¼',
 		0.3: '⅓',
 		0.33: '⅓',
+		'1/3': '⅓',
 		0.4: '⅖',
+		'2/5': '⅖',
 		0.5: '½',
+		'1/2': '½',
 		0.6: '⅗',
+		'3/5': '⅗',
 		0.66: '⅔',
+		'2/3': '⅔',
 		0.7: '⅔',
 		0.75: '¾',
+		'3/4': '¾',
 		0.8: '⅘',
+		'4/5': '⅘',
 		0.9: '⅚',
-		'1/3': '⅓',
-		'2/3': '⅔'
+		'5/6': '⅚'
 	}
 
 	// Round to a fixed number of decimal places

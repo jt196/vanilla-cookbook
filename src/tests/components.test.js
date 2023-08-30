@@ -149,37 +149,66 @@ describe('RecipeList component', () => {
 			created: new Date('2022-01-01'),
 			image_url: 'http://example.com/imageA.jpg',
 			userId: 1,
-			uid: 'A'
+			uid: 'A',
+			photos: [
+				{
+					id: '!test',
+					fileType: 'jpg'
+				}
+			]
 		},
 		{ name: 'Recipe B', created: new Date('2022-01-02'), userId: 2, uid: 'B' }
 	]
 	const mockData = { user: { userId: 1 } }
 
 	it('renders without crashing', () => {
-		const { container } = render(RecipeList, { filteredRecipes: mockRecipes, data: mockData })
+		const { container } = render(RecipeList, {
+			useVirtualList: false,
+			filteredRecipes: mockRecipes,
+			data: mockData
+		})
 		expect(container).toBeInTheDocument()
 	})
 
 	it('renders the correct number of recipes', () => {
-		const { getAllByRole } = render(RecipeList, { filteredRecipes: mockRecipes, data: mockData })
+		const { getAllByRole } = render(RecipeList, {
+			useVirtualList: false,
+			filteredRecipes: mockRecipes,
+			data: mockData
+		})
+
 		const articles = getAllByRole('article')
 		expect(articles.length).toBe(mockRecipes.length)
 	})
 
 	it('displays an image if the recipe has a valid image_url', () => {
-		const { getByAltText } = render(RecipeList, { filteredRecipes: mockRecipes, data: mockData })
+		const { getByAltText } = render(RecipeList, {
+			useVirtualList: false,
+			filteredRecipes: mockRecipes,
+			data: mockData
+		})
+
 		const image = getByAltText('Recipe A thumbnail')
 		expect(image).toBeInTheDocument()
-		expect(image.src).toBe('http://example.com/imageA.jpg')
+		expect(image.src).toContain('recipe_photos/!test.jpg')
 	})
 
 	it('displays the FoodBowl component if the recipe does not have a valid image_url', () => {
-		const { getByAltText } = render(RecipeList, { filteredRecipes: mockRecipes, data: mockData })
+		const { getByAltText } = render(RecipeList, {
+			useVirtualList: false,
+			filteredRecipes: mockRecipes,
+			data: mockData
+		})
+
 		expect(() => getByAltText('Recipe B thumbnail')).toThrow()
 	})
 
 	it('displays the recipe name and creation date', () => {
-		const { getAllByText } = render(RecipeList, { filteredRecipes: mockRecipes, data: mockData })
+		const { getAllByText } = render(RecipeList, {
+			useVirtualList: false,
+			filteredRecipes: mockRecipes,
+			data: mockData
+		})
 
 		// Check for the "Created:" text for each recipe
 		const createdElements = getAllByText(/Created:/i)
@@ -187,14 +216,16 @@ describe('RecipeList component', () => {
 	})
 
 	it('displays the "Delete" and "Edit" buttons only if the recipe.userId matches data.user.userId', () => {
-		const { getByText, queryByText } = render(RecipeList, {
+		// Destructure getByTestId, getByText, and queryByText from render
+		const { getByTestId, getByText, queryByText } = render(RecipeList, {
+			useVirtualList: false,
 			filteredRecipes: mockRecipes,
 			data: mockData
 		})
 
 		// Check for Recipe A (userId matches)
-		expect(getByText('Delete')).toBeInTheDocument()
-		expect(getByText('Edit')).toBeInTheDocument()
+		expect(getByTestId('delete-button')).toBeInTheDocument()
+		expect(getByTestId('edit-button')).toBeInTheDocument()
 
 		// Check for Recipe B (userId does not match)
 		const recipeBElement = getByText('Recipe B')

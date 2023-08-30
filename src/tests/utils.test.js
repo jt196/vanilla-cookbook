@@ -1,11 +1,8 @@
 import {
-	sortByKeyAsc,
-	sortByKeyDesc,
-	sortByDateAsc,
-	sortByDateDesc,
+	sortByKeyGeneric,
+	sortByDate,
 	randomSortArray,
-	sortRecipesByDate,
-	sortRecipesByTitle
+	sortRecipesByKey
 } from '$lib/utils/sorting.js'
 
 import {
@@ -38,28 +35,28 @@ describe('Sorting functions', () => {
 	]
 
 	it('should sort by key in ascending order', () => {
-		const result = sortByKeyAsc(sampleData, 'name')
+		const result = sortByKeyGeneric(sampleData, 'name', 'asc')
 		expect(result[0].name).toBe('Alice')
 		expect(result[1].name).toBe('Bob')
 		expect(result[2].name).toBe('John')
 	})
 
 	it('should sort by key in descending order', () => {
-		const result = sortByKeyDesc(sampleData, 'name')
+		const result = sortByKeyGeneric(sampleData, 'name', 'desc')
 		expect(result[0].name).toBe('John')
 		expect(result[1].name).toBe('Bob')
 		expect(result[2].name).toBe('Alice')
 	})
 
 	it('should sort by date in ascending order', () => {
-		const result = sortByDateAsc(sampleData, 'date')
+		const result = sortByDate(sampleData, 'date', 'asc')
 		expect(result[0].date).toBe('2021-11-11')
 		expect(result[1].date).toBe('2022-05-15')
 		expect(result[2].date).toBe('2023-01-01')
 	})
 
 	it('should sort by date in descending order', () => {
-		const result = sortByDateDesc(sampleData, 'date')
+		const result = sortByDate(sampleData, 'date', 'desc')
 		expect(result[0].date).toBe('2023-01-01')
 		expect(result[1].date).toBe('2022-05-15')
 		expect(result[2].date).toBe('2021-11-11')
@@ -233,39 +230,39 @@ describe('Date and Time utility functions', () => {
 	})
 })
 
-describe('sortRecipesByDate', () => {
+describe('sortByDate', () => {
 	const mockRecipes = [
 		{ name: 'B', created: new Date('2022-01-01') },
 		{ name: 'A', created: new Date('2023-01-01') }
 	]
 
 	it('should sort recipes in ascending order by date when currentSort is desc or undefined', () => {
-		const result = sortRecipesByDate(mockRecipes, 'desc')
+		const result = sortRecipesByKey(mockRecipes, 'created', 'desc')
 		expect(result.sortedRecipes[0].name).toBe('B')
 		expect(result.newSort).toBe('asc')
 	})
 
 	it('should sort recipes in descending order by date when currentSort is asc', () => {
-		const result = sortRecipesByDate(mockRecipes, 'asc')
+		const result = sortRecipesByKey(mockRecipes, 'created', 'asc')
 		expect(result.sortedRecipes[0].name).toBe('A')
 		expect(result.newSort).toBe('desc')
 	})
 })
 
-describe('sortRecipesByTitle', () => {
+describe('sortRecipesByKey', () => {
 	const mockRecipes = [
 		{ name: 'B', created: new Date('2022-01-01') },
 		{ name: 'A', created: new Date('2023-01-01') }
 	]
 
 	it('should sort recipes in ascending order by title when currentSort is desc or undefined', () => {
-		const result = sortRecipesByTitle(mockRecipes, 'desc')
+		const result = sortRecipesByKey(mockRecipes, 'name', 'desc')
 		expect(result.sortedRecipes[0].name).toBe('A')
 		expect(result.newSort).toBe('asc')
 	})
 
 	it('should sort recipes in descending order by title when currentSort is asc', () => {
-		const result = sortRecipesByTitle(mockRecipes, 'asc')
+		const result = sortRecipesByKey(mockRecipes, 'name', 'asc')
 		expect(result.sortedRecipes[0].name).toBe('B')
 		expect(result.newSort).toBe('desc')
 	})

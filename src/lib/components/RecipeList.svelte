@@ -1,12 +1,9 @@
 <script>
-	import { localDateAndTime } from '$lib/utils/dateTime'
-	import FoodBowl from '$lib/components/svg/FoodBowl.svelte'
-	import StarRating from './StarRating.svelte'
-	import Delete from './svg/Delete.svelte'
-	import Edit from './svg/Edit.svelte'
+	import RecipeCard from '$lib/components/RecipeCard.svelte'
 	import VirtualList from 'svelte-virtual-list'
 
 	export let filteredRecipes = []
+	export let useVirtualList = true
 	export let data
 
 	let start
@@ -14,41 +11,16 @@
 </script>
 
 <div class="container">
-	<VirtualList items={filteredRecipes} bind:start bind:end let:item>
-		<article>
-			<div class="grid">
-				{#if item.photos && item.photos.length > 0}
-					<img
-						class="recipe-thumbnail"
-						loading="lazy"
-						src="/recipe_photos/{item.photos[0].id}.{item.photos[0].fileType}"
-						alt="{item.name} photo" />
-				{:else}
-					<FoodBowl width="100px" />
-				{/if}
-				<a href="recipe/view/{item.uid}" class="recipe-card">
-					<div>
-						<header>{item.name}</header>
-						<p>Created: <i>{localDateAndTime(item.created)}</i></p>
-						<StarRating rating={item.rating} />
-					</div>
-				</a>
-				<div class="align-right recipe-buttons">
-					{#if item.userId === data.user?.userId}
-						<form action="?/deleteRecipe&uid={item.uid}" method="POST">
-							<button type="submit" class="outline secondary">
-								<Delete width="30px" height="30px" fill="var(--pico-del-color)" />
-							</button>
-						</form>
-						<a href="recipe/edit/{item.uid}" role="button" class="outline contrast">
-							<Edit width="30px" height="30px" fill="var(--pico-ins-color)" />
-						</a>
-					{/if}
-				</div>
-			</div>
-		</article>
-	</VirtualList>
-	<p>showing items {start}-{end}</p>
+	{#if useVirtualList}
+		<VirtualList items={filteredRecipes} bind:start bind:end let:item>
+			<RecipeCard {item} {data} />
+		</VirtualList>
+		<p>showing items {start}-{end}</p>
+	{:else}
+		{#each filteredRecipes as item (item.uid)}
+			<RecipeCard {item} {data} />
+		{/each}
+	{/if}
 </div>
 
 <style lang="scss">
