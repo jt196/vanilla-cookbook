@@ -1,4 +1,5 @@
 import { manipulateIngredient } from '$lib/utils/converter.js'
+import { findSuitableUnit } from '$lib/utils/units.js'
 
 /* global describe, expect, it */
 
@@ -55,4 +56,46 @@ describe('manipulateIngredient', () => {
 	})
 
 	// Add more test cases as needed
+})
+
+describe('findSuitableUnit function', () => {
+	it('should return "ounce" for imperial system and less than 16 ounces', () => {
+		const result = findSuitableUnit('imperial', 400) // 400 grams is approximately 14.11 ounces
+		expect(result).toBe('ounce')
+	})
+
+	it('should return "pound" for imperial system and 16 or more ounces', () => {
+		const result = findSuitableUnit('imperial', 500) // 500 grams is approximately 17.64 ounces
+		expect(result).toBe('pound')
+	})
+
+	it('should return "gram" for metric system and less than 1000 grams', () => {
+		const result = findSuitableUnit('metric', 900)
+		expect(result).toBe('gram')
+	})
+
+	it('should return "kilogram" for metric system and 1000 or more grams', () => {
+		const result = findSuitableUnit('metric', 1000)
+		expect(result).toBe('kilogram')
+	})
+
+	it('should return "teaspoon" for americanVolumetric system and less than 1/16 cups', () => {
+		const result = findSuitableUnit('americanVolumetric', 10) // 10 grams is approximately 0.0423 cups
+		expect(result).toBe('teaspoon')
+	})
+
+	it('should return "tablespoon" for americanVolumetric system and between 1/16 and 1/8 cups', () => {
+		const result = findSuitableUnit('americanVolumetric', 20) // 20 grams is approximately 0.0845 cups
+		expect(result).toBe('tablespoon')
+	})
+
+	it('should return "cup" for americanVolumetric system and 1/8 or more cups', () => {
+		const result = findSuitableUnit('americanVolumetric', 30) // 30 grams is approximately 0.1268 cups
+		expect(result).toBe('cup')
+	})
+
+	it('should return "gram" as default when system is not recognized', () => {
+		const result = findSuitableUnit('unknownSystem', 500)
+		expect(result).toBe('gram')
+	})
 })
