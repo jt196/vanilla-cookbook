@@ -77,8 +77,8 @@ export const determineSystem = (ingredientArray) => {
 
 const systemToUnitsMap = {
 	metric: ['gram', 'kilogram', 'liter', 'milliliter'],
-	imperial: ['fluid ounce', 'pound', 'gallon'],
-	americanVolumetric: ['cup']
+	imperial: ['fluid ounce', 'pound', 'gallon', 'ounce'],
+	americanVolumetric: ['cup', 'quart']
 }
 
 const measurementSystems = Object.keys(systemToUnitsMap).reduce((acc, system) => {
