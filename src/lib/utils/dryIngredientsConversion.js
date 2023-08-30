@@ -1,1218 +1,1224 @@
 export const dryIngredientsConversion = [
 	{
-		name: 'Agave syrup',
+		names: ['Agave syrup'],
 		gramsPerCup: 336.0
 	},
 	{
-		name: 'All-Purpose Flour',
-		gramsPerCup: 120.0
-	},
-	{
-		name: 'Almond Flour',
+		names: ['Almond Flour'],
 		gramsPerCup: 96.0
 	},
 	{
-		name: 'Almond meal',
+		names: ['Almond meal'],
 		gramsPerCup: 84.0
 	},
 	{
-		name: 'Almond paste (packed)',
+		names: ['Almond paste (packed)'],
 		gramsPerCup: 259.0
 	},
 	{
-		name: 'Almonds (sliced)',
+		names: ['Almonds (sliced)'],
 		gramsPerCup: 86.0
 	},
 	{
-		name: 'Almonds (slivered)',
+		names: ['Almonds (slivered)'],
 		gramsPerCup: 114.0
 	},
 	{
-		name: 'Almonds, whole (unblanched)',
+		names: ['Almonds, whole (unblanched)'],
 		gramsPerCup: 142.0
 	},
 	{
-		name: 'Amaranth flour',
+		names: ['Amaranth flour'],
 		gramsPerCup: 103.0
 	},
 	{
-		name: 'Apple juice concentrate',
+		names: ['Apple juice concentrate'],
 		gramsPerCup: 280.0
 	},
 	{
-		name: 'Apples (dried, diced)',
+		names: ['Apples (dried, diced)'],
 		gramsPerCup: 85.0
 	},
 	{
-		name: 'Apples (peeled, sliced)',
+		names: ['Apples (peeled, sliced)'],
 		gramsPerCup: 113.0
 	},
 	{
-		name: 'Applesauce',
+		names: ['Applesauce'],
 		gramsPerCup: 255.0
 	},
 	{
-		name: 'Apricots (dried, diced)',
+		names: ['Apricots (dried, diced)'],
 		gramsPerCup: 128.0
 	},
 	{
-		name: 'Artisan Bread Flour',
-		gramsPerCup: 120.0
-	},
-	{
-		name: 'Artisan Bread Topping',
+		names: ['Artisan Bread Topping'],
 		gramsPerCup: 172.0
 	},
 	{
-		name: "Baker's Cinnamon Filling",
+		names: ["Baker's Cinnamon Filling"],
 		gramsPerCup: 152.0
 	},
 	{
-		name: "Baker's Fruit Blend",
+		names: ["Baker's Fruit Blend"],
 		gramsPerCup: 128.0
 	},
 	{
-		name: "Baker's Special Sugar (superfine sugar, castor sugar)",
+		names: ["Baker's Special Sugar", 'Superfine Sugar', 'Caster Sugar', 'Castor Sugar'],
 		gramsPerCup: 190.0
 	},
 	{
-		name: 'Baking powder',
+		names: ['Baking powder'],
 		gramsPerCup: 192.0
 	},
 	{
-		name: 'Baking soda',
+		names: ['Baking soda'],
 		gramsPerCup: 288.0
 	},
 	{
-		name: 'Baking Sugar Alternative',
+		names: ['Baking Sugar Alternative'],
 		gramsPerCup: 170.0
 	},
 	{
-		name: 'Bananas (mashed)',
+		names: ['Bananas (mashed)'],
 		gramsPerCup: 227.0
 	},
 	{
-		name: 'Barley (cooked)',
+		names: ['Barley (cooked)'],
 		gramsPerCup: 215.0
 	},
 	{
-		name: 'Barley (pearled)',
+		names: ['Barley (pearled)'],
 		gramsPerCup: 213.0
 	},
 	{
-		name: 'Barley flakes',
+		names: ['Barley flakes'],
 		gramsPerCup: 92.0
 	},
 	{
-		name: 'Barley flour',
+		names: ['Barley flour'],
 		gramsPerCup: 85.0
 	},
 	{
-		name: 'Barley malt syrup',
+		names: ['Barley malt syrup'],
 		gramsPerCup: 336.0
 	},
 	{
-		name: 'Basil pesto',
+		names: ['Basil pesto'],
 		gramsPerCup: 224.0
 	},
 	{
-		name: 'Bell peppers (fresh)',
+		names: ['Bell peppers (fresh)'],
 		gramsPerCup: 142.0
 	},
 	{
-		name: 'Berries (frozen)',
+		names: ['Berries (frozen)'],
 		gramsPerCup: 142.0
 	},
 	{
-		name: 'Better Cheddar Cheese Powder',
+		names: ['Better Cheddar Cheese Powder'],
 		gramsPerCup: 114.0
 	},
 	{
-		name: 'Blueberries (dried)',
+		names: ['Blueberries (dried)'],
 		gramsPerCup: 156.0
 	},
 	{
-		name: 'Blueberries (fresh or frozen)',
+		names: ['Blueberries (fresh or frozen)'],
 		gramsPerCup: 140.0
 	},
 	{
-		name: 'Blueberry juice',
+		names: ['Blueberry juice'],
 		gramsPerCup: 241.0
 	},
 	{
-		name: 'Boiled cider',
+		names: ['Boiled cider'],
 		gramsPerCup: 340.0
 	},
 	{
-		name: 'Bran cereal',
+		names: ['Bran cereal'],
 		gramsPerCup: 60.0
 	},
 	{
-		name: 'Bread crumbs (dried)',
+		names: ['Bread crumbs (dried)'],
 		gramsPerCup: 112.0
 	},
 	{
-		name: 'Bread crumbs (fresh)',
+		names: ['Bread crumbs (fresh)'],
 		gramsPerCup: 84.0
 	},
 	{
-		name: 'Bread crumbs (Japanese Panko)',
+		names: ['Bread crumbs (Japanese Panko)'],
 		gramsPerCup: 50.0
 	},
 	{
-		name: 'Bread Flour',
+		names: [
+			'Bread Flour',
+			'Artisan Bread Flour',
+			'All-Purpose Flour',
+			'AP Flour',
+			'French-Style Flour'
+		],
 		gramsPerCup: 120.0
 	},
 	{
-		name: 'Brown rice (cooked)',
+		names: ['Brown rice (cooked)'],
 		gramsPerCup: 170.0
 	},
 	{
-		name: 'Brown rice flour',
+		names: ['Brown rice flour'],
 		gramsPerCup: 128.0
 	},
 	{
-		name: 'Brown sugar (dark or light, packed)',
+		names: ['Brown sugar', 'Light Brown Sugar', 'Dark Brown Sugar'],
 		gramsPerCup: 213.0
 	},
 	{
-		name: 'Buckwheat (whole)',
+		names: ['Buckwheat (whole)'],
 		gramsPerCup: 170.0
 	},
 	{
-		name: 'Buckwheat Flour',
+		names: ['Buckwheat Flour'],
 		gramsPerCup: 120.0
 	},
 	{
-		name: 'Bulgur',
+		names: ['Bulgur'],
 		gramsPerCup: 152.0
 	},
 	{
-		name: 'Butter',
+		names: ['Butter'],
 		gramsPerCup: 226.0
 	},
 	{
-		name: 'Buttermilk',
+		names: ['Buttermilk'],
 		gramsPerCup: 227.0
 	},
 	{
-		name: 'Buttermilk powder',
+		names: ['Buttermilk powder'],
 		gramsPerCup: 144.0
 	},
 	{
-		name: 'Cacao nibs',
+		names: ['Cacao nibs'],
 		gramsPerCup: 120.0
 	},
 	{
-		name: 'Cake Enhancer',
+		names: ['Cake Enhancer'],
 		gramsPerCup: 112.0
 	},
 	{
-		name: 'Candied peel',
+		names: ['Candied peel'],
 		gramsPerCup: 170.0
 	},
 	{
-		name: 'Caramel (14-16 individual pieces, 1" squares)',
+		names: ['Caramel'],
 		gramsPerCup: 284.0
 	},
 	{
-		name: 'Caramel bits (chopped Heath or toffee)',
+		names: ['Caramel bits', 'Chopped Caramel', 'Chopped Toffee'],
 		gramsPerCup: 156.0
 	},
 	{
-		name: 'Caraway seeds',
+		names: ['Caraway seeds'],
 		gramsPerCup: 144.0
 	},
 	{
-		name: 'Carrots (cooked and pur\u00e9ed)',
+		names: ['Carrot Puree', 'Mashed Carrot', 'Carrot Mash', 'Carrots (mashed)'],
 		gramsPerCup: 256.0
 	},
 	{
-		name: 'Carrots (diced)',
+		names: ['Carrots (diced)'],
 		gramsPerCup: 142.0
 	},
 	{
-		name: 'Carrots (grated)',
+		names: ['Carrots (grated)'],
 		gramsPerCup: 99.0
 	},
 	{
-		name: 'Cashews (chopped)',
+		names: ['Cashews (chopped)'],
 		gramsPerCup: 113.0
 	},
 	{
-		name: 'Cashews (whole)',
+		names: ['Cashews (whole)'],
 		gramsPerCup: 113.0
 	},
 	{
-		name: 'Celery (diced)',
+		names: ['Celery (diced)'],
 		gramsPerCup: 142.0
 	},
 	{
-		name: 'Cheese (Feta)',
+		names: ['Cheese (Feta)', 'Feta'],
 		gramsPerCup: 114.0
 	},
 	{
-		name: 'Cheese (grated cheddar, jack, mozzarella, or Swiss)',
+		names: [
+			'Cheese (grated)',
+			'Cheddar (grated)',
+			'mozzarella (grated)',
+			'Swiss Cheese (grated)',
+			'Grated Cheese'
+		],
 		gramsPerCup: 113.0
 	},
 	{
-		name: 'Cheese (grated Parmesan)',
+		names: ['grated Parmesan', 'Parmesan (grated)'],
 		gramsPerCup: 100.0
 	},
 	{
-		name: 'Cheese (Ricotta)',
+		names: ['Cheese (Ricotta)', 'Ricotta'],
 		gramsPerCup: 227.0
 	},
 	{
-		name: 'Cherries (candied)',
+		names: ['Cherries (candied)'],
 		gramsPerCup: 200.0
 	},
 	{
-		name: 'Cherries (dried)',
+		names: ['Cherries (dried)'],
 		gramsPerCup: 142.0
 	},
 	{
-		name: 'Cherries (fresh, pitted, chopped)',
+		names: ['Cherries (fresh, pitted, chopped)', 'Chopped Cherries', 'Cherries (chopped)'],
 		gramsPerCup: 160.0
 	},
 	{
-		name: 'Cherries (frozen)',
+		names: ['Cherries (frozen)'],
 		gramsPerCup: 113.0
 	},
 	{
-		name: 'Cherry Concentrate',
+		names: ['Cherry Concentrate'],
 		gramsPerCup: 336.0
 	},
 	{
-		name: 'Chickpea flour',
+		names: ['Chickpea flour'],
 		gramsPerCup: 85.0
 	},
 	{
-		name: 'Chives (fresh)',
+		names: ['Chives (fresh)', 'Fresh chives'],
 		gramsPerCup: 42.0
 	},
 	{
-		name: 'Chocolate (chopped)',
+		names: ['Chocolate Chips', 'Chocolate Chunks', 'Chocolate (chopped)'],
 		gramsPerCup: 170.0
 	},
 	{
-		name: 'Chocolate Chips',
-		gramsPerCup: 170.0
-	},
-	{
-		name: 'Chocolate Chunks',
-		gramsPerCup: 170.0
-	},
-	{
-		name: 'Cinnamon Sweet Bits',
+		names: ['Cinnamon Sweet Bits'],
 		gramsPerCup: 140.0
 	},
 	{
-		name: 'Cinnamon-Sugar',
+		names: ['Cinnamon-Sugar'],
 		gramsPerCup: 200.0
 	},
 	{
-		name: 'Cocoa (unsweetened)',
+		names: ['Cocoa (unsweetened)', 'Cocoa'],
 		gramsPerCup: 84.0
 	},
 	{
-		name: 'Coconut (sweetened, shredded)',
+		names: [
+			'Coconut (sweetened, shredded)',
+			'Shredded Coconut',
+			'Coconut (shredded)',
+			'Coconut (toasted)',
+			'Coconut (unsweetened, desiccated)'
+		],
 		gramsPerCup: 85.0
 	},
 	{
-		name: 'Coconut (toasted)',
-		gramsPerCup: 85.0
-	},
-	{
-		name: 'Coconut (unsweetened, desiccated)',
-		gramsPerCup: 85.0
-	},
-	{
-		name: 'Coconut (unsweetened, large flakes)',
+		names: ['Coconut (unsweetened, large flakes)'],
 		gramsPerCup: 60.0
 	},
 	{
-		name: 'Coconut (unsweetened, shredded)',
+		names: ['Coconut (unsweetened, shredded)'],
 		gramsPerCup: 53.0
 	},
 	{
-		name: 'Coconut cream\u00a0(unsweetened)',
+		names: ['Coconut cream (unsweetened)'],
 		gramsPerCup: 284.0
 	},
 	{
-		name: 'Coconut Flour',
+		names: ['Coconut Flour'],
 		gramsPerCup: 128.0
 	},
 	{
-		name: 'Coconut milk; canned, well shaken',
+		names: ['Coconut milk; canned, well shaken'],
 		gramsPerCup: 241.0
 	},
 	{
-		name: 'Coconut milk\u00a0(evaporated)',
+		names: ['Coconut milk (evaporated)'],
 		gramsPerCup: 242.0
 	},
 	{
-		name: 'Coconut Milk Powder',
+		names: ['Coconut Milk Powder'],
 		gramsPerCup: 114.0
 	},
 	{
-		name: 'Coconut oil',
+		names: ['Coconut oil'],
 		gramsPerCup: 226.0
 	},
 	{
-		name: 'Coconut sugar',
+		names: ['Coconut sugar'],
 		gramsPerCup: 154.0
 	},
 	{
-		name: "Confectioners' sugar (unsifted)",
+		names: ["Confectioners' sugar (unsifted)", 'Confectioners sugar'],
 		gramsPerCup: 113.5
 	},
 	{
-		name: 'Cookie crumbs',
+		names: ['Cookie crumbs'],
 		gramsPerCup: 85.0
 	},
 	{
-		name: 'Corn (fresh or frozen)\u00a0',
+		names: ['Corn', 'Frozen Corn', 'Corn (frozen)', 'Fresh Corn', 'Corn (Fresh)'],
 		gramsPerCup: 152.0
 	},
 	{
-		name: 'Corn (popped)',
+		names: ['Corn (popped)', 'Popcorn'],
 		gramsPerCup: 5.25
 	},
 	{
-		name: 'Corn syrup',
+		names: ['Corn syrup'],
 		gramsPerCup: 312.0
 	},
 	{
-		name: 'Cornmeal (whole)',
+		names: ['Cornmeal (whole)'],
 		gramsPerCup: 138.0
 	},
 	{
-		name: 'Cornmeal (yellow, Quaker)',
+		names: ['Cornmeal (yellow, Quaker)'],
 		gramsPerCup: 156.0
 	},
 	{
-		name: 'Cornstarch',
+		names: ['Cornstarch'],
 		gramsPerCup: 112.0
 	},
 	{
-		name: 'Cracked wheat',
+		names: ['Cracked wheat'],
 		gramsPerCup: 149.0
 	},
 	{
-		name: 'Cranberries (dried)',
+		names: ['Cranberries (dried)'],
 		gramsPerCup: 114.0
 	},
 	{
-		name: 'Cranberries (fresh or frozen)',
+		names: ['Cranberries (fresh or frozen)'],
 		gramsPerCup: 99.0
 	},
 	{
-		name: 'Cream (heavy cream, light cream, or half & half)',
+		names: ['Cream', 'Heavy Cream', 'Light Cream', 'Half and Half', 'Double Cream', 'Single Cream'],
 		gramsPerCup: 227.0
 	},
 	{
-		name: 'Cream cheese',
+		names: ['Cream cheese'],
 		gramsPerCup: 227.0
 	},
 	{
-		name: 'Cream of coconut',
+		names: ['Cream of coconut'],
 		gramsPerCup: 284.0
 	},
 	{
-		name: 'Cr\u00e8me fraiche',
+		names: ['Creme fraiche', 'Sour Cream'],
 		gramsPerCup: 248.0
 	},
 	{
-		name: 'Crystallized ginger',
+		names: ['Crystallized ginger'],
 		gramsPerCup: 184.0
 	},
 	{
-		name: 'Currants',
+		names: ['Currants'],
 		gramsPerCup: 142.0
 	},
 	{
-		name: 'Dates (chopped)',
+		names: ['Dates (chopped)'],
 		gramsPerCup: 149.0
 	},
 	{
-		name: 'Demerara sugar',
+		names: ['Demerara sugar'],
 		gramsPerCup: 220.0
 	},
 	{
-		name: 'Dried Blueberry Powder',
+		names: ['Dried Blueberry Powder'],
 		gramsPerCup: 112.0
 	},
 	{
-		name: "Dried milk (Baker's Special Dry Milk)",
+		names: [
+			'Dried milk',
+			"Baker's Special Dry Milk",
+			'Powdered Milk',
+			'Dried nonfat milk',
+			'Milk Powder'
+		],
 		gramsPerCup: 112.0
 	},
 	{
-		name: 'Dried nonfat milk (powdered)',
-		gramsPerCup: 112.0
-	},
-	{
-		name: 'Dried potato flakes (instant mashed potatoes)',
+		names: ['Dried potato flakes', 'instant mashed potatoes', 'smash'],
 		gramsPerCup: 86.0
 	},
 	{
-		name: 'Dried whole milk (powdered)',
+		names: ['Dried whole milk', 'Powdered Whole Milk'],
 		gramsPerCup: 100.0
 	},
 	{
-		name: 'Durum Flour',
+		names: ['Durum Flour'],
 		gramsPerCup: 124.0
 	},
 	{
-		name: 'Easy Roll Dough Improver',
+		names: ['Easy Roll Dough Improver'],
 		gramsPerCup: 144.0
 	},
 	{
-		name: 'Egg (fresh)',
-		gramsPerCup: null
+		names: ['Egg (fresh)', 'Fresh Eggs'],
+		gramsPerCup: 50
 	},
 	{
-		name: 'Egg white (fresh)',
-		gramsPerCup: null
+		names: ['Egg white (fresh)'],
+		gramsPerCup: 35
 	},
 	{
-		name: 'Egg whites (dried)',
+		names: ['Egg whites (dried)'],
 		gramsPerCup: 88.0
 	},
 	{
-		name: 'Egg yolk (fresh)',
-		gramsPerCup: null
+		names: ['Egg yolk (fresh)', 'Egg Yolk'],
+		gramsPerCup: 14
 	},
 	{
-		name: 'Espresso Powder',
+		names: ['Espresso Powder'],
 		gramsPerCup: 112.0
 	},
 	{
-		name: 'Everything Bagel Topping',
+		names: ['Everything Bagel Topping'],
 		gramsPerCup: 140.0
 	},
 	{
-		name: 'Figs (dried, chopped)',
+		names: ['Figs (dried, chopped)', 'Chopped Figs (dried)'],
 		gramsPerCup: 149.0
 	},
 	{
-		name: 'First Clear Flour',
+		names: ['First Clear Flour'],
 		gramsPerCup: 106.0
 	},
 	{
-		name: 'Flax meal',
+		names: ['Flax meal'],
 		gramsPerCup: 100.0
 	},
 	{
-		name: 'Flaxseed',
+		names: ['Flaxseed'],
 		gramsPerCup: 140.0
 	},
 	{
-		name: 'Formaggio Italiano Cheese and Herb Blend',
+		names: ['Formaggio Italiano Cheese and Herb Blend'],
 		gramsPerCup: 120.0
 	},
 	{
-		name: 'French-Style Flour',
+		names: ['Fruitcake Fruit Blend'],
 		gramsPerCup: 120.0
 	},
 	{
-		name: 'Fruitcake Fruit Blend',
-		gramsPerCup: 120.0
+		names: ['Garlic (cloves, in skin for roasting)'],
+		gramsPerCup: 113
 	},
 	{
-		name: 'Garlic (cloves, in skin for roasting)',
-		gramsPerCup: null
-	},
-	{
-		name: 'Garlic (minced)',
+		names: ['Garlic (minced)'],
 		gramsPerCup: 224.0
 	},
 	{
-		name: 'Garlic (peeled and sliced)',
+		names: ['Garlic (peeled and sliced)', 'Garlic (sliced)', 'Sliced Garlic'],
 		gramsPerCup: 149.0
 	},
 	{
-		name: 'Ghee',
+		names: ['Ghee'],
 		gramsPerCup: 176.0
 	},
 	{
-		name: 'Ginger (fresh, sliced)',
+		names: ['Ginger (fresh, sliced)', 'Ginger (sliced)', 'Sliced Ginger'],
 		gramsPerCup: 228.0
 	},
 	{
-		name: "Gluten-Free '00' Pizza Flour",
+		names: ["Gluten-Free '00' Pizza Flour"],
 		gramsPerCup: 100.0
 	},
 	{
-		name: 'Gluten-Free All-Purpose Baking Mix',
+		names: ['Gluten-Free All-Purpose Baking Mix'],
 		gramsPerCup: 120.0
 	},
 	{
-		name: 'Gluten-Free All-Purpose Flour',
+		names: ['Gluten-Free All-Purpose Flour'],
 		gramsPerCup: 156.0
 	},
 	{
-		name: 'Gluten-Free Bread Flour',
+		names: ['Gluten-Free Bread Flour'],
 		gramsPerCup: 120.0
 	},
 	{
-		name: 'Gluten-Free Measure for Measure Flour',
+		names: ['Gluten-Free Measure for Measure Flour'],
 		gramsPerCup: 120.0
 	},
 	{
-		name: 'Gluten-Free sourdough starter',
+		names: ['Gluten-Free sourdough starter'],
 		gramsPerCup: 227.0
 	},
 	{
-		name: 'Glutinous rice flour',
+		names: ['Glutinous rice flour'],
 		gramsPerCup: 120.0
 	},
 	{
-		name: 'Graham cracker crumbs\u00a0(store-bought or crushed from whole)',
+		names: ['Graham cracker crumbs'],
 		gramsPerCup: 100.0
 	},
 	{
-		name: 'Granola',
+		names: ['Granola'],
 		gramsPerCup: 113.0
 	},
 	{
-		name: 'Grape Nuts',
+		names: ['Grape Nuts'],
 		gramsPerCup: 114.0
 	},
 	{
-		name: 'Harvest Grains Blend',
+		names: ['Harvest Grains Blend'],
 		gramsPerCup: 148.0
 	},
 	{
-		name: 'Hazelnut flour',
+		names: ['Hazelnut flour'],
 		gramsPerCup: 89.0
 	},
 	{
-		name: 'Hazelnut Praline Paste',
+		names: ['Hazelnut Praline Paste'],
 		gramsPerCup: 312.0
 	},
 	{
-		name: 'Hazelnut spread',
+		names: ['Hazelnut spread'],
 		gramsPerCup: 320.0
 	},
 	{
-		name: 'Hazelnuts (whole)',
+		names: ['Hazelnuts (whole)'],
 		gramsPerCup: 142.0
 	},
 	{
-		name: 'Hi-Maize Natural Fiber',
+		names: ['Hi-Maize Natural Fiber'],
 		gramsPerCup: 128.0
 	},
 	{
-		name: 'High-Gluten Flour',
+		names: ['High-Gluten Flour'],
 		gramsPerCup: 120.0
 	},
 	{
-		name: 'Honey',
+		names: ['Honey'],
 		gramsPerCup: 336.0
 	},
 	{
-		name: 'Instant ClearJel',
+		names: ['Instant ClearJel'],
 		gramsPerCup: 176.0
 	},
 	{
-		name: 'Irish-Style Flour',
+		names: ['Irish-Style Flour'],
 		gramsPerCup: 110.0
 	},
 	{
-		name: 'Italian-Style Flour',
+		names: ['Italian-Style Flour'],
 		gramsPerCup: 106.0
 	},
 	{
-		name: 'Jam or preserves',
+		names: ['Jam', 'Chutney', 'Marmalade'],
 		gramsPerCup: 340.0
 	},
 	{
-		name: 'Jammy Bits',
+		names: ['Jammy Bits'],
 		gramsPerCup: 184.0
 	},
 	{
-		name: 'Keto Wheat Flour',
+		names: ['Keto Wheat Flour'],
 		gramsPerCup: 120.0
 	},
 	{
-		name: 'Keto Wheat Pizza Crust Mix',
+		names: ['Keto Wheat Pizza Crust Mix'],
 		gramsPerCup: 110.0
 	},
 	{
-		name: 'Key Lime Juice',
+		names: ['Key Lime Juice'],
 		gramsPerCup: 227.0
 	},
 	{
-		name: 'Lard',
+		names: ['Lard'],
 		gramsPerCup: 226.0
 	},
 	{
-		name: 'Leeks (diced)',
+		names: ['Leeks (diced)', 'Diced Leeks'],
 		gramsPerCup: 92.0
 	},
 	{
-		name: 'Lemon Crumbles',
+		names: ['Lemon Crumbles'],
 		gramsPerCup: 180.0
 	},
 	{
-		name: 'Lemon juice',
+		names: ['Lemon juice'],
 		gramsPerCup: 224.0
 	},
 	{
-		name: 'Lemon Juice Powder',
+		names: ['Lemon Juice Powder', 'Lime Juice Powder'],
 		gramsPerCup: 144.0
 	},
 	{
-		name: 'Lime Juice Powder',
-		gramsPerCup: 144.0
-	},
-	{
-		name: 'Macadamia nuts (whole)',
+		names: ['Macadamia nuts (whole)'],
 		gramsPerCup: 149.0
 	},
 	{
-		name: 'Malt syrup',
+		names: ['Malt syrup'],
 		gramsPerCup: 344.0
 	},
 	{
-		name: 'Malted Milk Powder',
+		names: ['Malted Milk Powder'],
 		gramsPerCup: 140.0
 	},
 	{
-		name: 'Malted Wheat Flakes',
+		names: ['Malted Wheat Flakes'],
 		gramsPerCup: 128.0
 	},
 	{
-		name: 'Maple sugar',
+		names: ['Maple sugar'],
 		gramsPerCup: 156.0
 	},
 	{
-		name: 'Maple syrup',
+		names: ['Maple syrup'],
 		gramsPerCup: 312.0
 	},
 	{
-		name: 'Marshmallow spread, homemade',
+		names: ['Marshmallow spread, homemade'],
 		gramsPerCup: 72.0
 	},
 	{
-		name: 'Marshmallow spread, store-bought',
+		names: ['Marshmallow spread, store-bought'],
 		gramsPerCup: 123.0
 	},
 	{
-		name: 'Marshmallow Fluff\u00ae',
+		names: ['Marshmallow Fluff'],
 		gramsPerCup: 128.0
 	},
 	{
-		name: 'Marshmallows (mini)',
+		names: ['Marshmallows (mini)', 'Mini Marshmallows'],
 		gramsPerCup: 43.0
 	},
 	{
-		name: 'Marzipan',
+		names: ['Marzipan'],
 		gramsPerCup: 290.0
 	},
 	{
-		name: 'Masa Harina',
+		names: ['Masa Harina'],
 		gramsPerCup: 93.0
 	},
 	{
-		name: 'Mascarpone cheese',
+		names: ['Mascarpone cheese', 'Mascarpone'],
 		gramsPerCup: 227.0
 	},
 	{
-		name: 'Mashed potatoes',
+		names: ['Mashed potatoes', 'Potatoes (mashed)'],
 		gramsPerCup: 213.0
 	},
 	{
-		name: 'Mashed sweet potatoes',
+		names: ['Mashed sweet potatoes'],
 		gramsPerCup: 240.0
 	},
 	{
-		name: 'Mayonnaise',
+		names: ['Mayonnaise'],
 		gramsPerCup: 226.0
 	},
 	{
-		name: 'Medium Rye Flour',
+		names: ['Medium Rye Flour'],
 		gramsPerCup: 106.0
 	},
 	{
-		name: 'Meringue powder',
+		names: ['Meringue powder'],
 		gramsPerCup: 172.0
 	},
 	{
-		name: 'Milk (evaporated)',
+		names: ['Milk (evaporated)', 'Evaporated Milk'],
 		gramsPerCup: 226.0
 	},
 	{
-		name: 'Milk (fresh)',
+		names: ['Milk (fresh)', 'Milk', 'Fresh Milk'],
 		gramsPerCup: 227.0
 	},
 	{
-		name: 'Millet (whole)',
+		names: ['Millet (whole)'],
 		gramsPerCup: 206.0
 	},
 	{
-		name: 'Mini chocolate chips',
+		names: ['Mini chocolate chips'],
 		gramsPerCup: 177.0
 	},
 	{
-		name: 'Molasses',
+		names: ['Molasses'],
 		gramsPerCup: 340.0
 	},
 	{
-		name: 'Mushrooms (sliced)',
+		names: ['Mushrooms (sliced)', 'Sliced Mushrooms'],
 		gramsPerCup: 78.0
 	},
 	{
-		name: 'Non-Diastatic Malt Powder',
+		names: ['Non-Diastatic Malt Powder', 'Malt Powder'],
 		gramsPerCup: 144.0
 	},
 	{
-		name: 'Oat bran',
+		names: ['Oat bran'],
 		gramsPerCup: 106.0
 	},
 	{
-		name: 'Oat flour',
+		names: ['Oat flour'],
 		gramsPerCup: 92.0
 	},
 	{
-		name: 'Oats (old-fashioned or quick-cooking)',
+		names: ['Oats', 'Oats (Quick Cooking)', 'Oats (instant)'],
 		gramsPerCup: 89.0
 	},
 	{
-		name: 'Oats (prepared)\u00a0',
+		names: ['Oats (prepared)'],
 		gramsPerCup: 147.0
 	},
 	{
-		name: 'Olive oil',
+		names: ['Olive oil'],
 		gramsPerCup: 200.0
 	},
 	{
-		name: 'Olives (sliced)',
+		names: ['Olives (sliced)'],
 		gramsPerCup: 142.0
 	},
 	{
-		name: 'Onions (fresh, diced)',
+		names: ['Onions (fresh, diced)'],
 		gramsPerCup: 142.0
 	},
 	{
-		name: 'Paleo Baking Flour',
+		names: ['Paleo Baking Flour'],
 		gramsPerCup: 104.0
 	},
 	{
-		name: 'Palm shortening',
+		names: ['Palm shortening'],
 		gramsPerCup: 180.0
 	},
 	{
-		name: 'Passion fruit pur\u00e9e\u00a0',
+		names: ['Passion fruit puree'],
 		gramsPerCup: 180.0
 	},
 	{
-		name: 'Pasta Flour Blend',
+		names: ['Pasta Flour Blend'],
 		gramsPerCup: 145.0
 	},
 	{
-		name: 'Pastry Flour',
+		names: ['Pastry Flour'],
 		gramsPerCup: 106.0
 	},
 	{
-		name: 'Pastry Flour Blend',
+		names: ['Pastry Flour Blend'],
 		gramsPerCup: 113.0
 	},
 	{
-		name: 'Peaches (peeled and diced)',
+		names: ['Peaches (peeled and diced)', 'Diced Peaches', 'Peaches (diced)'],
 		gramsPerCup: 170.0
 	},
 	{
-		name: 'Peanut butter',
+		names: ['Peanut butter'],
 		gramsPerCup: 270.0
 	},
 	{
-		name: 'Peanuts (whole, shelled)',
+		names: ['Peanuts (whole, shelled)', 'Whole Peanuts', 'Shelled Peanuts', 'Peanuts (whole)'],
 		gramsPerCup: 142.0
 	},
 	{
-		name: 'Pears (peeled and diced)',
+		names: ['Pears (peeled and diced)', 'Diced Pears', 'Pears (diced)'],
 		gramsPerCup: 163.0
 	},
 	{
-		name: 'Pecan Meal',
+		names: ['Pecan Meal'],
 		gramsPerCup: 80.0
 	},
 	{
-		name: 'Pecans (diced)',
+		names: ['Pecans (diced)'],
 		gramsPerCup: 114.0
 	},
 	{
-		name: 'Pie Filling Enhancer',
+		names: ['Pie Filling Enhancer'],
 		gramsPerCup: 184.0
 	},
 	{
-		name: 'Pine nuts',
+		names: ['Pine nuts'],
 		gramsPerCup: 142.0
 	},
 	{
-		name: 'Pineapple (crushed, drained)',
+		names: [
+			'Pineapple (crushed, drained)',
+			'Crushed Pineapple',
+			'Pineapple (drained)',
+			'Drained Pineapple',
+			'Pineapple (crushed)'
+		],
 		gramsPerCup: 256.0
 	},
 	{
-		name: 'Pineapple (dried)',
+		names: ['Pineapple (dried)'],
 		gramsPerCup: 142.0
 	},
 	{
-		name: 'Pineapple (fresh or canned, diced)',
+		names: ['Pineapple (diced)', 'Diced Pineapple'],
 		gramsPerCup: 170.0
 	},
 	{
-		name: 'Pistachio nuts (shelled)',
+		names: ['Pistachio nuts (shelled)'],
 		gramsPerCup: 120.0
 	},
 	{
-		name: 'Pistachio Paste',
+		names: ['Pistachio Paste'],
 		gramsPerCup: 312.0
 	},
 	{
-		name: 'Pizza Dough Flavor',
+		names: ['Pizza Dough Flavor'],
 		gramsPerCup: 96.0
 	},
 	{
-		name: 'Pizza Flour Blend',
+		names: ['Pizza Flour Blend'],
 		gramsPerCup: 124.0
 	},
 	{
-		name: 'Pizza sauce',
+		names: ['Pizza sauce'],
 		gramsPerCup: 228.0
 	},
 	{
-		name: 'Pizza Seasoning',
+		names: ['Pizza Seasoning'],
 		gramsPerCup: 80.0
 	},
 	{
-		name: 'Polenta (coarse ground cornmeal)',
+		names: ['Polenta (coarse ground cornmeal)'],
 		gramsPerCup: 163.0
 	},
 	{
-		name: 'Poppy seeds',
+		names: ['Poppy seeds'],
 		gramsPerCup: 144.0
 	},
 	{
-		name: 'Potato Flour',
+		names: ['Potato Flour'],
 		gramsPerCup: 184.0
 	},
 	{
-		name: 'Potato starch',
+		names: ['Potato starch'],
 		gramsPerCup: 152.0
 	},
 	{
-		name: 'Pumpernickel Flour',
+		names: ['Pumpernickel Flour'],
 		gramsPerCup: 106.0
 	},
 	{
-		name: 'Pumpkin pur\u00e9e\u00a0',
+		names: ['Pumpkin puree'],
 		gramsPerCup: 227.0
 	},
 	{
-		name: 'Quinoa (cooked)',
+		names: ['Quinoa (cooked)'],
 		gramsPerCup: 184.0
 	},
 	{
-		name: 'Quinoa (whole)',
+		names: ['Quinoa (whole)'],
 		gramsPerCup: 177.0
 	},
 	{
-		name: 'Quinoa flour',
+		names: ['Quinoa flour'],
 		gramsPerCup: 110.0
 	},
 	{
-		name: 'Raisins (loose)',
+		names: ['Raisins (loose)'],
 		gramsPerCup: 149.0
 	},
 	{
-		name: 'Raisins (packed)',
+		names: ['Raisins (packed)'],
 		gramsPerCup: 170.0
 	},
 	{
-		name: 'Raspberries (fresh)',
+		names: ['Raspberries (fresh)'],
 		gramsPerCup: 120.0
 	},
 	{
-		name: 'Rhubarb (sliced, 1/2" slices)',
+		names: ['Rhubarb (sliced)', 'Sliced Rhubarb'],
 		gramsPerCup: 120.0
 	},
 	{
-		name: 'Rice (long grain, dry)',
+		names: ['Rice (long grain, dry)', 'Rice (dry)', 'Dried Rice', 'Rice (dried)'],
 		gramsPerCup: 198.0
 	},
 	{
-		name: 'Rice flour (white)',
+		names: ['Rice flour (white)', 'Rice Flour'],
 		gramsPerCup: 142.0
 	},
 	{
-		name: 'Rice Krispies',
+		names: ['Rice Krispies', 'Puffed Rice'],
 		gramsPerCup: 28.0
 	},
 	{
-		name: 'Rye Bread Improver',
+		names: ['Rye Bread Improver'],
 		gramsPerCup: 112.0
 	},
 	{
-		name: 'Rye Chops',
+		names: ['Rye Chops'],
 		gramsPerCup: 120.0
 	},
 	{
-		name: 'Rye flakes',
+		names: ['Rye flakes'],
 		gramsPerCup: 124.0
 	},
 	{
-		name: 'Rye Flour Blend',
+		names: ['Rye Flour Blend'],
 		gramsPerCup: 106.0
 	},
 	{
-		name: 'Salt (Kosher, Diamond Crystal)',
+		names: [
+			'Salt (Kosher, Diamond Crystal)',
+			'Diamond Crystal Salt',
+			'Salt (Diamond Crystal)',
+			'Diamond Crystal Kosher Salt'
+		],
 		gramsPerCup: 128.0
 	},
 	{
-		name: "Salt (Kosher, Morton's)",
+		names: ["Salt (Kosher, Morton's)", "Salt (Morton's)", "Morton's Salt", "Morton's Kosher Salt"],
 		gramsPerCup: 256.0
 	},
 	{
-		name: 'Salt (table)',
+		names: ['Salt (table)', 'Table Salt'],
 		gramsPerCup: 288.0
 	},
 	{
-		name: 'Scallions (sliced)',
+		names: [
+			'Scallions (sliced)',
+			'Sliced Scallions',
+			'Green Onions (sliced)',
+			'Spring Onions (sliced)',
+			'Sliced Green Onions',
+			'Sliced Spring Onions'
+		],
 		gramsPerCup: 64.0
 	},
 	{
-		name: 'Self-Rising Flour',
+		names: [
+			'Self-Rising Flour',
+			'Self-Raising Flour',
+			'Flour (self-rising)',
+			'Flour (self-raising)'
+		],
 		gramsPerCup: 113.0
 	},
 	{
-		name: 'Semolina Flour',
+		names: ['Semolina Flour'],
 		gramsPerCup: 163.0
 	},
 	{
-		name: 'Sesame seeds',
+		names: ['Sesame seeds'],
 		gramsPerCup: 142.0
 	},
 	{
-		name: 'Shallots (peeled and sliced)',
+		names: ['Shallots (peeled and sliced)', 'Shallots (sliced)', 'Sliced Shallots'],
 		gramsPerCup: 156.0
 	},
 	{
-		name: 'Six-Grain Blend',
+		names: ['Six-Grain Blend'],
 		gramsPerCup: 128.0
 	},
 	{
-		name: 'Snow White Non-Melting Topping Sugar',
+		names: ['Snow White Non-Melting Topping Sugar', 'Snow White Sugar'],
 		gramsPerCup: 114.0
 	},
 	{
-		name: 'Sorghum flour',
+		names: ['Sorghum flour'],
 		gramsPerCup: 138.0
 	},
 	{
-		name: 'Sour cream',
+		names: ['Sourdough starter'],
 		gramsPerCup: 227.0
 	},
 	{
-		name: 'Sourdough starter',
-		gramsPerCup: 227.0
-	},
-	{
-		name: 'Soy flour',
+		names: ['Soy flour'],
 		gramsPerCup: 140.0
 	},
 	{
-		name: 'Sparkling Sugar',
+		names: ['Sparkling Sugar'],
 		gramsPerCup: 228.0
 	},
 	{
-		name: 'Spelt Flour',
+		names: ['Spelt Flour'],
 		gramsPerCup: 99.0
 	},
 	{
-		name: 'Sprouted Wheat Flour',
+		names: ['Sprouted Wheat Flour'],
 		gramsPerCup: 113.0
 	},
 	{
-		name: 'Steel cut oats',
+		names: ['Steel cut oats'],
 		gramsPerCup: 140.0
 	},
 	{
-		name: 'Sticky Bun Sugar',
+		names: ['Sticky Bun Sugar'],
 		gramsPerCup: 99.0
 	},
 	{
-		name: 'Strawberries (fresh sliced)',
+		names: ['Strawberries (fresh sliced)', 'Sliced Strawberries', 'Strawberries (sliced)'],
 		gramsPerCup: 167.0
 	},
 	{
-		name: 'Sugar (granulated white)',
+		names: [
+			'Sugar (granulated white)',
+			'Granulated Sugar',
+			'White Sugar',
+			'Sugar (granulated)',
+			'Sugar (white)'
+		],
 		gramsPerCup: 198.0
 	},
 	{
-		name: 'Sugar substitute (Splenda)',
+		names: ['Sugar substitute (Splenda)'],
 		gramsPerCup: 25.0
 	},
 	{
-		name: 'Sundried tomatoes (dry pack)',
+		names: ['Sundried tomatoes'],
 		gramsPerCup: 170.0
 	},
 	{
-		name: 'Sunflower seeds',
+		names: ['Sunflower seeds'],
 		gramsPerCup: 140.0
 	},
 	{
-		name: 'Super 10 Blend',
+		names: ['Super 10 Blend'],
 		gramsPerCup: 106.0
 	},
 	{
-		name: 'Swedish Pearl Sugar',
+		names: ['Swedish Pearl Sugar'],
 		gramsPerCup: 196.0
 	},
 	{
-		name: 'Sweet Ground Chocolate\u00a0and Cocoa Blend',
+		names: ['Sweet Ground Chocolate and Cocoa Blend'],
 		gramsPerCup: 112.0
 	},
 	{
-		name: 'Sweetened condensed coconut milk',
+		names: ['Sweetened condensed coconut milk'],
 		gramsPerCup: 288.0
 	},
 	{
-		name: 'Sweetened condensed milk',
+		names: ['Sweetened condensed milk'],
 		gramsPerCup: 312.0
 	},
 	{
-		name: 'Tahini paste',
+		names: ['Tahini paste', 'Tahini'],
 		gramsPerCup: 256.0
 	},
 	{
-		name: 'Tapioca starch or flour',
+		names: ['Tapioca starch', 'Tapioca Flour'],
 		gramsPerCup: 113.0
 	},
 	{
-		name: 'Tapioca (quick cooking)',
+		names: ['Tapioca (quick cooking)', 'Quick Cooking Tapioca'],
 		gramsPerCup: 168.0
 	},
 	{
-		name: 'Teff flour',
+		names: ['Teff flour'],
 		gramsPerCup: 135.0
 	},
 	{
-		name: 'The Works Bread Topping',
+		names: ['The Works Bread Topping'],
 		gramsPerCup: 140.0
 	},
 	{
-		name: 'Toasted Almond Flour',
+		names: ['Toasted Almond Flour', 'Almond Flour (toasted)'],
 		gramsPerCup: 96.0
 	},
 	{
-		name: 'Toffee chunks',
+		names: ['Toffee chunks'],
 		gramsPerCup: 156.0
 	},
 	{
-		name: 'Tomato paste',
+		names: ['Tomato paste'],
 		gramsPerCup: 232.0
 	},
 	{
-		name: 'Tropical Fruit Blend',
+		names: ['Tropical Fruit Blend'],
 		gramsPerCup: 128.0
 	},
 	{
-		name: 'Turbinado sugar (raw)',
+		names: ['Turbinado sugar (raw)', 'Turbinado sugar'],
 		gramsPerCup: 180.0
 	},
 	{
-		name: 'Unbleached Cake Flour',
+		names: ['Unbleached Cake Flour'],
 		gramsPerCup: 120.0
 	},
 	{
-		name: 'Extract',
+		names: ['Extract'],
 		gramsPerCup: 224.0
 	},
 	{
-		name: 'Vegetable oil',
+		names: ['Vegetable oil'],
 		gramsPerCup: 198.0
 	},
 	{
-		name: 'Vegetable shortening',
+		names: ['Vegetable shortening'],
 		gramsPerCup: 184.0
 	},
 	{
-		name: 'Vital Wheat Gluten',
+		names: ['Vital Wheat Gluten'],
 		gramsPerCup: 144.0
 	},
 	{
-		name: 'Walnuts (chopped)',
+		names: ['Walnuts (chopped)', 'Chopped Walnuts'],
 		gramsPerCup: 113.0
 	},
 	{
-		name: 'Walnuts (whole)',
+		names: ['Walnuts (whole)', 'Whole Walnuts'],
 		gramsPerCup: 128.0
 	},
 	{
-		name: 'Water',
+		names: ['Water'],
 		gramsPerCup: 227.0
 	},
 	{
-		name: 'Wheat berries (red)',
+		names: ['Wheat berries (red)'],
 		gramsPerCup: 184.0
 	},
 	{
-		name: 'Wheat bran',
+		names: ['Wheat bran'],
 		gramsPerCup: 64.0
 	},
 	{
-		name: 'Wheat germ',
+		names: ['Wheat germ'],
 		gramsPerCup: 112.0
 	},
 	{
-		name: 'White Chocolate Chips',
+		names: ['White Chocolate Chips'],
 		gramsPerCup: 170.0
 	},
 	{
-		name: 'White Rye Flour',
+		names: ['White Rye Flour', 'Rye Flour (white)'],
 		gramsPerCup: 106.0
 	},
 	{
-		name: 'White Whole Wheat Flour',
+		names: [
+			'White Whole Wheat Flour',
+			'Whole Wheat Flour (white)',
+			'Whole Wheat Flour (Premium 100%)',
+			'Whole Wheat Flour'
+		],
 		gramsPerCup: 113.0
 	},
 	{
-		name: 'Whole Grain Flour Blend',
+		names: ['Whole Grain Flour Blend'],
 		gramsPerCup: 113.0
 	},
 	{
-		name: 'Whole Wheat Flour (Premium 100%)',
-		gramsPerCup: 113.0
-	},
-	{
-		name: 'Whole Wheat Pastry Flour / Graham Flour',
+		names: ['Whole Wheat Pastry Flour', 'Graham Flour'],
 		gramsPerCup: 96.0
 	},
 	{
-		name: 'Yeast (instant)',
+		names: ['Yeast (instant)', 'Instant Yeast', 'Dried Yeast', 'Yeast (dried)'],
 		gramsPerCup: 144.0
 	},
 	{
-		name: 'Yeast (instant)',
-		gramsPerCup: 168.0
-	},
-	{
-		name: 'Yeast (instant)',
-		gramsPerCup: 144.0
-	},
-	{
-		name: 'Yogurt',
+		names: ['Yogurt'],
 		gramsPerCup: 227.0
 	},
 	{
-		name: 'Yuletide Cheer Fruit Blend',
+		names: ['Yuletide Cheer Fruit Blend'],
 		gramsPerCup: 130.0
 	},
 	{
-		name: 'Zucchini (shredded)',
+		names: ['Zucchini (shredded)', 'Courgette (shredded)', 'Courgette (grated)'],
 		gramsPerCup: 121.0
 	}
 ]

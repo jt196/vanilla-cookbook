@@ -93,18 +93,21 @@ const measurementSystems = Object.keys(systemToUnitsMap).reduce((acc, system) =>
 }, {})
 
 const fuseOptions = {
-	keys: ['name'],
+	keys: ['names'], // Changed from 'name' to 'names'
 	includeScore: true,
 	caseSensitive: false,
-	threshold: 0.5 // Lower the threshold, the stricter the match. Range [0, 1]
+	threshold: 0.3 // Lower the threshold, the stricter the match. Range [0, 1]
 }
 
 function fuzzyMatch(ingredient, lookupTable) {
 	const words = ingredient.toLowerCase().split(/\W+/) // Split by non-word characters
 	for (const word of words) {
 		for (const item of lookupTable) {
-			if (item.name.toLowerCase().includes(word)) {
-				return item
+			for (const name of item.names) {
+				// Loop through the names array
+				if (name.toLowerCase().includes(word)) {
+					return item
+				}
 			}
 		}
 	}
@@ -125,10 +128,20 @@ export const manipulateIngredient = (ingredientObj, fromSystem, toSystem) => {
 
 	if (toSystem === 'americanVolumetric' || fromSystem === 'americanVolumetric') {
 		const result = fuse.search(ingredient)
-		if (result.length > 0 && result[0].score < 0.5) {
+		console.log('🚀 ~ file: converter.js:128 ~ manipulateIngredient ~ result:', result)
+		console.log('🚀 ~ file: converter.js:128 ~ manipulateIngredient ~ ingredient:', ingredient)
+		if (result.length > 0 && result[0].score < 0.3) {
 			dryIngredient = result[0].item
+			console.log(
+				'🚀 ~ file: converter.js:130 ~ manipulateIngredient ~ dryIngredient:',
+				dryIngredient
+			)
 		} else {
 			dryIngredient = fuzzyMatch(ingredient, dryIngredientsConversion)
+			console.log(
+				'🚀 ~ file: converter.js:133 ~ manipulateIngredient ~ dryIngredient:',
+				dryIngredient
+			)
 		}
 
 		if (dryIngredient) {
