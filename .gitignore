@@ -3,6 +3,7 @@ node_modules
 /build
 /.svelte-kit
 /package
+src/lib/data/recipe_html/*
 .env
 .env.*
 !.env.example

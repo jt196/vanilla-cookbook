@@ -128,20 +128,10 @@ export const manipulateIngredient = (ingredientObj, fromSystem, toSystem) => {
 
 	if (toSystem === 'americanVolumetric' || fromSystem === 'americanVolumetric') {
 		const result = fuse.search(ingredient)
-		console.log('🚀 ~ file: converter.js:128 ~ manipulateIngredient ~ result:', result)
-		console.log('🚀 ~ file: converter.js:128 ~ manipulateIngredient ~ ingredient:', ingredient)
 		if (result.length > 0 && result[0].score < 0.3) {
 			dryIngredient = result[0].item
-			console.log(
-				'🚀 ~ file: converter.js:130 ~ manipulateIngredient ~ dryIngredient:',
-				dryIngredient
-			)
 		} else {
 			dryIngredient = fuzzyMatch(ingredient, dryIngredientsConversion)
-			console.log(
-				'🚀 ~ file: converter.js:133 ~ manipulateIngredient ~ dryIngredient:',
-				dryIngredient
-			)
 		}
 
 		if (dryIngredient) {

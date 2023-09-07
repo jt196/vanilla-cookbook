@@ -28,17 +28,65 @@ export function getAuthor(author) {
 }
 
 export function durationToText(duration) {
+	console.log('🚀 ~ file: parseHelpers.js:31 ~ durationToText ~ duration:', duration)
 	try {
 		const durationObject = parseIsoDuration(duration)
 		return humanizeDuration(durationObject)
 	} catch (error) {
-		return undefined
+		return duration
 	}
 }
 
 export function parseInstructions(instructions) {
 	if (!instructions) return []
-	return instructions.map((v) => v.text || v.name || '')
+
+	// If instructions is an array of objects
+	if (Array.isArray(instructions) && instructions[0] && typeof instructions[0] === 'object') {
+		return instructions.map((v) => cleanString(v.text || v.name || ''))
+	}
+
+	// If instructions is an array of strings
+	if (Array.isArray(instructions) && typeof instructions[0] === 'string') {
+		return instructions.map(cleanString)
+	}
+
+	// If instructions is a string
+	if (typeof instructions === 'string') {
+		// Return it as a single-item array
+		return [cleanString(instructions)]
+	}
+
+	// Handle other types as needed
+	return []
+}
+
+export function parseIngredients(ingredients) {
+	// If ingredients is already an array, clean each string and return
+	if (Array.isArray(ingredients)) {
+		return ingredients.map(cleanString)
+	}
+
+	// If ingredients is a string, split by comma and clean each resulting string
+	if (typeof ingredients === 'string') {
+		return ingredients.split(',').map(cleanString)
+	}
+
+	// If ingredients is neither an array nor a string, return an empty array
+	return []
+}
+
+export function cleanString(str) {
+	console.log('🚀 ~ file: parseHelpers.js:65 ~ cleanString ~ str:', str)
+	if (typeof str !== 'string') {
+		return '' // or return some default value if desired
+	}
+	return str
+		.split('\n')
+		.map((line) => line.trim())
+		.filter((line) => line.length > 0)
+		.join(' ')
+		.trim()
+		.replace(/\s+/g, ' ')
 }
 
 export function getUrl(recipe) {

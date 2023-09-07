@@ -9,7 +9,6 @@ export function sortRecipesByKey(recipes, key, currentSort) {
 }
 
 export function sortByKeyGeneric(inputArray, inputKey, direction) {
-	console.log('🚀 ~ file: sorting.js:13 ~ sortByKeyGeneric')
 	return [...inputArray].sort((a, b) => {
 		return direction === 'asc'
 			? a[inputKey].toString().localeCompare(b[inputKey].toString())

@@ -72,7 +72,7 @@ export const dryIngredientsConversion = [
 		gramsPerCup: 192.0
 	},
 	{
-		names: ['Baking soda'],
+		names: ['Baking soda', 'Bicarbonate of Soda', 'Sodium Bicarbonate'],
 		gramsPerCup: 288.0
 	},
 	{
@@ -100,7 +100,7 @@ export const dryIngredientsConversion = [
 		gramsPerCup: 85.0
 	},
 	{
-		names: ['Barley malt syrup'],
+		names: ['Barley malt syrup', 'Malt Extract'],
 		gramsPerCup: 336.0
 	},
 	{
@@ -108,7 +108,7 @@ export const dryIngredientsConversion = [
 		gramsPerCup: 224.0
 	},
 	{
-		names: ['Bell peppers (fresh)'],
+		names: ['Bell peppers (fresh)', 'Bell Pepper', 'Green Pepper'],
 		gramsPerCup: 142.0
 	},
 	{
@@ -156,6 +156,8 @@ export const dryIngredientsConversion = [
 			'Bread Flour',
 			'Artisan Bread Flour',
 			'All-Purpose Flour',
+			'All Purpose Flour',
+			'Plain Flour',
 			'AP Flour',
 			'French-Style Flour'
 		],
@@ -170,7 +172,7 @@ export const dryIngredientsConversion = [
 		gramsPerCup: 128.0
 	},
 	{
-		names: ['Brown sugar', 'Light Brown Sugar', 'Dark Brown Sugar'],
+		names: ['Brown sugar', 'Light Brown Sugar', 'Dark Brown Sugar', 'Demarara Sugar'],
 		gramsPerCup: 213.0
 	},
 	{
@@ -206,7 +208,7 @@ export const dryIngredientsConversion = [
 		gramsPerCup: 112.0
 	},
 	{
-		names: ['Candied peel'],
+		names: ['Candied peel', 'Crystallised fruit'],
 		gramsPerCup: 170.0
 	},
 	{
@@ -317,7 +319,8 @@ export const dryIngredientsConversion = [
 			'Shredded Coconut',
 			'Coconut (shredded)',
 			'Coconut (toasted)',
-			'Coconut (unsweetened, desiccated)'
+			'Coconut (unsweetened, desiccated)',
+			'Desiccated coconut'
 		],
 		gramsPerCup: 85.0
 	},
@@ -358,15 +361,23 @@ export const dryIngredientsConversion = [
 		gramsPerCup: 154.0
 	},
 	{
-		names: ["Confectioners' sugar (unsifted)", 'Confectioners sugar'],
+		names: ["Confectioners' sugar (unsifted)", 'Confectioners sugar', 'Icing Sugar'],
 		gramsPerCup: 113.5
 	},
 	{
-		names: ['Cookie crumbs'],
+		names: ['Cookie crumbs', 'Biscuit Crumbs'],
 		gramsPerCup: 85.0
 	},
 	{
-		names: ['Corn', 'Frozen Corn', 'Corn (frozen)', 'Fresh Corn', 'Corn (Fresh)'],
+		names: [
+			'Corn',
+			'Frozen Corn',
+			'Corn (frozen)',
+			'Fresh Corn',
+			'Corn (Fresh)',
+			'Maize',
+			'Fresh Maize'
+		],
 		gramsPerCup: 152.0
 	},
 	{
@@ -386,7 +397,7 @@ export const dryIngredientsConversion = [
 		gramsPerCup: 156.0
 	},
 	{
-		names: ['Cornstarch'],
+		names: ['Cornstarch', 'Cornflour'],
 		gramsPerCup: 112.0
 	},
 	{
@@ -512,7 +523,7 @@ export const dryIngredientsConversion = [
 		gramsPerCup: 120.0
 	},
 	{
-		names: ['Garlic (cloves, in skin for roasting)'],
+		names: ['Garlic Cloves', 'Garlic (whole)', 'Whole Garlic'],
 		gramsPerCup: 113
 	},
 	{
@@ -732,7 +743,7 @@ export const dryIngredientsConversion = [
 		gramsPerCup: 226.0
 	},
 	{
-		names: ['Milk (fresh)', 'Milk', 'Fresh Milk'],
+		names: ['Milk (fresh)', 'Milk', 'Fresh Milk', 'Whole Milk', 'Skimmed Milk'],
 		gramsPerCup: 227.0
 	},
 	{
@@ -744,7 +755,7 @@ export const dryIngredientsConversion = [
 		gramsPerCup: 177.0
 	},
 	{
-		names: ['Molasses'],
+		names: ['Molasses', 'Treacle', 'Black Treacle', 'Golden Syrup'],
 		gramsPerCup: 340.0
 	},
 	{
@@ -752,7 +763,7 @@ export const dryIngredientsConversion = [
 		gramsPerCup: 78.0
 	},
 	{
-		names: ['Non-Diastatic Malt Powder', 'Malt Powder'],
+		names: ['Non-Diastatic Malt Powder', 'Malt Powder', 'Dried Malt Extract', 'DME'],
 		gramsPerCup: 144.0
 	},
 	{
@@ -768,7 +779,7 @@ export const dryIngredientsConversion = [
 		gramsPerCup: 89.0
 	},
 	{
-		names: ['Oats (prepared)'],
+		names: ['Oats (prepared)', 'Oatmeal (cooked)', 'Porridge'],
 		gramsPerCup: 147.0
 	},
 	{
@@ -918,7 +929,7 @@ export const dryIngredientsConversion = [
 		gramsPerCup: 110.0
 	},
 	{
-		names: ['Raisins (loose)'],
+		names: ['Raisins (loose)', 'Raisins', 'Sultanas', 'Sultanas (loose)'],
 		gramsPerCup: 149.0
 	},
 	{
@@ -1125,7 +1136,7 @@ export const dryIngredientsConversion = [
 		gramsPerCup: 156.0
 	},
 	{
-		names: ['Tomato paste'],
+		names: ['Tomato paste', 'Tomato Puree'],
 		gramsPerCup: 232.0
 	},
 	{
@@ -1193,12 +1204,10 @@ export const dryIngredientsConversion = [
 			'White Whole Wheat Flour',
 			'Whole Wheat Flour (white)',
 			'Whole Wheat Flour (Premium 100%)',
-			'Whole Wheat Flour'
+			'Whole Wheat Flour',
+			'Wholemeal Flour',
+			'Whole Grain Flour Blend'
 		],
-		gramsPerCup: 113.0
-	},
-	{
-		names: ['Whole Grain Flour Blend'],
 		gramsPerCup: 113.0
 	},
 	{
@@ -1210,7 +1219,7 @@ export const dryIngredientsConversion = [
 		gramsPerCup: 144.0
 	},
 	{
-		names: ['Yogurt'],
+		names: ['Yogurt', 'Natural Yoghurt', 'Unflavored Yoghurt'],
 		gramsPerCup: 227.0
 	},
 	{

@@ -31,6 +31,7 @@
 		"global-jsdom": "^9.1.0",
 		"he": "^1.2.0",
 		"humanize-duration": "^3.29.0",
+		"js-beautify": "^1.14.9",
 		"jsdom": "^22.1.0",
 		"node-html-parser": "^6.1.5",
 		"node-stream-zip": "^1.15.0",

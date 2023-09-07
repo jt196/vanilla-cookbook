@@ -79,7 +79,7 @@
 				recipe.nutritional_info = nutritionProcess(scrapedRecipe.nutrition)
 			}
 		} else {
-			// Handle the error (e.g., show an error message)
+			console.error('Error:', await response.text())
 		}
 	}
 	onMount(() => {
