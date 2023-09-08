@@ -3,14 +3,13 @@ import Fuse from 'fuse.js'
 import { dryIngredientsConversion } from '$lib/utils/dryIngredientsConversion'
 
 /**
- * Takes the quantity of the original unit and converts it to another given unit.
+ * Converts a quantity from one unit to another.
  *
  * @param {number} quantity - The quantity of the 'from' unit.
  * @param {string} from - The original unit to be converted.
  * @param {string} [to='grams'] - The unit to be converted to.
  * @returns {{quantity: number, unit: string} | {error: string}} - Returns an object containing either the converted quantity and unit or an error message.
  */
-
 export const converter = (quantity, from, to = 'grams') => {
 	if (quantity <= 0) return { error: 'Quantity must be greater than 0' }
 
@@ -36,6 +35,12 @@ export const converter = (quantity, from, to = 'grams') => {
 	return { quantity: total, unit: to }
 }
 
+/**
+ * Determines the dominant measurement system used in an array of ingredients.
+ *
+ * @param {Array} ingredientArray - An array of ingredient objects.
+ * @returns {{system: string, counts: Object}} - The dominant system and the counts of each system.
+ */
 export const determineSystem = (ingredientArray) => {
 	const systemCounts = {
 		metric: 0,
@@ -75,12 +80,24 @@ export const determineSystem = (ingredientArray) => {
 	return { system: dominantSystem, counts: systemCounts }
 }
 
+/**
+ * Mapping of measurement systems to their respective units.
+ * @type {Object}
+ */
 const systemToUnitsMap = {
 	metric: ['gram', 'kilogram', 'liter', 'milliliter'],
 	imperial: ['fluid ounce', 'pound', 'gallon', 'ounce'],
 	americanVolumetric: ['cup', 'quart']
 }
 
+/**
+ * Manipulates an ingredient object to convert its quantity and unit from one system to another.
+ *
+ * @param {Object} ingredientObj - The ingredient object to be manipulated.
+ * @param {string} fromSystem - The original measurement system.
+ * @param {string} toSystem - The target measurement system.
+ * @returns {Object} - The manipulated ingredient object with converted quantity and unit.
+ */
 const measurementSystems = Object.keys(systemToUnitsMap).reduce((acc, system) => {
 	acc[system] = []
 	systemToUnitsMap[system].forEach((unit) => {
@@ -99,6 +116,13 @@ const fuseOptions = {
 	threshold: 0.3 // Lower the threshold, the stricter the match. Range [0, 1]
 }
 
+/**
+ * Attempts to find a match for an ingredient in a lookup table.
+ *
+ * @param {string} ingredient - The ingredient name to match.
+ * @param {Array} lookupTable - The table of ingredients to search within.
+ * @returns {Object|null} - Returns the matched ingredient object or null if no match is found.
+ */
 function fuzzyMatch(ingredient, lookupTable) {
 	const words = ingredient.toLowerCase().split(/\W+/) // Split by non-word characters
 	for (const word of words) {
@@ -114,8 +138,20 @@ function fuzzyMatch(ingredient, lookupTable) {
 	return null
 }
 
+/**
+ * Fuse instance for fuzzy searching within dry ingredients.
+ * @type {Fuse}
+ */
 const fuse = new Fuse(dryIngredientsConversion, fuseOptions)
 
+/**
+ * Manipulates an ingredient object to convert its quantity and unit from one system to another.
+ *
+ * @param {Object} ingredientObj - The ingredient object to be manipulated.
+ * @param {string} fromSystem - The original measurement system.
+ * @param {string} toSystem - The target measurement system.
+ * @returns {Object} - The manipulated ingredient object with converted quantity and unit.
+ */
 export const manipulateIngredient = (ingredientObj, fromSystem, toSystem) => {
 	const { quantity, unit, ingredient } = ingredientObj
 

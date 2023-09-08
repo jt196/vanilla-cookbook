@@ -1,3 +1,10 @@
+/**
+ * Sorts an array of recipes by a given key.
+ * @param {Object[]} recipes - Array of recipes to sort.
+ * @param {string} key - The key by which to sort the recipes.
+ * @param {string} [currentSort] - The current sort direction ('asc' or 'desc').
+ * @returns {{sortedRecipes: Object[], newSort: string}} - An object containing the sorted recipes and the new sort direction.
+ */
 export function sortRecipesByKey(recipes, key, currentSort) {
 	const sortByKey = key === 'created' ? sortByDate : sortByKeyGeneric
 
@@ -8,6 +15,13 @@ export function sortRecipesByKey(recipes, key, currentSort) {
 	}
 }
 
+/**
+ * Sorts an array by a given key in either ascending or descending order.
+ * @param {Object[]} inputArray - Array of objects to sort.
+ * @param {string} inputKey - The key by which to sort the array.
+ * @param {string} direction - The sort direction ('asc' or 'desc').
+ * @returns {Object[]} - The sorted array.
+ */
 export function sortByKeyGeneric(inputArray, inputKey, direction) {
 	return [...inputArray].sort((a, b) => {
 		return direction === 'asc'
@@ -16,6 +30,13 @@ export function sortByKeyGeneric(inputArray, inputKey, direction) {
 	})
 }
 
+/**
+ * Sorts an array by a date key in either ascending or descending order.
+ * @param {Object[]} inputArray - Array of objects to sort.
+ * @param {string} dateKey - The date key by which to sort the array.
+ * @param {string} direction - The sort direction ('asc' or 'desc').
+ * @returns {Object[]} - The sorted array.
+ */
 export function sortByDate(inputArray, dateKey, direction) {
 	return [...inputArray].sort((a, b) => {
 		return direction === 'asc'
@@ -34,6 +55,11 @@ export function randomSortArray(inputArray) {
 	return inputArray.sort(() => Math.random() - 0.5)
 }
 
+/**
+ * Recursively sorts an array of objects by their 'name' property.
+ * @param {Object[]} data - Array of objects to sort.
+ * @returns {Object[]} - The sorted array.
+ */
 export function sortByNameRecursive(data) {
 	// Sort the current level by name
 	data.sort((a, b) => {

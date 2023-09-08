@@ -1,3 +1,11 @@
+/**
+ * Represents an array of unit objects.
+ * @type {Object[]}
+ * @property {string[]} names - Different names for a given unit.
+ * @property {number} grams - The gram equivalent of the unit.
+ * @property {boolean} skipConversion - Whether to skip conversion, often used for volumetric units like teaspoons.
+ * @property {number} decimalPlaces - Number of decimal places for display.
+ */
 export const units = [
 	{
 		names: [
@@ -268,11 +276,22 @@ export const units = [
 	}
 ]
 
+/**
+ * Determines if a unit should skip conversion based on its name.
+ * @param {string} unit - The name of the unit.
+ * @returns {boolean} - Returns true if the unit should skip conversion, otherwise false.
+ */
 export function shouldSkipConversion(unit) {
 	const unitObj = units.find((u) => u.names.includes(unit))
 	return unitObj ? unitObj.skipConversion : false
 }
 
+/**
+ * Finds a suitable unit for a given system and quantity in grams.
+ * @param {string} system - The system to use ('imperial', 'metric', or 'americanVolumetric').
+ * @param {number} quantityInGrams - The quantity in grams.
+ * @returns {string} - The name of the suitable unit.
+ */
 export const findSuitableUnit = (system, quantityInGrams) => {
 	if (system === 'imperial') {
 		const ounces = quantityInGrams / 28.3495

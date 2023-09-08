@@ -5,10 +5,10 @@ import prisma from '@lucia-auth/adapter-prisma'
 import { fail } from '@sveltejs/kit'
 import { promises as fsPromises } from 'fs'
 import fs from 'fs'
-import { addCategoriesToDB, loadCategories } from '../src/lib/utils/paprikaAPI.js'
+import { addCategoriesToDB, loadCategories } from '../src/lib/utils/import/paprika/paprikaAPI.js'
 import path from 'path'
 import { fileURLToPath } from 'url'
-import { extractRecipes, filterRecipeData } from '../src/lib/utils/recipeImport.js'
+import { extractRecipes } from '../src/lib/utils/import/recipeImport.js'
 
 // // Prisma doesn't support ES Modules so we have to do this
 const PrismaClient = PrismaClientPkg.PrismaClient

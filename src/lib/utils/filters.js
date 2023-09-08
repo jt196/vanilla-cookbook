@@ -168,11 +168,34 @@ export function decimalToFraction(decimal, decimalPlaces = 10, tolerance = 1e-10
 	return fractions[finalDecimal.toString()] || finalDecimal
 }
 
+/**
+ * Rounds a number to a specified number of decimal places.
+ *
+ * @function
+ * @param {number} num - The number to be rounded.
+ * @param {number} decimalPlaces - The number of decimal places to round to.
+ * @returns {number} - The rounded number.
+ * @example
+ *
+ * roundToDecimalPlaces(123.4567, 2); // returns 123.46
+ */
 function roundToDecimalPlaces(num, decimalPlaces) {
 	const factor = Math.pow(10, decimalPlaces)
 	return Math.round(num * factor) / factor
 }
 
+/**
+ * Rounds a number to the nearest integer if it's within a specified tolerance.
+ *
+ * @function
+ * @param {number} num - The number to be checked and potentially rounded.
+ * @param {number} [tolerance=1e-10] - The tolerance within which the number will be rounded to the nearest integer.
+ * @returns {number} - The original number or its rounded value if it's within the tolerance.
+ * @example
+ *
+ * roundToTolerance(123.00000000001); // returns 123
+ * roundToTolerance(123.0001, 0.001); // returns 123
+ */
 function roundToTolerance(num, tolerance = 1e-10) {
 	const rounded = Math.round(num)
 	if (Math.abs(num - rounded) < tolerance) {

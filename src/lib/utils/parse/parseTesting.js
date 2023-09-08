@@ -4,6 +4,10 @@ import { dirname, resolve } from 'path'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
+/**
+ * Mocks the global fetch function to read from local HTML files instead of making actual HTTP requests.
+ * This is useful for testing purposes to avoid making real network requests.
+ */
 export function mockFetchForURL() {
 	global.fetch = async (url) => {
 		console.log(`Mock fetch called with URL: ${url}`) // Log the URL
@@ -18,6 +22,13 @@ export function mockFetchForURL() {
 	}
 }
 
+/**
+ * Converts a given URL to a simplified filename string.
+ * This is useful for saving web pages locally with a filename derived from their URL.
+ *
+ * @param {string} url - The URL to convert.
+ * @returns {string} The simplified filename string.
+ */
 export function urlToFilename(url) {
 	// Convert the URL to a simplified string that can be used as a filename
 	const simplifiedUrl = url

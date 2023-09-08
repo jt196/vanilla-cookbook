@@ -1,3 +1,8 @@
+/**
+ * List of weights for 1 cup of different dried ingredients
+ * The names uses an array so can be for multiple names of an ingredient
+ * @type {Object}
+ */
 export const dryIngredientsConversion = [
 	{
 		names: ['Agave syrup'],

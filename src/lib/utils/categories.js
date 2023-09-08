@@ -1,3 +1,11 @@
+/**
+ * Builds a hierarchical structure from a flat list of categories.
+ * This is used for taking a user's categories and building a structure from them
+ * They're stored in a flat structure in the DB
+ *
+ * @param {Array} categories - An array of category objects with uid, parent_uid, and other properties.
+ * @returns {Array} An array of root categories, each with a nested structure of children.
+ */
 export function buildHierarchy(categories) {
 	const map = {}
 	categories.forEach((cat) => (map[cat.uid] = { ...cat, children: [] }))
@@ -14,7 +22,12 @@ export function buildHierarchy(categories) {
 	return roots
 }
 
-// Return the data structure expected for svelte-dnd-action
+/**
+ * Transforms a hierarchical category structure into a format suitable for svelte-dnd-action.
+ *
+ * @param {Array} categories - An array of hierarchical category objects.
+ * @returns {Object} An object of nodes, each representing a category.
+ */
 export function transformToNodes(categories) {
 	const nodes = {}
 
@@ -53,7 +66,12 @@ export function transformToNodes(categories) {
 	return sortedNodesObject
 }
 
-// Wrap all top level nodes in an outer one
+/**
+ * Wraps all top-level nodes in an outer node.
+ *
+ * @param {Object} data - An object of nodes, each representing a category.
+ * @returns {Object} The input data with all top-level nodes wrapped in an outer node.
+ */
 export function wrapTopLevelNodes(data) {
 	// First, identify the top-level nodes
 	const childUIDs = new Set()
@@ -78,6 +96,14 @@ export function wrapTopLevelNodes(data) {
 	return wrappedData
 }
 
+/**
+ * Fetches categories for a user and transforms them into a suitable format.
+ *
+ * @param {Function} fetch - The fetch function to use.
+ * @param {URL} url - The base URL to fetch from.
+ * @param {string} userId - The ID of the user whose categories to fetch.
+ * @returns {Promise<Object>} An object of nodes, each representing a category.
+ */
 export async function fetchAndTransformCategories(fetch, url, userId) {
 	console.log('Fetching categories!')
 	const catRes = await fetch(`${url.origin}/api/recipe/categories/user/${userId}`)
@@ -87,6 +113,12 @@ export async function fetchAndTransformCategories(fetch, url, userId) {
 	return sortItemsAlphabetically(nodes)
 }
 
+/**
+ * Sorts the items in each node alphabetically by name.
+ *
+ * @param {Object} nodes - An object of nodes, each representing a category.
+ * @returns {Object} The input nodes with items sorted alphabetically.
+ */
 export function sortItemsAlphabetically(nodes) {
 	for (let nodeId in nodes) {
 		if (nodes[nodeId].items) {
@@ -100,7 +132,12 @@ export function sortItemsAlphabetically(nodes) {
 	return nodes
 }
 
-// Takes a hierarchical category object and returns an array of selected uids
+/**
+ * Collects the UIDs of all selected categories from a hierarchical structure.
+ *
+ * @param {Array} categories - An array of hierarchical category objects.
+ * @returns {Array<string>} An array of UIDs of selected categories.
+ */
 export function collectSelectedUids(categories) {
 	const selectedUids = []
 

@@ -5,6 +5,35 @@ import pkg from 'js-beautify'
 const { html: beautify } = pkg
 import { urlToFilename } from './parseTesting.js'
 
+/**
+ * Recipe Downloader and Saver
+ *
+ * This script provides utilities for downloading and saving recipes from various websites.
+ * It primarily focuses on extracting JSON-LD formatted recipe data, to save on space
+ * but can also save the entire HTML content if needed.
+ * If the page has already been downloaded, it'll skip the download.
+ * The sites array is the list of sites it'll attempt to download
+ * Currently this just contains the list of failing sites
+ * These have been commented out for ease of debugging
+ * sitePasses are all the sites that have passed tests
+ * sitesCantFix are all the unfixable/unscrapable sites
+ * siteErrors are the sites that failed to download
+ * The recipeParse.test.js also uses the sites array for testing
+ *
+ * @module recipeDownloader
+ *
+ * @author Your Name
+ * @version 1.0.0
+ *
+ * @tutorial
+ * 1. Ensure you have all the required dependencies installed.
+ * 2. Uncomment the sites.forEach at the bottom of this file
+ * 3. Run the script from the command line: `node src/lib/utils/parse/downloadRecipes.js`
+ * 4. The script will attempt to extract recipe data in JSON-LD format.
+ * 5. If found, only the recipe data will be saved. Otherwise, the entire HTML content will be saved.
+ * 6. The content will be saved in the 'src/lib/data/recipe_html' directory by default.
+ */
+
 // These are all passing the parsing tests
 export const sitePasses = [
 	'https://www.750g.com/gateau-au-yaourt-leger-et-moelleux-r60818.htm',
@@ -62,7 +91,9 @@ export const sitePasses = [
 	'https://www.eatingwell.com/recipe/8069828/vegetarian-stuffed-onions/',
 	'https://eatsmarter.com/recipes/grilled-vegetables-with-miso-dressing',
 	'https://emmikochteinfach.de/original-bruschetta-rezept-mit-tomaten/',
+	'https://en.wikibooks.org/wiki/Cookbook:Cr%C3%A8me_Anglaise',
 	'https://eatwhattonight.com/2022/06/steamed-tofu-with-century-egg-and-meat-floss/',
+	'https://www.ethanchlebowski.com/cooking-techniques-recipes/steak-amp-corn-salsa-tostada',
 	'https://www.epicurious.com/recipes/food/views/stovetop-apple-crisp',
 	'https://www.fifteenspatulas.com/thomas-kellers-buttermilk-fried-chicken/',
 	'https://www.finedininglovers.com/recipes/appetizer/green-salad-seaweed-red-prawns',
@@ -98,6 +129,7 @@ export const sitePasses = [
 	'https://www.justataste.com/frankenstein-rice-krispie-treats-recipe/',
 	'https://www.justonecookbook.com/zucchini-corn-stir-fry/',
 	'https://kennymcgovern.com/scottish-square-sausage',
+	'https://www.thekitchn.com/french-onion-chicken-thighs-recipe-23562341',
 	'https://www.kitchenstories.com/de/rezepte/gegrillter-lachs',
 	'https://www.kochbar.de/rezept/547756/Omelette-mit-Pilzen-und-Garnelen.html',
 	'https://www.koket.se/pasta-med-kramig-svampsas',
@@ -178,6 +210,7 @@ export const sitePasses = [
 	'https://tastesbetterfromscratch.com/chicken-and-dumplings/',
 	'https://www.tastesoflizzyt.com/easy-strawberry-cake-recipe/',
 	'https://tasty.co/recipe/taco-spiced-crispy-potato-skins',
+	'https://tastykitchen.com/recipes/special-dietary-needs/vegetarian/crunchy-cashew-thai-quinoa-salad-with-ginger-peanut-dressing/',
 	'https://www.theclevercarrot.com/2023/08/easy-ground-pork-meat-filling-for-ravioli/',
 	'https://theexpertguides.com/recipes/banana-bread-recipe/',
 	'https://thehappyfoodie.co.uk/recipes/jamie-olivers-herby-steak-and-crispy-potatoes/',
@@ -210,40 +243,33 @@ export const siteErrors = [
 	'https://www.tudogostoso.com.br/receita/187825-hamburguer-caseiro.html',
 	'https://www.cucchiaio.it/ricetta/ricetta-penne-pesto-zucchine/',
 	'https://rutgerbakt.nl/taart-recepten/slof/sloffentaart-met-zwitserse-room-en-zomerfruit/',
-	'https://www.thekitchn.com/hibiscus-mezcal-pitcher-cocktail-recipe-23177763',
 	'https://www.matprat.no/oppskrifter/rask/grove-pannekaker/',
 	'https://comidinhasdochef.com/torta-de-atum-fofinha-e-macia/',
 	'https://healthyeating.nhlbi.nih.gov/recipedetail.aspx?linkId=11&cId=1&rId=4'
 ]
 
-// TODO: These are failing the parsing tests
-export const sites = [
-	// Has itemprops, but they need fixing
-	'https://tastykitchen.com/recipes/special-dietary-needs/vegetarian/crunchy-cashew-thai-quinoa-salad-with-ginger-peanut-dressing/'
-]
-
 // Add the custom CSS selectors to the file
-export const sitesCustom = [
-	'https://www.ethanchlebowski.com/cooking-techniques-recipes/steak-amp-corn-salsa-tostada',
-	'https://recipes.farmhousedelivery.com/irish-banger-skillet/',
-	// This has a partial schema - with no ingredients
-	'https://fitmencook.com/recipes/fire-salmon-recipe/',
-	'https://www.gesund-aktiv.com/rezepte/vegetarisch/mediterraner-linsennudel-salat',
-	'https://receitas.ig.com.br/2023-09-03/receita-de-tiramisu.html',
-	'https://justbento.com/handbook/recipe-collection-mains/balsamic-sesame-chicken',
-	'https://kochbucher.com/hahnchen-mit-mohren-und-porree-in-krauter-frischkase-sauce/',
-	'https://www.kwestiasmaku.com/przepis/sernik-z-wisniami-0',
-	'https://www.latelierderoxane.com/blog/recette-pain-maison-sans-petrissage/',
-	'https://en.wikibooks.org/wiki/Cookbook:Cr%C3%A8me_Anglaise',
-	'https://meljoulwan.com/2020/02/06/moroccan-salad-platter/',
-	'https://www.nutritionbynathalie.com/single-post/mediterranean-style-sweet-potatoes',
-	'https://paninihappy.com/turkey-bacon-lattice-and-havarti-panini/',
-	'https://www.projectgezond.nl/croque-monsieur/',
-	'https://rosannapansino.com/blogs/recipes/princess-peach-castle-cake',
-	'https://www.saboresajinomoto.com.br/receita/hamburguer-duplo',
-	'https://sallys-blog.de/rezepte/einbackbroetchen-luftige-hefebroetchen',
-	'https://streetkitchen.hu/a-legjobb-reggelik/omlett-wrap/',
-	'https://www.wholefoodsmarket.co.uk/recipes/classic-french-toast'
+export const sites = [
+	// Known working site
+	'https://www.750g.com/gateau-au-yaourt-leger-et-moelleux-r60818.htm'
+	// 'https://recipes.farmhousedelivery.com/irish-banger-skillet/',
+	// // This has a partial schema - with no ingredients
+	// 'https://fitmencook.com/recipes/fire-salmon-recipe/',
+	// 'https://www.gesund-aktiv.com/rezepte/vegetarisch/mediterraner-linsennudel-salat',
+	// 'https://receitas.ig.com.br/2023-09-03/receita-de-tiramisu.html',
+	// 'https://justbento.com/handbook/recipe-collection-mains/balsamic-sesame-chicken',
+	// 'https://kochbucher.com/hahnchen-mit-mohren-und-porree-in-krauter-frischkase-sauce/',
+	// 'https://www.kwestiasmaku.com/przepis/sernik-z-wisniami-0',
+	// 'https://www.latelierderoxane.com/blog/recette-pain-maison-sans-petrissage/',
+	// 'https://meljoulwan.com/2020/02/06/moroccan-salad-platter/',
+	// 'https://www.nutritionbynathalie.com/single-post/mediterranean-style-sweet-potatoes',
+	// 'https://paninihappy.com/turkey-bacon-lattice-and-havarti-panini/',
+	// 'https://www.projectgezond.nl/croque-monsieur/',
+	// 'https://rosannapansino.com/blogs/recipes/princess-peach-castle-cake',
+	// 'https://www.saboresajinomoto.com.br/receita/hamburguer-duplo',
+	// 'https://sallys-blog.de/rezepte/einbackbroetchen-luftige-hefebroetchen',
+	// 'https://streetkitchen.hu/a-legjobb-reggelik/omlett-wrap/',
+	// 'https://www.wholefoodsmarket.co.uk/recipes/classic-french-toast'
 ]
 
 // These are off the to do list - not possible to get the data
@@ -255,6 +281,21 @@ export const sitesCantFix = [
 	// Angular nightmare - no data on the page
 	'https://www.woolworths.com.au/shop/recipes/slow-cooker-lamb-shanks-with-rosemary-and-thyme'
 ]
+
+/**
+ * Downloads and saves the content from a given URL. If the content contains a recipe in JSON-LD format,
+ * only the recipe data is saved. Otherwise, the entire HTML content is saved.
+ *
+ * @async
+ * @function
+ * @param {string} url - The URL to download content from.
+ * @returns {void}
+ *
+ * @throws Will throw an error if there's an issue fetching the URL.
+ *
+ * @example
+ * await downloadAndSave('https://example.com/recipe');
+ */
 
 export async function downloadAndSave(url) {
 	const filename = urlToFilename(url)
@@ -348,12 +389,6 @@ export async function downloadAndSave(url) {
 	} catch (error) {
 		console.error(`Error fetching URL ${url}:`)
 	}
-}
-
-export function downloadAllRecipes() {
-	sites.forEach((url) => {
-		downloadAndSave(url)
-	})
 }
 
 // sites.forEach((url) => {

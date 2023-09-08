@@ -1,3 +1,8 @@
+/**
+ * Utility functions for fetching and processing data from the Paprika API.
+ * @module paprikaAPI
+ */
+
 import { promises as fs } from 'fs'
 import axios from 'axios'
 import path from 'path'
@@ -16,6 +21,13 @@ const PrismaClient = PrismaClientPkg.PrismaClient
 // Different name of prismaC as the auth is importing prisma from the adapter
 const prismaC = new PrismaClient()
 
+/**
+ * Fetches data from the Paprika API for a given endpoint.
+ * @param {string} endpoint - The Paprika API endpoint.
+ * @param {string} email - The user's email.
+ * @param {string} password - The user's password.
+ * @returns {Promise<Object>} - The data fetched from the API.
+ */
 const resource = async (endpoint, email, password) => {
 	const options = {
 		method: 'GET',
@@ -34,6 +46,12 @@ const resource = async (endpoint, email, password) => {
 	return response.data.result
 }
 
+/**
+ * Fetches bookmarks from the Paprika API.
+ * @param {string} email - The user's email.
+ * @param {string} password - The user's password.
+ * @returns {Promise<Object>} - The bookmarks data fetched from the API.
+ */
 export const bookmarks = (email, password) => resource('bookmarks', email, password)
 export const categories = (email, password) => resource('categories', email, password)
 export const groceries = (email, password) => resource('groceries', email, password)
@@ -46,6 +64,12 @@ export const recipe = (recipeUid, email, password) =>
 	resource('recipe/' + recipeUid, email, password)
 export const status = (email, password) => resource('status', email, password)
 
+/**
+ * Downloads a file from a given URI and saves it to a specified filename.
+ * @param {string} uri - The URI of the file to be downloaded.
+ * @param {string} filename - The name of the file where the data will be saved.
+ * @returns {Promise<void>}
+ */
 const download = async (uri, filename) => {
 	const response = await axios.get(uri, { responseType: 'stream' })
 	const writer = fs.createWriteStream(filename)
@@ -57,6 +81,12 @@ const download = async (uri, filename) => {
 	})
 }
 
+/**
+ * Exports recipes from the Paprika API.
+ * @param {string} username - The user's username.
+ * @param {string} password - The user's password.
+ * @returns {Promise<Array>} - An array of detailed recipes.
+ */
 export const exportRecipes = async (username, password) => {
 	const recipesList = await recipes(username, password)
 	const categoriesList = await categories(username, password)
@@ -79,6 +109,14 @@ export const exportRecipes = async (username, password) => {
 	}))
 }
 
+/**
+ * Saves recipes to a specified file and downloads their photos.
+ * @param {string} username - The user's username.
+ * @param {string} password - The user's password.
+ * @param {string} filename - The name of the file where recipes will be saved.
+ * @param {string} photoDirectory - The directory where recipe photos will be saved.
+ * @returns {Promise<void>}
+ */
 export const saveRecipes = async (username, password, filename, photoDirectory) => {
 	const recipes = await exportRecipes(username, password)
 
@@ -91,8 +129,12 @@ export const saveRecipes = async (username, password, filename, photoDirectory) 
 	}
 }
 
-// Download the list of uids from the API, and grab the first recipe
-// This has been written for testing purposes so I don't have to get them all!
+/**
+ * Fetches details of the first recipe from the Paprika API.
+ * @param {string} email - The user's email.
+ * @param {string} password - The user's password.
+ * @returns {Promise<Array>} - An array containing details of the first recipe.
+ */
 export const fetchFirstRecipeDetails = async (email, password) => {
 	const recipeList = await recipes(email, password)
 	if (recipeList.length === 0) {
@@ -107,8 +149,15 @@ export const fetchFirstRecipeDetails = async (email, password) => {
 	return [detailedRecipe]
 }
 
-// Grab the list of uids from the API, then grab each recipe's details
-// Be careful when using as I don't know whether rate limits exist
+/**
+ * Fetches detailed recipes from the Paprika API.
+ * Be careful when using as I don't know whether rate limits exist
+ * Grab the list of uids from the API, then grab each recipe's details
+ *
+ * @param {string} email - The user's email.
+ * @param {string} password - The user's password.
+ * @returns {Promise<Array>} - An array of detailed recipes.
+ */
 export const fetchDetailedRecipes = async (email, password) => {
 	const recipeList = await recipes(email, password)
 	const detailedRecipes = []
@@ -123,7 +172,13 @@ export const fetchDetailedRecipes = async (email, password) => {
 	return detailedRecipes
 }
 
-// The recipe detail contains category UIDs - this will replace them with names
+/**
+ * Replaces category UIDs in a recipe with their respective names.
+ * @param {Object} recipe - The recipe object containing category UIDs.
+ * @param {string} email - The user's email.
+ * @param {string} password - The user's password.
+ * @returns {Promise<Object>} - The updated recipe with category names.
+ */
 const replaceCategoryUIDsWithNames = async (recipe, email, password) => {
 	const categoriesList = await getCategories(email, password)
 	const categoryMap = categoriesList.reduce((acc, category) => {
@@ -142,7 +197,12 @@ export const __dirname = path.dirname(__filename)
 
 const categoriesFilePath = path.join(__dirname, '../data/categories.json')
 
-// Download the categories to $lib/data/categories.json
+/**
+ * Downloads categories from the Paprika API and saves them to lib/data/categories.json
+ * @param {string} email - The user's email.
+ * @param {string} password - The user's password.
+ * @returns {Promise<Array>} - An array of categories.
+ */
 const getCategories = async (email, password) => {
 	try {
 		await fs.access(categoriesFilePath)
@@ -155,7 +215,10 @@ const getCategories = async (email, password) => {
 	}
 }
 
-// 1. Load Categories
+/**
+ * 1. Loads categories either from a local file or fetches them from the API.
+ * @returns {Promise<Array>} - An array of categories.
+ */
 export async function loadCategories() {
 	try {
 		if (await fs.access(categoriesFilePath)) {
@@ -170,7 +233,12 @@ export async function loadCategories() {
 	}
 }
 
-// 2. Add Categories to DB
+/**
+ * 2. Adds categories to the database.
+ * @param {Array} categories - An array of categories to be added.
+ * @param {string} userId - The user's ID.
+ * @returns {Promise<void>}
+ */
 export async function addCategoriesToDB(categories, userId) {
 	// Separate out top-level parents
 	const topLevelParents = categories.filter((cat) => cat.parent_uid === null)

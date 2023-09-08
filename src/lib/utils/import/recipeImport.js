@@ -1,6 +1,11 @@
 import unzipper from 'unzipper'
 import zlib from 'zlib'
 
+/**
+ * Extracts recipes from a given zip file.
+ * @param {string} zipFilePath - The path to the zip file containing the recipes.
+ * @returns {Promise<Array>} - An array of extracted recipes.
+ */
 export async function extractRecipes(zipFilePath) {
 	const recipes = []
 
@@ -46,7 +51,11 @@ export async function extractRecipes(zipFilePath) {
 	return recipes
 }
 
-// Filter the recipe JSON to correspond to existing fields in the database
+/**
+ * Filters the recipe JSON data to only include fields that exist in the database.
+ * @param {Object} recipe - The recipe data to be filtered.
+ * @returns {Object} - The filtered recipe data.
+ */
 export function filterRecipeData(recipe) {
 	const allowedFields = [
 		'uid',

@@ -24,12 +24,9 @@ describe('parseURL function', () => {
 			let recipe
 			try {
 				recipe = await parseURL(url)
-				console.log('Recipe:', recipe)
 			} catch (error) {
 				console.log('Error:', error)
 			}
-			console.log('🚀 ~ file: recipeParse.test.js:31 ~ it ~ recipe:', recipe)
-
 			// Define the keys you expect to be non-null
 			const expectedNonNullKeys = [
 				'name',

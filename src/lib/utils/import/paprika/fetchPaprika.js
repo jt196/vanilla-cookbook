@@ -1,3 +1,21 @@
+/**
+ * Utility script to fetch data from the Paprika API and save it to local JSON files.
+ *
+ * This script uses the Paprika API to fetch various types of data (e.g., recipes, categories, groceries)
+ * and saves the fetched data as JSON files in the `src/lib/data` directory.
+ *
+ * To use this script, run it with a command-line argument specifying the type of data to fetch.
+ * For example, to fetch recipes, run: `node src/lib/utils/import/paprika/fetchPaprika.js recipes`.
+ *
+ * Before running the script, ensure that the Paprika email and password are set in the `.env` file.
+ *
+ * @module fetchPaprika
+ * @requires fs/promises
+ * @requires path
+ * @requires dotenv
+ * @requires ./paprikaAPI.js
+ */
+
 import fs from 'fs/promises'
 import path from 'path'
 import { config } from 'dotenv'
@@ -14,10 +32,6 @@ import {
 	fetchFirstRecipeDetails,
 	__dirname
 } from './paprikaAPI.js'
-
-// From the project root, run "node src/lib/utils/fetchPaprika.js recipes" to download recipes
-// Check out the cases inside the switch statement to see what options you have
-// They're download into the src/lib/data folder with their respective names e.g. recipes.json
 
 config()
 
