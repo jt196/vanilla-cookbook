@@ -4,7 +4,10 @@
 	import { shouldSkipConversion } from '$lib/utils/units'
 	import { decimalToFraction, ingredientProcess, scaleNumbersInString } from '$lib/utils/filters'
 	import { determineSystem, manipulateIngredient, parseDirections } from '$lib/utils/converter'
+	import { getSanitizedHTML } from '$lib/utils/render'
 	import { onMount } from 'svelte'
+	import { marked } from 'marked'
+	import DOMPurify from 'dompurify'
 	import Scale from '$lib/components/Scale.svelte'
 	import FoodBowl from '$lib/components/svg/FoodBowl.svelte'
 	import CategoryTree from '$lib/components/CategoryTree.svelte'
@@ -115,6 +118,28 @@
 			return converted
 		})
 	}
+
+	let sanitizedDirections = []
+	let sanitizedIngredients = []
+
+	let isMounted = false
+
+	onMount(() => {
+		isMounted = true
+	})
+
+	// Reactive statement to update sanitizedDirections whenever dependencies change
+	$: if (isMounted) {
+		sanitizedDirections = parseDirections(directionLines, selectedSystem, measurementSystem).map(
+			(direction) => getSanitizedHTML(direction)
+		)
+		sanitizedIngredients = convertedIngredients.map((ingredient) => {
+			return {
+				...ingredient,
+				ingredient: getSanitizedHTML(ingredient.ingredient)
+			}
+		})
+	}
 </script>
 
 <h3>{recipe?.name}</h3>
@@ -181,16 +206,18 @@
 			</ul>
 		</details>
 		<ul>
-			{#each convertedIngredients as ingredient}
-				{#if ingredient && ingredient.ingredient && ingredient.ingredient.trim().startsWith('#')}
-					<h4>{ingredientHeader(ingredient.ingredient)}</h4>
+			{#each sanitizedIngredients as ingredient}
+				<!-- Check if it starts with a markdown heading -->
+				{#if /<h[1-6]>/.test(ingredient.ingredient)}
+					<!-- If the content is a heading, render it outside of a <li> -->
+					<div data-heading>{@html ingredient.ingredient}</div>
 				{:else}
 					<li>
 						<strong>
 							{ingredient.quantity ? decimalToFraction(ingredient.quantity * scale) : ''}
 						</strong>
 						{ingredient.unit && ingredient.unit !== 'q.b.' ? ingredient.unit : ''}
-						{ingredient.ingredient}
+						<span>{@html ingredient.ingredient}</span>
 					</li>
 				{/if}
 			{/each}
@@ -207,8 +234,10 @@
 
 {#if directionLines}
 	<h4>Directions:</h4>
-	{#each parseDirections(directionLines, selectedSystem, measurementSystem) as parsedDirection}
-		<p>{parsedDirection}</p>
+	{#each sanitizedDirections as parsedDirection}
+		<p>
+			{@html parsedDirection}
+		</p>
 	{/each}
 {/if}
 

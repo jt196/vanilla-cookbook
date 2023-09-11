@@ -342,7 +342,7 @@ export function parseTemperature(direction, toSystem, fromSystem) {
 		const convertedValues = values.map((value) => convertValue(value, from, to).toFixed(0))
 
 		// Join the converted values with '-' (if it's a range) and append the target unit.
-		return convertedValues.join('-') + toUnit
+		return '**' + convertedValues.join('-') + toUnit + '**'
 	}
 
 	// Handling generic "degrees" format
@@ -374,6 +374,5 @@ export function parseTemperature(direction, toSystem, fromSystem) {
 			convertMatch(match, 'imperial', 'metric', '°C')
 		)
 	}
-
 	return direction
 }
