@@ -3,7 +3,7 @@
 	import { collectSelectedUids } from '$lib/utils/categories'
 	import { shouldSkipConversion } from '$lib/utils/units'
 	import { decimalToFraction, ingredientProcess, scaleNumbersInString } from '$lib/utils/filters'
-	import { determineSystem, manipulateIngredient } from '$lib/utils/converter'
+	import { determineSystem, manipulateIngredient, parseDirections } from '$lib/utils/converter'
 	import { onMount } from 'svelte'
 	import Scale from '$lib/components/Scale.svelte'
 	import FoodBowl from '$lib/components/svg/FoodBowl.svelte'
@@ -207,8 +207,8 @@
 
 {#if directionLines}
 	<h4>Directions:</h4>
-	{#each directionLines as line}
-		<p>{line}</p>
+	{#each parseDirections(directionLines, selectedSystem, measurementSystem) as parsedDirection}
+		<p>{parsedDirection}</p>
 	{/each}
 {/if}
 

@@ -99,7 +99,6 @@ export function parseIngredients(ingredients) {
 	// If ingredients is neither an array nor a string, return an empty array
 	return []
 }
-
 /**
  * Clean a provided string by trimming and removing unnecessary spaces.
  * @param {string} str - The string to clean.

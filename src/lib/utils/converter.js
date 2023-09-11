@@ -241,3 +241,139 @@ export const manipulateIngredient = (ingredientObj, fromSystem, toSystem) => {
 		maxQty: roundedQuantity
 	}
 }
+
+/**
+ * Converts temperatures in an array of direction strings from one system to another.
+ *
+ * This function iterates over each direction in the array and converts any temperatures
+ * found within each direction from the original system to the target system using the
+ * `parseTemperature` function.
+ *
+ * @param {string[]} directions - An array of direction strings containing temperature values to be converted.
+ * @param {string} toSystem - The target temperature system for conversion.
+ *                            Accepted values: 'metric', 'imperial', 'americanVolumetric'.
+ * @param {string} fromSystem - The original temperature system of the values in the direction strings.
+ *                              Accepted values: 'metric', 'imperial'.
+ *
+ * @returns {string[]} - An array of direction strings with temperatures converted to the target system.
+ *
+ * @example
+ * parseDirections(["Preheat oven to 350°F", "Bake at 180C"], "metric", "imperial");
+ * // Returns: ["Preheat oven to 176°C", "Bake at 356°F"]
+ *
+ */
+export function parseDirections(directions, toSystem, fromSystem) {
+	return directions.map((direction) => parseTemperature(direction, toSystem, fromSystem))
+}
+
+/**
+ * Converts temperatures in a given string from one system to another.
+ *
+ * The function identifies temperatures in Celsius, Fahrenheit, and generic "degrees" format.
+ * It then converts them based on the specified target system.
+ *
+ * @param {string} direction - The input string containing temperature values to be converted.
+ * @param {string} toSystem - The target temperature system.
+ *                            Accepted values: 'metric', 'imperial', 'americanVolumetric'.
+ *                            Note: 'americanVolumetric' is treated as a subtype of 'imperial'.
+ * @param {string} fromSystem - The original temperature system of the values in the input string.
+ *                              Accepted values: 'metric', 'imperial'.
+ *
+ * @returns {string} - The input string with temperatures converted to the target system.
+ *
+ * @example
+ * parseTemperature("Preheat oven to 350°F", "metric", "imperial");
+ * // Returns: "Preheat oven to 176°C"
+ *
+ * @example
+ * parseTemperature("Heat to 180C", "imperial", "metric");
+ * // Returns: "Heat to 356°F"
+ */
+export function parseTemperature(direction, toSystem, fromSystem) {
+	const celsiusRegex = /(\d+-\d+|\d+(\.\d+)?)\s?(°C|ºC|C|degrees C)(?![a-zA-Z])/gi
+	const fahrenheitRegex = /(\d+-\d+|\d+(\.\d+)?)\s?(°F|F|degrees F)(?![a-zA-Z])/gi
+	const gasMarkRegex = /Gas Mark (\d+)|gas (\d+)/gi
+	const genericDegreesRegex = /(\d+(\.\d+)?) degrees(?! [CF])/gi
+
+	// Find all matches for each temperature type in the given direction
+	const celsiusMatches = direction.match(celsiusRegex) || []
+	const fahrenheitMatches = direction.match(fahrenheitRegex) || []
+	// Matches any "Gas Mark 4 or gas 4" references in the text, at the moment, not processing these.
+	// eslint-disable-next-line no-unused-vars
+	const gasMarkMatches = direction.match(gasMarkRegex) || []
+	const genericDegreesMatches = direction.match(genericDegreesRegex) || []
+
+	// Logging the matches for debugging purposes
+	// console.log('🚀 ~ celsiusMatches:', celsiusMatches)
+	// console.log('🚀 ~ fahrenheitMatches:', fahrenheitMatches)
+	// console.log('🚀 ~ gasMarkMatches:', gasMarkMatches)
+	// console.log('🚀 ~ genericDegreesMatches:', genericDegreesMatches)
+
+	const isTargetImperial = ['imperial', 'americanVolumetric'].includes(toSystem)
+
+	if (celsiusMatches.length && fahrenheitMatches.length) {
+		return direction // Rule 1
+	}
+
+	if (celsiusMatches.length && toSystem === 'metric') {
+		return direction // Rule 2
+	}
+
+	if (fahrenheitMatches.length && toSystem === 'imperial') {
+		return direction // Rule 3
+	}
+
+	function convertValue(value, from, to) {
+		if (from === 'imperial' && to === 'metric') {
+			return ((value - 32) * 5) / 9
+		} else if (from === 'metric' && to === 'imperial') {
+			return (value * 9) / 5 + 32
+		}
+		return value
+	}
+
+	function convertMatch(match, from, to, toUnit) {
+		// Split the match by '-' to handle ranges.
+		// If it's a single value, it'll result in an array with one element.
+		const values = match.split('-').map(parseFloat)
+
+		// Convert each value in the array using the convertValue function.
+		// The result is an array of converted values.
+		const convertedValues = values.map((value) => convertValue(value, from, to).toFixed(0))
+
+		// Join the converted values with '-' (if it's a range) and append the target unit.
+		return convertedValues.join('-') + toUnit
+	}
+
+	// Handling generic "degrees" format
+	if (genericDegreesMatches.length > 0) {
+		if (fromSystem === toSystem) {
+			return direction
+		} else {
+			if (fromSystem === 'imperial' && !isTargetImperial) {
+				return direction.replace(genericDegreesRegex, (match) =>
+					convertMatch(match, fromSystem, toSystem, '°C')
+				)
+			} else if (fromSystem === 'metric' && isTargetImperial) {
+				return direction.replace(genericDegreesRegex, (match) =>
+					convertMatch(match, fromSystem, toSystem, '°F')
+				)
+			}
+		}
+	}
+
+	// Handling Celsius and Fahrenheit conversions
+	if (celsiusMatches.length && isTargetImperial) {
+		return direction.replace(celsiusRegex, (match) =>
+			convertMatch(match, 'metric', 'imperial', '°F')
+		)
+	}
+
+	if (fahrenheitMatches.length && !isTargetImperial) {
+		return direction.replace(fahrenheitRegex, (match) =>
+			convertMatch(match, 'imperial', 'metric', '°C')
+		)
+	}
+
+	return direction
+}
