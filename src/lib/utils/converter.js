@@ -1,6 +1,7 @@
 import { units, findSuitableUnit } from '$lib/utils/units'
 import Fuse from 'fuse.js'
 import { dryIngredientsConversion } from '$lib/utils/dryIngredientsConversion'
+import { foodPreferences } from '$lib/data/ingredients/vegan/vegan'
 
 /**
  * Converts a quantity from one unit to another.
@@ -138,6 +139,70 @@ function fuzzyMatch(ingredient, lookupTable) {
 	return null
 }
 
+const fuseVeganOptions = {
+	keys: ['ingredients'],
+	threshold: 0.5, // Adjusted
+	caseSensitive: false,
+	includeScore: true,
+	ignoreLocation: true,
+	minMatchCharLength: 4, // Adjusted
+	tokenize: true, // Added
+	matchAllTokens: true // Added
+}
+
+const veganFuse = new Fuse(foodPreferences, fuseVeganOptions)
+
+export function addFoodPreferences(ingredientName) {
+	// Primary search with fuzzy check
+	const results = veganFuse.search(ingredientName)
+
+	if (results.length > 0 && results[0].score < 0.4) {
+		const matchedItem = results[0].item
+		return {
+			vegan: matchedItem.vegan,
+			vegetarian: matchedItem.vegetarian,
+			pescatarian: matchedItem.pescatarian,
+			canBeVegan: matchedItem.canBeVegan
+		}
+	}
+
+	// Second Pass: Simple substring check using JS .includes
+	// check if any term from the ingredients array of each item is a substring of the ingredientName
+	for (let item of veganFuse._docs) {
+		for (let term of item.ingredients) {
+			if (ingredientName.includes(term)) {
+				console.log('Matched term:', term) // Add this to debug
+				return {
+					vegan: item.vegan,
+					vegetarian: item.vegetarian,
+					pescatarian: item.pescatarian,
+					canBeVegan: item.canBeVegan
+				}
+			}
+		}
+	}
+
+	return {
+		vegan: true,
+		vegetarian: true,
+		pescatarian: true,
+		canBeVegan: true
+	} // default values if ingredient is not found or doesn't match closely enough
+}
+
+export function getDietLabel(prefs) {
+	if (prefs.vegan) {
+		return ''
+	} else if (prefs.canBeVegan) {
+		return 'VEGAN?'
+	} else if (prefs.pescatarian && !prefs.vegetarian) {
+		return 'PESCA'
+	} else if (prefs.vegetarian && !prefs.vegan) {
+		return 'NON-VEGAN'
+	}
+	return 'MEAT' // default return value if none of the conditions are met
+}
+
 /**
  * Fuse instance for fuzzy searching within dry ingredients.
  * @type {Fuse}
@@ -235,8 +300,8 @@ export const manipulateIngredient = (ingredientObj, fromSystem, toSystem) => {
 		...ingredientObj,
 		quantity: roundedQuantity,
 		unit: target.unit,
-		unitPlural: target.unit + 's', // Simplified
-		symbol: target.unit.charAt(0), // Simplified
+		unitPlural: target.unit + 's',
+		symbol: target.unit.charAt(0),
 		minQty: roundedQuantity,
 		maxQty: roundedQuantity
 	}

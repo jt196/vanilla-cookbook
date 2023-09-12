@@ -3,11 +3,15 @@
 	import { collectSelectedUids } from '$lib/utils/categories'
 	import { shouldSkipConversion } from '$lib/utils/units'
 	import { decimalToFraction, ingredientProcess, scaleNumbersInString } from '$lib/utils/filters'
-	import { determineSystem, manipulateIngredient, parseDirections } from '$lib/utils/converter'
+	import {
+		determineSystem,
+		manipulateIngredient,
+		parseDirections,
+		addFoodPreferences,
+		getDietLabel
+	} from '$lib/utils/converter'
 	import { getSanitizedHTML } from '$lib/utils/render'
 	import { onMount } from 'svelte'
-	import { marked } from 'marked'
-	import DOMPurify from 'dompurify'
 	import Scale from '$lib/components/Scale.svelte'
 	import FoodBowl from '$lib/components/svg/FoodBowl.svelte'
 	import CategoryTree from '$lib/components/CategoryTree.svelte'
@@ -62,43 +66,26 @@
 	function updateSelectedSystem() {
 		if (measurementSystem.system !== 'inconclusive') {
 			selectedSystem = measurementSystem.system
-			console.log(
-				'🚀 ~ file: +page.svelte:62 ~ updateSelectedSystem ~ selectedSystem:',
-				selectedSystem
-			)
 		}
 	}
-	console.log('🚀 ~ file: +page.svelte:74 ~ selectedSystem:', selectedSystem)
 
 	/** Logic to update various variables based on the recipe data. */
 	$: if (data && data.recipe) {
 		ingredients = recipe.ingredients ? recipe.ingredients.split('\n') : []
 		ingredientsArray = ingredientProcess(ingredients)
-		console.log('🚀 ~ file: +page.svelte:74 ~ ingredientsArray:', ingredientsArray)
+		console.log('🚀 ~ file: +page.svelte:76 ~ ingredientsArray:', ingredientsArray)
 		measurementSystem = determineSystem(ingredientsArray)
 		convertedIngredients = convertIngredients(
 			ingredientsArray,
 			measurementSystem.system,
 			selectedSystem
 		)
-		console.log('🚀 ~ file: +page.svelte:77 ~ convertedIngredients:', convertedIngredients)
 		// Call the function to update selectedSystem based on the initial measurementSystem
 		if (!selectedSystem) {
 			updateSelectedSystem()
 		}
 		recipe.directions ? (directionLines = recipe.directions.split('\n')) : null
 		scaledServings = recipe.servings ? scaleNumbersInString(recipe.servings, scale) : null
-	}
-
-	function ingredientHeader(ingredient) {
-		let ingredientTitle = ingredient.trim().replace('# ', '')
-		return toTitleCase(ingredientTitle)
-	}
-
-	function toTitleCase(str) {
-		return str.replace(/(^|\s)\S/g, function (t) {
-			return t.toUpperCase()
-		})
 	}
 
 	// Function to format the system string
@@ -108,14 +95,35 @@
 
 	function convertIngredients(ingredients, system, toSystem) {
 		return ingredients.map((ingredient) => {
-			if (shouldSkipConversion(ingredient.unit)) {
-				return ingredient
+			// Get the dietary preferences for the ingredient
+			const prefs = addFoodPreferences(ingredient.ingredient)
+			const dietLabel = getDietLabel(prefs)
+
+			if (
+				shouldSkipConversion(ingredient.unit) ||
+				!manipulateIngredient(ingredient, system, toSystem)
+			) {
+				// Return the original ingredient with the added dietary label
+				return {
+					...ingredient,
+					dietLabel: dietLabel
+				}
 			}
+
 			const converted = manipulateIngredient(ingredient, system, toSystem)
 			if (converted === null || converted.error) {
-				return ingredient
+				// Return the original ingredient with the added dietary label
+				return {
+					...ingredient,
+					dietLabel: dietLabel
+				}
 			}
-			return converted
+
+			// Return the converted ingredient with the added dietary label
+			return {
+				...converted,
+				dietLabel: dietLabel
+			}
 		})
 	}
 
@@ -217,7 +225,7 @@
 							{ingredient.quantity ? decimalToFraction(ingredient.quantity * scale) : ''}
 						</strong>
 						{ingredient.unit && ingredient.unit !== 'q.b.' ? ingredient.unit : ''}
-						<span>{@html ingredient.ingredient}</span>
+						<span>{@html ingredient.ingredient} <strong>{ingredient.dietLabel}</strong></span>
 					</li>
 				{/if}
 			{/each}
