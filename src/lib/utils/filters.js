@@ -97,8 +97,7 @@ export function sanitizeForYamlFrontMatter(str) {
 	str = str
 		.split('')
 		.filter((char) => {
-			const charCode = char.charCodeAt(0)
-			return charCode >= 32 && charCode <= 126 // Keep printable ASCII characters
+			return /[\x20-\x7E\u00A0-\u024F]/.test(char) // Keep printable ASCII characters and Latin Extended-A & B
 		})
 		.join('')
 

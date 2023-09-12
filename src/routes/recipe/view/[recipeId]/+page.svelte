@@ -72,6 +72,7 @@
 	/** Logic to update various variables based on the recipe data. */
 	$: if (data && data.recipe) {
 		ingredients = recipe.ingredients ? recipe.ingredients.split('\n') : []
+		console.log('🚀 ~ file: +page.svelte:75 ~ ingredients:', ingredients)
 		ingredientsArray = ingredientProcess(ingredients)
 		console.log('🚀 ~ file: +page.svelte:76 ~ ingredientsArray:', ingredientsArray)
 		measurementSystem = determineSystem(ingredientsArray)
