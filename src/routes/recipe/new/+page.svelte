@@ -1,5 +1,6 @@
 <script>
 	import { decodeHTMLEntities, nutritionProcess } from '$lib/utils/filters'
+	import { checkImageExistence } from '$lib/utils/image/imageUtils'
 	import { onMount } from 'svelte'
 	import Bookmark from '$lib/components/svg/Bookmark.svelte'
 
@@ -103,6 +104,16 @@
 			handleScrape()
 		}
 	})
+
+	let imageExists = false
+
+	$: if (recipe.image_url) {
+		checkImageExistence(recipe.image_url).then((result) => {
+			console.log('🚀 ~ file: +page.svelte:112 ~ recipe.image_url:', recipe.image_url)
+			return (imageExists = result)
+		})
+		console.log('🚀 ~ file: +page.svelte:113 ~ imageExists:', imageExists)
+	}
 </script>
 
 <h3>Scrape Recipe</h3>
@@ -135,7 +146,13 @@
 
 	<label for="image_url"> Image URL </label>
 	<input type="text" id="image_url" name="image_url" bind:value={recipe.image_url} />
-
+	{#if recipe.image_url && imageExists}
+		<img
+			class="recipe-thumbnail"
+			loading="lazy"
+			src={recipe.image_url}
+			alt="{recipe.image_url} thumbnail" />
+	{/if}
 	<label for="prep_time"> Prep Time </label>
 	<input type="text" id="prep_time" name="prep_time" bind:value={recipe.prep_time} />
 
@@ -177,5 +194,11 @@
 			flex-shrink: 0; // Prevent the button from shrinking
 			flex-grow: 0; // Prevent the button from growing
 		}
+	}
+	.recipe-thumbnail {
+		width: 100px;
+		height: auto;
+		object-fit: cover;
+		display: block;
 	}
 </style>

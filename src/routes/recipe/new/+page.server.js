@@ -1,6 +1,16 @@
 import { prisma } from '$lib/server/prisma'
 import { fail, redirect } from '@sveltejs/kit'
 import { parseURL } from '$lib/utils/parse/recipeParse'
+import {
+	checkImageExistence,
+	getContentTypeFromUrl,
+	mapContentTypeToFileTypeAndExtension
+} from '$lib/utils/image/imageUtils'
+import {
+	createRecipePhotoEntry,
+	removeRecipePhotoEntry,
+	processImage
+} from '$lib/utils/image/imageBackend'
 
 /**
  * @typedef {Object} Actions
@@ -34,9 +44,9 @@ export const actions = {
 			servings,
 			nutritional_info
 		} = Object.fromEntries(await request.formData())
-
+		let recipe
 		try {
-			await prisma.recipe.create({
+			recipe = await prisma.recipe.create({
 				data: {
 					name,
 					description,
@@ -57,6 +67,23 @@ export const actions = {
 		} catch (err) {
 			console.error(err)
 			return fail(500, { message: 'Could not create the recipe.' })
+		}
+		// If the image URL exists, create an entry, download, resize, and save the image
+		if (await checkImageExistence(image_url)) {
+			const contentType = await getContentTypeFromUrl(image_url)
+			const { fileType, extension } = mapContentTypeToFileTypeAndExtension(contentType)
+
+			let photoEntry
+			try {
+				photoEntry = await createRecipePhotoEntry(recipe.uid, image_url, fileType)
+				await processImage(image_url, photoEntry.id, extension)
+			} catch (error) {
+				console.error(error)
+				if (photoEntry) {
+					await removeRecipePhotoEntry(photoEntry.id)
+				}
+				return fail(500, { message: 'Failed to process the image.' })
+			}
 		}
 		throw redirect(302, '/recipe')
 	},
