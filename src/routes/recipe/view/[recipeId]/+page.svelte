@@ -15,6 +15,7 @@
 	import Scale from '$lib/components/Scale.svelte'
 	import FoodBowl from '$lib/components/svg/FoodBowl.svelte'
 	import CategoryTree from '$lib/components/CategoryTree.svelte'
+	import StarRating from '$lib/components/StarRating.svelte'
 
 	/**
 	 * Data for the current page.
@@ -170,6 +171,7 @@
 			Source:
 			<a href={recipe?.source_url}>{recipe?.source}</a>
 		</p>
+		<StarRating bind:rating={recipe.rating} />
 		{#if ingredients}
 			<p>
 				Servings: {scaledServings}

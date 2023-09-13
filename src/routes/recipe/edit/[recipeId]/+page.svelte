@@ -1,5 +1,7 @@
 <script>
 	import CategoryTree from '$lib/components/CategoryTree.svelte'
+	import StarRating from '$lib/components/StarRating.svelte'
+
 	/**
 	 * The page data type.
 	 * @typedef {Object} PageData
@@ -25,6 +27,11 @@
 			recipeCategories = [...recipeCategories, category.uid]
 		}
 	}
+
+	function handleRatingChange(event) {
+		recipe.rating = event.detail
+		console.log('New Rating:', recipe.rating)
+	}
 </script>
 
 <div class="recipe-container">
@@ -32,6 +39,9 @@
 		<h3>Editing: {recipe.name}</h3>
 		<label for="name"> Name </label>
 		<input type="text" id="name" name="name" bind:value={recipe.name} />
+
+		<StarRating bind:rating={recipe.rating} editable={true} on:ratingChanged={handleRatingChange} />
+		<input type="hidden" name="rating" bind:value={recipe.rating} />
 
 		<label for="source"> Source </label>
 		<input type="text" id="source" name="source" bind:value={recipe.source} />

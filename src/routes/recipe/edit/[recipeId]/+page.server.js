@@ -89,6 +89,7 @@ export const actions = {
 			name,
 			description,
 			source,
+			rating,
 			source_url,
 			cook_time,
 			image_url,
@@ -99,6 +100,9 @@ export const actions = {
 			servings,
 			nutritional_info
 		} = data
+
+		// Convert rating to float
+		const floatRating = parseFloat(rating)
 
 		console.log(
 			'🚀 ~ file: +page.server.js:89 ~ updateRecipe: ~ recipeCategories:',
@@ -124,6 +128,7 @@ export const actions = {
 					name,
 					description,
 					source,
+					rating: floatRating,
 					source_url,
 					cook_time,
 					image_url,
