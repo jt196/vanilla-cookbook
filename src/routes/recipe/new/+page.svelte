@@ -109,10 +109,8 @@
 
 	$: if (recipe.image_url) {
 		checkImageExistence(recipe.image_url).then((result) => {
-			console.log('🚀 ~ file: +page.svelte:112 ~ recipe.image_url:', recipe.image_url)
 			return (imageExists = result)
 		})
-		console.log('🚀 ~ file: +page.svelte:113 ~ imageExists:', imageExists)
 	}
 </script>
 

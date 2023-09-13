@@ -1,6 +1,5 @@
 export async function GET(request) {
 	const imageUrl = request.url.searchParams.get('url')
-	console.log('🚀 ~ file: +server.js:3 ~ GET ~ imageUrl:', imageUrl)
 	try {
 		const response = await fetch(imageUrl, { method: 'HEAD' })
 

@@ -3,12 +3,12 @@ import lucia from 'lucia-auth'
 import { sveltekit } from 'lucia-auth/middleware'
 import prisma from '@lucia-auth/adapter-prisma'
 import { fail } from '@sveltejs/kit'
-import { promises as fsPromises } from 'fs'
-import fs from 'fs'
 import { addCategoriesToDB, loadCategories } from '../src/lib/utils/import/paprika/paprikaAPI.js'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import { extractRecipes } from '../src/lib/utils/import/recipeImport.js'
+import { savePhoto } from '../src/lib/utils/image/imageBackend.js'
+import { promises as fsPromises } from 'fs'
 
 // // Prisma doesn't support ES Modules so we have to do this
 const PrismaClient = PrismaClientPkg.PrismaClient
@@ -107,17 +107,6 @@ async function addUsersToDB(users) {
 			console.error(err)
 			return fail(400, { message: 'Could not register user' })
 		}
-	}
-}
-
-async function savePhoto(photoData, photoFilename, directory) {
-	const imagePath = path.join(directory, photoFilename)
-
-	// Check if the photo already exists
-	if (!fs.existsSync(imagePath)) {
-		// <-- This is synchronous and fine as is.
-		const imageBuffer = Buffer.from(photoData, 'base64')
-		await fsPromises.writeFile(imagePath, imageBuffer) // <-- Promise-based approach.
 	}
 }
 

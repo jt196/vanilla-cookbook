@@ -14,27 +14,27 @@ export async function getContentTypeFromUrl(url) {
 export function mapContentTypeToFileTypeAndExtension(contentType) {
 	switch (contentType) {
 		case 'image/jpeg':
-			return { fileType: 'image/jpeg', extension: '.jpg' }
+			return { fileType: 'image/jpeg', extension: 'jpg' }
 		case 'image/png':
-			return { fileType: 'image/png', extension: '.png' }
+			return { fileType: 'image/png', extension: 'png' }
 		case 'image/gif':
-			return { fileType: 'image/gif', extension: '.gif' }
+			return { fileType: 'image/gif', extension: 'gif' }
 		case 'image/webp':
-			return { fileType: 'image/webp', extension: '.webp' }
+			return { fileType: 'image/webp', extension: 'webp' }
 		default:
-			return { fileType: 'image/jpeg', extension: '.jpg' } // default values
+			return { fileType: 'image/jpeg', extension: 'jpg' } // default values
 	}
 }
 
-export async function checkImageExistence(url) {
-	console.log(
-		'🚀 ~ file: imageUtils.js:31 ~ checkImageExistence ~ encodeURIComponent(url):',
-		encodeURIComponent(url)
-	)
+export async function checkImageExistence(imageUrl, baseUrl) {
+	console.log('Checking image existence!')
 	try {
-		const response = await fetch(`/api/recipe/images/remote-exist?url=${encodeURIComponent(url)}`)
+		const response = await fetch(
+			`${baseUrl.origin}/api/recipe/images/remote-exist?url=${encodeURIComponent(imageUrl)}`
+		)
 		return response.ok
 	} catch (error) {
+		console.log('🚀 ~ file: imageUtils.js:36 ~ checkImageExistence ~ error:', error)
 		return false
 	}
 }

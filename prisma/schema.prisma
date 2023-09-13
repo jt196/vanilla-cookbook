@@ -58,7 +58,7 @@ model RecipePhoto {
     url       String?
     fileType  String?
     isMain    Boolean @default(false)
-    recipe    Recipe  @relation(fields: [recipeUid], references: [uid])
+    recipe    Recipe  @relation(fields: [recipeUid], references: [uid], onDelete: Cascade)
 }
 
 model Category {

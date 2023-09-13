@@ -1,5 +1,7 @@
 import { prisma } from '$lib/server/prisma'
 import { error, fail, redirect } from '@sveltejs/kit'
+import path from 'path'
+import { promises as fsPromises } from 'fs'
 
 /**
  * Server-side logic to load recipes for the page.
@@ -79,6 +81,23 @@ export const actions = {
 
 			if (recipe.userId !== user.userId) {
 				throw error(403, 'Not authorized')
+			}
+
+			// 1. Fetch the associated RecipePhoto entries for the recipe
+			const photos = await prisma.recipePhoto.findMany({
+				where: {
+					recipeUid: uid
+				}
+			})
+
+			// 2. Delete the images from the file system
+			for (const photo of photos) {
+				const photoPath = path.join('static/recipe_photos/', photo.id + '.' + photo.fileType)
+				try {
+					await fsPromises.unlink(photoPath)
+				} catch (err) {
+					console.error(`Failed to delete photo at ${photoPath}`, err)
+				}
 			}
 
 			await prisma.recipe.delete({

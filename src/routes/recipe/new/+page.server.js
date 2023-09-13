@@ -24,7 +24,7 @@ import {
  */
 export const actions = {
 	// TODO: #42 Add photo when saving recipe
-	createRecipe: async ({ request, locals }) => {
+	createRecipe: async ({ request, locals, url }) => {
 		const { session, user } = await locals.auth.validateUser()
 		if (!session || !user) {
 			throw redirect(302, '/')
@@ -69,13 +69,14 @@ export const actions = {
 			return fail(500, { message: 'Could not create the recipe.' })
 		}
 		// If the image URL exists, create an entry, download, resize, and save the image
-		if (await checkImageExistence(image_url)) {
+		if (await checkImageExistence(image_url, url)) {
+			console.log('Image exists, processing!')
 			const contentType = await getContentTypeFromUrl(image_url)
-			const { fileType, extension } = mapContentTypeToFileTypeAndExtension(contentType)
+			const { extension } = mapContentTypeToFileTypeAndExtension(contentType)
 
 			let photoEntry
 			try {
-				photoEntry = await createRecipePhotoEntry(recipe.uid, image_url, fileType)
+				photoEntry = await createRecipePhotoEntry(recipe.uid, image_url, extension)
 				await processImage(image_url, photoEntry.id, extension)
 			} catch (error) {
 				console.error(error)
