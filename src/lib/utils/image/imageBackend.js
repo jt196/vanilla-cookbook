@@ -36,7 +36,6 @@ async function resizeImage(inputPath, outputPath, maxSize) {
 	console.log('Resizing Image!')
 	const image = sharp(inputPath)
 	const metadata = await image.metadata()
-	console.log('🚀 ~ file: imageBackend.js:39 ~ resizeImage ~ metadata:', metadata)
 
 	if (metadata.width > maxSize || metadata.height > maxSize) {
 		await image.resize({ width: maxSize, height: maxSize, fit: 'inside' }).toFile(outputPath)

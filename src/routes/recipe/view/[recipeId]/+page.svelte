@@ -11,11 +11,15 @@
 		getDietLabel
 	} from '$lib/utils/converter'
 	import { getSanitizedHTML } from '$lib/utils/render'
+	import { deleteRecipeById } from '$lib/utils/crud'
 	import { onMount } from 'svelte'
 	import Scale from '$lib/components/Scale.svelte'
 	import FoodBowl from '$lib/components/svg/FoodBowl.svelte'
 	import CategoryTree from '$lib/components/CategoryTree.svelte'
 	import StarRating from '$lib/components/StarRating.svelte'
+	import Delete from '$lib/components/svg/Delete.svelte'
+	import Edit from '$lib/components/svg/Edit.svelte'
+	import { goto } from '$app/navigation'
 
 	/**
 	 * Data for the current page.
@@ -23,7 +27,7 @@
 	 */
 	export let data
 
-	let { recipe, categories } = data
+	let { recipe, categories, user } = data
 
 	/**
 	 * The list of ingredients in string format.
@@ -70,12 +74,17 @@
 		}
 	}
 
+	async function handleDelete(uid) {
+		const success = await deleteRecipeById(uid)
+		if (success) {
+			goto('/recipe')
+		}
+	}
+
 	/** Logic to update various variables based on the recipe data. */
 	$: if (data && data.recipe) {
 		ingredients = recipe.ingredients ? recipe.ingredients.split('\n') : []
-		console.log('🚀 ~ file: +page.svelte:75 ~ ingredients:', ingredients)
 		ingredientsArray = ingredientProcess(ingredients)
-		console.log('🚀 ~ file: +page.svelte:76 ~ ingredientsArray:', ingredientsArray)
 		measurementSystem = determineSystem(ingredientsArray)
 		convertedIngredients = convertIngredients(
 			ingredientsArray,
@@ -252,7 +261,21 @@
 	{/each}
 {/if}
 
-<a href="/recipe/edit/{recipe?.uid}" role="button" class="outline contrast">Edit</a>
+{#if recipe.userId === user.userId}
+	<a
+		href="/recipe/edit/{recipe?.uid}"
+		role="button"
+		class="outline contrast"
+		data-testid="edit-button">
+		<Edit width="30px" height="30px" fill="var(--pico-ins-color)" />
+	</a>
+	<button
+		on:click={() => handleDelete(recipe?.uid)}
+		data-testid="delete-button"
+		class="outline secondary">
+		<Delete width="30px" height="30px" fill="var(--pico-del-color)" />
+	</button>
+{/if}
 
 <style lang="scss">
 	.recipe-cover img {

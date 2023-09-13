@@ -1,6 +1,10 @@
 <script>
 	import CategoryTree from '$lib/components/CategoryTree.svelte'
 	import StarRating from '$lib/components/StarRating.svelte'
+	import Delete from '$lib/components/svg/Delete.svelte'
+	import View from '$lib/components/svg/View.svelte'
+	import { deleteRecipeById } from '$lib/utils/crud'
+	import { goto } from '$app/navigation'
 
 	/**
 	 * The page data type.
@@ -15,7 +19,7 @@
 	/** @type {PageData} */
 	export let data
 
-	$: ({ recipe, allCategories } = data)
+	$: ({ recipe, allCategories, user } = data)
 
 	$: recipeCategories =
 		recipe && recipe.categories ? recipe.categories.map((cat) => cat.categoryUid) : []
@@ -31,6 +35,13 @@
 	function handleRatingChange(event) {
 		recipe.rating = event.detail
 		console.log('New Rating:', recipe.rating)
+	}
+
+	async function handleDelete(uid) {
+		const success = await deleteRecipeById(uid)
+		if (success) {
+			goto('/recipe')
+		}
 	}
 </script>
 
@@ -89,7 +100,21 @@
 	</div>
 </div>
 
-<a href="/recipe/view/{recipe.uid}" role="button" class="outline contrast">View</a>
+{#if recipe.userId === user.userId}
+	<a
+		href="/recipe/view/{recipe?.uid}"
+		role="button"
+		class="outline contrast"
+		data-testid="view-button">
+		<View width="30px" height="30px" fill="var(--pico-ins-color)" />
+	</a>
+	<button
+		on:click={() => handleDelete(recipe?.uid)}
+		data-testid="delete-button"
+		class="outline secondary">
+		<Delete width="30px" height="30px" fill="var(--pico-del-color)" />
+	</button>
+{/if}
 
 <style lang="scss">
 	.recipe-container {

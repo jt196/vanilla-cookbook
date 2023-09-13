@@ -1,13 +1,25 @@
 <!-- RecipeCard.svelte -->
 <script>
+	import { createEventDispatcher } from 'svelte'
+
 	import FoodBowl from '$lib/components/svg/FoodBowl.svelte'
 	import { localDateAndTime } from '$lib/utils/dateTime'
-	import StarRating from './StarRating.svelte'
-	import Delete from './svg/Delete.svelte'
-	import Edit from './svg/Edit.svelte'
+	import StarRating from '$lib/components/StarRating.svelte'
+	import Delete from '$lib/components/svg/Delete.svelte'
+	import Edit from '$lib/components/svg/Edit.svelte'
+	import { deleteRecipeById } from '$lib/utils/crud'
 
 	export let item
 	export let data
+
+	const dispatch = createEventDispatcher()
+
+	async function handleDelete(uid) {
+		const success = await deleteRecipeById(uid)
+		if (success) {
+			dispatch('recipeDeleted', uid) // Emit the custom event
+		}
+	}
 </script>
 
 <article>
@@ -30,13 +42,14 @@
 		</a>
 		<div class="align-right recipe-buttons">
 			{#if item.userId === data.user?.userId}
-				<form action="?/deleteRecipe&uid={item.uid}" method="POST">
-					<button type="submit" class="outline secondary" data-testid="delete-button">
-						<Delete width="30px" height="30px" fill="var(--pico-del-color)" />
-					</button>
-				</form>
+				<button
+					on:click={() => handleDelete(item.uid)}
+					data-testid="delete-button"
+					class="outline secondary">
+					<Delete width="30px" height="30px" fill="var(--pico-del-color)" />
+				</button>
 				<a
-					href="recipe/edit/{item.uid}"
+					href="/recipe/edit/{item.uid}"
 					role="button"
 					class="outline contrast"
 					data-testid="edit-button">

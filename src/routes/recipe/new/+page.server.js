@@ -86,7 +86,7 @@ export const actions = {
 				return fail(500, { message: 'Failed to process the image.' })
 			}
 		}
-		throw redirect(302, '/recipe')
+		throw redirect(302, `/recipe/view/${recipe.uid}`)
 	},
 	scrapeRecipe: async ({ request, locals }) => {
 		const { session, user } = await locals.auth.validateUser()

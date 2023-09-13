@@ -1,7 +1,5 @@
 import { prisma } from '$lib/server/prisma'
 import { error, fail, redirect } from '@sveltejs/kit'
-import path from 'path'
-import { promises as fsPromises } from 'fs'
 
 /**
  * Server-side logic to load recipes for the page.
@@ -64,56 +62,38 @@ export const actions = {
 	 */
 	deleteRecipe: async ({ url, locals }) => {
 		const { session, user } = await locals.auth.validateUser()
+		console.log('🚀 ~ file: +page.server.js:65 ~ deleteRecipe: ~ session:', session)
+		console.log('🚀 ~ file: +page.server.js:65 ~ deleteRecipe: ~ user:', user)
 		if (!session || !user) {
 			throw redirect(302, '/')
 		}
 		const uid = url.searchParams.get('uid')
+		console.log('🚀 ~ file: +page.server.js:69 ~ deleteRecipe: ~ uid:', uid)
 		if (!uid) {
 			return fail(400, { message: 'Invalid request' })
 		}
 
 		try {
-			const recipe = await prisma.recipe.findUniqueOrThrow({
-				where: {
-					uid
+			const response = await fetch(`/api/recipe/${uid}`, {
+				method: 'DELETE',
+				headers: {
+					'Content-Type': 'application/json'
 				}
 			})
 
-			if (recipe.userId !== user.userId) {
-				throw error(403, 'Not authorized')
+			if (!response.ok) {
+				const data = await response.json()
+				throw new Error(data.error || 'Failed to delete recipe')
 			}
 
-			// 1. Fetch the associated RecipePhoto entries for the recipe
-			const photos = await prisma.recipePhoto.findMany({
-				where: {
-					recipeUid: uid
-				}
-			})
-
-			// 2. Delete the images from the file system
-			for (const photo of photos) {
-				const photoPath = path.join('static/recipe_photos/', photo.id + '.' + photo.fileType)
-				try {
-					await fsPromises.unlink(photoPath)
-				} catch (err) {
-					console.error(`Failed to delete photo at ${photoPath}`, err)
-				}
+			return {
+				status: 200
 			}
-
-			await prisma.recipe.delete({
-				where: {
-					uid
-				}
-			})
 		} catch (err) {
 			console.error(err)
 			return fail(500, {
 				message: 'Something went wrong deleting your recipe'
 			})
-		}
-
-		return {
-			status: 200
 		}
 	}
 }

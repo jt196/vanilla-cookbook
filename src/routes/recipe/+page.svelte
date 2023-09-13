@@ -35,6 +35,11 @@
 		}
 	}
 
+	function handleRecipeDeleted(event) {
+		const deletedUid = event.detail
+		filteredRecipes = filteredRecipes.filter((recipe) => recipe.uid !== deletedUid)
+	}
+
 	$: {
 		let sortedRecipes = sortRecipesByKey(
 			data.recipes,
@@ -124,7 +129,7 @@
 				bind:activeButton
 				bind:sortState
 				on:sort={handleSort} />
-			<RecipeList {filteredRecipes} {data} />
+			<RecipeList {filteredRecipes} {data} on:recipeDeleted={handleRecipeDeleted} />
 		</div>
 	</div>
 </div>
