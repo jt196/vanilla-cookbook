@@ -5,9 +5,6 @@ import { promises as fsPromises } from 'fs'
 import path from 'path'
 
 export async function createRecipePhotoEntry(recipeUid, imageUrl, fileType) {
-	console.log('🚀 ~ file: imageBackend.js:6 ~ createRecipePhotoEntry ~ fileType:', fileType)
-	console.log('🚀 ~ file: imageBackend.js:6 ~ createRecipePhotoEntry ~ imageUrl:', imageUrl)
-	console.log('🚀 ~ file: imageBackend.js:6 ~ createRecipePhotoEntry ~ recipeUid:', recipeUid)
 	return await prisma.recipePhoto.create({
 		data: {
 			recipeUid: recipeUid,
@@ -22,6 +19,26 @@ export async function removeRecipePhotoEntry(uid) {
 	await prisma.recipePhoto.delete({
 		where: { id: uid }
 	})
+}
+
+/**
+ * Deletes a single photo file from the filesystem.
+ * @param {string} id - The ID of the photo.
+ * @param {string} fileType - The file type of the photo (e.g., 'jpg', 'png').
+ */
+export async function deleteSinglePhotoFile(id, fileType) {
+	const photoPath = path.join('static/recipe_photos/', `${id}.${fileType}`)
+	try {
+		await fsPromises.unlink(photoPath)
+		return true // Successfully deleted
+	} catch (err) {
+		if (err.code === 'ENOENT') {
+			console.log(`Can't find local image at path: ${photoPath}, no action taken.`)
+		} else {
+			console.error(`Failed to delete photo at ${photoPath}`, err)
+		}
+		return false // Failed to delete
+	}
 }
 
 async function downloadImage(url, photoFilename, directory) {
