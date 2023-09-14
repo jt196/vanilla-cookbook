@@ -5,9 +5,11 @@
 	import Bookmark from '$lib/components/svg/Bookmark.svelte'
 	import { goto } from '$app/navigation'
 	import { createRecipe } from '$lib/utils/crud'
+	import { scrapeRecipeFromURL } from '$lib/utils/parse/parseHelpersClient'
 
 	let baseUrl = ''
 	let bookmarkletCode = ''
+	let url = ''
 
 	/**
 	 * The scraped recipe object.
@@ -46,43 +48,24 @@
 	 * @returns {Promise<void>}
 	 */
 	async function handleScrape(event) {
-		if (event) event.preventDefault() // Prevent default form submission
+		if (event) event.preventDefault()
 
-		const urlInput = document.getElementById('url')
-		const url = urlInput.value
-
-		// Make a request to your scrapeRecipe endpoint
-		const response = await fetch('?/scrapeRecipe', {
-			method: 'POST',
-			body: new FormData(urlInput.closest('form'))
-		})
-
-		if (response.ok) {
-			let responseText = await response.text()
-			responseText = decodeHTMLEntities(responseText)
-			const primaryData = JSON.parse(responseText)
-
-			// Checking if the data key exists and is of type string
-			if (primaryData && typeof primaryData.data === 'string') {
-				const nestedData = JSON.parse(primaryData.data)
-
-				// Now, you can access the properties
-				const scrapedRecipe = JSON.parse(nestedData[1]) // Because the nested JSON string is in the second position
-
-				recipe.name = scrapedRecipe.name
-				recipe.source = scrapedRecipe.author
-				recipe.source_url = scrapedRecipe.sourceUrl
-				recipe.cook_time = scrapedRecipe.cookTime
-				recipe.image_url = scrapedRecipe.imageUrl
-				recipe.prep_time = scrapedRecipe.prepTime
-				recipe.ingredients = scrapedRecipe.ingredients.join('\n')
-				recipe.directions = scrapedRecipe.instructions.join('\n\n')
-				recipe.total_time = scrapedRecipe.totalTime
-				recipe.servings = scrapedRecipe.yeld
-				recipe.nutritional_info = nutritionProcess(scrapedRecipe.nutrition)
-			}
+		const result = await scrapeRecipeFromURL(url)
+		if (result.success) {
+			const scrapedRecipe = result.data
+			recipe.name = scrapedRecipe.name
+			recipe.source = scrapedRecipe.author
+			recipe.source_url = scrapedRecipe.sourceUrl
+			recipe.cook_time = scrapedRecipe.cookTime
+			recipe.image_url = scrapedRecipe.imageUrl
+			recipe.prep_time = scrapedRecipe.prepTime
+			recipe.ingredients = scrapedRecipe.ingredients.join('\n')
+			recipe.directions = scrapedRecipe.instructions.join('\n\n')
+			recipe.total_time = scrapedRecipe.totalTime
+			recipe.servings = scrapedRecipe.yeld
+			recipe.nutritional_info = nutritionProcess(scrapedRecipe.nutrition)
 		} else {
-			console.error('Error:', await response.text())
+			console.error('Error:', result.error)
 		}
 	}
 	onMount(() => {
@@ -100,11 +83,12 @@
 		const scrapeUrl = urlParams.get('scrape')
 		if (scrapeUrl) {
 			// Populate the URL input field
-			const urlInput = document.getElementById('url')
-			urlInput.value = decodeURIComponent(scrapeUrl)
+			url = decodeURIComponent(scrapeUrl)
 
 			// Call the handleScrape function directly
-			handleScrape()
+			handleScrape().catch((error) => {
+				console.error('Error during scrape:', error)
+			})
 		}
 	})
 
@@ -133,7 +117,7 @@
 <div class="container">
 	<form action="?/scrapeRecipe" method="POST" on:submit={handleScrape}>
 		<label for="url"> URL </label>
-		<input type="text" id="url" name="url" />
+		<input type="text" id="url" bind:value={url} />
 		<button type="submit">Scrape Recipe</button>
 	</form>
 	<div class="bookmarklet-button">
