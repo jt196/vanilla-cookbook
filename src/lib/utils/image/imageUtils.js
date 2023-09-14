@@ -30,7 +30,7 @@ export async function checkImageExistence(imageUrl, baseUrl) {
 	console.log('Checking image existence!')
 	try {
 		const response = await fetch(
-			`${baseUrl.origin}/api/recipe/images/remote-exist?url=${encodeURIComponent(imageUrl)}`
+			`${baseUrl}/api/recipe/images/remote-exist?url=${encodeURIComponent(imageUrl)}`
 		)
 		return response.ok
 	} catch (error) {

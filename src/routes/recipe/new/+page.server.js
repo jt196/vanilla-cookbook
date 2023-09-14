@@ -69,7 +69,7 @@ export const actions = {
 			return fail(500, { message: 'Could not create the recipe.' })
 		}
 		// If the image URL exists, create an entry, download, resize, and save the image
-		if (await checkImageExistence(image_url, url)) {
+		if (await checkImageExistence(image_url, url.origin)) {
 			console.log('Image exists, processing!')
 			const contentType = await getContentTypeFromUrl(image_url)
 			const { extension } = mapContentTypeToFileTypeAndExtension(contentType)

@@ -3,6 +3,8 @@
 	import { checkImageExistence } from '$lib/utils/image/imageUtils'
 	import { onMount } from 'svelte'
 	import Bookmark from '$lib/components/svg/Bookmark.svelte'
+	import { goto } from '$app/navigation'
+	import { createRecipe } from '$lib/utils/crud'
 
 	let baseUrl = ''
 	let bookmarkletCode = ''
@@ -86,6 +88,7 @@
 	onMount(() => {
 		// Set the base URL and generate the bookmarklet code
 		baseUrl = window.location.origin
+		console.log('🚀 ~ file: +page.svelte:91 ~ onMount ~ baseUrl:', baseUrl)
 		bookmarkletCode = `javascript:(function() {
         var currentUrl = encodeURIComponent(window.location.href);
         var newUrl = '${baseUrl}/recipe/new?scrape=' + currentUrl;
@@ -107,10 +110,22 @@
 
 	let imageExists = false
 
-	$: if (recipe.image_url) {
-		checkImageExistence(recipe.image_url).then((result) => {
+	$: if (recipe.image_url && baseUrl) {
+		checkImageExistence(recipe.image_url, baseUrl).then((result) => {
 			return (imageExists = result)
 		})
+	}
+
+	async function handleCreateRecipe(event) {
+		event.preventDefault() // Prevent default form submission
+
+		const result = await createRecipe(recipe)
+		if (result.success) {
+			// Handle success, maybe redirect or show a success message
+			goto(`/recipe/view/${result.data.uid}`)
+		} else {
+			console.error('Error:', result.error)
+		}
 	}
 </script>
 
@@ -127,7 +142,7 @@
 	</div>
 </div>
 
-<form action="?/createRecipe" method="POST">
+<form on:submit|preventDefault={handleCreateRecipe}>
 	<h3>New Recipe</h3>
 
 	<label for="name"> Name </label>

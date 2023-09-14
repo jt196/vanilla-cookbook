@@ -61,7 +61,7 @@ export function parseRecipe(html, url) {
 			rating,
 			totalTime,
 			description,
-			yeld,
+			servings,
 			video,
 			nutrition
 
@@ -160,7 +160,12 @@ export function parseRecipe(html, url) {
 		}
 
 		try {
-			yeld = recipeRaw.recipeYield
+			servings = recipeRaw.recipeYield
+
+			// Check if servings is an array
+			if (Array.isArray(servings)) {
+				servings = servings[0]
+			}
 		} catch (error) {
 			console.error('Error in recipeYield:', error)
 		}
@@ -193,7 +198,7 @@ export function parseRecipe(html, url) {
 			cuisine,
 			rating,
 			totalTime,
-			yeld,
+			servings,
 			...video,
 			nutrition
 		}

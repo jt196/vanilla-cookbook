@@ -75,7 +75,7 @@ export async function DELETE({ params, locals }) {
 // Handle post request to update an existing recipe
 // API Endpoint: /api/recipe/[uid].js
 
-export async function POST({ request, locals, params }) {
+export async function PUT({ request, locals, params }) {
 	const { session, user } = await locals.auth.validateUser()
 	const bodyText = await request.text()
 	const recipeData = JSON.parse(bodyText)
@@ -168,7 +168,6 @@ export async function POST({ request, locals, params }) {
 export async function GET({ params, locals }) {
 	const { session, user } = await locals.auth.validateUser()
 	const { uid } = params
-	console.log('🚀 ~ file: +server.js:145 ~ GET ~ recipeId:', uid)
 
 	if (!session || !user) {
 		return new Response(JSON.stringify({ error: 'User not authenticated.' }), {
