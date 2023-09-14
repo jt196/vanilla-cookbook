@@ -3,7 +3,7 @@
 	import StarRating from '$lib/components/StarRating.svelte'
 	import Delete from '$lib/components/svg/Delete.svelte'
 	import View from '$lib/components/svg/View.svelte'
-	import { deleteRecipeById } from '$lib/utils/crud'
+	import { deleteRecipeById, updateRecipe } from '$lib/utils/crud'
 	import { goto } from '$app/navigation'
 
 	/**
@@ -43,10 +43,24 @@
 			goto('/recipe')
 		}
 	}
+
+	async function handleSubmit() {
+		const recipeWithCategories = {
+			...recipe,
+			categories: recipeCategories
+		}
+		const result = await updateRecipe(recipeWithCategories)
+		if (result.success) {
+			// Handle success, maybe redirect or show a success message
+			goto(`/recipe/view/${recipe.uid}`)
+		} else {
+			console.error('Error:', result.error)
+		}
+	}
 </script>
 
 <div class="recipe-container">
-	<form action="?/updateRecipe" method="POST">
+	<form on:submit|preventDefault={handleSubmit}>
 		<h3>Editing: {recipe.name}</h3>
 		<label for="name"> Name </label>
 		<input type="text" id="name" name="name" bind:value={recipe.name} />

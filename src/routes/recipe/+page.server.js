@@ -74,7 +74,7 @@ export const actions = {
 		}
 
 		try {
-			const response = await fetch(`/api/recipe/${uid}`, {
+			const response = await fetch(`${url.origin}/api/recipe/${uid}`, {
 				method: 'DELETE',
 				headers: {
 					'Content-Type': 'application/json'

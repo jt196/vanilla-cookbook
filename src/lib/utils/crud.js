@@ -21,3 +21,26 @@ export async function deleteRecipeById(uid) {
 		}
 	}
 }
+
+export async function updateRecipe(recipe) {
+	try {
+		const response = await fetch(`/api/recipe/${recipe.uid}`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(recipe)
+		})
+
+		if (response.ok) {
+			const updatedRecipe = await response.json()
+			return { success: true, data: updatedRecipe }
+		} else {
+			const errorData = await response.json()
+			throw new Error(errorData.message || 'Error updating recipe')
+		}
+	} catch (error) {
+		console.error('Error updating recipe:', error.message)
+		return { success: false, error: error.message }
+	}
+}

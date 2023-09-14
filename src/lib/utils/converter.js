@@ -171,7 +171,6 @@ export function addFoodPreferences(ingredientName) {
 	for (let item of veganFuse._docs) {
 		for (let term of item.ingredients) {
 			if (ingredientName.includes(term)) {
-				console.log('Matched term:', term) // Add this to debug
 				return {
 					vegan: item.vegan,
 					vegetarian: item.vegetarian,

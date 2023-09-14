@@ -73,7 +73,9 @@ export async function DELETE({ params, locals }) {
 }
 
 // Handle post request to update an existing recipe
-export const POST = async ({ request, locals, params }) => {
+// API Endpoint: /api/recipe/[uid].js
+
+export async function POST({ request, locals, params }) {
 	const { session, user } = await locals.auth.validateUser()
 	const bodyText = await request.text()
 	const recipeData = JSON.parse(bodyText)
@@ -88,13 +90,21 @@ export const POST = async ({ request, locals, params }) => {
 		})
 	}
 
+	const recipeCategories = recipeData.categories || []
+	delete recipeData.categories // Remove the categories key from the main data object
+
+	// eslint-disable-next-line no-unused-vars
+	const recipePhotos = recipeData.photos || []
+	delete recipeData.photos // Remove the photos key from the main data object
+
 	try {
 		const recipe = await prisma.recipe.findUnique({
 			where: { uid: uid }
 		})
 
 		if (!recipe) {
-			return new Response('recipe not found!', {
+			console.log('Recipe not found!')
+			return new Response('Recipe not found!', {
 				status: 404,
 				headers: {
 					'Content-Type': 'application/json'
@@ -103,7 +113,8 @@ export const POST = async ({ request, locals, params }) => {
 		}
 
 		if (recipe.userId !== user.userId) {
-			return new Response('Unauthorised to update this recipe!', {
+			console.log('Unauthorised!')
+			return new Response('Unauthorized to update this recipe!', {
 				status: 401,
 				headers: {
 					'Content-Type': 'application/json'
@@ -111,21 +122,36 @@ export const POST = async ({ request, locals, params }) => {
 			})
 		}
 
-		const updatedrecipe = await prisma.recipe.update({
+		await prisma.recipe.update({
 			where: { uid: uid },
-			data: {
-				name: recipeData.name || recipe.name,
-				parent_uid: 'parent_uid' in recipeData ? recipeData.parent_uid : recipe.parent_uid
+			data: recipeData
+		})
+
+		// First, remove all existing associations
+		await prisma.recipeCategory.deleteMany({
+			where: {
+				recipeUid: uid
 			}
 		})
 
-		return new Response(JSON.stringify(updatedrecipe), {
+		// Then, add the new associations
+		for (let categoryUid of recipeCategories) {
+			await prisma.recipeCategory.create({
+				data: {
+					recipeUid: uid,
+					categoryUid: categoryUid
+				}
+			})
+		}
+
+		return new Response(JSON.stringify({ message: 'Recipe updated successfully' }), {
 			status: 200,
 			headers: {
 				'Content-Type': 'application/json'
 			}
 		})
 	} catch (error) {
+		console.log('🚀 ~ file: +server.js:152 ~ POST ~ error:', error)
 		return new Response(
 			{ error: `Failed to update recipe: ${error.message}` },
 			{
