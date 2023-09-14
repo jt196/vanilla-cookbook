@@ -81,6 +81,17 @@
 		}
 	}
 
+	let mainPhoto
+
+	if (recipe.photos && recipe.photos.length > 0) {
+		mainPhoto = recipe.photos.find((photo) => photo.isMain) || recipe.photos[0]
+	}
+
+	let otherPhotos = recipe.photos
+		? recipe.photos.filter((photo) => photo !== mainPhoto && photo.url === null)
+		: []
+	$: console.log('🚀 ~ file: +page.svelte:91 ~ otherPhotos:', otherPhotos)
+
 	/** Logic to update various variables based on the recipe data. */
 	$: if (data && data.recipe) {
 		ingredients = recipe.ingredients ? recipe.ingredients.split('\n') : []
@@ -166,10 +177,8 @@
 <div class="grid">
 	<div>
 		<div class="recipe-cover">
-			{#if recipe.photos && recipe.photos.length > 0}
-				<img
-					src="/recipe_photos/{recipe.photos[0].id}.{recipe.photos[0].fileType}"
-					alt="{recipe.name} photo" />
+			{#if mainPhoto}
+				<img src="/recipe_photos/{mainPhoto.id}.{mainPhoto.fileType}" alt="{recipe.name} photo" />
 			{:else}
 				<FoodBowl height="400px" />
 			{/if}
@@ -244,6 +253,13 @@
 		</ul>
 	</div>
 </div>
+{#if otherPhotos.length > 0}
+	<div class="other-photos">
+		{#each otherPhotos as photo (photo.id)}
+			<img src="/recipe_photos/{photo.id}.{photo.fileType}" alt="{recipe.name} photo" />
+		{/each}
+	</div>
+{/if}
 
 {#if recipe?.description}
 	<h4>Description:</h4>
