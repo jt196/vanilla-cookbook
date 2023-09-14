@@ -13,29 +13,10 @@ import { error, fail, redirect } from '@sveltejs/kit'
  * @returns {Promise<{ recipe: Object }>} The loaded recipe.
  */
 export const load = async ({ url, params, locals, fetch }) => {
-	const { session, user } = await locals.auth.validateUser()
-	if (!session || !user) {
-		throw error(401, 'Unauthorized')
-	}
+	const { user } = await locals.auth.validateUser()
 
-	const getRecipe = async () => {
-		const recipe = await prisma.recipe.findUnique({
-			where: {
-				uid: params.recipeId
-			},
-			include: {
-				categories: true
-			}
-		})
-		if (!recipe) {
-			throw error(404, 'recipe not found')
-		}
-		if (recipe.userId !== user.userId) {
-			throw error(403, 'Unauthorized')
-		}
-
-		return recipe
-	}
+	let recipeData = await fetch(`${url.origin}/api/recipe/${params.recipeId}`)
+	const recipe = await recipeData.json()
 
 	const hierarchicalCategories = await fetch(
 		`${url.origin}/api/recipe/categories/user/${user.userId}`
@@ -43,7 +24,7 @@ export const load = async ({ url, params, locals, fetch }) => {
 	const categories = await hierarchicalCategories.json()
 
 	return {
-		recipe: getRecipe(),
+		recipe,
 		allCategories: categories
 	}
 }
@@ -103,11 +84,6 @@ export const actions = {
 
 		// Convert rating to float
 		const floatRating = parseFloat(rating)
-
-		console.log(
-			'🚀 ~ file: +page.server.js:89 ~ updateRecipe: ~ recipeCategories:',
-			recipeCategories
-		)
 
 		try {
 			const recipe = await prisma.recipe.findUniqueOrThrow({

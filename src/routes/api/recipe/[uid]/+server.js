@@ -142,6 +142,7 @@ export const POST = async ({ request, locals, params }) => {
 export async function GET({ params, locals }) {
 	const { session, user } = await locals.auth.validateUser()
 	const { uid } = params
+	console.log('🚀 ~ file: +server.js:145 ~ GET ~ recipeId:', uid)
 
 	if (!session || !user) {
 		return new Response(JSON.stringify({ error: 'User not authenticated.' }), {
@@ -153,49 +154,47 @@ export async function GET({ params, locals }) {
 	}
 
 	try {
-		// Fetch the recipe's categories
-		const recipeCategories = await prisma.reciperecipe.findMany({
+		const recipe = await prisma.recipe.findUnique({
 			where: {
-				recipeUid: uid
+				uid: uid
 			},
-			select: {
-				recipe: true
+			include: {
+				photos: {
+					select: {
+						id: true,
+						fileType: true,
+						isMain: true
+					}
+				},
+				categories: true
 			}
 		})
-
-		const categories = recipeCategories.map((rc) => ({ ...rc.recipe, selected: true }))
-
-		const recipeSet = new Set()
-
-		// Recursively fetch parent categories
-		for (let recipe of categories) {
-			let currentrecipe = recipe
-			while (currentrecipe.parent_uid) {
-				const parentrecipe = await prisma.recipe.findUnique({
-					where: {
-						uid: currentrecipe.parent_uid
-					}
-				})
-				if (!parentrecipe) break // Stop if parent not found
-				recipeSet.add({ ...parentrecipe, selected: false })
-				currentrecipe = parentrecipe
-			}
+		if (!recipe) {
+			return new Response(JSON.stringify({ error: 'Recipe not found!' }), {
+				status: 404,
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			})
 		}
-
-		const uniqueCategories = [...categories, ...Array.from(recipeSet)]
-
-		const hierarchicalCategories = buildHierarchy(uniqueCategories)
-
+		if (recipe.userId !== user.userId) {
+			return new Response(JSON.stringify({ error: 'Unauthorised!' }), {
+				status: 403,
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			})
+		}
 		// TODO: #41 Make this into a get categories function for reuse
 
-		return new Response(JSON.stringify(hierarchicalCategories), {
+		return new Response(JSON.stringify(recipe), {
 			status: 200,
 			headers: {
 				'Content-Type': 'application/json'
 			}
 		})
 	} catch (error) {
-		return new Response(JSON.stringify({ error: `Failed to fetch categories: ${error.message}` }), {
+		return new Response(JSON.stringify({ error: `Failed to fetch recipe: ${error.message}` }), {
 			status: 500,
 			headers: {
 				'Content-Type': 'application/json'
