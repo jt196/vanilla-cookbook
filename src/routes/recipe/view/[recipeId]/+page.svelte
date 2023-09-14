@@ -83,8 +83,13 @@
 
 	let mainPhoto
 
-	if (recipe.photos && recipe.photos.length > 0) {
-		mainPhoto = recipe.photos.find((photo) => photo.isMain) || recipe.photos[0]
+	$: {
+		if (recipe && recipe.photos && recipe.photos.length > 0) {
+			mainPhoto =
+				recipe.photos.find((photo) => photo.isMain) ||
+				recipe.photos.find((photo) => !photo.isMain && photo.url === null) ||
+				recipe.photos.find((photo) => !photo.isMain)
+		}
 	}
 
 	let otherPhotos = recipe.photos
@@ -183,7 +188,11 @@
 	<div>
 		<div class="recipe-cover">
 			{#if mainPhoto}
-				<img src="/recipe_photos/{mainPhoto.id}.{mainPhoto.fileType}" alt="{recipe.name} photo" />
+				<img
+					src={mainPhoto.url
+						? mainPhoto.url
+						: `/recipe_photos/${mainPhoto.id}.${mainPhoto.fileType}`}
+					alt="{recipe.name} photo" />
 			{:else}
 				<FoodBowl height="400px" />
 			{/if}
@@ -258,13 +267,6 @@
 		</ul>
 	</div>
 </div>
-{#if otherPhotos.length > 0}
-	<div class="other-photos">
-		{#each otherPhotos as photo (photo.id)}
-			<img src="/recipe_photos/{photo.id}.{photo.fileType}" alt="{recipe.name} photo" />
-		{/each}
-	</div>
-{/if}
 
 {#if recipe?.description}
 	<h4>Description:</h4>
@@ -280,6 +282,14 @@
 			{@html parsedDirection}
 		</p>
 	{/each}
+{/if}
+
+{#if otherPhotos.length > 0}
+	<div class="other-photos">
+		{#each otherPhotos as photo (photo.id)}
+			<img src="/recipe_photos/{photo.id}.{photo.fileType}" alt="{recipe.name} photo" />
+		{/each}
+	</div>
 {/if}
 
 {#if recipe.userId === user.userId}
@@ -305,6 +315,13 @@
 		width: auto; /* This will ensure the width remains proportional */
 		object-fit: cover;
 		display: block; /* To remove any default spacing at the bottom of images */
+	}
+
+	.other-photos {
+		margin-bottom: 1rem;
+		img {
+			max-height: 150px;
+		}
 	}
 
 	// Ingredients headers in the middle of text to have some spacing

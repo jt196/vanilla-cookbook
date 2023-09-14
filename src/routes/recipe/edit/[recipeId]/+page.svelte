@@ -3,7 +3,7 @@
 	import StarRating from '$lib/components/StarRating.svelte'
 	import Delete from '$lib/components/svg/Delete.svelte'
 	import View from '$lib/components/svg/View.svelte'
-	import { deleteRecipeById, updateRecipe } from '$lib/utils/crud'
+	import { deleteRecipeById, updateRecipe, deletePhotoById } from '$lib/utils/crud'
 	import { goto } from '$app/navigation'
 
 	/**
@@ -44,17 +44,57 @@
 		}
 	}
 
-	async function handleSubmit() {
+	async function handleSubmit(event) {
+		event.preventDefault()
+
 		const recipeWithCategories = {
 			...recipe,
 			categories: recipeCategories
 		}
-		const result = await updateRecipe(recipeWithCategories)
-		if (result.success) {
-			// Handle success, maybe redirect or show a success message
-			goto(`/recipe/view/${recipe.uid}`)
-		} else {
-			console.error('Error:', result.error)
+
+		const formData = new FormData()
+
+		// Append the entire recipe object
+		formData.append('recipe', JSON.stringify(recipeWithCategories))
+
+		// Append the selected files
+		for (const file of selectedFiles) {
+			formData.append('images', file)
+		}
+
+		try {
+			const result = await updateRecipe(formData, recipe.uid)
+
+			if (result.success) {
+				// Handle success, maybe redirect or show a success message
+				goto(`/recipe/view/${recipe.uid}`)
+			} else {
+				console.error('Error:', result.error)
+			}
+		} catch (error) {
+			console.error('Error:', error)
+		}
+	}
+
+	let selectedFiles = []
+
+	function handleFilesChange(event) {
+		selectedFiles = Array.from(event.target.files)
+	}
+
+	let filteredPhotos
+	$: filteredPhotos =
+		recipe && recipe.photos ? recipe.photos.filter((photo) => photo.url === null) : []
+
+	$: console.log('🚀 ~ file: +page.svelte:65 ~ filteredPhotos:', filteredPhotos)
+
+	async function handleDeletePhoto(photoId) {
+		try {
+			await deletePhotoById(photoId)
+			// Optionally, remove the photo from the local state
+			recipe.photos = recipe.photos.filter((p) => p.id !== photoId)
+		} catch (error) {
+			console.error('Error deleting photo:', error.message)
 		}
 	}
 </script>
@@ -79,6 +119,17 @@
 
 		<label for="image_url"> Image URL </label>
 		<input type="text" id="image_url" name="image_url" bind:value={recipe.image_url} />
+
+		<label for="file">Upload Images</label>
+		<input type="file" id="file" name="file" on:change={handleFilesChange} multiple />
+
+		<div class="photos">
+			{#each filteredPhotos as photo}
+				<img src="/recipe_photos/{photo.id}.{photo.fileType}" alt="{recipe.name} photo" />
+				<button class="outline secondary" on:click={() => handleDeletePhoto(photo.id)}
+					><Delete width="30px" height="30px" fill="var(--pico-del-color)" /></button>
+			{/each}
+		</div>
 
 		<label for="prep_time"> Prep Time </label>
 		<input type="text" id="prep_time" name="prep_time" bind:value={recipe.prep_time} />
@@ -146,5 +197,12 @@
 		flex-basis: 300px; /* Set a fixed width for the category tree */
 		overflow-y: auto; /* Add a scrollbar if the content overflows */
 		max-height: 80vh; /* Set a maximum height */
+	}
+
+	.photos {
+		margin-bottom: 1rem;
+		img {
+			max-height: 150px;
+		}
 	}
 </style>

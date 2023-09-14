@@ -22,14 +22,11 @@ export async function deleteRecipeById(uid) {
 	}
 }
 
-export async function updateRecipe(recipe) {
+export async function updateRecipe(formData, recipeId) {
 	try {
-		const response = await fetch(`/api/recipe/${recipe.uid}`, {
+		const response = await fetch(`/api/recipe/${recipeId}`, {
 			method: 'PUT',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify(recipe)
+			body: formData // Use the FormData object directly
 		})
 
 		if (response.ok) {
@@ -55,18 +52,38 @@ export async function createRecipe(recipe) {
 			body: JSON.stringify(recipe)
 		})
 
-		console.log('🚀 ~ file: crud.js:52 ~ createRecipe ~ response:', response)
 		if (response.ok) {
 			const newRecipe = await response.json()
-			console.log('🚀 ~ file: crud.js:60 ~ createRecipe ~ newRecipe:', newRecipe)
 			return { success: true, data: newRecipe }
 		} else {
 			const errorData = await response.json()
-			console.log('🚀 ~ file: crud.js:64 ~ createRecipe ~ errorData.message:', errorData.message)
 			throw new Error(errorData.message || 'Error creating recipe')
 		}
 	} catch (error) {
 		console.error('Error creating recipe:', error.message)
 		return { success: false, error: error.message }
+	}
+}
+
+export async function deletePhotoById(id) {
+	if (confirm('Are you sure you want to delete this photo?')) {
+		try {
+			const response = await fetch(`/api/recipe/images/${id}`, {
+				method: 'DELETE',
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			})
+
+			if (!response.ok) {
+				const errorData = await response.json()
+				throw new Error(errorData.message || 'Error deleting photo')
+			}
+
+			return true
+		} catch (error) {
+			console.error('Error deleting photo:', error.message)
+			return false
+		}
 	}
 }

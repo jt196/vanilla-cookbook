@@ -80,17 +80,21 @@ export async function savePhoto(photoData, photoFilename, directory) {
 
 	// Check if the photo already exists
 	if (!fs.existsSync(imagePath)) {
-		let imageBuffer
+		try {
+			// Handle different input types
+			if (photoData instanceof ArrayBuffer) {
+				// Convert ArrayBuffer to Buffer
+				photoData = Buffer.from(photoData)
+			} else if (typeof photoData === 'string') {
+				// Convert base64 string to Buffer
+				photoData = Buffer.from(photoData, 'base64')
+			}
 
-		// Check if photoData is a base64 string or a Buffer
-		if (typeof photoData === 'string') {
-			imageBuffer = Buffer.from(photoData, 'base64')
-		} else if (Buffer.isBuffer(photoData)) {
-			imageBuffer = photoData
-		} else {
-			throw new Error('Invalid photo data provided.')
+			// Write the data to the file
+			await fs.promises.writeFile(imagePath, photoData)
+		} catch (error) {
+			console.error('Error saving photo:', error)
+			throw error // Rethrow the error to handle it at a higher level
 		}
-
-		await fs.promises.writeFile(imagePath, imageBuffer)
 	}
 }

@@ -1,6 +1,11 @@
 import { prisma } from '$lib/server/prisma'
-import path from 'path'
-import { promises as fsPromises } from 'fs'
+import {
+	deleteSinglePhotoFile,
+	savePhoto,
+	createRecipePhotoEntry,
+	removeRecipePhotoEntry
+} from '$lib/utils/image/imageBackend.js'
+import { mapContentTypeToFileTypeAndExtension } from '$lib/utils/image/imageUtils.js'
 
 // Handle delete request
 export async function DELETE({ params, locals }) {
@@ -40,12 +45,7 @@ export async function DELETE({ params, locals }) {
 		})
 		// 2. Delete the images from the file system
 		for (const photo of photos) {
-			const photoPath = path.join('static/recipe_photos/', photo.id + '.' + photo.fileType)
-			try {
-				await fsPromises.unlink(photoPath)
-			} catch (err) {
-				console.error(`Failed to delete photo at ${photoPath}`, err)
-			}
+			deleteSinglePhotoFile(photo.id, photo.fileType)
 		}
 		await prisma.recipe.delete({
 			where: { uid }
@@ -77,8 +77,16 @@ export async function DELETE({ params, locals }) {
 
 export async function PUT({ request, locals, params }) {
 	const { session, user } = await locals.auth.validateUser()
-	const bodyText = await request.text()
-	const recipeData = JSON.parse(bodyText)
+	// const bodyText = await request.text()
+	// const recipeData = JSON.parse(bodyText)
+	const formData = await request.formData()
+	// Retrieve and parse the 'recipe' field from the FormData
+	const recipeData = JSON.parse(formData.get('recipe'))
+	const imageData = formData.getAll('images')
+
+	// Now you have the 'recipe' data as an object
+	// console.log('Recipe Data:', recipeData)
+
 	const { uid } = params
 
 	if (!session || !user) {
@@ -126,6 +134,28 @@ export async function PUT({ request, locals, params }) {
 			where: { uid: uid },
 			data: recipeData
 		})
+
+		let photoEntry
+
+		// Loop through the uploaded images and save them
+		for (const file of imageData) {
+			try {
+				let extension = mapContentTypeToFileTypeAndExtension(file.type).extension
+				photoEntry = await createRecipePhotoEntry(recipe.uid, null, extension)
+				const photoFilename = photoEntry.id
+				const photoBuffer = await file.arrayBuffer() // Get the image data as a buffer
+
+				// Specify the directory where you want to save the images
+				const directory = 'static/recipe_photos'
+
+				let fullFilename = `${photoFilename}.${extension}`
+				// Call the savePhoto function to save the image
+				await savePhoto(photoBuffer, fullFilename, directory)
+			} catch (err) {
+				console.log('Error Saving Photo! Deleting Photo Entry!', err)
+				removeRecipePhotoEntry(photoEntry.id)
+			}
+		}
 
 		// First, remove all existing associations
 		await prisma.recipeCategory.deleteMany({
@@ -187,6 +217,7 @@ export async function GET({ params, locals }) {
 				photos: {
 					select: {
 						id: true,
+						url: true,
 						fileType: true,
 						isMain: true
 					}
