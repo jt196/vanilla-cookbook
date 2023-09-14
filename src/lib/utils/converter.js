@@ -77,7 +77,6 @@ export const determineSystem = (ingredientArray) => {
 	if (inconclusive) {
 		return { system: 'inconclusive', counts: systemCounts }
 	}
-
 	return { system: dominantSystem, counts: systemCounts }
 }
 
@@ -256,7 +255,7 @@ export const manipulateIngredient = (ingredientObj, fromSystem, toSystem) => {
 					quantity: convertedQuantity,
 					unit: targetUnit,
 					unitPlural: targetUnit + 's',
-					symbol: targetUnit.charAt(0),
+					symbol: targetUnit?.charAt(0),
 					minQty: convertedQuantity,
 					maxQty: convertedQuantity
 				}
@@ -268,7 +267,7 @@ export const manipulateIngredient = (ingredientObj, fromSystem, toSystem) => {
 					quantity: convertedQuantity,
 					unit: targetUnit,
 					unitPlural: targetUnit + 's',
-					symbol: targetUnit.charAt(0),
+					symbol: targetUnit?.charAt(0),
 					minQty: convertedQuantity,
 					maxQty: convertedQuantity
 				}
@@ -298,9 +297,9 @@ export const manipulateIngredient = (ingredientObj, fromSystem, toSystem) => {
 	return {
 		...ingredientObj,
 		quantity: roundedQuantity,
-		unit: target.unit,
-		unitPlural: target.unit + 's',
-		symbol: target.unit.charAt(0),
+		unit: target.unit ? target.unit : '',
+		unitPlural: target.unit ? target.unit + 's' : '',
+		symbol: target.unit?.charAt(0),
 		minQty: roundedQuantity,
 		maxQty: roundedQuantity
 	}
@@ -368,11 +367,6 @@ export function parseTemperature(direction, toSystem, fromSystem) {
 	const genericDegreesMatches = direction.match(genericDegreesRegex) || []
 
 	// Logging the matches for debugging purposes
-	// console.log('🚀 ~ celsiusMatches:', celsiusMatches)
-	// console.log('🚀 ~ fahrenheitMatches:', fahrenheitMatches)
-	// console.log('🚀 ~ gasMarkMatches:', gasMarkMatches)
-	// console.log('🚀 ~ genericDegreesMatches:', genericDegreesMatches)
-
 	const isTargetImperial = ['imperial', 'americanVolumetric'].includes(toSystem)
 
 	if (celsiusMatches.length && fahrenheitMatches.length) {

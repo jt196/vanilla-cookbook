@@ -112,6 +112,11 @@
 
 	// Function to format the system string
 	function formatSystem(system) {
+		// Check if system is null or undefined
+		if (!system) {
+			return '' // or return some default value or handle it in another way
+		}
+
 		return system.charAt(0).toUpperCase() + system.slice(1).replace(/([A-Z])/g, ' $1')
 	}
 
