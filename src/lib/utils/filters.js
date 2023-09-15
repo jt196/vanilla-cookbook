@@ -110,6 +110,10 @@ export function sanitizeForYamlFrontMatter(str) {
 	return str
 }
 
+export function sanitizeFilename(filename) {
+	return filename.replace(/[^\w\s-.]/gi, '_')
+}
+
 /**
  * Scales numbers within a string by a specified factor.
  *

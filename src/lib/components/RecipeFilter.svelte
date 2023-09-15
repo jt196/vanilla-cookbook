@@ -51,6 +51,9 @@
 				}}
 				>Rating <SortAscDesc sort={activeButton === 'rating' ? sortState.direction : ''} /></button>
 		</div>
+		<div>
+			<button on:click={() => dispatch('export')}>Export Recipes</button>
+		</div>
 	</div>
 </div>
 
