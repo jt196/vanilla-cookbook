@@ -15,6 +15,7 @@
 	import { onMount } from 'svelte'
 	import Scale from '$lib/components/Scale.svelte'
 	import FoodBowl from '$lib/components/svg/FoodBowl.svelte'
+	import Images from '$lib/components/svg/Images.svelte'
 	import CategoryTree from '$lib/components/CategoryTree.svelte'
 	import StarRating from '$lib/components/StarRating.svelte'
 	import Delete from '$lib/components/svg/Delete.svelte'
@@ -213,11 +214,30 @@
 				<Scale bind:scale />
 			</p>
 		{/if}
-		Categories:
-		<CategoryTree
-			{categories}
-			selectedCategoryUids={collectSelectedUids(categories)}
-			isRoot={true} />
+		<div id="recipe-buttons">
+			{#if recipe.userId === user.userId}
+				<a
+					href="/recipe/edit/{recipe?.uid}"
+					role="button"
+					class="outline contrast"
+					data-testid="edit-button">
+					<Edit width="30px" height="30px" fill="var(--pico-ins-color)" />
+				</a>
+				<button
+					on:click={() => handleDelete(recipe?.uid)}
+					data-testid="delete-button"
+					class="outline secondary">
+					<Delete width="30px" height="30px" fill="var(--pico-del-color)" />
+				</button>
+			{/if}
+		</div>
+		<div id="categories">
+			Categories:
+			<CategoryTree
+				{categories}
+				selectedCategoryUids={collectSelectedUids(categories)}
+				isRoot={true} />
+		</div>
 	</div>
 	<div>
 		<p>Ingredients:</p>
@@ -289,23 +309,14 @@
 		{#each otherPhotos as photo (photo.id)}
 			<img src="/recipe_photos/{photo.id}.{photo.fileType}" alt="{recipe.name} photo" />
 		{/each}
+		<a
+			href="/recipe/images/{recipe?.uid}"
+			role="button"
+			class="outline contrast"
+			data-testid="edit-button">
+			<Images width="30px" height="30px" fill="var(--pico-ins-color)" />
+		</a>
 	</div>
-{/if}
-
-{#if recipe.userId === user.userId}
-	<a
-		href="/recipe/edit/{recipe?.uid}"
-		role="button"
-		class="outline contrast"
-		data-testid="edit-button">
-		<Edit width="30px" height="30px" fill="var(--pico-ins-color)" />
-	</a>
-	<button
-		on:click={() => handleDelete(recipe?.uid)}
-		data-testid="delete-button"
-		class="outline secondary">
-		<Delete width="30px" height="30px" fill="var(--pico-del-color)" />
-	</button>
 {/if}
 
 <style lang="scss">

@@ -91,7 +91,7 @@ export async function savePhoto(photoData, photoFilename, directory) {
 			}
 
 			// Write the data to the file
-			await fs.promises.writeFile(imagePath, photoData)
+			await fsPromises.writeFile(imagePath, photoData)
 		} catch (error) {
 			console.error('Error saving photo:', error)
 			throw error // Rethrow the error to handle it at a higher level
