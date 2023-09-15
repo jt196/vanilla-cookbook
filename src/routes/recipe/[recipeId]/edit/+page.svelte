@@ -89,6 +89,7 @@
 	$: console.log('🚀 ~ file: +page.svelte:65 ~ filteredPhotos:', filteredPhotos)
 
 	async function handleDeletePhoto(photoId) {
+		event.preventDefault()
 		try {
 			await deletePhotoById(photoId)
 			// Optionally, remove the photo from the local state
@@ -126,7 +127,7 @@
 		<div class="photos">
 			{#each filteredPhotos as photo}
 				<img src="/recipe_photos/{photo.id}.{photo.fileType}" alt="{recipe.name} photo" />
-				<button class="outline secondary" on:click={() => handleDeletePhoto(photo.id)}
+				<button class="outline secondary" type="button" on:click={() => handleDeletePhoto(photo.id)}
 					><Delete width="30px" height="30px" fill="var(--pico-del-color)" /></button>
 			{/each}
 		</div>
