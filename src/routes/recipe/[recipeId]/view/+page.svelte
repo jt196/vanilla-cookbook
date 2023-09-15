@@ -280,7 +280,8 @@
 							{ingredient.quantity ? decimalToFraction(ingredient.quantity * scale) : ''}
 						</strong>
 						{ingredient.unit && ingredient.unit !== 'q.b.' ? ingredient.unit : ''}
-						<span>{@html ingredient.ingredient} <strong>{ingredient.dietLabel}</strong></span>
+						<!-- <span>{@html ingredient.ingredient} <strong>{ingredient.dietLabel}</strong></span> -->
+						<span>{@html ingredient.ingredient}</span>
 					</li>
 				{/if}
 			{/each}
