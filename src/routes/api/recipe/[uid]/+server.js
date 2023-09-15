@@ -219,7 +219,8 @@ export async function GET({ params, locals }) {
 						id: true,
 						url: true,
 						fileType: true,
-						isMain: true
+						isMain: true,
+						notes: true
 					}
 				},
 				categories: true

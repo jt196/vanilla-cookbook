@@ -3,8 +3,9 @@
 	import StarRating from '$lib/components/StarRating.svelte'
 	import Delete from '$lib/components/svg/Delete.svelte'
 	import View from '$lib/components/svg/View.svelte'
-	import { deleteRecipeById, updateRecipe, deletePhotoById } from '$lib/utils/crud'
+	import { deleteRecipeById, updateRecipe, deletePhotoById, updatePhotos } from '$lib/utils/crud'
 	import { goto } from '$app/navigation'
+	import UpArrow from '$lib/components/svg/UpArrow.svelte'
 
 	/**
 	 * The page data type.
@@ -89,13 +90,43 @@
 	$: console.log('🚀 ~ file: +page.svelte:65 ~ filteredPhotos:', filteredPhotos)
 
 	async function handleDeletePhoto(photoId) {
-		event.preventDefault()
 		try {
+			// Determine if the photo being deleted is the main photo.
+			const isMainPhotoBeingDeleted = filteredPhotos.some(
+				(photo) => photo.id === photoId && photo.isMain
+			)
+			// Delete photo
 			await deletePhotoById(photoId)
 			// Optionally, remove the photo from the local state
-			recipe.photos = recipe.photos.filter((p) => p.id !== photoId)
+			filteredPhotos = filteredPhotos.filter((p) => p.id !== photoId)
+
+			// If the main photo was deleted, choose a new main photo.
+			if (isMainPhotoBeingDeleted) {
+				// Find the next photo where url is null to be the main photo.
+				const newMainPhoto = filteredPhotos[0]
+
+				// If a new main photo was found, set it.
+				if (newMainPhoto) {
+					handleSetMainPhoto(newMainPhoto.id)
+				}
+			}
 		} catch (error) {
 			console.error('Error deleting photo:', error.message)
+		}
+	}
+
+	async function handleSetMainPhoto(mainPhotoId) {
+		// Immediately update local data
+		filteredPhotos = filteredPhotos.map((photo) => ({
+			...photo,
+			isMain: photo.id === mainPhotoId
+		}))
+
+		const success = await updatePhotos(filteredPhotos)
+		if (!success) {
+			console.error('Failed to set the main photo.')
+		} else {
+			// Handle the success e.g. show a success notification
 		}
 	}
 </script>
@@ -126,9 +157,29 @@
 
 		<div class="photos">
 			{#each filteredPhotos as photo}
-				<img src="/recipe_photos/{photo.id}.{photo.fileType}" alt="{recipe.name} photo" />
-				<button class="outline secondary" type="button" on:click={() => handleDeletePhoto(photo.id)}
-					><Delete width="30px" height="30px" fill="var(--pico-del-color)" /></button>
+				<div class="photo-container">
+					<img
+						src="/recipe_photos/{photo.id}.{photo.fileType}"
+						alt="{recipe.name} photo"
+						class={photo.isMain ? 'main-photo' : ''} />
+					<div class="photo-actions">
+						<button
+							class="outline secondary"
+							type="button"
+							on:click={() => handleDeletePhoto(photo.id)}>
+							<Delete width="30px" height="30px" fill="var(--pico-del-color)" />
+						</button>
+						{#if !photo.isMain}
+							<button
+								class="outline secondary"
+								data-tooltip="Promote to Main Photo"
+								type="button"
+								on:click={() => handleSetMainPhoto(photo.id)}>
+								<UpArrow width="30px" height="30px" fill="var(--pico-primary)" />
+							</button>
+						{/if}
+					</div>
+				</div>
 			{/each}
 		</div>
 
@@ -204,6 +255,29 @@
 		margin-bottom: 1rem;
 		img {
 			max-height: 150px;
+			border-radius: 5px;
 		}
+	}
+
+	.main-photo {
+		border: 3px solid var(--pico-muted-color);
+	}
+
+	.photos {
+		display: flex;
+		gap: 10px; /* adjust as needed */
+		flex-wrap: wrap;
+	}
+
+	.photo-container {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 5px; /* adjust as needed */
+	}
+
+	.photo-actions {
+		display: flex;
+		gap: 5px; /* adjust as needed */
 	}
 </style>

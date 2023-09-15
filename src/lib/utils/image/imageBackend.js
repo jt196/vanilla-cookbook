@@ -4,13 +4,13 @@ import fs from 'fs'
 import { promises as fsPromises } from 'fs'
 import path from 'path'
 
-export async function createRecipePhotoEntry(recipeUid, imageUrl, fileType) {
+export async function createRecipePhotoEntry(recipeUid, imageUrl, fileType, isMain = false) {
 	return await prisma.recipePhoto.create({
 		data: {
 			recipeUid: recipeUid,
 			url: imageUrl,
 			fileType: fileType,
-			isMain: true
+			isMain: isMain
 		}
 	})
 }

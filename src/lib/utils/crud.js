@@ -68,7 +68,7 @@ export async function createRecipe(recipe) {
 export async function deletePhotoById(id) {
 	if (confirm('Are you sure you want to delete this photo?')) {
 		try {
-			const response = await fetch(`/api/recipe/images/${id}`, {
+			const response = await fetch(`/api/recipe/image/${id}`, {
 				method: 'DELETE',
 				headers: {
 					'Content-Type': 'application/json'
@@ -85,5 +85,28 @@ export async function deletePhotoById(id) {
 			console.error('Error deleting photo:', error.message)
 			return false
 		}
+	}
+}
+
+// Send a list of one or more photos to the backend to update
+export async function updatePhotos(photos) {
+	try {
+		const response = await fetch('/api/recipe/images', {
+			method: 'PUT',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(photos)
+		})
+
+		if (!response.ok) {
+			const errorData = await response.json()
+			throw new Error(errorData.message || 'Error updating photos')
+		}
+
+		return true
+	} catch (error) {
+		console.error('Error updating photos:', error.message)
+		return false
 	}
 }

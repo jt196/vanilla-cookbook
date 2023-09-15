@@ -58,6 +58,7 @@ model RecipePhoto {
     url       String?
     fileType  String?
     isMain    Boolean @default(false)
+    notes     String?
     recipe    Recipe  @relation(fields: [recipeUid], references: [uid], onDelete: Cascade)
 }
 
