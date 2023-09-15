@@ -6,6 +6,8 @@
 	import RecipeList from '$lib/components/RecipeList.svelte'
 	import Sidebar from '$lib/components/Sidebar.svelte'
 	import Burger from '$lib/components/svg/Burger.svelte'
+	import Export from '$lib/components/svg/Export.svelte'
+	import New from '$lib/components/svg/New.svelte'
 	import CategoryTree from '$lib/components/CategoryTree.svelte'
 
 	export let data
@@ -141,10 +143,15 @@
 		<div>
 			<div class="grid">
 				<div>
-					<button on:click={toggleSidebar}> <Burger width="1.5rem" /> </button>
+					<button data-tooltip="Display Category Filter" on:click={toggleSidebar}>
+						<Burger width="1.5rem" />
+					</button>
 				</div>
 				<div class="align-right">
-					<a href="/recipe/new" role="button">New</a>
+					<button data-tooltip="Export Filtered Recipes" on:click={handleExport}
+						><Export width="30px" height="30px" /></button>
+					<a href="/recipe/new" data-tooltip="New Recipe" role="button"
+						><New width="30px" height="30px" /></a>
 				</div>
 			</div>
 			<RecipeFilter
@@ -152,8 +159,7 @@
 				bind:searchKey
 				bind:activeButton
 				bind:sortState
-				on:sort={handleSort}
-				on:export={handleExport} />
+				on:sort={handleSort} />
 			<RecipeList {filteredRecipes} {data} on:recipeDeleted={handleRecipeDeleted} />
 		</div>
 	</div>

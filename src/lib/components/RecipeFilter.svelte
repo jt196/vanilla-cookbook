@@ -16,7 +16,7 @@
 			placeholder="Search my recipes by..."
 			bind:value={searchString} />
 	</div>
-	<div>
+	<div data-tooltip="Choose Search Key">
 		<select name="selections" bind:value={searchKey} id="selections" aria-label="selections">
 			<option selected value="name">Name</option>
 			<option value="ingredients">Ingredients</option>
@@ -27,6 +27,7 @@
 	<div class="sort">
 		<div>
 			<button
+				data-tooltip="Sort by Date"
 				class={activeButton === 'created' ? 'secondary' : ''}
 				on:click={() => {
 					activeButton = 'created'
@@ -36,6 +37,7 @@
 		</div>
 		<div>
 			<button
+				data-tooltip="Sort by Name"
 				class={activeButton === 'name' ? 'secondary' : ''}
 				on:click={() => {
 					activeButton = 'name'
@@ -44,15 +46,13 @@
 		</div>
 		<div>
 			<button
+				data-tooltip="Sort by Rating"
 				class={activeButton === 'rating' ? 'secondary' : ''}
 				on:click={() => {
 					activeButton = 'rating'
 					dispatch('sort', { key: 'rating' })
 				}}
 				>Rating <SortAscDesc sort={activeButton === 'rating' ? sortState.direction : ''} /></button>
-		</div>
-		<div>
-			<button on:click={() => dispatch('export')}>Export Recipes</button>
 		</div>
 	</div>
 </div>
