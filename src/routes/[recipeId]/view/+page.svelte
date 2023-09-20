@@ -102,6 +102,7 @@
 		ingredients = recipe.ingredients ? recipe.ingredients.split('\n') : []
 		ingredientsArray = ingredientProcess(ingredients)
 		measurementSystem = determineSystem(ingredientsArray)
+		console.log('🚀 ~ file: +page.svelte:105 ~ measurementSystem:', measurementSystem)
 		convertedIngredients = convertIngredients(
 			ingredientsArray,
 			measurementSystem.system,

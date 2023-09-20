@@ -59,6 +59,11 @@ export const determineSystem = (ingredientArray) => {
 		})
 	})
 
+	// Check for the specific condition
+	if (systemCounts.imperial > 0 && systemCounts.americanVolumetric > 0) {
+		return { system: 'americanVolumetric', counts: systemCounts }
+	}
+
 	// Determine the dominant system
 	let dominantSystem = null
 	let maxCount = 0

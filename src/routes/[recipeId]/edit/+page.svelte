@@ -87,8 +87,6 @@
 	$: filteredPhotos =
 		recipe && recipe.photos ? recipe.photos.filter((photo) => photo.url === null) : []
 
-	$: console.log('🚀 ~ file: +page.svelte:65 ~ filteredPhotos:', filteredPhotos)
-
 	async function handleDeletePhoto(photoId) {
 		try {
 			// Determine if the photo being deleted is the main photo.
