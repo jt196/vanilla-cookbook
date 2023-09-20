@@ -24,9 +24,10 @@ export function sortRecipesByKey(recipes, key, currentSort) {
  */
 export function sortByKeyGeneric(inputArray, inputKey, direction) {
 	return [...inputArray].sort((a, b) => {
-		return direction === 'asc'
-			? a[inputKey].toString().localeCompare(b[inputKey].toString())
-			: b[inputKey].toString().localeCompare(a[inputKey].toString())
+		const aValue = a[inputKey]?.toString() || '' // Use optional chaining and fallback to empty string
+		const bValue = b[inputKey]?.toString() || '' // Use optional chaining and fallback to empty string
+
+		return direction === 'asc' ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue)
 	})
 }
 
