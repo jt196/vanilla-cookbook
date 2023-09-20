@@ -94,15 +94,15 @@
 		ingredients = recipe.ingredients ? recipe.ingredients.split('\n') : []
 		ingredientsArray = ingredientProcess(ingredients)
 		measurementSystem = determineSystem(ingredientsArray)
+		// if (!selectedSystem) {
+		// 	measurementSystem !== 'inconclusive' ? (selectedSystem = measurementSystem.system) : null
+		// }
 		convertedIngredients = convertIngredients(
 			ingredientsArray,
 			measurementSystem.system,
 			selectedSystem
 		)
 		// Call the function to update selectedSystem based on the initial measurementSystem
-		if (!selectedSystem) {
-			measurementSystem !== 'inconclusive' ? (selectedSystem = measurementSystem.system) : null
-		}
 		recipe.directions ? (directionLines = recipe.directions.split('\n')) : null
 		scaledServings = recipe.servings ? scaleNumbersInString(recipe.servings, scale) : null
 	}
@@ -118,6 +118,8 @@
 	}
 
 	function convertIngredients(ingredients, system, toSystem) {
+		// If no system selected, return the raw ingredients
+		if (!toSystem) return ingredients
 		return ingredients.map((ingredient) => {
 			// Get the dietary preferences for the ingredient
 			// const prefs = addFoodPreferences(ingredient.ingredient)
