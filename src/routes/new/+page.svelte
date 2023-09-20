@@ -74,7 +74,7 @@
 		console.log('🚀 ~ file: +page.svelte:91 ~ onMount ~ baseUrl:', baseUrl)
 		bookmarkletCode = `javascript:(function() {
         var currentUrl = encodeURIComponent(window.location.href);
-        var newUrl = '${baseUrl}/recipe/new?scrape=' + currentUrl;
+        var newUrl = '${baseUrl}/new?scrape=' + currentUrl;
         window.open(newUrl, '_blank');
     })();`
 
