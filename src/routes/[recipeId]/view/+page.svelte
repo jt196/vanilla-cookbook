@@ -94,6 +94,7 @@
 		ingredients = recipe.ingredients ? recipe.ingredients.split('\n') : []
 		ingredientsArray = ingredientProcess(ingredients)
 		measurementSystem = determineSystem(ingredientsArray)
+		console.log('🚀 ~ file: +page.svelte:97 ~ measurementSystem:', measurementSystem)
 		convertedIngredients = convertIngredients(
 			ingredientsArray,
 			measurementSystem.system,
@@ -232,30 +233,38 @@
 	<div>
 		<p>Ingredients:</p>
 		<details class="dropdown">
-			<summary> Selected system: {formatSystem(selectedSystem)} </summary>
+			<summary> Convert to: </summary>
 			<ul>
-				<li>
-					<label>
-						<input type="radio" bind:group={selectedSystem} name="system" value="metric" />
-						Metric
-					</label>
-				</li>
-				<li>
-					<label>
-						<input type="radio" bind:group={selectedSystem} name="system" value="imperial" />
-						Imperial
-					</label>
-				</li>
-				<li>
-					<label>
-						<input
-							type="radio"
-							bind:group={selectedSystem}
-							name="system"
-							value="americanVolumetric" />
-						American Volumetric
-					</label>
-				</li>
+				{#if measurementSystem.system !== 'metric'}
+					<li>
+						<label>
+							<input type="radio" bind:group={selectedSystem} name="system" value="metric" />
+							Metric
+						</label>
+					</li>
+				{/if}
+
+				{#if measurementSystem.system !== 'imperial'}
+					<li>
+						<label>
+							<input type="radio" bind:group={selectedSystem} name="system" value="imperial" />
+							Imperial
+						</label>
+					</li>
+				{/if}
+
+				{#if measurementSystem.system !== 'americanVolumetric'}
+					<li>
+						<label>
+							<input
+								type="radio"
+								bind:group={selectedSystem}
+								name="system"
+								value="americanVolumetric" />
+							American Volumetric
+						</label>
+					</li>
+				{/if}
 			</ul>
 		</details>
 		<ul>
