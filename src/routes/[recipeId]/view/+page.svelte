@@ -68,13 +68,6 @@
 	let selectedSystem
 	let convertedIngredients = {}
 
-	// Initialize the selected system based on the determined system
-	function updateSelectedSystem() {
-		if (measurementSystem.system !== 'inconclusive') {
-			selectedSystem = measurementSystem.system
-		}
-	}
-
 	async function handleDelete(uid) {
 		const success = await deleteRecipeById(uid)
 		if (success) {
@@ -102,7 +95,6 @@
 		ingredients = recipe.ingredients ? recipe.ingredients.split('\n') : []
 		ingredientsArray = ingredientProcess(ingredients)
 		measurementSystem = determineSystem(ingredientsArray)
-		console.log('🚀 ~ file: +page.svelte:105 ~ measurementSystem:', measurementSystem)
 		convertedIngredients = convertIngredients(
 			ingredientsArray,
 			measurementSystem.system,
@@ -110,7 +102,7 @@
 		)
 		// Call the function to update selectedSystem based on the initial measurementSystem
 		if (!selectedSystem) {
-			updateSelectedSystem()
+			measurementSystem !== 'inconclusive' ? (selectedSystem = measurementSystem.system) : null
 		}
 		recipe.directions ? (directionLines = recipe.directions.split('\n')) : null
 		scaledServings = recipe.servings ? scaleNumbersInString(recipe.servings, scale) : null
