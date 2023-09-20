@@ -77,17 +77,17 @@ describe('parseTemperature function', () => {
 
 	it('should convert "turn the oven on to heat up to 220ºC (fan)."', () => {
 		const result = parseTemperature('turn the oven on to heat up to 220ºC (fan).', 'imperial')
-		expect(result).toBe('turn the oven on to heat up to 428°F (fan).')
+		expect(result).toBe('turn the oven on to heat up to **428°F** (fan).')
 	})
 
 	it('should convert "Preheat a Philips air fryer to 200-205C"', () => {
 		const result = parseTemperature('Preheat a Philips air fryer to 200-205C.', 'imperial')
-		expect(result).toBe('Preheat a Philips air fryer to 392-401°F.')
+		expect(result).toBe('Preheat a Philips air fryer to **392-401°F**.')
 	})
 
 	it('should convert "Preheat a Philips air fryer to 392-401°F."', () => {
 		const result = parseTemperature('Preheat a Philips air fryer to 392-401°F.', 'metric')
-		expect(result).toBe('Preheat a Philips air fryer to 200-205°C.')
+		expect(result).toBe('Preheat a Philips air fryer to **200-205°C**.')
 	})
 
 	it('should convert "Preheat the oven to 170°C. Then do something else."', () => {
@@ -95,7 +95,7 @@ describe('parseTemperature function', () => {
 			'Preheat the oven to 170°C. Then do something else.',
 			'imperial'
 		)
-		expect(result).toBe('Preheat the oven to 338°F. Then do something else.')
+		expect(result).toBe('Preheat the oven to **338°F**. Then do something else.')
 	})
 
 	it('should convert "be sure to cook them until they register 175 degrees."', () => {
@@ -104,7 +104,7 @@ describe('parseTemperature function', () => {
 			'metric',
 			'imperial'
 		)
-		expect(result).toBe('be sure to cook them until they register 79°C.')
+		expect(result).toBe('be sure to cook them until they register **79°C**.')
 	})
 
 	it('should convert "Spread in a greased 13 x 9-inch pan, bake 25-30 minutes at 375F, let cool and cut into bars."', () => {
@@ -114,7 +114,7 @@ describe('parseTemperature function', () => {
 			'imperial'
 		)
 		expect(result).toBe(
-			'Spread in a greased 13 x 9-inch pan, bake 25-30 minutes at 191°C, let cool and cut into bars.'
+			'Spread in a greased 13 x 9-inch pan, bake 25-30 minutes at **191°C**, let cool and cut into bars.'
 		)
 	})
 
@@ -124,7 +124,7 @@ describe('parseTemperature function', () => {
 			'imperial',
 			'metric'
 		)
-		expect(result).toBe('Bake at 293°F (fan), 320°F (no fan) until lightly browned')
+		expect(result).toBe('Bake at **293°F** (fan), **320°F** (no fan) until lightly browned')
 	})
 
 	it('should convert "Meanwhile, adjust an oven rack to the middle position and heat the oven to 450 degrees."', () => {
@@ -134,13 +134,13 @@ describe('parseTemperature function', () => {
 			'imperial'
 		)
 		expect(result).toBe(
-			'Meanwhile, adjust an oven rack to the middle position and heat the oven to 232°C.'
+			'Meanwhile, adjust an oven rack to the middle position and heat the oven to **232°C**.'
 		)
 	})
 
 	it('should convert "218°C (205C convection)"', () => {
 		const result = parseTemperature('218°C (205C convection)', 'imperial', 'metric')
-		expect(result).toBe('424°F (401°F convection)')
+		expect(result).toBe('**424°F** (**401°F** convection)')
 	})
 
 	it('should convert "Testing for false positives"', () => {
@@ -161,7 +161,7 @@ describe('parseTemperature function', () => {
 
 	it('should convert "Heat oven to 180C/160C fan/gas 4."', () => {
 		const result = parseTemperature('Heat oven to 180C/160C fan/gas 4.', 'imperial', 'metric')
-		expect(result).toBe('Heat oven to 356°F/320°F fan/gas 4.')
+		expect(result).toBe('Heat oven to **356°F**/**320°F** fan/gas 4.')
 	})
 
 	it('should convert "Towards the end of the rising time, preheat your oven to 176C (160C fan) with a rack in the center."', () => {
@@ -171,7 +171,7 @@ describe('parseTemperature function', () => {
 			'metric'
 		)
 		expect(result).toBe(
-			'Towards the end of the rising time, preheat your oven to 349°F (320°F fan) with a rack in the center.'
+			'Towards the end of the rising time, preheat your oven to **349°F** (**320°F** fan) with a rack in the center.'
 		)
 	})
 })
