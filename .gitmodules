@@ -1,0 +1,3 @@
+[submodule "src/lib/submodules/recipe-ingredient-parser"]
+	path = src/lib/submodules/recipe-ingredient-parser
+	url = https://github.com/jt196/recipe-ingredient-parser.git
