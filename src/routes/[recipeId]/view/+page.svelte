@@ -94,9 +94,6 @@
 		ingredients = recipe.ingredients ? recipe.ingredients.split('\n') : []
 		ingredientsArray = ingredientProcess(ingredients)
 		measurementSystem = determineSystem(ingredientsArray)
-		// if (!selectedSystem) {
-		// 	measurementSystem !== 'inconclusive' ? (selectedSystem = measurementSystem.system) : null
-		// }
 		convertedIngredients = convertIngredients(
 			ingredientsArray,
 			measurementSystem.system,
