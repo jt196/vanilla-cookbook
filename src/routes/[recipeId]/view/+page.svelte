@@ -100,6 +100,7 @@
 			measurementSystem.system,
 			selectedSystem
 		)
+		console.log('🚀 ~ file: +page.svelte:99 ~ convertedIngredients:', convertedIngredients)
 		// Call the function to update selectedSystem based on the initial measurementSystem
 		if (!selectedSystem) {
 			measurementSystem !== 'inconclusive' ? (selectedSystem = measurementSystem.system) : null
@@ -262,9 +263,9 @@
 		</details>
 		<ul>
 			{#each sanitizedIngredients as ingredient}
-				<!-- Check if it starts with a markdown heading -->
-				{#if /<h[1-6]>/.test(ingredient.ingredient)}
-					<!-- If the content is a heading, render it outside of a <li> -->
+				{#if ingredient.ingredient.trim() === ''}
+					<br />
+				{:else if /<h[1-6]>/.test(ingredient.ingredient)}
 					<div data-heading>{@html ingredient.ingredient}</div>
 				{:else}
 					<li>
