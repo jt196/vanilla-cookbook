@@ -1,4 +1,4 @@
-import { parse } from 'recipe-ingredient-parser-v3'
+import { parse } from '$lib/submodules/recipe-ingredient-parser/src/index.js'
 import he from 'he'
 
 /**
