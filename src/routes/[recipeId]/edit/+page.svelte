@@ -41,7 +41,7 @@
 	async function handleDelete(uid) {
 		const success = await deleteRecipeById(uid)
 		if (success) {
-			goto('/recipe')
+			goto('/')
 		}
 	}
 
