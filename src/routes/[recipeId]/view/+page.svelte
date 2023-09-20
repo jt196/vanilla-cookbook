@@ -121,8 +121,8 @@
 	function convertIngredients(ingredients, system, toSystem) {
 		return ingredients.map((ingredient) => {
 			// Get the dietary preferences for the ingredient
-			const prefs = addFoodPreferences(ingredient.ingredient)
-			const dietLabel = getDietLabel(prefs)
+			// const prefs = addFoodPreferences(ingredient.ingredient)
+			// const dietLabel = getDietLabel(prefs)
 
 			if (
 				shouldSkipConversion(ingredient.unit) ||
@@ -130,8 +130,8 @@
 			) {
 				// Return the original ingredient with the added dietary label
 				return {
-					...ingredient,
-					dietLabel: dietLabel
+					...ingredient
+					// dietLabel: dietLabel
 				}
 			}
 
@@ -139,15 +139,15 @@
 			if (converted === null || converted.error) {
 				// Return the original ingredient with the added dietary label
 				return {
-					...ingredient,
-					dietLabel: dietLabel
+					...ingredient
+					// dietLabel: dietLabel
 				}
 			}
 
 			// Return the converted ingredient with the added dietary label
 			return {
-				...converted,
-				dietLabel: dietLabel
+				...converted
+				// dietLabel: dietLabel
 			}
 		})
 	}
