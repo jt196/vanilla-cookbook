@@ -20,14 +20,13 @@
 		<ul>
 			<li>
 				<strong>
-					<a href="/"> Bigly Recipes </a>
+					<a href="/"> Chefbook </a>
 				</strong>
 			</li>
 		</ul>
 		<ul>
 			<form method="POST">
 				<li><a href="/">Home</a></li>
-				<li><a href="/recipe">Recipes</a></li>
 				{#if !data.user}
 					<li><a href="/register">Register</a></li>
 					<li><a href="/login" role="button">Login</a></li>

@@ -33,7 +33,7 @@
 		{:else}
 			<FoodBowl width="100px" />
 		{/if}
-		<a href="/recipe/{item.uid}/view/" class="recipe-card">
+		<a href="/{item.uid}/view/" class="recipe-card">
 			<div>
 				<header>{item.name}</header>
 				<p>Created: <i>{localDateAndTime(item.created)}</i></p>
@@ -49,7 +49,7 @@
 					<Delete width="30px" height="30px" fill="var(--pico-del-color)" />
 				</button>
 				<a
-					href="/recipe/{item.uid}/edit/"
+					href="/{item.uid}/edit/"
 					role="button"
 					class="outline contrast"
 					data-testid="edit-button">

@@ -94,11 +94,7 @@
 </script>
 
 <h3>{recipe?.name}</h3>
-<a
-	href="/recipe/{recipe?.uid}/view/"
-	role="button"
-	class="outline contrast"
-	data-testid="view-button">
+<a href="/{recipe?.uid}/view/" role="button" class="outline contrast" data-testid="view-button">
 	<View width="30px" height="30px" fill="var(--pico-ins-color)" />
 </a>
 

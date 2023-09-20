@@ -217,7 +217,7 @@
 		<div id="recipe-buttons">
 			{#if recipe.userId === user.userId}
 				<a
-					href="/recipe/{recipe?.uid}/edit/"
+					href="/{recipe?.uid}/edit/"
 					role="button"
 					class="outline contrast"
 					data-testid="edit-button">
@@ -311,7 +311,7 @@
 			<img src="/recipe_photos/{photo.id}.{photo.fileType}" alt="{recipe.name} photo" />
 		{/each}
 		<a
-			href="/recipe/{recipe?.uid}/images/"
+			href="/{recipe?.uid}/images/"
 			role="button"
 			class="outline contrast"
 			data-testid="edit-button">
