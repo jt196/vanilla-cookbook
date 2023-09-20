@@ -4,11 +4,8 @@ import {
 	getContentTypeFromUrl,
 	mapContentTypeToFileTypeAndExtension
 } from '$lib/utils/image/imageUtils'
-import {
-	createRecipePhotoEntry,
-	removeRecipePhotoEntry,
-	processImage
-} from '$lib/utils/image/imageBackend'
+import { processImage } from '$lib/utils/image/imageBackend'
+import { createRecipePhotoEntry, removeRecipePhotoEntry } from '$lib/utils/api'
 
 export async function POST({ request, locals, url }) {
 	const { session, user } = await locals.auth.validateUser()

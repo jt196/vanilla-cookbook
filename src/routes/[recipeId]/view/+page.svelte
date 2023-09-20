@@ -100,7 +100,6 @@
 			measurementSystem.system,
 			selectedSystem
 		)
-		console.log('🚀 ~ file: +page.svelte:99 ~ convertedIngredients:', convertedIngredients)
 		// Call the function to update selectedSystem based on the initial measurementSystem
 		if (!selectedSystem) {
 			measurementSystem !== 'inconclusive' ? (selectedSystem = measurementSystem.system) : null

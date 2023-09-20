@@ -1,25 +1,7 @@
-import { prisma } from '$lib/server/prisma'
 import sharp from 'sharp'
 import fs from 'fs'
 import { promises as fsPromises } from 'fs'
 import path from 'path'
-
-export async function createRecipePhotoEntry(recipeUid, imageUrl, fileType, isMain = false) {
-	return await prisma.recipePhoto.create({
-		data: {
-			recipeUid: recipeUid,
-			url: imageUrl,
-			fileType: fileType,
-			isMain: isMain
-		}
-	})
-}
-
-export async function removeRecipePhotoEntry(uid) {
-	await prisma.recipePhoto.delete({
-		where: { id: uid }
-	})
-}
 
 /**
  * Deletes a single photo file from the filesystem.

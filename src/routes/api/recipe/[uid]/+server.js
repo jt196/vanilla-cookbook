@@ -1,11 +1,7 @@
 import { prisma } from '$lib/server/prisma'
-import {
-	deleteSinglePhotoFile,
-	savePhoto,
-	createRecipePhotoEntry,
-	removeRecipePhotoEntry
-} from '$lib/utils/image/imageBackend.js'
+import { deleteSinglePhotoFile, savePhoto } from '$lib/utils/image/imageBackend.js'
 import { mapContentTypeToFileTypeAndExtension } from '$lib/utils/image/imageUtils.js'
+import { createRecipePhotoEntry, removeRecipePhotoEntry } from '$lib/utils/api'
 
 // Handle delete request
 export async function DELETE({ params, locals }) {

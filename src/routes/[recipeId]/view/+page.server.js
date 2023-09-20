@@ -18,8 +18,10 @@ export const load = async ({ params, locals, fetch, url }) => {
 
 	let recipeCategories = await fetch(`${url.origin}/api/recipe/categories/${params.recipeId}`)
 	const categories = await recipeCategories.json()
+	console.log('🚀 ~ file: +page.server.js:21 ~ load ~ categories:', categories)
 	let recipeData = await fetch(`${url.origin}/api/recipe/${params.recipeId}`)
 	const recipe = await recipeData.json()
+	console.log('🚀 ~ file: +page.server.js:24 ~ load ~ recipe:', recipe)
 
 	return {
 		recipe,
