@@ -68,7 +68,7 @@
 
 			if (result.success) {
 				// Handle success, maybe redirect or show a success message
-				goto(`/recipe/${recipe.uid}/view/`)
+				goto(`/${recipe.uid}/view/`)
 			} else {
 				console.error('Error:', result.error)
 			}
