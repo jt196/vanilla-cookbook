@@ -146,8 +146,7 @@ export async function GET({ params, locals }) {
 		})
 
 		const categories = recipeCategories.map((rc) => ({ ...rc.category, selected: true }))
-
-		const categorySet = new Set()
+		const categoryMap = new Map(categories.map((category) => [category.uid, category]))
 
 		// Recursively fetch parent categories
 		for (let category of categories) {
@@ -158,14 +157,19 @@ export async function GET({ params, locals }) {
 						uid: currentCategory.parent_uid
 					}
 				})
+
 				if (!parentCategory) break // Stop if parent not found
-				categorySet.add({ ...parentCategory, selected: false })
+
+				// Add the parent category if it doesn't already exist in the map
+				if (!categoryMap.has(parentCategory.uid)) {
+					categoryMap.set(parentCategory.uid, { ...parentCategory, selected: false })
+				}
+
 				currentCategory = parentCategory
 			}
 		}
 
-		const uniqueCategories = [...categories, ...Array.from(categorySet)]
-
+		const uniqueCategories = Array.from(categoryMap.values())
 		const hierarchicalCategories = buildHierarchy(uniqueCategories)
 
 		// TODO: #41 Make this into a get categories function for reuse

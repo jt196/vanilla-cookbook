@@ -151,6 +151,5 @@ export function collectSelectedUids(categories) {
 	}
 
 	categories.forEach(traverse)
-
 	return selectedUids
 }

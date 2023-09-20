@@ -29,7 +29,6 @@
 	export let data
 
 	let { recipe, categories, user } = data
-
 	/**
 	 * The list of ingredients in string format.
 	 * @type {string[]}
