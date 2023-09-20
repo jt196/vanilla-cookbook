@@ -18,7 +18,9 @@
 		<VirtualList items={filteredRecipes} bind:start bind:end let:item>
 			<RecipeCard {item} {data} on:recipeDeleted={(e) => dispatch('recipeDeleted', e.detail)} />
 		</VirtualList>
-		<p>showing items {start}-{end}</p>
+		<span class="list-indicator">
+			<p>showing items {start}-{end}</p>
+		</span>
 	{:else}
 		<!-- for testing purposes only -->
 		{#each filteredRecipes as item (item.uid)}
@@ -31,5 +33,11 @@
 	.container {
 		min-height: 200px;
 		height: calc(100vh - 18em);
+	}
+
+	.list-indicator {
+		display: flex;
+		justify-content: center;
+		align-items: center;
 	}
 </style>

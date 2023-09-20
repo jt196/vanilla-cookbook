@@ -88,14 +88,9 @@
 		border: 1px solid white;
 	}
 
-	.search-box,
-	select {
-		width: 100%;
-	}
-
 	.recipe-filters {
 		margin-top: 1rem;
-		grid-template-columns: 2fr 1fr repeat(3, min-content); // Define the columns
+		grid-template-columns: 1fr auto 1fr;
 		gap: 1rem; // Space between grid items
 		align-items: center; // Vertically center the grid items
 		@media (max-width: 1023px) {

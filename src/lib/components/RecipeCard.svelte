@@ -36,7 +36,9 @@
 		<a href="/{item.uid}/view/" class="recipe-card">
 			<div>
 				<header>{item.name}</header>
-				<p>Created: <i>{localDateAndTime(item.created)}</i></p>
+				<span class="created">
+					<p>Created: <i>{localDateAndTime(item.created)}</i></p>
+				</span>
 				<StarRating rating={item.rating} />
 			</div>
 		</a>
@@ -46,14 +48,20 @@
 					on:click={() => handleDelete(item.uid)}
 					data-testid="delete-button"
 					class="outline secondary">
-					<Delete width="30px" height="30px" fill="var(--pico-del-color)" />
+					<Delete
+						width="var(--dynamic-width)"
+						height="var(--dynamic-height)"
+						fill="var(--pico-del-color)" />
 				</button>
 				<a
 					href="/{item.uid}/edit/"
 					role="button"
 					class="outline contrast"
 					data-testid="edit-button">
-					<Edit width="30px" height="30px" fill="var(--pico-ins-color)" />
+					<Edit
+						width="var(--dynamic-width)"
+						height="var(--dynamic-height)"
+						fill="var(--pico-ins-color)" />
 				</a>
 			{/if}
 		</div>
@@ -100,5 +108,24 @@
 
 	article:hover {
 		background-color: var(--pico-secondary-focus);
+	}
+
+	.created {
+		@media (max-width: 767px) {
+			display: none;
+		}
+	}
+
+	// Using CSS to adjust the button size variables
+	:root {
+		--dynamic-width: 30px;
+		--dynamic-height: 30px;
+	}
+
+	@media (max-width: 767px) {
+		:root {
+			--dynamic-width: 20px;
+			--dynamic-height: 20px;
+		}
 	}
 </style>

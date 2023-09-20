@@ -96,7 +96,6 @@
 	let otherPhotos = recipe.photos
 		? recipe.photos.filter((photo) => photo !== mainPhoto && photo.url === null)
 		: []
-	$: console.log('🚀 ~ file: +page.svelte:91 ~ otherPhotos:', otherPhotos)
 
 	/** Logic to update various variables based on the recipe data. */
 	$: if (data && data.recipe) {
