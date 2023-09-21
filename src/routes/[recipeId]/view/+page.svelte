@@ -231,42 +231,57 @@
 		</div>
 	</div>
 	<div>
-		<p>Ingredients:</p>
-		<details class="dropdown">
-			<summary> Convert to: </summary>
-			<ul>
-				{#if measurementSystem.system !== 'metric'}
-					<li>
-						<label>
-							<input type="radio" bind:group={selectedSystem} name="system" value="metric" />
-							Metric
-						</label>
-					</li>
-				{/if}
+		<div class="ing-header">
+			<p>Ingredients:</p>
+		</div>
+		<div class="convert">
+			<details class="dropdown">
+				<summary> Convert to: </summary>
+				<ul>
+					{#if measurementSystem.system !== 'metric'}
+						<li>
+							<label>
+								<input type="radio" bind:group={selectedSystem} name="system" value="metric" />
+								Metric
+							</label>
+						</li>
+					{/if}
 
-				{#if measurementSystem.system !== 'imperial'}
-					<li>
-						<label>
-							<input type="radio" bind:group={selectedSystem} name="system" value="imperial" />
-							Imperial
-						</label>
-					</li>
-				{/if}
+					{#if measurementSystem.system !== 'imperial'}
+						<li>
+							<label>
+								<input type="radio" bind:group={selectedSystem} name="system" value="imperial" />
+								Imperial
+							</label>
+						</li>
+					{/if}
 
-				{#if measurementSystem.system !== 'americanVolumetric'}
-					<li>
-						<label>
-							<input
-								type="radio"
-								bind:group={selectedSystem}
-								name="system"
-								value="americanVolumetric" />
-							American Volumetric
-						</label>
-					</li>
-				{/if}
-			</ul>
-		</details>
+					{#if measurementSystem.system !== 'americanVolumetric'}
+						<li>
+							<label>
+								<input
+									type="radio"
+									bind:group={selectedSystem}
+									name="system"
+									value="americanVolumetric" />
+								American Volumetric
+							</label>
+						</li>
+					{/if}
+				</ul>
+			</details>
+			<div>
+				<button
+					on:click={() => (selectedSystem = null)}
+					data-testid="delete-button"
+					data-tooltip="Reset to original measurement system"
+					class="outline secondary">
+					<Delete width="30px" height="30px" fill="var(--pico-del-color)" />
+				</button>
+			</div>
+		</div>
+		<div>System: {!selectedSystem ? measurementSystem.system : selectedSystem}</div>
+		<br />
 		<ul>
 			{#each sanitizedIngredients as ingredient}
 				{#if ingredient.ingredient.trim() === ''}
@@ -341,5 +356,23 @@
 	}
 	h4:first-child {
 		margin-top: 0;
+	}
+
+	.convert {
+		display: flex;
+		justify-content: space-between;
+		gap: 1rem;
+	}
+
+	.dropdown {
+		flex-grow: 1; /* Tells the dropdown to take up all available space */
+		flex-shrink: 1; /* Allows the dropdown to shrink if necessary */
+		flex-basis: auto; /* Default starting size before growing or shrinking */
+		min-width: 0; /* Makes sure it respects its parent's size */
+	}
+
+	div > button {
+		flex-grow: 0; /* Button should not grow */
+		flex-shrink: 0; /* Button should not shrink */
 	}
 </style>
