@@ -59,6 +59,7 @@
 	let measurementSystem = {}
 	let selectedSystem
 	let convertedIngredients = {}
+	let displayExtra = false
 
 	async function handleDelete(uid) {
 		const success = await deleteRecipeById(uid)
@@ -227,8 +228,15 @@
 				</button>
 			</div>
 		</div>
-		<div>System: {!selectedSystem ? measurementSystem.system : selectedSystem}</div>
-		<br />
+		<div class="ing-system">
+			<div>System: {!selectedSystem ? measurementSystem.system : selectedSystem}</div>
+			<fieldset data-tooltip="Display more ingredient information">
+				<label>
+					Extra:
+					<input type="checkbox" name="english" bind:checked={displayExtra} />
+				</label>
+			</fieldset>
+		</div>
 		<ul>
 			{#each sanitizedIngredients as ingredient}
 				{#if ingredient.ingredient.trim() === ''}
@@ -242,7 +250,12 @@
 						</strong>
 						{ingredient.unit && ingredient.unit !== 'q.b.' ? ingredient.unit : ''}
 						<!-- <span>{@html ingredient.ingredient} <strong>{ingredient.dietLabel}</strong></span> -->
-						<span>{@html ingredient.ingredient}</span>
+						<span
+							>{@html ingredient.ingredient}
+							{#if displayExtra && ingredient.additional}
+								<i> | {ingredient.additional}</i>
+							{/if}
+						</span>
 					</li>
 				{/if}
 			{/each}
@@ -321,5 +334,11 @@
 	div > button {
 		flex-grow: 0; /* Button should not grow */
 		flex-shrink: 0; /* Button should not shrink */
+	}
+
+	.ing-system {
+		display: flex;
+		gap: 1rem;
+		justify-content: space-between;
 	}
 </style>

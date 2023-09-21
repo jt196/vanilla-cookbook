@@ -174,15 +174,38 @@ describe('Filter functions', () => {
 
 describe('Date and Time utility functions', () => {
 	describe('localDateAndTime', () => {
+		let originalDateToLocaleDateString
+		let originalDateToLocaleTimeString
+
+		beforeAll(() => {
+			// Save the original functions to restore them later
+			originalDateToLocaleDateString = Date.prototype.toLocaleDateString
+			originalDateToLocaleTimeString = Date.prototype.toLocaleTimeString
+
+			// Mock the functions
+			Date.prototype.toLocaleDateString = function () {
+				return '1/1/2023'
+			}
+			Date.prototype.toLocaleTimeString = function () {
+				return '12:00:00 AM'
+			}
+		})
+
+		afterAll(() => {
+			// Restore the original functions
+			Date.prototype.toLocaleDateString = originalDateToLocaleDateString
+			Date.prototype.toLocaleTimeString = originalDateToLocaleTimeString
+		})
+
 		it('should return local date and time format for a date object', () => {
 			const date = new Date('2023-01-01T12:00:00Z')
 			const result = localDateAndTime(date)
-			expect(result).toMatch(/1\/1\/2023 \d{1,2}:\d{2}:\d{2}\u202f(AM|PM)/)
+			expect(result).toBe('1/1/2023 12:00:00 AM')
 		})
 
 		it('should return local date and time format for a date string', () => {
 			const result = localDateAndTime('2023-01-01T12:00:00Z')
-			expect(result).toMatch(/1\/1\/2023 \d{1,2}:\d{2}:\d{2}\u202f(AM|PM)/)
+			expect(result).toBe('1/1/2023 12:00:00 AM')
 		})
 
 		it('should return an empty string for null input', () => {
