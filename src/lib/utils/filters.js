@@ -31,7 +31,7 @@ export function ingredientProcess(ingredientArray) {
 	const parsedIngredients = []
 
 	ingredientArray.forEach((ingredientString) => {
-		const ingredientStr = sanitizeForYamlFrontMatter(ingredientString)
+		const ingredientStr = sanitizeIngredient(ingredientString)
 		try {
 			const ingredientObject = parse(ingredientStr, 'eng')
 
@@ -64,7 +64,7 @@ export function ingredientProcess(ingredientArray) {
  * @param {string} str - The input string to sanitize.
  * @returns {string} The sanitized string.
  */
-export function sanitizeForYamlFrontMatter(str) {
+export function sanitizeIngredient(str) {
 	if (!str) return ''
 
 	const fractionMap = {
@@ -94,15 +94,13 @@ export function sanitizeForYamlFrontMatter(str) {
 		str = str.replace(regex, ascii)
 	}
 
-	str = str
-		.split('')
-		.filter((char) => {
-			return /[\x20-\x7E\u00A0-\u024F]/.test(char) // Keep printable ASCII characters and Latin Extended-A & B
-		})
-		.join('')
+	// str = str
+	// 	.split('')
+	// 	.filter((char) => {
+	// 		return /[\x20-\x7E\u00A0-\u024F]/.test(char) // Keep printable ASCII characters and Latin Extended-A & B
+	// 	})
+	// 	.join('')
 
-	str = str.replace(': ', ' - ')
-	str = str.replace('*', '')
 	str = str.replace('"', '')
 	str = str.replace(/\\/g, '\\\\')
 	str = str.replace(/"/g, '\\"')

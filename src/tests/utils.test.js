@@ -8,7 +8,7 @@ import {
 import {
 	filterSearch,
 	ingredientProcess,
-	sanitizeForYamlFrontMatter,
+	sanitizeIngredient,
 	scaleNumbersInString,
 	decimalToFraction,
 	unicodeToAscii,
@@ -104,15 +104,13 @@ describe('Filter functions', () => {
 		})
 	})
 
-	describe('sanitizeForYamlFrontMatter', () => {
-		it('should sanitize string for YAML front matter', () => {
-			const str = 'Hello: World*'
-			const result = sanitizeForYamlFrontMatter(str)
-			expect(result).toBe('Hello - World')
+	describe('sanitizeIngredient', () => {
+		it('should sanitize ingredient string', () => {
+			const str = '½ an apple'
+			const result = sanitizeIngredient(str)
+			expect(result).toBe('1/2 an apple')
 		})
 	})
-
-	// ... Continue with other functions ...
 
 	describe('startsWithHttp', () => {
 		it('should return true if string starts with http', () => {

@@ -86,14 +86,16 @@
 	/** Logic to update various variables based on the recipe data. */
 	$: if (data && data.recipe) {
 		ingredients = recipe.ingredients ? recipe.ingredients.split('\n') : []
+		console.log('🚀 ~ file: +page.svelte:89 ~ ingredients:', ingredients)
 		ingredientsArray = ingredientProcess(ingredients)
+		console.log('🚀 ~ file: +page.svelte:91 ~ ingredientsArray:', ingredientsArray)
 		measurementSystem = determineSystem(ingredientsArray)
-		console.log('🚀 ~ file: +page.svelte:97 ~ measurementSystem:', measurementSystem)
 		convertedIngredients = convertIngredients(
 			ingredientsArray,
 			measurementSystem.system,
 			selectedSystem
 		)
+		console.log('🚀 ~ file: +page.svelte:94 ~ convertedIngredients:', convertedIngredients)
 		// Call the function to update selectedSystem based on the initial measurementSystem
 		recipe.directions ? (directionLines = recipe.directions.split('\n')) : null
 		scaledServings = recipe.servings ? scaleNumbersInString(recipe.servings, scale) : null
