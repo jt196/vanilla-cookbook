@@ -1,4 +1,4 @@
-import { units, findSuitableUnit } from '$lib/utils/units'
+import { units, findSuitableUnit, shouldSkipConversion } from '$lib/utils/units'
 import Fuse from 'fuse.js'
 import { dryIngredientsConversion } from '$lib/utils/dryIngredientsConversion'
 import { foodPreferences } from '$lib/data/ingredients/vegan/vegan'
@@ -438,4 +438,40 @@ export function parseTemperature(direction, toSystem, fromSystem) {
 		)
 	}
 	return direction
+}
+
+export function convertIngredients(ingredients, system, toSystem) {
+	// If no system selected, return the raw ingredients
+	if (!toSystem) return ingredients
+	return ingredients.map((ingredient) => {
+		// Get the dietary preferences for the ingredient
+		// const prefs = addFoodPreferences(ingredient.ingredient)
+		// const dietLabel = getDietLabel(prefs)
+
+		if (
+			shouldSkipConversion(ingredient.unit) ||
+			!manipulateIngredient(ingredient, system, toSystem)
+		) {
+			// Return the original ingredient with the added dietary label
+			return {
+				...ingredient
+				// dietLabel: dietLabel
+			}
+		}
+
+		const converted = manipulateIngredient(ingredient, system, toSystem)
+		if (converted === null || converted.error) {
+			// Return the original ingredient with the added dietary label
+			return {
+				...ingredient
+				// dietLabel: dietLabel
+			}
+		}
+
+		// Return the converted ingredient with the added dietary label
+		return {
+			...converted
+			// dietLabel: dietLabel
+		}
+	})
 }

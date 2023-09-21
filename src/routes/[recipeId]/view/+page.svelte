@@ -1,15 +1,8 @@
 <script>
 	import { localDateAndTime } from '$lib/utils/dateTime'
 	import { collectSelectedUids } from '$lib/utils/categories'
-	import { shouldSkipConversion } from '$lib/utils/units'
 	import { decimalToFraction, ingredientProcess, scaleNumbersInString } from '$lib/utils/filters'
-	import {
-		determineSystem,
-		manipulateIngredient,
-		parseDirections,
-		addFoodPreferences,
-		getDietLabel
-	} from '$lib/utils/converter'
+	import { determineSystem, parseDirections, convertIngredients } from '$lib/utils/converter'
 	import { getSanitizedHTML } from '$lib/utils/render'
 	import { deleteRecipeById } from '$lib/utils/crud'
 	import { onMount } from 'svelte'
@@ -103,52 +96,6 @@
 		// Call the function to update selectedSystem based on the initial measurementSystem
 		recipe.directions ? (directionLines = recipe.directions.split('\n')) : null
 		scaledServings = recipe.servings ? scaleNumbersInString(recipe.servings, scale) : null
-	}
-
-	// Function to format the system string
-	function formatSystem(system) {
-		// Check if system is null or undefined
-		if (!system) {
-			return '' // or return some default value or handle it in another way
-		}
-
-		return system.charAt(0).toUpperCase() + system.slice(1).replace(/([A-Z])/g, ' $1')
-	}
-
-	function convertIngredients(ingredients, system, toSystem) {
-		// If no system selected, return the raw ingredients
-		if (!toSystem) return ingredients
-		return ingredients.map((ingredient) => {
-			// Get the dietary preferences for the ingredient
-			// const prefs = addFoodPreferences(ingredient.ingredient)
-			// const dietLabel = getDietLabel(prefs)
-
-			if (
-				shouldSkipConversion(ingredient.unit) ||
-				!manipulateIngredient(ingredient, system, toSystem)
-			) {
-				// Return the original ingredient with the added dietary label
-				return {
-					...ingredient
-					// dietLabel: dietLabel
-				}
-			}
-
-			const converted = manipulateIngredient(ingredient, system, toSystem)
-			if (converted === null || converted.error) {
-				// Return the original ingredient with the added dietary label
-				return {
-					...ingredient
-					// dietLabel: dietLabel
-				}
-			}
-
-			// Return the converted ingredient with the added dietary label
-			return {
-				...converted
-				// dietLabel: dietLabel
-			}
-		})
 	}
 
 	let sanitizedDirections = []
