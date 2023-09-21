@@ -248,7 +248,13 @@
 				{:else}
 					<li>
 						<strong>
-							{ingredient.quantity ? decimalToFraction(ingredient.quantity * scale) : ''}
+							{#if ingredient.minQty == ingredient.maxQty && ingredient.quantity}
+								{decimalToFraction(ingredient.quantity * scale)}
+							{:else if ingredient.minQty != ingredient.maxQty && ingredient.quantity}
+								{decimalToFraction(ingredient.minQty * scale)}-{decimalToFraction(
+									ingredient.maxQty * scale
+								)}
+							{/if}
 						</strong>
 						{ingredient.unit && ingredient.unit !== 'q.b.' ? ingredient.unit : ''}
 						<!-- <span>{@html ingredient.ingredient} <strong>{ingredient.dietLabel}</strong></span> -->
