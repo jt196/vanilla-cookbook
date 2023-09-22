@@ -118,7 +118,21 @@ describe('manipulateIngredient', () => {
 		expect(result).toEqual(expect.objectContaining(expected))
 	})
 
-	// Add more test cases as needed
+	it('converts grams to cups', () => {
+		const input = {
+			quantity: 1.25,
+			unit: 'kg',
+			ingredient: 'unrefined golden granulated sugar'
+		}
+		const result = manipulateIngredient(input, 'metric', 'americanVolumetric')
+		const expected = {
+			quantity: 3.68, // Replace with your expected output
+			unit: 'cup',
+			ingredient: 'unrefined golden granulated sugar'
+		}
+		// expect(result).toEqual(expected)
+		expect(result).toEqual(expect.objectContaining(expected))
+	})
 })
 
 describe('findSuitableUnit function', () => {

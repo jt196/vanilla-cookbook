@@ -228,19 +228,51 @@ export const manipulateIngredient = (ingredientObj, fromSystem, toSystem) => {
 		return ingredientObj
 	}
 
+	let quantityToUse = quantity
+
+	// Convert the original unit to grams only if the system is not 'americanVolumetric'
+	if (fromSystem !== 'americanVolumetric') {
+		const { quantity: convertedQuantity, error } = converter(quantity, unit, 'grams')
+		if (error) {
+			return { error }
+		}
+		quantityToUse = convertedQuantity
+		console.log(
+			'🚀 ~ file: converter.js:240 ~ manipulateIngredient ~ quantityToUse:',
+			quantityToUse
+		)
+	}
+
 	let dryIngredient = null
 
 	if (toSystem === 'americanVolumetric' || fromSystem === 'americanVolumetric') {
 		const result = fuse.search(ingredient)
 		if (result.length > 0 && result[0].score < 0.3) {
 			dryIngredient = result[0].item
+			console.log(
+				'🚀 ~ file: converter.js:237 ~ manipulateIngredient ~ dryIngredient:',
+				dryIngredient
+			)
 		} else {
 			dryIngredient = fuzzyMatch(ingredient, dryIngredientsConversion)
+			console.log(
+				'🚀 ~ file: converter.js:240 ~ manipulateIngredient ~ dryIngredient:',
+				dryIngredient
+			)
 		}
 
 		if (dryIngredient) {
 			if (toSystem === 'americanVolumetric') {
-				let convertedQuantity = quantity / dryIngredient.gramsPerCup
+				let convertedQuantity = quantityToUse / dryIngredient.gramsPerCup
+				console.log(
+					'🚀 ~ file: converter.js:252 ~ manipulateIngredient ~ dryIngredient.gramsPerCup:',
+					dryIngredient.gramsPerCup
+				)
+				console.log('🚀 ~ file: converter.js:252 ~ manipulateIngredient ~ quantity:', quantityToUse)
+				console.log(
+					'🚀 ~ file: converter.js:252 ~ manipulateIngredient ~ convertedQuantity:',
+					convertedQuantity
+				)
 				const targetUnit = findSuitableUnit(toSystem, convertedQuantity * 236.588) // Convert cups to grams
 
 				// Adjust the convertedQuantity based on the targetUnit
@@ -265,7 +297,7 @@ export const manipulateIngredient = (ingredientObj, fromSystem, toSystem) => {
 					maxQty: convertedQuantity
 				}
 			} else if (fromSystem === 'americanVolumetric' && unit === 'cup') {
-				const convertedQuantity = quantity * dryIngredient.gramsPerCup
+				const convertedQuantity = quantityToUse * dryIngredient.gramsPerCup
 				const targetUnit = findSuitableUnit(toSystem, convertedQuantity)
 				return {
 					...ingredientObj,
