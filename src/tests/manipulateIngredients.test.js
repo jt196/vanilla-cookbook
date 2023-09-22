@@ -111,7 +111,7 @@ describe('manipulateIngredient', () => {
 		}
 		const result = manipulateIngredient(input, 'americanVolumetric', 'metric')
 		const expected = {
-			quantity: 227, // Replace with your expected output
+			quantity: 236.6, // Replace with your expected output
 			unit: 'gram',
 			ingredient: 'chilled water'
 		}
@@ -119,7 +119,7 @@ describe('manipulateIngredient', () => {
 		expect(result).toEqual(expect.objectContaining(expected))
 	})
 
-	it('converts grams to cups', () => {
+	it('converts kg to cups', () => {
 		const input = {
 			quantity: 1.25,
 			unit: 'kg',
@@ -130,6 +130,52 @@ describe('manipulateIngredient', () => {
 			quantity: 3.68, // Replace with your expected output
 			unit: 'cup',
 			ingredient: 'unrefined golden granulated sugar'
+		}
+		// expect(result).toEqual(expected)
+		expect(result).toEqual(expect.objectContaining(expected))
+	})
+
+	it('converts cups to grams', () => {
+		const input = {
+			quantity: 0.75,
+			unit: 'cups',
+			ingredient: 'water'
+		}
+		const result = manipulateIngredient(input, 'americanVolumetric', 'metric')
+		const expected = {
+			quantity: 177.4, // Replace with your expected output
+			unit: 'gram',
+			ingredient: 'water'
+		}
+		// expect(result).toEqual(expected)
+		expect(result).toEqual(expect.objectContaining(expected))
+	})
+	it('converts grams to cups', () => {
+		const input = {
+			quantity: 177.4, // Replace with your expected output
+			unit: 'gram',
+			ingredient: 'water'
+		}
+		const result = manipulateIngredient(input, 'metric', 'americanVolumetric')
+		const expected = {
+			quantity: 0.75,
+			unit: 'cup',
+			ingredient: 'water'
+		}
+		// expect(result).toEqual(expected)
+		expect(result).toEqual(expect.objectContaining(expected))
+	})
+	it('converts teaspoons to grams', () => {
+		const input = {
+			quantity: 1, // Replace with your expected output
+			unit: 'teaspoons',
+			ingredient: 'salt'
+		}
+		const result = manipulateIngredient(input, 'americanVolumetric', 'metric')
+		const expected = {
+			quantity: 6,
+			unit: 'gram',
+			ingredient: 'salt'
 		}
 		// expect(result).toEqual(expected)
 		expect(result).toEqual(expect.objectContaining(expected))

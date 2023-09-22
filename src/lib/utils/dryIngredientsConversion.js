@@ -13,6 +13,10 @@ export const dryIngredientsConversion = [
 		gramsPerCup: 96.0
 	},
 	{
+		names: ['Almond (ground)', 'Ground Almonds'],
+		gramsPerCup: 110.0
+	},
+	{
 		names: ['Almond meal'],
 		gramsPerCup: 84.0
 	},
@@ -25,8 +29,8 @@ export const dryIngredientsConversion = [
 		gramsPerCup: 86.0
 	},
 	{
-		names: ['Almonds (slivered)'],
-		gramsPerCup: 114.0
+		names: ['Almonds (slivered)', 'Flaked Almonds'],
+		gramsPerCup: 101.5
 	},
 	{
 		names: ['Almonds, whole (unblanched)'],
@@ -86,7 +90,7 @@ export const dryIngredientsConversion = [
 	},
 	{
 		names: ['Bananas (mashed)'],
-		gramsPerCup: 227.0
+		gramsPerCup: 236.0
 	},
 	{
 		names: ['Barley (cooked)'],
@@ -198,14 +202,14 @@ export const dryIngredientsConversion = [
 	},
 	{
 		names: ['Buttermilk'],
-		gramsPerCup: 227.0
+		gramsPerCup: 236.0
 	},
 	{
 		names: ['Buttermilk powder'],
 		gramsPerCup: 144.0
 	},
 	{
-		names: ['Cacao nibs'],
+		names: ['Cacao nibs', 'Cacao'],
 		gramsPerCup: 120.0
 	},
 	{
@@ -315,8 +319,8 @@ export const dryIngredientsConversion = [
 		gramsPerCup: 200.0
 	},
 	{
-		names: ['Cocoa (unsweetened)', 'Cocoa'],
-		gramsPerCup: 84.0
+		names: ['Cocoa (unsweetened)', 'Cocoa', 'Cocoa Powder'],
+		gramsPerCup: 120.0
 	},
 	{
 		names: [
@@ -367,7 +371,7 @@ export const dryIngredientsConversion = [
 	},
 	{
 		names: ["Confectioners' sugar (unsifted)", 'Confectioners sugar', 'Icing Sugar'],
-		gramsPerCup: 113.5
+		gramsPerCup: 132.2
 	},
 	{
 		names: ['Cookie crumbs', 'Biscuit Crumbs'],
@@ -402,7 +406,7 @@ export const dryIngredientsConversion = [
 		gramsPerCup: 156.0
 	},
 	{
-		names: ['Cornstarch', 'Cornflour'],
+		names: ['Cornstarch', 'Cornflour', 'Corn Starch'],
 		gramsPerCup: 112.0
 	},
 	{
@@ -418,8 +422,12 @@ export const dryIngredientsConversion = [
 		gramsPerCup: 99.0
 	},
 	{
-		names: ['Cream', 'Heavy Cream', 'Light Cream', 'Half and Half', 'Double Cream', 'Single Cream'],
-		gramsPerCup: 227.0
+		names: ['Cream', 'Heavy Cream', 'Half and Half', 'Double Cream'],
+		gramsPerCup: 232.0
+	},
+	{
+		names: ['Single Cream', 'Light Cream'],
+		gramsPerCup: 239.1
 	},
 	{
 		names: ['Cream cheese'],
@@ -569,7 +577,7 @@ export const dryIngredientsConversion = [
 	},
 	{
 		names: ['Gluten-Free sourdough starter'],
-		gramsPerCup: 227.0
+		gramsPerCup: 230.0
 	},
 	{
 		names: ['Glutinous rice flour'],
@@ -633,7 +641,7 @@ export const dryIngredientsConversion = [
 	},
 	{
 		names: ['Jam', 'Chutney', 'Marmalade'],
-		gramsPerCup: 340.0
+		gramsPerCup: 313.0
 	},
 	{
 		names: ['Jammy Bits'],
@@ -649,7 +657,7 @@ export const dryIngredientsConversion = [
 	},
 	{
 		names: ['Key Lime Juice'],
-		gramsPerCup: 227.0
+		gramsPerCup: 236.0
 	},
 	{
 		names: ['Lard'],
@@ -721,7 +729,7 @@ export const dryIngredientsConversion = [
 	},
 	{
 		names: ['Mascarpone cheese', 'Mascarpone'],
-		gramsPerCup: 227.0
+		gramsPerCup: 220.0
 	},
 	{
 		names: ['Mashed potatoes', 'Potatoes (mashed)'],
@@ -736,8 +744,8 @@ export const dryIngredientsConversion = [
 		gramsPerCup: 226.0
 	},
 	{
-		names: ['Medium Rye Flour'],
-		gramsPerCup: 106.0
+		names: ['Medium Rye Flour', 'Rye Flour'],
+		gramsPerCup: 158.1
 	},
 	{
 		names: ['Meringue powder'],
@@ -749,7 +757,7 @@ export const dryIngredientsConversion = [
 	},
 	{
 		names: ['Milk (fresh)', 'Milk', 'Fresh Milk', 'Whole Milk', 'Skimmed Milk'],
-		gramsPerCup: 227.0
+		gramsPerCup: 236.0
 	},
 	{
 		names: ['Millet (whole)'],
@@ -772,6 +780,10 @@ export const dryIngredientsConversion = [
 		gramsPerCup: 144.0
 	},
 	{
+		names: ['Nutella'],
+		gramsPerCup: 297.4
+	},
+	{
 		names: ['Oat bran'],
 		gramsPerCup: 106.0
 	},
@@ -781,7 +793,7 @@ export const dryIngredientsConversion = [
 	},
 	{
 		names: ['Oats', 'Oats (Quick Cooking)', 'Oats (instant)'],
-		gramsPerCup: 89.0
+		gramsPerCup: 97.0
 	},
 	{
 		names: ['Oats (prepared)', 'Oatmeal (cooked)', 'Porridge'],
@@ -789,7 +801,7 @@ export const dryIngredientsConversion = [
 	},
 	{
 		names: ['Olive oil'],
-		gramsPerCup: 200.0
+		gramsPerCup: 216.0
 	},
 	{
 		names: ['Olives (sliced)'],
@@ -919,7 +931,7 @@ export const dryIngredientsConversion = [
 	},
 	{
 		names: ['Pumpkin puree'],
-		gramsPerCup: 227.0
+		gramsPerCup: 236.0
 	},
 	{
 		names: ['Quinoa (cooked)'],
@@ -938,7 +950,7 @@ export const dryIngredientsConversion = [
 		gramsPerCup: 149.0
 	},
 	{
-		names: ['Raisins (packed)'],
+		names: ['Raisins (packed)', 'Dried Fruit'],
 		gramsPerCup: 170.0
 	},
 	{
@@ -950,7 +962,16 @@ export const dryIngredientsConversion = [
 		gramsPerCup: 120.0
 	},
 	{
-		names: ['Rice (long grain, dry)', 'Rice (dry)', 'Dried Rice', 'Rice (dried)'],
+		names: [
+			'Rice (long grain, dry)',
+			'Rice (dry)',
+			'Dried Rice',
+			'Rice (dried)',
+			'Rice (uncooked)',
+			'Uncooked Rice',
+			'Raw rice',
+			'Rice (raw)'
+		],
 		gramsPerCup: 198.0
 	},
 	{
@@ -991,7 +1012,7 @@ export const dryIngredientsConversion = [
 		gramsPerCup: 256.0
 	},
 	{
-		names: ['Salt (table)', 'Table Salt'],
+		names: ['Salt (table)', 'Table Salt', 'Salt'],
 		gramsPerCup: 288.0
 	},
 	{
@@ -1040,7 +1061,7 @@ export const dryIngredientsConversion = [
 	},
 	{
 		names: ['Sourdough starter'],
-		gramsPerCup: 227.0
+		gramsPerCup: 236.0
 	},
 	{
 		names: ['Soy flour'],
@@ -1109,7 +1130,7 @@ export const dryIngredientsConversion = [
 		gramsPerCup: 288.0
 	},
 	{
-		names: ['Sweetened condensed milk'],
+		names: ['Sweetened condensed milk', 'Condensed Milk'],
 		gramsPerCup: 312.0
 	},
 	{
@@ -1162,7 +1183,7 @@ export const dryIngredientsConversion = [
 	},
 	{
 		names: ['Vegetable oil'],
-		gramsPerCup: 198.0
+		gramsPerCup: 216.0
 	},
 	{
 		names: ['Vegetable shortening'],
@@ -1173,7 +1194,13 @@ export const dryIngredientsConversion = [
 		gramsPerCup: 144.0
 	},
 	{
-		names: ['Walnuts (chopped)', 'Chopped Walnuts'],
+		names: [
+			'Walnuts (chopped)',
+			'Chopped Walnuts',
+			'Chopped Nuts',
+			'Chopped Almonds',
+			'Chopped Hazelnuts'
+		],
 		gramsPerCup: 113.0
 	},
 	{
@@ -1182,7 +1209,7 @@ export const dryIngredientsConversion = [
 	},
 	{
 		names: ['Water'],
-		gramsPerCup: 227.0
+		gramsPerCup: 236.59
 	},
 	{
 		names: ['Wheat berries (red)'],
@@ -1225,7 +1252,7 @@ export const dryIngredientsConversion = [
 	},
 	{
 		names: ['Yogurt', 'Natural Yoghurt', 'Unflavored Yoghurt'],
-		gramsPerCup: 227.0
+		gramsPerCup: 236.0
 	},
 	{
 		names: ['Yuletide Cheer Fruit Blend'],

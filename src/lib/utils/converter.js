@@ -296,8 +296,17 @@ export const manipulateIngredient = (ingredientObj, fromSystem, toSystem) => {
 					minQty: convertedQuantity,
 					maxQty: convertedQuantity
 				}
-			} else if (fromSystem === 'americanVolumetric' && unit === 'cup') {
-				const convertedQuantity = quantityToUse * dryIngredient.gramsPerCup
+			} else if (fromSystem === 'americanVolumetric') {
+				const converterResult = converter(quantityToUse, unit, 'cup')
+				console.log(converterResult, typeof converterResult.quantity)
+				const { quantity: quantityInCups } = converter(quantityToUse, unit, 'cup')
+				const convertedQuantity = parseFloat(
+					(quantityInCups * dryIngredient.gramsPerCup).toFixed(1)
+				)
+				console.log(
+					'🚀 ~ file: converter.js:302 ~ manipulateIngredient ~ convertedQuantity:',
+					typeof convertedQuantity
+				)
 				const targetUnit = findSuitableUnit(toSystem, convertedQuantity)
 				return {
 					...ingredientObj,
