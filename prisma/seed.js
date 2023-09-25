@@ -26,10 +26,10 @@ export const auth = lucia({
 	middleware: sveltekit()
 })
 
-const adminEmail = process.env.ADMIN_EMAIL
-const adminUser = process.env.ADMIN_USER
-const adminName = process.env.ADMIN_NAME
-const adminPassword = process.env.ADMIN_PASSWORD
+const adminEmail = process.env.ADMIN_EMAIL || 'email@example.com'
+const adminUser = process.env.ADMIN_USER || 'user'
+const adminName = process.env.ADMIN_NAME || 'User Name'
+const adminPassword = process.env.ADMIN_PASSWORD || 'cookbook'
 const paprikaFile = process.env.PAPRIKA_IMPORT_FILE
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))

@@ -86,11 +86,11 @@ model RecipeCategory {
 
 model AuthUser {
     id           String        @id @default(uuid())
-    name         String
+    name         String?
     username     String        @unique
     email        String        @unique
-    about        String
-    isAdmin      Boolean
+    about        String?
+    isAdmin      Boolean       @default(false)
     articles     Article[]
     recipes      Recipe[]
     categories   Category[]
