@@ -1,6 +1,6 @@
 import PrismaClientPkg from '@prisma/client'
 import lucia from 'lucia-auth'
-import "lucia-auth/polyfill/node";
+import 'lucia-auth/polyfill/node'
 import { sveltekit } from 'lucia-auth/middleware'
 import prisma from '@lucia-auth/adapter-prisma'
 import { fail } from '@sveltejs/kit'
@@ -237,23 +237,32 @@ async function seed() {
 		try {
 			await fsPromises.access('./prisma/db/dev.sqlite')
 		} catch (error) {
+			// Error out if db doesn't exist already
+			console.log('Database file does not exist!')
 			fileExists = false
+			return
 		}
 		if (fileExists) {
 			console.log('Database File Exists Already!')
-			await prismaC.$disconnect()
-			return
-			// Do something (or nothing!) if the DB already exists
+			// Do something (or nothing!) if the DB already exists e.g.
 			// await prismaC.authUser.deleteMany()
 			// await prismaC.article.deleteMany()
 			// await prismaC.recipe.deleteMany()
 			// await prismaC.recipeCategory.deleteMany()
 		}
 
+		// Try to get the admin user from the db
+		let adminUserId = await getAdminUserId()
+		if (adminUserId) {
+			console.log('Database is already seeded.')
+			await prismaC.$disconnect()
+			return
+		}
+
 		const users = getUsers()
 		await addUsersToDB(users)
+		adminUserId = await getAdminUserId()
 
-		const adminUserId = await getAdminUserId()
 		const categories = await loadCategories()
 		await addCategoriesToDB(categories, adminUserId)
 
