@@ -195,7 +195,7 @@ const replaceCategoryUIDsWithNames = async (recipe, email, password) => {
 const __filename = fileURLToPath(import.meta.url)
 export const __dirname = path.dirname(__filename)
 
-const categoriesFilePath = path.join(__dirname, '../../../data/categories.json')
+const categoriesFilePath = path.join(__dirname, '../../../data/import/categories.json')
 
 /**
  * Downloads categories from the Paprika API and saves them to lib/data/categories.json
