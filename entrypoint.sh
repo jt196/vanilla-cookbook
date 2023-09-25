@@ -2,10 +2,10 @@
 set -e
 
 # Generate Prisma client
-npx prisma generate
+# npx prisma generate
 
 # Run migrations
-npx prisma migrate deploy
+# npx prisma migrate deploy
 
 # Conditionally run the seed script
 # node /app/prisma/seed.js
