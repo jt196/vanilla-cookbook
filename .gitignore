@@ -18,3 +18,4 @@ migration.sql
 # Test
 package-lock.json
 static/recipe_photos/*
+*.diff
