@@ -20,11 +20,11 @@ ENTRYPOINT ["/app/entrypoint.sh"]
 # Create DB folder
 RUN mkdir -p /app/prisma/db
 
+# Generate Prisma client
+RUN npx prisma generate
+
 # Build SvelteKit app
 RUN npm run build
 
 # Expose the application's port
 EXPOSE 3000
-
-# Run the application
-CMD ["npm", "start"]
