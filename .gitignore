@@ -5,8 +5,7 @@ node_modules
 /package
 src/lib/data/recipe_html/*
 .env
-.env.*
-!.env.example
+!.env.template
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 */dev.sqlite

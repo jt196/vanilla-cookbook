@@ -263,8 +263,13 @@ async function seed() {
 		await addUsersToDB(users)
 		adminUserId = await getAdminUserId()
 
-		const categories = await loadCategories()
-		await addCategoriesToDB(categories, adminUserId)
+		// Load categories either from Paprika API, or local JSON at lib/data/import/categories.json
+		const categories = (await loadCategories()(
+			// If categories are successfully returned, add them to the DB
+			categories && categories.length > 0
+		))
+			? await addCategoriesToDB(categories, adminUserId)
+			: null
 
 		const rawRecipes = await loadRecipes()
 		await ensureCategoriesExist(rawRecipes, adminUserId)
