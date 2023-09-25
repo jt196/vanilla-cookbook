@@ -15,5 +15,6 @@ migration_lock*
 migration.sql
 *.code-workspace
 *.sqlite
+# Test
 package-lock.json
 static/recipe_photos/*
