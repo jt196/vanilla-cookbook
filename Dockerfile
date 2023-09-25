@@ -22,9 +22,7 @@ ENTRYPOINT ["/app/entrypoint.sh"]
 
 # Create DB folder
 RUN mkdir -p /app/prisma/db
-
-# Generate Prisma client
-RUN npx prisma generate
+RUN mkdir -p /app/static/recipe_photos
 
 # Build SvelteKit app
 RUN npm run build

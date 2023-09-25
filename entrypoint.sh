@@ -1,14 +1,15 @@
 #!/bin/bash
 set -e
 
-# Create db if it doesn't exist
-npx prisma db push
+# Generate Prisma client
+npx prisma generate
 
 # Run migrations
 npx prisma migrate deploy
 
 # Conditionally run the seed script
-node /app/prisma/seed.js
+# node /app/prisma/seed.js
+npx prisma migrate dev --name init
 
 # Start your Node.js application (in foreground)
 exec nodemon --exec "npm start"
