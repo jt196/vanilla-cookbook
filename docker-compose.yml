@@ -1,0 +1,10 @@
+version: '3'
+services:
+  app:
+    build: .
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./import:/app/src/lib/data/import
+      - ./db:/app/prisma/db
+      - ./static:/app/static

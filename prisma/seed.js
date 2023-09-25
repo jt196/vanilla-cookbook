@@ -9,6 +9,9 @@ import { fileURLToPath } from 'url'
 import { extractRecipes } from '../src/lib/utils/import/recipeImport.js'
 import { savePhoto } from '../src/lib/utils/image/imageBackend.js'
 import { promises as fsPromises } from 'fs'
+import { config } from 'dotenv'
+
+config()
 
 // // Prisma doesn't support ES Modules so we have to do this
 const PrismaClient = PrismaClientPkg.PrismaClient
@@ -21,6 +24,12 @@ export const auth = lucia({
 	env: 'DEV',
 	middleware: sveltekit()
 })
+
+const adminEmail = process.env.ADMIN_EMAIL
+const adminUser = process.env.ADMIN_USER
+const adminName = process.env.ADMIN_NAME
+const adminPassword = process.env.ADMIN_PASSWORD
+const paprikaFile = process.env.PAPRIKA_IMPORT_FILE
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -35,28 +44,12 @@ function getUsers() {
 	// Return all users including admin
 	return [
 		{
-			name: 'james',
-			username: 'jt196',
-			password: 'homersdad',
-			email: 'jamestorr@gmail.com',
+			name: adminName,
+			username: adminUser,
+			password: adminPassword,
+			email: adminEmail,
 			about: 'Administrator of the site',
 			isAdmin: true
-		},
-		{
-			name: 'matia',
-			username: 'joyofcodedev',
-			email: 'matia@example.test',
-			about: 'Likes long walks on the beach. 😘',
-			password: '123456',
-			isAdmin: false
-		},
-		{
-			name: 'bob',
-			username: 'bobross',
-			email: 'bob@example.test',
-			about: 'Likes painting.',
-			password: 'abcdef',
-			isAdmin: false
 		}
 	]
 }
@@ -72,7 +65,7 @@ async function getAdminUserId() {
 // 6. Load Recipes
 async function loadRecipes() {
 	try {
-		const recipesPath = path.join(__dirname, '../src/lib/data/recipes.paprikarecipes') // Adjust the filename
+		const recipesPath = path.join(__dirname, '../src/lib/data/import/', paprikaFile) // Adjust the filename
 		let recipes = await extractRecipes(recipesPath)
 		return recipes
 	} catch (error) {
@@ -241,15 +234,19 @@ async function seed() {
 	try {
 		let fileExists = true
 		try {
-			await fsPromises.access('./prisma/dev.db')
+			await fsPromises.access('./prisma/db/dev.sqlite')
 		} catch (error) {
 			fileExists = false
 		}
 		if (fileExists) {
-			await prismaC.authUser.deleteMany()
-			await prismaC.article.deleteMany()
-			await prismaC.recipe.deleteMany()
-			await prismaC.recipeCategory.deleteMany()
+			console.log('Database File Exists Already!')
+			await prismaC.$disconnect()
+			return
+			// Do something (or nothing!) if the DB already exists
+			// await prismaC.authUser.deleteMany()
+			// await prismaC.article.deleteMany()
+			// await prismaC.recipe.deleteMany()
+			// await prismaC.recipeCategory.deleteMany()
 		}
 
 		const users = getUsers()

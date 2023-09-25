@@ -88,6 +88,66 @@ describe('manipulateIngredient', () => {
 		expect(result).toEqual(expected)
 	})
 
+	it('converts grams to pounds', () => {
+		const input = {
+			quantity: 454,
+			unit: 'gram',
+			ingredient: 'salt'
+		}
+		const result = manipulateIngredient(input, 'metric', 'imperial')
+		const expected = {
+			quantity: 1,
+			unit: 'pound',
+			ingredient: 'salt'
+		}
+		expect(result).toEqual(expect.objectContaining(expected))
+	})
+
+	it('converts pounds to kg', () => {
+		const input = {
+			quantity: 3,
+			unit: 'pound',
+			ingredient: 'salt'
+		}
+		const result = manipulateIngredient(input, 'imperial', 'metric')
+		const expected = {
+			quantity: 1.36,
+			unit: 'kilogram',
+			ingredient: 'salt'
+		}
+		expect(result).toEqual(expect.objectContaining(expected))
+	})
+
+	it('converts pounds to grams', () => {
+		const input = {
+			quantity: 1,
+			unit: 'pound',
+			ingredient: 'salt'
+		}
+		const result = manipulateIngredient(input, 'imperial', 'metric')
+		const expected = {
+			quantity: 453.59,
+			unit: 'gram',
+			ingredient: 'salt'
+		}
+		expect(result).toEqual(expect.objectContaining(expected))
+	})
+
+	it('converts ounces to grams', () => {
+		const input = {
+			quantity: 1,
+			unit: 'ounce',
+			ingredient: 'salt'
+		}
+		const result = manipulateIngredient(input, 'imperial', 'metric')
+		const expected = {
+			quantity: 28.35,
+			unit: 'gram',
+			ingredient: 'salt'
+		}
+		expect(result).toEqual(expect.objectContaining(expected))
+	})
+
 	it('converts grams to tablespoons', () => {
 		const input = {
 			quantity: 4,
@@ -98,6 +158,21 @@ describe('manipulateIngredient', () => {
 		const expected = {
 			quantity: 1.3,
 			unit: 'teaspoon',
+			ingredient: 'instant yeast'
+		}
+		expect(result).toEqual(expect.objectContaining(expected))
+	})
+
+	it('converts tablespoons to grams', () => {
+		const input = {
+			quantity: 1.3,
+			unit: 'teaspoon',
+			ingredient: 'instant yeast'
+		}
+		const result = manipulateIngredient(input, 'americanVolumetric', 'metric')
+		const expected = {
+			quantity: 3.9,
+			unit: 'gram',
 			ingredient: 'instant yeast'
 		}
 		expect(result).toEqual(expect.objectContaining(expected))
@@ -176,6 +251,51 @@ describe('manipulateIngredient', () => {
 			quantity: 6,
 			unit: 'gram',
 			ingredient: 'salt'
+		}
+		// expect(result).toEqual(expected)
+		expect(result).toEqual(expect.objectContaining(expected))
+	})
+	it('converts grams to teaspoons', () => {
+		const input = {
+			quantity: 6,
+			unit: 'grams',
+			ingredient: 'kosher salt'
+		}
+		const result = manipulateIngredient(input, 'metric', 'americanVolumetric')
+		const expected = {
+			quantity: 1.1,
+			unit: 'teaspoon',
+			ingredient: 'kosher salt'
+		}
+		// expect(result).toEqual(expected)
+		expect(result).toEqual(expect.objectContaining(expected))
+	})
+	it('converts cups to grams', () => {
+		const input = {
+			quantity: 0.5, // Replace with your expected output
+			unit: 'cup',
+			ingredient: 'sugar'
+		}
+		const result = manipulateIngredient(input, 'americanVolumetric', 'metric')
+		const expected = {
+			quantity: 99,
+			unit: 'gram',
+			ingredient: 'sugar'
+		}
+		// expect(result).toEqual(expected)
+		expect(result).toEqual(expect.objectContaining(expected))
+	})
+	it('converts grams to cups', () => {
+		const input = {
+			quantity: 99, // Replace with your expected output
+			unit: 'gram',
+			ingredient: 'Sparkling Sugar'
+		}
+		const result = manipulateIngredient(input, 'metric', 'americanVolumetric')
+		const expected = {
+			quantity: 0.43,
+			unit: 'cup',
+			ingredient: 'Sparkling Sugar'
 		}
 		// expect(result).toEqual(expected)
 		expect(result).toEqual(expect.objectContaining(expected))
