@@ -22,7 +22,6 @@ RUN mkdir -p /app/prisma/db
 
 # Run Prisma migration and seed script
 RUN npx prisma migrate dev --name init
-RUN node ./prisma/seed.js
 
 # Build SvelteKit app
 RUN npm run build
