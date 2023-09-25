@@ -60,7 +60,7 @@ async function getAdminUserId() {
 	const adminUser = await prismaC.authUser.findFirst({
 		where: { isAdmin: true }
 	})
-	return adminUser.id
+	return adminUser ? adminUser.id : null
 }
 
 // 6. Load Recipes
