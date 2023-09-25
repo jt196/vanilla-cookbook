@@ -14,5 +14,6 @@ prisma/dev.sqlite
 migration_lock*
 migration.sql
 *.code-workspace
+*.sqlite
 package-lock.json
 static/recipe_photos/*
