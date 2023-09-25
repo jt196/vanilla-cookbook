@@ -12,4 +12,4 @@ set -e
 npx prisma migrate dev --name init
 
 # Start your Node.js application (in foreground)
-exec nodemon --exec "npm start"
+exec nodemon --exec "node build/index.js"
