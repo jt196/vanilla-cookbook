@@ -14,8 +14,8 @@ RUN npm install
 COPY . .
 
 # Make executable and define entrypoint file
-RUN chmod +x /entrypoint.sh
-ENTRYPOINT ["/entrypoint.sh"]
+RUN chmod +x /app/entrypoint.sh
+ENTRYPOINT ["/app/entrypoint.sh"]
 
 # Create DB folder
 RUN mkdir -p /app/prisma/db
