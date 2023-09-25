@@ -243,7 +243,7 @@ async function seed() {
 			return
 		}
 		if (fileExists) {
-			console.log('Database File Exists Already!')
+			console.log('Database File exists!')
 			// Do something (or nothing!) if the DB already exists e.g.
 			// await prismaC.authUser.deleteMany()
 			// await prismaC.article.deleteMany()
