@@ -1,5 +1,6 @@
 import PrismaClientPkg from '@prisma/client'
 import lucia from 'lucia-auth'
+import "lucia-auth/polyfill/node";
 import { sveltekit } from 'lucia-auth/middleware'
 import prisma from '@lucia-auth/adapter-prisma'
 import { fail } from '@sveltejs/kit'

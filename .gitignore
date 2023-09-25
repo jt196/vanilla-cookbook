@@ -9,7 +9,7 @@ src/lib/data/recipe_html/*
 !.env.example
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
-prisma/dev.sqlite
+*/dev.sqlite
 *.sqlite-journal
 migration_lock*
 migration.sql

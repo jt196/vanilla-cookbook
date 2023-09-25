@@ -1,4 +1,5 @@
 import lucia from 'lucia-auth'
+import "lucia-auth/polyfill/node";
 import prismaAdapter from '@lucia-auth/adapter-prisma'
 import { sveltekit } from 'lucia-auth/middleware'
 import { dev } from '$app/environment'

@@ -10,6 +10,9 @@ COPY package*.json ./
 # Install dependencies
 RUN npm install
 
+# Install Nodemon
+RUN npm install -g nodemon
+
 # Copy the current directory contents into the container
 COPY . .
 
