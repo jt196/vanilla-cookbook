@@ -1,10 +1,14 @@
 version: '3'
 services:
   app:
-    build: .
+    image: recipe-manager:latest
+    container_name: recipe-manager
     ports:
-      - '3000:3000'
+      - '3021:3000'
     volumes:
-      - ./import:/app/src/lib/data/import
-      - ./db:/app/prisma/db
+      - ./src/lib/data/import:/app/src/lib/data/import
+      - ./prisma/db:/app/prisma/db
       - ./static:/app/static
+      - ./.env:/app/.env
+    environment:
+      - ORIGIN=http://192.168.1.77:3021
