@@ -8,7 +8,8 @@ services:
     volumes:
       - ./src/lib/data/import:/app/src/lib/data/import
       - ./prisma/db:/app/prisma/db
-      - ./static:/app/static
+      - ./static/recipe_photos:/app/build/client/recipe_photos
+      - ./src:/app/src
       - ./.env:/app/.env
-    environment:
-      - ORIGIN=http://192.168.1.77:3021
+    env_file:
+      - .env
