@@ -1,6 +1,6 @@
 <script>
 	export let state = 'empty' // "empty", "half", or "full"
-	export let height = '1rem'
+	export let height = '20px'
 	export let fill = 'gold'
 </script>
 

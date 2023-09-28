@@ -1,6 +1,6 @@
 <script>
 	export let isExpanded
-	export let height = '1rem'
+	export let height = '20px'
 </script>
 
 <svg

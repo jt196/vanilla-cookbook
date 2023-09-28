@@ -173,10 +173,7 @@
 		</div>
 		<div id="categories">
 			Categories:
-			<CategoryTree
-				{categories}
-				selectedCategoryUids={collectSelectedUids(categories)}
-				isRoot={true} />
+			<CategoryTree {categories} selectedCategoryUids={collectSelectedUids(categories)} />
 		</div>
 	</div>
 	<div>

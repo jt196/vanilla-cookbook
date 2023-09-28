@@ -135,8 +135,7 @@
 		categories={data.categories}
 		onCategoryClick={handleCategoryClick}
 		{selectedCategoryUids}
-		on:clearCategory={clearCategory}
-		isRoot={true} /></Sidebar>
+		on:clearCategory={clearCategory} /></Sidebar>
 
 <div class="content" class:sidebar-open={sidebarOpen} on:close={handleSidebarClose}>
 	<div class="grid">
