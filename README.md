@@ -11,3 +11,18 @@
 7. Initialise the Prisma db: `npx prisma migrate dev --name init` - for docker, this command needs to be `npx prisma migrate deploy` (no name)
    - This will run the seed.js file as well.
 8. Generate the Prisma client and types (is this typescript?): `npx prisma generate`
+
+# Deployment Workflow
+
+As it stands with the current local/NAS setup
+
+1. Make changes on local disk
+2. Confirm they work - run tests etc
+3. Sync with the Git repo
+4. Go to the _paprika-dev_ folder on the NAS
+5. Sync the changes from the remote Git repo
+6. Build the image: `docker build -t recipe-manager .`
+7. Go to the _recipe-manager_ folder in the _docker_ folder
+8. Run `docker-compose up -d`
+
+This should be all it takes currently.
