@@ -72,10 +72,12 @@
 
 	$: {
 		if (recipe && recipe.photos && recipe.photos.length > 0) {
+			console.log('🚀 ~ file: +page.svelte:75 ~ recipe.photos:', recipe.photos)
 			mainPhoto =
 				recipe.photos.find((photo) => photo.isMain) ||
 				recipe.photos.find((photo) => !photo.isMain && photo.url === null) ||
 				recipe.photos.find((photo) => !photo.isMain)
+			console.log('🚀 ~ file: +page.svelte:76 ~ mainPhoto:', mainPhoto)
 		}
 	}
 
@@ -128,7 +130,9 @@
 		<div class="recipe-cover">
 			{#if mainPhoto}
 				<img
-					src={mainPhoto.url ? mainPhoto.url : `/api/recipe/image/${mainPhoto.id}`}
+					src={mainPhoto.url && !mainPhoto.fileType
+						? mainPhoto.url
+						: `/api/recipe/image/${mainPhoto.id}`}
 					alt="{recipe.name} photo" />
 			{:else}
 				<FoodBowl height="400px" />

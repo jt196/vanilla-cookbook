@@ -78,7 +78,8 @@ export async function POST({ request, locals, url }) {
 
 		let photoEntry
 		try {
-			photoEntry = await createRecipePhotoEntry(recipe.uid, image_url, extension)
+			// Creating the main image on save - set to isMain
+			photoEntry = await createRecipePhotoEntry(recipe.uid, image_url, extension, true)
 			await processImage(image_url, photoEntry.id, extension)
 		} catch (error) {
 			console.error(error)

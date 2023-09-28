@@ -2,6 +2,7 @@ import { prisma } from '$lib/server/prisma'
 import { deleteSinglePhotoFile } from '$lib/utils/image/imageBackend.js'
 import fs from 'fs'
 import path from 'path'
+import axios from 'axios'
 
 // Handle GET request to retrieve the image
 export async function GET({ params }) {
@@ -24,12 +25,36 @@ export async function GET({ params }) {
 	const filePath = path.join(process.cwd(), 'uploads', `${photo.id}.${photo.fileType}`)
 
 	if (fs.existsSync(filePath)) {
+		console.log('Returning image from file')
 		const file = fs.readFileSync(filePath)
 		return new Response(file, {
 			headers: {
 				'Content-Type': `image/${photo.fileType}`
 			}
 		})
+	} else if (photo.url) {
+		try {
+			const response = await axios.get(photo.url, {
+				responseType: 'arraybuffer' // This is crucial to get the image as a buffer
+			})
+
+			const buffer = Buffer.from(response.data, 'binary')
+
+			return new Response(buffer, {
+				status: 200,
+				headers: {
+					'Content-Type': `image/${photo.fileType}`
+				}
+			})
+		} catch (error) {
+			console.error('Error fetching the image:', error)
+			return new Response(JSON.stringify({ message: 'Failed to fetch the image' }), {
+				status: 500,
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			})
+		}
 	} else {
 		return new Response(JSON.stringify({ message: 'File not found' }), {
 			status: 404,
