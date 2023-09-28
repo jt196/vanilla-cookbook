@@ -62,7 +62,7 @@
 			recipe.ingredients = scrapedRecipe.ingredients.join('\n')
 			recipe.directions = scrapedRecipe.instructions.join('\n\n')
 			recipe.total_time = scrapedRecipe.totalTime
-			recipe.servings = scrapedRecipe.yeld
+			recipe.servings = scrapedRecipe.servings
 			recipe.nutritional_info = nutritionProcess(scrapedRecipe.nutrition)
 		} else {
 			console.error('Error:', result.error)
