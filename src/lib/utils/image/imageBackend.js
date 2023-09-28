@@ -9,7 +9,7 @@ import path from 'path'
  * @param {string} fileType - The file type of the photo (e.g., 'jpg', 'png').
  */
 export async function deleteSinglePhotoFile(id, fileType) {
-	const photoPath = path.join('static/recipe_photos/', `${id}.${fileType}`)
+	const photoPath = path.join('uploads/', `${id}.${fileType}`)
 	try {
 		await fsPromises.unlink(photoPath)
 		return true // Successfully deleted
@@ -46,7 +46,7 @@ async function resizeImage(inputPath, outputPath, maxSize) {
 
 export async function processImage(imageUrl, uid, fileExtension) {
 	const filename = `${uid}.${fileExtension}`
-	const imagePath = `static/recipe_photos/`
+	const imagePath = `uploads/`
 	const imageFullPath = path.join(imagePath, filename)
 	const tempImagePath = path.join(imagePath, `${uid}_temp.${fileExtension}`)
 

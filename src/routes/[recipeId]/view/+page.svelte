@@ -93,8 +93,6 @@
 			measurementSystem.system,
 			selectedSystem
 		)
-		console.log('🚀 ~ file: +page.svelte:95 ~ selectedSystem:', selectedSystem)
-		console.log('🚀 ~ file: +page.svelte:92 ~ convertedIngredients:', convertedIngredients)
 		// Call the function to update selectedSystem based on the initial measurementSystem
 		recipe.directions ? (directionLines = recipe.directions.split('\n')) : null
 		scaledServings = recipe.servings ? scaleNumbersInString(recipe.servings, scale) : null
@@ -130,9 +128,7 @@
 		<div class="recipe-cover">
 			{#if mainPhoto}
 				<img
-					src={mainPhoto.url
-						? mainPhoto.url
-						: `/recipe_photos/${mainPhoto.id}.${mainPhoto.fileType}`}
+					src={mainPhoto.url ? mainPhoto.url : `/api/recipe/image/${mainPhoto.id}`}
 					alt="{recipe.name} photo" />
 			{:else}
 				<FoodBowl height="400px" />
@@ -289,7 +285,7 @@
 {#if otherPhotos.length > 0}
 	<div class="other-photos">
 		{#each otherPhotos as photo (photo.id)}
-			<img src="/recipe_photos/{photo.id}.{photo.fileType}" alt="{recipe.name} photo" />
+			<img src="/api/recipe/image/{photo.id}" alt="{recipe.name} photo" />
 		{/each}
 		<a
 			href="/{recipe?.uid}/images/"

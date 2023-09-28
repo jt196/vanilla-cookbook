@@ -190,7 +190,10 @@ describe('RecipeList component', () => {
 
 		const image = getByAltText('Recipe A thumbnail')
 		expect(image).toBeInTheDocument()
-		expect(image.src).toContain('recipe_photos/!test.jpg')
+
+		// Assuming that the id of the photo for "Recipe A" is known and is stored in a variable called photoId
+		const photoId = mockRecipes[0].photos[0].id // or however you get the id from the mock
+		expect(image.src).toContain(`/api/recipe/image/${photoId}`)
 	})
 
 	it('displays the FoodBowl component if the recipe does not have a valid image_url', () => {

@@ -103,7 +103,7 @@
 		{#if filteredPhotos.length > 0}
 			<div class="other-photos">
 				{#each filteredPhotos as photo (photo.id)}
-					<img src="/recipe_photos/{photo.id}.{photo.fileType}" alt="{recipe.name} photo" />
+					<img src="/api/recipe/image/{photo.id}" alt="{recipe.name} photo" />
 
 					<div class="photo-note">
 						{#if editingPhotoId === photo.id}

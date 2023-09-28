@@ -8,7 +8,7 @@ services:
     volumes:
       - ./src/lib/data/import:/app/src/lib/data/import
       - ./prisma/db:/app/prisma/db
-      - ./static/recipe_photos:/app/build/client/recipe_photos
+      - ./uploads:/app/uploads
       - ./src:/app/src
       - ./.env:/app/.env
     env_file:

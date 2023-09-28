@@ -34,7 +34,7 @@ const paprikaFile = process.env.PAPRIKA_IMPORT_FILE
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
-const staticDir = path.join(__dirname, '../static/recipe_photos') // Adjust the path to point to the root /static folder
+const uploadDir = path.join(__dirname, '../uploads') // Adjust the path to point to the root /static folder
 
 /**
  * Process an array of PaprikaRecipes
@@ -193,7 +193,7 @@ async function handlePhotosForRecipes(createdRecipes) {
 	for (const recipe of createdRecipes) {
 		// Handle the main photo
 		if (recipe.photo && recipe.photo_data) {
-			await savePhoto(recipe.photo_data, recipe.photo, staticDir)
+			await savePhoto(recipe.photo_data, recipe.photo, uploadDir)
 			await prismaC.recipePhoto.create({
 				data: {
 					id: recipe.photo.split('.')[0],
@@ -208,7 +208,7 @@ async function handlePhotosForRecipes(createdRecipes) {
 		if (recipe.photos && recipe.photos.length > 0) {
 			for (const photoObj of recipe.photos) {
 				const { data: photoData, filename } = photoObj
-				await savePhoto(photoData, filename, staticDir)
+				await savePhoto(photoData, filename, uploadDir)
 				await prismaC.recipePhoto.create({
 					data: {
 						id: filename.split('.')[0],

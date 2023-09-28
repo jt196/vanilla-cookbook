@@ -142,7 +142,7 @@ export async function PUT({ request, locals, params }) {
 				const photoBuffer = await file.arrayBuffer() // Get the image data as a buffer
 
 				// Specify the directory where you want to save the images
-				const directory = 'static/recipe_photos'
+				const directory = 'uploads'
 
 				let fullFilename = `${photoFilename}.${extension}`
 				// Call the savePhoto function to save the image

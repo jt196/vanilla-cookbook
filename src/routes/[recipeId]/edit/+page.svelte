@@ -157,7 +157,7 @@
 			{#each filteredPhotos as photo}
 				<div class="photo-container">
 					<img
-						src="/recipe_photos/{photo.id}.{photo.fileType}"
+						src="/api/recipe/image/{photo.id}"
 						alt="{recipe.name} photo"
 						class={photo.isMain ? 'main-photo' : ''} />
 					<div class="photo-actions">

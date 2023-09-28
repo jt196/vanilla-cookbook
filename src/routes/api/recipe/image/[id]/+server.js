@@ -1,5 +1,44 @@
 import { prisma } from '$lib/server/prisma'
 import { deleteSinglePhotoFile } from '$lib/utils/image/imageBackend.js'
+import fs from 'fs'
+import path from 'path'
+
+// Handle GET request to retrieve the image
+export async function GET({ params }) {
+	const { id } = params
+	const photo = await prisma.recipePhoto.findUniqueOrThrow({
+		where: {
+			id
+		}
+	})
+
+	if (!photo) {
+		return new Response(JSON.stringify({ message: 'Image not found' }), {
+			status: 404,
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		})
+	}
+
+	const filePath = path.join(process.cwd(), 'uploads', `${photo.id}.${photo.fileType}`)
+
+	if (fs.existsSync(filePath)) {
+		const file = fs.readFileSync(filePath)
+		return new Response(file, {
+			headers: {
+				'Content-Type': `image/${photo.fileType}`
+			}
+		})
+	} else {
+		return new Response(JSON.stringify({ message: 'File not found' }), {
+			status: 404,
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		})
+	}
+}
 
 // Handle delete request
 export async function DELETE({ params, locals }) {

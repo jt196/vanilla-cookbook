@@ -20,6 +20,7 @@
 			dispatch('recipeDeleted', uid) // Emit the custom event
 		}
 	}
+	// TODO: #96 Move to using an uploads folder instead of static/recipe_photos
 </script>
 
 <article>
@@ -28,7 +29,7 @@
 			<img
 				class="recipe-thumbnail"
 				loading="lazy"
-				src="/recipe_photos/{item.photos[0].id}.{item.photos[0].fileType}"
+				src="/api/recipe/image/{item.photos[0].id}"
 				alt="{item.name} thumbnail" />
 		{:else}
 			<FoodBowl width="100px" />

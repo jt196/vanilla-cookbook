@@ -16,5 +16,5 @@ migration.sql
 *.sqlite
 # Test
 package-lock.json
-static/recipe_photos/*
 *.diff
+uploads/*
