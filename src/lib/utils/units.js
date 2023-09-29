@@ -283,7 +283,12 @@ export const units = [
  */
 export function shouldSkipConversion(unit) {
 	const unitObj = units.find((u) => u.names.includes(unit))
-	return unitObj ? unitObj.skipConversion : false
+
+	// If the unit isn't found in the units array, return true
+	if (!unitObj) return true
+
+	// If skipConversion is true for the unit, return true
+	return unitObj.skipConversion
 }
 
 /**

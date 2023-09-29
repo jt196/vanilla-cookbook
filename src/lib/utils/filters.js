@@ -34,7 +34,6 @@ export function ingredientProcess(ingredientArray) {
 		const ingredientStr = sanitizeIngredient(ingredientString)
 		try {
 			const ingredientObject = parse(ingredientStr, 'eng')
-
 			if (!ingredientObject) {
 				throw new Error('Parsed ingredient is null')
 			}
