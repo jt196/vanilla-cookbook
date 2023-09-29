@@ -252,7 +252,11 @@
 								)}
 							{/if}
 						</strong>
-						{ingredient.unit && ingredient.unit !== 'q.b.' ? ingredient.unit : ''}
+						{#if ingredient.unit && ingredient.unit !== 'q.b.'}
+							{ingredient.quantity * scale > 1 && ingredient.unitPlural
+								? ingredient.unitPlural
+								: ingredient.unit}
+						{/if}
 						<!-- <span>{@html ingredient.ingredient} <strong>{ingredient.dietLabel}</strong></span> -->
 						<span
 							>{@html ingredient.ingredient}
