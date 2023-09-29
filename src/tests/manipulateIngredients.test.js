@@ -297,7 +297,6 @@ describe('manipulateIngredient', () => {
 			unit: 'cup',
 			ingredient: 'Sparkling Sugar'
 		}
-		// expect(result).toEqual(expected)
 		expect(result).toEqual(expect.objectContaining(expected))
 	})
 	it('converts cups to ounces', () => {
@@ -325,6 +324,20 @@ describe('manipulateIngredient', () => {
 			quantity: 2,
 			unit: 'pound',
 			ingredient: 'mayonnaise'
+		}
+		expect(result).toEqual(expect.objectContaining(expected))
+	})
+	it('converts cups to kg', () => {
+		const input = {
+			quantity: 12,
+			unit: 'cup',
+			ingredient: 'sugar'
+		}
+		const result = manipulateIngredient(input, 'americanVolumetric', 'metric')
+		const expected = {
+			quantity: 2.4,
+			unit: 'kilogram',
+			ingredient: 'sugar'
 		}
 		expect(result).toEqual(expect.objectContaining(expected))
 	})

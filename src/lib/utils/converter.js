@@ -290,16 +290,17 @@ export const manipulateIngredient = (ingredientObj, fromSystem, toSystem) => {
 					const targetMetricUnit = findSuitableUnit(toSystem, convertedQuantityGrams)
 					// Convert the grams into the suitable unit - don't convert if already grams
 					let convertedQuantityMetric
+					// Don't run the conversion if already grams
 					if (targetMetricUnit === 'gram') {
 						convertedQuantityMetric = convertedQuantityGrams
 					} else {
+						// Otherwise, convert grams to kg etc
 						;({ quantity: convertedQuantityMetric } = converter(
 							convertedQuantityGrams,
 							'gram',
 							targetMetricUnit
 						))
 					}
-
 					convertedQuantityMetric = parseFloat(convertedQuantityMetric.toFixed(1))
 					return {
 						...ingredientObj,
@@ -323,6 +324,7 @@ export const manipulateIngredient = (ingredientObj, fromSystem, toSystem) => {
 					// Find a suitable unit - if it's bigger than 28 ounces, use lb etc
 					const targetImperialUnit = findSuitableUnit(toSystem, convertedQuantityGrams)
 					let convertedQuantityImperial
+						// Convert this unit to target imperial
 					;({ quantity: convertedQuantityImperial } = converter(
 						convertedQuantityGrams,
 						'gram',
