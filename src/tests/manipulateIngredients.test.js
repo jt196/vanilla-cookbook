@@ -213,7 +213,7 @@ describe('manipulateIngredient', () => {
 	it('converts cups to grams', () => {
 		const input = {
 			quantity: 0.75,
-			unit: 'cups',
+			unit: 'cup',
 			ingredient: 'water'
 		}
 		const result = manipulateIngredient(input, 'americanVolumetric', 'metric')
@@ -243,7 +243,7 @@ describe('manipulateIngredient', () => {
 	it('converts teaspoons to grams', () => {
 		const input = {
 			quantity: 1, // Replace with your expected output
-			unit: 'teaspoons',
+			unit: 'teaspoon',
 			ingredient: 'salt'
 		}
 		const result = manipulateIngredient(input, 'americanVolumetric', 'metric')
@@ -298,6 +298,34 @@ describe('manipulateIngredient', () => {
 			ingredient: 'Sparkling Sugar'
 		}
 		// expect(result).toEqual(expected)
+		expect(result).toEqual(expect.objectContaining(expected))
+	})
+	it('converts cups to ounces', () => {
+		const input = {
+			quantity: 0.25,
+			unit: 'cup',
+			ingredient: 'mayonnaise'
+		}
+		const result = manipulateIngredient(input, 'americanVolumetric', 'imperial')
+		const expected = {
+			quantity: 2.0,
+			unit: 'ounce',
+			ingredient: 'mayonnaise'
+		}
+		expect(result).toEqual(expect.objectContaining(expected))
+	})
+	it('converts cups to pounds', () => {
+		const input = {
+			quantity: 4,
+			unit: 'cup',
+			ingredient: 'mayonnaise'
+		}
+		const result = manipulateIngredient(input, 'americanVolumetric', 'imperial')
+		const expected = {
+			quantity: 2,
+			unit: 'pound',
+			ingredient: 'mayonnaise'
+		}
 		expect(result).toEqual(expect.objectContaining(expected))
 	})
 })
