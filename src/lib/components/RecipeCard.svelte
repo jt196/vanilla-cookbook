@@ -81,6 +81,7 @@
 		display: grid;
 		grid-template-columns: 100px 3fr 1fr; // 100px for the image, 3 parts for the recipe card, and 1 part for the buttons
 		gap: 1rem; // Spacing between grid items
+		align-items: center;
 	}
 
 	.recipe-card {
@@ -98,6 +99,10 @@
 		gap: 0.5rem; // Adds spacing between the buttons
 		button {
 			margin-bottom: 0;
+		}
+		@media (max-width: 767px) {
+			flex-direction: column;
+			align-items: end;
 		}
 	}
 
@@ -127,6 +132,9 @@
 		:root {
 			--dynamic-width: 20px;
 			--dynamic-height: 20px;
+		}
+		header {
+			font-size: 0.8rem;
 		}
 	}
 </style>

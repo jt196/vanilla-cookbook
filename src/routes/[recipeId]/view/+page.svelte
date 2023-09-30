@@ -124,7 +124,7 @@
 <h3>{recipe?.name}</h3>
 
 <div class="grid">
-	<div>
+	<div class="recipe-details">
 		<div class="recipe-cover">
 			{#if mainPhoto}
 				<img
@@ -152,26 +152,28 @@
 				<Scale bind:scale />
 			</p>
 		{/if}
-		<div id="recipe-buttons">
-			{#if recipe.userId === user.userId}
-				<a
-					href="/{recipe?.uid}/edit/"
-					role="button"
-					class="outline contrast"
-					data-testid="edit-button">
-					<Edit width="30px" height="30px" fill="var(--pico-ins-color)" />
-				</a>
-				<button
-					on:click={() => handleDelete(recipe?.uid)}
-					data-testid="delete-button"
-					class="outline secondary">
-					<Delete width="30px" height="30px" fill="var(--pico-del-color)" />
-				</button>
-			{/if}
-		</div>
-		<div id="categories">
-			Categories:
-			<CategoryTree {categories} selectedCategoryUids={collectSelectedUids(categories)} />
+		<div class="button-cat">
+			<div id="categories">
+				Categories:
+				<CategoryTree {categories} selectedCategoryUids={collectSelectedUids(categories)} />
+			</div>
+			<div id="recipe-buttons">
+				{#if recipe.userId === user.userId}
+					<a
+						href="/{recipe?.uid}/edit/"
+						role="button"
+						class="outline contrast"
+						data-testid="edit-button">
+						<Edit width="30px" height="30px" fill="var(--pico-ins-color)" />
+					</a>
+					<button
+						on:click={() => handleDelete(recipe?.uid)}
+						data-testid="delete-button"
+						class="outline secondary">
+						<Delete width="30px" height="30px" fill="var(--pico-del-color)" />
+					</button>
+				{/if}
+			</div>
 		</div>
 	</div>
 	<div>
@@ -233,39 +235,41 @@
 				</label>
 			</fieldset>
 		</div>
-		<ul>
-			{#each sanitizedIngredients as ingredient}
-				{#if ingredient.ingredient.trim() === ''}
-					<br />
-				{:else if /<h[1-6]>/.test(ingredient.ingredient)}
-					<div data-heading>{@html ingredient.ingredient}</div>
-				{:else}
-					<li>
-						<strong>
-							{#if ingredient.minQty == ingredient.maxQty && ingredient.quantity}
-								{decimalToFraction(ingredient.quantity * scale)}
-							{:else if ingredient.minQty != ingredient.maxQty && ingredient.quantity}
-								{decimalToFraction(ingredient.minQty * scale)}-{decimalToFraction(
-									ingredient.maxQty * scale
-								)}
+		<div class="ingredients">
+			<ul>
+				{#each sanitizedIngredients as ingredient}
+					{#if ingredient.ingredient.trim() === ''}
+						<br />
+					{:else if /<h[1-6]>/.test(ingredient.ingredient)}
+						<div data-heading>{@html ingredient.ingredient}</div>
+					{:else}
+						<li>
+							<strong>
+								{#if ingredient.minQty == ingredient.maxQty && ingredient.quantity}
+									{decimalToFraction(ingredient.quantity * scale)}
+								{:else if ingredient.minQty != ingredient.maxQty && ingredient.quantity}
+									{decimalToFraction(ingredient.minQty * scale)}-{decimalToFraction(
+										ingredient.maxQty * scale
+									)}
+								{/if}
+							</strong>
+							{#if ingredient.unit && ingredient.unit !== 'q.b.'}
+								{ingredient.quantity * scale > 1 && ingredient.unitPlural
+									? ingredient.unitPlural
+									: ingredient.unit}
 							{/if}
-						</strong>
-						{#if ingredient.unit && ingredient.unit !== 'q.b.'}
-							{ingredient.quantity * scale > 1 && ingredient.unitPlural
-								? ingredient.unitPlural
-								: ingredient.unit}
-						{/if}
-						<!-- <span>{@html ingredient.ingredient} <strong>{ingredient.dietLabel}</strong></span> -->
-						<span
-							>{@html ingredient.ingredient}
-							{#if displayExtra && ingredient.additional}
-								<i> | {ingredient.additional}</i>
-							{/if}
-						</span>
-					</li>
-				{/if}
-			{/each}
-		</ul>
+							<!-- <span>{@html ingredient.ingredient} <strong>{ingredient.dietLabel}</strong></span> -->
+							<span
+								>{@html ingredient.ingredient}
+								{#if displayExtra && ingredient.additional}
+									<i> | {ingredient.additional}</i>
+								{/if}
+							</span>
+						</li>
+					{/if}
+				{/each}
+			</ul>
+		</div>
 	</div>
 </div>
 
@@ -301,14 +305,34 @@
 {/if}
 
 <style lang="scss">
-	.recipe-cover img {
-		height: 100%; /* Set to your desired height */
-		max-height: 400px;
-		width: auto; /* This will ensure the width remains proportional */
-		object-fit: cover;
-		display: block; /* To remove any default spacing at the bottom of images */
+	.recipe-cover {
+		img {
+			height: 100%; /* Set to your desired height */
+			max-height: 400px;
+			width: auto; /* This will ensure the width remains proportional */
+			object-fit: cover;
+			display: block; /* To remove any default spacing at the bottom of images */
+		}
+		margin-bottom: 1rem;
 	}
 
+	.recipe-details {
+		@media (max-width: 767px) {
+			display: flex;
+			flex-direction: column;
+		}
+	}
+
+	.button-cat {
+		display: flex;
+		justify-content: space-between;
+		gap: 1rem;
+		#recipe-buttons {
+			display: flex;
+			flex-direction: column;
+			gap: 1rem;
+		}
+	}
 	.other-photos {
 		margin-bottom: 1rem;
 		img {
@@ -346,5 +370,11 @@
 		display: flex;
 		gap: 1rem;
 		justify-content: space-between;
+	}
+
+	.ingredients {
+		ul {
+			padding-left: 1rem;
+		}
 	}
 </style>

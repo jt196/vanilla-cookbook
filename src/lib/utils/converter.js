@@ -284,7 +284,6 @@ export const manipulateIngredient = (ingredientObj, fromSystem, toSystem) => {
 					unit === 'gallons'
 				) {
 					const { quantity: quantityInCups } = converter(quantityToUse, unit, 'cup')
-					// TODO: #104 Account for grams, kg etc here - I think it's just returning grams atm
 					let convertedQuantityGrams = quantityInCups * dryIngredient.gramsPerCup
 					// Find the target unit according to the amount
 					const targetMetricUnit = findSuitableUnit(toSystem, convertedQuantityGrams)

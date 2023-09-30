@@ -51,7 +51,7 @@
 <style lang="scss">
 	.scale {
 		display: flex;
-		max-width: 20%;
+		max-width: 100%;
 		gap: 1rem;
 		margin: 1rem 0 1rem 0;
 		input {

@@ -1,3 +1,9 @@
 .align-right {
 	text-align: right;
 }
+
+.container {
+	@media (min-width: 576px) {
+		min-width: 576px;
+	}
+}
