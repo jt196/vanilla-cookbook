@@ -1,4 +1,5 @@
 <script>
+	import Settings from '$lib/components/svg/Settings.svelte'
 	/**
 	 * This script is responsible for importing styles and managing page data.
 	 */
@@ -31,6 +32,7 @@
 					<li><a href="/register">Register</a></li>
 					<li><a href="/login" role="button">Login</a></li>
 				{:else}
+					<li><a href="/user/settings"><Settings width="25px" /></a></li>
 					<li>
 						<button formaction="/logout" type="submit">Logout</button>
 					</li>

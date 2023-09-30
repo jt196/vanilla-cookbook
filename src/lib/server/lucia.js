@@ -1,10 +1,10 @@
 import lucia from 'lucia-auth'
-import "lucia-auth/polyfill/node";
+import 'lucia-auth/polyfill/node'
 import prismaAdapter from '@lucia-auth/adapter-prisma'
 import { sveltekit } from 'lucia-auth/middleware'
 import { prisma } from '$lib/server/prisma'
 
-const isDev = process.env.VITE_ENV === 'development';
+const isDev = process.env.VITE_ENV === 'development'
 
 export const auth = lucia({
 	adapter: prismaAdapter(prisma),
@@ -14,7 +14,8 @@ export const auth = lucia({
 		return {
 			userId: userData.id,
 			username: userData.username,
-			name: userData.name
+			name: userData.name,
+			isAdmin: userData.isAdmin
 		}
 	},
 	sessionCookie: {
