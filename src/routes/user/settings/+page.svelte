@@ -1,4 +1,5 @@
 <script>
+	import { goto } from '$app/navigation'
 	let oldPass, newPass, newPassConfirm
 
 	export let data
@@ -37,6 +38,10 @@
 			// Handle success
 			console.log(responseData.message)
 			feedbackMessage = 'Password Updated!'
+			// Wait for 3 seconds before redirecting to the login page
+			setTimeout(() => {
+				goto('/login')
+			}, 2000)
 		} else if (response.status === 401) {
 			feedbackMessage = 'Old Password Incorrect!'
 		} else {
