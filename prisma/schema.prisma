@@ -90,6 +90,7 @@ model AuthUser {
     username     String        @unique
     email        String        @unique
     about        String?
+    units        String?       @default("metric")
     isAdmin      Boolean       @default(false)
     articles     Article[]
     recipes      Recipe[]
