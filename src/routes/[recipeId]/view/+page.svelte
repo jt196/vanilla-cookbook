@@ -22,6 +22,7 @@
 	export let data
 
 	let { recipe, categories, user } = data
+	console.log('🚀 ~ file: +page.svelte:25 ~ user:', user)
 	/**
 	 * The list of ingredients in string format.
 	 * @type {string[]}
@@ -57,8 +58,37 @@
 	 * @type {string}
 	 */
 	let measurementSystem = {}
-	let selectedSystem
 	let convertedIngredients = {}
+
+	let selectedSystem = user?.units
+
+	let summary
+
+	function getLabelFromValue(value) {
+		const system = systems.find((s) => s.value === value)
+		return system ? system.label : null
+	}
+
+	$: {
+		const originalLabel = getLabelFromValue(measurementSystem?.system)
+		const selectedLabel = getLabelFromValue(selectedSystem)
+
+		if (originalLabel) {
+			summary = `${originalLabel} (original)`
+			if (selectedLabel && selectedSystem !== measurementSystem.system) {
+				summary += ` to ${selectedLabel}`
+			}
+		} else {
+			summary = 'Loading...'
+		}
+	}
+
+	const systems = [
+		{ value: 'metric', label: 'Metric' },
+		{ value: 'imperial', label: 'Imperial' },
+		{ value: 'americanVolumetric', label: 'American Volumetric' }
+	]
+
 	let displayExtra = false
 
 	async function handleDelete(uid) {
@@ -121,21 +151,34 @@
 	}
 </script>
 
-<h3>{recipe?.name}</h3>
+<div id="recipe-buttons">
+	{#if recipe.userId === user.userId}
+		<a href="/{recipe?.uid}/edit/" role="button" class="outline contrast" data-testid="edit-button">
+			<Edit width="30px" height="30px" fill="var(--pico-ins-color)" />
+		</a>
+		<button
+			on:click={() => handleDelete(recipe?.uid)}
+			data-testid="delete-button"
+			class="outline secondary">
+			<Delete width="30px" height="30px" fill="var(--pico-del-color)" />
+		</button>
+	{/if}
+</div>
 
-<div class="grid">
-	<div class="recipe-details">
-		<div class="recipe-cover">
-			{#if mainPhoto}
-				<img
-					src={mainPhoto.url && !mainPhoto.fileType
-						? mainPhoto.url
-						: `/api/recipe/image/${mainPhoto.id}`}
-					alt="{recipe.name} photo" />
-			{:else}
-				<FoodBowl height="400px" />
-			{/if}
-		</div>
+<div class="recipe-details">
+	<div class="recipe-cover">
+		{#if mainPhoto}
+			<img
+				src={mainPhoto.url && !mainPhoto.fileType
+					? mainPhoto.url
+					: `/api/recipe/image/${mainPhoto.id}`}
+				alt="{recipe.name} photo" />
+		{:else}
+			<FoodBowl height="400px" />
+		{/if}
+	</div>
+	<div class="recipe-about">
+		<h1>{recipe?.name}</h1>
 
 		<p>Created: <i>{localDateAndTime(recipe.created)}</i></p>
 		<p>
@@ -143,99 +186,42 @@
 			<a href={recipe?.source_url}>{recipe?.source}</a>
 		</p>
 		<StarRating bind:rating={recipe.rating} />
-		{#if ingredients}
-			<p>
-				Servings: {scaledServings}
-			</p>
-			<p>
-				Scale
-				<Scale bind:scale />
-			</p>
-		{/if}
 		<div class="button-cat">
 			<div id="categories">
 				Categories:
 				<CategoryTree {categories} selectedCategoryUids={collectSelectedUids(categories)} />
 			</div>
-			<div id="recipe-buttons">
-				{#if recipe.userId === user.userId}
-					<a
-						href="/{recipe?.uid}/edit/"
-						role="button"
-						class="outline contrast"
-						data-testid="edit-button">
-						<Edit width="30px" height="30px" fill="var(--pico-ins-color)" />
-					</a>
-					<button
-						on:click={() => handleDelete(recipe?.uid)}
-						data-testid="delete-button"
-						class="outline secondary">
-						<Delete width="30px" height="30px" fill="var(--pico-del-color)" />
-					</button>
-				{/if}
-			</div>
 		</div>
 	</div>
-	<div>
+</div>
+<div class="description">
+	{#if recipe?.description}
+		<h3>Description:</h3>
+		<p>
+			{recipe?.description}
+		</p>
+	{/if}
+</div>
+<div class="recipe-main">
+	<div class="ing-div">
 		<div class="ing-header">
-			<p>Ingredients:</p>
+			<h3>Ingredients</h3>
 		</div>
-		<div class="convert">
-			<details class="dropdown">
-				<summary> Convert to: </summary>
-				<ul>
-					{#if measurementSystem.system !== 'metric'}
-						<li>
-							<label>
-								<input type="radio" bind:group={selectedSystem} name="system" value="metric" />
-								Metric
-							</label>
-						</li>
-					{/if}
-
-					{#if measurementSystem.system !== 'imperial'}
-						<li>
-							<label>
-								<input type="radio" bind:group={selectedSystem} name="system" value="imperial" />
-								Imperial
-							</label>
-						</li>
-					{/if}
-
-					{#if measurementSystem.system !== 'americanVolumetric'}
-						<li>
-							<label>
-								<input
-									type="radio"
-									bind:group={selectedSystem}
-									name="system"
-									value="americanVolumetric" />
-								American Volumetric
-							</label>
-						</li>
-					{/if}
-				</ul>
-			</details>
-			<div>
-				<button
-					on:click={() => (selectedSystem = null)}
-					data-testid="delete-button"
-					data-tooltip="Reset to original measurement system"
-					class="outline secondary">
-					<Delete width="30px" height="30px" fill="var(--pico-del-color)" />
-				</button>
-			</div>
-		</div>
-		<div class="ing-system">
-			<div>System: {!selectedSystem ? measurementSystem.system : selectedSystem}</div>
+		{#if ingredients}
+			<p>
+				Servings: {scaledServings}
+			</p>
+			<p>
+				<Scale bind:scale />
+			</p>
+		{/if}
+		<div class="ingredients">
 			<fieldset data-tooltip="Display more ingredient information">
 				<label>
-					Extra:
+					Display extra:
 					<input type="checkbox" name="english" bind:checked={displayExtra} />
 				</label>
 			</fieldset>
-		</div>
-		<div class="ingredients">
 			<ul>
 				{#each sanitizedIngredients as ingredient}
 					{#if ingredient.ingredient.trim() === ''}
@@ -270,24 +256,45 @@
 				{/each}
 			</ul>
 		</div>
+		<div class="convert">
+			<details class="dropdown">
+				<summary>
+					{summary}
+				</summary>
+				<ul>
+					{#each systems as system}
+						<li>
+							<label>
+								<input
+									type="radio"
+									bind:group={selectedSystem}
+									name="system"
+									value={system.value}
+									checked={system.value === selectedSystem} />
+								{system.label}
+							</label>
+						</li>
+					{/each}
+				</ul>
+			</details>
+		</div>
+		<div class="ing-system">
+			<div>
+				System: {getLabelFromValue(!selectedSystem ? measurementSystem.system : selectedSystem)}
+			</div>
+		</div>
+	</div>
+	<div class="recipe-text">
+		{#if directionLines}
+			<h3>Directions</h3>
+			{#each sanitizedDirections as parsedDirection}
+				<p>
+					{@html parsedDirection}
+				</p>
+			{/each}
+		{/if}
 	</div>
 </div>
-
-{#if recipe?.description}
-	<h4>Description:</h4>
-	<p>
-		{recipe?.description}
-	</p>
-{/if}
-
-{#if directionLines}
-	<h4>Directions:</h4>
-	{#each sanitizedDirections as parsedDirection}
-		<p>
-			{@html parsedDirection}
-		</p>
-	{/each}
-{/if}
 
 {#if otherPhotos.length > 0}
 	<div class="other-photos">
@@ -316,9 +323,28 @@
 		margin-bottom: 1rem;
 	}
 
+	.recipe-main {
+		margin-top: 2rem;
+		display: flex;
+		gap: 2rem;
+		.recipe-text {
+			flex: 2;
+		}
+		.ing-div {
+			flex: 1;
+		}
+	}
+
 	.recipe-details {
+		display: flex;
+		gap: 2rem;
+		.recipe-about {
+			flex: 2;
+		}
+		.recipe-cover {
+			flex: 1;
+		}
 		@media (max-width: 767px) {
-			display: flex;
 			flex-direction: column;
 		}
 	}
@@ -327,16 +353,17 @@
 		display: flex;
 		justify-content: space-between;
 		gap: 1rem;
-		#recipe-buttons {
-			display: flex;
-			flex-direction: column;
-			gap: 1rem;
-		}
+	}
+	#recipe-buttons {
+		display: flex;
+		justify-content: flex-end;
+		gap: 1rem;
 	}
 	.other-photos {
-		margin-bottom: 1rem;
+		margin: 1rem 0 2rem 0;
 		img {
 			max-height: 150px;
+			margin-right: 1rem;
 		}
 	}
 

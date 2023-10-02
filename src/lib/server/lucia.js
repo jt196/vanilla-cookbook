@@ -15,7 +15,8 @@ export const auth = lucia({
 			userId: userData.id,
 			username: userData.username,
 			name: userData.name,
-			isAdmin: userData.isAdmin
+			isAdmin: userData.isAdmin,
+			units: userData.units
 		}
 	},
 	sessionCookie: {
