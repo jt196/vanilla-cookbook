@@ -1,5 +1,5 @@
 import { prisma } from '$lib/server/prisma'
-import { auth, LuciaError } from '$lib/server/lucia'
+import { auth } from '$lib/server/lucia'
 import { validatePassword } from '$lib/utils/security.js'
 
 export const PUT = async ({ request, locals, params }) => {
@@ -65,7 +65,8 @@ export const PUT = async ({ request, locals, params }) => {
 								}
 							})
 						} catch (e) {
-							if (e instanceof LuciaError && e.message === 'AUTH_INVALID_USER_ID') {
+							if (e.name === 'LuciaError' && e.message === 'AUTH_INVALID_USER_ID') {
+								console.log('LuciaError: ' + e.message)
 								console.error('Invalid user id:', id)
 								return new Response(JSON.stringify({ error: 'Invalid user id.' }), {
 									status: 400,
@@ -198,8 +199,8 @@ export async function DELETE({ params, locals }) {
 		})
 	} catch (e) {
 		console.log('Error: ' + e)
-		if (e instanceof LuciaError) {
-			console.log('LuciaError: ' + e)
+		if (e.name === 'LuciaError') {
+			console.log('LuciaError: ' + e.message)
 		}
 		return new Response(JSON.stringify({ error: 'An unexpected error occurred.' }), {
 			status: 500,
