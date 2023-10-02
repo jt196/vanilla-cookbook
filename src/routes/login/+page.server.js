@@ -1,5 +1,6 @@
 import { auth } from '$lib/server/lucia'
 import { fail, redirect } from '@sveltejs/kit'
+import { prisma } from '$lib/server/prisma'
 
 /**
  * Validates if the user is logged in and redirects if necessary.
@@ -9,9 +10,11 @@ import { fail, redirect } from '@sveltejs/kit'
  */
 export const load = async ({ locals }) => {
 	const session = await locals.auth.validate()
+	const settings = await prisma.siteSettings.findFirst()
 	if (session) {
 		throw redirect(302, '/')
 	}
+	return { settings }
 }
 
 /**

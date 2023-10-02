@@ -122,3 +122,8 @@ model AuthKey {
     @@index([user_id])
     @@map("auth_key")
 }
+
+model SiteSettings {
+    id                  Int     @id @default(autoincrement())
+    registrationAllowed Boolean
+}

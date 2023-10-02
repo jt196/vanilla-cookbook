@@ -2,6 +2,7 @@
  * Authentication utility functions.
  */
 import { auth } from '$lib/server/lucia'
+import { prisma } from '$lib/server/prisma'
 
 /**
  * Helper functions for SvelteKit.
@@ -30,8 +31,12 @@ import { fail, redirect } from '@sveltejs/kit'
  */
 export const load = async ({ locals }) => {
 	const session = await locals.auth.validate()
+	const settings = await prisma.siteSettings.findFirst()
 	if (session) {
 		throw redirect(302, '/')
+	}
+	if (!settings.registrationAllowed) {
+		throw redirect(302, '/login')
 	}
 }
 

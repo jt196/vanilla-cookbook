@@ -14,6 +14,7 @@
 	 * @type {PageData}
 	 */
 	export let data
+	const { user, settings } = data
 </script>
 
 <div class="container">
@@ -28,9 +29,11 @@
 		<ul>
 			<form method="POST">
 				<li><a href="/">Home</a></li>
-				{#if !data.user}
-					<li><a href="/register">Register</a></li>
+				{#if !user}
 					<li><a href="/login" role="button">Login</a></li>
+					{#if settings.registrationAllowed}
+						<li><a href="/register">Register</a></li>
+					{/if}
 				{:else}
 					<li><a href="/user/settings"><Settings width="25px" /></a></li>
 					<li>

@@ -251,6 +251,16 @@ async function seed() {
 			// await prismaC.recipeCategory.deleteMany()
 		}
 
+		const settingsExists = await prismaC.siteSettings.findFirst()
+		if (!settingsExists) {
+			console.log('🚀 ~ file: seed.js:257: settings do not exist, creating')
+			await prismaC.siteSettings.create({
+				data: {
+					registrationAllowed: false
+				}
+			})
+		}
+
 		// Try to get the admin user from the db
 		let adminUserId = await getAdminUserId()
 		if (adminUserId) {

@@ -1,3 +1,8 @@
+<script>
+	export let data
+	const { settings } = data
+</script>
+
 <form method="POST">
 	<hgroup>
 		<h2>Login</h2>
@@ -11,4 +16,6 @@
 
 	<button type="submit">Login</button>
 </form>
-<p>Don't have an account? <a href="/register">Register</a></p>
+{#if settings.registrationAllowed}
+	<p>Don't have an account? <a href="/register">Register</a></p>
+{/if}
