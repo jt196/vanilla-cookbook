@@ -4,6 +4,7 @@
 	import New from '$lib/components/svg/New.svelte'
 	import { validatePassword } from '$lib/utils/security.js'
 	import { onMount } from 'svelte'
+	import { goto } from '$app/navigation'
 
 	export let data
 	let users = data.users
@@ -11,10 +12,17 @@
 	let isDialogOpen = false // dialog is initially closed
 	let isEditMode = false
 	let password = ''
-	// let passwordFeedback = {
-	// 	isValid: false,
-	// 	message: ''
-	// }
+
+	$: adminCount = users.filter((user) => user.isAdmin).length
+	$: {
+		// Find the index of the user being edited in the users array
+		const index = users.findIndex((user) => user.id === editingUser.id)
+
+		// If the user is found, update its data
+		if (index !== -1) {
+			users[index] = { ...editingUser }
+		}
+	}
 	$: passwordFeedback = password.length > 0 ? validatePassword(password) : null
 
 	let editingUser = {
@@ -88,7 +96,14 @@
 		// Handle response (e.g., refresh data, close modal)
 		if (response.ok) {
 			isDialogOpen = false
-			await fetchData() // Refresh data after successful update
+			if (adminId === editingUser.id && editingUser.isAdmin === false) {
+				await fetch('/logout', { method: 'POST' })
+				setTimeout(() => {
+					goto('/login')
+				}, 2000)
+			} else {
+				await fetchData() // Refresh data after successful update
+			}
 		} else {
 			// Handle error
 		}
@@ -134,7 +149,11 @@
 	<tbody>
 		{#each users as user}
 			<tr>
-				<th scope="row">{user.username}</th>
+				<th scope="row"
+					>{user.username}
+					{#if user.id === adminId}
+						<span class="you-label">(You)</span>
+					{/if}</th>
 				<td>{user.name}</td>
 				<td>{user.email}</td>
 				<td>{user.about}</td>
@@ -175,10 +194,12 @@
 		<input type="text" id="source" name="source" bind:value={editingUser.about} />
 		<label for="source"> Password </label>
 		<input type="text" id="source" name="source" bind:value={password} />
-		<label>
-			<input type="checkbox" name="Admin" bind:checked={editingUser.isAdmin} />
-			Admin
-		</label>
+		{#if !editingUser.isAdmin || (editingUser.isAdmin && adminCount > 1)}
+			<label>
+				<input type="checkbox" name="Admin" bind:checked={editingUser.isAdmin} />
+				Admin
+			</label>
+		{/if}
 		<footer>
 			{#if passwordFeedback && passwordFeedback.message}
 				<p class="feedback">{passwordFeedback.message}</p>
@@ -188,3 +209,14 @@
 		</footer>
 	</article>
 </dialog>
+
+<style lang="scss">
+	.you-label {
+		font-size: 0.9em;
+		color: var(
+			--highlight-color,
+			#007bff
+		); // Use a CSS variable for highlight color or a fixed value.
+		margin-left: 0.5em;
+	}
+</style>

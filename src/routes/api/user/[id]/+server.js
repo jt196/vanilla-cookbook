@@ -1,16 +1,15 @@
 import { prisma } from '$lib/server/prisma'
 import { auth, LuciaError } from '$lib/server/lucia'
-import { goto } from '$app/navigation'
 import { validatePassword } from '$lib/utils/security.js'
 
 export const PUT = async ({ request, locals, params }) => {
 	const { session, user } = await locals.auth.validateUser()
 	const bodyText = await request.text()
 	const userData = JSON.parse(bodyText)
-	console.log('🚀 ~ file: +server.js:10 ~ PUT ~ userData:', userData)
 	const { id } = params
 
 	if (!session || !user) {
+		console.log('No session or user!')
 		return new Response('User not authenticated!', {
 			status: 401,
 			headers: {
@@ -48,14 +47,42 @@ export const PUT = async ({ request, locals, params }) => {
 			const passwordValidation = validatePassword(userData.password)
 			if (passwordValidation.isValid) {
 				try {
-					console.log('🚀 ~ file: +server.js:52 ~ PUT ~ userData.password:', userData.password)
 					// Reset user password
 					await auth.updateKeyPassword('username', userData.username, userData.password)
 					// Invalidate all of the user's sessions
 					await auth.invalidateAllUserSessions(id)
-					// If admin user has reset their own password, redirect to the login page
+					// If the admin user has reset their own password, create a new session and set a new session cookie
 					if (user.userId === id) {
-						goto('/login')
+						try {
+							// // Create a new session for the user
+							const newSession = await auth.createSession(user.id)
+							locals.auth.setSession(newSession)
+
+							return new Response(JSON.stringify({ message: 'Password updated successfully' }), {
+								status: 200,
+								headers: {
+									'Content-Type': 'application/json'
+								}
+							})
+						} catch (e) {
+							if (e instanceof LuciaError && e.message === 'AUTH_INVALID_USER_ID') {
+								console.error('Invalid user id:', id)
+								return new Response(JSON.stringify({ error: 'Invalid user id.' }), {
+									status: 400,
+									headers: {
+										'Content-Type': 'application/json'
+									}
+								})
+							} else {
+								console.error('Unexpected error while creating session:', e)
+								return new Response(JSON.stringify({ error: 'Unexpected error.' }), {
+									status: 500,
+									headers: {
+										'Content-Type': 'application/json'
+									}
+								})
+							}
+						}
 					}
 				} catch (e) {
 					console.log('Error changing password: ' + e)
@@ -69,6 +96,31 @@ export const PUT = async ({ request, locals, params }) => {
 				})
 			}
 		}
+
+		if ('isAdmin' in userData) {
+			console.log('Is Admin is in user data!')
+			// Check if this user is the only admin
+			if (existingUser.isAdmin) {
+				const adminCount = await prisma.authUser.count({
+					where: {
+						isAdmin: true
+					}
+				})
+
+				if (adminCount === 1 && !userData.isAdmin) {
+					return new Response(
+						JSON.stringify({ error: "The only admin user can't make themselves non-admin." }),
+						{
+							status: 400,
+							headers: {
+								'Content-Type': 'application/json'
+							}
+						}
+					)
+				}
+			}
+		}
+
 		const updatedUser = await prisma.authUser.update({
 			where: { id: id },
 			data: {
@@ -80,12 +132,30 @@ export const PUT = async ({ request, locals, params }) => {
 			}
 		})
 
-		return new Response(JSON.stringify(updatedUser), {
-			status: 200,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
+		if (user.isAdmin && !userData.isAdmin) {
+			// Invalidate all of the user's sessions
+			await auth.invalidateAllUserSessions(id)
+
+			// // Create a new session for the user
+			const newSession = await auth.createSession(id)
+			locals.auth.setSession(newSession)
+			return new Response(
+				JSON.stringify({ message: 'Role updated successfully. Please log in again.' }),
+				{
+					status: 200,
+					headers: {
+						'Content-Type': 'application/json'
+					}
+				}
+			)
+		} else {
+			return new Response(JSON.stringify(updatedUser), {
+				status: 200,
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			})
+		}
 	} catch (error) {
 		return new Response(JSON.stringify({ error: `Failed to update user: ${error.message}` }), {
 			status: 500,

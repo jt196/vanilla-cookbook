@@ -1,5 +1,5 @@
 import { prisma } from '$lib/server/prisma'
-import { error } from '@sveltejs/kit'
+import { redirect } from '@sveltejs/kit'
 
 /**
  * Server-side logic to load recipes for the page.
@@ -8,7 +8,7 @@ import { error } from '@sveltejs/kit'
 export const load = async ({ url, fetch, locals }) => {
 	const { session, user } = await locals.auth.validateUser()
 	if (!session || !user) {
-		throw error(401, 'Unauthorized')
+		throw redirect(302, '/login')
 	}
 	const recipes = await prisma.recipe.findMany({
 		orderBy: {

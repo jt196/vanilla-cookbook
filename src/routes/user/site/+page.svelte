@@ -7,7 +7,6 @@
 
 	async function updateSettings(event) {
 		event.preventDefault()
-		console.log('🚀 ~ file: +page.svelte:16 ~ updateSettings ~ settings:', settings)
 		const response = await fetch('/api/site', {
 			method: 'POST',
 			headers: {
@@ -30,11 +29,17 @@
 			<input type="checkbox" name="Admin" bind:checked={settings.registrationAllowed} />
 			Allow Registrations
 		</label>
-		<button type="submit">Update Site Settings</button>
 		<footer>
+			<button type="submit">Update</button>
 			{#if settingsFeedback}
 				<p class="feedback">{settingsFeedback}</p>
 			{/if}
 		</footer>
 	</form>
 </div>
+
+<style lang="scss">
+	footer {
+		margin-top: 1rem;
+	}
+</style>
