@@ -1,11 +1,13 @@
 <script>
 	import Edit from '$lib/components/svg/Edit.svelte'
+	import Delete from '$lib/components/svg/Delete.svelte'
 	import New from '$lib/components/svg/New.svelte'
 	import { validatePassword } from '$lib/utils/security.js'
 	import { onMount } from 'svelte'
 
 	export let data
 	let users = data.users
+	let adminId = data.adminId
 	let isDialogOpen = false // dialog is initially closed
 	let isEditMode = false
 	let password = ''
@@ -91,6 +93,27 @@
 			// Handle error
 		}
 	}
+	async function deleteUser(id) {
+		if (!confirm('Are you sure you want to delete this user?')) {
+			return
+		}
+		try {
+			const response = await fetch(`/api/user/${id}`, {
+				method: 'DELETE',
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			})
+
+			if (!response.ok) {
+				const errorData = await response.json()
+				throw new Error(errorData.message || 'Error deleting user')
+			}
+			await fetchData()
+		} catch (error) {
+			console.error('Error deleting user:', error.message)
+		}
+	}
 </script>
 
 <button data-tooltip="New User" on:click={openCreateDialog}
@@ -105,6 +128,7 @@
 			<th scope="col">About</th>
 			<th scope="col">Admin</th>
 			<th scope="col">Edit</th>
+			<th scope="col">Del</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -120,8 +144,18 @@
 						on:click={() => openEditDialog(user)}
 						data-testid="edit-button"
 						class="outline secondary">
-						<Edit width="20px" fill="white" />
+						<Edit width="20px" fill="var(--pico-ins-color)" />
 					</button></td>
+				<td>
+					{#if user.id !== adminId}
+						<button
+							on:click={() => deleteUser(user.id)}
+							data-testid="delete-button"
+							class="outline secondary">
+							<Delete width="20px" fill="var(--pico-del-color)" />
+						</button>
+					{/if}
+				</td>
 			</tr>
 		{/each}
 	</tbody>

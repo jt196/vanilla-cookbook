@@ -1,5 +1,5 @@
 import { prisma } from '$lib/server/prisma'
-import { auth } from '$lib/server/lucia'
+import { auth, LuciaError } from '$lib/server/lucia'
 import { goto } from '$app/navigation'
 import { validatePassword } from '$lib/utils/security.js'
 
@@ -88,6 +88,50 @@ export const PUT = async ({ request, locals, params }) => {
 		})
 	} catch (error) {
 		return new Response(JSON.stringify({ error: `Failed to update user: ${error.message}` }), {
+			status: 500,
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		})
+	}
+}
+
+export async function DELETE({ params, locals }) {
+	const { id } = params
+	const { session, user } = await locals.auth.validateUser()
+
+	if (!session || !user) {
+		console.log('User Not Authenticated!')
+		return new Response('User not authenticated', {
+			status: 401,
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		})
+	}
+
+	if (!user.isAdmin) {
+		return new Response('Unauthorised to delete this user!', {
+			status: 401,
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		})
+	}
+	try {
+		await auth.deleteUser(id)
+		return new Response(JSON.stringify('User successfully deleted!.'), {
+			status: 200,
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		})
+	} catch (e) {
+		console.log('Error: ' + e)
+		if (e instanceof LuciaError) {
+			console.log('LuciaError: ' + e)
+		}
+		return new Response(JSON.stringify({ error: 'An unexpected error occurred.' }), {
 			status: 500,
 			headers: {
 				'Content-Type': 'application/json'
