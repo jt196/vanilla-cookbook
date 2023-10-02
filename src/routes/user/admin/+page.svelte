@@ -1,12 +1,19 @@
 <script>
 	import Edit from '$lib/components/svg/Edit.svelte'
 	import New from '$lib/components/svg/New.svelte'
+	import { validatePassword } from '$lib/utils/security.js'
 	import { onMount } from 'svelte'
 
 	export let data
 	let users = data.users
 	let isDialogOpen = false // dialog is initially closed
 	let isEditMode = false
+	let password = ''
+	// let passwordFeedback = {
+	// 	isValid: false,
+	// 	message: ''
+	// }
+	$: passwordFeedback = password.length > 0 ? validatePassword(password) : null
 
 	let editingUser = {
 		id: null,
@@ -61,6 +68,12 @@
 	async function handleSubmit() {
 		const endpoint = isEditMode ? `/api/user/${editingUser.id}` : '/api/user/'
 		const method = isEditMode ? 'PUT' : 'POST'
+		if (passwordFeedback) {
+			if (!passwordFeedback.isValid) {
+				return // exit if password is not valid
+			}
+			editingUser = { password, ...editingUser }
+		}
 
 		const response = await fetch(endpoint, {
 			method,
@@ -126,7 +139,16 @@
 		<input type="text" id="source" name="source" bind:value={editingUser.email} />
 		<label for="source"> About </label>
 		<input type="text" id="source" name="source" bind:value={editingUser.about} />
+		<label for="source"> Password </label>
+		<input type="text" id="source" name="source" bind:value={password} />
+		<label>
+			<input type="checkbox" name="Admin" bind:checked={editingUser.isAdmin} />
+			Admin
+		</label>
 		<footer>
+			{#if passwordFeedback && passwordFeedback.message}
+				<p class="feedback">{passwordFeedback.message}</p>
+			{/if}
 			<button on:click={() => (isDialogOpen = false)} class="secondary">Cancel</button>
 			<button on:click={handleSubmit}>{isEditMode ? 'Update' : 'Create'}</button>
 		</footer>
