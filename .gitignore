@@ -10,8 +10,6 @@ vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 */dev.sqlite
 *.sqlite-journal
-migration_lock*
-migration.sql
 *.code-workspace
 *.sqlite
 # Test
