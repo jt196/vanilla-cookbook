@@ -86,7 +86,7 @@
 	const systems = [
 		{ value: 'metric', label: 'Metric' },
 		{ value: 'imperial', label: 'Imperial' },
-		{ value: 'americanVolumetric', label: 'American Volumetric' }
+		{ value: 'americanVolumetric', label: 'US Cups' }
 	]
 
 	let displayExtra = false
@@ -123,6 +123,8 @@
 			measurementSystem.system,
 			selectedSystem
 		)
+		console.log('🚀 ~ file: +page.svelte:124 ~ measurementSystem.system:', measurementSystem.system)
+		console.log('🚀 ~ file: +page.svelte:126 ~ selectedSystem:', selectedSystem)
 		// Call the function to update selectedSystem based on the initial measurementSystem
 		recipe.directions ? (directionLines = recipe.directions.split('\n')) : null
 		scaledServings = recipe.servings ? scaleNumbersInString(recipe.servings, scale) : null
@@ -282,11 +284,6 @@
 				</ul>
 			</details>
 		</div>
-		<div class="ing-system">
-			<div>
-				System: {getLabelFromValue(!selectedSystem ? measurementSystem.system : selectedSystem)}
-			</div>
-		</div>
 	</div>
 	<div class="recipe-text">
 		{#if directionLines}
@@ -400,15 +397,12 @@
 		flex-shrink: 0; /* Button should not shrink */
 	}
 
-	.ing-system {
-		display: flex;
-		gap: 1rem;
-		justify-content: space-between;
-	}
-
 	.ingredients {
 		ul {
-			padding-left: 1rem;
+			padding-left: 0;
+			li {
+				list-style-type: none;
+			}
 		}
 	}
 </style>

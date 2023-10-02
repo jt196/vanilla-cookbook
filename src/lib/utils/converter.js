@@ -507,9 +507,9 @@ export function parseTemperature(direction, toSystem, fromSystem) {
 	return direction
 }
 
-export function convertIngredients(ingredients, system, toSystem) {
+export function convertIngredients(ingredients, fromSystem, toSystem) {
 	// If no system selected, return the raw ingredients
-	if (!toSystem) return ingredients
+	if (!toSystem || fromSystem === toSystem) return ingredients
 	return ingredients.map((ingredient) => {
 		// Get the dietary preferences for the ingredient
 		// const prefs = addFoodPreferences(ingredient.ingredient)
@@ -517,7 +517,7 @@ export function convertIngredients(ingredients, system, toSystem) {
 
 		if (
 			shouldSkipConversion(ingredient.unit) ||
-			!manipulateIngredient(ingredient, system, toSystem)
+			!manipulateIngredient(ingredient, fromSystem, toSystem)
 		) {
 			// Return the original ingredient with the added dietary label
 			return {
@@ -526,7 +526,7 @@ export function convertIngredients(ingredients, system, toSystem) {
 			}
 		}
 
-		const converted = manipulateIngredient(ingredient, system, toSystem)
+		const converted = manipulateIngredient(ingredient, fromSystem, toSystem)
 		if (converted === null || converted.error) {
 			// Return the original ingredient with the added dietary label
 			return {
