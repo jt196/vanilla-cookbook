@@ -186,11 +186,8 @@
 			<a href={recipe?.source_url}>{recipe?.source}</a>
 		</p>
 		<StarRating bind:rating={recipe.rating} />
-		<div class="button-cat">
-			<div id="categories">
-				Categories:
-				<CategoryTree {categories} selectedCategoryUids={collectSelectedUids(categories)} />
-			</div>
+		<div id="categories">
+			<CategoryTree {categories} selectedCategoryUids={collectSelectedUids(categories)} />
 		</div>
 	</div>
 </div>
@@ -333,6 +330,9 @@
 		.ing-div {
 			flex: 1;
 		}
+		@media (max-width: 767px) {
+			flex-direction: column;
+		}
 	}
 
 	.recipe-details {
@@ -340,6 +340,12 @@
 		gap: 2rem;
 		.recipe-about {
 			flex: 2;
+			#categories {
+				margin-top: 1rem;
+				ul {
+					padding-left: 1rem;
+				}
+			}
 		}
 		.recipe-cover {
 			flex: 1;
@@ -358,6 +364,7 @@
 		display: flex;
 		justify-content: flex-end;
 		gap: 1rem;
+		margin-bottom: 1rem;
 	}
 	.other-photos {
 		margin: 1rem 0 2rem 0;
