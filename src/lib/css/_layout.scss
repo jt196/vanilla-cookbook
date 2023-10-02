@@ -6,6 +6,12 @@
 	@media (min-width: 576px) {
 		min-width: 576px;
 	}
+	@media (min-width: 768px) {
+		max-width: 748px;
+	}
+	@media (min-width: 1024px) {
+		max-width: 1004px;
+	}
 }
 
 nav {
@@ -14,4 +20,13 @@ nav {
 
 #categories ul {
 	padding-left: 1rem;
+}
+
+nav {
+	li {
+		vertical-align: middle;
+		#logout {
+			margin-bottom: 0;
+		}
+	}
 }

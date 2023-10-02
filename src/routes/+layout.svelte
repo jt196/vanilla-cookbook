@@ -37,7 +37,7 @@
 				{:else}
 					<li><a href="/user/settings"><Settings width="25px" /></a></li>
 					<li>
-						<button formaction="/logout" type="submit">Logout</button>
+						<button id="logout" formaction="/logout" type="submit">Logout</button>
 					</li>
 				{/if}
 			</form>
