@@ -22,7 +22,7 @@
 		<ul>
 			<li>
 				<strong>
-					<a href="/"> Chefbook </a>
+					<a href="/"> Cookrr </a>
 				</strong>
 			</li>
 		</ul>
