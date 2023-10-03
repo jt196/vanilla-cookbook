@@ -132,6 +132,7 @@
 
 	let sanitizedDirections = []
 	let sanitizedIngredients = []
+	let hasAdditional
 
 	let isMounted = false
 
@@ -152,6 +153,7 @@
 				ingredient: getSanitizedHTML(ingredient.ingredient)
 			}
 		})
+		hasAdditional = sanitizedIngredients.some((item) => item.additional !== null)
 	}
 </script>
 
@@ -224,12 +226,14 @@
 			</p>
 		{/if}
 		<div class="ingredients">
-			<fieldset data-tooltip="Display more ingredient information">
-				<label>
-					Display extra:
-					<input type="checkbox" name="english" bind:checked={displayExtra} />
-				</label>
-			</fieldset>
+			{#if hasAdditional}
+				<fieldset data-tooltip="Display more ingredient information">
+					<label>
+						Display extra:
+						<input type="checkbox" name="english" bind:checked={displayExtra} />
+					</label>
+				</fieldset>
+			{/if}
 			<ul>
 				{#each sanitizedIngredients as ingredient}
 					{#if ingredient.ingredient.trim() === ''}
