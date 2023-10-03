@@ -18,7 +18,7 @@
 	// let sortKey = 'created'
 	let sortState = {
 		key: 'created', // default sort key
-		direction: 'desc' // default sort direction
+		direction: 'asc' // default sort direction
 	}
 
 	// let sortDirection = 'asc'
