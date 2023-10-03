@@ -141,9 +141,11 @@
 
 	// Reactive statement to update sanitizedDirections whenever dependencies change
 	$: if (isMounted) {
-		sanitizedDirections = parseDirections(directionLines, selectedSystem, measurementSystem).map(
-			(direction) => getSanitizedHTML(direction)
-		)
+		sanitizedDirections = parseDirections(
+			directionLines,
+			selectedSystem,
+			measurementSystem.system
+		).map((direction) => getSanitizedHTML(direction))
 		sanitizedIngredients = convertedIngredients.map((ingredient) => {
 			return {
 				...ingredient,

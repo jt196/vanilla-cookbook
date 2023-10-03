@@ -425,8 +425,9 @@ export function parseDirections(directions, toSystem, fromSystem) {
  * // Returns: "Heat to 356°F"
  */
 export function parseTemperature(direction, toSystem, fromSystem) {
+	console.log('Parsing temperature!')
 	const celsiusRegex = /(\d+-\d+|\d+(\.\d+)?)\s?(°C|ºC|C|degrees C)(?![a-zA-Z])/gi
-	const fahrenheitRegex = /(\d+-\d+|\d+(\.\d+)?)\s?(°F|F|degrees F)(?![a-zA-Z])/gi
+	const fahrenheitRegex = /(\d+-\d+|\d+(\.\d+)?)\s?(°F|ºF|F|degrees F)(?![a-zA-Z])/gi
 	const gasMarkRegex = /Gas Mark (\d+)|gas (\d+)/gi
 	const genericDegreesRegex = /(\d+(\.\d+)?) degrees(?! [CF])/gi
 
@@ -437,7 +438,6 @@ export function parseTemperature(direction, toSystem, fromSystem) {
 	// eslint-disable-next-line no-unused-vars
 	const gasMarkMatches = direction.match(gasMarkRegex) || []
 	const genericDegreesMatches = direction.match(genericDegreesRegex) || []
-
 	// Logging the matches for debugging purposes
 	const isTargetImperial = ['imperial', 'americanVolumetric'].includes(toSystem)
 
