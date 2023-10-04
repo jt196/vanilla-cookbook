@@ -19,7 +19,10 @@
 				(photo) => photo.id === photoId && photo.isMain
 			)
 			// Delete photo
-			await deletePhotoById(photoId)
+			const photoDeleted = await deletePhotoById(photoId)
+			// If the photo was not deleted, exit the function
+			if (!photoDeleted) return
+
 			// Optionally, remove the photo from the local state
 			filteredPhotos = filteredPhotos.filter((p) => p.id !== photoId)
 
