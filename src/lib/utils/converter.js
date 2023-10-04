@@ -440,6 +440,7 @@ export function parseTemperature(direction, toSystem, fromSystem) {
 	const genericDegreesMatches = direction.match(genericDegreesRegex) || []
 	// Logging the matches for debugging purposes
 	const isTargetImperial = ['imperial', 'americanVolumetric'].includes(toSystem)
+	const isSourceImperial = ['imperial', 'americanVolumetric'].includes(fromSystem)
 
 	if (celsiusMatches.length && fahrenheitMatches.length) {
 		return direction // Rule 1
@@ -477,12 +478,13 @@ export function parseTemperature(direction, toSystem, fromSystem) {
 
 	// Handling generic "degrees" format
 	if (genericDegreesMatches.length > 0) {
-		if (fromSystem === toSystem) {
+		// Skip this if from/toSystem are the same, or both imperial
+		if (fromSystem === toSystem || (isSourceImperial && isTargetImperial)) {
 			return direction
 		} else {
-			if (fromSystem === 'imperial' && !isTargetImperial) {
+			if ((fromSystem === 'imperial' || 'americanVolumetric') && !isTargetImperial) {
 				return direction.replace(genericDegreesRegex, (match) =>
-					convertMatch(match, fromSystem, toSystem, '°C')
+					convertMatch(match, 'imperial', 'metric', '°C')
 				)
 			} else if (fromSystem === 'metric' && isTargetImperial) {
 				return direction.replace(genericDegreesRegex, (match) =>
