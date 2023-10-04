@@ -48,14 +48,12 @@
 	$: if (data && data.recipe) {
 		ingredients = recipe.ingredients ? recipe.ingredients.split('\n') : []
 		ingredientsArray = ingredientProcess(ingredients)
-		console.log('🚀 ~ file: +page.svelte:51 ~ ingredientsArray:', ingredientsArray)
 		measurementSystem = determineSystem(ingredientsArray)
 		convertedIngredients = convertIngredients(
 			ingredientsArray,
 			measurementSystem.system,
 			selectedSystem
 		)
-		console.log('🚀 ~ file: +page.svelte:53 ~ convertedIngredients:', convertedIngredients)
 		// Call the function to update selectedSystem based on the initial measurementSystem
 		recipe.directions ? (directionLines = recipe.directions.split('\n')) : null
 		scaledServings = recipe.servings ? scaleNumbersInString(recipe.servings, scale) : null
@@ -84,10 +82,6 @@
 				ingredient: getSanitizedHTML(ingredient.ingredient)
 			}
 		})
-		console.log(
-			'🚀 ~ file: +page.svelte:85 ~ sanitizedIngredients=convertedIngredients.map ~ sanitizedIngredients:',
-			sanitizedIngredients
-		)
 		hasAdditional = sanitizedIngredients.some((item) => item.additional !== null)
 	}
 </script>

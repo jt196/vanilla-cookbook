@@ -1,7 +1,7 @@
 <script>
 	import Scale from '$lib/components/Scale.svelte'
 	import RecipeViewDropdown from './RecipeViewDropdown.svelte'
-	import RecipeViewDryMatch from './RecipeViewDryMatch.svelte'
+	import RecipeViewIngAdmin from './RecipeViewIngAdmin.svelte'
 	import RecipeViewExtra from './RecipeViewExtra.svelte'
 	import RecipeViewIng from './RecipeViewIng.svelte'
 
@@ -15,6 +15,7 @@
 
 	let displayExtra = false
 	let displayDryMatch = false
+	let displayOriginal = false
 </script>
 
 <div class="ing-div">
@@ -25,18 +26,20 @@
 		{#if scaledServings}
 			<p>Servings: {scaledServings}</p>
 		{/if}
-		<p><Scale bind:scale /></p>
+		{#if sanitizedIngredients.some((item) => item.ingredients)}
+			<p><Scale bind:scale /></p>
+		{/if}
 	{/if}
 	<div class="ingredients">
 		{#if sanitizedIngredients.some((item) => item.additional)}
 			<RecipeViewExtra bind:displayExtra />
 		{/if}
 		{#if sanitizedIngredients.some((item) => item.dryIngredient) && userIsAdmin}
-			<RecipeViewDryMatch bind:displayDryMatch />
+			<RecipeViewIngAdmin bind:displayDryMatch bind:displayOriginal />
 		{/if}
 		<ul>
 			{#each sanitizedIngredients as ingredient}
-				<RecipeViewIng {ingredient} {scale} {displayExtra} {displayDryMatch} />
+				<RecipeViewIng {ingredient} {scale} {displayExtra} {displayDryMatch} {displayOriginal} />
 			{/each}
 		</ul>
 	</div>

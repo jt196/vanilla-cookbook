@@ -7,7 +7,9 @@
 	let sanitisedDescription = []
 
 	recipe.description ? (descriptionLines = recipe.description.split('\n')) : null
-	sanitisedDescription = descriptionLines.map((direction) => getSanitizedHTML(direction))
+	sanitisedDescription
+		? (sanitisedDescription = descriptionLines.map((direction) => getSanitizedHTML(direction)))
+		: null
 </script>
 
 {#if recipe?.description}
