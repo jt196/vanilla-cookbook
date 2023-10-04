@@ -78,7 +78,7 @@ export function parseRecipe(html, url) {
 		}
 
 		try {
-			description = recipeRaw.description
+			description = parseInstructions(recipeRaw.description)
 		} catch (error) {
 			console.error('Error in getUrl:', error)
 		}

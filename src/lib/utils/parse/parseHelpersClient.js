@@ -31,6 +31,7 @@ export async function handleScrape(event = null, url) {
 			prep_time: scrapedRecipe.prepTime,
 			ingredients: scrapedRecipe.ingredients.join('\n'),
 			directions: scrapedRecipe.instructions.join('\n\n'),
+			description: scrapedRecipe.description.join('\n\n'),
 			total_time: scrapedRecipe.totalTime,
 			servings: scrapedRecipe.servings,
 			nutritional_info: nutritionProcess(scrapedRecipe.nutrition)

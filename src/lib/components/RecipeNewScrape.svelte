@@ -1,6 +1,5 @@
 <script>
 	import { handleScrape } from '$lib/utils/parse/parseHelpersClient'
-	import Bookmarklet from './Bookmarklet.svelte'
 
 	export let initialUrl = ''
 	export let recipe
