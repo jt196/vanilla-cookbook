@@ -429,7 +429,7 @@ export function parseTemperature(direction, toSystem, fromSystem) {
 	const celsiusRegex = /(\d+-\d+|\d+(\.\d+)?)\s?(°C|ºC|C|degrees C)(?![a-zA-Z])/gi
 	const fahrenheitRegex = /(\d+-\d+|\d+(\.\d+)?)\s?(°F|ºF|F|degrees F)(?![a-zA-Z])/gi
 	const gasMarkRegex = /Gas Mark (\d+)|gas (\d+)/gi
-	const genericDegreesRegex = /(\d+(\.\d+)?) degrees(?! [CF])/gi
+	const genericDegreesRegex = /(\d+(\.\d+)?) degrees(?: (F(ahrenheit)?|C(elcius)?))?\b/gi
 
 	// Find all matches for each temperature type in the given direction
 	const celsiusMatches = direction.match(celsiusRegex) || []

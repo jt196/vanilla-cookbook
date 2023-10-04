@@ -61,6 +61,15 @@ describe('parseTemperature function', () => {
 		expect(result).toBe('Preheat the oven to **177°C**')
 	})
 
+	it('should convert "Preheat the oven to 350 degrees Fahrenheit"', () => {
+		const result = parseTemperature(
+			'Preheat the oven to 350 degrees Fahrenheit',
+			'metric',
+			'imperial'
+		)
+		expect(result).toBe('Preheat the oven to **177°C**')
+	})
+
 	it('should convert "Preheat the oven to 180°C (350°F), Gas Mark 4."', () => {
 		const result = parseTemperature(
 			'Preheat the oven to 180°C (350°F), Gas Mark 4.',
