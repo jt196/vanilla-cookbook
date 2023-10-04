@@ -1,14 +1,13 @@
 <script>
-	import { decodeHTMLEntities, nutritionProcess } from '$lib/utils/filters'
+	import { nutritionProcess } from '$lib/utils/filters'
 	import { checkImageExistence } from '$lib/utils/image/imageUtils'
 	import { onMount } from 'svelte'
-	import Bookmark from '$lib/components/svg/Bookmark.svelte'
 	import { goto } from '$app/navigation'
 	import { createRecipe } from '$lib/utils/crud'
-	import { scrapeRecipeFromURL } from '$lib/utils/parse/parseHelpersClient'
+	import { handleScrape } from '$lib/utils/parse/parseHelpersClient'
+	import RecipeNewScrape from '$lib/components/RecipeNewScrape.svelte'
 
 	let baseUrl = ''
-	let bookmarkletCode = ''
 	let url = ''
 
 	/**
@@ -47,48 +46,25 @@
 	 * @param {Event} event - The scrape event.
 	 * @returns {Promise<void>}
 	 */
-	async function handleScrape(event) {
-		if (event) event.preventDefault()
-
-		const result = await scrapeRecipeFromURL(url)
-		if (result.success) {
-			const scrapedRecipe = result.data
-			recipe.name = scrapedRecipe.name
-			recipe.source = scrapedRecipe.author
-			recipe.source_url = scrapedRecipe.sourceUrl
-			recipe.cook_time = scrapedRecipe.cookTime
-			recipe.image_url = scrapedRecipe.imageUrl
-			recipe.prep_time = scrapedRecipe.prepTime
-			recipe.ingredients = scrapedRecipe.ingredients.join('\n')
-			recipe.directions = scrapedRecipe.instructions.join('\n\n')
-			recipe.total_time = scrapedRecipe.totalTime
-			recipe.servings = scrapedRecipe.servings
-			recipe.nutritional_info = nutritionProcess(scrapedRecipe.nutrition)
-		} else {
-			console.error('Error:', result.error)
-		}
-	}
-	onMount(() => {
-		// Set the base URL and generate the bookmarklet code
-		baseUrl = window.location.origin
-		console.log('🚀 ~ file: +page.svelte:91 ~ onMount ~ baseUrl:', baseUrl)
-		bookmarkletCode = `javascript:(function() {
-        var currentUrl = encodeURIComponent(window.location.href);
-        var newUrl = '${baseUrl}/new?scrape=' + currentUrl;
-        window.open(newUrl, '_blank');
-    })();`
-
+	onMount(async () => {
 		// Check for the 'scrape' parameter and populate the form
 		const urlParams = new URLSearchParams(window.location.search)
 		const scrapeUrl = urlParams.get('scrape')
+		scrapeUrl ? (url = scrapeUrl) : null
+
 		if (scrapeUrl) {
 			// Populate the URL input field
 			url = decodeURIComponent(scrapeUrl)
 
-			// Call the handleScrape function directly
-			handleScrape().catch((error) => {
+			// Call the handleScrape function directly and get the scraped data
+			try {
+				const scrapedData = await handleScrape(null, url)
+				if (scrapedData) {
+					recipe = { ...recipe, ...scrapedData }
+				}
+			} catch (error) {
 				console.error('Error during scrape:', error)
-			})
+			}
 		}
 	})
 
@@ -113,18 +89,7 @@
 	}
 </script>
 
-<h3>Scrape Recipe</h3>
-<div class="container">
-	<form action="?/scrapeRecipe" method="POST" on:submit={handleScrape}>
-		<label for="url"> URL </label>
-		<input type="text" id="url" bind:value={url} />
-		<button type="submit">Scrape Recipe</button>
-	</form>
-	<div class="bookmarklet-button">
-		<p>Drag This Bookmark to Your Browser Toolbar to Scrape External Web Pages</p>
-		<a href={bookmarkletCode} role="button"><Bookmark width="25px" /></a>
-	</div>
-</div>
+<RecipeNewScrape initialUrl={url} {baseUrl} bind:recipe />
 
 <form on:submit|preventDefault={handleCreateRecipe}>
 	<h3>New Recipe</h3>
@@ -176,22 +141,6 @@
 </form>
 
 <style lang="scss">
-	.container {
-		display: flex;
-		align-items: start; // Align items to the top
-		width: 100%; // Ensure the container takes the full width
-
-		form {
-			flex: 1; // Allow the form to take up the remaining space
-			margin-right: 20px; // Add some spacing between the form and the button
-		}
-
-		.bookmarklet-button {
-			max-width: 300px;
-			flex-shrink: 0; // Prevent the button from shrinking
-			flex-grow: 0; // Prevent the button from growing
-		}
-	}
 	.recipe-thumbnail {
 		width: 100px;
 		height: auto;
