@@ -5,6 +5,8 @@
 	import RecipeForm from '$lib/components/RecipeForm.svelte'
 	import View from '$lib/components/svg/View.svelte'
 	import Delete from '$lib/components/svg/Delete.svelte'
+	import Sidebar from '$lib/components/Sidebar.svelte'
+	import Burger from '$lib/components/svg/Burger.svelte'
 
 	/**
 	 * The page data type.
@@ -16,7 +18,7 @@
 	let recipeCategories = [] // This will store the selected category UIDs for the recipe
 	let allCategories = [] // This will store all available categories
 	let selectedFiles = []
-	$: console.log('🚀 ~ file: +page.svelte:19 ~ selectedFiles:', selectedFiles)
+	let sidebarOpen = false
 
 	/** @type {PageData} */
 	export let data
@@ -56,7 +58,6 @@
 
 		// Append the selected files
 		for (const file of selectedFiles) {
-			console.log('🚀 ~ file: +page.svelte:58 ~ handleSubmit ~ file:', file)
 			formData.append('images', file)
 		}
 
@@ -73,9 +74,27 @@
 			console.error('Error:', error)
 		}
 	}
+
+	function toggleSidebar() {
+		sidebarOpen = !sidebarOpen
+	}
+
+	function handleSidebarClose() {
+		sidebarOpen = false
+	}
 </script>
 
-<div class="recipe-container">
+<Sidebar bind:isOpen={sidebarOpen} on:close={handleSidebarClose}>
+	<CategoryTree
+		categories={allCategories}
+		onCategoryClick={handleCategoryClick}
+		selectedCategoryUids={recipeCategories} />
+</Sidebar>
+
+<div class="recipe-container" class:sidebar-open={sidebarOpen} on:close={handleSidebarClose}>
+	<button data-tooltip="Display Category Selector" on:click={toggleSidebar}>
+		<Burger width="1.5rem" />
+	</button>
 	<RecipeForm
 		bind:recipe
 		editMode="true"
@@ -83,12 +102,6 @@
 		{recipeCategories}
 		buttonText="Update Recipe"
 		onSubmit={handleSubmit} />
-	<div class="category-container">
-		<CategoryTree
-			categories={allCategories}
-			onCategoryClick={handleCategoryClick}
-			selectedCategoryUids={recipeCategories} />
-	</div>
 </div>
 
 {#if recipe.userId === user.userId}
@@ -105,14 +118,24 @@
 
 <style lang="scss">
 	.recipe-container {
-		display: flex; /* Use Flexbox */
 		justify-content: space-between; /* Add space between the form and the category tree */
 		align-items: flex-start; /* Align items to the top */
-	}
+		transition: margin-left 0.3s ease;
+		padding: 0; // This is just an example, adjust as needed
+		&.sidebar-open {
+			margin-left: 250px;
 
-	.category-container {
-		flex-basis: 300px; /* Set a fixed width for the category tree */
-		overflow-y: auto; /* Add a scrollbar if the content overflows */
-		max-height: 80vh; /* Set a maximum height */
+			@media (max-width: 1279px) {
+				padding-left: 0; // Remove left padding when the sidebar is open
+				margin-left: 220px;
+			}
+
+			@media (max-width: 768px) {
+				margin-left: 0;
+			}
+		}
+		button {
+			margin-bottom: 1rem;
+		}
 	}
 </style>

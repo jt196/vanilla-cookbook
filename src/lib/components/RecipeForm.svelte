@@ -9,7 +9,7 @@
 	export let recipe
 	export let onSubmit
 	export let buttonText = 'Add Recipe' // Default button text
-	export let selectedFiles
+	export let selectedFiles = null
 
 	export let baseUrl = ''
 	export let editMode = false

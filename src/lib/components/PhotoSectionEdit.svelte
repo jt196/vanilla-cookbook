@@ -10,8 +10,7 @@
 	export let selectedFiles
 
 	let filteredPhotos
-	$: filteredPhotos =
-		recipe && recipe.photos ? recipe.photos.filter((photo) => photo.url === null) : []
+	$: filteredPhotos = recipe && recipe.photos ? recipe.photos.filter((photo) => photo.fileType) : []
 
 	async function handleDeletePhoto(photoId) {
 		try {
@@ -55,10 +54,6 @@
 	}
 
 	function handleFilesChange(event) {
-		console.log(
-			'🚀 ~ file: PhotoSectionEdit.svelte:59 ~ handleFilesChange ~ event.target.files:',
-			event.target.files
-		)
 		selectedFiles = Array.from(event.target.files)
 	}
 </script>
