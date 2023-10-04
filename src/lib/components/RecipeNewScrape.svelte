@@ -22,7 +22,6 @@
 		<input type="text" id="url" bind:value={url} />
 		<button type="submit">Scrape Recipe</button>
 	</form>
-	<Bookmarklet />
 </div>
 
 <style lang="scss">
@@ -33,13 +32,6 @@
 
 		form {
 			flex: 1; // Allow the form to take up the remaining space
-			margin-right: 20px; // Add some spacing between the form and the button
-		}
-
-		.bookmarklet-button {
-			max-width: 300px;
-			flex-shrink: 0; // Prevent the button from shrinking
-			flex-grow: 0; // Prevent the button from growing
 		}
 	}
 </style>
