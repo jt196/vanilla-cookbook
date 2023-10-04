@@ -1,25 +1,11 @@
 <script>
-	import Bookmark from '$lib/components/svg/Bookmark.svelte'
 	import { handleScrape } from '$lib/utils/parse/parseHelpersClient'
-
-	import { onMount } from 'svelte'
+	import Bookmarklet from './Bookmarklet.svelte'
 
 	export let initialUrl = ''
-	export let baseUrl = ''
 	export let recipe
 
 	let url = initialUrl
-	let bookmarkletCode = ''
-
-	onMount(() => {
-		// Set the base URL and generate the bookmarklet code
-		baseUrl = window.location.origin
-		bookmarkletCode = `javascript:(function() {
-            var currentUrl = encodeURIComponent(window.location.href);
-            var newUrl = '${baseUrl}/new?scrape=' + currentUrl;
-            window.open(newUrl, '_blank');
-        })();`
-	})
 
 	async function scrapeEventHandler(event) {
 		const scrapedData = await handleScrape(event, url)
@@ -36,10 +22,7 @@
 		<input type="text" id="url" bind:value={url} />
 		<button type="submit">Scrape Recipe</button>
 	</form>
-	<div class="bookmarklet-button">
-		<p>Drag This Bookmark to Your Browser Toolbar to Scrape External Web Pages</p>
-		<a href={bookmarkletCode} role="button"><Bookmark width="25px" /></a>
-	</div>
+	<Bookmarklet />
 </div>
 
 <style lang="scss">
