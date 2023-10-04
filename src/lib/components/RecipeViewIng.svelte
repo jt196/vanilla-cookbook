@@ -4,6 +4,7 @@
 	export let ingredient
 	export let scale
 	export let displayExtra
+	export let displayDryMatch
 </script>
 
 {#if ingredient.ingredient.trim() === ''}
@@ -30,6 +31,9 @@
 			>{@html ingredient.ingredient}
 			{#if displayExtra && ingredient.additional}
 				<i> | {ingredient.additional}</i>
+			{/if}
+			{#if displayDryMatch && ingredient.dryIngredient}
+				<i> | {ingredient.dryIngredient.names[0]} ({ingredient.dryIngredient.gramsPerCup} g/cup)</i>
 			{/if}
 		</span>
 	</li>
