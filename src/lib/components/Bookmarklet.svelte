@@ -20,11 +20,3 @@
 	<p>Drag This Bookmark to Your Browser Toolbar to Scrape External Web Pages</p>
 	<a href={bookmarkletCode} role="button"><Bookmark width="25px" /></a>
 </div>
-
-<style lang="scss">
-	.bookmarklet-button {
-		max-width: 300px;
-		flex-shrink: 0; // Prevent the button from shrinking
-		flex-grow: 0; // Prevent the button from growing
-	}
-</style>

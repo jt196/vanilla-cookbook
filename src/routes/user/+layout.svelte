@@ -11,6 +11,11 @@
 						Settings
 					</a>
 				</li>
+				<li>
+					<a href="/user/bookmark" class={data.pathname === '/user/bookmark' ? 'active-link' : ''}>
+						Bookmark
+					</a>
+				</li>
 				{#if data.user.isAdmin}
 					<li>
 						<a href="/user/users" class={data.pathname === '/user/users' ? 'active-link' : ''}>
