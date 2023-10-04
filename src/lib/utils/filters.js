@@ -134,38 +134,52 @@ export function scaleNumbersInString(str, scale) {
 export function decimalToFraction(decimal, decimalPlaces = 10, tolerance = 1e-10) {
 	const fractions = {
 		0.1: '⅒',
-		'1/10': '⅒',
 		0.2: '⅕',
-		'1/5': '⅕',
 		0.25: '¼',
-		'1/4': '¼',
 		0.3: '⅓',
-		0.33: '⅓',
-		'1/3': '⅓',
 		0.4: '⅖',
-		'2/5': '⅖',
 		0.5: '½',
-		'1/2': '½',
 		0.6: '⅗',
-		'3/5': '⅗',
 		0.66: '⅔',
-		'2/3': '⅔',
 		0.7: '⅔',
 		0.75: '¾',
-		'3/4': '¾',
 		0.8: '⅘',
-		'4/5': '⅘',
-		0.9: '⅚',
-		'5/6': '⅚'
+		0.9: '⅚'
+	}
+
+	// Determine the whole number and fractional parts
+	const wholeNumber = Math.floor(decimal)
+	const fractionalPart = decimal - wholeNumber
+
+	// If the decimal is a whole number, simply return it
+	if (fractionalPart === 0) {
+		return wholeNumber.toString()
 	}
 
 	// Round to a fixed number of decimal places
-	const roundedDecimal = roundToDecimalPlaces(decimal, decimalPlaces)
+	const roundedDecimal = roundToDecimalPlaces(fractionalPart, decimalPlaces)
 
 	// Further round if the number is close to an integer
-	const finalDecimal = roundToTolerance(roundedDecimal, tolerance)
+	const finalFractional = roundToTolerance(roundedDecimal, tolerance)
 
-	return fractions[finalDecimal.toString()] || finalDecimal
+	if (fractions[finalFractional]) {
+		return wholeNumber === 0
+			? fractions[finalFractional]
+			: `${wholeNumber}${fractions[finalFractional]}`
+	} else {
+		let closestFraction
+		let smallestDifference = Infinity
+
+		for (let key in fractions) {
+			let difference = Math.abs(finalFractional - parseFloat(key))
+			if (difference < smallestDifference) {
+				smallestDifference = difference
+				closestFraction = fractions[key]
+			}
+		}
+
+		return wholeNumber === 0 ? closestFraction : `${wholeNumber}${closestFraction}`
+	}
 }
 
 /**

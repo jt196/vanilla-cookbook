@@ -144,14 +144,33 @@ describe('Filter functions', () => {
 	})
 
 	describe('decimalToFraction', () => {
-		it('should convert decimal to fraction', () => {
+		it('should convert 0.5 to ½', () => {
 			const result = decimalToFraction(0.5)
 			expect(result).toBe('½')
 		})
-
-		it('should return the original number if no fraction representation is found', () => {
+		it('should convert 0.3 to ⅓', () => {
+			const result = decimalToFraction(0.3)
+			expect(result).toBe('⅓')
+		})
+		it('should convert 1.3 to 1⅓', () => {
+			const result = decimalToFraction(1.3)
+			expect(result).toBe('1⅓')
+		})
+		it('should convert 0.123 to ⅒', () => {
 			const result = decimalToFraction(0.123)
-			expect(result).toBe(0.123)
+			expect(result).toBe('⅒')
+		})
+		it('should convert 0.77 to ¾', () => {
+			const result = decimalToFraction(0.77)
+			expect(result).toBe('¾')
+		})
+		it('should return the same if a whole number', () => {
+			const result = decimalToFraction(225)
+			expect(result).toBe('225')
+		})
+		it('should convert 1.2 to 1⅕', () => {
+			const result = decimalToFraction(1.2)
+			expect(result).toBe('1⅕')
 		})
 	})
 
