@@ -2,7 +2,6 @@
 	import { decimalToFraction } from '$lib/utils/filters'
 
 	export let ingredient
-	console.log('🚀 ~ file: RecipeViewIng.svelte:5 ~ ingredient:', ingredient)
 	export let scale
 	export let displayExtra
 	export let displayDryMatch

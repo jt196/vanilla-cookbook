@@ -26,7 +26,7 @@
 		{#if scaledServings}
 			<p>Servings: {scaledServings}</p>
 		{/if}
-		{#if sanitizedIngredients.some((item) => item.ingredients)}
+		{#if sanitizedIngredients.some((item) => item.ingredient)}
 			<p><Scale bind:scale /></p>
 		{/if}
 	{/if}
