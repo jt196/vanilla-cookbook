@@ -267,6 +267,7 @@ export const manipulateIngredient = (ingredientObj, fromSystem, toSystem) => {
 
 				return {
 					...ingredientObj,
+					dryIngredient,
 					quantity: convertedQuantity,
 					unit: targetUnit,
 					unitPlural: targetUnit + 's',
@@ -303,6 +304,7 @@ export const manipulateIngredient = (ingredientObj, fromSystem, toSystem) => {
 					convertedQuantityMetric = parseFloat(convertedQuantityMetric.toFixed(1))
 					return {
 						...ingredientObj,
+						dryIngredient,
 						quantity: convertedQuantityMetric,
 						unit: targetMetricUnit,
 						unitPlural: targetMetricUnit + 's',
@@ -333,6 +335,7 @@ export const manipulateIngredient = (ingredientObj, fromSystem, toSystem) => {
 					convertedQuantityImperial = parseFloat(convertedQuantityImperial.toFixed(1))
 					return {
 						...ingredientObj,
+						dryIngredient,
 						quantity: convertedQuantityImperial,
 						unit: targetImperialUnit,
 						unitPlural: targetImperialUnit + 's',

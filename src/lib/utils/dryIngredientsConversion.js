@@ -792,7 +792,7 @@ export const dryIngredientsConversion = [
 		gramsPerCup: 92.0
 	},
 	{
-		names: ['Oats', 'Oats (Quick Cooking)', 'Oats (instant)'],
+		names: ['Oats', 'Oats (Quick Cooking)', 'Oats (instant)', 'Rolled Oats'],
 		gramsPerCup: 97.0
 	},
 	{
@@ -844,7 +844,13 @@ export const dryIngredientsConversion = [
 		gramsPerCup: 270.0
 	},
 	{
-		names: ['Peanuts (whole, shelled)', 'Whole Peanuts', 'Shelled Peanuts', 'Peanuts (whole)'],
+		names: [
+			'Peanuts (whole, shelled)',
+			'Whole Peanuts',
+			'Shelled Peanuts',
+			'Peanuts (whole)',
+			'Raw Nuts'
+		],
 		gramsPerCup: 142.0
 	},
 	{
