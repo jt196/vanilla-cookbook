@@ -2,17 +2,29 @@
 	import { checkImageExistence } from '$lib/utils/image/imageUtils'
 	import { onMount } from 'svelte'
 
+	import PhotoSectionEdit from './PhotoSectionEdit.svelte'
+	import PhotoSectionNew from './PhotoSectionNew.svelte'
+	import StarRating from '$lib/components/StarRating.svelte'
+
 	export let recipe
 	export let onSubmit
 	export let buttonText = 'Add Recipe' // Default button text
+	export let selectedFiles
 
 	export let baseUrl = ''
+	export let editMode = false
+	export let recipeCategories = null
 
 	onMount(() => {
 		baseUrl = window.location.origin
 	})
 
 	let imageExists = false
+
+	function handleRatingChange(event) {
+		recipe.rating = event.detail
+		console.log('New Rating:', recipe.rating)
+	}
 
 	$: if (recipe.image_url && baseUrl) {
 		checkImageExistence(recipe.image_url, baseUrl).then((result) => {
@@ -22,9 +34,17 @@
 </script>
 
 <form on:submit|preventDefault={onSubmit}>
-	<h3>New Recipe</h3>
+	{#if !editMode}
+		<h3>New Recipe</h3>
+	{:else}
+		<h3>Editing: {recipe.name}</h3>
+	{/if}
+
 	<label for="name"> Name </label>
 	<input type="text" id="name" name="name" bind:value={recipe.name} />
+
+	<StarRating bind:rating={recipe.rating} editable={true} on:ratingChanged={handleRatingChange} />
+	<input type="hidden" name="rating" bind:value={recipe.rating} />
 
 	<label for="source"> Source </label>
 	<input type="text" id="source" name="source" bind:value={recipe.source} />
@@ -38,12 +58,10 @@
 	<label for="image_url"> Image URL </label>
 	<input type="text" id="image_url" name="image_url" bind:value={recipe.image_url} />
 
-	{#if recipe.image_url && imageExists}
-		<img
-			class="recipe-thumbnail"
-			loading="lazy"
-			src={recipe.image_url}
-			alt="{recipe.image_url} thumbnail" />
+	{#if editMode}
+		<PhotoSectionEdit bind:recipe bind:selectedFiles />
+	{:else}
+		<PhotoSectionNew bind:recipe bind:imageExists />
 	{/if}
 
 	<label for="prep_time"> Prep Time </label>
@@ -75,13 +93,9 @@
 		bind:value={recipe.nutritional_info} />
 
 	<button type="submit">{buttonText}</button>
+	{#if recipeCategories}
+		{#each recipeCategories as categoryUid}
+			<input type="hidden" name="categories[]" value={categoryUid} />
+		{/each}
+	{/if}
 </form>
-
-<style lang="scss">
-	.recipe-thumbnail {
-		width: 100px;
-		height: auto;
-		object-fit: cover;
-		display: block;
-	}
-</style>

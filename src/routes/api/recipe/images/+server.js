@@ -6,7 +6,6 @@ export async function PUT({ request, locals }) {
 	// Parse the request data
 	const bodyText = await request.text()
 	const photosToUpdate = JSON.parse(bodyText)
-	console.log('🚀 ~ file: +server.js:9 ~ PUT ~ photosToUpdate:', photosToUpdate)
 
 	// If the user is not authenticated
 	if (!session || !user) {

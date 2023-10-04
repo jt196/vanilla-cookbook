@@ -4,7 +4,7 @@
 	import { createRecipe } from '$lib/utils/crud'
 	import { handleScrape } from '$lib/utils/parse/parseHelpersClient'
 	import RecipeNewScrape from '$lib/components/RecipeNewScrape.svelte'
-	import RecipeNewForm from '$lib/components/RecipeNewForm.svelte'
+	import RecipeForm from '$lib/components/RecipeForm.svelte'
 
 	let url = ''
 
@@ -81,4 +81,4 @@
 
 <RecipeNewScrape initialUrl={url} bind:recipe />
 
-<RecipeNewForm bind:recipe onSubmit={handleCreateRecipe} />
+<RecipeForm bind:recipe onSubmit={handleCreateRecipe} />

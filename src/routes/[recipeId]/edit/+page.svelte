@@ -1,11 +1,10 @@
 <script>
 	import CategoryTree from '$lib/components/CategoryTree.svelte'
-	import StarRating from '$lib/components/StarRating.svelte'
-	import Delete from '$lib/components/svg/Delete.svelte'
-	import View from '$lib/components/svg/View.svelte'
-	import { deleteRecipeById, updateRecipe, deletePhotoById, updatePhotos } from '$lib/utils/crud'
+	import { deleteRecipeById, updateRecipe } from '$lib/utils/crud'
 	import { goto } from '$app/navigation'
-	import UpArrow from '$lib/components/svg/UpArrow.svelte'
+	import RecipeForm from '$lib/components/RecipeForm.svelte'
+	import View from '$lib/components/svg/View.svelte'
+	import Delete from '$lib/components/svg/Delete.svelte'
 
 	/**
 	 * The page data type.
@@ -16,6 +15,8 @@
 
 	let recipeCategories = [] // This will store the selected category UIDs for the recipe
 	let allCategories = [] // This will store all available categories
+	let selectedFiles = []
+	$: console.log('🚀 ~ file: +page.svelte:19 ~ selectedFiles:', selectedFiles)
 
 	/** @type {PageData} */
 	export let data
@@ -31,11 +32,6 @@
 		} else {
 			recipeCategories = [...recipeCategories, category.uid]
 		}
-	}
-
-	function handleRatingChange(event) {
-		recipe.rating = event.detail
-		console.log('New Rating:', recipe.rating)
 	}
 
 	async function handleDelete(uid) {
@@ -60,6 +56,7 @@
 
 		// Append the selected files
 		for (const file of selectedFiles) {
+			console.log('🚀 ~ file: +page.svelte:58 ~ handleSubmit ~ file:', file)
 			formData.append('images', file)
 		}
 
@@ -76,137 +73,16 @@
 			console.error('Error:', error)
 		}
 	}
-
-	let selectedFiles = []
-
-	function handleFilesChange(event) {
-		selectedFiles = Array.from(event.target.files)
-	}
-
-	let filteredPhotos
-	$: filteredPhotos =
-		recipe && recipe.photos ? recipe.photos.filter((photo) => photo.url === null) : []
-
-	async function handleDeletePhoto(photoId) {
-		try {
-			// Determine if the photo being deleted is the main photo.
-			const isMainPhotoBeingDeleted = filteredPhotos.some(
-				(photo) => photo.id === photoId && photo.isMain
-			)
-			// Delete photo
-			await deletePhotoById(photoId)
-			// Optionally, remove the photo from the local state
-			filteredPhotos = filteredPhotos.filter((p) => p.id !== photoId)
-
-			// If the main photo was deleted, choose a new main photo.
-			if (isMainPhotoBeingDeleted) {
-				// Find the next photo where url is null to be the main photo.
-				const newMainPhoto = filteredPhotos[0]
-
-				// If a new main photo was found, set it.
-				if (newMainPhoto) {
-					handleSetMainPhoto(newMainPhoto.id)
-				}
-			}
-		} catch (error) {
-			console.error('Error deleting photo:', error.message)
-		}
-	}
-
-	async function handleSetMainPhoto(mainPhotoId) {
-		// Immediately update local data
-		filteredPhotos = filteredPhotos.map((photo) => ({
-			...photo,
-			isMain: photo.id === mainPhotoId
-		}))
-
-		const success = await updatePhotos(filteredPhotos)
-		if (!success) {
-			console.error('Failed to set the main photo.')
-		} else {
-			// Handle the success e.g. show a success notification
-		}
-	}
 </script>
 
 <div class="recipe-container">
-	<form on:submit|preventDefault={handleSubmit}>
-		<h3>Editing: {recipe.name}</h3>
-		<label for="name"> Name </label>
-		<input type="text" id="name" name="name" bind:value={recipe.name} />
-
-		<StarRating bind:rating={recipe.rating} editable={true} on:ratingChanged={handleRatingChange} />
-		<input type="hidden" name="rating" bind:value={recipe.rating} />
-
-		<label for="source"> Source </label>
-		<input type="text" id="source" name="source" bind:value={recipe.source} />
-
-		<label for="source_url"> Source URL </label>
-		<input type="text" id="source_url" name="source_url" bind:value={recipe.source_url} />
-
-		<label for="cook_time"> Cook Time </label>
-		<input type="text" id="cook_time" name="cook_time" bind:value={recipe.cook_time} />
-
-		<label for="image_url"> Image URL </label>
-		<input type="text" id="image_url" name="image_url" bind:value={recipe.image_url} />
-
-		<label for="file">Upload Images</label>
-		<input type="file" id="file" name="file" on:change={handleFilesChange} multiple />
-
-		<div class="photos">
-			{#each filteredPhotos as photo}
-				<div class="photo-container">
-					<img
-						src="/api/recipe/image/{photo.id}"
-						alt="{recipe.name} photo"
-						class={photo.isMain ? 'main-photo' : ''} />
-					<div class="photo-actions">
-						<button
-							class="outline secondary"
-							type="button"
-							on:click={() => handleDeletePhoto(photo.id)}>
-							<Delete width="30px" height="30px" fill="var(--pico-del-color)" />
-						</button>
-						{#if !photo.isMain}
-							<button
-								class="outline secondary"
-								data-tooltip="Promote to Main Photo"
-								type="button"
-								on:click={() => handleSetMainPhoto(photo.id)}>
-								<UpArrow width="30px" height="30px" fill="var(--pico-primary)" />
-							</button>
-						{/if}
-					</div>
-				</div>
-			{/each}
-		</div>
-
-		<label for="prep_time"> Prep Time </label>
-		<input type="text" id="prep_time" name="prep_time" bind:value={recipe.prep_time} />
-
-		<label for="ingredients"> Ingredients </label>
-		<textarea id="ingredients" name="ingredients" rows="5" bind:value={recipe.ingredients} />
-
-		<label for="directions"> Directions </label>
-		<textarea id="directions" name="directions" rows="5" bind:value={recipe.directions} />
-
-		<label for="total_time"> Total Time </label>
-		<input type="text" id="total_time" name="total_time" bind:value={recipe.total_time} />
-
-		<label for="servings"> Servings </label>
-		<input type="text" id="servings" name="servings" bind:value={recipe.servings} />
-
-		<label for="nutritional_info"> Nutritional Information </label>
-		<textarea
-			id="nutritional_info"
-			name="nutritional_info"
-			rows="5"
-			bind:value={recipe.nutritional_info} />
-		<button type="submit">Update Recipe</button>
-		{#each recipeCategories as categoryUid}
-			<input type="hidden" name="categories[]" value={categoryUid} />
-		{/each}
-	</form>
+	<RecipeForm
+		bind:recipe
+		editMode="true"
+		bind:selectedFiles
+		{recipeCategories}
+		buttonText="Update Recipe"
+		onSubmit={handleSubmit} />
 	<div class="category-container">
 		<CategoryTree
 			categories={allCategories}
@@ -234,44 +110,9 @@
 		align-items: flex-start; /* Align items to the top */
 	}
 
-	form {
-		flex: 1; /* Take up the remaining space after the category tree */
-		margin-right: 2rem; /* Add some margin for spacing */
-	}
-
 	.category-container {
 		flex-basis: 300px; /* Set a fixed width for the category tree */
 		overflow-y: auto; /* Add a scrollbar if the content overflows */
 		max-height: 80vh; /* Set a maximum height */
-	}
-
-	.photos {
-		margin-bottom: 1rem;
-		img {
-			max-height: 150px;
-			border-radius: 5px;
-		}
-	}
-
-	.main-photo {
-		border: 3px solid var(--pico-muted-color);
-	}
-
-	.photos {
-		display: flex;
-		gap: 10px; /* adjust as needed */
-		flex-wrap: wrap;
-	}
-
-	.photo-container {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 5px; /* adjust as needed */
-	}
-
-	.photo-actions {
-		display: flex;
-		gap: 5px; /* adjust as needed */
 	}
 </style>
