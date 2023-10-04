@@ -16,7 +16,7 @@
 	let { recipe } = data
 
 	$: filteredPhotos = (recipe.photos || [])
-		.filter((photo) => photo.url === null)
+		.filter((photo) => photo.fileType)
 		.sort((a, b) => (b.mainPhoto || 0) - (a.mainPhoto || 0))
 
 	async function handleSetMainPhoto(mainPhotoId) {
