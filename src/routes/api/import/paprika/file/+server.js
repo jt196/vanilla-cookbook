@@ -16,7 +16,6 @@ export async function POST({ request, locals }) {
 	const { filename } = await request.json()
 
 	const filepath = path.join(process.cwd(), 'src/lib/data/import', user.userId + '_' + filename)
-	console.log('🚀 ~ file: +server.js:8 ~ POST ~ filepath:', filepath)
 
 	try {
 		await fs.access(filepath, fs.constants.F_OK) // checks if the file exists

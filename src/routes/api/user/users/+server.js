@@ -1,6 +1,4 @@
-import { PrismaClient } from '@prisma/client'
-
-const prisma = new PrismaClient()
+import { prisma } from '$lib/server/prisma'
 
 export async function GET({ locals }) {
 	const { session, user } = await locals.auth.validateUser()

@@ -4,7 +4,8 @@
 	import { importFileExists } from '$lib/utils/crud.js'
 	import { onMount } from 'svelte'
 	export let data
-	const { user } = data
+	const { user, categoryCount } = data
+	console.log('🚀 ~ file: +page.svelte:8 ~ categoryCount:', categoryCount)
 
 	let paprikaUser = ''
 	let paprikaPassword = ''
@@ -76,6 +77,8 @@
 				><Delete width="30px" height="30px" fill="var(--pico-del-color)" /></button>
 		{/if}
 	</p>
+	<p>Categories in File: {categoryCount.file}</p>
+	<p>Categories in DB: {categoryCount.db}</p>
 </div>
 
 <style lang="scss">

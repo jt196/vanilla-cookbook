@@ -4,6 +4,7 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 import { extractRecipes } from '$lib/utils/import/recipeImport.js'
 import { savePhoto } from '$lib/utils/image/imageBackend.js'
+import { promises as fsPromises } from 'fs'
 
 // // Prisma doesn't support ES Modules so we have to do this
 const PrismaClient = PrismaClientPkg.PrismaClient
@@ -170,4 +171,22 @@ export async function importPaprikaData(userId) {
 
 	await addRecipeCategoriesToDB(createdRecipes, rawRecipes)
 	await handlePhotosForRecipes(rawRecipes)
+}
+
+export async function getJSONLength(filePath) {
+	try {
+		const data = await fsPromises.readFile(filePath, 'utf-8')
+		const jsonContent = JSON.parse(data)
+
+		// If the JSON content is an array, return its length. Otherwise, return null.
+		if (Array.isArray(jsonContent)) {
+			return jsonContent.length
+		} else {
+			console.error('Expected an array in the JSON file.')
+			return null
+		}
+	} catch (err) {
+		console.error('Error reading or parsing the file:', err)
+		return null
+	}
 }
