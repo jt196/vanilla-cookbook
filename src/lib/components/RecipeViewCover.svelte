@@ -2,16 +2,13 @@
 	import FoodBowl from '$lib/components/svg/FoodBowl.svelte'
 
 	export let mainPhoto
+	console.log('🚀 ~ file: RecipeViewCover.svelte:5 ~ mainPhoto:', mainPhoto.fileType)
 	export let recipe
 </script>
 
 <div class="recipe-cover">
 	{#if mainPhoto}
-		<img
-			src={mainPhoto.url && !mainPhoto.fileType
-				? mainPhoto.url
-				: `/api/recipe/image/${mainPhoto.id}`}
-			alt="{recipe.name} photo" />
+		<img src="/api/recipe/image/{mainPhoto.id}" alt="{recipe.name} photo" />
 	{:else}
 		<FoodBowl height="400px" />
 	{/if}
