@@ -1,12 +1,9 @@
 import PrismaClientPkg from '@prisma/client'
-import {
-	addCategoriesToDB,
-	loadCategories
-} from '../src/lib/utils/import/paprika/paprikaAPIUtils.js/index.js'
+import { addCategoriesToDB, loadCategories } from '$lib/utils/import/paprika/paprikaAPIUtils.js'
 import path from 'path'
 import { fileURLToPath } from 'url'
-import { extractRecipes } from '../src/lib/utils/import/recipeImport.js'
-import { savePhoto } from '../src/lib/utils/image/imageBackend.js'
+import { extractRecipes } from '$lib/utils/import/recipeImport.js'
+import { savePhoto } from '$lib/utils/image/imageBackend.js'
 
 // // Prisma doesn't support ES Modules so we have to do this
 const PrismaClient = PrismaClientPkg.PrismaClient

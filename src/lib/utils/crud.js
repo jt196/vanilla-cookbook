@@ -110,3 +110,16 @@ export async function updatePhotos(photos) {
 		return false
 	}
 }
+
+export async function importFileExists(filename) {
+	const response = await fetch('/api/import/paprika/file', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({ filename })
+	})
+
+	const result = await response.json()
+	return result.exists
+}

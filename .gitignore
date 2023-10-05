@@ -4,6 +4,7 @@ node_modules
 /.svelte-kit
 /package
 src/lib/data/recipe_html/*
+src/lib/data/import/*
 .env
 !.env.template
 vite.config.js.timestamp-*

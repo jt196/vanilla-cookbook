@@ -54,11 +54,11 @@
 <div class="container">
 	<form action="?/updatePassword" method="POST" on:submit={updatePassword}>
 		<label for="old"> Old Password </label>
-		<input type="text" id="old" bind:value={oldPass} />
+		<input type="password" id="old" bind:value={oldPass} />
 		<label for="new"> New Password </label>
-		<input type="text" id="new" bind:value={newPass} />
+		<input type="password" id="new" bind:value={newPass} />
 		<label for="confirm"> Confirm New Password </label>
-		<input type="text" id="confirm" bind:value={newPassConfirm} />
+		<input type="password" id="confirm" bind:value={newPassConfirm} />
 		<button type="submit">Update Password</button>
 	</form>
 	{#if feedbackMessage}

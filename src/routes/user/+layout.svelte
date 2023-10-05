@@ -7,13 +7,18 @@
 		<ul>
 			<form method="POST">
 				<li>
-					<a href="/user/settings" class={data.pathname === '/user/settings' ? 'active-link' : ''}>
-						Settings
+					<a href="/user/password" class={data.pathname === '/user/password' ? 'active-link' : ''}>
+						Password
 					</a>
 				</li>
 				<li>
 					<a href="/user/bookmark" class={data.pathname === '/user/bookmark' ? 'active-link' : ''}>
 						Bookmark
+					</a>
+				</li>
+				<li>
+					<a href="/user/import" class={data.pathname === '/user/import' ? 'active-link' : ''}>
+						Import
 					</a>
 				</li>
 				{#if data.user.isAdmin}

@@ -35,7 +35,7 @@
 						<li><a href="/register">Register</a></li>
 					{/if}
 				{:else}
-					<li><a href="/user/settings"><Settings width="25px" /></a></li>
+					<li><a href="/user/password"><Settings width="25px" /></a></li>
 					<li>
 						<button id="logout" formaction="/logout" type="submit">Logout</button>
 					</li>
