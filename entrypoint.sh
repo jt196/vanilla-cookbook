@@ -1,15 +1,10 @@
 #!/bin/bash
 set -e
 
-# Generate Prisma client
-# npx prisma generate
-
 # Run migrations
-# npx prisma migrate deploy
-
-# Conditionally run the seed script
-# node /app/prisma/seed.js
 npx prisma migrate deploy
+# Seed db - won't run if already seeded
+npx prisma db seed
 
 # Start your Node.js application (in foreground)
 exec nodemon --exec "node build/index.js"
