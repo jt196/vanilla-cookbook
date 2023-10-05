@@ -97,8 +97,6 @@ async function createZipWithGzippedRecipes(recipeData) {
 export async function POST({ request }) {
 	const bodyText = await request.text()
 	const recipeData = JSON.parse(bodyText)
-	console.log('🚀 ~ file: +server.js:30 ~ POST ~ recipeData:', recipeData)
-
 	try {
 		const zipBuffer = await createZipWithGzippedRecipes(recipeData)
 

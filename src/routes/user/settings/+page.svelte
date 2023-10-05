@@ -5,8 +5,6 @@
 	export let data
 
 	const { user } = data
-	console.log('🚀 ~ file: +page.svelte:9 ~ user:', user)
-
 	let feedbackMessage = ''
 
 	$: passwordsMismatch = newPass !== newPassConfirm && newPass && newPassConfirm

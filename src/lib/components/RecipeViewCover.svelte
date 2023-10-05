@@ -2,7 +2,6 @@
 	import FoodBowl from '$lib/components/svg/FoodBowl.svelte'
 
 	export let mainPhoto
-	console.log('🚀 ~ file: RecipeViewCover.svelte:5 ~ mainPhoto:', mainPhoto.fileType)
 	export let recipe
 </script>
 

@@ -31,10 +31,6 @@ export const POST = async ({ request, locals }) => {
 	const passwordValidation = validatePassword(userData.password)
 
 	if (!passwordValidation.isValid) {
-		console.log(
-			'🚀 ~ file: +server.js:42 ~ passwordValidation.message:',
-			passwordValidation.message
-		)
 		return new Response(JSON.stringify({ error: passwordValidation.message }), {
 			status: 400,
 			headers: {

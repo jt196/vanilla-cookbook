@@ -29,8 +29,6 @@ export async function GET({ locals }) {
 
 	try {
 		const users = await prisma.authUser.findMany()
-		console.log('🚀 ~ file: +server.js:32 ~ GET ~ users:', users)
-
 		return new Response(JSON.stringify(users), {
 			status: 200,
 			headers: {

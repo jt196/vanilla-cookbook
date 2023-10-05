@@ -5,10 +5,13 @@
 	import { validatePassword } from '$lib/utils/security.js'
 	import { onMount } from 'svelte'
 	import { goto } from '$app/navigation'
+	import TrueFalse from '$lib/components/TrueFalse.svelte'
 
 	export let data
 	let users = data.users
-	let adminId = data.adminId
+	// If the logged in user is an admin, this will return the id
+	// If the page is attempted access by a non-admin, it'll redirect
+	let currentAdminUserId = data.adminId
 	let isDialogOpen = false // dialog is initially closed
 	let isEditMode = false
 	let password = ''
@@ -96,7 +99,7 @@
 		// Handle response (e.g., refresh data, close modal)
 		if (response.ok) {
 			isDialogOpen = false
-			if (adminId === editingUser.id && editingUser.isAdmin === false) {
+			if (currentAdminUserId === editingUser.id && editingUser.isAdmin === false) {
 				await fetch('/logout', { method: 'POST' })
 				setTimeout(() => {
 					goto('/login')
@@ -142,6 +145,7 @@
 			<th scope="col">Email</th>
 			<th scope="col">About</th>
 			<th scope="col">Admin</th>
+			<th scope="col">Root</th>
 			<th scope="col">Edit</th>
 			<th scope="col">Del</th>
 		</tr>
@@ -151,13 +155,14 @@
 			<tr>
 				<th scope="row"
 					>{user.username}
-					{#if user.id === adminId}
+					{#if user.id === currentAdminUserId}
 						<span class="you-label">(You)</span>
 					{/if}</th>
 				<td>{user.name}</td>
 				<td>{user.email}</td>
 				<td>{user.about}</td>
-				<td>{user.isAdmin}</td>
+				<td><TrueFalse isTrue={user.isAdmin} /></td>
+				<td><TrueFalse isTrue={user.isRoot} /></td>
 				<td>
 					<button
 						on:click={() => openEditDialog(user)}
@@ -166,7 +171,7 @@
 						<Edit width="20px" fill="var(--pico-ins-color)" />
 					</button></td>
 				<td>
-					{#if user.id !== adminId}
+					{#if user.id !== currentAdminUserId || !user.isRoot}
 						<button
 							on:click={() => deleteUser(user.id)}
 							data-testid="delete-button"
