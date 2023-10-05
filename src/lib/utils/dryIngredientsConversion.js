@@ -253,7 +253,7 @@ export const dryIngredientsConversion = [
 		gramsPerCup: 113.0
 	},
 	{
-		names: ['Celery (diced)'],
+		names: ['Celery (diced)', 'Celery', 'Celery (chopped)', 'Chopped Celery'],
 		gramsPerCup: 142.0
 	},
 	{
@@ -1170,6 +1170,10 @@ export const dryIngredientsConversion = [
 	{
 		names: ['Tomato paste', 'Tomato Puree'],
 		gramsPerCup: 232.0
+	},
+	{
+		names: ['Canned Tomatoes', 'Tomatoes (Canned)'],
+		gramsPerCup: 242.0
 	},
 	{
 		names: ['Tropical Fruit Blend'],
