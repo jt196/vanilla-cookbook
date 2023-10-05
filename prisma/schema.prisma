@@ -92,6 +92,7 @@ model AuthUser {
     about        String?
     units        String?       @default("metric")
     isAdmin      Boolean       @default(false)
+    isRoot       Boolean       @default(false)
     articles     Article[]
     recipes      Recipe[]
     categories   Category[]

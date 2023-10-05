@@ -19,11 +19,11 @@ export const PUT = async ({ request, locals, params }) => {
 	}
 
 	try {
-		const existingUser = await prisma.authUser.findUnique({
+		const updatingUser = await prisma.authUser.findUnique({
 			where: { id: id }
 		})
 
-		if (!existingUser) {
+		if (!updatingUser) {
 			return new Response('User not found!', {
 				status: 404,
 				headers: {
@@ -32,7 +32,7 @@ export const PUT = async ({ request, locals, params }) => {
 			})
 		}
 
-		if (!user.isAdmin && existingUser.id !== user.userId) {
+		if (!user.isAdmin && updatingUser.id !== user.userId) {
 			return new Response('Unauthorised to update this user!', {
 				status: 401,
 				headers: {
@@ -101,7 +101,7 @@ export const PUT = async ({ request, locals, params }) => {
 		if ('isAdmin' in userData) {
 			console.log('Is Admin is in user data!')
 			// Check if this user is the only admin
-			if (existingUser.isAdmin) {
+			if (updatingUser.isAdmin) {
 				const adminCount = await prisma.authUser.count({
 					where: {
 						isAdmin: true
@@ -125,11 +125,11 @@ export const PUT = async ({ request, locals, params }) => {
 		const updatedUser = await prisma.authUser.update({
 			where: { id: id },
 			data: {
-				name: userData.name || existingUser.name,
-				username: userData.username || existingUser.username,
-				email: userData.email || existingUser.email,
-				about: userData.about || existingUser.about,
-				isAdmin: 'isAdmin' in userData ? userData.isAdmin : existingUser.isAdmin
+				name: userData.name || updatingUser.name,
+				username: userData.username || updatingUser.username,
+				email: userData.email || updatingUser.email,
+				about: userData.about || updatingUser.about,
+				isAdmin: 'isAdmin' in userData ? userData.isAdmin : updatingUser.isAdmin
 			}
 		})
 
@@ -169,6 +169,11 @@ export const PUT = async ({ request, locals, params }) => {
 
 export async function DELETE({ params, locals }) {
 	const { id } = params
+
+	const deletingUser = await prisma.authUser.findUnique({
+		where: { id: id }
+	})
+
 	const { session, user } = await locals.auth.validateUser()
 
 	if (!session || !user) {
@@ -181,8 +186,26 @@ export async function DELETE({ params, locals }) {
 		})
 	}
 
+	if (user.userId === id) {
+		return new Response('Cannot delete yourself!', {
+			status: 401,
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		})
+	}
+
 	if (!user.isAdmin) {
 		return new Response('Unauthorised to delete this user!', {
+			status: 401,
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		})
+	}
+
+	if (deletingUser.isRoot) {
+		return new Response('Cannot delete root user!', {
 			status: 401,
 			headers: {
 				'Content-Type': 'application/json'
