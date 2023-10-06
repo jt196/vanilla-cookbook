@@ -10,45 +10,87 @@
 	let paprikaUser = ''
 	let paprikaPassword = ''
 
-	let feedbackMessage
+	let catFeedbackMessage = ''
+	let recFeedbackMessage = ''
 	let catFileExists = false
 	let recFileExists = false
 
 	onMount(async () => {
 		await checkCategoryFileExists(user.userId)
+		await checkRecipeFileExists(user.userId)
 	})
 
 	async function downloadCategories() {
-		const response = await fetch('/api/import/paprika/categories', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({ paprikaUser, paprikaPassword })
-		})
+		// 1. Update the feedbackMessage to notify the user that the process has started
+		catFeedbackMessage = 'Importing categories, please wait!'
+		console.log(
+			'🚀 ~ file: +page.svelte:26 ~ downloadCategories ~ catFeedbackMessage:',
+			catFeedbackMessage
+		)
 
-		const result = await response.json()
-		if (response.ok) {
-			await checkCategoryFileExists(user.userId)
-		} else {
-			feedbackMessage = result.error
+		try {
+			const response = await fetch('/api/import/paprika/categories', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ paprikaUser, paprikaPassword })
+			})
+
+			const result = await response.json()
+
+			// 2. Update the catFeedbackMessage based on the server's response
+			if (response.ok) {
+				await checkCategoryFileExists(user.userId)
+				catFeedbackMessage = 'Categories imported successfully!'
+				console.log(
+					'🚀 ~ file: +page.svelte:43 ~ downloadCategories ~ catFeedbackMessage:',
+					catFeedbackMessage
+				)
+			} else {
+				catFeedbackMessage = result.error
+				console.log(
+					'🚀 ~ file: +page.svelte:46 ~ downloadCategories ~ catFeedbackMessage:',
+					catFeedbackMessage
+				)
+			}
+		} catch (error) {
+			// Handle any unexpected errors during the fetch
+			catFeedbackMessage = 'An unexpected error occurred. Please try again later.'
+			console.log(
+				'🚀 ~ file: +page.svelte:51 ~ downloadCategories ~ catFeedbackMessage:',
+				catFeedbackMessage
+			)
+			console.error('Error downloading categories:', error)
 		}
 	}
 
 	async function downloadRecipes() {
-		const response = await fetch('/api/import/paprika/recipes', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({ paprikaUser, paprikaPassword })
-		})
+		// 1. Update the feedbackMessage to notify the user that the process has started
+		recFeedbackMessage = 'Importing recipes, please wait!'
 
-		const result = await response.json()
-		if (response.ok) {
-			await checkRecipeFileExists(user.userId)
-		} else {
-			feedbackMessage = result.error
+		try {
+			const response = await fetch('/api/import/paprika/recipes', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ paprikaUser, paprikaPassword })
+			})
+
+			const result = await response.json()
+
+			// 2. Update the recFeedbackMessage based on the server's response
+			if (response.ok) {
+				await checkRecipeFileExists(user.userId)
+				recFeedbackMessage = 'Recipes imported successfully!'
+			} else {
+				recFeedbackMessage = result.error
+			}
+		} catch (error) {
+			// Handle any unexpected errors during the fetch
+			recFeedbackMessage = 'An unexpected error occurred. Please try again later.'
+			console.error('Error downloading recipes:', error)
 		}
 	}
 
@@ -69,9 +111,9 @@
 		const exists = await importFileExists(filename)
 		console.log('🚀 ~ file: +page.svelte:70 ~ checkRecipeFileExists ~ exists:', exists)
 		if (exists) {
-			catFileExists = exists
+			recFileExists = exists
 		} else {
-			catFileExists = false
+			recFileExists = false
 		}
 	}
 
@@ -150,15 +192,20 @@
 		<div class="import-categories">
 			<button disabled={catFileExists} on:click={downloadCategories}
 				>Download Paprika Categories</button>
-			<p class="feedback">
-				Category File: <TrueFalse isTrue={catFileExists} />{#if catFileExists}
-					<button
-						class="outline secondary"
-						disabled={!catFileExists}
-						on:click={() => removeFile('categories.json')}
-						><Delete width="30px" height="30px" fill="var(--pico-del-color)" /></button>
-				{/if}
-			</p>
+			<div class="feedback">
+				<div>
+					{catFeedbackMessage}
+				</div>
+				<div>
+					Category File: <TrueFalse isTrue={catFileExists} />{#if catFileExists}
+						<button
+							class="outline secondary"
+							disabled={!catFileExists}
+							on:click={() => removeFile('categories.json')}
+							><Delete width="30px" height="30px" fill="var(--pico-del-color)" /></button>
+					{/if}
+				</div>
+			</div>
 			<p>Categories in File: {catFile}</p>
 			<p>Categories in DB: {catDb}</p>
 			<button
@@ -169,15 +216,20 @@
 		</div>
 		<div class="import-recipes">
 			<button disabled={recFileExists} on:click={downloadRecipes}>Download Paprika Recipes</button>
-			<p class="feedback">
-				Category File: <TrueFalse isTrue={recFileExists} />{#if recFileExists}
-					<button
-						class="outline secondary"
-						disabled={!recFileExists}
-						on:click={() => removeFile('recipes.json')}
-						><Delete width="30px" height="30px" fill="var(--pico-del-color)" /></button>
-				{/if}
-			</p>
+			<div class="feedback">
+				<div>
+					{recFeedbackMessage}
+				</div>
+				<div>
+					Recipe File: <TrueFalse isTrue={recFileExists} />{#if recFileExists}
+						<button
+							class="outline secondary"
+							disabled={!recFileExists}
+							on:click={() => removeFile('recipes.json')}
+							><Delete width="30px" height="30px" fill="var(--pico-del-color)" /></button>
+					{/if}
+				</div>
+			</div>
 			<p>Recipes in File: {recFile}</p>
 			<p>Recipes in DB: {recDb}</p>
 			<button
@@ -191,11 +243,18 @@
 
 <style lang="scss">
 	.feedback {
-		margin-top: 1rem;
+		margin: 1rem 0 1rem 0;
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
 	}
 
 	.paprika-files {
 		display: flex;
 		gap: 1rem;
+	}
+
+	.outline.secondary {
+		margin-left: 1rem; /* Adjust this value as required */
 	}
 </style>

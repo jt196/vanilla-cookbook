@@ -16,6 +16,8 @@ import { promises as fsPromises } from 'fs'
 config()
 
 const BASE_URL = 'https://www.paprikaapp.com/api/v1/sync/'
+const __filename = fileURLToPath(import.meta.url)
+export const __dirname = path.dirname(__filename)
 
 /**
  * Fetches data from the Paprika API for a given endpoint.
@@ -131,7 +133,7 @@ export const saveRecipes = async (username, password, filename, photoDirectory) 
  * @param {string} password - The user's password.
  * @returns {Promise<Array>} - An array containing details of the first recipe.
  */
-export const fetchFirstRecipeDetails = async (email, password) => {
+export const fetchFirstRecipeDetails = async (email, password, userId) => {
 	const recipeList = await recipes(email, password)
 	if (recipeList.length === 0) {
 		throw new Error('No recipes found.')
@@ -140,7 +142,7 @@ export const fetchFirstRecipeDetails = async (email, password) => {
 	const firstRecipe = recipeList[0]
 	let detailedRecipe = await recipe(firstRecipe.uid, email, password)
 	// Replace the uids with names
-	detailedRecipe = await replaceCategoryUIDsWithNames(detailedRecipe, email, password)
+	detailedRecipe = await replaceCategoryUIDsWithNames(detailedRecipe, email, password, userId)
 
 	return [detailedRecipe]
 }
@@ -154,14 +156,21 @@ export const fetchFirstRecipeDetails = async (email, password) => {
  * @param {string} password - The user's password.
  * @returns {Promise<Array>} - An array of detailed recipes.
  */
-export const fetchDetailedRecipes = async (email, password) => {
+export const fetchDetailedRecipes = async (email, password, userId) => {
 	const recipeList = await recipes(email, password)
 	const detailedRecipes = []
 
-	for (const r of recipeList) {
+	// Loop through only the first 10 items of recipeList
+	// for (let i = 0; i < Math.min(10, recipeList.length); i++) {
+	for (let i = 0; i < recipeList.length; i++) {
+		console.log('🚀 ~ file: paprikaAPIUtils.js:165 ~ fetchDetailedRecipes ~ i:', i)
+		const r = recipeList[i]
+		console.log('🚀 ~ file: paprikaAPIUtils.js:167 ~ fetchDetailedRecipes ~ r:', r)
+
 		let detailedRecipe = await recipe(r.uid, email, password)
+
 		// Replace the uids with names
-		detailedRecipe = await replaceCategoryUIDsWithNames(detailedRecipe, email, password)
+		detailedRecipe = await replaceCategoryUIDsWithNames(detailedRecipe, email, password, userId)
 		detailedRecipes.push(detailedRecipe)
 	}
 
@@ -175,8 +184,8 @@ export const fetchDetailedRecipes = async (email, password) => {
  * @param {string} password - The user's password.
  * @returns {Promise<Object>} - The updated recipe with category names.
  */
-const replaceCategoryUIDsWithNames = async (recipe, email, password) => {
-	const categoriesList = await getCategories(email, password)
+const replaceCategoryUIDsWithNames = async (recipe, email, password, userId) => {
+	const categoriesList = await getCategories(email, password, userId)
 	const categoryMap = categoriesList.reduce((acc, category) => {
 		acc[category.uid] = category.name
 		return acc
@@ -188,23 +197,21 @@ const replaceCategoryUIDsWithNames = async (recipe, email, password) => {
 	return updatedRecipe
 }
 
-const __filename = fileURLToPath(import.meta.url)
-export const __dirname = path.dirname(__filename)
-
-const categoriesFilePath = path.join(__dirname, '../../../data/import/categories.json')
-
 /**
  * Downloads categories from the Paprika API and saves them to lib/data/categories.json
  * @param {string} email - The user's email.
  * @param {string} password - The user's password.
  * @returns {Promise<Array>} - An array of categories.
  */
-const getCategories = async (email, password) => {
+const getCategories = async (email, password, userId) => {
+	const categoriesFilePath = path.join(__dirname, `../../../data/import/${userId}_categories.json`)
 	try {
+		console.log('Accessing the local categories!')
 		await fs.access(categoriesFilePath)
 		const categoriesData = await fs.readFile(categoriesFilePath, 'utf-8')
 		return JSON.parse(categoriesData)
 	} catch (error) {
+		console.log('🚀 ~ file: paprikaAPIUtils.js:207 ~ getCategories ~ error:', error)
 		const fetchedCategories = await categories(email, password)
 		await fs.writeFile(categoriesFilePath, JSON.stringify(fetchedCategories, null, 2))
 		return fetchedCategories

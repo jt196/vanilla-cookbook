@@ -28,7 +28,8 @@ export async function POST({ request, locals }) {
 			}
 		})
 	} catch (error) {
-		return new Response(JSON.stringify({ error: `Error fetching recipes: ${error.message}` }), {
+		console.error('Error during fetchData:', error)
+		return new Response(JSON.stringify({ error: 'Failed to fetch recipes.' }), {
 			status: 500,
 			headers: {
 				'Content-Type': 'application/json'

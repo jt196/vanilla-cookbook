@@ -26,11 +26,8 @@ export const load = async ({ url, fetch, locals }) => {
 	try {
 		const response = await fetch(`/api/user/${user.userId}/recipes/count`)
 		const data = await response.json()
-		console.log('🚀 ~ file: +page.server.js:29 ~ load ~ data:', data)
-
 		if (data && data.count) {
 			dbRecCount = data.count
-			console.log('🚀 ~ file: +page.server.js:33 ~ load ~ dbRecCount:', dbRecCount)
 		}
 	} catch (err) {
 		console.error('Error fetching recipe db count:', err)
@@ -41,8 +38,6 @@ export const load = async ({ url, fetch, locals }) => {
 	try {
 		const response = await fetch(`/api/import/paprika/categories`)
 		const data = await response.json()
-		console.log('🚀 ~ file: +page.server.js:44 ~ load ~ data:', data)
-
 		if (data && data.fileCount) {
 			fileCategoryCount = data.fileCount
 		}
@@ -54,8 +49,6 @@ export const load = async ({ url, fetch, locals }) => {
 	try {
 		const response = await fetch(`/api/import/paprika/recipes`)
 		const data = await response.json()
-		console.log('🚀 ~ file: +page.server.js:57 ~ load ~ data:', data)
-
 		if (data && data.fileCount) {
 			fileRecCount = data.fileCount
 		}

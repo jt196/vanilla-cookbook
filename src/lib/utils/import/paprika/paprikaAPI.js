@@ -83,22 +83,24 @@ export async function fetchData(fetchType, email, password, userId) {
 		console.error(
 			'Please specify a valid argument (e.g., "categories", "recipes", "groceries", etc.).'
 		)
-		return // Return early if fetchType is invalid
+		return Promise.reject('Invalid fetchType provided') // Reject with an error message
 	}
 
 	// 2. Execute the appropriate fetch function with the necessary credentials
 	const outputPath = path.join(__dirname, '../../../data/import', userId + '_' + outputFilename)
 	console.log('🚀 ~ file: paprikaAPI.js:91 ~ fetchData ~ outputPath:', outputPath)
 	try {
-		const data = await fetchFunction(email, password)
+		const data = await fetchFunction(email, password, userId)
+		console.log('🚀 ~ file: paprikaAPI.js:94 ~ fetchData ~ userId:', userId)
 		console.log('🚀 ~ file: paprikaAPI.js:94 ~ fetchData ~ password:', password)
 		console.log('🚀 ~ file: paprikaAPI.js:94 ~ fetchData ~ email:', email)
-		console.log('🚀 ~ file: paprikaAPI.js:94 ~ fetchData ~ data:', data)
 
 		// 3. Write the resulting data to an appropriate file
 		await fs.writeFile(outputPath, JSON.stringify(data, null, 2))
 		console.log(`Data saved to ${outputPath}`)
+		return Promise.resolve(`Data saved to ${outputPath}`) // Resolve with a success message
 	} catch (error) {
 		console.error(`Error fetching ${fetchType}:`, error)
+		return Promise.reject(`Error fetching ${fetchType}: ${error.message}`) // Reject with an error message
 	}
 }
