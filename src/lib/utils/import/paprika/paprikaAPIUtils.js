@@ -8,18 +8,14 @@ import axios from 'axios'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import { config } from 'dotenv'
-import PrismaClientPkg from '@prisma/client'
+import { prisma } from '$lib/server/prisma'
+import { extractRecipes } from '../recipeImport'
+import { savePhoto } from '$lib/utils/image/imageBackend'
+import { promises as fsPromises } from 'fs'
 
 config()
 
 const BASE_URL = 'https://www.paprikaapp.com/api/v1/sync/'
-const email = process.env.PAPRIKA_EMAIL
-const password = process.env.PAPRIKA_PASSWORD
-
-// // Prisma doesn't support ES Modules so we have to do this
-const PrismaClient = PrismaClientPkg.PrismaClient
-// Different name of prismaC as the auth is importing prisma from the adapter
-const prismaC = new PrismaClient()
 
 /**
  * Fetches data from the Paprika API for a given endpoint.
@@ -219,16 +215,29 @@ const getCategories = async (email, password) => {
  * 1. Loads categories either from a local file or fetches them from the API.
  * @returns {Promise<Array>} - An array of categories.
  */
-export async function loadCategories() {
+export async function loadCategories(filepath) {
 	try {
-		if (await fs.access(categoriesFilePath)) {
-			const data = await fs.readFile(categoriesFilePath, 'utf-8')
+		if (await fs.access(filepath)) {
+			const data = await fs.readFile(filepath, 'utf-8')
 			return JSON.parse(data)
 		} else {
-			return await getCategories(email, password)
+			console.log("Categories file doesn't exist!")
+			// return await getCategories(email, password)
 		}
 	} catch (error) {
 		console.error('Error loading categories:', error.message)
+		return []
+	}
+}
+
+// 6. Load Recipes
+export async function loadRecipes(filename) {
+	try {
+		const recipesPath = path.join(__dirname, '../src/lib/data/import/', filename) // Adjust the filename
+		let recipes = await extractRecipes(recipesPath)
+		return recipes
+	} catch (error) {
+		console.error('Error loading recipes:', error.message)
 		return []
 	}
 }
@@ -246,7 +255,7 @@ export async function addCategoriesToDB(categories, userId) {
 
 	// Insert top-level parents first
 	for (const category of topLevelParents) {
-		await prismaC.category.upsert({
+		await prisma.category.upsert({
 			where: { uid: category.uid },
 			update: { ...category, userId: userId },
 			create: { ...category, userId: userId }
@@ -261,7 +270,7 @@ export async function addCategoriesToDB(categories, userId) {
 		for (let i = 0; i < childCategories.length; i++) {
 			const category = childCategories[i]
 			if (processedUids.has(category.parent_uid)) {
-				await prismaC.category.upsert({
+				await prisma.category.upsert({
 					where: { uid: category.uid },
 					update: { ...category, userId: userId },
 					create: { ...category, userId: userId }
@@ -271,5 +280,156 @@ export async function addCategoriesToDB(categories, userId) {
 				i-- // Adjust the index since we've modified the array
 			}
 		}
+	}
+}
+
+export async function addRecipesToDB(declaredRecipes, adminUserId) {
+	const createdRecipes = []
+	for (const recipe of declaredRecipes) {
+		const createdRecipe = await prisma.recipe.create({
+			data: {
+				...recipe,
+				userId: adminUserId
+			}
+		})
+		createdRecipes.push(createdRecipe)
+	}
+	return createdRecipes
+}
+
+export async function handlePhotosForRecipes(createdRecipes) {
+	const __dirname = path.dirname(fileURLToPath(import.meta.url))
+	const uploadDir = path.join(__dirname, '../uploads') // Adjust the path to point to the root /static folder
+	for (const recipe of createdRecipes) {
+		// Handle the main photo
+		if (recipe.photo && recipe.photo_data) {
+			await savePhoto(recipe.photo_data, recipe.photo, uploadDir)
+			await prisma.recipePhoto.create({
+				data: {
+					id: recipe.photo.split('.')[0],
+					recipeUid: recipe.uid,
+					isMain: true,
+					fileType: getFileType(recipe.photo)
+				}
+			})
+		}
+
+		// Handle the photos array
+		if (recipe.photos && recipe.photos.length > 0) {
+			for (const photoObj of recipe.photos) {
+				const { data: photoData, filename } = photoObj
+				await savePhoto(photoData, filename, uploadDir)
+				await prisma.recipePhoto.create({
+					data: {
+						id: filename.split('.')[0],
+						recipeUid: recipe.uid,
+						fileType: getFileType(filename)
+					}
+				})
+			}
+		}
+
+		// Handle the photo_url
+		if (recipe.image_url) {
+			await prisma.recipePhoto.create({
+				data: {
+					recipeUid: recipe.uid,
+					url: recipe.image_url
+				}
+			})
+		}
+	}
+}
+
+export async function addRecipeCategoriesToDB(createdRecipes, rawRecipes) {
+	for (const recipe of createdRecipes) {
+		const originalRecipe = rawRecipes.find((raw) => raw.uid === recipe.uid)
+		const categoryNames = originalRecipe.categories
+
+		const categories = await prisma.category.findMany({
+			where: {
+				name: {
+					in: categoryNames
+				}
+			}
+		})
+
+		for (const category of categories) {
+			await prisma.recipeCategory.create({
+				data: {
+					recipeUid: recipe.uid,
+					categoryUid: category.uid
+				}
+			})
+		}
+	}
+}
+
+// Parse a recipe object and create any categories that don't exist
+export async function ensureCategoriesExist(rawRecipes, adminUserId) {
+	const allCategoriesFromRecipes = rawRecipes.flatMap((recipe) => recipe.categories)
+	const uniqueCategories = [...new Set(allCategoriesFromRecipes)]
+
+	const existingCategories = await prisma.category.findMany({
+		where: {
+			name: {
+				in: uniqueCategories
+			}
+		}
+	})
+
+	const existingCategoryNames = existingCategories.map((cat) => cat.name)
+	const categoriesToCreate = uniqueCategories.filter(
+		(catName) => !existingCategoryNames.includes(catName)
+	)
+
+	await Promise.all(
+		categoriesToCreate.map((catName) => {
+			return prisma.category.create({
+				data: {
+					name: catName,
+					userId: adminUserId
+				}
+			})
+		})
+	)
+
+	return [...existingCategories, ...categoriesToCreate]
+}
+
+export function getFileType(filename) {
+	return filename.split('.').pop()
+}
+
+export async function declareRecipes(rawRecipes) {
+	return rawRecipes.map((recipe) => {
+		// eslint-disable-next-line no-unused-vars
+		const { categories, photo_data, photos, photo_url, photo, ...otherRecipeFields } = recipe
+		return {
+			...otherRecipeFields,
+			created: new Date(otherRecipeFields.created)
+		}
+	})
+}
+
+export async function getJSONLength(filePath) {
+	try {
+		const data = await fsPromises.readFile(filePath, 'utf-8')
+		const jsonContent = JSON.parse(data)
+
+		// If the JSON content is an array, return its length. Otherwise, return null.
+		if (Array.isArray(jsonContent)) {
+			return jsonContent.length
+		} else {
+			console.error('Expected an array in the JSON file.')
+			return null
+		}
+	} catch (err) {
+		if (err.code === 'ENOENT') {
+			// File not found
+			return 0
+		}
+		console.error('Error reading or parsing the file:', err)
+		return null
 	}
 }

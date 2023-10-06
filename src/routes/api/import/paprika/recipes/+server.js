@@ -1,8 +1,8 @@
 import { fetchData } from '$lib/utils/import/paprika/paprikaAPI.js'
 import path from 'path'
 import {
-	addCategoriesToDB,
-	loadCategories,
+	addRecipesToDB,
+	loadRecipes,
 	getJSONLength
 } from '$lib/utils/import/paprika/paprikaAPIUtils.js'
 
@@ -20,15 +20,15 @@ export async function POST({ request, locals }) {
 
 	const { paprikaUser, paprikaPassword } = await request.json()
 	try {
-		await fetchData('categories', paprikaUser, paprikaPassword, user.userId)
-		return new Response(JSON.stringify({ success: 'Categories fetched successfully.' }), {
+		await fetchData('recipes', paprikaUser, paprikaPassword, user.userId)
+		return new Response(JSON.stringify({ success: 'Recipes fetched successfully.' }), {
 			status: 200,
 			headers: {
 				'Content-Type': 'application/json'
 			}
 		})
 	} catch (error) {
-		return new Response(JSON.stringify({ error: `Error fetching categories: ${error.message}` }), {
+		return new Response(JSON.stringify({ error: `Error fetching recipes: ${error.message}` }), {
 			status: 500,
 			headers: {
 				'Content-Type': 'application/json'
@@ -37,7 +37,7 @@ export async function POST({ request, locals }) {
 	}
 }
 
-// If [userId]_categories.json exists, how many items are in it
+// If [userId]_recipes.json exists, how many items are in it
 export async function GET({ locals }) {
 	// Validate the logged-in user from the Lucia locals object
 	const { user, session } = await locals.auth.validateUser()
@@ -52,11 +52,7 @@ export async function GET({ locals }) {
 
 	try {
 		// Get the count from the JSON file
-		const filePath = path.join(
-			process.cwd(),
-			'src/lib/data/import',
-			`${user.userId}_categories.json`
-		)
+		const filePath = path.join(process.cwd(), 'src/lib/data/import', `${user.userId}_recipes.json`)
 		const fileCount = await getJSONLength(filePath)
 
 		return new Response(JSON.stringify({ fileCount }), {
@@ -66,7 +62,8 @@ export async function GET({ locals }) {
 			}
 		})
 	} catch (error) {
-		console.error('Error getting category count from JSON file:', error)
+		console.error('Error getting recipe count from JSON file:', error)
+
 		if (error.code === 'ENOENT') {
 			// File not found
 			return new Response(JSON.stringify({ fileCount: 0 }), {
@@ -99,17 +96,13 @@ export async function PUT({ locals }) {
 	}
 
 	try {
-		const filepath = path.join(
-			process.cwd(),
-			'src/lib/data/import',
-			user.userId + '_categories.json'
-		)
+		const filepath = path.join(process.cwd(), 'src/lib/data/import', user.userId + '_recipes.json')
 		// Load categories using the utility function
-		const categories = await loadCategories(filepath)
+		const categories = await loadRecipes(filepath)
 
 		// If no categories are returned or the list is empty, respond appropriately
 		if (!categories || categories.length === 0) {
-			return new Response(JSON.stringify({ error: 'No categories found to import.' }), {
+			return new Response(JSON.stringify({ error: 'No recipes found to import.' }), {
 				status: 400,
 				headers: {
 					'Content-Type': 'application/json'
@@ -118,10 +111,10 @@ export async function PUT({ locals }) {
 		}
 
 		// Call the function to add categories to the database
-		await addCategoriesToDB(categories, user.userId)
+		await addRecipesToDB(categories, user.userId)
 
 		return new Response(
-			JSON.stringify({ success: true, message: 'Categories added to the database.' }),
+			JSON.stringify({ success: true, message: 'Recipes added to the database.' }),
 			{
 				status: 200,
 				headers: {
@@ -130,7 +123,7 @@ export async function PUT({ locals }) {
 			}
 		)
 	} catch (error) {
-		console.error('Error adding categories to database:', error)
+		console.error('Error adding recipes to database:', error)
 
 		return new Response(JSON.stringify({ error: 'Internal server error.' }), {
 			status: 500,
