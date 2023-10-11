@@ -5,11 +5,11 @@
 	import { importFileExists, uploadPaprikaFile } from '$lib/utils/crud.js'
 	import { onMount } from 'svelte'
 	export let data
-	let paprikarecipesFiles = []
 	const { user, importCount } = data
-	;({ paprikarecipesFiles } = data)
+	let paprikarecipesFiles = data.paprikarecipesFiles
 
-	const { catDb, catFile, recDb, recFile } = importCount
+	const { catFile, recDb, recFile } = importCount
+	let catDb = importCount.catDb
 
 	let paprikaUser = ''
 	let paprikaPassword = ''
@@ -21,8 +21,6 @@
 	let recFileExists = false
 
 	let selectedFiles = []
-	$: console.log('🚀 ~ file: +page.svelte:20 ~ selectedFiles:', selectedFiles.length)
-
 	onMount(async () => {
 		await checkCategoryFileExists(user.userId)
 		await checkRecipeFileExists(user.userId)
@@ -47,24 +45,12 @@
 			if (response.ok) {
 				await checkCategoryFileExists(user.userId)
 				catFeedbackMessage = 'Categories imported successfully!'
-				console.log(
-					'🚀 ~ file: +page.svelte:43 ~ downloadCategories ~ catFeedbackMessage:',
-					catFeedbackMessage
-				)
 			} else {
 				catFeedbackMessage = result.error
-				console.log(
-					'🚀 ~ file: +page.svelte:46 ~ downloadCategories ~ catFeedbackMessage:',
-					catFeedbackMessage
-				)
 			}
 		} catch (error) {
 			// Handle any unexpected errors during the fetch
 			catFeedbackMessage = 'An unexpected error occurred. Please try again later.'
-			console.log(
-				'🚀 ~ file: +page.svelte:51 ~ downloadCategories ~ catFeedbackMessage:',
-				catFeedbackMessage
-			)
 			console.error('Error downloading categories:', error)
 		}
 	}
@@ -102,7 +88,6 @@
 	async function checkCategoryFileExists() {
 		const filename = 'categories.json'
 		const exists = await importFileExists(filename)
-		console.log('🚀 ~ file: +page.svelte:39 ~ checkCategoryFileExists ~ exists:', exists)
 		if (exists) {
 			catFileExists = exists
 		} else {
@@ -113,7 +98,6 @@
 	async function checkRecipeFileExists() {
 		const filename = 'recipes.json'
 		const exists = await importFileExists(filename)
-		console.log('🚀 ~ file: +page.svelte:70 ~ checkRecipeFileExists ~ exists:', exists)
 		if (exists) {
 			recFileExists = exists
 		} else {
@@ -156,8 +140,19 @@
 
 			const data = await response.json()
 
-			if (data.success) {
+			if (response.status === 200) {
 				catImportStatus = 'Categories successfully imported!'
+				try {
+					const response = await fetch(`/api/user/${user.userId}/categories/count`)
+					const data = await response.json()
+					console.log('🚀 ~ file: +page.svelte:148 ~ importCategoriesFromFile ~ data:', data)
+
+					if (data && data.count) {
+						catDb = data.count
+					}
+				} catch (err) {
+					console.error('Error fetching category db count:', err)
+				}
 			} else {
 				catImportStatus = data.error || 'An unknown error occurred.'
 			}
@@ -179,7 +174,7 @@
 
 			const data = await response.json()
 
-			if (data.success) {
+			if (response.status === 200) {
 				recImportStatus = 'Recipes successfully imported!'
 			} else {
 				recImportStatus = data.error || 'An unknown error occurred.'
@@ -210,7 +205,6 @@
 		}
 
 		const result = await uploadPaprikaFile(formData)
-		console.log('🚀 ~ file: +page.svelte:217 ~ handleSubmit ~ result:', result)
 		console.log('Uploading File!')
 		if (result.success) {
 			console.log('File uploaded successfully!')
@@ -236,7 +230,7 @@
 
 			const data = await response.json()
 
-			if (data.success) {
+			if (response.status === 200) {
 				recImportStatus = 'Recipes successfully imported!'
 			} else {
 				recImportStatus = data.error || 'An unknown error occurred.'
@@ -251,7 +245,7 @@
 		try {
 			const response = await fetch('/api/import/paprika/paprikarecipes')
 			const data = await response.json()
-			if (data.success) {
+			if (response.status === 200) {
 				paprikarecipesFiles = data.files // Update the files list on the frontend
 			}
 		} catch (error) {
@@ -290,7 +284,7 @@
 				class="outline secondary"
 				disabled={catDb === catFile || catFile === 0 || catFile === null}
 				on:click={importCategoriesFromFile}>Import Categories</button>
-			<p>{catImportStatus ? catImportStatus : ''}</p>
+			<FeedbackMessage message={catImportStatus} />
 		</div>
 		<div class="import-recipes">
 			<button disabled={recFileExists} on:click={downloadRecipes}>Download Paprika Recipes</button>
@@ -312,7 +306,7 @@
 				class="outline secondary"
 				disabled={recDb === recFile || recFile === 0 || recFile === null}
 				on:click={importRecipesFromFile}>Import Recipes</button>
-			<p>{recImportStatus ? recImportStatus : ''}</p>
+			<FeedbackMessage message={recImportStatus} />
 		</div>
 	</div>
 	<div class="paprika-file-upload">

@@ -62,10 +62,6 @@ export const load = async ({ url, fetch, locals }) => {
 		const data = await response.json()
 		if (data && data.files) {
 			paprikarecipesFiles = data.files
-			console.log(
-				'🚀 ~ file: +page.server.js:65 ~ load ~ paprikarecipesFiles:',
-				paprikarecipesFiles
-			)
 		}
 	} catch (err) {
 		console.error('Error fetching category file count:', err)

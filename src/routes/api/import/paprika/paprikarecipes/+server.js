@@ -25,7 +25,7 @@ export async function GET({ locals }) {
 		// Filter out filenames with the .paprikarecipes extension
 		const paprikaFiles = files.filter((file) => path.extname(file) === '.paprikarecipes')
 
-		return new Response(JSON.stringify({ success: true, files: paprikaFiles }), {
+		return new Response(JSON.stringify({ files: paprikaFiles }), {
 			status: 200,
 			headers: {
 				'Content-Type': 'application/json'

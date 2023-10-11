@@ -5,9 +5,12 @@ import { prisma } from '$lib/server/prisma'
 export async function GET({ params, locals }) {
 	// Destructure the user ID from the URL params
 	const { id } = params
+	console.log('🚀 ~ file: +server.js:8 ~ GET ~ id:', id)
 
 	// Validate the logged-in user from the Lucia locals object
-	const { user } = await locals.auth.validateUser()
+	// eslint-disable-next-line no-unused-vars
+	const { session, user } = await locals.auth.validateUser()
+	console.log('🚀 ~ file: +server.js:11 ~ GET ~ user:', user)
 	if (!user || user.userId !== id) {
 		return new Response(JSON.stringify({ error: 'User not authenticated or wrong user.' }), {
 			status: 403,

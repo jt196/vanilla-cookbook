@@ -2,8 +2,6 @@
  * Utility functions for fetching and processing data from the Paprika API.
  * @module paprikaAPI
  */
-
-import { promises as fs } from 'fs'
 import axios from 'axios'
 import path from 'path'
 import { fileURLToPath } from 'url'
@@ -70,7 +68,7 @@ export const status = (email, password) => resource('status', email, password)
  */
 const download = async (uri, filename) => {
 	const response = await axios.get(uri, { responseType: 'stream' })
-	const writer = fs.createWriteStream(filename)
+	const writer = fsPromises.createWriteStream(filename)
 	response.data.pipe(writer)
 
 	return new Promise((resolve, reject) => {
@@ -118,7 +116,7 @@ export const exportRecipes = async (username, password) => {
 export const saveRecipes = async (username, password, filename, photoDirectory) => {
 	const recipes = await exportRecipes(username, password)
 
-	await fs.writeFile(filename, JSON.stringify(recipes))
+	await fsPromises.writeFile(filename, JSON.stringify(recipes))
 
 	console.log(`${recipes.length} recipes were saved.`)
 
@@ -210,32 +208,37 @@ const getCategories = async (email, password, userId) => {
 	)
 	try {
 		console.log('Accessing the local categories!')
-		await fs.access(categoriesFilePath)
-		const categoriesData = await fs.readFile(categoriesFilePath, 'utf-8')
+		await fsPromises.access(categoriesFilePath)
+		const categoriesData = await fsPromises.readFile(categoriesFilePath, 'utf-8')
 		return JSON.parse(categoriesData)
 	} catch (error) {
 		console.log('🚀 ~ file: paprikaAPIUtils.js:207 ~ getCategories ~ error:', error)
 		const fetchedCategories = await categories(email, password)
-		await fs.writeFile(categoriesFilePath, JSON.stringify(fetchedCategories, null, 2))
+		await fsPromises.writeFile(categoriesFilePath, JSON.stringify(fetchedCategories, null, 2))
 		return fetchedCategories
 	}
 }
 
 /**
- * 1. Loads categories either from a local file or fetches them from the API.
+ * 1. Loads categories either from a local file
  * @returns {Promise<Array>} - An array of categories.
  */
 export async function loadCategories(filepath) {
+	console.log('🚀 ~ file: paprikaAPIUtils.js:229 ~ loadCategories ~ filepath:', filepath)
 	try {
-		if (await fs.access(filepath)) {
-			const data = await fs.readFile(filepath, 'utf-8')
-			return JSON.parse(data)
-		} else {
-			console.log("Categories file doesn't exist!")
-			// return await getCategories(email, password)
-		}
+		// This will throw an error if the file does not exist or is inaccessible
+		await fsPromises.access(filepath)
+
+		// If there's no error, we can read the file
+		const data = await fsPromises.readFile(filepath, 'utf-8')
+		return JSON.parse(data)
 	} catch (error) {
-		console.error('Error loading categories:', error.message)
+		if (error.code === 'ENOENT') {
+			console.log("Categories file doesn't exist!")
+			// return await getCategories(email, password);
+		} else {
+			console.error('Error loading categories:', error.message)
+		}
 		return []
 	}
 }
