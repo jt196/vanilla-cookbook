@@ -24,6 +24,7 @@ export async function deleteSinglePhotoFile(id, fileType) {
 	}
 }
 
+// eslint-disable-next-line no-unused-vars
 async function downloadImage(url, photoFilename, directory) {
 	console.log('Downloading Image!')
 	const response = await fetch(url)
@@ -59,9 +60,27 @@ export async function processImage(imageUrl, uid, fileExtension) {
 	const imageFullPath = path.join(imagePath, filename)
 	const tempImagePath = path.join(imagePath, `${uid}_temp.${fileExtension}`)
 
-	await downloadImage(imageUrl, filename, imagePath)
+	// 1. Download the image and keep it as a buffer
+	const buffer = await downloadImageAsBuffer(imageUrl)
+
+	// 2. Validate the buffer
+	const fileTypeResult = await fileTypeFromBuffer(buffer)
+	if (!fileTypeResult || !validImageTypes.includes(fileTypeResult.ext)) {
+		throw new Error('Invalid image type.')
+	}
+
+	// 3. Save buffer to file
+	await saveFile(buffer, filename, imagePath)
+
 	await resizeImage(imageFullPath, tempImagePath, 1024)
 
 	// Replace the original image with the resized version
 	await fsPromises.rename(tempImagePath, imageFullPath)
+}
+
+// Helper function to download image as buffer
+async function downloadImageAsBuffer(url) {
+	const response = await fetch(url)
+	const arrayBuffer = await response.arrayBuffer()
+	return Buffer.from(arrayBuffer)
 }
