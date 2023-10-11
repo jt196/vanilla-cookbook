@@ -8,41 +8,44 @@
 	export let displayOriginal
 </script>
 
-{#if ingredient.ingredient.trim() === ''}
-	<li>
-		{ingredient.originalString}
-	</li>
-{:else if /<h[1-6]>/.test(ingredient.ingredient)}
-	<div data-heading>{@html ingredient.ingredient}</div>
-{:else}
-	<li>
-		<strong>
-			{#if ingredient.minQty == ingredient.maxQty && ingredient.quantity}
-				{decimalToFraction(ingredient.quantity * scale)}
-			{:else if ingredient.minQty != ingredient.maxQty && ingredient.quantity}
-				{decimalToFraction(ingredient.minQty * scale)}-{decimalToFraction(
-					ingredient.maxQty * scale
-				)}
+{#if typeof ingredient.ingredient === 'string'}
+	{#if ingredient.ingredient.trim() === ''}
+		<li>
+			{ingredient.originalString}
+		</li>
+	{:else if /<h[1-6]>/.test(ingredient.ingredient)}
+		<div data-heading>{@html ingredient.ingredient}</div>
+	{:else}
+		<li>
+			<strong>
+				{#if ingredient.minQty == ingredient.maxQty && ingredient.quantity}
+					{decimalToFraction(ingredient.quantity * scale)}
+				{:else if ingredient.minQty != ingredient.maxQty && ingredient.quantity}
+					{decimalToFraction(ingredient.minQty * scale)}-{decimalToFraction(
+						ingredient.maxQty * scale
+					)}
+				{/if}
+			</strong>
+			{#if ingredient.unit && ingredient.unit !== 'q.b.'}
+				{ingredient.quantity * scale > 1 && ingredient.unitPlural
+					? ingredient.unitPlural
+					: ingredient.unit}
 			{/if}
-		</strong>
-		{#if ingredient.unit && ingredient.unit !== 'q.b.'}
-			{ingredient.quantity * scale > 1 && ingredient.unitPlural
-				? ingredient.unitPlural
-				: ingredient.unit}
-		{/if}
-		<span
-			>{@html ingredient.ingredient}
-			{#if displayExtra && ingredient.additional}
-				<i> | {ingredient.additional}</i>
-			{/if}
-			{#if displayDryMatch && ingredient.dryIngredient}
-				<i> | {ingredient.dryIngredient.names[0]} ({ingredient.dryIngredient.gramsPerCup} g/cup)</i>
-			{/if}
-			{#if displayOriginal}
-				<i> | {ingredient.originalString}</i>
-			{/if}
-		</span>
-	</li>
+			<span
+				>{@html ingredient.ingredient}
+				{#if displayExtra && ingredient.additional}
+					<i> | {ingredient.additional}</i>
+				{/if}
+				{#if displayDryMatch && ingredient.dryIngredient}
+					<i>
+						| {ingredient.dryIngredient.names[0]} ({ingredient.dryIngredient.gramsPerCup} g/cup)</i>
+				{/if}
+				{#if displayOriginal}
+					<i> | {ingredient.originalString}</i>
+				{/if}
+			</span>
+		</li>
+	{/if}
 {/if}
 
 <style lang="scss">

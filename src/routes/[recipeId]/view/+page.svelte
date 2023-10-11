@@ -13,6 +13,7 @@
 	import RecipeViewDirections from '$lib/components/RecipeViewDirections.svelte'
 
 	export let data
+	let isLoading = true
 
 	let { recipe, categories, user } = data
 
@@ -69,20 +70,29 @@
 		isMounted = true
 	})
 
-	// Reactive statement to update sanitizedDirections whenever dependencies change
-	$: if (isMounted) {
-		sanitizedDirections = parseDirections(
-			directionLines,
-			selectedSystem,
-			measurementSystem.system
-		).map((direction) => getSanitizedHTML(direction))
-		sanitizedIngredients = convertedIngredients.map((ingredient) => {
-			return {
-				...ingredient,
-				ingredient: getSanitizedHTML(ingredient.ingredient)
-			}
-		})
+	const sanitizeContent = async () => {
+		// Use Promise.all to await all asynchronous operations
+		sanitizedDirections = await Promise.all(
+			parseDirections(directionLines, selectedSystem, measurementSystem.system).map((direction) =>
+				getSanitizedHTML(direction)
+			)
+		)
+
+		const tempIngredients = await Promise.all(
+			convertedIngredients.map(async (ingredient) => {
+				return {
+					...ingredient,
+					ingredient: await getSanitizedHTML(ingredient.ingredient)
+				}
+			})
+		)
+		sanitizedIngredients = tempIngredients
 		hasAdditional = sanitizedIngredients.some((item) => item.additional !== null)
+		isLoading = false
+	}
+
+	$: if (isMounted) {
+		sanitizeContent()
 	}
 </script>
 
@@ -92,28 +102,32 @@
 	{/if}
 </div>
 
-<div class="recipe-details">
-	<RecipeViewCover {mainPhoto} {recipe} />
-	<RecipeViewAbout {recipe} {categories} />
-</div>
-<div class="description">
-	<RecipeViewDesc {recipe} />
-</div>
-<div class="recipe-main">
-	<div class="ing-div">
-		<RecipeViewIng
-			{ingredients}
-			{sanitizedIngredients}
-			bind:scale
-			bind:scaledServings
-			userIsAdmin={user.isAdmin}
-			{measurementSystem}
-			bind:selectedSystem />
+{#if isLoading}
+	<div aria-busy="true">Waiting for the kettle to boil...</div>
+{:else}
+	<div class="recipe-details">
+		<RecipeViewCover {mainPhoto} {recipe} />
+		<RecipeViewAbout {recipe} {categories} />
 	</div>
-	<div class="recipe-text">
-		<RecipeViewDirections {directionLines} {sanitizedDirections} />
+	<div class="description">
+		<RecipeViewDesc {recipe} />
 	</div>
-</div>
+	<div class="recipe-main">
+		<div class="ing-div">
+			<RecipeViewIng
+				{ingredients}
+				{sanitizedIngredients}
+				bind:scale
+				bind:scaledServings
+				userIsAdmin={user.isAdmin}
+				{measurementSystem}
+				bind:selectedSystem />
+		</div>
+		<div class="recipe-text">
+			<RecipeViewDirections {directionLines} {sanitizedDirections} />
+		</div>
+	</div>
+{/if}
 
 <RecipeViewOtherPhotos {otherPhotos} recipeName={recipe.name} />
 

@@ -25,7 +25,6 @@
 		"adm-zip": "^0.5.10",
 		"archiver": "^6.0.1",
 		"axios": "^1.4.0",
-		"dompurify": "^3.0.5",
 		"eslint": "^8.33.0",
 		"eslint-config-prettier": "^8.6.0",
 		"eslint-plugin-jsdoc": "^46.4.6",
@@ -66,9 +65,11 @@
 	"dependencies": {
 		"@lucia-auth/adapter-prisma": "^2.0.0",
 		"@prisma/client": "^4.9.0",
+		"dompurify": "^3.0.6",
 		"dotenv": "^16.3.1",
 		"file-type": "^18.5.0",
 		"lucia-auth": "^1.7.0",
+		"sanitize-html": "^2.11.0",
 		"sharp": "^0.32.6",
 		"svelte-dnd-action": "^0.9.24"
 	}

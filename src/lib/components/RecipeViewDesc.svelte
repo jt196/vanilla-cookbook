@@ -6,10 +6,19 @@
 	let descriptionLines = []
 	let sanitisedDescription = []
 
-	recipe.description ? (descriptionLines = recipe.description.split('\n')) : null
-	sanitisedDescription
-		? (sanitisedDescription = descriptionLines.map((direction) => getSanitizedHTML(direction)))
-		: null
+	const loadSanitizedDescription = async () => {
+		if (recipe.description) {
+			descriptionLines = recipe.description.split('\n')
+			// Use Promise.all to await multiple asynchronous operations
+			sanitisedDescription = await Promise.all(
+				descriptionLines.map((direction) => getSanitizedHTML(direction))
+			)
+		}
+	}
+
+	$: if (recipe.description) {
+		loadSanitizedDescription()
+	}
 </script>
 
 {#if recipe?.description}
