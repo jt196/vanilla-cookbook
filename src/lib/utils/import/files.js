@@ -42,3 +42,5 @@ export async function saveFile(fileData, filename, directory) {
 		}
 	}
 }
+
+export const validImageTypes = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp']

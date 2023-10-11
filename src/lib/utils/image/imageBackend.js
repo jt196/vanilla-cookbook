@@ -1,7 +1,8 @@
 import sharp from 'sharp'
 import { promises as fsPromises } from 'fs'
 import path from 'path'
-import { saveFile } from '$lib/utils/import/files'
+import { saveFile, validImageTypes } from '$lib/utils/import/files'
+import { fileTypeFromBuffer } from 'file-type'
 
 /**
  * Deletes a single photo file from the filesystem.
@@ -28,6 +29,14 @@ async function downloadImage(url, photoFilename, directory) {
 	const response = await fetch(url)
 	const arrayBuffer = await response.arrayBuffer()
 	const buffer = Buffer.from(arrayBuffer)
+
+	// Validate the file type of the image
+	const fileTypeResult = await fileTypeFromBuffer(buffer)
+
+	if (!fileTypeResult || !validImageTypes.includes(fileTypeResult.ext)) {
+		throw new Error('Invalid image type.')
+	}
+
 	await saveFile(buffer, photoFilename, directory)
 }
 

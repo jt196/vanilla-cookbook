@@ -2,7 +2,8 @@ import { prisma } from '$lib/server/prisma'
 import { deleteSinglePhotoFile } from '$lib/utils/image/imageBackend.js'
 import { mapContentTypeToFileTypeAndExtension } from '$lib/utils/image/imageUtils.js'
 import { createRecipePhotoEntry, removeRecipePhotoEntry } from '$lib/utils/api'
-import { saveFile } from '$lib/utils/import/files.js'
+import { saveFile, validImageTypes } from '$lib/utils/import/files.js'
+import { fileTypeFromBuffer } from 'file-type'
 
 // Handle delete request
 export async function DELETE({ params, locals }) {
@@ -142,11 +143,17 @@ export async function PUT({ request, locals, params }) {
 				const photoFilename = photoEntry.id
 				const photoBuffer = await file.arrayBuffer() // Get the image data as a buffer
 
+				// Validate the file type of the image
+				const fileTypeResult = await fileTypeFromBuffer(photoBuffer)
+				if (!fileTypeResult || !validImageTypes.includes(fileTypeResult.ext)) {
+					throw new Error('Invalid image type.')
+				}
+
 				// Specify the directory where you want to save the images
 				const directory = 'uploads/images'
 
 				let fullFilename = `${photoFilename}.${extension}`
-				// Call the savePhoto function to save the image
+				// Call the saveFile function to save the image
 				await saveFile(photoBuffer, fullFilename, directory)
 			} catch (err) {
 				console.log('Error Saving Photo! Deleting Photo Entry!', err)
