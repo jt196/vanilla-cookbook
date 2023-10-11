@@ -2,7 +2,7 @@
  * Utility script to fetch data from the Paprika API and save it to local JSON files.
  *
  * This script uses the Paprika API to fetch various types of data (e.g., recipes, categories, groceries)
- * and saves the fetched data as JSON files in the `src/lib/data/import` directory.
+ * and saves the fetched data as JSON files in the `uploads/imports` directory.
  *
  * Before running the script, ensure that the Paprika email and password are set in the `.env` file.
  *
@@ -87,7 +87,11 @@ export async function fetchData(fetchType, email, password, userId) {
 	}
 
 	// 2. Execute the appropriate fetch function with the necessary credentials
-	const outputPath = path.join(__dirname, '../../../data/import', userId + '_' + outputFilename)
+	const outputPath = path.join(
+		__dirname,
+		'../../../../../uploads/imports',
+		userId + '_' + outputFilename
+	)
 	console.log('🚀 ~ file: paprikaAPI.js:91 ~ fetchData ~ outputPath:', outputPath)
 	try {
 		const data = await fetchFunction(email, password, userId)

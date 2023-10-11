@@ -10,7 +10,7 @@ import {
 } from '$lib/utils/import/paprika/paprikaAPIUtils.js'
 
 export async function importPaprikaData(userId) {
-	// Load categories either from Paprika API, or local JSON at lib/data/import/categories.json
+	// Load categories either from Paprika API, or local JSON at uploads/imports/categories.json
 	const categories = await loadCategories()
 	// If categories are successfully returned, add them to the DB
 	if (categories && categories.length > 0) {

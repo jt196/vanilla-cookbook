@@ -31,7 +31,7 @@ export async function PUT({ request, locals }) {
 			}
 
 			// Specify the directory where you want to save the file
-			const directory = 'uploads'
+			const directory = 'uploads/imports'
 			const filename = `${user.userId}_recipes.paprikarecipes`
 
 			// Save the paprika file

@@ -6,7 +6,6 @@ services:
     ports:
       - '3021:3000'
     volumes:
-      - ./src/lib/data/import:/app/src/lib/data/import
       - ./prisma/db:/app/prisma/db
       - ./uploads:/app/uploads
       - ./src:/app/src

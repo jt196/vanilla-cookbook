@@ -15,7 +15,7 @@ export async function POST({ request, locals }) {
 
 	const { filename } = await request.json()
 
-	const filepath = path.join(process.cwd(), 'src/lib/data/import', user.userId + '_' + filename)
+	const filepath = path.join(process.cwd(), 'uploads/imports', user.userId + '_' + filename)
 
 	try {
 		await fs.access(filepath, fs.constants.F_OK) // checks if the file exists
@@ -49,7 +49,7 @@ export async function DELETE({ request, locals }) {
 
 	const { filename } = await request.json()
 	console.log('🚀 ~ file: +server.js:52 ~ DELETE ~ filename:', filename)
-	const filepath = path.join(process.cwd(), 'src/lib/data/import', user.userId + '_' + filename)
+	const filepath = path.join(process.cwd(), 'uploads/imports', user.userId + '_' + filename)
 	console.log('🚀 ~ file: +server.js:54 ~ DELETE ~ filepath:', filepath)
 
 	try {

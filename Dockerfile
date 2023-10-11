@@ -22,7 +22,7 @@ ENTRYPOINT ["/app/entrypoint.sh"]
 
 # Create DB folder
 RUN mkdir -p /app/prisma/db
-RUN mkdir -p /app/uploads
+RUN mkdir -p /app/uploads/images /app/uploads/imports
 
 # Generate Prisma client
 RUN npx prisma generate

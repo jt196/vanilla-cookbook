@@ -2,7 +2,7 @@
 
 1. Clone the repo and the recipe-ingredient-parser submodule: `git clone --recursive https://github.com/jt196/recipe-manager-prisma.git`
 2. Install the base packages: `npm i`
-3. Create the folders for the static photos and the db
+3. Create the folders for the static photos/imports and the db
    - uploads/
    - prisma/db
 4. Move the .paprikarecipes file into the import folder. If you have one already, move the categories.json file there, if you don't it should be created if you're polling the Paprika API.

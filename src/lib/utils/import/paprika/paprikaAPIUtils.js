@@ -204,7 +204,10 @@ const replaceCategoryUIDsWithNames = async (recipe, email, password, userId) => 
  * @returns {Promise<Array>} - An array of categories.
  */
 const getCategories = async (email, password, userId) => {
-	const categoriesFilePath = path.join(__dirname, `../../../data/import/${userId}_categories.json`)
+	const categoriesFilePath = path.join(
+		__dirname,
+		`../../../../../uploads/imports/${userId}_categories.json`
+	)
 	try {
 		console.log('Accessing the local categories!')
 		await fs.access(categoriesFilePath)
@@ -240,7 +243,7 @@ export async function loadCategories(filepath) {
 // 6. Load Recipes
 export async function loadRecipes(filename) {
 	try {
-		const recipesPath = path.join(__dirname, '../src/lib/data/import/', filename) // Adjust the filename
+		const recipesPath = path.join(__dirname, '../uploads/imports/', filename) // Adjust the filename
 		let recipes = await extractRecipes(recipesPath)
 		return recipes
 	} catch (error) {
@@ -306,7 +309,7 @@ export async function addRecipesToDB(declaredRecipes, adminUserId) {
 
 export async function handlePhotosForRecipes(createdRecipes) {
 	const __dirname = path.dirname(fileURLToPath(import.meta.url))
-	const uploadDir = path.join(__dirname, '../uploads') // Adjust the path to point to the root /static folder
+	const uploadDir = path.join(__dirname, '../uploads/images') // Adjust the path to point to the root /static folder
 	for (const recipe of createdRecipes) {
 		// Handle the main photo
 		if (recipe.photo && recipe.photo_data) {

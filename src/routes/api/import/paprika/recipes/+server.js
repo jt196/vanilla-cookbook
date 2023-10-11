@@ -53,7 +53,7 @@ export async function GET({ locals }) {
 
 	try {
 		// Get the count from the JSON file
-		const filePath = path.join(process.cwd(), 'src/lib/data/import', `${user.userId}_recipes.json`)
+		const filePath = path.join(process.cwd(), 'uploads/imports', `${user.userId}_recipes.json`)
 		const fileCount = await getJSONLength(filePath)
 
 		return new Response(JSON.stringify({ fileCount }), {
@@ -99,7 +99,7 @@ export async function PUT({ locals }) {
 	try {
 		// TODO: API recipe file import here.
 
-		// const filepath = path.join(process.cwd(), 'src/lib/data/import', user.userId + '_recipes.json')
+		// const filepath = path.join(process.cwd(), 'uploads/imports', user.userId + '_recipes.json')
 		// // Load categories using the utility function
 		// const recipes = await loadRecipes(filepath)
 
