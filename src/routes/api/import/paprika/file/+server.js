@@ -48,9 +48,7 @@ export async function DELETE({ request, locals }) {
 	}
 
 	const { filename } = await request.json()
-	console.log('🚀 ~ file: +server.js:52 ~ DELETE ~ filename:', filename)
-	const filepath = path.join(process.cwd(), 'uploads/imports', user.userId + '_' + filename)
-	console.log('🚀 ~ file: +server.js:54 ~ DELETE ~ filepath:', filepath)
+	const filepath = path.join(process.cwd(), 'uploads/imports', filename)
 
 	try {
 		await fs.unlink(filepath) // this will delete the file

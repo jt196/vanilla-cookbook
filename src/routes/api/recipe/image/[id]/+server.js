@@ -25,7 +25,6 @@ export async function GET({ params }) {
 	const filePath = path.join(process.cwd(), 'uploads/images', `${photo.id}.${photo.fileType}`)
 
 	if (fs.existsSync(filePath)) {
-		console.log('Returning image from file')
 		const file = fs.readFileSync(filePath)
 		return new Response(file, {
 			headers: {

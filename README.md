@@ -2,14 +2,15 @@
 
 1. Clone the repo and the recipe-ingredient-parser submodule: `git clone --recursive https://github.com/jt196/recipe-manager-prisma.git`
 2. Install the base packages: `npm i`
-3. Create the folders for the static photos/imports and the db
-   - uploads/
+3. Create the folders for the uploads and the db
+   - uploads/imports
+   - uploads/images
    - prisma/db
-4. Move the .paprikarecipes file into the import folder. If you have one already, move the categories.json file there, if you don't it should be created if you're polling the Paprika API.
+4. Generate the Prisma client and types (is this typescript?): `npx prisma generate`
 5. Add your admin user details and Paprika log in details to the .env.template file.
 6. Rename this to .env, or just run `cp .env.example .env` in the root of the project.
-7. `npx prisma migrate dev --name init`
-8. Generate the Prisma client and types (is this typescript?): `npx prisma generate`
+7. Build the DB: `npx prisma migrate deploy`
+8. Seed the DB: `npx prisma db seed`
 
 # Getting Started with Docker
 
@@ -17,9 +18,9 @@
 2. Rename it _.env_
 3. Add the admin user details, as well as the Paprika details (optional)
 4. Add the _docker-compose.yml_ file to the folder
-5. Create import (optional), db and uploads folders for persistence
-6. If you're importing a .paprikarecipes file, add that to the import/ folder
-7. If you're importing categories too, and already have the categories.json, add that to the folder.
+5. Create db and uploads folders for persistence
+6. If you're importing a .paprikarecipes file, add that to the _uploads/import_ folder
+7. If you're importing categories too, and already have the _categories.json_, add that to the folder.
 8. Run `docker-compose up -d`
 
 # Deployment/Change Workflow

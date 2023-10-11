@@ -1,6 +1,48 @@
 import { saveFile } from '$lib/utils/import/files.js'
+import { importPaprikaData } from '$lib/utils/import/paprika/paprikaFileImport.js'
 import { fileTypeFromBuffer } from 'file-type'
+import fs from 'fs'
+import path from 'path'
 
+// Gets a list of .paprikarecipes files in the uploads/imports folder
+export async function GET({ locals }) {
+	const { session, user } = await locals.auth.validateUser()
+	if (!session || !user) {
+		return new Response(JSON.stringify({ error: 'User not authenticated.' }), {
+			status: 401,
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		})
+	}
+
+	try {
+		const directory = 'uploads/imports'
+
+		// Read the directory
+		const files = fs.readdirSync(directory)
+
+		// Filter out filenames with the .paprikarecipes extension
+		const paprikaFiles = files.filter((file) => path.extname(file) === '.paprikarecipes')
+
+		return new Response(JSON.stringify({ success: true, files: paprikaFiles }), {
+			status: 200,
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		})
+	} catch (error) {
+		console.error('Error reading the directory', error)
+		return new Response(JSON.stringify({ error: 'Failed to read the directory.' }), {
+			status: 500,
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		})
+	}
+}
+
+// Uploads a .paprikarecipes zip file to the uploads/import folder
 export async function PUT({ request, locals }) {
 	const { session, user } = await locals.auth.validateUser()
 	if (!session || !user) {
@@ -32,7 +74,10 @@ export async function PUT({ request, locals }) {
 
 			// Specify the directory where you want to save the file
 			const directory = 'uploads/imports'
-			const filename = `${user.userId}_recipes.paprikarecipes`
+			// Change the filename to userId_recipes.paprikarecipes
+			// const filename = `${user.userId}_recipes.paprikarecipes`
+			// Use the original filename
+			const filename = paprikaFile.name
 
 			// Save the paprika file
 			await saveFile(fileBuffer, filename, directory)
@@ -61,4 +106,68 @@ export async function PUT({ request, locals }) {
 			'Content-Type': 'application/json'
 		}
 	})
+}
+
+export async function POST({ request, locals }) {
+	const { session, user } = await locals.auth.validateUser()
+	if (!session || !user) {
+		return new Response(JSON.stringify({ error: 'User not authenticated.' }), {
+			status: 401,
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		})
+	}
+
+	try {
+		const requestData = await request.json()
+		const filename = requestData.filename
+		console.log('🚀 ~ file: +server.js:122 ~ POST ~ filename:', filename)
+
+		if (!filename) {
+			return new Response(JSON.stringify({ error: 'Filename is required.' }), {
+				status: 400,
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			})
+		}
+
+		// Importing the paprika file
+		// const result = importPaprikaData(user.userId, filename);
+
+		// Mocking the result
+		const result = {
+			success: true, // or false depending on what you want to simulate
+			message: 'Mocked data: Import successful!' // you can add any other mock data or properties you need
+		}
+
+		if (result.success) {
+			return new Response(JSON.stringify({ success: 'Paprika data imported successfully!' }), {
+				status: 200,
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			})
+		} else {
+			// Handle errors from the importPaprikaData function, if any
+			return new Response(
+				JSON.stringify({ error: result.message || 'Failed to import paprika data.' }),
+				{
+					status: 500,
+					headers: {
+						'Content-Type': 'application/json'
+					}
+				}
+			)
+		}
+	} catch (error) {
+		console.error('Error processing the request', error)
+		return new Response(JSON.stringify({ error: 'Failed to process the request.' }), {
+			status: 500,
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		})
+	}
 }
