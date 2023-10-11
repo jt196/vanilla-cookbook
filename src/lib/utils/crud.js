@@ -123,3 +123,25 @@ export async function importFileExists(filename) {
 	const result = await response.json()
 	return result.exists
 }
+
+export async function uploadPaprikaFile(formData) {
+	try {
+		const response = await fetch(`/api/import/paprika/paprikarecipes`, {
+			method: 'PUT',
+			body: formData
+		})
+
+		const responseData = await response.json()
+
+		if (response.ok) {
+			// Assuming the server responds with a success message
+			return { success: true, message: responseData.success }
+		} else {
+			// Extracting error message from the server's response
+			throw new Error(responseData.error || 'Error uploading file')
+		}
+	} catch (error) {
+		console.error('Error uploading Paprika file:', error.message)
+		return { success: false, message: error.message }
+	}
+}

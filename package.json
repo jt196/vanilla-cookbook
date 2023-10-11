@@ -67,6 +67,7 @@
 		"@lucia-auth/adapter-prisma": "^2.0.0",
 		"@prisma/client": "^4.9.0",
 		"dotenv": "^16.3.1",
+		"file-type": "^18.5.0",
 		"lucia-auth": "^1.7.0",
 		"sharp": "^0.32.6",
 		"svelte-dnd-action": "^0.9.24"

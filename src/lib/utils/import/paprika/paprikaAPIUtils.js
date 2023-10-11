@@ -10,7 +10,7 @@ import { fileURLToPath } from 'url'
 import { config } from 'dotenv'
 import { prisma } from '$lib/server/prisma'
 import { extractRecipes } from '../recipeImport'
-import { savePhoto } from '$lib/utils/image/imageBackend'
+import { saveFile } from '$lib/utils/import/files'
 import { promises as fsPromises } from 'fs'
 
 config()
@@ -310,7 +310,7 @@ export async function handlePhotosForRecipes(createdRecipes) {
 	for (const recipe of createdRecipes) {
 		// Handle the main photo
 		if (recipe.photo && recipe.photo_data) {
-			await savePhoto(recipe.photo_data, recipe.photo, uploadDir)
+			await saveFile(recipe.photo_data, recipe.photo, uploadDir)
 			await prisma.recipePhoto.create({
 				data: {
 					id: recipe.photo.split('.')[0],
@@ -325,7 +325,7 @@ export async function handlePhotosForRecipes(createdRecipes) {
 		if (recipe.photos && recipe.photos.length > 0) {
 			for (const photoObj of recipe.photos) {
 				const { data: photoData, filename } = photoObj
-				await savePhoto(photoData, filename, uploadDir)
+				await saveFile(photoData, filename, uploadDir)
 				await prisma.recipePhoto.create({
 					data: {
 						id: filename.split('.')[0],

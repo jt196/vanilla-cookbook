@@ -1,7 +1,7 @@
 <script>
 	import TrueFalse from '$lib/components/TrueFalse.svelte'
 	import Delete from '$lib/components/svg/Delete.svelte'
-	import { importFileExists } from '$lib/utils/crud.js'
+	import { importFileExists, uploadPaprikaFile } from '$lib/utils/crud.js'
 	import { onMount } from 'svelte'
 	export let data
 	const { user, importCount } = data
@@ -12,10 +12,12 @@
 
 	let catFeedbackMessage = ''
 	let recFeedbackMessage = ''
+	let papFeedbackMessage = ''
 	let catFileExists = false
 	let recFileExists = false
 
-	let selectedFiles
+	let selectedFiles = []
+	$: console.log('🚀 ~ file: +page.svelte:20 ~ selectedFiles:', selectedFiles.length)
 
 	onMount(async () => {
 		await checkCategoryFileExists(user.userId)
@@ -184,7 +186,32 @@
 	}
 
 	function handlePaprikaUpload(event) {
-		selectedFiles = Array.from(event.target.files)
+		const file = event.target.files[0]
+		if (file && file.name.endsWith('.paprikarecipes')) {
+			selectedFiles = [file]
+		} else {
+			console.error('Invalid file type')
+		}
+	}
+
+	async function handleSubmit(event) {
+		event.preventDefault()
+
+		const formData = new FormData()
+
+		// Append the selected file
+		if (selectedFiles && selectedFiles.length) {
+			formData.append('paprikaFile', selectedFiles[0])
+		}
+
+		const result = await uploadPaprikaFile(formData)
+		if (result.success) {
+			console.log('File uploaded successfully!')
+			papFeedbackMessage = result.message // Shows success message
+		} else {
+			console.log('There was a problem uploading your file!')
+			papFeedbackMessage = result.message // Shows error message
+		}
 	}
 </script>
 
@@ -248,6 +275,11 @@
 	<div class="paprika-file">
 		<label for="file">Upload Paprika File</label>
 		<input type="file" id="file" name="file" on:change={handlePaprikaUpload} />
+		<button class="outline secondary" disabled={selectedFiles.length == 0} on:click={handleSubmit}
+			>Import Recipes</button>
+		<div class="feedback">
+			{papFeedbackMessage}
+		</div>
 	</div>
 </div>
 

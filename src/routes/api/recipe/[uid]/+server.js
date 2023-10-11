@@ -1,7 +1,8 @@
 import { prisma } from '$lib/server/prisma'
-import { deleteSinglePhotoFile, savePhoto } from '$lib/utils/image/imageBackend.js'
+import { deleteSinglePhotoFile } from '$lib/utils/image/imageBackend.js'
 import { mapContentTypeToFileTypeAndExtension } from '$lib/utils/image/imageUtils.js'
 import { createRecipePhotoEntry, removeRecipePhotoEntry } from '$lib/utils/api'
+import { saveFile } from '$lib/utils/import/files.js'
 
 // Handle delete request
 export async function DELETE({ params, locals }) {
@@ -146,7 +147,7 @@ export async function PUT({ request, locals, params }) {
 
 				let fullFilename = `${photoFilename}.${extension}`
 				// Call the savePhoto function to save the image
-				await savePhoto(photoBuffer, fullFilename, directory)
+				await saveFile(photoBuffer, fullFilename, directory)
 			} catch (err) {
 				console.log('Error Saving Photo! Deleting Photo Entry!', err)
 				removeRecipePhotoEntry(photoEntry.id)
