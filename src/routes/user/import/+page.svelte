@@ -225,13 +225,15 @@
 					'Content-Type': 'application/json'
 					// If your API needs authentication, you might also include authorization headers here
 				},
-				body: JSON.stringify({ filename: filename }) // or whatever filename you want to delete
+				body: JSON.stringify({ filename: filename })
 			})
 
 			const data = await response.json()
+			console.log('🚀 ~ file: +page.svelte:232 ~ importFromPaprikaFile ~ data:', data)
 
 			if (response.status === 200) {
-				recImportStatus = 'Recipes successfully imported!'
+				recImportStatus = data.success
+				console.log(`Imported ${data.count} recipes!`) // Or you can utilize this data however you see fit
 			} else {
 				recImportStatus = data.error || 'An unknown error occurred.'
 			}

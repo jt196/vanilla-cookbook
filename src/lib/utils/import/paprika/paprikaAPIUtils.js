@@ -441,3 +441,28 @@ export async function getJSONLength(filePath) {
 		return null
 	}
 }
+
+export async function filterExistingRecipes(rawRecipes) {
+	// Extract UIDs from rawRecipes
+	const uidsToCheck = rawRecipes.map((recipe) => recipe.uid)
+
+	// Query the database for recipes with matching UIDs
+	const existingRecipes = await prisma.recipe.findMany({
+		where: {
+			uid: {
+				in: uidsToCheck
+			}
+		},
+		select: {
+			uid: true
+		}
+	})
+
+	// Extract UIDs of existing recipes
+	const existingUids = existingRecipes.map((recipe) => recipe.uid)
+
+	// Filter out recipes from rawRecipes that exist in the database
+	const newRecipes = rawRecipes.filter((recipe) => !existingUids.includes(recipe.uid))
+
+	return newRecipes
+}

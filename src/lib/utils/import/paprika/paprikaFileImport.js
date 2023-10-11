@@ -4,6 +4,7 @@ import {
 	addRecipesToDB,
 	declareRecipes,
 	ensureCategoriesExist,
+	filterExistingRecipes,
 	handlePhotosForRecipes,
 	loadCategories,
 	loadRecipes
@@ -27,19 +28,28 @@ export async function importPaprikaRecipes(userId, filename) {
 	// Load recipes into memory from file
 	// Nothing is stored locally here
 	const rawRecipes = await loadRecipes(filename)
-	rawRecipes.forEach((recipe) => {
-		console.log(`Name: ${recipe.name}, UID: ${recipe.uid}`)
-	})
+	// Check against existing recipes using uids
+	const newRecipes = await filterExistingRecipes(rawRecipes)
+	// Return if they're already imported
+	if (newRecipes.length === 0) {
+		console.log('All recipes are already in the database.')
+		return { success: true, message: 'All recipes are already in the database.', count: 0 }
+	}
 	// Check the recipe object for matching categories
 	// Add them to the DB if they don't exist
-	await ensureCategoriesExist(rawRecipes, userId)
+	await ensureCategoriesExist(newRecipes, userId)
 	// Destructure the recipe data to remove any fields that don't exist on the recipe table
-	const declaredRecipes = await declareRecipes(rawRecipes)
+	const declaredRecipes = await declareRecipes(newRecipes)
 	// Add the destructured data to the DB
 	const createdRecipes = await addRecipesToDB(declaredRecipes, userId)
 
 	// Add the recipe categories to the RecipeCategory table
-	await addRecipeCategoriesToDB(createdRecipes, rawRecipes)
+	await addRecipeCategoriesToDB(createdRecipes, newRecipes)
 	// Add the photos to the DB too
-	await handlePhotosForRecipes(rawRecipes)
+	await handlePhotosForRecipes(newRecipes)
+	return {
+		success: true,
+		message: `${newRecipes.length} recipes imported successfully!`,
+		count: newRecipes.length
+	}
 }

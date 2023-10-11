@@ -1,8 +1,5 @@
 import { saveFile } from '$lib/utils/import/files.js'
-import {
-	importPaprikaData,
-	importPaprikaRecipes
-} from '$lib/utils/import/paprika/paprikaFileImport.js'
+import { importPaprikaRecipes } from '$lib/utils/import/paprika/paprikaFileImport.js'
 import { fileTypeFromBuffer } from 'file-type'
 import fs from 'fs'
 import path from 'path'
@@ -140,32 +137,30 @@ export async function POST({ request, locals }) {
 		}
 
 		// Importing the paprika file
-		const result = importPaprikaRecipes(user.userId, filename)
+		const importedCount = await importPaprikaRecipes(user.userId, filename)
+		console.log('🚀 ~ file: +server.js:141 ~ POST ~ importedCount:', importedCount)
 
-		// Mocking the result
-		// const result = {
-		// 	success: true, // or false depending on what you want to simulate
-		// 	message: 'Mocked data: Import successful!' // you can add any other mock data or properties you need
-		// }
-
-		if (result.success) {
-			return new Response(JSON.stringify({ success: 'Paprika data imported successfully!' }), {
-				status: 200,
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			})
-		} else {
-			// Handle errors from the importPaprikaData function, if any
+		if (importedCount.count >= 0) {
 			return new Response(
-				JSON.stringify({ error: result.message || 'Failed to import paprika data.' }),
+				JSON.stringify({
+					success: importedCount.message,
+					count: importedCount.count
+				}),
 				{
-					status: 500,
+					status: 200,
 					headers: {
 						'Content-Type': 'application/json'
 					}
 				}
 			)
+		} else {
+			// Handle errors from the importPaprikaData function, if any
+			return new Response(JSON.stringify({ error: 'Failed to import paprika data.' }), {
+				status: 500,
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			})
 		}
 	} catch (error) {
 		console.error('Error processing the request', error)
