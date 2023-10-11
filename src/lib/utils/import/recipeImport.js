@@ -3,16 +3,19 @@ import zlib from 'zlib'
 
 /**
  * Extracts recipes from a given zip file.
+ * Doesn't use local storage, runs everything in memory.
  * @param {string} zipFilePath - The path to the zip file containing the recipes.
  * @returns {Promise<Array>} - An array of extracted recipes.
  */
 export async function extractRecipes(zipFilePath) {
 	const recipes = []
 
+	// Open the zip file for reading without extracting contents to disk
 	const directory = await unzipper.Open.file(zipFilePath)
 
 	const processEntry = (entry) => {
 		return new Promise((resolve, reject) => {
+			// Collect paprikarecipe chunks and decompress into memory
 			if (entry.path.endsWith('.paprikarecipe')) {
 				const chunks = []
 				const readStream = entry.stream()
@@ -28,7 +31,7 @@ export async function extractRecipes(zipFilePath) {
 							reject(err)
 							return
 						}
-
+						// Parse as a json and push into the recipes array
 						try {
 							const recipeJson = JSON.parse(decompressedBuffer.toString('utf8'))
 							recipes.push(recipeJson)

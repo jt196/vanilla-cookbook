@@ -161,10 +161,7 @@ export const fetchDetailedRecipes = async (email, password, userId) => {
 	// Loop through only the first 10 items of recipeList
 	// for (let i = 0; i < Math.min(10, recipeList.length); i++) {
 	for (let i = 0; i < recipeList.length; i++) {
-		console.log('🚀 ~ file: paprikaAPIUtils.js:165 ~ fetchDetailedRecipes ~ i:', i)
 		const r = recipeList[i]
-		console.log('🚀 ~ file: paprikaAPIUtils.js:167 ~ fetchDetailedRecipes ~ r:', r)
-
 		let detailedRecipe = await recipe(r.uid, email, password)
 
 		// Replace the uids with names
@@ -212,7 +209,6 @@ const getCategories = async (email, password, userId) => {
 		const categoriesData = await fsPromises.readFile(categoriesFilePath, 'utf-8')
 		return JSON.parse(categoriesData)
 	} catch (error) {
-		console.log('🚀 ~ file: paprikaAPIUtils.js:207 ~ getCategories ~ error:', error)
 		const fetchedCategories = await categories(email, password)
 		await fsPromises.writeFile(categoriesFilePath, JSON.stringify(fetchedCategories, null, 2))
 		return fetchedCategories
@@ -224,7 +220,6 @@ const getCategories = async (email, password, userId) => {
  * @returns {Promise<Array>} - An array of categories.
  */
 export async function loadCategories(filepath) {
-	console.log('🚀 ~ file: paprikaAPIUtils.js:229 ~ loadCategories ~ filepath:', filepath)
 	try {
 		// This will throw an error if the file does not exist or is inaccessible
 		await fsPromises.access(filepath)
@@ -246,7 +241,7 @@ export async function loadCategories(filepath) {
 // 6. Load Recipes
 export async function loadRecipes(filename) {
 	try {
-		const recipesPath = path.join(__dirname, '../uploads/imports/', filename) // Adjust the filename
+		const recipesPath = path.join(__dirname, '../../../../../uploads/imports/', filename) // Adjust the filename
 		let recipes = await extractRecipes(recipesPath)
 		return recipes
 	} catch (error) {
@@ -296,13 +291,13 @@ export async function addCategoriesToDB(categories, userId) {
 	}
 }
 
-export async function addRecipesToDB(declaredRecipes, adminUserId) {
+export async function addRecipesToDB(declaredRecipes, userId) {
 	const createdRecipes = []
 	for (const recipe of declaredRecipes) {
 		const createdRecipe = await prisma.recipe.create({
 			data: {
 				...recipe,
-				userId: adminUserId
+				userId: userId
 			}
 		})
 		createdRecipes.push(createdRecipe)
@@ -312,7 +307,7 @@ export async function addRecipesToDB(declaredRecipes, adminUserId) {
 
 export async function handlePhotosForRecipes(createdRecipes) {
 	const __dirname = path.dirname(fileURLToPath(import.meta.url))
-	const uploadDir = path.join(__dirname, '../uploads/images') // Adjust the path to point to the root /static folder
+	const uploadDir = path.join(__dirname, '../../../../../uploads/images') // Adjust the path to point to the root /static folder
 	for (const recipe of createdRecipes) {
 		// Handle the main photo
 		if (recipe.photo && recipe.photo_data) {

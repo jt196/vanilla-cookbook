@@ -1,5 +1,8 @@
 import { saveFile } from '$lib/utils/import/files.js'
-import { importPaprikaData } from '$lib/utils/import/paprika/paprikaFileImport.js'
+import {
+	importPaprikaData,
+	importPaprikaRecipes
+} from '$lib/utils/import/paprika/paprikaFileImport.js'
 import { fileTypeFromBuffer } from 'file-type'
 import fs from 'fs'
 import path from 'path'
@@ -23,7 +26,10 @@ export async function GET({ locals }) {
 		const files = fs.readdirSync(directory)
 
 		// Filter out filenames with the .paprikarecipes extension
-		const paprikaFiles = files.filter((file) => path.extname(file) === '.paprikarecipes')
+		// Filter out filenames that start with userId and have the .paprikarecipes extension
+		const paprikaFiles = files
+			.filter((file) => file.startsWith(user.userId) && path.extname(file) === '.paprikarecipes')
+			.map((file) => file.replace(`${user.userId}_`, ''))
 
 		return new Response(JSON.stringify({ files: paprikaFiles }), {
 			status: 200,
@@ -77,7 +83,7 @@ export async function PUT({ request, locals }) {
 			// Change the filename to userId_recipes.paprikarecipes
 			// const filename = `${user.userId}_recipes.paprikarecipes`
 			// Use the original filename
-			const filename = paprikaFile.name
+			const filename = `${user.userId}_${paprikaFile.name}`
 
 			// Save the paprika file
 			await saveFile(fileBuffer, filename, directory)
@@ -121,7 +127,7 @@ export async function POST({ request, locals }) {
 
 	try {
 		const requestData = await request.json()
-		const filename = requestData.filename
+		const filename = `${user.userId}_${requestData.filename}`
 		console.log('🚀 ~ file: +server.js:122 ~ POST ~ filename:', filename)
 
 		if (!filename) {
@@ -134,13 +140,13 @@ export async function POST({ request, locals }) {
 		}
 
 		// Importing the paprika file
-		// const result = importPaprikaData(user.userId, filename);
+		const result = importPaprikaRecipes(user.userId, filename)
 
 		// Mocking the result
-		const result = {
-			success: true, // or false depending on what you want to simulate
-			message: 'Mocked data: Import successful!' // you can add any other mock data or properties you need
-		}
+		// const result = {
+		// 	success: true, // or false depending on what you want to simulate
+		// 	message: 'Mocked data: Import successful!' // you can add any other mock data or properties you need
+		// }
 
 		if (result.success) {
 			return new Response(JSON.stringify({ success: 'Paprika data imported successfully!' }), {
