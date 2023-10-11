@@ -56,17 +56,6 @@ export const load = async ({ url, fetch, locals }) => {
 		console.error('Error fetching category file count:', err)
 		// You might want to handle this error differently based on your application's needs
 	}
-	let paprikarecipesFiles = []
-	try {
-		const response = await fetch(`/api/import/paprika/paprikarecipes`)
-		const data = await response.json()
-		if (data && data.files) {
-			paprikarecipesFiles = data.files
-		}
-	} catch (err) {
-		console.error('Error fetching category file count:', err)
-		// You might want to handle this error differently based on your application's needs
-	}
 
 	return {
 		user,
@@ -75,7 +64,6 @@ export const load = async ({ url, fetch, locals }) => {
 			catDb: dbCategoryCount,
 			recFile: fileRecCount,
 			recDb: dbRecCount
-		},
-		paprikarecipesFiles
+		}
 	}
 }

@@ -1,10 +1,7 @@
 import { fetchData } from '$lib/utils/import/paprika/paprikaAPI.js'
 import path from 'path'
-import {
-	addRecipesToDB,
-	loadRecipes,
-	getJSONLength
-} from '$lib/utils/import/paprika/paprikaAPIUtils.js'
+import { getJSONLength } from '$lib/utils/import/paprika/paprikaAPIUtils.js'
+import { importPaprikaRecipes } from '$lib/utils/import/paprika/paprikaFileImport.js'
 
 // Grab the Paprika categories from their API
 export async function POST({ request, locals }) {
@@ -97,34 +94,35 @@ export async function PUT({ locals }) {
 	}
 
 	try {
-		// TODO: API recipe file import here.
+		const filename = user.userId + '_recipes.json'
+		console.log('🚀 ~ file: +server.js:98 ~ PUT ~ filename:', filename)
 
-		// const filepath = path.join(process.cwd(), 'uploads/imports', user.userId + '_recipes.json')
-		// // Load categories using the utility function
-		// const recipes = await loadRecipes(filepath)
+		// Import recipes from .json file
+		const importedCount = await importPaprikaRecipes(user.userId, filename)
+		console.log('🚀 ~ file: +server.js:102 ~ PUT ~ importedCount:', importedCount)
 
-		// // If no categories are returned or the list is empty, respond appropriately
-		// if (!categories || categories.length === 0) {
-		// 	return new Response(JSON.stringify({ error: 'No recipes found to import.' }), {
-		// 		status: 400,
-		// 		headers: {
-		// 			'Content-Type': 'application/json'
-		// 		}
-		// 	})
-		// }
-
-		// // Call the function to add categories to the database
-		// await addRecipesToDB(categories, user.userId)
-
-		return new Response(
-			JSON.stringify({ success: true, message: 'Recipes added to the database.' }),
-			{
-				status: 200,
+		if (importedCount.count >= 0) {
+			return new Response(
+				JSON.stringify({
+					success: importedCount.message,
+					count: importedCount.count
+				}),
+				{
+					status: 200,
+					headers: {
+						'Content-Type': 'application/json'
+					}
+				}
+			)
+		} else {
+			// Handle errors from the importPaprikaData function, if any
+			return new Response(JSON.stringify({ error: 'Failed to import paprika data.' }), {
+				status: 500,
 				headers: {
 					'Content-Type': 'application/json'
 				}
-			}
-		)
+			})
+		}
 	} catch (error) {
 		console.error('Error adding recipes to database:', error)
 

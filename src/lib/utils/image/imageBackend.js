@@ -60,22 +60,31 @@ export async function processImage(imageUrl, uid, fileExtension) {
 	const imageFullPath = path.join(imagePath, filename)
 	const tempImagePath = path.join(imagePath, `${uid}_temp.${fileExtension}`)
 
-	// 1. Download the image and keep it as a buffer
-	const buffer = await downloadImageAsBuffer(imageUrl)
+	try {
+		// 1. Download the image and keep it as a buffer
+		const buffer = await downloadImageAsBuffer(imageUrl)
 
-	// 2. Validate the buffer
-	const fileTypeResult = await fileTypeFromBuffer(buffer)
-	if (!fileTypeResult || !validImageTypes.includes(fileTypeResult.ext)) {
-		throw new Error('Invalid image type.')
+		// 2. Validate the buffer
+		const fileTypeResult = await fileTypeFromBuffer(buffer)
+		if (!fileTypeResult || !validImageTypes.includes(fileTypeResult.ext)) {
+			console.error('Invalid image type.')
+			return false // Indicate failure
+		}
+
+		// 3. Save buffer to file
+		await saveFile(buffer, filename, imagePath)
+
+		await resizeImage(imageFullPath, tempImagePath, 1024)
+
+		// Replace the original image with the resized version
+		await fsPromises.rename(tempImagePath, imageFullPath)
+
+		// Return true on successful processing
+		return true
+	} catch (error) {
+		console.error('Error processing the image:', error)
+		return false // Indicate failure
 	}
-
-	// 3. Save buffer to file
-	await saveFile(buffer, filename, imagePath)
-
-	await resizeImage(imageFullPath, tempImagePath, 1024)
-
-	// Replace the original image with the resized version
-	await fsPromises.rename(tempImagePath, imageFullPath)
 }
 
 // Helper function to download image as buffer

@@ -21,6 +21,11 @@
 						Import
 					</a>
 				</li>
+				<li>
+					<a href="/user/upload" class={data.pathname === '/user/upload' ? 'active-link' : ''}>
+						Upload
+					</a>
+				</li>
 				{#if data.user.isAdmin}
 					<li>
 						<a href="/user/users" class={data.pathname === '/user/users' ? 'active-link' : ''}>

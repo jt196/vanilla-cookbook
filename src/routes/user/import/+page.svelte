@@ -6,7 +6,6 @@
 	import { onMount } from 'svelte'
 	export let data
 	const { user, importCount } = data
-	let paprikarecipesFiles = data.paprikarecipesFiles
 
 	const { catFile, recDb, recFile } = importCount
 	let catDb = importCount.catDb
@@ -16,7 +15,6 @@
 
 	let catFeedbackMessage = ''
 	let recFeedbackMessage = ''
-	let papFeedbackMessage = ''
 	let catFileExists = false
 	let recFileExists = false
 
@@ -115,11 +113,10 @@
 		})
 		const result = await response.json()
 		if (result.success) {
-			if (filename.includes('paprikarecipes')) {
-				fetchPaprikaFiles()
-				papFeedbackMessage = filename + ' successfully deleted from uploads folder!'
-			} else if (filename.includes('categories')) {
+			if (filename.includes('categories')) {
 				await checkCategoryFileExists()
+			} else {
+				await checkRecipeFileExists()
 			}
 		}
 	}
@@ -127,7 +124,6 @@
 	let catImportStatus = null
 	let recImportStatus = null
 
-	// TODO: Test this!
 	async function importCategoriesFromFile() {
 		try {
 			const response = await fetch('/api/import/paprika/categories', {
@@ -168,7 +164,6 @@
 				method: 'PUT',
 				headers: {
 					'Content-Type': 'application/json'
-					// If your API needs authentication, you might also include authorization headers here
 				}
 			})
 
@@ -184,93 +179,32 @@
 			recImportStatus = 'Failed to import recipes. Please try again.'
 		}
 	}
-
-	function handlePaprikaUpload(event) {
-		const file = event.target.files[0]
-		if (file && file.name.endsWith('.paprikarecipes')) {
-			selectedFiles = [file]
-		} else {
-			console.error('Invalid file type')
-		}
-	}
-
-	async function handleSubmit(event) {
-		event.preventDefault()
-
-		const formData = new FormData()
-
-		// Append the selected file
-		if (selectedFiles && selectedFiles.length) {
-			formData.append('paprikaFile', selectedFiles[0])
-		}
-
-		const result = await uploadPaprikaFile(formData)
-		console.log('Uploading File!')
-		if (result.success) {
-			console.log('File uploaded successfully!')
-			fetchPaprikaFiles()
-			papFeedbackMessage = result.message // Shows success message
-		} else {
-			console.log('There was a problem uploading your file!')
-			papFeedbackMessage = result.message // Shows error message
-		}
-	}
-
-	async function importFromPaprikaFile(filename) {
-		console.log('Importing Paprika file!')
-		try {
-			const response = await fetch('/api/import/paprika/paprikarecipes', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-					// If your API needs authentication, you might also include authorization headers here
-				},
-				body: JSON.stringify({ filename: filename })
-			})
-
-			const data = await response.json()
-			console.log('🚀 ~ file: +page.svelte:232 ~ importFromPaprikaFile ~ data:', data)
-
-			if (response.status === 200) {
-				recImportStatus = data.success
-				console.log(`Imported ${data.count} recipes!`) // Or you can utilize this data however you see fit
-			} else {
-				recImportStatus = data.error || 'An unknown error occurred.'
-			}
-		} catch (error) {
-			console.error('Error importing recipes:', error)
-			recImportStatus = 'Failed to import recipes. Please try again.'
-		}
-	}
-
-	async function fetchPaprikaFiles() {
-		try {
-			const response = await fetch('/api/import/paprika/paprikarecipes')
-			const data = await response.json()
-			if (response.status === 200) {
-				paprikarecipesFiles = data.files // Update the files list on the frontend
-			}
-		} catch (error) {
-			console.error('Error fetching files:', error)
-		}
-	}
 </script>
 
-<h3>Paprika Import</h3>
-<p>User ID: {user.userId}</p>
-<p>You can find your uploads files in the uploads/import folder.</p>
+<h3>Paprika API Import</h3>
+<p>Enter your Paprika API credentials to download your recipes and categories.</p>
+<p>1. Download, then import your categories.</p>
+<p>
+	1. Download, then import your recipes. This will take a short while if you've a few recipes. You
+	might find exporting them from the app is a little quicker.
+</p>
+<p>
+	<i
+		>Please note: access to the images in the recipes have a limited time, if you want to download
+		them with your recipes, do this soon after you download the recipes.</i>
+</p>
 <div class="container">
 	<label for="paprikaUser"> Paprika User </label>
 	<input type="text" id="paprikaUser" bind:value={paprikaUser} />
 	<label for="paprikaPassword"> Paprika Password </label>
 	<input type="password" id="paprikaPassword" bind:value={paprikaPassword} />
-	<div class="paprika-files">
+	<div class="paprika-api">
 		<div class="import-categories">
 			<button disabled={catFileExists} on:click={downloadCategories}
 				>Download Paprika Categories</button>
 			<div class="feedback">
 				<FeedbackMessage message={catFeedbackMessage} />
-				<div>
+				<div class="file-manage">
 					Category File: <TrueFalse isTrue={catFileExists} />{#if catFileExists}
 						<button
 							class="outline secondary"
@@ -283,7 +217,7 @@
 			<p>Categories in File: {catFile}</p>
 			<p>Categories in DB: {catDb}</p>
 			<button
-				class="outline secondary"
+				class="outline secondary delete"
 				disabled={catDb === catFile || catFile === 0 || catFile === null}
 				on:click={importCategoriesFromFile}>Import Categories</button>
 			<FeedbackMessage message={catImportStatus} />
@@ -292,10 +226,10 @@
 			<button disabled={recFileExists} on:click={downloadRecipes}>Download Paprika Recipes</button>
 			<div class="feedback">
 				<FeedbackMessage message={recFeedbackMessage} />
-				<div>
+				<div class="file-manage">
 					Recipe File: <TrueFalse isTrue={recFileExists} />{#if recFileExists}
 						<button
-							class="outline secondary"
+							class="outline secondary delete"
 							disabled={!recFileExists}
 							on:click={() => removeFile(user.userId + '_recipes.json')}
 							><Delete width="30px" height="30px" fill="var(--pico-del-color)" /></button>
@@ -311,28 +245,6 @@
 			<FeedbackMessage message={recImportStatus} />
 		</div>
 	</div>
-	<div class="paprika-file-upload">
-		<label for="file">Upload Paprika File</label>
-		<input type="file" id="file" name="file" on:change={handlePaprikaUpload} />
-		<button class="outline secondary" disabled={selectedFiles.length == 0} on:click={handleSubmit}
-			>Upload .paprikarecipes File</button>
-		<div class="feedback">
-			<FeedbackMessage message={papFeedbackMessage} />
-		</div>
-	</div>
-	{#if paprikarecipesFiles && paprikarecipesFiles.length !== 0}
-		<div class="paprika-file-import">
-			<p>Import an uploaded Paprika file</p>
-			{#each paprikarecipesFiles as file}
-				<button
-					class="outline secondary"
-					disabled={!paprikarecipesFiles || paprikarecipesFiles.length === 0}
-					on:click={() => importFromPaprikaFile(file)}>Import {file}</button>
-				<button class="outline secondary" on:click={() => removeFile(file)}
-					><Delete width="30px" height="30px" fill="var(--pico-del-color)" /></button>
-			{/each}
-		</div>
-	{/if}
 </div>
 
 <style lang="scss">
@@ -343,16 +255,20 @@
 		gap: 1rem;
 	}
 
-	.paprika-files {
+	.paprika-api {
 		display: flex;
 		gap: 1rem;
-	}
-
-	.paprika-file-import {
 		margin-bottom: 2rem;
+		justify-content: space-between;
+		.import-categories,
+		.import-recipes {
+			width: 50%;
+		}
 	}
 
-	.outline.secondary {
-		margin-left: 0;
+	.file-manage {
+		button {
+			margin-left: 1rem;
+		}
 	}
 </style>

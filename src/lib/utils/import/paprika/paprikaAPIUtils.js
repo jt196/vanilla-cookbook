@@ -8,8 +8,9 @@ import { fileURLToPath } from 'url'
 import { config } from 'dotenv'
 import { prisma } from '$lib/server/prisma'
 import { extractRecipes } from '../recipeImport'
-import { saveFile } from '$lib/utils/import/files'
+import { isValidRecipeStructure, saveFile } from '$lib/utils/import/files'
 import { promises as fsPromises } from 'fs'
+import { processImage } from '$lib/utils/image/imageBackend'
 
 config()
 
@@ -75,6 +76,13 @@ const download = async (uri, filename) => {
 		writer.on('finish', resolve)
 		writer.on('error', reject)
 	})
+}
+
+export async function downloadImageAsBuffer(url) {
+	const response = await axios.get(url, {
+		responseType: 'arraybuffer'
+	})
+	return Buffer.from(response.data)
 }
 
 /**
@@ -238,11 +246,28 @@ export async function loadCategories(filepath) {
 	}
 }
 
-// 6. Load Recipes
+// Load recipes from a given filename
+// Parses either a .json file or a .paprikarecipes archive
 export async function loadRecipes(filename) {
 	try {
-		const recipesPath = path.join(__dirname, '../../../../../uploads/imports/', filename) // Adjust the filename
-		let recipes = await extractRecipes(recipesPath)
+		const recipesPath = path.join(__dirname, '../../../../../uploads/imports/', filename)
+
+		let recipes
+
+		if (filename.endsWith('.paprikarecipes')) {
+			recipes = await extractRecipes(recipesPath)
+		} else if (filename.endsWith('.json')) {
+			const content = await fsPromises.readFile(recipesPath, 'utf-8')
+			recipes = JSON.parse(content)
+		} else {
+			throw new Error('Unsupported file type.')
+		}
+
+		// Validate the recipes structure
+		if (!isValidRecipeStructure(recipes)) {
+			throw new Error('Invalid recipe structure.')
+		}
+
 		return recipes
 	} catch (error) {
 		console.error('Error loading recipes:', error.message)
@@ -308,44 +333,95 @@ export async function addRecipesToDB(declaredRecipes, userId) {
 export async function handlePhotosForRecipes(createdRecipes) {
 	const __dirname = path.dirname(fileURLToPath(import.meta.url))
 	const uploadDir = path.join(__dirname, '../../../../../uploads/images') // Adjust the path to point to the root /static folder
-	for (const recipe of createdRecipes) {
-		// Handle the main photo
-		if (recipe.photo && recipe.photo_data) {
-			await saveFile(recipe.photo_data, recipe.photo, uploadDir)
-			await prisma.recipePhoto.create({
-				data: {
-					id: recipe.photo.split('.')[0],
-					recipeUid: recipe.uid,
-					isMain: true,
-					fileType: getFileType(recipe.photo)
-				}
-			})
-		}
 
-		// Handle the photos array
-		if (recipe.photos && recipe.photos.length > 0) {
-			for (const photoObj of recipe.photos) {
-				const { data: photoData, filename } = photoObj
-				await saveFile(photoData, filename, uploadDir)
+	const failedRecipes = []
+
+	for (const recipe of createdRecipes) {
+		try {
+			let isMainSet = false
+
+			// Handle the main photo in Base64 format
+			if (recipe.photo && recipe.photo_data) {
+				await saveFile(recipe.photo_data, recipe.photo, uploadDir)
+				isMainSet = true
 				await prisma.recipePhoto.create({
 					data: {
-						id: filename.split('.')[0],
+						id: recipe.photo.split('.')[0],
 						recipeUid: recipe.uid,
-						fileType: getFileType(filename)
+						isMain: true,
+						fileType: getFileType(recipe.photo)
 					}
 				})
 			}
-		}
 
-		// Handle the photo_url
-		if (recipe.image_url) {
-			await prisma.recipePhoto.create({
-				data: {
-					recipeUid: recipe.uid,
-					url: recipe.image_url
+			// Handle the photos array
+			if (recipe.photos && recipe.photos.length > 0) {
+				for (const photoObj of recipe.photos) {
+					const { data: photoData, filename } = photoObj
+					await saveFile(photoData, filename, uploadDir)
+					let setMain = false
+					!isMainSet ? ((setMain = true), (isMainSet = true)) : null
+					await prisma.recipePhoto.create({
+						data: {
+							id: filename.split('.')[0],
+							recipeUid: recipe.uid,
+							fileType: getFileType(filename),
+							isMain: setMain
+						}
+					})
 				}
-			})
+			}
+
+			// If the recipe is in .json format download the photo
+			if (recipe.photo_url && !isMainSet && recipe.photo) {
+				console.log('Grabbing photo from recipe.photo_url: ' + recipe.name)
+				let filename = recipe.photo.split('.')[0]
+				let filetype = getFileType(recipe.photo)
+				let photoUrlSuccess = await processImage(recipe.photo_url, filename, filetype)
+				photoUrlSuccess ? ((isMainSet = true), console.log('photo_url grab successful!')) : null
+				if (photoUrlSuccess) {
+					await prisma.recipePhoto.create({
+						data: {
+							id: filename,
+							recipeUid: recipe.uid,
+							fileType: filetype,
+							isMain: isMainSet
+						}
+					})
+				}
+			}
+			// If all of the above still haven't managed to grab an image, download it from the image_url field
+			if (recipe.image_url && !isMainSet) {
+				console.log('Grabbing photo from recipe.image_url: ' + recipe.name)
+				const url = new URL(recipe.image_url)
+				const pathname = url.pathname
+				let filetype = getFileType(pathname)
+				isMainSet = true
+				let recipePhoto = await prisma.recipePhoto.create({
+					data: {
+						recipeUid: recipe.uid,
+						fileType: filetype,
+						isMain: isMainSet
+					}
+				})
+				let imageUrlSuccess = await processImage(recipe.image_url, recipePhoto.id, filetype)
+				imageUrlSuccess ? ((isMainSet = true), console.log('image_url grab successful!')) : null
+				if (!imageUrlSuccess) {
+					// Delete the preliminary record if the processImage function fails
+					await prisma.recipePhoto.delete({
+						where: {
+							id: recipePhoto.id
+						}
+					})
+				}
+			}
+		} catch (error) {
+			console.error(`Failed to process recipe with UID ${recipe.uid}:`, error)
+			failedRecipes.push(recipe.uid)
 		}
+	}
+	if (failedRecipes.length > 0) {
+		console.warn(`Failed to process recipes with UIDs: ${failedRecipes.join(', ')}`)
 	}
 }
 

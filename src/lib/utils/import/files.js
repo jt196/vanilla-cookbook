@@ -19,6 +19,8 @@ export async function isValidFileType(stream, desiredExtensions) {
 	return fileTypeResult.ext === desiredExtensions
 }
 
+export const validImageTypes = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp']
+
 export async function saveFile(fileData, filename, directory) {
 	const filePath = path.join(directory, filename)
 
@@ -43,4 +45,22 @@ export async function saveFile(fileData, filename, directory) {
 	}
 }
 
-export const validImageTypes = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp']
+export function isValidRecipeStructure(recipes) {
+	// We're expecting an array of recipes
+	if (!Array.isArray(recipes) || recipes.length === 0) return false
+
+	const firstRecipe = recipes[0]
+
+	// Define required fields and their types
+	const requiredFields = {
+		name: 'string'
+	}
+
+	for (let field in requiredFields) {
+		if (typeof firstRecipe[field] !== requiredFields[field]) {
+			return false
+		}
+	}
+
+	return true
+}

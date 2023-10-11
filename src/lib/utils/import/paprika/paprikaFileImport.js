@@ -28,6 +28,10 @@ export async function importPaprikaRecipes(userId, filename) {
 	// Load recipes into memory from file
 	// Nothing is stored locally here
 	const rawRecipes = await loadRecipes(filename)
+	if (rawRecipes.length === 0) {
+		console.log('Error loading recipes.')
+		return { success: false, message: 'There was an error loading your recipes!', count: 0 }
+	}
 	// Check against existing recipes using uids
 	const newRecipes = await filterExistingRecipes(rawRecipes)
 	// Return if they're already imported
@@ -36,7 +40,7 @@ export async function importPaprikaRecipes(userId, filename) {
 		return { success: true, message: 'All recipes are already in the database.', count: 0 }
 	}
 	// Check the recipe object for matching categories
-	// Add them to the DB if they don't exist
+	// Add them to the Category table in the DB if they don't exist
 	await ensureCategoriesExist(newRecipes, userId)
 	// Destructure the recipe data to remove any fields that don't exist on the recipe table
 	const declaredRecipes = await declareRecipes(newRecipes)
