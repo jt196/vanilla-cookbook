@@ -15,6 +15,8 @@
 	let catFileExists = false
 	let recFileExists = false
 
+	let selectedFiles
+
 	onMount(async () => {
 		await checkCategoryFileExists(user.userId)
 		await checkRecipeFileExists(user.userId)
@@ -180,6 +182,10 @@
 			recImportStatus = 'Failed to import recipes. Please try again.'
 		}
 	}
+
+	function handlePaprikaUpload(event) {
+		selectedFiles = Array.from(event.target.files)
+	}
 </script>
 
 <h3>Paprika Import</h3>
@@ -238,6 +244,10 @@
 				on:click={importRecipesFromFile}>Import Recipes</button>
 			<p>{recImportStatus ? recImportStatus : ''}</p>
 		</div>
+	</div>
+	<div class="paprika-file">
+		<label for="file">Upload Paprika File</label>
+		<input type="file" id="file" name="file" on:change={handlePaprikaUpload} />
 	</div>
 </div>
 

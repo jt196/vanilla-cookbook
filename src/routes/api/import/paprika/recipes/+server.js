@@ -97,22 +97,24 @@ export async function PUT({ locals }) {
 	}
 
 	try {
-		const filepath = path.join(process.cwd(), 'src/lib/data/import', user.userId + '_recipes.json')
-		// Load categories using the utility function
-		const categories = await loadRecipes(filepath)
+		// TODO: API recipe file import here.
 
-		// If no categories are returned or the list is empty, respond appropriately
-		if (!categories || categories.length === 0) {
-			return new Response(JSON.stringify({ error: 'No recipes found to import.' }), {
-				status: 400,
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			})
-		}
+		// const filepath = path.join(process.cwd(), 'src/lib/data/import', user.userId + '_recipes.json')
+		// // Load categories using the utility function
+		// const recipes = await loadRecipes(filepath)
 
-		// Call the function to add categories to the database
-		await addRecipesToDB(categories, user.userId)
+		// // If no categories are returned or the list is empty, respond appropriately
+		// if (!categories || categories.length === 0) {
+		// 	return new Response(JSON.stringify({ error: 'No recipes found to import.' }), {
+		// 		status: 400,
+		// 		headers: {
+		// 			'Content-Type': 'application/json'
+		// 		}
+		// 	})
+		// }
+
+		// // Call the function to add categories to the database
+		// await addRecipesToDB(categories, user.userId)
 
 		return new Response(
 			JSON.stringify({ success: true, message: 'Recipes added to the database.' }),
