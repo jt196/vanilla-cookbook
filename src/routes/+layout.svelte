@@ -22,23 +22,23 @@
 		<ul>
 			<li>
 				<strong>
-					<a href="/"> Cookrr </a>
+					{#if user}
+						<a href="/user/{user.userId}/recipes"> Cookrr </a>
+					{:else}
+						<a href="/"> Cookrr </a>
+					{/if}
 				</strong>
 			</li>
 		</ul>
 		<ul>
 			<form method="POST">
-				<li><a href="/">Home</a></li>
 				{#if !user}
 					<li><a href="/login" role="button">Login</a></li>
 					{#if settings.registrationAllowed}
 						<li><a href="/register">Register</a></li>
 					{/if}
 				{:else}
-					<li><a href="/user/password"><Settings width="25px" /></a></li>
-					<li>
-						<button id="logout" formaction="/logout" type="submit">Logout</button>
-					</li>
+					<li><a href="/user/options/settings"><Settings width="25px" /></a></li>
 				{/if}
 			</form>
 		</ul>
