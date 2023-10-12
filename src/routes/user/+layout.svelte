@@ -7,6 +7,11 @@
 		<ul>
 			<form method="POST">
 				<li>
+					<a href="/user/settings" class={data.pathname === '/user/settings' ? 'active-link' : ''}>
+						Settings
+					</a>
+				</li>
+				<li>
 					<a href="/user/password" class={data.pathname === '/user/password' ? 'active-link' : ''}>
 						Password
 					</a>

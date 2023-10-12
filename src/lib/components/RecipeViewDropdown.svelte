@@ -1,4 +1,6 @@
 <script>
+	import { systems } from '$lib/utils/units'
+
 	export let selectedSystem = ''
 	export let measurementSystem = ''
 
@@ -22,12 +24,6 @@
 			summary = 'Loading...'
 		}
 	}
-
-	const systems = [
-		{ value: 'metric', label: 'Metric' },
-		{ value: 'imperial', label: 'Imperial' },
-		{ value: 'americanVolumetric', label: 'US Cups' }
-	]
 </script>
 
 <details class="dropdown">

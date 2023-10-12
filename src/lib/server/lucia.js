@@ -16,6 +16,8 @@ export const auth = lucia({
 			username: userData.username,
 			name: userData.name,
 			isAdmin: userData.isAdmin,
+			publicProfile: userData.publicProfile,
+			publicRecipes: userData.publicRecipes,
 			units: userData.units
 		}
 	},

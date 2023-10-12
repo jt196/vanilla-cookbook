@@ -323,3 +323,9 @@ export const findSuitableUnit = (system, quantityInGrams) => {
 	}
 	return 'gram' // default
 }
+
+export const systems = [
+	{ value: 'metric', label: 'Metric' },
+	{ value: 'imperial', label: 'Imperial' },
+	{ value: 'americanVolumetric', label: 'US Cups' }
+]

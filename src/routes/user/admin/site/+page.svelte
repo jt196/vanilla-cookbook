@@ -5,7 +5,7 @@
 
 	let settingsFeedback = ''
 
-	async function updateSettings(event) {
+	async function updateAdminSettings(event) {
 		event.preventDefault()
 		const response = await fetch('/api/site', {
 			method: 'POST',
@@ -24,7 +24,7 @@
 
 <h3>Update Site Settings</h3>
 <div class="container">
-	<form method="POST" action="?/updateSettings" on:submit={updateSettings}>
+	<form method="POST" action="?/updateAdminSettings" on:submit={updateAdminSettings}>
 		<label>
 			<input type="checkbox" name="Admin" bind:checked={settings.registrationAllowed} />
 			Allow Registrations
