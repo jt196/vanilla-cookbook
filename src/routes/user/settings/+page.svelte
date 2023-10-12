@@ -1,15 +1,17 @@
 <script>
 	import { systems } from '$lib/utils/units.js'
+	import FeedbackMessage from '$lib/components/FeedbackMessage.svelte'
 
 	export let data
 	const { user } = data
 	let settingsFeedback = ''
 	let systemLabel
+	$: console.log(user.units)
 
 	async function updateSettings(event) {
 		event.preventDefault()
-		const response = await fetch('/api/user/settings', {
-			method: 'POST',
+		const response = await fetch(`/api/user/${user.userId}`, {
+			method: 'PUT',
 			headers: {
 				'Content-Type': 'application/json'
 			},
@@ -55,8 +57,6 @@
 	</details>
 	<footer>
 		<button type="submit">Update</button>
-		{#if settingsFeedback}
-			<p class="feedback">{settingsFeedback}</p>
-		{/if}
+		<FeedbackMessage message={settingsFeedback} />
 	</footer>
 </form>

@@ -121,7 +121,8 @@ export const PUT = async ({ request, locals, params }) => {
 				}
 			}
 		}
-
+		// Updating the user object with a fallback if the value doesn't exist
+		// Note the different format for boolean values
 		const updatedUser = await prisma.authUser.update({
 			where: { id: id },
 			data: {
@@ -129,6 +130,11 @@ export const PUT = async ({ request, locals, params }) => {
 				username: userData.username || updatingUser.username,
 				email: userData.email || updatingUser.email,
 				about: userData.about || updatingUser.about,
+				units: userData.units || updatingUser.units,
+				publicProfile:
+					'publicProfile' in userData ? userData.publicProfile : updatingUser.publicProfile,
+				publicRecipes:
+					'publicRecipes' in userData ? userData.publicRecipes : updatingUser.publicRecipes,
 				isAdmin: 'isAdmin' in userData ? userData.isAdmin : updatingUser.isAdmin
 			}
 		})
