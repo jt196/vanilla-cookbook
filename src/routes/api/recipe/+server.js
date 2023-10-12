@@ -35,7 +35,8 @@ export async function POST({ request, locals, url }) {
 		directions,
 		total_time,
 		servings,
-		nutritional_info
+		nutritional_info,
+		is_public
 	} = recipeData
 
 	let recipe
@@ -54,6 +55,7 @@ export async function POST({ request, locals, url }) {
 				total_time,
 				servings,
 				nutritional_info,
+				is_public,
 				created: new Date(),
 				userId: user.userId
 			}

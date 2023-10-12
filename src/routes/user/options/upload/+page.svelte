@@ -9,6 +9,7 @@
 	let recImportMessage = ''
 
 	let isPublic = false
+	$: console.log('🚀 ~ file: +page.svelte:13 ~ isPublic:', isPublic)
 
 	let selectedFiles = []
 
@@ -154,7 +155,5 @@
 
 	.outline.secondary {
 		margin-left: 0;
-		disabled {
-		}
 	}
 </style>

@@ -7,12 +7,17 @@
 	import StarRating from '$lib/components/StarRating.svelte'
 
 	export let recipe
+	$: console.log('🚀 ~ file: RecipeForm.svelte:11 ~ recipe.is_public:', recipe.is_public)
 	export let onSubmit
 	export let buttonText = 'Add Recipe' // Default button text
 	export let selectedFiles = null
 
 	export let baseUrl = ''
 	export let editMode = false
+	// If new recipe, default set to false
+	if (!editMode) {
+		recipe.is_public = false
+	}
 	export let recipeCategories = null
 
 	onMount(() => {
@@ -91,6 +96,15 @@
 		name="nutritional_info"
 		rows="5"
 		bind:value={recipe.nutritional_info} />
+
+	<label>
+		<input
+			type="checkbox"
+			data-tooltip="Make your new recipe public"
+			name="Recipe Public"
+			bind:checked={recipe.is_public} />
+		Recipe Public
+	</label>
 
 	<button type="submit">{buttonText}</button>
 	{#if recipeCategories}
