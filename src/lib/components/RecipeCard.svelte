@@ -75,6 +75,9 @@
 		height: auto;
 		object-fit: cover;
 		display: block;
+		@media (max-width: 767px) {
+			max-height: 75px;
+		}
 	}
 
 	.grid {
@@ -103,6 +106,10 @@
 		@media (max-width: 767px) {
 			flex-direction: column;
 			align-items: end;
+			button,
+			a {
+				padding: 0.4rem;
+			}
 		}
 	}
 
@@ -110,6 +117,10 @@
 		transition: background-color 0.2s ease;
 		padding: 1rem;
 		margin-bottom: 1rem;
+		@media (max-width: 767px) {
+			padding: 0.5rem;
+			margin-bottom: 0.5rem;
+		}
 	}
 
 	article:hover {

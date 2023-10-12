@@ -33,6 +33,9 @@
 	.container {
 		min-height: 200px;
 		height: calc(100vh - 18em);
+		@media (max-width: 1023px) {
+			padding: 0;
+		}
 	}
 
 	.list-indicator {
