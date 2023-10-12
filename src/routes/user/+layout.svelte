@@ -28,12 +28,16 @@
 				</li>
 				{#if data.user.isAdmin}
 					<li>
-						<a href="/user/users" class={data.pathname === '/user/users' ? 'active-link' : ''}>
+						<a
+							href="/user/admin/users"
+							class={data.pathname === '/user/admin/users' ? 'active-link' : ''}>
 							Users
 						</a>
 					</li>
 					<li>
-						<a href="/user/site" class={data.pathname === '/user/site' ? 'active-link' : ''}>
+						<a
+							href="/user/admin/site"
+							class={data.pathname === '/user/admin/site' ? 'active-link' : ''}>
 							Site
 						</a>
 					</li>
