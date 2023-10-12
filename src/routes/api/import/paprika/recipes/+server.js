@@ -81,7 +81,7 @@ export async function GET({ locals }) {
 	}
 }
 
-export async function PUT({ locals }) {
+export async function PUT({ request, locals }) {
 	const { user, session } = await locals.auth.validateUser()
 
 	if (!user || !session) {
@@ -93,12 +93,17 @@ export async function PUT({ locals }) {
 		})
 	}
 
+	const bodyText = await request.text()
+	const isPublic = JSON.parse(bodyText).isPublic
+
+	console.log('isPublic:', isPublic) // You can now use this boolean as needed
+
 	try {
 		const filename = user.userId + '_recipes.json'
 		console.log('🚀 ~ file: +server.js:98 ~ PUT ~ filename:', filename)
 
 		// Import recipes from .json file
-		const importedCount = await importPaprikaRecipes(user.userId, filename)
+		const importedCount = await importPaprikaRecipes(user.userId, filename, isPublic)
 		console.log('🚀 ~ file: +server.js:102 ~ PUT ~ importedCount:', importedCount)
 
 		if (importedCount.count >= 0) {

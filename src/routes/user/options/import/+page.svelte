@@ -18,7 +18,8 @@
 	let catFileExists = false
 	let recFileExists = false
 
-	let selectedFiles = []
+	let isPublic = false
+
 	onMount(async () => {
 		await checkCategoryFileExists(user.userId)
 		await checkRecipeFileExists(user.userId)
@@ -164,7 +165,8 @@
 				method: 'PUT',
 				headers: {
 					'Content-Type': 'application/json'
-				}
+				},
+				body: JSON.stringify({ isPublic })
 			})
 
 			const data = await response.json()
@@ -238,6 +240,14 @@
 			</div>
 			<p>Recipes in File: {recFile}</p>
 			<p>Recipes in DB: {recDb}</p>
+			<label>
+				<input
+					type="checkbox"
+					data-tooltip="Make your imported recipes public"
+					name="Recipes Public"
+					bind:checked={isPublic} />
+				Recipes Public
+			</label>
 			<button
 				class="outline secondary"
 				disabled={recDb === recFile || recFile === 0 || recFile === null}

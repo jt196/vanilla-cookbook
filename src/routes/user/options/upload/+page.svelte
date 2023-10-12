@@ -7,7 +7,8 @@
 
 	let recUploadMessage = ''
 	let recImportMessage = ''
-	$: console.log('🚀 ~ file: +page.svelte:10 ~ recImportMessage:', recImportMessage)
+
+	let isPublic = false
 
 	let selectedFiles = []
 
@@ -67,7 +68,7 @@
 					'Content-Type': 'application/json'
 					// If your API needs authentication, you might also include authorization headers here
 				},
-				body: JSON.stringify({ filename: filename })
+				body: JSON.stringify({ filename: filename, isPublic: isPublic })
 			})
 
 			const data = await response.json()
@@ -125,6 +126,14 @@
 			<button class="outline secondary" on:click={() => removeFile(file)}
 				><Delete width="30px" height="30px" fill="var(--pico-del-color)" /></button>
 		{/each}
+		<label>
+			<input
+				type="checkbox"
+				data-tooltip="Make your imported recipes public"
+				name="Recipes Public"
+				bind:checked={isPublic} />
+			Recipes Public
+		</label>
 	</div>
 {/if}
 <div class="feedback">

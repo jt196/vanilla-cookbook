@@ -125,6 +125,7 @@ export async function POST({ request, locals }) {
 	try {
 		const requestData = await request.json()
 		const filename = `${user.userId}_${requestData.filename}`
+		const isPublic = requestData.isPublic
 		console.log('🚀 ~ file: +server.js:122 ~ POST ~ filename:', filename)
 
 		if (!filename) {
@@ -137,7 +138,7 @@ export async function POST({ request, locals }) {
 		}
 
 		// Importing the paprika file
-		const importedCount = await importPaprikaRecipes(user.userId, filename)
+		const importedCount = await importPaprikaRecipes(user.userId, filename, isPublic)
 		console.log('🚀 ~ file: +server.js:141 ~ POST ~ importedCount:', importedCount)
 
 		if (importedCount.count >= 0) {

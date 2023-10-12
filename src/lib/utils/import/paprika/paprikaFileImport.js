@@ -24,7 +24,7 @@ export async function importPaprikaCategories(userId) {
 	}
 }
 
-export async function importPaprikaRecipes(userId, filename) {
+export async function importPaprikaRecipes(userId, filename, isPublic = false) {
 	// Load recipes into memory from file
 	// Nothing is stored locally here
 	const rawRecipes = await loadRecipes(filename)
@@ -43,7 +43,7 @@ export async function importPaprikaRecipes(userId, filename) {
 	// Add them to the Category table in the DB if they don't exist
 	await ensureCategoriesExist(newRecipes, userId)
 	// Destructure the recipe data to remove any fields that don't exist on the recipe table
-	const declaredRecipes = await declareRecipes(newRecipes)
+	const declaredRecipes = await declareRecipes(newRecipes, isPublic)
 	// Add the destructured data to the DB
 	const createdRecipes = await addRecipesToDB(declaredRecipes, userId)
 

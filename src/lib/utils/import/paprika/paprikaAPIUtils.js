@@ -485,13 +485,14 @@ export function getFileType(filename) {
 	return filename.split('.').pop()
 }
 
-export async function declareRecipes(rawRecipes) {
+export async function declareRecipes(rawRecipes, isPublic) {
 	return rawRecipes.map((recipe) => {
 		// eslint-disable-next-line no-unused-vars
 		const { categories, photo_data, photos, photo_url, photo, ...otherRecipeFields } = recipe
 		return {
 			...otherRecipeFields,
-			created: new Date(otherRecipeFields.created)
+			created: new Date(otherRecipeFields.created),
+			is_public: isPublic
 		}
 	})
 }

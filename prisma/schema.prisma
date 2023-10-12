@@ -24,20 +24,20 @@ model Recipe {
     userId           String
     rating           Float?
     photo_hash       String?
-    on_favorites     Boolean          @default(false)
+    on_favorites     Boolean?         @default(false)
     photo            String?
     scale            String?
     ingredients      String?
-    is_pinned        Boolean          @default(false)
-    is_public        Boolean          @default(false)
+    is_pinned        Boolean?         @default(false)
+    is_public        Boolean?         @default(false)
     source           String?
     total_time       String?
     hash             String?
     description      String?
     source_url       String?
     difficulty       String?
-    on_grocery_list  Boolean          @default(false)
-    in_trash         Boolean          @default(false)
+    on_grocery_list  Boolean?         @default(false)
+    in_trash         Boolean?         @default(false)
     directions       String?
     photo_url        String?
     cook_time        String?
