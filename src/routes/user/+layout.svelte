@@ -49,4 +49,10 @@
 		color: white;
 		font-weight: bold;
 	}
+	form li {
+		padding: 0.4rem;
+	}
+	nav {
+		margin-bottom: 1rem;
+	}
 </style>
