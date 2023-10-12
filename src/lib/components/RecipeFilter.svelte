@@ -25,35 +25,27 @@
 		</select>
 	</div>
 	<div class="sort">
-		<div>
-			<button
-				data-tooltip="Sort by Date"
-				class={activeButton === 'created' ? 'secondary' : ''}
-				on:click={() => {
-					activeButton = 'created'
-					dispatch('sort', { key: 'created' })
-				}}
-				>Date <SortAscDesc sort={activeButton === 'created' ? sortState.direction : ''} /></button>
-		</div>
-		<div>
-			<button
-				data-tooltip="Sort by Name"
-				class={activeButton === 'name' ? 'secondary' : ''}
-				on:click={() => {
-					activeButton = 'name'
-					dispatch('sort', { key: 'name' })
-				}}>Title <SortAscDesc sort={activeButton === 'name' ? sortState.direction : ''} /></button>
-		</div>
-		<div>
-			<button
-				data-tooltip="Sort by Rating"
-				class={activeButton === 'rating' ? 'secondary' : ''}
-				on:click={() => {
-					activeButton = 'rating'
-					dispatch('sort', { key: 'rating' })
-				}}
-				>Rating <SortAscDesc sort={activeButton === 'rating' ? sortState.direction : ''} /></button>
-		</div>
+		<button
+			data-tooltip="Sort by Date"
+			class={activeButton === 'created' ? 'secondary' : ''}
+			on:click={() => {
+				activeButton = 'created'
+				dispatch('sort', { key: 'created' })
+			}}>Date <SortAscDesc sort={activeButton === 'created' ? sortState.direction : ''} /></button>
+		<button
+			data-tooltip="Sort by Name"
+			class={activeButton === 'name' ? 'secondary' : ''}
+			on:click={() => {
+				activeButton = 'name'
+				dispatch('sort', { key: 'name' })
+			}}>Title <SortAscDesc sort={activeButton === 'name' ? sortState.direction : ''} /></button>
+		<button
+			data-tooltip="Sort by Rating"
+			class={activeButton === 'rating' ? 'secondary' : ''}
+			on:click={() => {
+				activeButton = 'rating'
+				dispatch('sort', { key: 'rating' })
+			}}>Rating <SortAscDesc sort={activeButton === 'rating' ? sortState.direction : ''} /></button>
 	</div>
 </div>
 
@@ -76,7 +68,7 @@
 
 		button {
 			white-space: nowrap;
-			margin-bottom: var(--pico-spacing);
+			margin-bottom: 0.5rem;
 			svg {
 				display: inline-block; // or just 'inline' depending on your needs
 				vertical-align: middle; // to align it with the text
@@ -89,7 +81,10 @@
 	}
 
 	.recipe-filters {
-		margin-top: 1rem;
+		margin: 0.5rem 0 0 0;
+		input {
+			margin-bottom: 0.5rem;
+		}
 		grid-template-columns: 1fr auto 1fr;
 		gap: 1rem; // Space between grid items
 		align-items: center; // Vertically center the grid items
@@ -97,10 +92,22 @@
 			grid-template-columns: 2fr 1fr; // Let the search and select take up the full width
 			grid-template-rows: repeat(2, auto); // Two rows: one for search and dropdown, one for buttons
 			gap: 0.5rem; // Gap between rows
+			input {
+				height: 2.5rem;
+				margin-bottom: 0;
+			}
+			#selections {
+				line-height: 1rem;
+				margin-bottom: 0;
+			}
 		}
 
 		@media (max-width: 767px) {
 			grid-template-columns: 1fr; // Stack items on top of each other
 		}
+	}
+
+	#selections {
+		margin-bottom: 0.5rem;
 	}
 </style>

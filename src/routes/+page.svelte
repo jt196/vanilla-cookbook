@@ -140,18 +140,15 @@
 <div class="content" class:sidebar-open={sidebarOpen} on:close={handleSidebarClose}>
 	<div class="grid">
 		<div>
-			<div class="grid">
-				<div>
-					<button data-tooltip="Display Category Filter" on:click={toggleSidebar}>
-						<Burger width="1.5rem" />
-					</button>
-				</div>
-				<div class="align-right">
-					<button data-tooltip="Export Filtered Recipes" on:click={handleExport}
-						><Export width="30px" height="30px" /></button>
-					<a href="/new" data-tooltip="New Recipe" role="button"
-						><New width="30px" height="30px" /></a>
-				</div>
+			<div class="menu-buttons">
+				<button data-tooltip="Display Category Filter" on:click={toggleSidebar}>
+					<Burger width="1.5rem" />
+				</button>
+				<div class="spacer" />
+				<button data-tooltip="Export Filtered Recipes" on:click={handleExport}
+					><Export width="30px" height="30px" /></button>
+				<a href="/new" data-tooltip="New Recipe" role="button"
+					><New width="30px" height="30px" /></a>
 			</div>
 			<RecipeFilter
 				bind:searchString
@@ -182,6 +179,7 @@
 			}
 		}
 	}
+
 	.sidebar-buttons {
 		display: flex; // Use flexbox
 		justify-content: center; // Center horizontally
@@ -192,5 +190,18 @@
 
 	.sidebar-check {
 		margin-left: 1rem;
+	}
+	.menu-buttons {
+		display: flex;
+		justify-content: space-between;
+		gap: 1rem;
+		.spacer {
+			flex-grow: 1;
+		}
+	}
+
+	#selections,
+	.search-box input:not([type='checkbox'], [type='radio']) {
+		margin-bottom: 0.5rem;
 	}
 </style>
