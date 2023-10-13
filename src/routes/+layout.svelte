@@ -35,7 +35,7 @@
 			<form method="POST">
 				<li><a href="/users"><Users width="25px" /></a></li>
 				{#if !user}
-					<li><a href="/login" role="button">Login</a></li>
+					<a href="/login" role="button">Login</a>
 					{#if settings.registrationAllowed}
 						<li><a href="/register">Register</a></li>
 					{/if}
@@ -47,3 +47,9 @@
 	</nav>
 	<slot />
 </div>
+
+<style lang="scss">
+	a {
+		padding: 12.75px;
+	}
+</style>
