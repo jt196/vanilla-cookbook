@@ -66,7 +66,7 @@
 
 			if (result.success) {
 				// Handle success, maybe redirect or show a success message
-				goto(`/${recipe.uid}/view/`)
+				goto(`/recipe/${recipe.uid}/view/`)
 			} else {
 				console.error('Error:', result.error)
 			}
@@ -105,7 +105,11 @@
 </div>
 
 {#if recipe.userId === user.userId}
-	<a href="/{recipe?.uid}/view/" role="button" class="outline contrast" data-testid="view-button">
+	<a
+		href="/recipe/{recipe?.uid}/view/"
+		role="button"
+		class="outline contrast"
+		data-testid="view-button">
 		<View width="30px" height="30px" fill="var(--pico-ins-color)" />
 	</a>
 	<button

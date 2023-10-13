@@ -15,7 +15,8 @@
 	export let data
 	let isLoading = true
 
-	let { recipe, categories, user } = data
+	let { recipe, categories, user, viewMode } = data
+	console.log('🚀 ~ file: +page.svelte:19 ~ viewMode:', viewMode)
 
 	let ingredients = []
 	let ingredientsArray = []
@@ -96,11 +97,13 @@
 	}
 </script>
 
-<div id="recipe-buttons">
-	{#if recipe.userId === user.userId}
-		<RecipeViewButtons {recipe} />
-	{/if}
-</div>
+{#if !viewMode}
+	<div id="recipe-buttons">
+		{#if recipe.userId === user.userId}
+			<RecipeViewButtons {recipe} />
+		{/if}
+	</div>
+{/if}
 
 {#if isLoading}
 	<div aria-busy="true">Waiting for the kettle to boil...</div>

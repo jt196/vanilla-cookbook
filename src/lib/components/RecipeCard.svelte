@@ -34,7 +34,7 @@
 		{:else}
 			<FoodBowl width="100px" />
 		{/if}
-		<a href="/{item.uid}/view/" class="recipe-card">
+		<a href="/recipe/{item.uid}/view/" class="recipe-card">
 			<div>
 				<header>{item.name}</header>
 				<span class="created">
@@ -55,7 +55,7 @@
 						fill="var(--pico-del-color)" />
 				</button>
 				<a
-					href="/{item.uid}/edit/"
+					href="/recipe/{item.uid}/edit/"
 					role="button"
 					class="outline contrast"
 					data-testid="edit-button">

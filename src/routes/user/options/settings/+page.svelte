@@ -28,7 +28,9 @@
 	$: systemLabel = 'Selected system: ' + systems.find((system) => system.value === user.units).label
 </script>
 
-<button id="logout" formaction="/logout" type="submit">Logout</button>
+<form method="POST">
+	<button id="logout" formaction="/logout" type="submit">Logout</button>
+</form>
 
 <form method="POST" action="?/updateSettings" on:submit={updateSettings}>
 	<label>

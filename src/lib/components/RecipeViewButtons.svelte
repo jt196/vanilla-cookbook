@@ -15,7 +15,11 @@
 	export let recipe
 </script>
 
-<a href="/{recipe?.uid}/edit/" role="button" class="outline contrast" data-testid="edit-button">
+<a
+	href="/recipe/{recipe?.uid}/edit/"
+	role="button"
+	class="outline contrast"
+	data-testid="edit-button">
 	<Edit width="30px" height="30px" fill="var(--pico-ins-color)" />
 </a>
 <button
@@ -24,6 +28,10 @@
 	class="outline secondary">
 	<Delete width="30px" height="30px" fill="var(--pico-del-color)" />
 </button>
-<a href="/{recipe?.uid}/images/" role="button" class="outline contrast" data-testid="edit-button">
+<a
+	href="/recipe/{recipe?.uid}/images/"
+	role="button"
+	class="outline contrast"
+	data-testid="edit-button">
 	<Images width="30px" height="30px" fill="var(--pico-ins-color)" />
 </a>

@@ -203,15 +203,6 @@ export async function GET({ params, locals }) {
 	const { session, user } = await locals.auth.validateUser()
 	const { uid } = params
 
-	if (!session || !user) {
-		return new Response(JSON.stringify({ error: 'User not authenticated.' }), {
-			status: 401,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
-	}
-
 	try {
 		const recipe = await prisma.recipe.findUnique({
 			where: {
@@ -230,6 +221,16 @@ export async function GET({ params, locals }) {
 				categories: true
 			}
 		})
+
+		if (!recipe.is_public && (!session || !user)) {
+			return new Response(JSON.stringify({ error: 'User not authenticated and recipe private.' }), {
+				status: 401,
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			})
+		}
+
 		if (!recipe) {
 			return new Response(JSON.stringify({ error: 'Recipe not found!' }), {
 				status: 404,
@@ -238,7 +239,9 @@ export async function GET({ params, locals }) {
 				}
 			})
 		}
-		if (recipe.userId !== user.userId) {
+		if (!recipe.is_public && recipe.userId !== user.userId) {
+			console.log('🚀 ~ file: +server.js:243 ~ GET ~ recipe.is_public:', recipe.is_public)
+			console.log('Unauthorised!')
 			return new Response(JSON.stringify({ error: 'Unauthorised!' }), {
 				status: 403,
 				headers: {
