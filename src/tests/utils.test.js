@@ -164,9 +164,13 @@ describe('Filter functions', () => {
 			const result = decimalToFraction(0.77)
 			expect(result).toBe('¾')
 		})
+		it('should return the whole number if above 10', () => {
+			const result = decimalToFraction(11.5)
+			expect(result).toBe(12)
+		})
 		it('should return the same if a whole number', () => {
 			const result = decimalToFraction(225)
-			expect(result).toBe('225')
+			expect(result).toBe(225)
 		})
 		it('should convert 1.2 to 1⅕', () => {
 			const result = decimalToFraction(1.2)
