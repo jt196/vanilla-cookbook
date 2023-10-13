@@ -2,11 +2,9 @@ import { prisma } from '$lib/server/prisma'
 
 export async function GET({ params, locals }) {
 	const requestedUserId = params.id // Extracting the uid from the request parameters
-	console.log('🚀 ~ file: +server.js:5 ~ GET ~ requestedUserId:', requestedUserId)
 
 	// Validate the requesting user's session and get their userId
 	const { user } = await locals.auth.validateUser()
-	console.log('🚀 ~ file: +server.js:16 ~ GET ~ user.userId:', user.userId)
 
 	let whereClause = {
 		userId: requestedUserId // Ensure recipes belong to the requested user
@@ -14,7 +12,7 @@ export async function GET({ params, locals }) {
 
 	// If the requesting user's ID doesn't match the requested ID, only fetch public recipes
 	if (!user || user.userId !== requestedUserId) {
-		whereClause.isPublic = true // Assuming `isPublic` is a field in your Recipe model indicating if a recipe is public or not
+		whereClause.is_public = true // Assuming `isPublic` is a field in your Recipe model indicating if a recipe is public or not
 	}
 
 	try {

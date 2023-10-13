@@ -8,9 +8,15 @@
 	import Burger from '$lib/components/svg/Burger.svelte'
 	import Export from '$lib/components/svg/Export.svelte'
 	import New from '$lib/components/svg/New.svelte'
+	import House from '$lib/components/svg/House.svelte'
 	import CategoryTree from '$lib/components/CategoryTree.svelte'
+	import { goto } from '$app/navigation'
 
 	export let data
+	const { user } = data
+	const { requestedUserId, viewingUserId } = user
+	let viewOnly = true
+	requestedUserId === viewingUserId ? (viewOnly = false) : null
 
 	let sidebarOpen = false
 	let searchString = ''
@@ -115,35 +121,45 @@
 	}
 </script>
 
-<Sidebar
-	bind:isOpen={sidebarOpen}
-	on:close={handleSidebarClose}
-	let:onCategoryClick={handleCategoryClick}>
-	<div class="sidebar-buttons">
-		{#if selectedCategoryUids}
-			<button on:click={clearCategory}>Clear</button>
-		{/if}
-		<a href="/categories" role="button">Edit</a>
-	</div>
-	<div class="sidebar-check">
-		<label>
-			<input type="checkbox" bind:checked={useAndLogic} />
-			{useAndLogic ? 'Using AND logic' : 'Using OR logic'}
-		</label>
-	</div>
-	<CategoryTree
-		categories={data.categories}
-		onCategoryClick={handleCategoryClick}
-		{selectedCategoryUids}
-		on:clearCategory={clearCategory} /></Sidebar>
+{#if !viewOnly}
+	<Sidebar
+		bind:isOpen={sidebarOpen}
+		on:close={handleSidebarClose}
+		let:onCategoryClick={handleCategoryClick}>
+		<div class="sidebar-buttons">
+			{#if selectedCategoryUids}
+				<button on:click={clearCategory}>Clear</button>
+			{/if}
+			<a href="/categories" role="button">Edit</a>
+		</div>
+		<div class="sidebar-check">
+			<label>
+				<input type="checkbox" bind:checked={useAndLogic} />
+				{useAndLogic ? 'Using AND logic' : 'Using OR logic'}
+			</label>
+		</div>
+		<CategoryTree
+			categories={data.categories}
+			onCategoryClick={handleCategoryClick}
+			{selectedCategoryUids}
+			on:clearCategory={clearCategory} /></Sidebar>
+{/if}
 
 <div class="content" class:sidebar-open={sidebarOpen} on:close={handleSidebarClose}>
 	<div class="grid">
 		<div>
 			<div class="menu-buttons">
-				<button data-tooltip="Display Category Filter" on:click={toggleSidebar}>
-					<Burger width="1.5rem" />
-				</button>
+				{#if !viewOnly}
+					<button data-tooltip="Display Category Filter" on:click={toggleSidebar}>
+						<Burger width="1.5rem" />
+					</button>
+				{:else}
+					<button
+						data-tooltip="Go to my recipes"
+						on:click={() => goto(`/user/${viewingUserId}/recipes`)}>
+						<House width="1.5rem" />
+					</button>
+				{/if}
 				<div class="spacer" />
 				<button data-tooltip="Export Filtered Recipes" on:click={handleExport}
 					><Export width="30px" height="30px" /></button>
