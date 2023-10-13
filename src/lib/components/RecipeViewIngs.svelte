@@ -39,7 +39,13 @@
 		{/if}
 		<ul>
 			{#each sanitizedIngredients as ingredient}
-				<RecipeViewIng {ingredient} {scale} {displayExtra} {displayDryMatch} {displayOriginal} />
+				<RecipeViewIng
+					{ingredient}
+					{scale}
+					{displayExtra}
+					{displayDryMatch}
+					{displayOriginal}
+					{selectedSystem} />
 			{/each}
 		</ul>
 	</div>

@@ -57,6 +57,9 @@
 			measurementSystem.system,
 			selectedSystem
 		)
+		console.log('🚀 ~ file: +page.svelte:59 ~ selectedSystem:', selectedSystem)
+		console.log('🚀 ~ file: +page.svelte:58 ~ measurementSystem.system:', measurementSystem.system)
+		console.log('🚀 ~ file: +page.svelte:56 ~ convertIngredients:', convertedIngredients)
 		// Call the function to update selectedSystem based on the initial measurementSystem
 		recipe.directions ? (directionLines = recipe.directions.split('\n')) : null
 		scaledServings = recipe.servings ? scaleNumbersInString(recipe.servings, scale) : null
@@ -72,15 +75,23 @@
 		isMounted = true
 	})
 
+	let isLatest = true
+
 	const sanitizeContent = async () => {
-		// Use Promise.all to await all asynchronous operations
-		sanitizedDirections = await Promise.all(
+		isLatest = false // Reset flag when starting a new invocation
+		const currentInvocation = {}
+		isLatest = currentInvocation
+
+		const directionsResult = await Promise.all(
 			parseDirections(directionLines, selectedSystem, measurementSystem.system).map((direction) =>
 				getSanitizedHTML(direction)
 			)
 		)
 
-		const tempIngredients = await Promise.all(
+		if (currentInvocation !== isLatest) return // Ignore results if this isn't the latest invocation
+		sanitizedDirections = directionsResult
+
+		const tempIngredientsResult = await Promise.all(
 			convertedIngredients.map(async (ingredient) => {
 				return {
 					...ingredient,
@@ -88,12 +99,14 @@
 				}
 			})
 		)
-		sanitizedIngredients = tempIngredients
+
+		if (currentInvocation !== isLatest) return // Ignore results if this isn't the latest invocation
+		sanitizedIngredients = tempIngredientsResult
 		hasAdditional = sanitizedIngredients.some((item) => item.additional !== null)
 		isLoading = false
 	}
 
-	$: if (isMounted) {
+	$: if (isMounted && selectedSystem) {
 		sanitizeContent()
 	}
 </script>

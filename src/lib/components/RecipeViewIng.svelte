@@ -6,7 +6,7 @@
 	export let displayExtra
 	export let displayDryMatch
 	export let displayOriginal
-	export let measurementSystem
+	export let selectedSystem
 </script>
 
 {#if typeof ingredient.ingredient === 'string'}
@@ -20,13 +20,13 @@
 		<li>
 			<strong>
 				{#if ingredient.minQty == ingredient.maxQty && ingredient.quantity}
-					{#if measurementSystem === 'metric'}
+					{#if selectedSystem === 'metric'}
 						{roundIngredientQuantity(ingredient.quantity * scale)}
 					{:else}
 						{decimalToFraction(ingredient.quantity * scale)}
 					{/if}
 				{:else if ingredient.minQty != ingredient.maxQty && ingredient.quantity}
-					{#if measurementSystem === 'metric'}
+					{#if selectedSystem === 'metric'}
 						{roundIngredientQuantity(ingredient.minQty * scale)}-{roundIngredientQuantity(
 							ingredient.maxQty * scale
 						)}
