@@ -5,14 +5,15 @@ import { redirect } from '@sveltejs/kit'
  * @returns {Promise<Object>} An object containing the recipes ordered by their creation date in descending order.
  */
 export const load = async ({ params, url, fetch, locals }) => {
+	const requestedUserId = params.id // Extracting the uid from the request parameters
+	const userIsPublicResponse = await fetch(`${url.origin}/api/user/${requestedUserId}/public`)
+	const userIsPublic = await userIsPublicResponse.json()
 	const { session, user } = await locals.auth.validateUser()
-	if (!session || !user) {
+	if (!userIsPublic.publicProfile && (!session || !user)) {
 		throw redirect(302, '/login')
 	}
-	const requestedUserId = params.id // Extracting the uid from the request parameters
-	console.log('🚀 ~ file: +page.server.js:13 ~ load ~ requestedUserId:', requestedUserId)
-	console.log('🚀 ~ file: +page.server.js:26 ~ load ~ user.userId:', user.userId)
-
+	let viewingUserId
+	user ? (viewingUserId = user.userId) : null
 	const recipeResponse = await fetch(`${url.origin}/api/user/${requestedUserId}/recipes`)
 	const recipes = await recipeResponse.json()
 	const hierarchicalCategories = await fetch(`${url.origin}/api/user/${requestedUserId}/categories`)
@@ -23,7 +24,8 @@ export const load = async ({ params, url, fetch, locals }) => {
 		categories,
 		user: {
 			requestedUserId: requestedUserId,
-			viewingUserId: user.userId
+			viewingUserId: viewingUserId,
+			publicProfile: userIsPublic
 		}
 	}
 }

@@ -15,7 +15,8 @@
 	export let data
 	let isLoading = true
 
-	let { recipe, categories, user, viewMode } = data
+	let { recipe, categories, viewUser, viewMode } = data
+	console.log('🚀 ~ file: +page.svelte:19 ~ viewUser:', viewUser)
 	console.log('🚀 ~ file: +page.svelte:19 ~ viewMode:', viewMode)
 
 	let ingredients = []
@@ -29,7 +30,7 @@
 	let measurementSystem = {}
 	let convertedIngredients = {}
 
-	let selectedSystem = user?.units
+	let selectedSystem = viewUser?.units
 
 	let mainPhoto
 
@@ -99,7 +100,7 @@
 
 {#if !viewMode}
 	<div id="recipe-buttons">
-		{#if recipe.userId === user.userId}
+		{#if recipe.userId === viewUser.userId}
 			<RecipeViewButtons {recipe} />
 		{/if}
 	</div>
@@ -122,7 +123,7 @@
 				{sanitizedIngredients}
 				bind:scale
 				bind:scaledServings
-				userIsAdmin={user.isAdmin}
+				userIsAdmin={viewUser.isAdmin}
 				{measurementSystem}
 				bind:selectedSystem />
 		</div>

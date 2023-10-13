@@ -10,6 +10,12 @@ export async function DELETE({ params, locals }) {
 	const { session, user } = await locals.auth.validateUser()
 	const { uid } = params
 
+	const recipe = await prisma.recipe.findUniqueOrThrow({
+		where: {
+			uid
+		}
+	})
+
 	if (!session || !user) {
 		console.log('User Not Authenticated!')
 		return new Response('User not authenticated', {
@@ -19,12 +25,6 @@ export async function DELETE({ params, locals }) {
 			}
 		})
 	}
-
-	const recipe = await prisma.recipe.findUniqueOrThrow({
-		where: {
-			uid
-		}
-	})
 
 	if (!recipe || recipe.userId !== user.userId) {
 		return new Response('Unauthorized to delete this recipe.', {

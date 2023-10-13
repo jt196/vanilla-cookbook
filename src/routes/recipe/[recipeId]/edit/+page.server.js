@@ -15,9 +15,7 @@ export const load = async ({ url, params, locals, fetch }) => {
 	let recipeData = await fetch(`${url.origin}/api/recipe/${params.recipeId}`)
 	const recipe = await recipeData.json()
 
-	const hierarchicalCategories = await fetch(
-		`${url.origin}/api/recipe/categories/user/${user.userId}`
-	)
+	const hierarchicalCategories = await fetch(`${url.origin}/api/user/${user.userId}/categories`)
 	const categories = await hierarchicalCategories.json()
 
 	return {

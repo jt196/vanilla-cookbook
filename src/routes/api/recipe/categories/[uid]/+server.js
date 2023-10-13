@@ -125,7 +125,18 @@ export async function GET({ params, locals }) {
 	const { session, user } = await locals.auth.validateUser()
 	const { uid } = params
 
-	if (!session || !user) {
+	const recipe = await prisma.recipe.findFirst({
+		where: {
+			uid: uid
+		},
+		select: {
+			is_public: true
+		}
+	})
+
+	const isPublic = recipe?.is_public ?? false
+
+	if (!isPublic && (!session || !user)) {
 		return new Response(JSON.stringify({ error: 'User not authenticated.' }), {
 			status: 401,
 			headers: {
