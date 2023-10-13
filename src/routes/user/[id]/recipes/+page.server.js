@@ -1,4 +1,3 @@
-import { prisma } from '$lib/server/prisma'
 import { redirect } from '@sveltejs/kit'
 
 /**
@@ -10,36 +9,10 @@ export const load = async ({ url, fetch, locals }) => {
 	if (!session || !user) {
 		throw redirect(302, '/login')
 	}
-	const recipes = await prisma.recipe.findMany({
-		orderBy: {
-			created: 'desc'
-		},
-		include: {
-			categories: {
-				select: {
-					category: {
-						select: {
-							name: true,
-							uid: true
-						}
-					}
-				}
-			},
-			photos: {
-				where: {
-					isMain: true
-				},
-				select: {
-					id: true, // or whatever fields you need
-					fileType: true
-				}
-			}
-		}
-	})
 
-	const hierarchicalCategories = await fetch(
-		`${url.origin}/api/recipe/categories/user/${user.userId}`
-	)
+	const recipeResponse = await fetch(`${url.origin}/api/user/${user.userId}/recipes`)
+	const recipes = recipeResponse.json()
+	const hierarchicalCategories = await fetch(`${url.origin}/api/user/${user.userId}/categories`)
 	const categories = await hierarchicalCategories.json()
 
 	return {

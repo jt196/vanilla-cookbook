@@ -32,7 +32,7 @@
 <style lang="scss">
 	.container {
 		min-height: 200px;
-		height: calc(100vh - 18em);
+		height: calc(100vh - 13em);
 		@media (max-width: 1023px) {
 			padding: 0;
 		}
