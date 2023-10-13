@@ -239,3 +239,35 @@ export async function DELETE({ params, locals }) {
 		})
 	}
 }
+
+export async function GET({ locals, params }) {
+	const { id } = params
+	const userProfile = await prisma.authUser.findUnique({
+		where: { id: id }
+	})
+	const { session, user } = await locals.auth.validateUser()
+	if (!userProfile.publicProfile && (!session || !user)) {
+		console.log('Not public profile, or no session or user!')
+		return new Response('User not authenticated!', {
+			status: 401,
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		})
+	}
+	try {
+		return new Response(JSON.stringify({ userProfile: userProfile }), {
+			status: 200,
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		})
+	} catch (error) {
+		return new Response(JSON.stringify({ error: `Failed to fetch users: ${error.message}` }), {
+			status: 500,
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		})
+	}
+}

@@ -14,9 +14,9 @@ export async function GET({ params }) {
 			}
 		})
 
-		let publicProfile = user.publicProfile
+		let publicProfile = user
 
-		return new Response(JSON.stringify({ publicProfile }), {
+		return new Response(JSON.stringify(publicProfile), {
 			status: 200,
 			headers: {
 				'Content-Type': 'application/json'

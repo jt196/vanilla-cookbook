@@ -16,7 +16,6 @@
 	export let data
 	const { user } = data
 	const { requestedUserId, viewingUserId, publicProfile } = user
-	console.log('🚀 ~ file: +page.svelte:19 ~ publicProfile:', publicProfile)
 	let viewOnly
 	// Changing user won't update the viewOnly attribute, so we need to get the id from params
 	// As it doesn't update using the +page.server.js load function
@@ -166,6 +165,7 @@
 						on:click={() => goto(`/user/${viewingUserId}/recipes`)}>
 						<House width="1.5rem" />
 					</button>
+					<h3>{publicProfile.name} Recipes</h3>
 				{/if}
 				<div class="spacer" />
 				<button data-tooltip="Export Filtered Recipes" on:click={handleExport}

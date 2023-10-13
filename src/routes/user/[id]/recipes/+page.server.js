@@ -13,7 +13,9 @@ export const load = async ({ params, url, fetch, locals }) => {
 		throw redirect(302, '/login')
 	}
 	let viewingUserId
-	user ? (viewingUserId = user.userId) : null
+	let userName
+	user ? ((viewingUserId = user.userId), (userName = user.name)) : (userName = userIsPublic.name)
+	console.log('🚀 ~ file: +page.server.js:23 ~ load ~ userName:', userName)
 	const recipeResponse = await fetch(`${url.origin}/api/user/${requestedUserId}/recipes`)
 	const recipes = await recipeResponse.json()
 	const hierarchicalCategories = await fetch(`${url.origin}/api/user/${requestedUserId}/categories`)
