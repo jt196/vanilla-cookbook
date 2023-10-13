@@ -132,6 +132,9 @@ export function scaleNumbersInString(str, scale) {
  * @returns {string | number} - The fraction representation or original number.
  */
 export function decimalToFraction(decimal, decimalPlaces = 10, tolerance = 1e-10) {
+	// Return the rounded decimal if the number is higher than 10
+	if (decimal > 10) return roundToDecimalPlaces(decimal, 0)
+
 	const fractions = {
 		0.1: '⅒',
 		0.2: '⅕',
@@ -180,6 +183,11 @@ export function decimalToFraction(decimal, decimalPlaces = 10, tolerance = 1e-10
 
 		return wholeNumber === 0 ? closestFraction : `${wholeNumber}${closestFraction}`
 	}
+}
+
+export function roundIngredientQuantity(decimal) {
+	if (decimal > 10) return roundToDecimalPlaces(decimal, 0)
+	else return roundToDecimalPlaces(decimal, 1)
 }
 
 /**

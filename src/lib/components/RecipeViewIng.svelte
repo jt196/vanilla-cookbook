@@ -1,11 +1,12 @@
 <script>
-	import { decimalToFraction } from '$lib/utils/filters'
+	import { decimalToFraction, roundIngredientQuantity } from '$lib/utils/filters'
 
 	export let ingredient
 	export let scale
 	export let displayExtra
 	export let displayDryMatch
 	export let displayOriginal
+	export let measurementSystem
 </script>
 
 {#if typeof ingredient.ingredient === 'string'}
@@ -19,11 +20,21 @@
 		<li>
 			<strong>
 				{#if ingredient.minQty == ingredient.maxQty && ingredient.quantity}
-					{decimalToFraction(ingredient.quantity * scale)}
+					{#if measurementSystem === 'metric'}
+						{roundIngredientQuantity(ingredient.quantity * scale)}
+					{:else}
+						{decimalToFraction(ingredient.quantity * scale)}
+					{/if}
 				{:else if ingredient.minQty != ingredient.maxQty && ingredient.quantity}
-					{decimalToFraction(ingredient.minQty * scale)}-{decimalToFraction(
-						ingredient.maxQty * scale
-					)}
+					{#if measurementSystem === 'metric'}
+						{roundIngredientQuantity(ingredient.minQty * scale)}-{roundIngredientQuantity(
+							ingredient.maxQty * scale
+						)}
+					{:else}
+						{decimalToFraction(ingredient.minQty * scale)}-{decimalToFraction(
+							ingredient.maxQty * scale
+						)}
+					{/if}
 				{/if}
 			</strong>
 			{#if ingredient.unit && ingredient.unit !== 'q.b.'}
