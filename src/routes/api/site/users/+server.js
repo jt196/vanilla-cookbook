@@ -7,7 +7,6 @@ export async function GET() {
 				publicProfile: true
 			}
 		})
-		console.log('🚀 ~ file: +server.js:10 ~ GET ~ users:', users)
 		return new Response(JSON.stringify(users), {
 			status: 200,
 			headers: {

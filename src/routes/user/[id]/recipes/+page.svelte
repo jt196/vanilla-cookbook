@@ -11,12 +11,18 @@
 	import House from '$lib/components/svg/House.svelte'
 	import CategoryTree from '$lib/components/CategoryTree.svelte'
 	import { goto } from '$app/navigation'
+	import { page } from '$app/stores'
 
 	export let data
 	const { user } = data
 	const { requestedUserId, viewingUserId } = user
-	let viewOnly = true
-	requestedUserId === viewingUserId ? (viewOnly = false) : null
+	let viewOnly
+	// Changing user won't update the viewOnly attribute, so we need to get the id from params
+	// As it doesn't update using the +page.server.js load function
+	$: {
+		const { params } = $page
+		viewOnly = params.id !== viewingUserId
+	}
 
 	let sidebarOpen = false
 	let searchString = ''
