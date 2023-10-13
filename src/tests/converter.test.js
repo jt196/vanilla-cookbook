@@ -33,6 +33,12 @@ describe('converter function', () => {
 		expect(result.unit).toBe('gram')
 	})
 
+	it('should convert pounds to grams correctly', () => {
+		const result = converter(1.25, 'pound', 'gram')
+		expect(result.quantity).toBeCloseTo(566.99, 2) // Check up to 2 decimal places
+		expect(result.unit).toBe('gram')
+	})
+
 	it('should convert litres to cups correctly', () => {
 		const result = converter(1, 'litres', 'cup')
 		expect(result.quantity).toBeCloseTo(4.23, 2) // Check up to 2 decimal places

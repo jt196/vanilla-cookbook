@@ -312,8 +312,6 @@ export const manipulateIngredient = (ingredientObj, fromSystem, toSystem) => {
 						minQty: convertedQuantityMetric,
 						maxQty: convertedQuantityMetric
 					}
-				} else {
-					return ingredientObj
 				}
 			} else if (fromSystem === 'americanVolumetric' && toSystem === 'imperial') {
 				if (unit === 'cup') {
@@ -343,8 +341,6 @@ export const manipulateIngredient = (ingredientObj, fromSystem, toSystem) => {
 						minQty: convertedQuantityImperial,
 						maxQty: convertedQuantityImperial
 					}
-				} else {
-					return ingredientObj
 				}
 			}
 		}

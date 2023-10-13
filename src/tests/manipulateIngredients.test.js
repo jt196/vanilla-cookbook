@@ -133,6 +133,22 @@ describe('manipulateIngredient', () => {
 		expect(result).toEqual(expect.objectContaining(expected))
 	})
 
+	// Pounds should be converted if converting from amVol too
+	it('converts pounds to grams', () => {
+		const input = {
+			quantity: 1,
+			unit: 'pound',
+			ingredient: 'salt'
+		}
+		const result = manipulateIngredient(input, 'americanVolumetric', 'metric')
+		const expected = {
+			quantity: 453.59,
+			unit: 'gram',
+			ingredient: 'salt'
+		}
+		expect(result).toEqual(expect.objectContaining(expected))
+	})
+
 	it('converts ounces to grams', () => {
 		const input = {
 			quantity: 1,
