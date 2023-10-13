@@ -13,7 +13,7 @@ export const load = async ({ url, fetch, locals }) => {
 	}
 
 	// Fetch users
-	const res = await fetch(`${url.origin}/api/user/users`)
+	const res = await fetch(`${url.origin}/api/user/admin/users`)
 
 	if (!res.ok) {
 		throw error(res.status, 'Failed to fetch users')

@@ -9,6 +9,7 @@
 
 	// Import Global CSS
 	import '$lib/css/global.scss'
+	import Users from '$lib/components/svg/Users.svelte'
 	/**
 	 * Data for the page, structure defined by the `PageData` type.
 	 * @type {PageData}
@@ -32,6 +33,7 @@
 		</ul>
 		<ul>
 			<form method="POST">
+				<li><a href="/users"><Users width="25px" /></a></li>
 				{#if !user}
 					<li><a href="/login" role="button">Login</a></li>
 					{#if settings.registrationAllowed}

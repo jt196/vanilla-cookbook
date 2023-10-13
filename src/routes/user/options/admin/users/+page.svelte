@@ -64,7 +64,7 @@
 	}
 
 	async function fetchData() {
-		const response = await fetch('/api/user/users') // Adjust this to your actual API endpoint
+		const response = await fetch('/api/user/admin/users') // Adjust this to your actual API endpoint
 		if (response.ok) {
 			users = await response.json()
 		} else {
