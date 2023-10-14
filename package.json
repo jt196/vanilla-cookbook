@@ -65,6 +65,7 @@
 	"dependencies": {
 		"@lucia-auth/adapter-prisma": "^2.0.0",
 		"@prisma/client": "^4.9.0",
+		"csv-parser": "^3.0.0",
 		"dompurify": "^3.0.6",
 		"dotenv": "^16.3.1",
 		"file-type": "^18.5.0",

@@ -130,5 +130,14 @@ model AuthKey {
 
 model SiteSettings {
     id                  Int     @id @default(autoincrement())
+    version             Int     @default(0)
     registrationAllowed Boolean
+}
+
+model Ingredient {
+    id          Int      @id @default(autoincrement())
+    name        String   @unique
+    gramsPerCup Float
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
 }
