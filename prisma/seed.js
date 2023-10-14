@@ -89,7 +89,7 @@ async function seedIngredients() {
 		const currentVersion = siteSettings?.version || 0
 
 		// Define the expected version
-		const expectedVersion = 1 // Change this as needed
+		const expectedVersion = 2.1 // Change this as needed
 
 		// Proceed with seeding if currentVersion is less than expectedVersion
 		if (currentVersion < expectedVersion) {
@@ -102,14 +102,14 @@ async function seedIngredients() {
 			fs.createReadStream('./src/lib/data/ingredients/dry_ingredient_data.csv')
 				.pipe(csv({ separator: ',' })) // Specify the separator as a comma
 				.on('data', async (row) => {
-					const names = row.names
+					const name = row.name
 					const gramsPerCup = parseFloat(row.gramsPerCup)
 
 					// Insert data into the Ingredient table with the full names
 					data.push(
 						prismaC.ingredient.create({
 							data: {
-								name: names,
+								name: name,
 								gramsPerCup: gramsPerCup
 							}
 						})

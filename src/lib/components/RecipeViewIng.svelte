@@ -48,8 +48,7 @@
 					<i> | {ingredient.additional}</i>
 				{/if}
 				{#if displayDryMatch && ingredient.dryIngredient}
-					<i>
-						| {ingredient.dryIngredient.names[0]} ({ingredient.dryIngredient.gramsPerCup} g/cup)</i>
+					<i> | {ingredient.dryIngredient.name} ({ingredient.dryIngredient.gramsPerCup} g/cup)</i>
 				{/if}
 				{#if displayOriginal}
 					<i> | {ingredient.originalString}</i>
