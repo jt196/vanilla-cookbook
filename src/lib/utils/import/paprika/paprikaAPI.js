@@ -92,6 +92,7 @@ export async function fetchData(fetchType, email, password, userId) {
 		'../../../../../uploads/imports',
 		userId + '_' + outputFilename
 	)
+	console.log('🚀 ~ file: paprikaAPI.js:92 ~ fetchData ~ __dirname:', __dirname)
 	console.log('🚀 ~ file: paprikaAPI.js:91 ~ fetchData ~ outputPath:', outputPath)
 	try {
 		const data = await fetchFunction(email, password, userId)

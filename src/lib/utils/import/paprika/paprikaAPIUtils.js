@@ -16,7 +16,9 @@ config()
 
 const BASE_URL = 'https://www.paprikaapp.com/api/v1/sync/'
 const __filename = fileURLToPath(import.meta.url)
+console.log('🚀 ~ file: paprikaAPIUtils.js:19 ~ import.meta.url:', import.meta.url)
 export const __dirname = path.dirname(__filename)
+console.log('🚀 ~ file: paprikaAPIUtils.js:21 ~ __dirname:', __dirname)
 
 /**
  * Fetches data from the Paprika API for a given endpoint.
@@ -319,6 +321,7 @@ export async function addCategoriesToDB(categories, userId) {
 export async function addRecipesToDB(declaredRecipes, userId) {
 	const createdRecipes = []
 	for (const recipe of declaredRecipes) {
+		// TODO: $transaction this
 		const createdRecipe = await prisma.recipe.create({
 			data: {
 				...recipe,
@@ -337,6 +340,7 @@ export async function handlePhotosForRecipes(createdRecipes) {
 	const failedRecipes = []
 
 	for (const recipe of createdRecipes) {
+		// TODO: $transaction
 		try {
 			let isMainSet = false
 
@@ -437,7 +441,7 @@ export async function addRecipeCategoriesToDB(createdRecipes, rawRecipes) {
 				}
 			}
 		})
-
+		// TODO: $transaction this rather than running many adds
 		for (const category of categories) {
 			await prisma.recipeCategory.create({
 				data: {
