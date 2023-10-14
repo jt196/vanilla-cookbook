@@ -52,14 +52,16 @@
 		ingredients = recipe.ingredients ? recipe.ingredients.split('\n') : []
 		ingredientsArray = ingredientProcess(ingredients)
 		measurementSystem = determineSystem(ingredientsArray)
-		convertedIngredients = convertIngredients(
-			ingredientsArray,
-			measurementSystem.system,
-			selectedSystem
-		)
-		console.log('🚀 ~ file: +page.svelte:59 ~ selectedSystem:', selectedSystem)
-		console.log('🚀 ~ file: +page.svelte:58 ~ measurementSystem.system:', measurementSystem.system)
-		console.log('🚀 ~ file: +page.svelte:56 ~ convertIngredients:', convertedIngredients)
+		// Only run the conversion if there is a system, or it's not the same as the selected system
+		if (selectedSystem === measurementSystem.system || !measurementSystem.system) {
+			convertedIngredients = ingredientsArray
+		} else {
+			convertedIngredients = convertIngredients(
+				ingredientsArray,
+				measurementSystem.system,
+				selectedSystem
+			)
+		}
 		// Call the function to update selectedSystem based on the initial measurementSystem
 		recipe.directions ? (directionLines = recipe.directions.split('\n')) : null
 		scaledServings = recipe.servings ? scaleNumbersInString(recipe.servings, scale) : null

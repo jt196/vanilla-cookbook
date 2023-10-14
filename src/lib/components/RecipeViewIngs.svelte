@@ -49,9 +49,11 @@
 			{/each}
 		</ul>
 	</div>
-	<div class="convert">
-		<RecipeViewDropdown bind:selectedSystem {measurementSystem} />
-	</div>
+	{#if measurementSystem}
+		<div class="convert">
+			<RecipeViewDropdown bind:selectedSystem {measurementSystem} />
+		</div>
+	{/if}
 </div>
 
 <style lang="scss">
