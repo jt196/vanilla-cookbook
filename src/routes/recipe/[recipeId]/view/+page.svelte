@@ -16,9 +16,6 @@
 	let isLoading = true
 
 	let { recipe, categories, viewUser, viewMode } = data
-	console.log('🚀 ~ file: +page.svelte:19 ~ viewUser:', viewUser)
-	console.log('🚀 ~ file: +page.svelte:19 ~ viewMode:', viewMode)
-
 	let ingredients = []
 	let ingredientsArray = []
 
@@ -47,22 +44,37 @@
 		? recipe.photos.filter((photo) => photo !== mainPhoto && photo.url === null)
 		: []
 
+	// Function to handle the API fetch
+	async function handleIngAPIFetch(measurementSystem, selectedSystem) {
+		try {
+			const response = await fetch(`/api/ingredients`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					ingredients: ingredientsArray,
+					fromSystem: measurementSystem.system,
+					toSystem: selectedSystem
+				})
+			})
+
+			if (response.ok) {
+				const data = await response.json()
+				convertedIngredients = data // Update convertedIngredients with the fetched data
+			} else {
+				console.error('API request failed:', response.statusText)
+			}
+		} catch (error) {
+			console.error('Error:', error)
+		}
+	}
+
 	/** Logic to update various variables based on the recipe data. */
 	$: if (data && data.recipe) {
 		ingredients = recipe.ingredients ? recipe.ingredients.split('\n') : []
 		ingredientsArray = ingredientProcess(ingredients)
 		measurementSystem = determineSystem(ingredientsArray)
-		// Only run the conversion if there is a system, or it's not the same as the selected system
-		if (selectedSystem === measurementSystem.system || !measurementSystem.system) {
-			convertedIngredients = ingredientsArray
-		} else {
-			convertedIngredients = convertIngredients(
-				ingredientsArray,
-				measurementSystem.system,
-				selectedSystem
-			)
-		}
-		// Call the function to update selectedSystem based on the initial measurementSystem
 		recipe.directions ? (directionLines = recipe.directions.split('\n')) : null
 		scaledServings = recipe.servings ? scaleNumbersInString(recipe.servings, scale) : null
 	}
@@ -108,8 +120,14 @@
 		isLoading = false
 	}
 
-	$: if (isMounted && selectedSystem) {
+	$: if (isMounted && selectedSystem && convertedIngredients) {
 		sanitizeContent()
+	}
+
+	$: if (isMounted && selectedSystem !== measurementSystem.system) {
+		handleIngAPIFetch(measurementSystem, selectedSystem)
+	} else {
+		convertedIngredients = ingredientsArray
 	}
 </script>
 

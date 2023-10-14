@@ -207,12 +207,6 @@ export function getDietLabel(prefs) {
 }
 
 /**
- * Fuse instance for fuzzy searching within dry ingredients.
- * @type {Fuse}
- */
-const fuse = new Fuse(dryIngredientsConversion, fuseOptions)
-
-/**
  * Manipulates an ingredient object to convert its quantity and unit from one system to another.
  *
  * @param {Object} ingredientObj - The ingredient object to be manipulated.
@@ -220,7 +214,7 @@ const fuse = new Fuse(dryIngredientsConversion, fuseOptions)
  * @param {string} toSystem - The target measurement system.
  * @returns {Object} - The manipulated ingredient object with converted quantity and unit.
  */
-export const manipulateIngredient = (ingredientObj, fromSystem, toSystem) => {
+export const manipulateIngredient = (ingredientObj, fromSystem, toSystem, fuse) => {
 	const { quantity, unit, ingredient } = ingredientObj
 	// If no unit is provided, return the original ingredientObj
 	if (!unit) {
@@ -509,6 +503,7 @@ export function parseTemperature(direction, toSystem, fromSystem) {
 }
 
 export function convertIngredients(ingredients, fromSystem, toSystem) {
+	const fuse = new Fuse(dryIngredientsConversion, fuseOptions)
 	// If no system selected, return the raw ingredients
 	if (!toSystem || fromSystem === toSystem) return ingredients
 	return ingredients.map((ingredient) => {
@@ -518,7 +513,7 @@ export function convertIngredients(ingredients, fromSystem, toSystem) {
 
 		if (
 			shouldSkipConversion(ingredient.unit) ||
-			!manipulateIngredient(ingredient, fromSystem, toSystem)
+			!manipulateIngredient(ingredient, fromSystem, toSystem, fuse)
 		) {
 			// Return the original ingredient with the added dietary label
 			return {
@@ -527,7 +522,7 @@ export function convertIngredients(ingredients, fromSystem, toSystem) {
 			}
 		}
 
-		const converted = manipulateIngredient(ingredient, fromSystem, toSystem)
+		const converted = manipulateIngredient(ingredient, fromSystem, toSystem, fuse)
 		if (converted === null || converted.error) {
 			// Return the original ingredient with the added dietary label
 			return {

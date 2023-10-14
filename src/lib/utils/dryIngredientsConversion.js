@@ -520,6 +520,10 @@ export const dryIngredientsConversion = [
 		gramsPerCup: 106.0
 	},
 	{
+		names: ['Fish Sauce'],
+		gramsPerCup: 269.0
+	},
+	{
 		names: ['Flax meal'],
 		gramsPerCup: 100.0
 	},
@@ -808,7 +812,7 @@ export const dryIngredientsConversion = [
 		gramsPerCup: 142.0
 	},
 	{
-		names: ['Onions (fresh, diced)'],
+		names: ['Onions (fresh, diced)', 'Minced Onion', 'Onions (minced)'],
 		gramsPerCup: 142.0
 	},
 	{
@@ -1072,6 +1076,10 @@ export const dryIngredientsConversion = [
 	{
 		names: ['Soy flour'],
 		gramsPerCup: 140.0
+	},
+	{
+		names: ['Soy Sauce'],
+		gramsPerCup: 272.0
 	},
 	{
 		names: ['Sparkling Sugar'],
