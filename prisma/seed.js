@@ -20,7 +20,8 @@ const prismaC = new PrismaClient({
 	log: ['query'],
 	datasources: {
 		db: {
-			url: 'file:./db/dev.sqlite?connection_limit=1'
+			// url: 'file:./db/dev.sqlite?connection_limit=1'
+			url: 'file:./db/dev.sqlite'
 			// connectionTimeout: 60000 // Increase the timeout to 60 seconds (adjust as needed)
 		}
 	}
@@ -101,7 +102,7 @@ async function seedIngredients() {
 		const currentVersion = siteSettings?.version || 0
 
 		// Define the expected version
-		const expectedVersion = 2.35 // Change this as needed
+		const expectedVersion = 2.36 // Change this as needed
 
 		// Proceed with seeding if currentVersion is less than expectedVersion
 		if (currentVersion < expectedVersion) {
@@ -115,30 +116,27 @@ async function seedIngredients() {
 
 				// Read the CSV file using csv-parser with proper configuration
 				const rows = []
-				fs.createReadStream(filePath)
-					.pipe(csv({ separator: ',' })) // Specify the separator as a comma
-					.on('data', (row) => {
-						const name = row.name
-						console.log('🚀 ~ file: seed.js:114 ~ .on ~ name:', name)
-						const gramsPerCup = parseFloat(row.gramsPerCup)
-						console.log('🚀 ~ file: seed.js:116 ~ .on ~ gramsPerCup:', gramsPerCup)
+				await new Promise((resolve, reject) => {
+					fs.createReadStream(filePath)
+						.pipe(csv({ separator: ',' })) // Specify the separator as a comma
+						.on('data', (row) => {
+							const name = row.name
+							const gramsPerCup = parseFloat(row.gramsPerCup)
 
-						// Add the data to the rows array
-						rows.push({
-							name: name,
-							gramsPerCup: gramsPerCup
-						})
-					})
-					.on('end', async () => {
-						// Insert data into the Ingredient table with the full names
-						for (const row of rows) {
-							await prismaC.ingredient.create({
-								data: row
+							// Add the data to the rows array
+							rows.push({
+								name: name,
+								gramsPerCup: gramsPerCup
 							})
-						}
+						})
+						.on('end', resolve)
+						.on('error', reject)
+				})
 
-						console.log(`Data from ${csvFile} has been seeded.`)
-					})
+				// Begin the transaction
+				await prismaC.$transaction(rows.map((row) => prismaC.ingredient.create({ data: row })))
+
+				console.log(`Data from ${csvFile} has been seeded.`)
 			}
 
 			// Update the version in SiteSettings
