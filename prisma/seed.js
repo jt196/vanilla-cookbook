@@ -15,7 +15,16 @@ config()
 // // Prisma doesn't support ES Modules so we have to do this
 const PrismaClient = PrismaClientPkg.PrismaClient
 // Different name of prismaC as the auth is importing prisma from the adapter
-const prismaC = new PrismaClient()
+const prismaC = new PrismaClient({
+	errorFormat: 'pretty',
+	log: ['query'],
+	datasources: {
+		db: {
+			url: 'file:./db/dev.sqlite?connection_limit=1'
+			// connectionTimeout: 60000 // Increase the timeout to 60 seconds (adjust as needed)
+		}
+	}
+})
 
 // Have to invoke the auth module here as it's outside the project directory.
 export const auth = lucia({
@@ -92,7 +101,7 @@ async function seedIngredients() {
 		const currentVersion = siteSettings?.version || 0
 
 		// Define the expected version
-		const expectedVersion = 2.34 // Change this as needed
+		const expectedVersion = 2.35 // Change this as needed
 
 		// Proceed with seeding if currentVersion is less than expectedVersion
 		if (currentVersion < expectedVersion) {
