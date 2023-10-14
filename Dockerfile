@@ -13,6 +13,9 @@ RUN npm install
 # Install Nodemon
 RUN npm install -g nodemon
 
+# Specify base directory env variable
+ENV APP_ROOT_PATH /app
+
 # Copy the current directory contents into the container
 COPY . .
 

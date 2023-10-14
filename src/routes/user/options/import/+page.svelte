@@ -19,7 +19,6 @@
 	let recFileExists = false
 
 	let isPublic = false
-	$: console.log('🚀 ~ file: +page.svelte:23 ~ isPublic:', isPublic)
 
 	onMount(async () => {
 		await checkCategoryFileExists(user.userId)

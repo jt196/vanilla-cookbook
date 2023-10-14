@@ -73,7 +73,6 @@
 			})
 
 			const data = await response.json()
-			console.log('🚀 ~ file: +page.svelte:232 ~ importFromPaprikaFile ~ data:', data)
 
 			if (response.status === 200) {
 				recImportMessage = data.success

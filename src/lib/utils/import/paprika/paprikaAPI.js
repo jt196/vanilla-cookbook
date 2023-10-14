@@ -87,18 +87,23 @@ export async function fetchData(fetchType, email, password, userId) {
 	}
 
 	// 2. Execute the appropriate fetch function with the necessary credentials
+	// const outputPath = path.join(
+	// 	__dirname,
+	// 	'../../../../../uploads/imports',
+	// 	userId + '_' + outputFilename
+	// )
+	// Attempting to resolve docker path issues
+	const appBasePath = process.env.APP_ROOT_PATH || __dirname
 	const outputPath = path.join(
-		__dirname,
+		appBasePath,
 		'../../../../../uploads/imports',
-		userId + '_' + outputFilename
+		`${userId}_${outputFilename}`
 	)
+
 	console.log('🚀 ~ file: paprikaAPI.js:92 ~ fetchData ~ __dirname:', __dirname)
 	console.log('🚀 ~ file: paprikaAPI.js:91 ~ fetchData ~ outputPath:', outputPath)
 	try {
 		const data = await fetchFunction(email, password, userId)
-		console.log('🚀 ~ file: paprikaAPI.js:94 ~ fetchData ~ userId:', userId)
-		console.log('🚀 ~ file: paprikaAPI.js:94 ~ fetchData ~ password:', password)
-		console.log('🚀 ~ file: paprikaAPI.js:94 ~ fetchData ~ email:', email)
 
 		// 3. Write the resulting data to an appropriate file
 		await fs.writeFile(outputPath, JSON.stringify(data, null, 2))
