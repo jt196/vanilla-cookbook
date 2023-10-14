@@ -8,6 +8,7 @@ import { promises as fsPromises } from 'fs'
 import { config } from 'dotenv'
 import fs from 'fs'
 import csv from 'csv-parser'
+import path from 'path'
 
 config()
 
@@ -73,14 +74,16 @@ function getUsers() {
 
 async function seedIngredients() {
 	try {
-		// Check if the CSV file exists
-		const fileExists = await fs.promises
-			.access('./src/lib/data/ingredients/dry_ingredient_data.csv')
-			.then(() => true)
-			.catch(() => false)
+		const folderPath = './src/lib/data/ingredients' // Specify the folder path
 
-		if (!fileExists) {
-			console.log('CSV file does not exist, cannot continue seeding.')
+		// Get a list of all files in the folder
+		const files = fs.readdirSync(folderPath)
+
+		// Filter files that match the pattern 'ingredient_*.csv'
+		const csvFiles = files.filter((file) => /^ingredients_.*\.csv$/.test(file))
+
+		if (csvFiles.length === 0) {
+			console.log('No CSV files matching the pattern found, cannot continue seeding.')
 			return
 		}
 
@@ -89,44 +92,53 @@ async function seedIngredients() {
 		const currentVersion = siteSettings?.version || 0
 
 		// Define the expected version
-		const expectedVersion = 2.1 // Change this as needed
+		const expectedVersion = 2.34 // Change this as needed
 
 		// Proceed with seeding if currentVersion is less than expectedVersion
 		if (currentVersion < expectedVersion) {
-			const data = []
-
 			// Clear the existing data in the Ingredient table
 			await prismaC.ingredient.deleteMany()
 
-			// Read the CSV file using csv-parser with proper configuration
-			fs.createReadStream('./src/lib/data/ingredients/dry_ingredient_data.csv')
-				.pipe(csv({ separator: ',' })) // Specify the separator as a comma
-				.on('data', async (row) => {
-					const name = row.name
-					const gramsPerCup = parseFloat(row.gramsPerCup)
+			// Loop through each CSV file
+			for (const csvFile of csvFiles) {
+				const filePath = path.join(folderPath, csvFile)
+				console.log('🚀 ~ file: seed.js:107 ~ seedIngredients ~ filePath:', filePath)
 
-					// Insert data into the Ingredient table with the full names
-					data.push(
-						prismaC.ingredient.create({
-							data: {
-								name: name,
-								gramsPerCup: gramsPerCup
-							}
+				// Read the CSV file using csv-parser with proper configuration
+				const rows = []
+				fs.createReadStream(filePath)
+					.pipe(csv({ separator: ',' })) // Specify the separator as a comma
+					.on('data', (row) => {
+						const name = row.name
+						console.log('🚀 ~ file: seed.js:114 ~ .on ~ name:', name)
+						const gramsPerCup = parseFloat(row.gramsPerCup)
+						console.log('🚀 ~ file: seed.js:116 ~ .on ~ gramsPerCup:', gramsPerCup)
+
+						// Add the data to the rows array
+						rows.push({
+							name: name,
+							gramsPerCup: gramsPerCup
 						})
-					)
-				})
-				.on('end', async () => {
-					// Wait for all data insertions to complete
-					await Promise.all(data)
-
-					// Update the version in SiteSettings
-					await prismaC.siteSettings.update({
-						where: { id: siteSettings?.id || 1 },
-						data: { version: expectedVersion }
 					})
+					.on('end', async () => {
+						// Insert data into the Ingredient table with the full names
+						for (const row of rows) {
+							await prismaC.ingredient.create({
+								data: row
+							})
+						}
 
-					console.log('Data has been seeded.')
-				})
+						console.log(`Data from ${csvFile} has been seeded.`)
+					})
+			}
+
+			// Update the version in SiteSettings
+			await prismaC.siteSettings.update({
+				where: { id: siteSettings?.id || 1 },
+				data: { version: expectedVersion }
+			})
+
+			console.log('All data has been seeded.')
 		} else {
 			console.log('Data is up to date. No need to seed.')
 		}

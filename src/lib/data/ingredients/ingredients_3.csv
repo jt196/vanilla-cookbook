@@ -1,0 +1,1083 @@
+name,gramsPerCup
+"Trail mix with pretzels, cereal, or granola",140.0
+"Pumpkin seeds, NFS",144.0
+"Pumpkin seeds, salted",144.0
+"Pumpkin seeds, unsalted",144.0
+"Sunflower seeds, plain, unsalted",144.0
+"Sunflower seeds, plain, salted",144.0
+"Sunflower seeds, flavored",144.0
+"Sunflower seeds, NFS",144.0
+Flax seeds,168.0
+Mixed seeds,145.0
+Chia seeds,168.0
+"Bread, white",40.0
+"Bread, white, toasted",40.0
+"Bread, French or Vienna",45.0
+"Bread, dough, fried",140.0
+Bread stuffing,228.0
+Bread stuffing made with egg,170.0
+"Breadsticks, hard, NFS",46.0
+"Breadsticks, hard, reduced sodium",46.0
+Croutons,40.0
+Melba toast,30.0
+"Bread, French or Vienna, whole wheat",45.0
+"Breadsticks, hard, whole wheat",46.0
+"Injera, Ethiopian bread",68.0
+"Bread, gluten free",40.0
+"Bread, gluten free, toasted",40.0
+"Breadsticks, hard, gluten free",46.0
+"Cornbread, prepared from mix",89.0
+"Cornbread, made from home recipe",89.0
+Cornbread stuffing,200.0
+"Corn pone, baked",89.0
+"Gordita/sope shell, plain, no filling",100.0
+Hush puppy,152.0
+Spoonbread,187.0
+"Cake or cupcake, NFS",90.0
+"Cake, angel food",50.0
+"Cake or cupcake, apple",90.0
+"Cake or cupcake, banana",90.0
+"Cake or cupcake, Black Forest",120.0
+"Cake, Boston cream pie",70.0
+"Cake or cupcake, carrot",90.0
+"Cake or cupcake, coconut",90.0
+"Cheesecake, plain",180.0
+"Cheesecake, fruit",180.0
+"Cheesecake, chocolate",180.0
+"Cake or cupcake, chocolate with white icing, bakery",90.0
+"Cake or cupcake, chocolate with white icing, from mix",75.0
+"Cake or cupcake, chocolate with chocolate icing, bakery",90.0
+"Cake or cupcake, chocolate with chocolate icing, from mix",75.0
+"Cake or cupcake, chocolate, no icing",50.0
+"Cake or cupcake, German chocolate",90.0
+"Cake or cupcake, gluten free",90.0
+"Cake, chocolate, flourless",120.0
+"Cake, cream",90.0
+"Snack cake, chocolate",45.0
+"Snack cake, white",45.0
+"Cake, fruit cake",120.0
+"Cake or cupcake, gingerbread",100.0
+Ice cream cake,138.0
+"Cake, jelly roll",100.0
+"Cake or cupcake, lemon",90.0
+"Cake or cupcake, marble",90.0
+"Cake or cupcake, peanut butter",90.0
+"Cake, pound",100.0
+"Cake or cupcake, pumpkin",90.0
+"Cake or cupcake, red velvet",90.0
+"Cake or cupcake, spice",90.0
+"Cake, sponge",50.0
+"Cake or cupcake, strawberry",90.0
+"Cake, torte",120.0
+"Cake, tres leche",120.0
+"Cake, pineapple, upside down",120.0
+"Cake or cupcake, white with white icing, bakery",90.0
+"Cake or cupcake, white with white icing, from mix",75.0
+"Cake or cupcake, white with chocolate icing, bakery",90.0
+"Cake or cupcake, white with chocolate icing, from mix",75.0
+"Cake or cupcake, white, no icing",50.0
+"Cake, strawberry shortcake",150.0
+"Cake or cupcake, zucchini",90.0
+"Cookie, batter or dough, raw",250.0
+"Cookie, chocolate chip",81.0
+"Cookie, animal",64.0
+"Cookie, butter or sugar",85.0
+"Pie, NFS",250.0
+"Pie, apple",250.0
+"Pie, berry",250.0
+"Pie, blueberry",250.0
+"Pie, cherry",250.0
+"Pie, lemon",250.0
+"Pie, key lime",250.0
+"Pie, peach",250.0
+"Pie, strawberry",250.0
+"Pie, banana cream",250.0
+"Pie, chocolate cream",250.0
+"Pie, coconut cream",250.0
+"Pie, custard",250.0
+"Pie, peanut butter cream",250.0
+"Pie, pineapple cream",250.0
+"Pie, pumpkin",250.0
+"Pie, sweet potato",250.0
+"Pie, vanilla cream",250.0
+"Pie, lemon meringue",250.0
+"Pie, pecan",250.0
+"Pie, oatmeal",250.0
+"Cobbler, apple",250.0
+"Cobbler, berry",250.0
+"Cobbler, cherry",250.0
+"Cobbler, peach",250.0
+"Crisp, apple",250.0
+"Crisp, berry",250.0
+"Crisp, cherry",250.0
+"Crisp, peach",250.0
+Cheese pastry puffs,16.0
+"Pastry, mainly flour and water, fried",28.0
+"Doughnut, NFS",60.0
+"Cereal or granola bar, chocolate coated, NFS",117.0
+"Baby Toddler snack, NFS",15.0
+Baby Toddler cookie,60.0
+"Crackers, NFS",50.0
+Graham crackers,85.0
+Graham crackers (Teddy Grahams),70.0
+"Graham crackers, sandwich, with filling",70.0
+"Crackers, butter, reduced sodium",50.0
+"Crackers, saltine, reduced sodium",50.0
+"Crackers, wheat, reduced sodium",50.0
+"Crackers, woven wheat, reduced sodium",70.0
+"Crackers, butter, plain",50.0
+"Crackers, butter, flavored",50.0
+"Crackers, butter (Ritz)",50.0
+"Crackers, butter, reduced fat",50.0
+"Crackers, cheese",50.0
+"Crackers, cheese (Cheez-It)",50.0
+"Crackers, cheese (Goldfish)",50.0
+"Crackers, cheese, reduced fat",50.0
+"Crackers, cheese, reduced sodium",50.0
+"Crackers, cheese, whole grain",50.0
+"Crackers, oyster",50.0
+"Chips, rice",30.0
+Rice cake,30.0
+"Crackers, rice",40.0
+"Crackers, rice and nuts",50.0
+"Crackers, saltine",50.0
+"Crackers, saltine, reduced fat",50.0
+"Crackers, saltine, multigrain",50.0
+"Crackers, multigrain",50.0
+"Crackers, sandwich",70.0
+"Crackers, sandwich, peanut butter filled",70.0
+"Crackers, sandwich, peanut butter filled (Ritz)",70.0
+"Crackers, sandwich, reduced fat, peanut butter filled",70.0
+"Crackers, whole grain, sandwich, peanut butter filled",70.0
+"Crackers, sandwich, cheese filled",70.0
+"Crackers, sandwich, cheese filled (Ritz)",70.0
+"Crackers, water",60.0
+"Crackers, wonton",50.0
+"Crackers, woven wheat",70.0
+"Crackers, woven wheat, plain (Triscuit)",70.0
+"Crackers, woven wheat, flavored (Triscuit)",70.0
+"Crackers, woven wheat, reduced fat",70.0
+"Crackers, wheat",50.0
+"Crackers, wheat, plain (Wheat Thins)",50.0
+"Crackers, wheat, flavored (Wheat Thins)",50.0
+"Crackers, wheat, reduced fat",50.0
+"Crackers, gluten free, plain",50.0
+"Crackers, gluten free, flavored",50.0
+Baby Toddler crackers,60.0
+"Baby Toddler puffs, fruit",15.0
+"Baby Toddler puffs, vegetable",15.0
+Baby Toddler crunchies,15.0
+Baby Toddler wheels,15.0
+Corn nuts,95.0
+"Corn chips, plain",45.0
+"Corn chips, flavored",45.0
+"Corn chips, plain (Fritos)",45.0
+"Corn chips, flavored (Fritos)",45.0
+Cheese flavored corn snacks,35.0
+"Cheese flavored corn snacks, reduced fat",35.0
+"Tortilla chips, plain",30.0
+Cheese flavored corn snacks (Cheetos),35.0
+"Tortilla chips, flavored",30.0
+"Corn chips, reduced sodium",45.0
+"Tortilla chips, nacho cheese flavor (Doritos)",30.0
+"Tortilla chips, cool ranch flavor (Doritos)",30.0
+"Tortilla chips, other flavors (Doritos)",30.0
+"Tortilla chips, reduced fat, plain",30.0
+"Tortilla chips, reduced fat, flavored",30.0
+"Tortilla chips, low fat, unsalted",30.0
+"Tortilla chips, reduced sodium",30.0
+Snack mix,60.0
+"Potato chips, restructured, multigrain",25.0
+Pita chips,60.0
+"Popcorn, NFS",14.0
+"Popcorn, movie theater, with added butter",14.0
+"Popcorn, movie theater, no butter added",11.0
+"Popcorn, air-popped, no butter added",8.0
+"Popcorn, air-popped, with added butter",11.0
+"Popcorn, popped in oil, no butter added",11.0
+"Popcorn, popped in oil, with added butter",14.0
+"Popcorn, microwave, NFS",14.0
+"Popcorn, microwave, plain",11.0
+"Popcorn, microwave, plain, light",8.0
+"Popcorn, microwave, low sodium",11.0
+"Popcorn, microwave, butter flavored",14.0
+"Popcorn, microwave, flavored, light",8.0
+"Popcorn, microwave, cheese flavored",14.0
+"Popcorn, microwave, kettle",14.0
+"Popcorn, ready-to-eat, NFS",14.0
+"Popcorn, ready-to-eat, plain",11.0
+"Popcorn, ready-to-eat, plain, light",8.0
+"Popcorn, ready-to-eat, low sodium",11.0
+"Popcorn, ready-to-eat, butter flavored",14.0
+"Popcorn, ready-to-eat, cheese flavored",14.0
+"Popcorn, ready-to-eat, flavored, light",8.0
+"Popcorn, ready-to-eat, kettle",14.0
+"Popcorn, caramel coated",35.0
+"Popcorn, caramel coated, with nuts",42.0
+"Popcorn, chocolate coated",35.0
+"Popcorn chips, plain",30.0
+"Popcorn chips, other flavors",30.0
+"Popcorn chips, sweet flavors",30.0
+Onion flavored rings,15.0
+Shrimp chips,40.0
+"Pretzels, NFS",40.0
+"Pretzels, hard, NFS",40.0
+"Pretzels, hard, plain, salted",40.0
+"Pretzels, hard, plain, lightly salted",40.0
+"Pretzels, hard, plain, unsalted",40.0
+"Pretzels, hard, flavored",40.0
+"Pretzels, hard, multigrain",40.0
+"Pretzels, hard, plain, gluten free",40.0
+"Pretzels, hard, flavored, gluten free",40.0
+"Pretzel chips, hard, plain",40.0
+"Pretzel chips, hard, flavored",40.0
+"Pretzel chips, hard, gluten free",40.0
+"Pretzels, hard, coated, NFS",86.0
+"Pretzels, hard, chocolate coated",86.0
+"Pretzels, hard, white chocolate coated",86.0
+"Pretzels, hard, yogurt coated",86.0
+"Pretzels, hard, coated, gluten free",86.0
+"Pretzels, hard, filled, NFS",96.0
+"Pretzels, hard, cheese filled",96.0
+"Pretzels, hard, peanut butter filled",96.0
+"Pretzels, soft, NFS",147.0
+"Pretzels, soft, ready-to-eat, NFS",147.0
+"Pretzels, soft, ready-to-eat, salted, buttered",147.0
+"Pretzels, soft, ready-to-eat, unsalted, buttered",147.0
+"Pretzels, soft, ready-to-eat, salted, no butter",147.0
+"Pretzels, soft, ready-to-eat, unsalted, no butter",147.0
+"Pretzels, soft, ready-to-eat, cinnamon sugar coated",168.0
+"Pretzels, soft, ready-to-eat, coated or flavored",168.0
+"Pretzels, soft, ready-to-eat, topped with meat",168.0
+"Pretzels, soft, ready-to-eat, topped with cheese",168.0
+"Pretzels, soft, from frozen, NFS",147.0
+"Pretzels, soft, from frozen, salted",147.0
+"Pretzels, soft, from frozen, unsalted",147.0
+"Pretzels, soft, from frozen, cinnamon sugar coated",147.0
+"Pretzels, soft, from frozen, coated or flavored",147.0
+"Pretzels, soft, from frozen, topped with meat",147.0
+"Pretzels, soft, from frozen, topped with cheese",147.0
+"Pretzels, soft, filled with cheese",147.0
+"Pretzels, soft, from school lunch",147.0
+"Pretzels, soft, multigrain",147.0
+"Pretzels, soft, gluten free",147.0
+"Pretzels, soft, gluten free, cinnamon sugar coated",147.0
+"Pretzels, soft, gluten free, coated or flavored",147.0
+Multigrain chips (Sun Chips),30.0
+"Snack mix, plain (Chex Mix)",60.0
+Bagel chips,60.0
+Cracker chips,30.0
+"Dumpling, no meat",75.0
+"Pasta, vegetable, cooked",140.0
+"Noodles, cooked",160.0
+"Noodles, whole grain, cooked",160.0
+"Noodles, vegetable, cooked",160.0
+"Noodles, chow mein",56.0
+"Long rice noodles, made from mung beans, cooked",190.0
+"Rice noodles, cooked",175.0
+"Pasta, cooked",140.0
+"Pasta, whole grain, cooked",140.0
+"Pasta, gluten free",140.0
+"Cereal, cooked, NFS",240.0
+Barley,170.0
+Buckwheat groats,170.0
+"Grits, NFS",240.0
+"Grits, regular or quick, made with water, NS as to fat",240.0
+"Grits, regular or quick, made with water, no added fat",240.0
+"Grits, regular or quick, made with water, fat added",240.0
+"Grits, with cheese, NS as to fat",240.0
+"Grits, with cheese, no added fat",240.0
+"Grits, with cheese, fat added",240.0
+"Grits, instant, made with water, no added fat",240.0
+"Grits, instant, made with water, fat added",240.0
+"Grits, instant, made with water, NS as to fat",240.0
+"Cornmeal mush, NS as to fat",240.0
+"Cornmeal mush, no added fat",240.0
+"Cornmeal mush, fat added",240.0
+"Masa harina, cooked",240.0
+Millet,170.0
+"Oatmeal, fast food, plain",240.0
+"Oatmeal, fast food, flavored",240.0
+"Oatmeal, NFS",240.0
+"Oatmeal, regular or quick, made with water, no added fat",240.0
+"Oatmeal, regular or quick, made with water, fat added",240.0
+"Oatmeal, regular or quick, made with milk, no added fat",240.0
+"Oatmeal, regular or quick, made with milk, fat added",240.0
+"Oatmeal, regular or quick, made with non-dairy milk, no added fat",240.0
+"Oatmeal, regular or quick, made with non-dairy milk, fat added",240.0
+"Oatmeal, instant, plain, made with water, no added fat",240.0
+"Oatmeal, instant, plain, made with water, fat added",240.0
+"Oatmeal, instant, plain, made with milk, no added fat",240.0
+"Oatmeal, instant, plain, made with milk, fat added",240.0
+"Oatmeal, instant, plain, made with non-dairy milk, no added fat",240.0
+"Oatmeal, instant, plain, made with non-dairy milk, fat added",240.0
+"Oatmeal, instant, maple flavored, no added fat",240.0
+"Oatmeal, instant, maple flavored, fat added",240.0
+"Oatmeal, instant, fruit flavored, no added fat",240.0
+"Oatmeal, instant, fruit flavored, fat added",240.0
+"Oatmeal, reduced sugar",240.0
+"Oatmeal, multigrain",240.0
+"Quinoa, NS as to fat",170.0
+"Quinoa, no added fat",170.0
+"Quinoa, fat added",170.0
+"Rice, cooked, NFS",158.0
+"Rice, white, cooked, NS as to fat",163.0
+"Rice, white, cooked, made with oil",163.0
+"Rice, white, cooked, made with butter",163.0
+"Rice, white, cooked, made with margarine",163.0
+"Rice, white, cooked, fat added, NS as to fat type",163.0
+"Rice, white, cooked, no added fat",158.0
+"Rice, brown, cooked, NS as to fat",196.0
+"Rice, brown, cooked, fat added, made with oil",196.0
+"Rice, brown, cooked, made with butter",196.0
+"Rice, brown, cooked, made with margarine",196.0
+"Rice, brown, cooked, fat added, NS as to fat type",196.0
+"Rice, brown, cooked, no added fat",195.0
+Cream of rice,240.0
+"Rice, cooked, with milk",200.0
+"Rice, sweet, cooked with honey",175.0
+Congee,249.0
+"Yellow rice, cooked, NS as to fat",158.0
+"Yellow rice, cooked, no added fat",158.0
+"Yellow rice, cooked, fat added",163.0
+"Rice, white, cooked, glutinous",174.0
+"Rice, wild, 100%, cooked, NS as to fat",164.0
+"Rice, wild, 100%, cooked, no added fat",164.0
+"Rice, wild, 100%, cooked, fat added",164.0
+"Rice, white and wild, cooked, no added fat",166.0
+"Rice, brown and wild, cooked, no added fat",151.0
+"Rice, white and wild, cooked, fat added",168.0
+"Rice, white and wild, cooked, NS as to fat",168.0
+"Rice, brown and wild, cooked, fat added",155.0
+"Rice, brown and wild, cooked, NS as to fat",150.0
+"Rice, white, cooked with fat, Puerto Rican style",155.0
+"Cream of wheat, NFS",240.0
+"Cream of wheat, regular or quick, made with water, no added fat",240.0
+"Cream of wheat, regular or quick, made with water, fat added",240.0
+"Cream of wheat, instant, made with water, no added fat",240.0
+"Cream of wheat, instant, made with water, fat added",240.0
+"Bulgur, no added fat",140.0
+"Bulgur, fat added",140.0
+"Bulgur, NS as to fat",140.0
+"Couscous, plain, cooked",160.0
+"Whole wheat cereal, cooked",240.0
+"Wheat cereal, chocolate flavored, cooked",240.0
+"Oat bran cereal, cooked",240.0
+"Cereal, ready-to-eat, NFS",35.0
+"Cereal, O's, flavored",40.0
+"Cereal, crunch",35.0
+"Cereal, O's, plain",30.0
+"Cereal, chocolate puffs",35.0
+"Cereal, cinnamon toast",40.0
+"Cereal, chocolate crispy",40.0
+"Cereal, corn squares",30.0
+"Cereal, corn flakes, plain",30.0
+"Cereal, corn puffs",25.0
+"Cereal, rice crispy, plain",25.0
+"Cereal, bran flakes, plain",50.0
+"Cereal, shredded wheat, flavored",50.0
+"Cereal, rice crispy, flavored",40.0
+"Cereal, fruit rings",30.0
+"Cereal, fruit crispy",35.0
+"Cereal, granola",110.0
+"Cereal, oat bunches",45.0
+"Cereal, corn squares, flavored",40.0
+"Cereal, O's, honey nut",40.0
+"Cereal, multigrain",50.0
+"Cereal, oat squares",45.0
+"Cereal, frosted oats with marshmallows",35.0
+"Cereal, O's, multigrain",30.0
+"Cereal, bran flakes, flavored",60.0
+"Cereal, rice squares",30.0
+"Cereal, K's, plain",35.0
+"Cereal, K's, flavored",35.0
+"Cereal, flavored puffs",30.0
+"Cereal, corn flakes, flavored",40.0
+"Cereal, O's, NFS",35.0
+"Cereal, wheat squares",60.0
+"Cereal, plain puffs",15.0
+"Cereal, shredded wheat, plain",45.0
+"Cereal, wheat flakes",40.0
+"Cereal, other, NFS",35.0
+"Cereal, other, plain",30.0
+"Cereal, other, fruit flavored",40.0
+"Cereal, other, chocolate",40.0
+"Cereal, other, peanut butter",40.0
+"Cereal, other, honey",40.0
+"Cereal, reduced sugar",35.0
+"Oats, raw",80.0
+"Cereal, oat bran, ready-to-eat",80.0
+Chilaquiles,170.0
+Frito pie,150.0
+Mexican pizza,120.0
+Taco or tostada salad with meat,122.0
+Taco or tostada salad with chicken,122.0
+"Taco or tostada salad, meatless",122.0
+Taco or tostada salad with meat and sour cream,122.0
+Taco or tostada salad with chicken and sour cream,122.0
+"Taco or tostada salad, meatless with sour cream",122.0
+"Taco, NFS",120.0
+"Taco, corn tortilla, beef, cheese",120.0
+"Taco, corn tortilla, beef, with beans, cheese",120.0
+"Taco, corn tortilla, pork, cheese",120.0
+"Taco, corn tortilla, pork, with beans, cheese",120.0
+"Taco, corn tortilla, chicken, cheese",120.0
+"Taco, corn tortilla, chicken, with beans, cheese",120.0
+"Taco, corn tortilla, with beans, cheese",120.0
+"Taco, flour tortilla, beef, cheese",120.0
+"Taco, flour tortilla, beef, with beans, cheese",120.0
+"Taco, flour tortilla, pork, cheese",120.0
+"Taco, flour tortilla, pork, with beans, cheese",120.0
+"Taco, flour tortilla, chicken, cheese",120.0
+"Taco, flour tortilla, chicken, with beans, cheese",120.0
+"Taco, flour tortilla, with beans, cheese",120.0
+"Taco, fish",120.0
+"Taco, meat, no cheese",120.0
+"Taco, meat, with beans, no cheese",120.0
+"Taco, with beans, no cheese",120.0
+"Taco, cheese only",120.0
+"Burrito, NFS",120.0
+"Burrito, beef, cheese",120.0
+"Burrito, beef, with rice, cheese",120.0
+"Burrito, beef, with beans, cheese",120.0
+"Burrito, beef, with beans and rice, cheese",120.0
+"Burrito, pork, cheese",120.0
+"Burrito, pork, with rice, cheese",120.0
+"Burrito, pork, with beans, cheese",120.0
+"Burrito, pork, with beans and rice, cheese",120.0
+"Burrito, chicken, cheese",120.0
+"Burrito, chicken, with rice, cheese",120.0
+"Burrito, chicken, with beans, cheese",120.0
+"Burrito, chicken, with beans and rice, cheese",120.0
+"Burrito, with beans, no cheese",120.0
+"Burrito, with beans, cheese",120.0
+"Burrito, with beans and rice, cheese",120.0
+"Burrito, meat, no cheese",120.0
+"Burrito, meat, with rice, no cheese",120.0
+"Burrito, meat, with beans, no cheese",120.0
+"Burrito, meat, with beans and rice, no cheese",120.0
+"Burrito, cheese only",120.0
+"Burrito bowl, NFS",120.0
+"Burrito bowl, beef or pork",120.0
+"Burrito bowl, beef or pork, with rice",120.0
+"Burrito bowl, beef or pork, with beans",120.0
+"Burrito bowl, beef or pork, with beans and rice",120.0
+"Burrito bowl, chicken",120.0
+"Burrito bowl, chicken, with rice",120.0
+"Burrito bowl, chicken, with beans",120.0
+"Burrito bowl, chicken, with beans and rice",120.0
+"Burrito bowl, with beans",120.0
+"Enchilada, NFS",170.0
+"Enchilada, beef",170.0
+"Enchilada, pork",170.0
+"Enchilada, chicken",170.0
+"Enchilada, no meat",170.0
+"Tamale, NFS",170.0
+"Tamale, beef",170.0
+"Tamale, pork",170.0
+"Tamale, chicken",170.0
+"Tamale, no meat",170.0
+Tamale casserole with meat,250.0
+"Nachos, NFS",135.0
+"Nachos, cheese only",135.0
+"Nachos, beef or pork",135.0
+"Nachos, beef or pork, with beans",135.0
+"Nachos, chicken",135.0
+"Nachos, chicken, with beans",135.0
+"Nachos, with beans",135.0
+"Gordita, cheese only",120.0
+"Gordita, with beans",120.0
+"Gordita, meat",120.0
+"Gordita, meat, with beans",120.0
+"Chimichanga, meat",120.0
+"Chimichanga, with beans",120.0
+"Chimichanga, chicken",120.0
+"Quesadilla, NFS",95.0
+"Quesadilla, cheese only",95.0
+"Quesadilla, beef or pork",95.0
+"Quesadilla, chicken",95.0
+"Quesadilla, with vegetables",95.0
+"Quesadilla, beef or pork, with vegetables",95.0
+"Quesadilla, chicken, with vegetables",95.0
+"Quesadilla, egg",95.0
+"Quesadilla, egg, with meat",95.0
+"Taquito, cheese only",120.0
+"Taquito, beef or pork",120.0
+"Taquito, chicken",120.0
+"Taquito, egg",120.0
+"Fajita, NFS",120.0
+"Fajita, chicken",120.0
+"Fajita, beef or pork",120.0
+"Fajita, shrimp",120.0
+"Fajita, vegetable",120.0
+"Pupusa, cheese only",170.0
+"Pupusa, with beans",170.0
+"Pupusa, meat",170.0
+"Pupusa, meat, with beans",170.0
+Pizza rolls,119.0
+"Egg roll, with shrimp",125.0
+"Egg roll, with beef and/or pork",125.0
+"Egg roll, with chicken or turkey",125.0
+"Roll with meat and/or shrimp, vegetables and rice paper, not fried",83.0
+"Wonton, dumpling or pot sticker, fried",75.0
+"Wonton, dumpling or pot sticker, fried, no meat",75.0
+"Puffs, fried, crab meat and cream cheese filled",77.0
+"Wonton, dumpling or pot sticker, steamed",75.0
+Pierogi,80.0
+"Gnocchi, cheese",70.0
+"Gnocchi, potato",188.0
+Spanakopita,120.0
+"Quiche with meat, poultry or fish",160.0
+"Spinach quiche, meatless",160.0
+"Cheese quiche, meatless",160.0
+Chicken cornbread,92.0
+Cornmeal dressing with chicken or turkey and vegetables,161.0
+Dressing with oysters,161.0
+Dressing with chicken or turkey and vegetables,161.0
+Dressing with meat and vegetables,161.0
+Lasagna with meat,250.0
+"Lasagna with meat, canned",250.0
+"Lasagna with meat, from restaurant",250.0
+"Lasagna with meat, home recipe",250.0
+"Lasagna with meat, frozen",250.0
+Lasagna with meat and spinach,250.0
+Lasagna with chicken or turkey,250.0
+"Lasagna, with chicken or turkey, and spinach",250.0
+"Lasagna, meatless",250.0
+"Lasagna, meatless, with vegetables",250.0
+"Ravioli, NS as to filling, no sauce",160.0
+"Ravioli, NS as to filling, with tomato sauce",250.0
+"Ravioli, NS as to filling, with cream sauce",250.0
+"Ravioli, meat-filled, no sauce",160.0
+"Ravioli, meat-filled, with tomato sauce or meat sauce",250.0
+"Ravioli, meat-filled, with tomato sauce or meat sauce, canned",251.0
+"Ravioli, meat-filled, with cream sauce",250.0
+"Ravioli, cheese-filled, no sauce",160.0
+"Ravioli, cheese-filled, with tomato sauce",250.0
+"Ravioli, cheese-filled, with tomato sauce, canned",246.0
+"Ravioli, cheese-filled, with meat sauce",250.0
+"Ravioli, cheese-filled, with cream sauce",250.0
+"Ravioli, cheese and spinach-filled, no sauce",160.0
+"Ravioli, cheese and spinach-filled, with cream sauce",250.0
+"Ravioli, cheese and spinach filled, with tomato sauce",250.0
+"Manicotti, cheese-filled, with tomato sauce, meatless",235.0
+"Stuffed shells, cheese-filled, no sauce",152.0
+"Stuffed shells, cheese- and spinach- filled, no sauce",152.0
+"Tortellini, meat-filled, with tomato sauce",210.0
+"Tortellini, meat-filled, with tomato sauce, canned",233.0
+"Tortellini, cheese-filled, meatless, with tomato sauce",250.0
+"Tortellini, cheese-filled, meatless, with tomato sauce, canned",247.0
+"Tortellini, cheese-filled, meatless, with vinaigrette dressing",169.0
+"Tortellini, meat-filled, no sauce",190.0
+"Tortellini, cheese-filled, with cream sauce",250.0
+"Tortellini, cheese-filled, no sauce",150.0
+"Tortellini, spinach-filled, with tomato sauce",200.0
+"Tortellini, spinach-filled, no sauce",122.0
+"Cannelloni, cheese- and spinach-filled, no sauce",208.0
+Chow fun noodles with meat and vegetables,152.0
+"Chow fun noodles with vegetables, meatless",152.0
+"Lo mein, NFS",200.0
+"Lo mein, meatless",200.0
+"Lo mein, with shrimp",200.0
+"Lo mein, with pork",200.0
+"Lo mein, with beef",200.0
+"Lo mein, with chicken",200.0
+"Pad Thai, NFS",200.0
+"Pad Thai, meatless",200.0
+Pad Thai with chicken,200.0
+Pad Thai with seafood,200.0
+Pad Thai with meat,200.0
+"Adobo, with noodles",224.0
+"Spaghetti with corned beef, Puerto Rican style",215.0
+"Macaroni with tuna, Puerto Rican style",225.0
+Macaroni or noodles with cheese,230.0
+"Macaroni or noodles with cheese, from restaurant",230.0
+"Macaroni or noodles with cheese, made from packaged mix",230.0
+"Macaroni or noodles with cheese, canned",230.0
+"Macaroni or noodles with cheese, Easy Mac type",230.0
+"Macaroni or noodles with cheese, made from reduced fat packaged mix",230.0
+Macaroni or noodles with cheese and tuna,230.0
+Macaroni or noodles with cheese and meat,230.0
+"Macaroni or noodles with cheese and meat, prepared from Hamburger Helper mix",230.0
+Macaroni or noodles with cheese and tomato,230.0
+Macaroni or noodles with cheese and frankfurters or hot dogs,230.0
+Macaroni or noodles with cheese and egg,230.0
+Macaroni or noodles with cheese and chicken or turkey,230.0
+"Macaroni or noodles with cheese, whole grain",230.0
+"Pasta with tomato-based sauce, cheese and meat",250.0
+Pasta with tomato-based sauce and cheese,250.0
+"Pasta with vegetables, no sauce or dressing",150.0
+"Pasta with sauce, NFS",250.0
+"Pasta with sauce, meatless, school lunch",250.0
+"Pasta with tomato-based sauce, restaurant",250.0
+"Pasta with tomato-based sauce, home recipe",250.0
+"Pasta with tomato-based sauce, ready-to-heat",250.0
+"Pasta with tomato-based sauce, and added vegetables, restaurant",250.0
+"Pasta with tomato-based sauce, and added vegetables, home recipe",250.0
+"Pasta with tomato-based sauce, and added vegetables, ready-to-heat",250.0
+"Pasta with sauce and meat, from school lunch",250.0
+"Pasta with tomato-based sauce and meat, restaurant",250.0
+"Pasta with tomato-based sauce and meat, home recipe",250.0
+"Pasta with tomato-based sauce and meat, ready-to-heat",250.0
+"Pasta with tomato-based sauce, meat, and added vegetables, restaurant",250.0
+"Pasta with tomato-based sauce, meat, and added vegetables, home recipe",250.0
+"Pasta with tomato-based sauce, meat, and added vegetables, ready-to-heat",250.0
+"Pasta with tomato-based sauce and poultry, restaurant",250.0
+"Pasta with tomato-based sauce and poultry, home recipe",250.0
+"Pasta with tomato-based sauce and poultry, ready-to-heat",250.0
+"Pasta with tomato-based sauce, poultry, and added vegetables, restaurant",250.0
+"Pasta with tomato-based sauce, poultry, and added vegetables, home recipe",250.0
+"Pasta with tomato-based sauce, poultry, and added vegetables, ready-to-heat",250.0
+"Pasta with tomato-based sauce and seafood, restaurant",250.0
+"Pasta with tomato-based sauce and seafood, home recipe",250.0
+"Pasta with tomato-based sauce and seafood, ready-to-heat",250.0
+"Pasta with tomato-based sauce, seafood, and added vegetables, restaurant",250.0
+"Pasta with tomato-based sauce, seafood, and added vegetables, home recipe",250.0
+"Pasta with tomato-based sauce, seafood, and added vegetables, ready-to-heat",250.0
+"Pasta with cream sauce, restaurant",250.0
+"Pasta with cream sauce, home recipe",250.0
+"Pasta with cream sauce, ready-to-heat",250.0
+"Pasta with cream sauce and added vegetables, restaurant",250.0
+"Pasta with cream sauce and added vegetables, from home recipe",250.0
+"Pasta with cream sauce and added vegetables, ready-to-heat",250.0
+"Pasta with cream sauce and meat, restaurant",250.0
+"Pasta with cream sauce and meat, home recipe",250.0
+"Pasta with cream sauce and meat, ready-to-heat",250.0
+"Pasta with cream sauce, meat, and added vegetables, restaurant",250.0
+"Pasta with cream sauce, meat, and added vegetables, home recipe",250.0
+"Pasta with cream sauce, meat, and added vegetables, ready-to-heat",250.0
+"Pasta with cream sauce and poultry, restaurant",250.0
+"Pasta with cream sauce and poultry, home recipe",250.0
+"Pasta with cream sauce and poultry, ready-to-heat",250.0
+"Pasta with cream sauce, poultry, and added vegetables, restaurant",250.0
+"Pasta with cream sauce, poultry, and added vegetables, home recipe",250.0
+"Pasta with cream sauce, poultry, and added vegetables, ready-to-heat",250.0
+"Pasta with cream sauce and seafood, restaurant",250.0
+"Pasta with cream sauce and seafood, home recipe",250.0
+"Pasta with cream sauce and seafood, ready-to-heat",250.0
+"Pasta with cream sauce, seafood, and added vegetables, restaurant",250.0
+"Pasta with cream sauce, seafood, and added vegetables, home recipe",250.0
+"Pasta with cream sauce, seafood, and added vegetables, ready-to-heat",250.0
+"Pasta, whole grain, with tomato-based sauce, restaurant",250.0
+"Pasta, whole grain, with tomato-based sauce, home recipe",250.0
+"Pasta, whole grain, with tomato-based sauce, ready-to-heat",250.0
+"Pasta, whole grain, with tomato-based sauce and added vegetables, restaurant",250.0
+"Pasta, whole grain, with tomato-based sauce and added vegetables, home recipe",250.0
+"Pasta, whole grain, with tomato-based sauce and added vegetables, ready-to-heat",250.0
+"Pasta, whole grain, with tomato-based sauce and meat, restaurant",250.0
+"Pasta, whole grain, with tomato-based sauce and meat, home recipe",250.0
+"Pasta, whole grain, with tomato-based sauce and meat, ready-to-heat",250.0
+"Pasta, whole grain, with tomato-based sauce, meat, and added vegetables, restaurant",250.0
+"Pasta, whole grain, with tomato-based sauce, meat, and added vegetables, home recipe",250.0
+"Pasta, whole grain, with tomato-based sauce, meat, and added vegetables, ready-to-heat",250.0
+"Pasta, whole grain, with tomato-based sauce and poultry, restaurant",250.0
+"Pasta, whole grain, with tomato-based sauce and poultry, home recipe",250.0
+"Pasta, whole grain, with tomato-based sauce and poultry, ready-to-heat",250.0
+"Pasta, whole grain, with tomato-based sauce, poultry, and added vegetables, restaurant",250.0
+"Pasta, whole grain, with tomato-based sauce, poultry, and added vegetables, home recipe",250.0
+"Pasta, whole grain, with tomato-based sauce, poultry, and added vegetables, ready-to-heat",250.0
+"Pasta, whole grain, with tomato-based sauce and seafood, restaurant",250.0
+"Pasta, whole grain, with tomato-based sauce and seafood, home recipe",250.0
+"Pasta, whole grain, with tomato-based sauce and seafood, ready-to-heat",250.0
+"Pasta, whole grain, with tomato-based sauce, seafood, and added vegetables, restaurant",250.0
+"Pasta, whole grain, with tomato-based sauce, seafood, and added vegetables, home recipe",250.0
+"Pasta, whole grain, with tomato-based sauce, seafood, and added vegetables, ready-to-heat",250.0
+"Pasta, whole grain, with cream sauce, restaurant",250.0
+"Pasta, whole grain, with cream sauce, home recipe",250.0
+"Pasta, whole grain, with cream sauce, ready-to-heat",250.0
+"Pasta, whole grain, with cream sauce, and added vegetables, restaurant",250.0
+"Pasta, whole grain, with cream sauce, and added vegetables, home recipe",250.0
+"Pasta, whole grain, with cream sauce, and added vegetables, ready-to-heat",250.0
+"Pasta, whole grain, with cream sauce and meat, restaurant",250.0
+"Pasta, whole grain, with cream sauce and meat, home recipe",250.0
+"Pasta, whole grain, with cream sauce and meat, ready-to-heat",250.0
+"Pasta, whole grain, with cream sauce, meat, and added vegetables, restaurant",250.0
+"Pasta, whole grain, with cream sauce, meat, and added vegetables, home recipe",250.0
+"Pasta, whole grain, with cream sauce, meat, and added vegetables, ready-to-heat",250.0
+"Pasta, whole grain, with cream sauce and poultry, restaurant",250.0
+"Pasta, whole grain, with cream sauce and poultry, home recipe",250.0
+"Pasta, whole grain, with cream sauce and poultry, ready-to-heat",250.0
+"Pasta, whole grain, with cream sauce, poultry, and added vegetables, restaurant",250.0
+"Pasta, whole grain, with cream sauce, poultry, and added vegetables, home recipe",250.0
+"Pasta, whole grain, with cream sauce, poultry, and added vegetables, ready-to-heat",250.0
+"Pasta, whole grain, with cream sauce and seafood, restaurant",250.0
+"Pasta, whole grain, with cream sauce and seafood, home recipe",250.0
+"Pasta, whole grain, with cream sauce and seafood, ready-to-heat",250.0
+"Pasta, whole grain, with cream sauce, seafood, and added vegetables, restaurant",250.0
+"Pasta, whole grain, with cream sauce, seafood, and added vegetables, home recipe",250.0
+"Pasta, whole grain, with cream sauce, seafood, and added vegetables, ready-to-heat",250.0
+Pasta with tomato-based sauce and beans or lentils,227.0
+"Macaroni or noodles, creamed, with cheese",230.0
+"Macaroni or noodles, creamed, with cheese and tuna",230.0
+Flavored pasta,185.0
+"Yat Ga Mein with meat, fish, or poultry",205.0
+"Macaroni or pasta salad, made with mayonnaise",204.0
+"Macaroni or pasta salad, made with light mayonnaise",204.0
+"Macaroni or pasta salad, made with mayonnaise-type salad dressing",204.0
+"Macaroni or pasta salad, made with light mayonnaise-type salad dressing",204.0
+"Macaroni or pasta salad, made with Italian dressing",204.0
+"Macaroni or pasta salad, made with light Italian dressing",204.0
+"Macaroni or pasta salad, made with creamy dressing",204.0
+"Macaroni or pasta salad, made with light creamy dressing",204.0
+"Macaroni or pasta salad, made with any type of fat free dressing",204.0
+Macaroni or pasta salad with egg,204.0
+Macaroni or pasta salad with tuna,204.0
+Macaroni or pasta salad with crab meat,204.0
+Macaroni or pasta salad with shrimp,204.0
+Macaroni or pasta salad with tuna and egg,204.0
+Macaroni or pasta salad with chicken,204.0
+Macaroni or pasta salad with cheese,204.0
+Macaroni or pasta salad with meat,204.0
+Noodle pudding,200.0
+"Bibimbap, Korean",162.0
+"Rice, fried, meatless",166.0
+"Rice, fried, NFS",198.0
+"Rice, fried, with chicken",198.0
+"Rice, fried, with pork",198.0
+"Rice, fried, with beef",198.0
+"Rice, fried, with shrimp",198.0
+"Dukboki or Tteokbokki, Korean",250.0
+"Adobo, with rice",244.0
+"Sushi, NFS",150.0
+"Sushi roll, avocado",150.0
+"Sushi roll, California",150.0
+"Sushi roll, eel",150.0
+"Sushi roll, salmon",150.0
+"Sushi roll, shrimp",150.0
+Sushi roll tuna,150.0
+"Sushi roll, vegetable",132.0
+"Sushi, topped with crab",140.0
+"Sushi, topped with eel",140.0
+"Sushi, topped with salmon",140.0
+"Sushi, topped with shrimp",140.0
+"Sushi, topped with tuna",140.0
+"Sushi, topped with egg",150.0
+"Rice with chicken, Puerto Rican style",157.0
+"Paella with meat, Valenciana style",137.0
+"Seafood paella, Puerto Rican style",230.0
+"Soupy rice with chicken, Puerto Rican style",215.0
+"Soupy rice mixture with chicken and potatoes, Puerto Rican style",240.0
+"Stewed rice, Puerto Rican style",170.0
+"Rice with squid, Puerto Rican style",160.0
+"Fried rice, Puerto Rican style",173.0
+"Rice with vienna sausage, Puerto Rican style",180.0
+"Rice with Spanish sausage, Puerto Rican style",180.0
+"Rice with onions, Puerto Rican style",165.0
+"Rice with stewed beans, Puerto Rican style",188.0
+"Congee, with meat, poultry, and/or seafood",249.0
+"Congee, with meat, poultry, and/or seafood, and vegetables",249.0
+"Congee, with vegetables",249.0
+Biryani with vegetables,172.0
+"Beans and rice, from fast food / restaurant",170.0
+"Kidney beans and rice, from fast food / restaurant",170.0
+"Black beans and rice, from fast food / restaurant",170.0
+"Pinto beans and rice, from fast food / restaurant",170.0
+Beans and white rice,170.0
+"Beans and rice, with tomatoes",170.0
+"Beans and rice, with meat",170.0
+Kidney beans and white rice,170.0
+Black beans and white rice,170.0
+Pinto beans and white rice,170.0
+"Rice, white, with corn, NS as to fat",161.0
+"Rice, white, with corn, no added fat",161.0
+"Rice, white, with corn, fat added",161.0
+"Rice, white, with peas, NS as to fat",160.0
+"Rice, white, with peas, no added fat",160.0
+"Rice, white, with peas, fat added",160.0
+"Rice, white, with carrots, NS as to fat",160.0
+"Rice, white, with carrots, no added fat",160.0
+"Rice, white, with carrots, fat added",160.0
+"Rice, white, with peas and carrots, NS as to fat",160.0
+"Rice, white, with peas and carrots, no added fat",160.0
+"Rice, white, with peas and carrots, fat added",160.0
+"Rice, white, with tomatoes and/or tomato-based sauce, NS as to fat",209.0
+"Rice, white, with tomatoes and/or tomato-based sauce, no added fat",206.0
+"Rice, white, with tomatoes and/or tomato-based sauce, fat added",209.0
+"Rice, white, with dark green vegetables, NS as to fat",172.0
+"Rice, white, with dark green vegetables, no added fat",172.0
+"Rice, white, with dark green vegetables, fat added",172.0
+"Rice, white, with carrots and tomatoes and/or tomato-based sauce, NS as to fat",172.0
+"Rice, white, with carrots and tomatoes and/or tomato-based sauce, no added fat",172.0
+"Rice, white, with carrots and tomatoes and/or tomato-based sauce, fat added",172.0
+"Rice, white, with dark green vegetables and tomatoes and/or tomato-based sauce, NS as to fat",172.0
+"Rice, white, with dark green vegetables and tomatoes and/or tomato-based sauce, no added fat",172.0
+"Rice, white, with dark green vegetables and tomatoes and/or tomato-based sauce, fat added",172.0
+"Rice, white, with carrots and dark green vegetables, NS as to fat",172.0
+"Rice, white, with carrots and dark green vegetables, no added fat",172.0
+"Rice, white, with carrots and dark green vegetables, fat added",172.0
+"Rice, white, with carrots, dark green vegetables, and tomatoes and/or tomato-based sauce, NS as to fat",172.0
+"Rice, white, with carrots, dark green vegetables, and tomatoes and/or tomato-based sauce, no added fat",172.0
+"Rice, white, with carrots, dark green vegetables, and tomatoes and/or tomato-based sauce, fat added",172.0
+"Rice, white, with other vegetables, NS as to fat",172.0
+"Rice, white, with other vegetables, no added fat",172.0
+"Rice, white, with other vegetables, fat added",172.0
+"Rice, white, with lentils, NS as to fat",207.0
+"Rice, white, with lentils, fat added",207.0
+"Rice, white, with lentils, no added fat",198.0
+"Rice, cooked with coconut milk",200.0
+Beans and brown rice,170.0
+Kidney beans and brown rice,170.0
+Black beans and brown rice,170.0
+Pinto beans and brown rice,170.0
+"Rice, brown, with corn, NS as to fat",191.0
+"Rice, brown, with corn, no added fat",188.0
+"Rice, brown, with corn, fat added",191.0
+"Rice, brown, with peas, NS as to fat",190.0
+"Rice, brown, with peas, no added fat",187.0
+"Rice, brown, with peas, fat added",190.0
+"Rice, brown, with carrots, NS as to fat",189.0
+"Rice, brown, with carrots, no added fat",186.0
+"Rice, brown, with carrots, fat added",189.0
+"Rice, brown, with peas and carrots, NS as to fat",190.0
+"Rice, brown, with peas and carrots, no added fat",187.0
+"Rice, brown, with peas and carrots, fat added",190.0
+"Rice, brown, with tomatoes and/or tomato based sauce, NS as to fat",243.0
+"Rice, brown, with tomatoes and/or tomato based sauce, no added fat",243.0
+"Rice, brown, with tomatoes and/or tomato based sauce, fat added",243.0
+"Rice, brown, with dark green vegetables, NS as to fat",189.0
+"Rice, brown, with dark green vegetables, no added fat",186.0
+"Rice, brown, with dark green vegetables, fat added",189.0
+"Rice, brown, with carrots and tomatoes and/or tomato-based sauce, NS as to fat",229.0
+"Rice, brown, with carrots and tomatoes and/or tomato-based sauce, no added fat",225.0
+"Rice, brown, with carrots and tomatoes and/or tomato-based sauce, fat added",229.0
+"Rice, brown, with dark green vegetables and tomatoes and/or tomato-based sauce, NS as to fat",229.0
+"Rice, brown, with dark green vegetables and tomatoes and/or tomato-based sauce, no added fat",229.0
+"Rice, brown, with dark green vegetables and tomatoes and/or tomato-based sauce, fat added",229.0
+"Rice, brown, with carrots and dark green vegetables, NS as to fat",189.0
+"Rice, brown, with carrots and dark green vegetables, no added fat",186.0
+"Rice, brown, with carrots and dark green vegetables, fat added",189.0
+"Rice, brown, with carrots, dark green vegetables, and tomatoes and/or tomato-based sauce, NS as to fat",224.0
+"Rice, brown, with carrots, dark green vegetables, and tomatoes and/or tomato-based sauce, no added fat",220.0
+"Rice, brown, with carrots, dark green vegetables, and tomatoes and/or tomato-based sauce, fat added",186.0
+"Rice, brown, with other vegetables, NS as to fat",190.0
+"Rice, brown, with other vegetables, no added fat",186.0
+"Rice, brown, with other vegetables, fat added",190.0
+"Stuffed pepper, with meat",198.0
+"Stuffed pepper, with rice and meat",198.0
+"Stuffed pepper, with rice, meatless",198.0
+"Stuffed tomato, with rice and meat",198.0
+"Stuffed tomato, with rice, meatless",198.0
+Rice pilaf,206.0
+Dirty rice,198.0
+Flavored rice mixture,218.0
+Flavored rice mixture with cheese,230.0
+"Flavored rice, brown and wild",217.0
+Flavored rice and pasta mixture,184.0
+"Flavored rice and pasta mixture, reduced sodium",196.0
+"Spanish rice, from restaurant",243.0
+"Spanish rice, fat added",243.0
+"Spanish rice, no added fat",243.0
+"Spanish rice, NS as to fat",243.0
+Spanish rice with ground beef,230.0
+Rice dressing,167.0
+Rice with raisins,185.0
+Rice dessert or salad with fruit,155.0
+"Rice, white, with cheese and/or cream based sauce, NS as to fat",204.0
+"Rice, white, with cheese and/or cream based sauce, no added fat",204.0
+"Rice, white, with cheese and/or cream based sauce, fat added",204.0
+"Rice, white, with gravy, NS as to fat",237.0
+"Rice, white, with gravy, no added fat",237.0
+"Rice, white, with gravy, fat added",237.0
+"Rice, white, with soy-based sauce, NS as to fat",237.0
+"Rice, white, with soy-based sauce, no added fat",237.0
+"Rice, white, with soy-based sauce, fat added",237.0
+"Rice, brown, with cheese and/or cream based sauce, NS as to fat",282.0
+"Rice, brown, with cheese and/or cream based sauce, no added fat",277.0
+"Rice, brown, with cheese and/or cream based sauce, fat added",282.0
+"Rice, brown, with gravy, NS as to fat",237.0
+"Rice, brown, with gravy, no added fat",237.0
+"Rice, brown, with gravy, fat added",237.0
+"Rice, brown, with soy-based sauce, NS as to fat",237.0
+"Rice, brown, with soy-based sauce, no added fat",237.0
+"Rice, brown, with soy-based sauce, fat added",237.0
+"Rice, white, with vegetables, cheese and/or cream based sauce, NS as to fat",261.0
+"Rice, white, with vegetables, cheese and/or cream based sauce, no added fat",258.0
+"Rice, white, with vegetables, cheese and/or cream based sauce, fat added",262.0
+"Rice, white, with vegetables and gravy, NS as to fat",260.0
+"Rice, white, with vegetables and gravy, no added fat",256.0
+"Rice, white, with vegetables and gravy, fat added",260.0
+"Rice, white, with vegetables, soy-based sauce, NS as to fat",258.0
+"Rice, white, with vegetables, soy-based sauce, no added fat",255.0
+"Rice, white, with vegetables, soy-based sauce, fat added",258.0
+"Rice, brown, with vegetables, cheese and/or cream based sauce, NS as to fat",293.0
+"Rice, brown, with vegetables, cheese and/or cream based sauce, no added fat",289.0
+"Rice, brown, with vegetables, cheese and/or cream based sauce, fat added",293.0
+"Rice, brown, with vegetables and gravy, NS as to fat",292.0
+"Rice, brown, with vegetables and gravy, no added fat",288.0
+"Rice, brown, with vegetables and gravy, fat added",292.0
+"Rice, brown, with vegetables, soy-based sauce, NS as to fat",290.0
+"Rice, brown, with vegetables, soy-based sauce, no added fat",286.0
+"Rice, brown, with vegetables, soy-based sauce, fat added",290.0
+Upma,170.0
+Tabbouleh,160.0
+"Soup, NFS",241.0
+"Noodle soup, NFS",241.0
+"Rice soup, NFS",241.0
+"Barley soup, home recipe, canned, or ready-to-serve",244.0
+"Beef noodle soup, canned or ready-to-serve",244.0
+"Beef noodle soup, home recipe",244.0
+"Chicken or turkey noodle soup, canned or ready-to-serve",241.0
+"Chicken or turkey noodle soup, home recipe",241.0
+"Chicken or turkey noodle soup, cream of, home recipe, canned, or ready-to-serve",245.0
+"Chicken or turkey noodle soup, reduced sodium, canned or ready-to-serve",238.0
+"Chicken or turkey rice soup, canned, or ready-to-serve",241.0
+"Chicken or turkey rice soup, home recipe",231.0
+"Chicken or turkey rice soup, reduced sodium, canned, prepared with water or ready-to-serve",241.0
+Matzo ball soup,241.0
+"Chicken or turkey soup with dumplings and potatoes, home recipe, canned, or ready-to-serve",251.0
+"Chicken or turkey soup with dumplings, home recipe, canned or ready-to-serve",241.0
+"Instant soup, noodle",240.0
+"Soup, mostly noodles",233.0
+"Soup, mostly noodles, reduced sodium",233.0
+Wonton soup,241.0
+"Noodle soup with vegetables, Asian style",228.0
+"Sopa Seca de Fideo, Mexican style, made with dry noodles, home recipe",218.0
+"Sopa de Fideo Aguada, Mexican style noodle soup, home recipe",242.0
+"Sopa seca de arroz, home recipe, Mexican style",218.0
+"Sopa de tortilla, Mexican style tortilla soup, home recipe",240.0
+"Meat substitute, cereal- and vegetable protein-based, fried",146.0
+"Clementine, raw",200.0
+"Grapefruit, raw",180.0
+"Grapefruit, canned",250.0
+"Kumquat, raw",185.0
+"Lemon, raw",200.0
+Lemon pie filling,260.0
+"Lime, raw",200.0
+"Orange, raw",180.0
+"Orange, canned, NFS",250.0
+"Orange, canned, juice pack",245.0
+"Orange, canned, in syrup",250.0
+"Tangerine, raw",195.0
+"Orange juice, 100%, frozen, not reconstituted",284.0
+"Fruit mixture, dried",160.0
+"Apple, dried",90.0
+"Apricot, dried",160.0
+"Blueberries, dried",160.0
+"Cherries, dried",160.0
+Banana chips,72.0
+"Currants, dried",160.0
+"Cranberries, dried",160.0
+Date,160.0
+"Fig, dried",160.0
+"Mango, dried",160.0
+"Papaya, dried",160.0
+"Peach, dried",160.0
+"Pear, dried",160.0
+"Persimmon, dried",160.0
+"Pineapple, dried",160.0
+"Prune, dried",160.0
+"Tamarind, dried",160.0
+"Fruit, NFS",150.0
+"Fruit, pickled",240.0
+"Apple, raw",125.0
+"Applesauce, regular",250.0
+"Applesauce, unsweetened",245.0
+"Applesauce, flavored",250.0
+Apple pie filling,260.0
+"Apple, baked",190.0
+"Apricot, raw",155.0
+"Apricot, canned",250.0
+"Avocado, raw",150.0
+"Banana, raw",150.0
+"Banana, fried",140.0
+"Cantaloupe, raw",155.0
+"Starfruit, raw",100.0
+"Cherries, maraschino",160.0
+Cherry pie filling,260.0
+"Cherries, raw",150.0
+"Cherries, canned",250.0
+"Cherries, frozen",150.0
+Dragon fruit,180.0
+"Fig, canned",250.0
+"Grapes, raw",150.0
+"Guava, raw",165.0
+"Kiwi fruit, raw",180.0
+Lychee,190.0
+"Honeydew melon, raw",155.0
+"Mango, raw",165.0
+"Mango, canned",250.0
+"Mango, frozen",150.0
+"Nectarine, raw",155.0
+"Papaya, raw",165.0
+"Papaya, canned",250.0
+"Passion fruit, raw",236.0
+"Peach, raw",155.0
+"Peach, canned, NFS",250.0
+"Peach, canned, in syrup",250.0
+"Peach, canned, juice pack",245.0
+"Peach, frozen",150.0
+"Pear, raw",125.0
+"Pear, Asian, raw",125.0
+"Pear, canned, NFS",250.0
+"Pear, canned, in syrup",250.0
+"Pear, canned, juice pack",245.0
+"Pineapple, raw",165.0
+"Pineapple, canned, NFS",250.0
+"Pineapple, canned, in syrup",250.0
+"Pineapple, canned, juice pack",245.0
+"Pineapple, frozen",150.0
+"Plum, raw",155.0
+"Plum, canned",250.0
+"Pomegranate, raw",175.0
+Rhubarb,240.0
+"Watermelon, raw",155.0
+"Berries, NFS",150.0
+"Blackberries, raw",150.0
+"Blackberries, frozen",150.0
+"Blueberries, raw",150.0
+"Bluberries, canned",250.0
+"Blueberries, frozen",150.0
+Blueberry pie filling,260.0
+"Cranberries, raw",100.0
+Cranberry sauce,280.0
+"Raspberries, raw",150.0
+"Raspberries, frozen",150.0
+"Strawberries, raw",150.0
+"Strawberries, canned",250.0
+"Strawberries, frozen",150.0
+Ambrosia,193.0
+"Fruit salad, fresh or raw,  excluding citrus fruits, no dressing",150.0
+"Fruit salad, fresh or raw, including citrus fruits, no dressing",150.0
+"Fruit cocktail, canned, NFS",250.0
+"Fruit cocktail, canned, in syrup",250.0
+"Fruit cocktail, canned, juice pack",245.0
+"Fruit mixture, frozen",150.0
+Apple salad with dressing,137.0
+"Fruit salad, excluding citrus fruits, with salad dressing or mayonnaise",188.0
+"Fruit salad, excluding citrus fruits, with whipped cream",182.0
+"Fruit salad, excluding citrus fruits, with nondairy whipped topping",175.0
+"Fruit salad, excluding citrus fruits, with marshmallows",171.0
+"Fruit salad, including citrus fruits, with pudding",182.0
+"Fruit salad, excluding citrus fruits, with pudding",182.0
+"Fruit salad, including citrus fruits, with salad dressing or mayonnaise",188.0
+"Fruit salad, including citrus fruit, with whipped cream",182.0
+"Fruit salad, including citrus fruits, with nondairy whipped topping",175.0
+"Fruit salad, including citrus fruits, with marshmallows",171.0
+Lime souffle,120.0
+Pineapple salad with dressing,184.0
+"Soup, fruit",242.0
+Sorbet,200.0
+"Fruit smoothie, with whole fruit, no dairy",216.0
+"Fruit smoothie, with whole fruit, no dairy, added protein",216.0
+"Fruit smoothie, with whole fruit, non-dairy",216.0
+"Fruit smoothie juice drink, no dairy",216.0
+"Fruit smoothie, light",216.0
+"Fruit smoothie, bottled",248.0
+Baby Toddler yogurt melts,28.0
+"Potato, NFS",160.0
+"Potato, baked, NFS",130.0
+"Potato, baked, peel not eaten",130.0
+"Potato, boiled, NFS",160.0
+"Potato, boiled, ready-to-heat",160.0
+"Potato, boiled, from fresh, peel not eaten, NS as to fat",160.0
+"Potato, boiled, from fresh, peel not eaten, no added fat",160.0
+"Potato, boiled, from fresh, peel not eaten, fat added, NS as to fat type",160.0
+"Potato, boiled, from fresh, peel not eaten, made with oil",160.0
+"Potato, boiled, from fresh, peel not eaten, made with butter",160.0
+"Potato, boiled, from fresh, peel not eaten, made with margarine",160.0
+"Potato, boiled, from fresh, peel eaten, NS as to fat",160.0
+"Potato, boiled, from fresh, peel eaten, fat added, NS as to fat type",160.0
+"Potato, boiled, from fresh,  peel eaten, no added fat",160.0
+"Potato, boiled, from fresh, peel eaten, made with oil",160.0
+"Potato, boiled, from fresh, peel eaten, made with butter",160.0
+"Potato, boiled, from fresh, peel eaten, made with margarine",160.0
