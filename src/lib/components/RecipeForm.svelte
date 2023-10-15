@@ -7,7 +7,6 @@
 	import StarRating from '$lib/components/StarRating.svelte'
 
 	export let recipe
-	$: console.log('🚀 ~ file: RecipeForm.svelte:11 ~ recipe.is_public:', recipe.is_public)
 	export let onSubmit
 	export let buttonText = 'Add Recipe' // Default button text
 	export let selectedFiles = null

@@ -75,8 +75,6 @@ export async function DELETE({ params, locals }) {
 
 export async function PUT({ request, locals, params }) {
 	const { session, user } = await locals.auth.validateUser()
-	// const bodyText = await request.text()
-	// const recipeData = JSON.parse(bodyText)
 	const formData = await request.formData()
 	// Retrieve and parse the 'recipe' field from the FormData
 	const recipeData = JSON.parse(formData.get('recipe'))
@@ -185,7 +183,6 @@ export async function PUT({ request, locals, params }) {
 			}
 		})
 	} catch (error) {
-		console.log('🚀 ~ file: +server.js:152 ~ POST ~ error:', error)
 		return new Response(
 			{ error: `Failed to update recipe: ${error.message}` },
 			{
@@ -240,7 +237,6 @@ export async function GET({ params, locals }) {
 			})
 		}
 		if (!recipe.is_public && recipe.userId !== user.userId) {
-			console.log('🚀 ~ file: +server.js:243 ~ GET ~ recipe.is_public:', recipe.is_public)
 			console.log('Unauthorised!')
 			return new Response(JSON.stringify({ error: 'Unauthorised!' }), {
 				status: 403,
