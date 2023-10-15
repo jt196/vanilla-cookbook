@@ -2,13 +2,22 @@
 	import FeedbackMessage from '$lib/components/FeedbackMessage.svelte'
 	import TrueFalse from '$lib/components/TrueFalse.svelte'
 	import Delete from '$lib/components/svg/Delete.svelte'
-	import { importFileExists, uploadPaprikaFile } from '$lib/utils/crud.js'
+	import {
+		dbCatCount,
+		dbRecCount,
+		fileCatCount,
+		fileRecCount,
+		importFileExists
+	} from '$lib/utils/crud.js'
 	import { onMount } from 'svelte'
+
 	export let data
 	const { user, importCount } = data
 
-	const { catFile, recDb, recFile } = importCount
 	let catDb = importCount.catDb
+	let recDb = importCount.recDb
+	let catFile = importCount.catFile
+	let recFile = importCount.recFile
 
 	let paprikaUser = ''
 	let paprikaPassword = ''
@@ -45,10 +54,10 @@
 
 			const result = await response.json()
 			downloadCatBusy = false
-
 			// 2. Update the catFeedbackMessage based on the server's response
 			if (response.ok) {
-				await checkCategoryFileExists(user.userId)
+				await checkCategoryFileExists()
+				catFile = await fileCatCount()
 				catFeedbackMessage = 'Categories imported successfully!'
 			} else {
 				catFeedbackMessage = result.error
@@ -79,7 +88,8 @@
 			downloadRecBusy = false
 			// 2. Update the recFeedbackMessage based on the server's response
 			if (response.ok) {
-				await checkRecipeFileExists(user.userId)
+				await checkRecipeFileExists()
+				recFile = await fileRecCount()
 				recFeedbackMessage = 'Recipes imported successfully!'
 			} else {
 				recFeedbackMessage = result.error
@@ -123,9 +133,15 @@
 		const result = await response.json()
 		if (result.success) {
 			if (filename.includes('categories')) {
+				// Check for file existence
 				await checkCategoryFileExists()
+				// Update the category count in the file
+				catFile = await fileCatCount()
+				catFeedbackMessage = 'Category File Deleted!'
 			} else {
 				await checkRecipeFileExists()
+				recFile = await fileRecCount()
+				recFeedbackMessage = 'Recipe File Deleted!'
 			}
 		}
 	}
@@ -151,11 +167,10 @@
 
 			if (response.status === 200) {
 				catImportStatus = 'Categories successfully imported!'
+				catDb = await dbCatCount(user.userId)
 				try {
 					const response = await fetch(`/api/user/${user.userId}/categories/count`)
 					const data = await response.json()
-					console.log('🚀 ~ file: +page.svelte:148 ~ importCategoriesFromFile ~ data:', data)
-
 					if (data && data.count) {
 						catDb = data.count
 					}
@@ -189,6 +204,7 @@
 
 			if (response.status === 200) {
 				recImportStatus = 'Recipes successfully imported!'
+				recDb = await dbRecCount(user.userId)
 			} else {
 				recImportStatus = data.error || 'An unknown error occurred.'
 			}
@@ -225,10 +241,9 @@
 				<div class="file-manage">
 					Category File: <TrueFalse isTrue={catFileExists} />{#if catFileExists}
 						<button
-							aria-busy={deleteCatBusy}
 							class="outline secondary"
 							disabled={!catFileExists}
-							on:click={() => removeFile(user.userId + '_categories.json')}
+							on:click={() => removeFile('categories.json')}
 							><Delete width="30px" height="30px" fill="var(--pico-del-color)" /></button>
 					{/if}
 				</div>
@@ -250,10 +265,9 @@
 				<div class="file-manage">
 					Recipe File: <TrueFalse isTrue={recFileExists} />{#if recFileExists}
 						<button
-							aria-busy={deleteRecBusy}
 							class="outline secondary delete"
 							disabled={!recFileExists}
-							on:click={() => removeFile(user.userId + '_recipes.json')}
+							on:click={() => removeFile('recipes.json')}
 							><Delete width="30px" height="30px" fill="var(--pico-del-color)" /></button>
 					{/if}
 				</div>

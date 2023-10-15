@@ -14,9 +14,7 @@ export async function POST({ request, locals }) {
 	}
 
 	const { filename } = await request.json()
-
 	const filepath = path.join(process.cwd(), 'uploads/imports', user.userId + '_' + filename)
-
 	try {
 		await fs.access(filepath, fs.constants.F_OK) // checks if the file exists
 		return new Response(JSON.stringify({ exists: true }), {
@@ -48,6 +46,7 @@ export async function DELETE({ request, locals }) {
 	}
 
 	const { filename } = await request.json()
+	console.log('🚀 ~ file: +server.js:49 ~ DELETE ~ filename:', filename)
 	const filepath = path.join(process.cwd(), 'uploads/imports', user.userId + '_' + filename)
 
 	try {

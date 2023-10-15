@@ -143,3 +143,61 @@ export async function uploadPaprikaFile(formData) {
 		return { success: false, message: error.message }
 	}
 }
+
+export async function dbCatCount(userId) {
+	let dbCategoryCount = 0
+	try {
+		const response = await fetch(`/api/user/${userId}/categories/count`)
+		const data = await response.json()
+
+		if (data && data.count) {
+			dbCategoryCount = data.count
+		}
+	} catch (err) {
+		console.error('Error fetching category db count:', err)
+	}
+	return dbCategoryCount
+}
+
+export async function dbRecCount(userId) {
+	// Fetch the category count for the user
+	let dbRecCount = 0
+	try {
+		const response = await fetch(`/api/user/${userId}/recipes/count`)
+		const data = await response.json()
+		if (data && data.count) {
+			dbRecCount = data.count
+		}
+	} catch (err) {
+		console.error('Error fetching recipe db count:', err)
+	}
+	return dbRecCount
+}
+
+export async function fileCatCount() {
+	let fileCategoryCount = 0
+	try {
+		const response = await fetch(`/api/import/paprika/categories`)
+		const data = await response.json()
+		if (data && data.fileCount) {
+			fileCategoryCount = data.fileCount
+		}
+	} catch (err) {
+		console.error('Error fetching category file count:', err)
+	}
+	return fileCategoryCount
+}
+
+export async function fileRecCount() {
+	let fileRecCount = 0
+	try {
+		const response = await fetch(`/api/import/paprika/recipes`)
+		const data = await response.json()
+		if (data && data.fileCount) {
+			fileRecCount = data.fileCount
+		}
+	} catch (err) {
+		console.error('Error fetching category file count:', err)
+	}
+	return fileRecCount
+}
