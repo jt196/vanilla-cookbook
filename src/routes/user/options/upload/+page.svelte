@@ -9,6 +9,7 @@
 	let recImportMessage = ''
 
 	let isPublic = false
+	let importPaprikaFileBusy = false
 	let selectedFiles = []
 
 	async function removeFile(filename) {
@@ -59,6 +60,7 @@
 
 	async function importFromPaprikaFile(filename) {
 		console.log('Importing Paprika file!')
+		importPaprikaFileBusy = true
 		try {
 			const response = await fetch('/api/import/paprika/paprikarecipes', {
 				method: 'POST',
@@ -70,6 +72,8 @@
 			})
 
 			const data = await response.json()
+
+			importPaprikaFileBusy = false
 
 			if (response.status === 200) {
 				recImportMessage = data.success
@@ -113,6 +117,7 @@
 		<h3>Import an uploaded Paprika file</h3>
 		{#each paprikarecipesFiles as file}
 			<button
+				aria-busy={importPaprikaFileBusy}
 				class="outline secondary"
 				disabled={!paprikarecipesFiles || paprikarecipesFiles.length === 0}
 				on:click={() => importFromPaprikaFile(file)}>Import {file}</button>

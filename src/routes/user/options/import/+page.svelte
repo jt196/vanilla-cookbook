@@ -17,6 +17,10 @@
 	let recFeedbackMessage = ''
 	let catFileExists = false
 	let recFileExists = false
+	let importCatBusy = false
+	let importRecBusy = false
+	let downloadCatBusy = false
+	let downloadRecBusy = false
 
 	let isPublic = false
 
@@ -28,6 +32,7 @@
 	async function downloadCategories() {
 		// 1. Update the feedbackMessage to notify the user that the process has started
 		catFeedbackMessage = 'Importing categories, please wait!'
+		downloadCatBusy = true
 
 		try {
 			const response = await fetch('/api/import/paprika/categories', {
@@ -39,6 +44,7 @@
 			})
 
 			const result = await response.json()
+			downloadCatBusy = false
 
 			// 2. Update the catFeedbackMessage based on the server's response
 			if (response.ok) {
@@ -57,6 +63,7 @@
 	async function downloadRecipes() {
 		// 1. Update the feedbackMessage to notify the user that the process has started
 		recFeedbackMessage = 'Importing recipes, please wait!'
+		downloadRecBusy = true
 
 		try {
 			const response = await fetch('/api/import/paprika/recipes', {
@@ -69,6 +76,7 @@
 
 			const result = await response.json()
 
+			downloadRecBusy = false
 			// 2. Update the recFeedbackMessage based on the server's response
 			if (response.ok) {
 				await checkRecipeFileExists(user.userId)
@@ -134,8 +142,12 @@
 					// If your API needs authentication, you might also include authorization headers here
 				}
 			})
+			catImportStatus = 'Importing categories from file!'
+			importCatBusy = true
 
 			const data = await response.json()
+
+			importCatBusy = false
 
 			if (response.status === 200) {
 				catImportStatus = 'Categories successfully imported!'
@@ -169,7 +181,11 @@
 				body: JSON.stringify({ isPublic })
 			})
 
+			importRecBusy = true
+
 			const data = await response.json()
+
+			response ? (importRecBusy = false) : null
 
 			if (response.status === 200) {
 				recImportStatus = 'Recipes successfully imported!'
@@ -202,13 +218,14 @@
 	<input type="password" id="paprikaPassword" bind:value={paprikaPassword} />
 	<div class="paprika-api">
 		<div class="import-categories">
-			<button disabled={catFileExists} on:click={downloadCategories}
+			<button aria-busy={downloadCatBusy} disabled={catFileExists} on:click={downloadCategories}
 				>Download Paprika Categories</button>
 			<div class="feedback">
 				<FeedbackMessage message={catFeedbackMessage} />
 				<div class="file-manage">
 					Category File: <TrueFalse isTrue={catFileExists} />{#if catFileExists}
 						<button
+							aria-busy={deleteCatBusy}
 							class="outline secondary"
 							disabled={!catFileExists}
 							on:click={() => removeFile(user.userId + '_categories.json')}
@@ -219,18 +236,21 @@
 			<p>Categories in File: {catFile}</p>
 			<p>Categories in DB: {catDb}</p>
 			<button
+				aria-busy={importCatBusy}
 				class="outline secondary delete"
 				disabled={catDb === catFile || catFile === 0 || catFile === null}
 				on:click={importCategoriesFromFile}>Import Categories</button>
 			<FeedbackMessage message={catImportStatus} />
 		</div>
 		<div class="import-recipes">
-			<button disabled={recFileExists} on:click={downloadRecipes}>Download Paprika Recipes</button>
+			<button disabled={recFileExists} aria-busy={downloadRecBusy} on:click={downloadRecipes}
+				>Download Paprika Recipes</button>
 			<div class="feedback">
 				<FeedbackMessage message={recFeedbackMessage} />
 				<div class="file-manage">
 					Recipe File: <TrueFalse isTrue={recFileExists} />{#if recFileExists}
 						<button
+							aria-busy={deleteRecBusy}
 							class="outline secondary delete"
 							disabled={!recFileExists}
 							on:click={() => removeFile(user.userId + '_recipes.json')}
@@ -249,6 +269,7 @@
 				Recipes Public
 			</label>
 			<button
+				aria-busy={importRecBusy}
 				class="outline secondary"
 				disabled={recDb === recFile || recFile === 0 || recFile === null}
 				on:click={importRecipesFromFile}>Import Recipes</button>
