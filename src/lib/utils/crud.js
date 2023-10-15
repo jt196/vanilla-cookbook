@@ -130,9 +130,7 @@ export async function uploadPaprikaFile(formData) {
 			method: 'PUT',
 			body: formData
 		})
-
 		const responseData = await response.json()
-
 		if (response.ok) {
 			// Assuming the server responds with a success message
 			return { success: true, message: responseData.success }

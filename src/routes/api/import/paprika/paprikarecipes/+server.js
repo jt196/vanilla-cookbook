@@ -81,7 +81,6 @@ export async function PUT({ request, locals }) {
 			// const filename = `${user.userId}_recipes.paprikarecipes`
 			// Use the original filename
 			const filename = `${user.userId}_${paprikaFile.name}`
-
 			// Save the paprika file
 			await saveFile(fileBuffer, filename, directory)
 
@@ -126,8 +125,6 @@ export async function POST({ request, locals }) {
 		const requestData = await request.json()
 		const filename = `${user.userId}_${requestData.filename}`
 		const isPublic = requestData.isPublic
-		console.log('🚀 ~ file: +server.js:122 ~ POST ~ filename:', filename)
-
 		if (!filename) {
 			return new Response(JSON.stringify({ error: 'Filename is required.' }), {
 				status: 400,
@@ -139,8 +136,6 @@ export async function POST({ request, locals }) {
 
 		// Importing the paprika file
 		const importedCount = await importPaprikaRecipes(user.userId, filename, isPublic)
-		console.log('🚀 ~ file: +server.js:141 ~ POST ~ importedCount:', importedCount)
-
 		if (importedCount.count >= 0) {
 			return new Response(
 				JSON.stringify({

@@ -9,8 +9,6 @@
 	let recImportMessage = ''
 
 	let isPublic = false
-	$: console.log('🚀 ~ file: +page.svelte:13 ~ isPublic:', isPublic)
-
 	let selectedFiles = []
 
 	async function removeFile(filename) {
@@ -60,7 +58,6 @@
 	}
 
 	async function importFromPaprikaFile(filename) {
-		console.log('🚀 ~ file: +page.svelte:61 ~ importFromPaprikaFile ~ filename:', filename)
 		console.log('Importing Paprika file!')
 		try {
 			const response = await fetch('/api/import/paprika/paprikarecipes', {
@@ -76,10 +73,6 @@
 
 			if (response.status === 200) {
 				recImportMessage = data.success
-				console.log(
-					'🚀 ~ file: +page.svelte:77 ~ importFromPaprikaFile ~ recImportMessage:',
-					recImportMessage
-				)
 				console.log(`Imported ${data.count} recipes!`) // Or you can utilize this data however you see fit
 			} else {
 				recImportMessage = data.error || 'An unknown error occurred.'
