@@ -85,18 +85,8 @@ async function seedIngredients() {
 	try {
 		const folderPath = './src/lib/data/ingredients' // Specify the folder path
 
-		// Get a list of all files in the folder
-		// const files = fs.readdirSync(folderPath)
-
-		// Filter files that match the pattern 'ingredient_*.csv'
-		// const csvFiles = files.filter((file) => /^ingredients_.*\.csv$/.test(file))
-
 		const filePath = path.join(folderPath, 'dry_ingredient_data.csv')
 
-		// if (csvFiles.length === 0) {
-		// 	console.log('No CSV files matching the pattern found, cannot continue seeding.')
-		// 	return
-		// }
 		if (!fs.existsSync(filePath)) {
 			console.log('dry_ingredient_data.csv not found, cannot continue seeding.')
 			return
@@ -113,11 +103,6 @@ async function seedIngredients() {
 		if (currentVersion < expectedVersion) {
 			// Clear the existing data in the Ingredient table
 			await prismaC.ingredient.deleteMany()
-
-			// Loop through each CSV file
-			// for (const csvFile of csvFiles) {
-			// const filePath = path.join(folderPath, csvFile)
-			console.log('🚀 ~ file: seed.js:107 ~ seedIngredients ~ filePath:', filePath)
 
 			// Read the CSV file using csv-parser with proper configuration
 			const rows = []
@@ -142,7 +127,6 @@ async function seedIngredients() {
 			await prismaC.$transaction(rows.map((row) => prismaC.ingredient.create({ data: row })))
 
 			console.log(`Data from ${filePath} has been seeded.`)
-			// }
 
 			// Update the version in SiteSettings
 			await prismaC.siteSettings.update({
