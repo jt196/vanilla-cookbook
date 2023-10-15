@@ -86,22 +86,10 @@ export async function fetchData(fetchType, email, password, userId) {
 		return Promise.reject('Invalid fetchType provided') // Reject with an error message
 	}
 
-	// 2. Execute the appropriate fetch function with the necessary credentials
-	// const outputPath = path.join(
-	// 	__dirname,
-	// 	'../../../../../uploads/imports',
-	// 	userId + '_' + outputFilename
-	// )
-	// Attempting to resolve docker path issues
-	const appBasePath = process.env.APP_ROOT_PATH || __dirname
-	const outputPath = path.join(
-		appBasePath,
-		'../../../../../uploads/imports',
-		`${userId}_${outputFilename}`
-	)
+	// Use environment variable for docker container, otherwise, use the relative path
+	const projectRoot = process.env.APP_ROOT_PATH || path.join(__dirname, '../../../../..')
+	const outputPath = path.join(projectRoot, 'uploads/imports', `${userId}_${outputFilename}`)
 
-	console.log('🚀 ~ file: paprikaAPI.js:92 ~ fetchData ~ __dirname:', __dirname)
-	console.log('🚀 ~ file: paprikaAPI.js:91 ~ fetchData ~ outputPath:', outputPath)
 	try {
 		const data = await fetchFunction(email, password, userId)
 
