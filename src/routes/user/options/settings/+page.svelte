@@ -3,7 +3,7 @@
 	import FeedbackMessage from '$lib/components/FeedbackMessage.svelte'
 
 	export let data
-	const { user } = data
+	const { user, dbRecCount } = data
 	let settingsFeedback = ''
 	let systemLabel
 	$: console.log(user.units)
@@ -27,6 +27,11 @@
 	// Display the selected system label
 	$: systemLabel = 'Selected system: ' + systems.find((system) => system.value === user.units).label
 </script>
+
+<div class="rec-count">
+	You have {dbRecCount} recipes in your account.
+</div>
+<br />
 
 <form method="POST">
 	<button id="logout" formaction="/logout" type="submit">Logout</button>

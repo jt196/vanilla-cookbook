@@ -1,8 +1,10 @@
 <script>
 	import FeedbackMessage from '$lib/components/FeedbackMessage.svelte'
 	import Delete from '$lib/components/svg/Delete.svelte'
-	import { uploadPaprikaFile } from '$lib/utils/crud.js'
+	import { dbRecCount, uploadPaprikaFile } from '$lib/utils/crud.js'
 	export let data
+	const { user } = data
+	let recDb = data.dbRecCount
 	let paprikarecipesFiles = data.paprikarecipesFiles
 
 	let recUploadMessage = ''
@@ -77,6 +79,7 @@
 
 			if (response.status === 200) {
 				recImportMessage = data.success
+				recDb = await dbRecCount(user.userId)
 				console.log(`Imported ${data.count} recipes!`) // Or you can utilize this data however you see fit
 			} else {
 				recImportMessage = data.error || 'An unknown error occurred.'
@@ -100,6 +103,11 @@
 	}
 </script>
 
+<div class="rec-count">
+	You have {recDb} recipes in your account.
+</div>
+<br />
+
 <div class="paprika-file-upload">
 	<h3>Upload a Paprika File</h3>
 	<label for="file">Click browse to upload a .paprikarecipes file</label>
@@ -116,6 +124,15 @@
 	<div class="paprika-file-import">
 		<h3>Import an uploaded Paprika file</h3>
 		{#each paprikarecipesFiles as file}
+			<label>
+				<input
+					type="checkbox"
+					data-tooltip="Make your imported recipes public"
+					name="Recipes Public"
+					bind:checked={isPublic} />
+				I want to make these recipes public
+			</label>
+			<br />
 			<button
 				aria-busy={importPaprikaFileBusy}
 				class="outline secondary"
@@ -124,14 +141,6 @@
 			<button class="outline secondary" on:click={() => removeFile(file)}
 				><Delete width="30px" height="30px" fill="var(--pico-del-color)" /></button>
 		{/each}
-		<label>
-			<input
-				type="checkbox"
-				data-tooltip="Make your imported recipes public"
-				name="Recipes Public"
-				bind:checked={isPublic} />
-			Recipes Public
-		</label>
 	</div>
 {/if}
 <div class="feedback">
