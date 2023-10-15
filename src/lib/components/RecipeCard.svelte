@@ -10,7 +10,9 @@
 	import { deleteRecipeById } from '$lib/utils/crud'
 
 	export let item
+	console.log('🚀 ~ file: RecipeCard.svelte:13 ~ item:', item)
 	export let data
+	console.log('🚀 ~ file: RecipeCard.svelte:15 ~ data:', data.user)
 
 	const dispatch = createEventDispatcher()
 
@@ -44,7 +46,7 @@
 			</div>
 		</a>
 		<div class="align-right recipe-buttons">
-			{#if item.userId === data.user?.userId}
+			{#if item.userId === data.user?.requestedUserId}
 				<button
 					on:click={() => handleDelete(item.uid)}
 					data-testid="delete-button"
