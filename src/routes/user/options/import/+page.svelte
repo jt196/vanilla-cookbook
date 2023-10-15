@@ -217,6 +217,11 @@
 
 <h3>Paprika API Import</h3>
 <p>
+	Paprika categories are organised like a tree inside the app, allowing you to have folder-like
+	structures. Unfortunately, when you export the Paprika file, it doesn't retain this structure. The
+	way around this is to import your categories from their API before you import your recipes.
+</p>
+<p>
 	1. Download your categories by entering your username and password, then pressing the <strong
 		>Download Paprika Categories</strong> button.
 </p>
