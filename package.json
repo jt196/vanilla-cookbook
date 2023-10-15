@@ -5,6 +5,7 @@
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",
+		"build:localprod": "vite build --mode localproduction",
 		"preview": "vite preview",
 		"test": "vitest",
 		"test:watch": "npm run test -- --watch",

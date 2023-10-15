@@ -26,7 +26,7 @@ import {
 	status,
 	fetchDetailedRecipes,
 	fetchFirstRecipeDetails,
-	__dirname
+	appRootPath
 } from './paprikaAPIUtils.js'
 
 export async function fetchData(fetchType, email, password, userId) {
@@ -87,8 +87,7 @@ export async function fetchData(fetchType, email, password, userId) {
 	}
 
 	// Use environment variable for docker container, otherwise, use the relative path
-	const projectRoot = process.env.APP_ROOT_PATH || path.join(__dirname, '../../../../..')
-	const outputPath = path.join(projectRoot, 'uploads/imports', `${userId}_${outputFilename}`)
+	const outputPath = path.join(appRootPath, 'uploads/imports', `${userId}_${outputFilename}`)
 
 	try {
 		const data = await fetchFunction(email, password, userId)

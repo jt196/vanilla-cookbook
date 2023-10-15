@@ -19,6 +19,11 @@ const __filename = fileURLToPath(import.meta.url)
 console.log('🚀 ~ file: paprikaAPIUtils.js:19 ~ import.meta.url:', import.meta.url)
 export const __dirname = path.dirname(__filename)
 console.log('🚀 ~ file: paprikaAPIUtils.js:21 ~ __dirname:', __dirname)
+export const appRootPath =
+	import.meta.env.VITE_APP_ROOT_PATH ||
+	process.env.APP_ROOT_PATH ||
+	path.join(__dirname, '../../../../..')
+console.log('🚀 ~ file: paprikaAPIUtils.js:23 ~ appRootPath:', appRootPath)
 
 /**
  * Fetches data from the Paprika API for a given endpoint.
@@ -209,10 +214,8 @@ const replaceCategoryUIDsWithNames = async (recipe, email, password, userId) => 
  * @returns {Promise<Array>} - An array of categories.
  */
 const getCategories = async (email, password, userId) => {
-	const categoriesFilePath = path.join(
-		__dirname,
-		`../../../../../uploads/imports/${userId}_categories.json`
-	)
+	const categoriesFilePath = path.join(appRootPath, `uploads/imports/${userId}_categories.json`)
+
 	try {
 		console.log('Accessing the local categories!')
 		await fsPromises.access(categoriesFilePath)
@@ -252,7 +255,8 @@ export async function loadCategories(filepath) {
 // Parses either a .json file or a .paprikarecipes archive
 export async function loadRecipes(filename) {
 	try {
-		const recipesPath = path.join(__dirname, '../../../../../uploads/imports/', filename)
+		const recipesPath = path.join(appRootPath, 'uploads/imports', filename)
+		console.log('🚀 ~ file: paprikaAPIUtils.js:257 ~ loadRecipes ~ recipesPath:', recipesPath)
 
 		let recipes
 
@@ -334,8 +338,7 @@ export async function addRecipesToDB(declaredRecipes, userId) {
 }
 
 export async function handlePhotosForRecipes(createdRecipes) {
-	const __dirname = path.dirname(fileURLToPath(import.meta.url))
-	const uploadDir = path.join(__dirname, '../../../../../uploads/images') // Adjust the path to point to the root /static folder
+	const uploadDir = path.join(appRootPath, 'uploads/images')
 
 	const failedRecipes = []
 

@@ -17,7 +17,6 @@ const PrismaClient = PrismaClientPkg.PrismaClient
 // Different name of prismaC as the auth is importing prisma from the adapter
 const prismaC = new PrismaClient({
 	errorFormat: 'pretty',
-	log: ['query'],
 	datasources: {
 		db: {
 			// url: 'file:./db/dev.sqlite?connection_limit=1'
