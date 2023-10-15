@@ -216,17 +216,23 @@
 </script>
 
 <h3>Paprika API Import</h3>
-<p>Enter your Paprika API credentials to download your recipes and categories.</p>
-<p>1. Download, then import your categories.</p>
 <p>
-	1. Download, then import your recipes. This will take a short while if you've a few recipes. You
-	might find exporting them from the app is a little quicker.
+	1. Download your categories by entering your username and password, then pressing the <strong
+		>Download Paprika Categories</strong> button.
 </p>
-<p>
-	<i
-		>Please note: access to the images in the recipes have a limited time, if you want to download
-		them with your recipes, do this soon after you download the recipes.</i>
-</p>
+<p>2. If the Category File is there (look for a tick!), press <strong>Import Categories</strong></p>
+<p>3. Delete the file, or hang on to it.</p>
+{#if user.isAdmin}
+	<p>
+		4. Download, then import your recipes. This will take a short while if you've a few recipes. You
+		might find exporting them from the app is a little quicker.
+	</p>
+	<p>
+		<i
+			>Please note: access to the images in the recipes have a limited time, if you want to download
+			them with your recipes, do this soon after you download the recipes.</i>
+	</p>
+{/if}
 <div class="container">
 	<label for="paprikaUser"> Paprika User </label>
 	<input type="text" id="paprikaUser" bind:value={paprikaUser} />
@@ -257,38 +263,40 @@
 				on:click={importCategoriesFromFile}>Import Categories</button>
 			<FeedbackMessage message={catImportStatus} />
 		</div>
-		<div class="import-recipes">
-			<button disabled={recFileExists} aria-busy={downloadRecBusy} on:click={downloadRecipes}
-				>Download Paprika Recipes</button>
-			<div class="feedback">
-				<FeedbackMessage message={recFeedbackMessage} />
-				<div class="file-manage">
-					Recipe File: <TrueFalse isTrue={recFileExists} />{#if recFileExists}
-						<button
-							class="outline secondary delete"
-							disabled={!recFileExists}
-							on:click={() => removeFile('recipes.json')}
-							><Delete width="30px" height="30px" fill="var(--pico-del-color)" /></button>
-					{/if}
+		{#if user.isAdmin}
+			<div class="import-recipes">
+				<button disabled={recFileExists} aria-busy={downloadRecBusy} on:click={downloadRecipes}
+					>Download Paprika Recipes</button>
+				<div class="feedback">
+					<FeedbackMessage message={recFeedbackMessage} />
+					<div class="file-manage">
+						Recipe File: <TrueFalse isTrue={recFileExists} />{#if recFileExists}
+							<button
+								class="outline secondary delete"
+								disabled={!recFileExists}
+								on:click={() => removeFile('recipes.json')}
+								><Delete width="30px" height="30px" fill="var(--pico-del-color)" /></button>
+						{/if}
+					</div>
 				</div>
+				<p>Recipes in File: {recFile}</p>
+				<p>Recipes in DB: {recDb}</p>
+				<label>
+					<input
+						type="checkbox"
+						data-tooltip="Make your imported recipes public"
+						name="Recipes Public"
+						bind:checked={isPublic} />
+					Recipes Public
+				</label>
+				<button
+					aria-busy={importRecBusy}
+					class="outline secondary"
+					disabled={recDb === recFile || recFile === 0 || recFile === null}
+					on:click={importRecipesFromFile}>Import Recipes</button>
+				<FeedbackMessage message={recImportStatus} />
 			</div>
-			<p>Recipes in File: {recFile}</p>
-			<p>Recipes in DB: {recDb}</p>
-			<label>
-				<input
-					type="checkbox"
-					data-tooltip="Make your imported recipes public"
-					name="Recipes Public"
-					bind:checked={isPublic} />
-				Recipes Public
-			</label>
-			<button
-				aria-busy={importRecBusy}
-				class="outline secondary"
-				disabled={recDb === recFile || recFile === 0 || recFile === null}
-				on:click={importRecipesFromFile}>Import Recipes</button>
-			<FeedbackMessage message={recImportStatus} />
-		</div>
+		{/if}
 	</div>
 </div>
 
