@@ -123,11 +123,13 @@ const fuseOptions = {
 
 /**
  * Attempts to find a match for an ingredient in a lookup table.
+ * This was used in the manipulate ingredients function before I transitioned to the database version
  *
  * @param {string} ingredient - The ingredient name to match.
  * @param {Array} lookupTable - The table of ingredients to search within.
  * @returns {Object|null} - Returns the matched ingredient object or null if no match is found.
  */
+// eslint-disable-next-line no-unused-vars
 function fuzzyMatch(ingredient, lookupTable) {
 	const words = ingredient.toLowerCase().split(/\W+/) // Split by non-word characters
 	for (const word of words) {
@@ -238,8 +240,6 @@ export const manipulateIngredient = (ingredientObj, fromSystem, toSystem, fuse) 
 		const result = fuse.search(ingredient)
 		if (result.length > 0 && result[0].score < 0.3) {
 			dryIngredient = result[0].item
-		} else {
-			dryIngredient = fuzzyMatch(ingredient, dryIngredientsConversion)
 		}
 
 		if (dryIngredient) {
@@ -418,7 +418,6 @@ export function parseDirections(directions, toSystem, fromSystem) {
  * // Returns: "Heat to 356°F"
  */
 export function parseTemperature(direction, toSystem, fromSystem) {
-	console.log('Parsing temperature!')
 	const celsiusRegex = /(\d+-\d+|\d+(\.\d+)?)\s?(°C|ºC|C|degrees C)(?![a-zA-Z])/gi
 	const fahrenheitRegex = /(\d+-\d+|\d+(\.\d+)?)\s?(°F|ºF|F|degrees F)(?![a-zA-Z])/gi
 	const gasMarkRegex = /Gas Mark (\d+)|gas (\d+)/gi

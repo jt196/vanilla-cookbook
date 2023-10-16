@@ -10,9 +10,7 @@
 	import { deleteRecipeById } from '$lib/utils/crud'
 
 	export let item
-	console.log('🚀 ~ file: RecipeCard.svelte:13 ~ item:', item)
 	export let data
-	console.log('🚀 ~ file: RecipeCard.svelte:15 ~ data:', data.user)
 
 	const dispatch = createEventDispatcher()
 

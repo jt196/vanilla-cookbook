@@ -1,361 +1,262 @@
-import { manipulateIngredient } from '$lib/utils/converter.js'
 import { findSuitableUnit } from '$lib/utils/units.js'
+import { config } from 'dotenv'
+import axios from 'axios'
+
+config()
+
+axios.defaults.baseURL = process.env.ORIGIN || 'http://localhost:5173'
 
 /* global describe, expect, it */
 
-// TODO: #93 Write more manipulateIngredient tests
-describe('manipulateIngredient', () => {
-	it('converts grams to cups', () => {
-		const input = {
-			quantity: 567,
-			unit: 'gram',
-			ingredient: 'unbleached bread flour'
-		}
-		const result = manipulateIngredient(input, 'metric', 'americanVolumetric')
-		const expected = {
-			quantity: 4.72, // Replace with your expected output
-			unit: 'cup',
-			ingredient: 'unbleached bread flour'
-		}
-		// expect(result).toEqual(expected)
-		expect(result).toEqual(expect.objectContaining(expected))
-	})
+// TODO: 'unbleached bread flour' metric to americanVolumetric pass
 
-	it('converts grams to cups', () => {
-		const input = {
-			quantity: 198,
-			unit: 'gram',
-			ingredient: 'Rice (dry)'
-		}
-		const result = manipulateIngredient(input, 'metric', 'americanVolumetric')
-		const expected = {
-			quantity: 1, // Replace with your expected output
-			unit: 'cup',
-			ingredient: 'Rice (dry)'
-		}
-		// expect(result).toEqual(expected)
-		expect(result).toEqual(expect.objectContaining(expected))
-	})
+describe('Conversion API tests', () => {
+	const checkConvertedIngredient = (response, ingredientName, expectedQuantity, expectedUnit) => {
+		const ingredient = response.data.find(
+			(ing) => ing.ingredient === ingredientName && ing.unit === expectedUnit
+		)
 
-	it('converts grams to cups', () => {
-		const input = {
-			quantity: 170,
-			unit: 'gram',
-			ingredient: 'Chocolate Chips'
+		if (!ingredient) {
+			throw new Error(`No ingredient found with name: ${ingredientName} and unit: ${expectedUnit}`)
 		}
-		const result = manipulateIngredient(input, 'metric', 'americanVolumetric')
-		const expected = {
-			quantity: 1, // Replace with your expected output
-			unit: 'cup',
-			ingredient: 'Chocolate Chips'
-		}
-		// expect(result).toEqual(expected)
-		expect(result).toEqual(expect.objectContaining(expected))
-	})
 
-	it('converts grams to cups', () => {
-		const input = {
-			quantity: 170,
-			unit: 'gram',
-			ingredient: 'Chocolate Chunks'
+		if (Math.abs(ingredient.quantity - expectedQuantity) > 0.01) {
+			// Using 0.01 as an approximation for the 2 decimal places
+			throw new Error(
+				`Expected ${ingredientName} to have quantity ${expectedQuantity} but found ${ingredient.quantity}`
+			)
 		}
-		const result = manipulateIngredient(input, 'metric', 'americanVolumetric')
-		const expected = {
-			quantity: 1, // Replace with your expected output
-			unit: 'cup',
-			ingredient: 'Chocolate Chunks'
-		}
-		// expect(result).toEqual(expected)
-		expect(result).toEqual(expect.objectContaining(expected))
-	})
 
-	it('converts grams to ounces', () => {
-		const input = {
-			quantity: 11,
-			unit: 'gram',
-			ingredient: 'salt'
-		}
-		const result = manipulateIngredient(input, 'metric', 'imperial')
-		const expected = {
-			quantity: 0.4,
-			unit: 'ounce',
-			ingredient: 'salt',
-			maxQty: 0.4,
-			minQty: 0.4,
-			symbol: 'o',
-			unitPlural: 'ounces'
-		}
-		expect(result).toEqual(expected)
-	})
+		expect(ingredient.quantity).toBeCloseTo(expectedQuantity, 2)
+	}
 
-	it('converts grams to pounds', () => {
-		const input = {
-			quantity: 454,
-			unit: 'gram',
-			ingredient: 'salt'
+	it('converts an array of ingredients from metric to AmVol via API', async () => {
+		const payload = {
+			ingredients: [
+				{
+					quantity: 567,
+					unit: 'gram',
+					ingredient: 'unbleached cake flour'
+				},
+				{
+					quantity: 99,
+					unit: 'gram',
+					ingredient: 'Sparkling Sugar'
+				},
+				{
+					quantity: 198,
+					unit: 'gram',
+					ingredient: 'Rice (dry)'
+				},
+				{
+					quantity: 170,
+					unit: 'gram',
+					ingredient: 'Chocolate Chips'
+				},
+				{
+					quantity: 170,
+					unit: 'gram',
+					ingredient: 'Chocolate Chunks'
+				},
+				{
+					quantity: 4,
+					unit: 'gram',
+					ingredient: 'instant yeast'
+				},
+				{
+					quantity: 1.25,
+					unit: 'kg',
+					ingredient: 'granulated sugar'
+				},
+				{
+					quantity: 177.4, // Replace with your expected output
+					unit: 'gram',
+					ingredient: 'water'
+				},
+				{
+					quantity: 6,
+					unit: 'grams',
+					ingredient: 'Salt (table)'
+				}
+			],
+			fromSystem: 'metric',
+			toSystem: 'americanVolumetric'
 		}
-		const result = manipulateIngredient(input, 'metric', 'imperial')
-		const expected = {
-			quantity: 1,
-			unit: 'pound',
-			ingredient: 'salt'
-		}
-		expect(result).toEqual(expect.objectContaining(expected))
-	})
 
-	it('converts pounds to kg', () => {
-		const input = {
-			quantity: 3,
-			unit: 'pound',
-			ingredient: 'salt'
-		}
-		const result = manipulateIngredient(input, 'imperial', 'metric')
-		const expected = {
-			quantity: 1.36,
-			unit: 'kilogram',
-			ingredient: 'salt'
-		}
-		expect(result).toEqual(expect.objectContaining(expected))
-	})
+		const response = await axios.post('/api/ingredients', payload)
 
-	it('converts pounds to grams', () => {
-		const input = {
-			quantity: 1,
-			unit: 'pound',
-			ingredient: 'salt'
-		}
-		const result = manipulateIngredient(input, 'imperial', 'metric')
-		const expected = {
-			quantity: 453.59,
-			unit: 'gram',
-			ingredient: 'salt'
-		}
-		expect(result).toEqual(expect.objectContaining(expected))
-	})
+		expect(response.status).toBe(200)
+		expect(Array.isArray(response.data)).toBe(true)
+		expect(response.data.length).toBe(payload.ingredients.length)
 
-	// Pounds should be converted if converting from amVol too
-	it('converts pounds to grams', () => {
-		const input = {
-			quantity: 1,
-			unit: 'pound',
-			ingredient: 'salt'
-		}
-		const result = manipulateIngredient(input, 'americanVolumetric', 'metric')
-		const expected = {
-			quantity: 453.59,
-			unit: 'gram',
-			ingredient: 'salt'
-		}
-		expect(result).toEqual(expect.objectContaining(expected))
+		checkConvertedIngredient(response, 'unbleached cake flour', 4.72, 'cup')
+		checkConvertedIngredient(response, 'Sparkling Sugar', 0.43, 'cup')
+		checkConvertedIngredient(response, 'Rice (dry)', 1, 'cup')
+		checkConvertedIngredient(response, 'Chocolate Chips', 1, 'cup')
+		checkConvertedIngredient(response, 'Chocolate Chunks', 1, 'cup')
+		checkConvertedIngredient(response, 'instant yeast', 1.3, 'teaspoon')
+		checkConvertedIngredient(response, 'granulated sugar', 6.31, 'cup')
+		checkConvertedIngredient(response, 'water', 0.75, 'cup')
+		checkConvertedIngredient(response, 'Salt (table)', 1, 'teaspoon')
 	})
+	it('converts an array of ingredients from metric to imperial via API', async () => {
+		const payload = {
+			ingredients: [
+				{
+					quantity: 11,
+					unit: 'gram',
+					ingredient: 'Salt (table)'
+				},
+				{
+					quantity: 454,
+					unit: 'gram',
+					ingredient: 'Sauerkraut'
+				}
+			],
+			fromSystem: 'metric',
+			toSystem: 'imperial'
+		}
 
-	it('converts ounces to grams', () => {
-		const input = {
-			quantity: 1,
-			unit: 'ounce',
-			ingredient: 'salt'
-		}
-		const result = manipulateIngredient(input, 'imperial', 'metric')
-		const expected = {
-			quantity: 28.35,
-			unit: 'gram',
-			ingredient: 'salt'
-		}
-		expect(result).toEqual(expect.objectContaining(expected))
-	})
+		const response = await axios.post('/api/ingredients', payload)
 
-	it('converts grams to tablespoons', () => {
-		const input = {
-			quantity: 4,
-			unit: 'gram',
-			ingredient: 'instant yeast'
-		}
-		const result = manipulateIngredient(input, 'metric', 'americanVolumetric')
-		const expected = {
-			quantity: 1.3,
-			unit: 'teaspoon',
-			ingredient: 'instant yeast'
-		}
-		expect(result).toEqual(expect.objectContaining(expected))
-	})
+		expect(response.status).toBe(200)
+		expect(Array.isArray(response.data)).toBe(true)
+		expect(response.data.length).toBe(payload.ingredients.length)
 
-	it('converts tablespoons to grams', () => {
-		const input = {
-			quantity: 1.3,
-			unit: 'teaspoon',
-			ingredient: 'instant yeast'
-		}
-		const result = manipulateIngredient(input, 'americanVolumetric', 'metric')
-		const expected = {
-			quantity: 3.9,
-			unit: 'gram',
-			ingredient: 'instant yeast'
-		}
-		expect(result).toEqual(expect.objectContaining(expected))
+		checkConvertedIngredient(response, 'Salt (table)', 0.4, 'ounce')
+		checkConvertedIngredient(response, 'Sauerkraut', 1, 'pound')
 	})
+	it('converts an array of ingredients from imperial to metric via API', async () => {
+		const payload = {
+			ingredients: [
+				{
+					quantity: 3,
+					unit: 'pound',
+					ingredient: 'Salt (table)'
+				},
+				{
+					quantity: 1,
+					unit: 'pound',
+					ingredient: 'Sauerkraut'
+				},
+				{
+					quantity: 1,
+					unit: 'ounce',
+					ingredient: 'Beef mince'
+				}
+			],
+			fromSystem: 'imperial',
+			toSystem: 'metric'
+		}
 
-	it('converts cups to grams', () => {
-		const input = {
-			quantity: 1,
-			unit: 'cup',
-			ingredient: 'chilled water'
-		}
-		const result = manipulateIngredient(input, 'americanVolumetric', 'metric')
-		const expected = {
-			quantity: 236.6, // Replace with your expected output
-			unit: 'gram',
-			ingredient: 'chilled water'
-		}
-		// expect(result).toEqual(expected)
-		expect(result).toEqual(expect.objectContaining(expected))
-	})
+		const response = await axios.post('/api/ingredients', payload)
 
-	it('converts kg to cups', () => {
-		const input = {
-			quantity: 1.25,
-			unit: 'kg',
-			ingredient: 'unrefined golden granulated sugar'
-		}
-		const result = manipulateIngredient(input, 'metric', 'americanVolumetric')
-		const expected = {
-			quantity: 3.68, // Replace with your expected output
-			unit: 'cup',
-			ingredient: 'unrefined golden granulated sugar'
-		}
-		// expect(result).toEqual(expected)
-		expect(result).toEqual(expect.objectContaining(expected))
-	})
+		expect(response.status).toBe(200)
+		expect(Array.isArray(response.data)).toBe(true)
+		expect(response.data.length).toBe(payload.ingredients.length)
+		console.log('🚀 ~ file: manipulateIngredients.test.js:168 ~ it ~ response.data:', response.data)
 
-	it('converts cups to grams', () => {
-		const input = {
-			quantity: 0.75,
-			unit: 'cup',
-			ingredient: 'water'
-		}
-		const result = manipulateIngredient(input, 'americanVolumetric', 'metric')
-		const expected = {
-			quantity: 177.4, // Replace with your expected output
-			unit: 'gram',
-			ingredient: 'water'
-		}
-		// expect(result).toEqual(expected)
-		expect(result).toEqual(expect.objectContaining(expected))
+		checkConvertedIngredient(response, 'Salt (table)', 1.36, 'kilogram')
+		checkConvertedIngredient(response, 'Sauerkraut', 453.59, 'gram')
+		checkConvertedIngredient(response, 'Beef mince', 28.35, 'gram')
 	})
-	it('converts grams to cups', () => {
-		const input = {
-			quantity: 177.4, // Replace with your expected output
-			unit: 'gram',
-			ingredient: 'water'
+	it('converts an array of ingredients from US Vol to imperial via API', async () => {
+		const payload = {
+			ingredients: [
+				{
+					quantity: 0.25,
+					unit: 'cup',
+					ingredient: 'mayonnaise'
+				},
+				{
+					quantity: 4,
+					unit: 'cup',
+					ingredient: 'Chocolate Chunks'
+				}
+				// You can add more ingredients to this array as needed
+			],
+			fromSystem: 'americanVolumetric',
+			toSystem: 'imperial'
 		}
-		const result = manipulateIngredient(input, 'metric', 'americanVolumetric')
-		const expected = {
-			quantity: 0.75,
-			unit: 'cup',
-			ingredient: 'water'
-		}
-		// expect(result).toEqual(expected)
-		expect(result).toEqual(expect.objectContaining(expected))
+
+		const response = await axios.post('/api/ingredients', payload)
+		expect(response.status).toBe(200)
+		expect(Array.isArray(response.data)).toBe(true)
+		expect(response.data.length).toBe(payload.ingredients.length)
+
+		checkConvertedIngredient(response, 'mayonnaise', 2.0, 'ounce')
+		checkConvertedIngredient(response, 'Chocolate Chunks', 1.5, 'pound')
 	})
-	it('converts teaspoons to grams', () => {
-		const input = {
-			quantity: 1, // Replace with your expected output
-			unit: 'teaspoon',
-			ingredient: 'salt'
+	it('converts an array of ingredients from US Vol to metric via API', async () => {
+		const payload = {
+			ingredients: [
+				{
+					quantity: 0.25,
+					unit: 'cup',
+					ingredient: 'mayonnaise'
+				},
+				{
+					quantity: 4,
+					unit: 'cup',
+					ingredient: 'Beef mince'
+				},
+				{
+					quantity: 1,
+					unit: 'pound',
+					ingredient: 'salt'
+				},
+				{
+					quantity: 1.3,
+					unit: 'teaspoon',
+					ingredient: 'instant yeast'
+				},
+				{
+					quantity: 1,
+					unit: 'cup',
+					ingredient: 'chilled water'
+				},
+				{
+					quantity: 0.75,
+					unit: 'cup',
+					ingredient: 'water'
+				},
+				{
+					quantity: 1,
+					unit: 'teaspoon',
+					ingredient: 'Kosher salt'
+				},
+				{
+					quantity: 0.5,
+					unit: 'cup',
+					ingredient: 'Granulated sugar'
+				},
+				{
+					quantity: 12,
+					unit: 'cup',
+					ingredient: 'brown sugar'
+				}
+			],
+			fromSystem: 'americanVolumetric',
+			toSystem: 'metric'
 		}
-		const result = manipulateIngredient(input, 'americanVolumetric', 'metric')
-		const expected = {
-			quantity: 6,
-			unit: 'gram',
-			ingredient: 'salt'
-		}
-		// expect(result).toEqual(expected)
-		expect(result).toEqual(expect.objectContaining(expected))
-	})
-	it('converts grams to teaspoons', () => {
-		const input = {
-			quantity: 6,
-			unit: 'grams',
-			ingredient: 'kosher salt'
-		}
-		const result = manipulateIngredient(input, 'metric', 'americanVolumetric')
-		const expected = {
-			quantity: 1.1,
-			unit: 'teaspoon',
-			ingredient: 'kosher salt'
-		}
-		// expect(result).toEqual(expected)
-		expect(result).toEqual(expect.objectContaining(expected))
-	})
-	it('converts cups to grams', () => {
-		const input = {
-			quantity: 0.5, // Replace with your expected output
-			unit: 'cup',
-			ingredient: 'sugar'
-		}
-		const result = manipulateIngredient(input, 'americanVolumetric', 'metric')
-		const expected = {
-			quantity: 99,
-			unit: 'gram',
-			ingredient: 'sugar'
-		}
-		// expect(result).toEqual(expected)
-		expect(result).toEqual(expect.objectContaining(expected))
-	})
-	it('converts grams to cups', () => {
-		const input = {
-			quantity: 99, // Replace with your expected output
-			unit: 'gram',
-			ingredient: 'Sparkling Sugar'
-		}
-		const result = manipulateIngredient(input, 'metric', 'americanVolumetric')
-		const expected = {
-			quantity: 0.43,
-			unit: 'cup',
-			ingredient: 'Sparkling Sugar'
-		}
-		expect(result).toEqual(expect.objectContaining(expected))
-	})
-	it('converts cups to ounces', () => {
-		const input = {
-			quantity: 0.25,
-			unit: 'cup',
-			ingredient: 'mayonnaise'
-		}
-		const result = manipulateIngredient(input, 'americanVolumetric', 'imperial')
-		const expected = {
-			quantity: 2.0,
-			unit: 'ounce',
-			ingredient: 'mayonnaise'
-		}
-		expect(result).toEqual(expect.objectContaining(expected))
-	})
-	it('converts cups to pounds', () => {
-		const input = {
-			quantity: 4,
-			unit: 'cup',
-			ingredient: 'mayonnaise'
-		}
-		const result = manipulateIngredient(input, 'americanVolumetric', 'imperial')
-		const expected = {
-			quantity: 2,
-			unit: 'pound',
-			ingredient: 'mayonnaise'
-		}
-		expect(result).toEqual(expect.objectContaining(expected))
-	})
-	it('converts cups to kg', () => {
-		const input = {
-			quantity: 12,
-			unit: 'cup',
-			ingredient: 'sugar'
-		}
-		const result = manipulateIngredient(input, 'americanVolumetric', 'metric')
-		const expected = {
-			quantity: 2.4,
-			unit: 'kilogram',
-			ingredient: 'sugar'
-		}
-		expect(result).toEqual(expect.objectContaining(expected))
+
+		const response = await axios.post('/api/ingredients', payload)
+
+		expect(response.status).toBe(200)
+		expect(Array.isArray(response.data)).toBe(true)
+		expect(response.data.length).toBe(payload.ingredients.length)
+		console.log('🚀 ~ file: manipulateIngredients.test.js:248 ~ it ~ response.data:', response.data)
+
+		// Validate the conversions for each ingredient
+		checkConvertedIngredient(response, 'mayonnaise', 56.5, 'gram')
+		checkConvertedIngredient(response, 'Beef mince', 946.35, 'gram')
+		checkConvertedIngredient(response, 'salt', 453.59, 'gram')
+		checkConvertedIngredient(response, 'instant yeast', 3.9, 'gram')
+		checkConvertedIngredient(response, 'chilled water', 236.59, 'gram')
+		checkConvertedIngredient(response, 'water', 177.4, 'gram')
+		checkConvertedIngredient(response, 'Kosher salt', 5.3, 'gram')
+		checkConvertedIngredient(response, 'Granulated sugar', 99, 'gram')
+		checkConvertedIngredient(response, 'brown sugar', 2.6, 'kilogram')
 	})
 })
 

@@ -159,7 +159,7 @@ describe('RecipeList component', () => {
 		},
 		{ name: 'Recipe B', created: new Date('2022-01-02'), userId: 2, uid: 'B' }
 	]
-	const mockData = { user: { userId: 1 } }
+	const mockData = { user: { requestedUserId: 1 } }
 
 	it('renders without crashing', () => {
 		const { container } = render(RecipeList, {

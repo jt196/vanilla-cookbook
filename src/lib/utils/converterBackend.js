@@ -16,7 +16,7 @@ export async function convertIngredientsBackend(ingredients, fromSystem, toSyste
 	// Initialize a Fuse instance with the retrieved ingredient data
 	const fuseOptions = {
 		keys: ['name'], // Specify the property to search on
-		threshold: 0.3, // Adjust the threshold as needed
+		threshold: 0.8, // Adjust the threshold as needed
 		includeScore: true,
 		caseSensitive: false
 	}
