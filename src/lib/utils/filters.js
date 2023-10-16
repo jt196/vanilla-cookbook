@@ -93,16 +93,11 @@ export function sanitizeIngredient(str) {
 		str = str.replace(regex, ascii)
 	}
 
-	// str = str
-	// 	.split('')
-	// 	.filter((char) => {
-	// 		return /[\x20-\x7E\u00A0-\u024F]/.test(char) // Keep printable ASCII characters and Latin Extended-A & B
-	// 	})
-	// 	.join('')
-
 	str = str.replace('"', '')
 	str = str.replace(/\\/g, '\\\\')
 	str = str.replace(/"/g, '\\"')
+	// Replace any hyphens or dashes at the beginning
+	str = str.replace(/^\s*[-–—]\s*/, '')
 
 	return str
 }
