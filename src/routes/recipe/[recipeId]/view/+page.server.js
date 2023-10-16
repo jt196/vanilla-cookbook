@@ -27,7 +27,8 @@ export const load = async ({ params, locals, fetch, url }) => {
 	let nullUser = {
 		isAdmin: false,
 		userId: null,
-		units: 'metric'
+		units: 'metric',
+		skipSmallUnits: false
 	}
 
 	let viewUser

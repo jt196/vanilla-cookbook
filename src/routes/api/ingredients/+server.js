@@ -6,12 +6,17 @@ export const POST = async ({ request }) => {
 	try {
 		// Parse JSON data from the request body
 		const requestBody = await request.json()
+		console.log(
+			'🚀 ~ file: +server.js:9 ~ POST ~ requestBody.skipSmallUnits:',
+			requestBody.skipSmallUnits
+		)
 
 		// Manipulate the JSON data (e.g., using convertIngredientsBackend)
 		const manipulatedData = await convertIngredientsBackend(
 			requestBody.ingredients,
 			requestBody.fromSystem,
-			requestBody.toSystem
+			requestBody.toSystem,
+			requestBody.skipSmallUnits
 		)
 
 		// Return the manipulated data as a JSON response

@@ -9,7 +9,12 @@ async function getAllIngredientData() {
 	return ingredientData
 }
 
-export async function convertIngredientsBackend(ingredients, fromSystem, toSystem) {
+export async function convertIngredientsBackend(
+	ingredients,
+	fromSystem,
+	toSystem,
+	skipSmallUnits = false
+) {
 	console.log('Converting ingredients via API!')
 	const allIngredientData = await getAllIngredientData()
 
@@ -30,7 +35,7 @@ export async function convertIngredientsBackend(ingredients, fromSystem, toSyste
 		// const dietLabel = getDietLabel(prefs)
 
 		if (
-			shouldSkipConversion(ingredient.unit) ||
+			shouldSkipConversion(ingredient.unit, skipSmallUnits) ||
 			!manipulateIngredient(ingredient, fromSystem, toSystem, fuse)
 		) {
 			// Return the original ingredient with the added dietary label

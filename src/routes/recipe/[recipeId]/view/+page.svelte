@@ -11,6 +11,7 @@
 	import RecipeViewIng from '$lib/components/RecipeViewIngs.svelte'
 	import RecipeViewOtherPhotos from '$lib/components/RecipeViewOtherPhotos.svelte'
 	import RecipeViewDirections from '$lib/components/RecipeViewDirections.svelte'
+	import User from '$lib/components/svg/User.svelte'
 
 	export let data
 	let isLoading = true
@@ -55,7 +56,8 @@
 				body: JSON.stringify({
 					ingredients: ingredientsArray,
 					fromSystem: measurementSystem.system,
-					toSystem: selectedSystem
+					toSystem: selectedSystem,
+					skipSmallUnits: viewUser.skipSmallUnits
 				})
 			})
 

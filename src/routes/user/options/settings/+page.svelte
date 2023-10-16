@@ -10,6 +10,7 @@
 
 	async function updateSettings(event) {
 		event.preventDefault()
+		console.log('🚀 ~ file: +page.svelte:19 ~ updateSettings ~ user:', user)
 		const response = await fetch(`/api/user/${user.userId}`, {
 			method: 'PUT',
 			headers: {
@@ -38,6 +39,10 @@
 </form>
 
 <form method="POST" action="?/updateSettings" on:submit={updateSettings}>
+	<label>
+		<input type="checkbox" name="Profile Public" bind:checked={user.skipSmallUnits} />
+		Use teaspoons and tablespoons instead of grams.
+	</label>
 	<label>
 		<input type="checkbox" name="Profile Public" bind:checked={user.publicProfile} />
 		Profile Public

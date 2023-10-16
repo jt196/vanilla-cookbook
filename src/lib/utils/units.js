@@ -123,7 +123,7 @@ export const units = [
 			'ts'
 		],
 		grams: 4.92,
-		skipConversion: true,
+		skipConversion: false,
 		decimalPlaces: 1
 	},
 	{
@@ -165,7 +165,7 @@ export const units = [
 			'Ts'
 		],
 		grams: 14.78,
-		skipConversion: true,
+		skipConversion: false,
 		decimalPlaces: 1
 	},
 	{
@@ -281,11 +281,15 @@ export const units = [
  * @param {string} unit - The name of the unit.
  * @returns {boolean} - Returns true if the unit should skip conversion, otherwise false.
  */
-export function shouldSkipConversion(unit) {
+export function shouldSkipConversion(unit, skipSmallUnits = false) {
 	const unitObj = units.find((u) => u.names.includes(unit))
 
 	// If the unit isn't found in the units array, return true
 	if (!unitObj) return true
+
+	// Check the skipSmallUnits flag
+	if (skipSmallUnits && (unitObj.names[0] === 'teaspoon' || unitObj.names[0] === 'tablespoon'))
+		return true
 
 	// If skipConversion is true for the unit, return true
 	return unitObj.skipConversion

@@ -22,7 +22,6 @@ export const PUT = async ({ request, locals, params }) => {
 		const updatingUser = await prisma.authUser.findUnique({
 			where: { id: id }
 		})
-
 		if (!updatingUser) {
 			return new Response('User not found!', {
 				status: 404,
@@ -131,6 +130,8 @@ export const PUT = async ({ request, locals, params }) => {
 				email: userData.email || updatingUser.email,
 				about: userData.about || updatingUser.about,
 				units: userData.units || updatingUser.units,
+				skipSmallUnits:
+					'skipSmallUnits' in userData ? userData.skipSmallUnits : updatingUser.skipSmallUnits,
 				publicProfile:
 					'publicProfile' in userData ? userData.publicProfile : updatingUser.publicProfile,
 				publicRecipes:

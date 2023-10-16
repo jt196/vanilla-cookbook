@@ -86,21 +86,22 @@ model RecipeCategory {
 }
 
 model AuthUser {
-    id            String        @id @default(uuid())
-    name          String?
-    username      String        @unique
-    email         String        @unique
-    about         String?
-    units         String?       @default("metric")
-    publicProfile Boolean       @default(false)
-    publicRecipes Boolean       @default(false)
-    isAdmin       Boolean       @default(false)
-    isRoot        Boolean       @default(false)
-    articles      Article[]
-    recipes       Recipe[]
-    categories    Category[]
-    auth_session  AuthSession[]
-    auth_key      AuthKey[]
+    id             String        @id @default(uuid())
+    name           String?
+    username       String        @unique
+    email          String        @unique
+    about          String?
+    units          String?       @default("metric")
+    publicProfile  Boolean       @default(false)
+    publicRecipes  Boolean       @default(false)
+    skipSmallUnits Boolean       @default(false)
+    isAdmin        Boolean       @default(false)
+    isRoot         Boolean       @default(false)
+    articles       Article[]
+    recipes        Recipe[]
+    categories     Category[]
+    auth_session   AuthSession[]
+    auth_key       AuthKey[]
 
     @@map("auth_user")
 }

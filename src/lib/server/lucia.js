@@ -18,7 +18,8 @@ export const auth = lucia({
 			isAdmin: userData.isAdmin,
 			publicProfile: userData.publicProfile,
 			publicRecipes: userData.publicRecipes,
-			units: userData.units
+			units: userData.units,
+			skipSmallUnits: userData.skipSmallUnits
 		}
 	},
 	sessionCookie: {
