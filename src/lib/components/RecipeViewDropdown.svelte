@@ -16,7 +16,7 @@
 		const selectedLabel = getLabelFromValue(selectedSystem)
 
 		if (originalLabel) {
-			summary = `${originalLabel} (original)`
+			summary = `${originalLabel} `
 			if (selectedLabel && selectedSystem !== measurementSystem.system) {
 				summary += ` to ${selectedLabel}`
 			}
