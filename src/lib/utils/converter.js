@@ -386,11 +386,11 @@ export const manipulateIngredient = (ingredientObj, fromSystem, toSystem, fuse) 
  * @returns {string[]} - An array of direction strings with temperatures converted to the target system.
  *
  * @example
- * parseDirections(["Preheat oven to 350°F", "Bake at 180C"], "metric", "imperial");
+ * parseRecipeText(["Preheat oven to 350°F", "Bake at 180C"], "metric", "imperial");
  * // Returns: ["Preheat oven to 176°C", "Bake at 356°F"]
  *
  */
-export function parseDirections(directions, toSystem, fromSystem) {
+export function parseRecipeText(directions, toSystem, fromSystem) {
 	return directions.map((direction) => parseTemperature(direction, toSystem, fromSystem))
 }
 

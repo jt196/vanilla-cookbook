@@ -1,6 +1,6 @@
 <script>
 	import { ingredientProcess, scaleNumbersInString } from '$lib/utils/filters'
-	import { determineSystem, parseDirections, convertIngredients } from '$lib/utils/converter'
+	import { determineSystem, parseRecipeText } from '$lib/utils/converter'
 	import { getSanitizedHTML } from '$lib/utils/render'
 	import { onMount } from 'svelte'
 
@@ -12,6 +12,7 @@
 	import RecipeViewOtherPhotos from '$lib/components/RecipeViewOtherPhotos.svelte'
 	import RecipeViewDirections from '$lib/components/RecipeViewDirections.svelte'
 	import User from '$lib/components/svg/User.svelte'
+	import RecipeViewNotes from '$lib/components/RecipeViewNotes.svelte'
 
 	export let data
 	let isLoading = true
@@ -25,6 +26,7 @@
 	let scaledServings
 
 	let directionLines = []
+	let notesLines = []
 	let measurementSystem = {}
 	let convertedIngredients = {}
 
@@ -78,10 +80,12 @@
 		ingredientsArray = ingredientProcess(ingredients)
 		measurementSystem = determineSystem(ingredientsArray)
 		recipe.directions ? (directionLines = recipe.directions.split('\n')) : null
+		recipe.notes ? (notesLines = recipe.notes.split('\n')) : null
 		scaledServings = recipe.servings ? scaleNumbersInString(recipe.servings, scale) : null
 	}
 
 	let sanitizedDirections = []
+	let sanitizedNotes = []
 	let sanitizedIngredients = []
 	let hasAdditional
 
@@ -99,13 +103,20 @@
 		isLatest = currentInvocation
 
 		const directionsResult = await Promise.all(
-			parseDirections(directionLines, selectedSystem, measurementSystem.system).map((direction) =>
+			parseRecipeText(directionLines, selectedSystem, measurementSystem.system).map((direction) =>
 				getSanitizedHTML(direction)
+			)
+		)
+
+		const notesResult = await Promise.all(
+			parseRecipeText(notesLines, selectedSystem, measurementSystem.system).map((note) =>
+				getSanitizedHTML(note)
 			)
 		)
 
 		if (currentInvocation !== isLatest) return // Ignore results if this isn't the latest invocation
 		sanitizedDirections = directionsResult
+		sanitizedNotes = notesResult
 
 		const tempIngredientsResult = await Promise.all(
 			convertedIngredients.map(async (ingredient) => {
@@ -166,6 +177,7 @@
 			<RecipeViewDirections {directionLines} {sanitizedDirections} />
 		</div>
 	</div>
+	<RecipeViewNotes {notesLines} {sanitizedNotes} />
 {/if}
 
 <RecipeViewOtherPhotos {otherPhotos} recipeName={recipe.name} />
