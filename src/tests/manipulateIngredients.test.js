@@ -69,9 +69,19 @@ describe('Conversion API tests', () => {
 					ingredient: 'granulated sugar'
 				},
 				{
-					quantity: 177.4, // Replace with your expected output
+					quantity: 177.4,
 					unit: 'gram',
 					ingredient: 'water'
+				},
+				{
+					quantity: 236.59,
+					unit: 'ml',
+					ingredient: 'honey'
+				},
+				{
+					quantity: 14.8,
+					unit: 'ml',
+					ingredient: 'soy sauce'
 				},
 				{
 					quantity: 6,
@@ -97,6 +107,8 @@ describe('Conversion API tests', () => {
 		checkConvertedIngredient(response, 'instant yeast', 1.3, 'teaspoon')
 		checkConvertedIngredient(response, 'granulated sugar', 6.31, 'cup')
 		checkConvertedIngredient(response, 'water', 0.75, 'cup')
+		checkConvertedIngredient(response, 'honey', 1, 'cup')
+		checkConvertedIngredient(response, 'soy sauce', 1, 'tablespoon')
 		checkConvertedIngredient(response, 'Salt (table)', 1, 'teaspoon')
 	})
 	it('converts an array of ingredients from metric to imperial via API', async () => {
@@ -254,7 +266,7 @@ describe('Conversion API tests', () => {
 		checkConvertedIngredient(response, 'instant yeast', 3.9, 'gram')
 		checkConvertedIngredient(response, 'chilled water', 236.59, 'gram')
 		checkConvertedIngredient(response, 'water', 177.4, 'gram')
-		checkConvertedIngredient(response, 'Kosher salt', 5.3, 'gram')
+		checkConvertedIngredient(response, 'Kosher salt', 4.8, 'gram')
 		checkConvertedIngredient(response, 'Granulated sugar', 99, 'gram')
 		checkConvertedIngredient(response, 'brown sugar', 2.6, 'kilogram')
 	})

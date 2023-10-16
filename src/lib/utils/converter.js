@@ -223,11 +223,39 @@ export const manipulateIngredient = (ingredientObj, fromSystem, toSystem, fuse) 
 		return ingredientObj
 	}
 
+	// Looking up the units to normalise them
+	const fromUnits = units.find((unitLookup) => unitLookup.names.includes(unit)) || {}
+	const fromUnit = fromUnits.names[0]
+
+	// Convert the units simply to volumetric if metric volumetric
+	if (toSystem === 'americanVolumetric' && (fromUnit === 'milliliter' || fromUnit === 'liter')) {
+		// Convert to cups
+		const { quantity: convertedQuantity, error } = converter(quantity, fromUnit, 'cups')
+		if (error) {
+			return { error }
+		}
+		// Use this quantity to determine the suitable unit
+		const targetUnit = findSuitableUnit(toSystem, convertedQuantity * 236.588)
+		// convert from cup to target unit
+		const { quantity: convertedQuantityFinal } = converter(convertedQuantity, 'cup', targetUnit)
+
+		// Return the object
+		return {
+			...ingredientObj,
+			quantity: parseFloat(convertedQuantityFinal).toFixed(1),
+			unit: targetUnit,
+			unitPlural: targetUnit + 's',
+			symbol: targetUnit?.charAt(0),
+			minQty: parseFloat(convertedQuantityFinal).toFixed(1),
+			maxQty: parseFloat(convertedQuantityFinal).toFixed(1)
+		}
+	}
+
 	let quantityToUse = quantity
 
 	// Convert the original unit to grams only if the system is not 'americanVolumetric'
 	if (fromSystem !== 'americanVolumetric') {
-		const { quantity: convertedQuantity, error } = converter(quantity, unit, 'grams')
+		const { quantity: convertedQuantity, error } = converter(quantity, fromUnit, 'grams')
 		if (error) {
 			return { error }
 		}
@@ -278,7 +306,7 @@ export const manipulateIngredient = (ingredientObj, fromSystem, toSystem, fuse) 
 					unit === 'quarts' ||
 					unit === 'gallons'
 				) {
-					const { quantity: quantityInCups } = converter(quantityToUse, unit, 'cup')
+					const { quantity: quantityInCups } = converter(quantityToUse, fromUnit, 'cup')
 					let convertedQuantityGrams = quantityInCups * dryIngredient.gramsPerCup
 					// Find the target unit according to the amount
 					const targetMetricUnit = findSuitableUnit(toSystem, convertedQuantityGrams)
@@ -310,7 +338,7 @@ export const manipulateIngredient = (ingredientObj, fromSystem, toSystem, fuse) 
 			} else if (fromSystem === 'americanVolumetric' && toSystem === 'imperial') {
 				if (unit === 'cup') {
 					// Convert cups to grams
-					const { quantity: quantityInCups } = converter(quantityToUse, unit, 'cup')
+					const { quantity: quantityInCups } = converter(quantityToUse, fromUnit, 'cup')
 					let convertedQuantityGrams = parseFloat(
 						(quantityInCups * dryIngredient.gramsPerCup).toFixed(1)
 					)
@@ -341,7 +369,7 @@ export const manipulateIngredient = (ingredientObj, fromSystem, toSystem, fuse) 
 	}
 
 	// Step 3: Convert to Intermediate Unit (grams)
-	const intermediate = converter(quantity, unit, 'gram')
+	const intermediate = converter(quantity, fromUnit, 'gram')
 	if (intermediate.error) return { error: intermediate.error }
 
 	// Step 4: Convert to Target Unit
