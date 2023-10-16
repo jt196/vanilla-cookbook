@@ -13,19 +13,20 @@ CREATE TABLE "Recipe" (
     "userId" TEXT NOT NULL,
     "rating" REAL,
     "photo_hash" TEXT,
-    "on_favorites" BOOLEAN,
+    "on_favorites" BOOLEAN DEFAULT false,
     "photo" TEXT,
     "scale" TEXT,
     "ingredients" TEXT,
-    "is_pinned" BOOLEAN,
+    "is_pinned" BOOLEAN DEFAULT false,
+    "is_public" BOOLEAN DEFAULT false,
     "source" TEXT,
     "total_time" TEXT,
     "hash" TEXT,
     "description" TEXT,
     "source_url" TEXT,
     "difficulty" TEXT,
-    "on_grocery_list" BOOLEAN,
-    "in_trash" BOOLEAN,
+    "on_grocery_list" BOOLEAN DEFAULT false,
+    "in_trash" BOOLEAN DEFAULT false,
     "directions" TEXT,
     "photo_url" TEXT,
     "cook_time" TEXT,
@@ -75,11 +76,16 @@ CREATE TABLE "RecipeCategory" (
 -- CreateTable
 CREATE TABLE "auth_user" (
     "id" TEXT NOT NULL PRIMARY KEY,
-    "name" TEXT NOT NULL,
+    "name" TEXT,
     "username" TEXT NOT NULL,
     "email" TEXT NOT NULL,
-    "about" TEXT NOT NULL,
-    "isAdmin" BOOLEAN NOT NULL
+    "about" TEXT,
+    "units" TEXT DEFAULT 'metric',
+    "publicProfile" BOOLEAN NOT NULL DEFAULT false,
+    "publicRecipes" BOOLEAN NOT NULL DEFAULT false,
+    "skipSmallUnits" BOOLEAN NOT NULL DEFAULT false,
+    "isAdmin" BOOLEAN NOT NULL DEFAULT false,
+    "isRoot" BOOLEAN NOT NULL DEFAULT false
 );
 
 -- CreateTable
@@ -101,6 +107,22 @@ CREATE TABLE "auth_key" (
     CONSTRAINT "auth_key_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "auth_user" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+-- CreateTable
+CREATE TABLE "SiteSettings" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "version" REAL NOT NULL DEFAULT 0,
+    "registrationAllowed" BOOLEAN NOT NULL
+);
+
+-- CreateTable
+CREATE TABLE "Ingredient" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "name" TEXT NOT NULL,
+    "gramsPerCup" REAL NOT NULL,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "auth_user_username_key" ON "auth_user"("username");
 
@@ -118,3 +140,6 @@ CREATE UNIQUE INDEX "auth_key_id_key" ON "auth_key"("id");
 
 -- CreateIndex
 CREATE INDEX "auth_key_user_id_idx" ON "auth_key"("user_id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Ingredient_name_key" ON "Ingredient"("name");
