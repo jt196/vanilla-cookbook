@@ -144,6 +144,7 @@
 			<th scope="col">Name</th>
 			<th scope="col">Email</th>
 			<th scope="col">About</th>
+			<th scope="col">Recipes</th>
 			<th scope="col">Admin</th>
 			<th scope="col">Root</th>
 			<th scope="col">Edit</th>
@@ -161,6 +162,7 @@
 				<td>{user.name}</td>
 				<td>{user.email}</td>
 				<td>{user.about}</td>
+				<td>{user.recipesCount}</td>
 				<td><TrueFalse isTrue={user.isAdmin} /></td>
 				<td><TrueFalse isTrue={user.isRoot} /></td>
 				<td>

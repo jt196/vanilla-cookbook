@@ -26,7 +26,36 @@ export async function GET({ locals }) {
 	}
 
 	try {
-		const users = await prisma.authUser.findMany()
+		// const users = await prisma.authUser.findMany()
+		const usersWithRecipeCount = await prisma.authUser.findMany({
+			select: {
+				id: true,
+				name: true,
+				username: true,
+				email: true,
+				about: true,
+				units: true,
+				publicProfile: true,
+				publicRecipes: true,
+				skipSmallUnits: true,
+				isAdmin: true,
+				isRoot: true,
+				_count: {
+					select: {
+						recipes: true
+					}
+				}
+			}
+		})
+
+		// Modify users to include the recipes count and remove the _count key
+		const users = usersWithRecipeCount.map((user) => {
+			const { _count, ...restOfUser } = user
+			return {
+				...restOfUser,
+				recipesCount: _count.recipes
+			}
+		})
 		return new Response(JSON.stringify(users), {
 			status: 200,
 			headers: {
