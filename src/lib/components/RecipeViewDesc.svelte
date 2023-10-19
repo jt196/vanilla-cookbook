@@ -21,7 +21,7 @@
 	}
 </script>
 
-{#if recipe?.description}
+{#if sanitisedDescription.length > 0}
 	<h3>Description:</h3>
 	{#each sanitisedDescription as parsedDescription}
 		<p>
