@@ -166,8 +166,6 @@ describe('Conversion API tests', () => {
 		expect(response.status).toBe(200)
 		expect(Array.isArray(response.data)).toBe(true)
 		expect(response.data.length).toBe(payload.ingredients.length)
-		console.log('🚀 ~ file: manipulateIngredients.test.js:168 ~ it ~ response.data:', response.data)
-
 		checkConvertedIngredient(response, 'Salt (table)', 1.36, 'kilogram')
 		checkConvertedIngredient(response, 'Sauerkraut', 453.59, 'gram')
 		checkConvertedIngredient(response, 'Beef mince', 28.35, 'gram')
@@ -257,8 +255,6 @@ describe('Conversion API tests', () => {
 		expect(response.status).toBe(200)
 		expect(Array.isArray(response.data)).toBe(true)
 		expect(response.data.length).toBe(payload.ingredients.length)
-		console.log('🚀 ~ file: manipulateIngredients.test.js:248 ~ it ~ response.data:', response.data)
-
 		// Validate the conversions for each ingredient
 		checkConvertedIngredient(response, 'mayonnaise', 56.5, 'gram')
 		checkConvertedIngredient(response, 'Beef mince', 946.35, 'gram')

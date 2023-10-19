@@ -49,8 +49,8 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@picocss/pico": "next",
 		"@lucia-auth/adapter-prisma": "^2.0.0",
+		"@picocss/pico": "next",
 		"@prisma/client": "^4.9.0",
 		"archiver": "^6.0.1",
 		"axios": "^1.4.0",
@@ -63,7 +63,7 @@
 		"humanize-duration": "^3.29.0",
 		"lucia-auth": "^1.7.0",
 		"marked": "^9.0.0",
-		"node-html-parser": "^6.1.5",
+		"node-html-parser": "^6.1.10",
 		"parse-iso-duration": "^1.1.0",
 		"sanitize-html": "^2.11.0",
 		"sharp": "^0.32.6",

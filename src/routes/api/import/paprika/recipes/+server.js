@@ -100,12 +100,8 @@ export async function PUT({ request, locals }) {
 
 	try {
 		const filename = user.userId + '_recipes.json'
-		console.log('🚀 ~ file: +server.js:98 ~ PUT ~ filename:', filename)
-
 		// Import recipes from .json file
 		const importedCount = await importPaprikaRecipes(user.userId, filename, isPublic)
-		console.log('🚀 ~ file: +server.js:102 ~ PUT ~ importedCount:', importedCount)
-
 		if (importedCount.count >= 0) {
 			return new Response(
 				JSON.stringify({

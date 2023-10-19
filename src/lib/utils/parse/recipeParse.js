@@ -13,7 +13,7 @@ import {
 	parseUsingSiteConfig,
 	extractMicrodata
 } from './parseHelpers'
-import parse from 'node-html-parser'
+import { parse } from 'node-html-parser'
 import { siteConfigurations } from './siteConfigurations'
 
 /**
@@ -208,6 +208,7 @@ export function parseRecipe(html, url) {
 		}
 		return recipe
 	} catch (error) {
+		console.log('Error: ' + error)
 		return typeof error === 'string' ? error : 'Unknown error'
 	}
 }

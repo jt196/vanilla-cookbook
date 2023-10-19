@@ -10,7 +10,6 @@
 
 	async function updateSettings(event) {
 		event.preventDefault()
-		console.log('🚀 ~ file: +page.svelte:19 ~ updateSettings ~ user:', user)
 		const response = await fetch(`/api/user/${user.userId}`, {
 			method: 'PUT',
 			headers: {

@@ -7,6 +7,7 @@
 	let url = initialUrl
 
 	async function scrapeEventHandler(event) {
+		console.log('Handling Scrape!')
 		const scrapedData = await handleScrape(event, url)
 		if (scrapedData) {
 			recipe = { ...recipe, ...scrapedData }

@@ -5,8 +5,6 @@
 
 	export let data
 	const { users, viewingUser } = data
-	console.log('🚀 ~ file: +page.svelte:8 ~ viewingUser:', viewingUser)
-	console.log('🚀 ~ file: +page.svelte:17 ~ users:', users)
 </script>
 
 {#if viewingUser && viewingUser.id}

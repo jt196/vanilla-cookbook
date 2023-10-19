@@ -34,7 +34,7 @@ export async function checkImageExistence(imageUrl, baseUrl) {
 		)
 		return response.ok
 	} catch (error) {
-		console.log('🚀 ~ file: imageUtils.js:36 ~ checkImageExistence ~ error:', error)
+		console.log('error:', error)
 		return false
 	}
 }

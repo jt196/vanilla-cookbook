@@ -97,7 +97,6 @@ export async function PUT({ locals }) {
 
 	try {
 		const filepath = path.join(process.cwd(), 'uploads/imports', user.userId + '_categories.json')
-		console.log('🚀 ~ file: +server.js:100 ~ PUT ~ filepath:', filepath)
 		// Load categories using the utility function
 		const categories = await loadCategories(filepath)
 

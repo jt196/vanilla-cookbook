@@ -16,14 +16,11 @@ config()
 
 const BASE_URL = 'https://www.paprikaapp.com/api/v1/sync/'
 const __filename = fileURLToPath(import.meta.url)
-console.log('🚀 ~ file: paprikaAPIUtils.js:19 ~ import.meta.url:', import.meta.url)
 export const __dirname = path.dirname(__filename)
-console.log('🚀 ~ file: paprikaAPIUtils.js:21 ~ __dirname:', __dirname)
 export const appRootPath =
 	import.meta.env.VITE_APP_ROOT_PATH ||
 	process.env.APP_ROOT_PATH ||
 	path.join(__dirname, '../../../../..')
-console.log('🚀 ~ file: paprikaAPIUtils.js:23 ~ appRootPath:', appRootPath)
 
 /**
  * Fetches data from the Paprika API for a given endpoint.
@@ -256,8 +253,6 @@ export async function loadCategories(filepath) {
 export async function loadRecipes(filename) {
 	try {
 		const recipesPath = path.join(appRootPath, 'uploads/imports', filename)
-		console.log('🚀 ~ file: paprikaAPIUtils.js:257 ~ loadRecipes ~ recipesPath:', recipesPath)
-
 		let recipes
 
 		if (filename.endsWith('.paprikarecipes')) {

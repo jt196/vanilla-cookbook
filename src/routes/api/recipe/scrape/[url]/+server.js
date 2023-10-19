@@ -4,7 +4,6 @@ import { parseURL } from '$lib/utils/parse/recipeParse'
 
 export async function GET(request) {
 	const { url } = request.params
-
 	try {
 		const scrapedRecipe = await parseURL(decodeURIComponent(url))
 		return new Response(JSON.stringify(scrapedRecipe), {

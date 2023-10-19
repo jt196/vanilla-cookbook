@@ -63,7 +63,7 @@ export async function POST({ request, locals, url }) {
 			}
 		})
 	} catch (err) {
-		console.log('🚀 ~ file: +server.js:152 ~ POST ~ error:', err)
+		console.log('Error: ' + err)
 		return new Response(
 			{ err: `Failed to update recipe: ${err.message}` },
 			{
