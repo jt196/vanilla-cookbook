@@ -37,6 +37,11 @@
 	}
 </script>
 
+<p>
+	<a target="_blank" href="https://www.markdownguide.org/basic-syntax/">Markdown</a> is supported for
+	ingredients, directions and notes.
+</p>
+
 <form on:submit|preventDefault={onSubmit}>
 	{#if !editMode}
 		<h3>New Recipe</h3>

@@ -95,10 +95,6 @@
 	<button data-tooltip="Display Category Selector" on:click={toggleSidebar}>
 		<Burger width="1.5rem" />
 	</button>
-	<p>
-		<a href="https://www.markdownguide.org/basic-syntax/">Markdown</a> is supported for ingredients,
-		directions and notes.
-	</p>
 	<RecipeForm
 		bind:recipe
 		editMode="true"
