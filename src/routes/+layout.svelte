@@ -20,7 +20,7 @@
 
 	if (browser && 'serviceWorker' in navigator) {
 		navigator.serviceWorker
-			.register('/pwa/service-worker.js', { scope: '/' })
+			.register('/service-worker.js', { scope: '/' })
 			.then(function (registration) {
 				console.log('Service worker registered with scope:', registration.scope)
 			})
@@ -31,7 +31,7 @@
 </script>
 
 <svelte:head>
-	<link rel="manifest" href="/pwa/manifest.json" />
+	<link rel="manifest" href="/manifest.json" />
 </svelte:head>
 
 <div class="container">

@@ -8,12 +8,12 @@ const domain = process.env.ORIGIN
 const workboxConfig = {
 	globDirectory: 'build/',
 	globPatterns: ['**/*.{html,js,css,svg,png,jpg}'],
-	swDest: 'static/pwa/service-worker.js',
+	swDest: 'static/service-worker.js',
 	skipWaiting: true,
 	clientsClaim: true,
 	runtimeCaching: [
 		{
-			urlPattern: new RegExp(`^https://${domain}/`),
+			urlPattern: new RegExp(`^${domain}/`),
 			handler: 'NetworkFirst',
 			options: {
 				cacheName: 'my-cache',
