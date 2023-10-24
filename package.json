@@ -4,8 +4,8 @@
 	"private": true,
 	"scripts": {
 		"dev": "vite dev",
-		"build": "vite build && node src/lib/utils/pwa/generate-sw.js",
-		"build:localprod": "vite build --mode localproduction && node src/lib/utils/pwa/generate-sw.js",
+		"build": "vite build && node static/generate-sw.js",
+		"build:localprod": "vite build --mode localproduction && node static/generate-sw.js",
 		"preview": "vite preview",
 		"test": "vitest",
 		"test:watch": "npm run test -- --watch",
