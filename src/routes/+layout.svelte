@@ -1,5 +1,6 @@
 <script>
 	import Settings from '$lib/components/svg/Settings.svelte'
+	import { browser } from '$app/environment'
 	/**
 	 * This script is responsible for importing styles and managing page data.
 	 */
@@ -16,7 +17,22 @@
 	 */
 	export let data
 	const { user, settings } = data
+
+	if (browser && 'serviceWorker' in navigator) {
+		navigator.serviceWorker
+			.register('/pwa/service-worker.js', { scope: '/' })
+			.then(function (registration) {
+				console.log('Service worker registered with scope:', registration.scope)
+			})
+			.catch(function (error) {
+				console.log('Service worker registration failed:', error)
+			})
+	}
 </script>
+
+<svelte:head>
+	<link rel="manifest" href="/pwa/manifest.json" />
+</svelte:head>
 
 <div class="container">
 	<nav>

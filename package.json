@@ -4,8 +4,8 @@
 	"private": true,
 	"scripts": {
 		"dev": "vite dev",
-		"build": "vite build",
-		"build:localprod": "vite build --mode localproduction",
+		"build": "vite build && node static/pwa/generate-sw.js",
+		"build:localprod": "vite build --mode localproduction && node static/pwa/generate-sw.js",
 		"preview": "vite preview",
 		"test": "vitest",
 		"test:watch": "npm run test -- --watch",
@@ -68,6 +68,8 @@
 		"sanitize-html": "^2.11.0",
 		"sharp": "^0.32.6",
 		"svelte-dnd-action": "^0.9.24",
-		"unzipper": "^0.10.14"
+		"unzipper": "^0.10.14",
+		"workbox-build": "^7.0.0",
+		"workbox-window": "^7.0.0"
 	}
 }

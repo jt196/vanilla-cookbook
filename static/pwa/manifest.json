@@ -1,0 +1,21 @@
+{
+	"name": "Fork It! Recipes",
+	"short_name": "FIR",
+	"description": "Fork it! Save and share your recipes",
+	"start_url": "/",
+	"display": "standalone",
+	"background_color": "#13171f",
+	"theme_color": "#0172ad",
+	"icons": [
+		{
+			"src": "static/images/logo-small.png",
+			"sizes": "192x192",
+			"type": "image/png"
+		},
+		{
+			"src": "static/images/logo-large.png",
+			"sizes": "512x512",
+			"type": "image/png"
+		}
+	]
+}

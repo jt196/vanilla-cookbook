@@ -5,5 +5,5 @@
 			"$lib/*": ["src/lib/*"]
 		}
 	},
-	"include": ["src/**/*"]
+	"include": ["src/**/*", "static/pwa/*"]
 }
