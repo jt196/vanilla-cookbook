@@ -18,5 +18,3 @@ package-lock.json
 *.diff
 uploads/*
 *.backup
-service-worker.js*
-workbox-*.js*

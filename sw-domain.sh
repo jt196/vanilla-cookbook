@@ -7,6 +7,21 @@
 # Read the local variables
 source .env
 
+# Error out if no .env file
+if [ ! -f .env ]; then
+  echo "Error: .env file not found!"
+  exit 1
+fi
+
+# Check if ORIGIN is set
+if [ -z "$ORIGIN" ]; then
+  echo "Error: ORIGIN environment variable is not set!"
+  exit 1
+fi
+
+# Log the DOMAIN to Docker logs
+echo "Domain set to: $ORIGIN"
+
 # Escape special characters in $ORIGIN
 escaped_origin=$(echo "$ORIGIN" | perl -pe 's|\.|\\.|g; s|/|\\/|g')
 
@@ -14,6 +29,8 @@ escaped_origin=$(echo "$ORIGIN" | perl -pe 's|\.|\\.|g; s|/|\\/|g')
 replace_urlpattern() {
   local file="$1"
   perl -pi -e "s|%%URLPATTERN%%|$escaped_origin/|g" "$file"
+  # Log the file being modified to Docker logs
+  echo "Replaced URL pattern in: $file"
 }
 
 # Call the function for each file
