@@ -4,6 +4,7 @@
 	"private": true,
 	"scripts": {
 		"dev": "vite dev",
+		"generate-sw": "node src/lib/utils/pwa/generate-sw.js",
 		"build:localprod": "vite build --mode localproduction",
 		"build": "vite build",
 		"preview": "vite preview",

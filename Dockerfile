@@ -30,6 +30,9 @@ RUN mkdir -p /app/uploads/images /app/uploads/imports
 # Generate Prisma client
 RUN npx prisma generate
 
+# Generate the service worker
+RUN npm run generate-sw
+
 # Build SvelteKit app
 RUN npm run build
 
