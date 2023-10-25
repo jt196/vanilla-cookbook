@@ -3,10 +3,9 @@
 	"version": "0.0.1",
 	"private": true,
 	"scripts": {
-		"generate-sw": "node src/lib/utils/pwa/generate-sw.js",
 		"dev": "vite dev",
-		"build": "vite build && npm run generate-sw",
-		"build:localprod": "vite build --mode localproduction && npm run generate-sw",
+		"build:localprod": "vite build --mode localproduction",
+		"build": "vite build",
 		"preview": "vite preview",
 		"test": "vitest",
 		"test:watch": "npm run test -- --watch",

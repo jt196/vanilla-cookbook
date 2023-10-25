@@ -13,5 +13,8 @@ npx prisma db seed
 # Generate PWA helper files
 npm run generate-sw
 
+# Script to insert the domain into the build service-worker files for PWA functionality
+./sw-domain.sh
+
 # Start your Node.js application (in foreground)
 exec nodemon --exec "node build/index.js"
