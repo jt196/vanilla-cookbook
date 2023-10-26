@@ -14,7 +14,7 @@ export const load = async ({ params, locals, fetch, url }) => {
 	const { session, user } = await locals.auth.validateUser()
 	let response = await fetch(`${url.origin}/api/recipe/${params.recipeId}`)
 	const recipe = await response.json()
-	if (recipe.is_public === false && (!session || !user)) {
+	if (!recipe.is_public && (!session || !user)) {
 		throw error(401, 'Unauthorized')
 	}
 

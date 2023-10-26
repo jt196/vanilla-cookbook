@@ -13,6 +13,7 @@
 	import RecipeViewDirections from '$lib/components/RecipeViewDirections.svelte'
 	import User from '$lib/components/svg/User.svelte'
 	import RecipeViewNotes from '$lib/components/RecipeViewNotes.svelte'
+	import List from '$lib/components/svg/List.svelte'
 
 	export let data
 	let isLoading = true
@@ -144,13 +145,13 @@
 	}
 </script>
 
-{#if !viewMode}
-	<div id="recipe-buttons">
-		{#if recipe.userId === viewUser.userId}
-			<RecipeViewButtons {recipe} />
-		{/if}
-	</div>
-{/if}
+<div id="recipe-buttons">
+	<button class="home-button" data-tooltip="Go to recipe list"
+		><a href="/"><List width="30px" height="30px" /></a></button>
+	{#if recipe.userId === viewUser.userId}
+		<RecipeViewButtons {recipe} />
+	{/if}
+</div>
 
 {#if isLoading}
 	<div aria-busy="true">Waiting for the kettle to boil...</div>
@@ -210,5 +211,9 @@
 		justify-content: flex-end;
 		gap: 1rem;
 		margin-bottom: 1rem;
+	}
+
+	#recipe-buttons .home-button {
+		margin-right: auto; /* this pushes everything else to the right */
 	}
 </style>
