@@ -11,6 +11,7 @@
 	// Import Global CSS
 	import '$lib/css/global.scss'
 	import Users from '$lib/components/svg/Users.svelte'
+	import SiteIcons from '$lib/components/SiteIcons.svelte'
 	/**
 	 * Data for the page, structure defined by the `PageData` type.
 	 * @type {PageData}
@@ -30,9 +31,7 @@
 	}
 </script>
 
-<svelte:head>
-	<link rel="manifest" href="/manifest.json" />
-</svelte:head>
+<SiteIcons />
 
 <div class="container">
 	<nav>
