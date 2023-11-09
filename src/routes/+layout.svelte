@@ -19,16 +19,16 @@
 	export let data
 	const { user, settings } = data
 
-	if (browser && 'serviceWorker' in navigator) {
-		navigator.serviceWorker
-			.register('/service-worker.js', { scope: '/' })
-			.then(function (registration) {
-				console.log('Service worker registered with scope:', registration.scope)
-			})
-			.catch(function (error) {
-				console.log('Service worker registration failed:', error)
-			})
-	}
+	// if (browser && 'serviceWorker' in navigator) {
+	// 	navigator.serviceWorker
+	// 		.register('/service-worker.js', { scope: '/' })
+	// 		.then(function (registration) {
+	// 			console.log('Service worker registered with scope:', registration.scope)
+	// 		})
+	// 		.catch(function (error) {
+	// 			console.log('Service worker registration failed:', error)
+	// 		})
+	// }
 </script>
 
 <SiteIcons />
