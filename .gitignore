@@ -12,7 +12,7 @@ vite.config.ts.timestamp-*
 */dev.sqlite
 *.sqlite-journal
 *.code-workspace
-*.sqlite
+*.sqlite*
 # Test
 package-lock.json
 *.diff

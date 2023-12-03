@@ -11,7 +11,7 @@ npx prisma migrate deploy
 npx prisma db seed
 
 # Script to insert the domain into the build service-worker files for PWA functionality
-./sw-domain.sh
+# ./sw-domain.sh
 
 # Start your Node.js application (in foreground)
 exec nodemon --exec "node build/index.js"
