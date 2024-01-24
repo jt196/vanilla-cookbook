@@ -14,4 +14,4 @@ npx prisma db seed
 # ./sw-domain.sh
 
 # Start your Node.js application (in foreground)
-exec nodemon --exec "node build/index.js"
+exec nodemon --exitcrash --exec "node build/index.js"
