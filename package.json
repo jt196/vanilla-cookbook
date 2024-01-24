@@ -29,7 +29,7 @@
 		"eslint-plugin-svelte3": "^4.0.0",
 		"global-jsdom": "9.2.0",
 		"js-beautify": "^1.14.9",
-		"jsdom": "24.0.0",
+		"jsdom": "23.2.0",
 		"prettier": "^2.8.3",
 		"prettier-plugin-svelte": "^2.9.0",
 		"prisma": "^4.14.1",
