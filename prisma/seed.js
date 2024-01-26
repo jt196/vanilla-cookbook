@@ -1,9 +1,9 @@
 import PrismaClientPkg from '@prisma/client'
 import { fail } from '@sveltejs/kit'
-import lucia from 'lucia-auth'
-import 'lucia-auth/polyfill/node'
-import { sveltekit } from 'lucia-auth/middleware'
-import prisma from '@lucia-auth/adapter-prisma'
+import { lucia } from 'lucia'
+// import 'lucia-auth/polyfill/node'
+import { sveltekit } from 'lucia/middleware'
+import { prisma } from '@lucia-auth/adapter-prisma'
 import { promises as fsPromises } from 'fs'
 import { config } from 'dotenv'
 import fs from 'fs'
@@ -28,7 +28,11 @@ const prismaC = new PrismaClient({
 
 // Have to invoke the auth module here as it's outside the project directory.
 export const auth = lucia({
-	adapter: prisma(new PrismaClient()),
+	adapter: prisma(new PrismaClient(), {
+		user: 'authUser',
+		key: 'authKey',
+		session: 'authSession'
+	}),
 	env: 'DEV',
 	middleware: sveltekit()
 })
