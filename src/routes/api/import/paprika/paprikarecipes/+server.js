@@ -6,7 +6,8 @@ import path from 'path'
 
 // Gets a list of .paprikarecipes files in the uploads/imports folder
 export async function GET({ locals }) {
-	const { session, user } = await locals.auth.validateUser()
+	const session = await locals.auth.validate()
+	const user = session.user
 	if (!session || !user) {
 		return new Response(JSON.stringify({ error: 'User not authenticated.' }), {
 			status: 401,
@@ -47,7 +48,8 @@ export async function GET({ locals }) {
 
 // Uploads a .paprikarecipes zip file to the uploads/import folder
 export async function PUT({ request, locals }) {
-	const { session, user } = await locals.auth.validateUser()
+	const session = await locals.auth.validate()
+	const user = session.user
 	if (!session || !user) {
 		return new Response(JSON.stringify({ error: 'User not authenticated.' }), {
 			status: 401,
@@ -111,7 +113,8 @@ export async function PUT({ request, locals }) {
 }
 
 export async function POST({ request, locals }) {
-	const { session, user } = await locals.auth.validateUser()
+	const session = await locals.auth.validate()
+	const user = session.user
 	if (!session || !user) {
 		return new Response(JSON.stringify({ error: 'User not authenticated.' }), {
 			status: 401,

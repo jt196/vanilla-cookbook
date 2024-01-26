@@ -7,6 +7,7 @@
  */
 export const load = async ({ url, locals }) => {
 	// eslint-disable-next-line no-unused-vars
-	const { session, user } = await locals.auth.validateUser()
+	const session = await locals.auth.validate()
+	const user = session.user
 	return { user, pathname: url.pathname }
 }

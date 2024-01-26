@@ -7,7 +7,8 @@ export async function GET({ params, locals }) {
 	const { id } = params
 
 	// Validate the logged-in user from the Lucia locals object
-	const { user } = await locals.auth.validateUser()
+	const session = await locals.auth.validate()
+	const user = session.user
 	if (!user || user.userId !== id) {
 		return new Response(JSON.stringify({ error: 'User not authenticated or wrong user.' }), {
 			status: 403,

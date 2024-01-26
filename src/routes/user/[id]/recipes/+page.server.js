@@ -8,7 +8,8 @@ export const load = async ({ params, url, fetch, locals }) => {
 	const requestedUserId = params.id // Extracting the uid from the request parameters
 	const userIsPublicResponse = await fetch(`${url.origin}/api/user/${requestedUserId}/public`)
 	const userIsPublic = await userIsPublicResponse.json()
-	const { session, user } = await locals.auth.validateUser()
+	const session = await locals.auth.validate()
+	const user = session.user
 	if (!userIsPublic.publicProfile && (!session || !user)) {
 		throw redirect(302, '/login')
 	}

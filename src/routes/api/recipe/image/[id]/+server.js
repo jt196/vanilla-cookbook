@@ -66,7 +66,8 @@ export async function GET({ params }) {
 
 // Handle delete request
 export async function DELETE({ params, locals }) {
-	const { session, user } = await locals.auth.validateUser()
+	const session = await locals.auth.validate()
+	const user = session.user
 	const { id } = params
 
 	if (!session || !user) {

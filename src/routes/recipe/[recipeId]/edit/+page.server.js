@@ -10,7 +10,8 @@
  * @returns {Promise<{ recipe: Object }>} The loaded recipe.
  */
 export const load = async ({ url, params, locals, fetch }) => {
-	const { user } = await locals.auth.validateUser()
+	const session = await locals.auth.validate()
+	const user = session.user
 
 	let recipeData = await fetch(`${url.origin}/api/recipe/${params.recipeId}`)
 	const recipe = await recipeData.json()

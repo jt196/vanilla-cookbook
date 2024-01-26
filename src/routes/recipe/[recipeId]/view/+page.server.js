@@ -11,7 +11,8 @@ import { error, redirect } from '@sveltejs/kit'
  * @async
  */
 export const load = async ({ params, locals, fetch, url }) => {
-	const { session, user } = await locals.auth.validateUser()
+	const session = await locals.auth.validate()
+	const user = session.user
 	let response = await fetch(`${url.origin}/api/recipe/${params.recipeId}`)
 	const recipe = await response.json()
 	if (!recipe.is_public && (!session || !user)) {

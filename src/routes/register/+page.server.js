@@ -60,7 +60,7 @@ export const actions = {
 
 		try {
 			await auth.createUser({
-				primaryKey: {
+				key: {
 					providerId: 'username',
 					providerUserId: username,
 					password

@@ -4,7 +4,8 @@ export async function GET({ params, locals }) {
 	const requestedUserId = params.id // Extracting the uid from the request parameters
 
 	// Validate the requesting user's session and get their userId
-	const { user } = await locals.auth.validateUser()
+	const session = await locals.auth.validate()
+	const user = session.user
 
 	let whereClause = {
 		userId: requestedUserId // Ensure recipes belong to the requested user

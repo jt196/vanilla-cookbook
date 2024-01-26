@@ -7,7 +7,8 @@ export async function GET({ params, locals }) {
 	const { id } = params
 	// Validate the logged-in user from the Lucia locals object
 	// eslint-disable-next-line no-unused-vars
-	const { session, user } = await locals.auth.validateUser()
+	const session = await locals.auth.validate()
+	const user = session.user
 	if (!user || user.userId !== id) {
 		return new Response(JSON.stringify({ error: 'User not authenticated or wrong user.' }), {
 			status: 403,

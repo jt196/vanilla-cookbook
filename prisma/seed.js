@@ -44,7 +44,7 @@ async function addUsersToDB(users) {
 		const { name, username, password, email, about, isAdmin, isRoot } = user
 		try {
 			await auth.createUser({
-				primaryKey: {
+				key: {
 					providerId: 'username',
 					providerUserId: username,
 					password

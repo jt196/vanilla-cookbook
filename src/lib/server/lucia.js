@@ -1,18 +1,22 @@
-import lucia from 'lucia-auth'
-import 'lucia-auth/polyfill/node'
-import prismaAdapter from '@lucia-auth/adapter-prisma'
-import { sveltekit } from 'lucia-auth/middleware'
-import { prisma } from '$lib/server/prisma'
+import { lucia } from 'lucia'
+// import 'lucia-auth/polyfill/node'
+import { prisma } from '@lucia-auth/adapter-prisma'
+import { sveltekit } from 'lucia/middleware'
+import { prisma as client } from '$lib/server/prisma'
 
 const isDev = process.env.VITE_ENV === 'development'
 
 export const auth = lucia({
-	adapter: prismaAdapter(prisma),
+	adapter: prisma(client, {
+		user: 'authUser',
+		key: 'authKey',
+		session: 'authSession'
+	}),
 	env: isDev ? 'DEV' : 'PROD',
 	middleware: sveltekit(),
-	transformDatabaseUser: (userData) => {
+	getUserAttributes: (userData) => {
 		return {
-			userId: userData.id,
+			// userId: userData.id,
 			username: userData.username,
 			name: userData.name,
 			isAdmin: userData.isAdmin,

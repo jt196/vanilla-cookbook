@@ -1,7 +1,8 @@
 import { error } from '@sveltejs/kit'
 
 export const load = async ({ url, fetch, locals }) => {
-	const { session, user } = await locals.auth.validateUser()
+	const session = await locals.auth.validate()
+	const user = session.user
 
 	if (!session || !user) {
 		throw error(401, 'Unauthorized')

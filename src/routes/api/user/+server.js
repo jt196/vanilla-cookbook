@@ -2,7 +2,8 @@ import { auth } from '$lib/server/lucia'
 import { validatePassword } from '$lib/utils/security.js'
 
 export const POST = async ({ request, locals }) => {
-	const { session, user } = await locals.auth.validateUser()
+	const session = await locals.auth.validate()
+	const user = session.user
 	const bodyText = await request.text()
 	const userData = JSON.parse(bodyText)
 
@@ -41,7 +42,7 @@ export const POST = async ({ request, locals }) => {
 
 	try {
 		const newUser = await auth.createUser({
-			primaryKey: {
+			key: {
 				providerId: 'username',
 				providerUserId: userData.username,
 				password: userData.password

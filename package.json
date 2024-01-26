@@ -62,7 +62,7 @@
 		"fuse.js": "^6.6.2",
 		"he": "^1.2.0",
 		"humanize-duration": "^3.29.0",
-		"lucia-auth": "^1.8.0",
+		"lucia": "^2.7.6",
 		"marked": "^9.0.0",
 		"node-html-parser": "^6.1.10",
 		"parse-iso-duration": "^1.1.0",

@@ -45,7 +45,10 @@ export const POST = async ({ request, locals, params }) => {
 			await auth.invalidateAllUserSessions(user.id)
 
 			// // Create a new session for the user
-			const newSession = await auth.createSession(user.id)
+			const newSession = await auth.createSession({
+				userId: user.id,
+				attributes: {}
+			})
 			locals.auth.setSession(newSession)
 
 			// Redirect the user to the login page

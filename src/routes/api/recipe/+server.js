@@ -8,7 +8,8 @@ import { processImage } from '$lib/utils/image/imageBackend'
 import { createRecipePhotoEntry, removeRecipePhotoEntry } from '$lib/utils/api'
 
 export async function POST({ request, locals, url }) {
-	const { session, user } = await locals.auth.validateUser()
+	const session = await locals.auth.validate()
+	const user = session.user
 
 	if (!session || !user) {
 		console.log('User not authenticated!')

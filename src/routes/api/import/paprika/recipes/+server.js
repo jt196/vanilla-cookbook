@@ -5,7 +5,8 @@ import { importPaprikaRecipes } from '$lib/utils/import/paprika/paprikaFileImpor
 
 // Grab the Paprika categories from their API
 export async function POST({ request, locals }) {
-	const { session, user } = await locals.auth.validateUser()
+	const session = await locals.auth.validate()
+	const user = session.user
 	if (!session || !user) {
 		return new Response(JSON.stringify({ error: 'User not authenticated.' }), {
 			status: 401,
@@ -38,8 +39,9 @@ export async function POST({ request, locals }) {
 // If [userId]_recipes.json exists, how many items are in it
 export async function GET({ locals }) {
 	// Validate the logged-in user from the Lucia locals object
-	const { user, session } = await locals.auth.validateUser()
-	if (!user || !session) {
+	const session = await locals.auth.validate()
+	const user = session.user
+	if (!session || !user) {
 		return new Response(JSON.stringify({ error: 'User not authenticated or wrong user.' }), {
 			status: 403,
 			headers: {
@@ -82,9 +84,9 @@ export async function GET({ locals }) {
 }
 
 export async function PUT({ request, locals }) {
-	const { user, session } = await locals.auth.validateUser()
-
-	if (!user || !session) {
+	const session = await locals.auth.validate()
+	const user = session.user
+	if (!session || !user) {
 		return new Response(JSON.stringify({ error: 'User not authenticated or wrong user.' }), {
 			status: 403,
 			headers: {
