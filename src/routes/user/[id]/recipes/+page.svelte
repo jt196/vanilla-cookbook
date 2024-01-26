@@ -12,6 +12,7 @@
 	import CategoryTree from '$lib/components/CategoryTree.svelte'
 	import { goto } from '$app/navigation'
 	import { page } from '$app/stores'
+	import { sortState, searchString, searchKey } from '$lib/stores'
 
 	export let data
 	const { user } = data
@@ -25,15 +26,7 @@
 	}
 
 	let sidebarOpen = false
-	let searchString = ''
-	let searchKey = 'name'
-	// let sortKey = 'created'
-	let sortState = {
-		key: 'created', // default sort key
-		direction: 'asc' // default sort direction
-	}
 
-	// let sortDirection = 'asc'
 	let activeButton = 'created' // default active button
 	let filteredRecipes = [] // Declare it before the reactive statement
 
@@ -57,8 +50,8 @@
 	$: {
 		let sortedRecipes = sortRecipesByKey(
 			data.recipes,
-			sortState.key,
-			sortState.direction
+			$sortState.key,
+			$sortState.direction
 		).sortedRecipes
 
 		let categoryFilteredRecipes = sortedRecipes
@@ -79,14 +72,17 @@
 			}
 		}
 
-		filteredRecipes = filterSearch(searchString, categoryFilteredRecipes, searchKey)
+		filteredRecipes = filterSearch($searchString, categoryFilteredRecipes, $searchKey)
 	}
 	function handleSort(event) {
-		if (sortState.key === event.detail.key) {
-			sortState.direction = sortState.direction === 'asc' ? 'desc' : 'asc'
+		if ($sortState.key === event.detail.key) {
+			sortState.update((state) => ({
+				...state,
+				direction: state.direction === 'asc' ? 'desc' : 'asc'
+			})) // Update store
 		} else {
 			sortState.key = event.detail.key
-			sortState.direction = 'desc' // Default to descending when changing sort key
+			sortState.set({ key: event.detail.key, direction: 'desc' }) // Update store
 		}
 	}
 
@@ -173,12 +169,7 @@
 				<a href="/new" data-tooltip="New Recipe" role="button"
 					><New width="30px" height="30px" /></a>
 			</div>
-			<RecipeFilter
-				bind:searchString
-				bind:searchKey
-				bind:activeButton
-				bind:sortState
-				on:sort={handleSort} />
+			<RecipeFilter bind:activeButton on:sort={handleSort} />
 			<RecipeList {filteredRecipes} {data} on:recipeDeleted={handleRecipeDeleted} />
 		</div>
 	</div>
