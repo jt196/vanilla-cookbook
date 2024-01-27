@@ -7,56 +7,66 @@
 	export let displayDryMatch
 	export let displayOriginal
 	export let selectedSystem
+
+	let struckThrough = false // Step 1: Reactive variable to track the "struck through" state
+
+	// Step 2: Modify handleClick to toggle the struckThrough state
+	function handleClick() {
+		struckThrough = !struckThrough // Toggle the state
+	}
 </script>
 
-{#if typeof ingredient.ingredient === 'string'}
-	{#if ingredient.ingredient.trim() === ''}
-		<li>
-			{ingredient.originalString}
-		</li>
-	{:else if /<h[1-6]>/.test(ingredient.ingredient)}
-		<div data-heading>{@html ingredient.ingredient}</div>
-	{:else}
-		<li>
-			<strong>
-				{#if ingredient.minQty == ingredient.maxQty && ingredient.quantity}
-					{#if selectedSystem === 'metric'}
-						{roundIngredientQuantity(ingredient.quantity * scale)}
-					{:else}
-						{decimalToFraction(ingredient.quantity * scale)}
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+<div on:click={handleClick}>
+	{#if typeof ingredient.ingredient === 'string'}
+		{#if ingredient.ingredient.trim() === ''}
+			<li class:struck={struckThrough}>
+				{ingredient.originalString}
+			</li>
+		{:else if /<h[1-6]>/.test(ingredient.ingredient)}
+			<div data-heading>{@html ingredient.ingredient}</div>
+		{:else}
+			<li class:struck={struckThrough}>
+				<strong>
+					{#if ingredient.minQty == ingredient.maxQty && ingredient.quantity}
+						{#if selectedSystem === 'metric'}
+							{roundIngredientQuantity(ingredient.quantity * scale)}
+						{:else}
+							{decimalToFraction(ingredient.quantity * scale)}
+						{/if}
+					{:else if ingredient.minQty != ingredient.maxQty && ingredient.quantity}
+						{#if selectedSystem === 'metric'}
+							{roundIngredientQuantity(ingredient.minQty * scale)}-{roundIngredientQuantity(
+								ingredient.maxQty * scale
+							)}
+						{:else}
+							{decimalToFraction(ingredient.minQty * scale)}-{decimalToFraction(
+								ingredient.maxQty * scale
+							)}
+						{/if}
 					{/if}
-				{:else if ingredient.minQty != ingredient.maxQty && ingredient.quantity}
-					{#if selectedSystem === 'metric'}
-						{roundIngredientQuantity(ingredient.minQty * scale)}-{roundIngredientQuantity(
-							ingredient.maxQty * scale
-						)}
-					{:else}
-						{decimalToFraction(ingredient.minQty * scale)}-{decimalToFraction(
-							ingredient.maxQty * scale
-						)}
+				</strong>
+				{#if ingredient.unit && ingredient.unit !== 'q.b.'}
+					{ingredient.quantity * scale > 1 && ingredient.unitPlural
+						? ingredient.unitPlural
+						: ingredient.unit}
+				{/if}
+				<span
+					>{@html ingredient.ingredient}
+					{#if displayExtra && ingredient.additional}
+						<i> | {ingredient.additional}</i>
 					{/if}
-				{/if}
-			</strong>
-			{#if ingredient.unit && ingredient.unit !== 'q.b.'}
-				{ingredient.quantity * scale > 1 && ingredient.unitPlural
-					? ingredient.unitPlural
-					: ingredient.unit}
-			{/if}
-			<span
-				>{@html ingredient.ingredient}
-				{#if displayExtra && ingredient.additional}
-					<i> | {ingredient.additional}</i>
-				{/if}
-				{#if displayDryMatch && ingredient.dryIngredient}
-					<i> | {ingredient.dryIngredient.name} ({ingredient.dryIngredient.gramsPerCup} g/cup)</i>
-				{/if}
-				{#if displayOriginal}
-					<i> | {ingredient.originalString}</i>
-				{/if}
-			</span>
-		</li>
+					{#if displayDryMatch && ingredient.dryIngredient}
+						<i> | {ingredient.dryIngredient.name} ({ingredient.dryIngredient.gramsPerCup} g/cup)</i>
+					{/if}
+					{#if displayOriginal}
+						<i> | {ingredient.originalString}</i>
+					{/if}
+				</span>
+			</li>
+		{/if}
 	{/if}
-{/if}
+</div>
 
 <style lang="scss">
 	// Ingredients headers in the middle of text to have some spacing
@@ -68,5 +78,9 @@
 	}
 	li {
 		list-style-type: none;
+	}
+
+	.struck {
+		text-decoration: line-through;
 	}
 </style>
