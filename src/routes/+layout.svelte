@@ -12,6 +12,7 @@
 	import '$lib/css/global.scss'
 	import Users from '$lib/components/svg/Users.svelte'
 	import SiteIcons from '$lib/components/SiteIcons.svelte'
+	import Shopping from '$lib/components/svg/Shopping.svelte'
 	/**
 	 * Data for the page, structure defined by the `PageData` type.
 	 * @type {PageData}
@@ -48,6 +49,7 @@
 		</ul>
 		<ul>
 			<form method="POST">
+				<li><a href="/user/shopping"><Shopping width="25px" /></a></li>
 				<li><a href="/users"><Users width="25px" /></a></li>
 				{#if !user}
 					<a href="/login" role="button">Login</a>

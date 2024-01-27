@@ -188,6 +188,13 @@ export async function fileCatCount() {
 	return fileCategoryCount
 }
 
+/**
+ * Retrieves the file record count by making an asynchronous request to the
+ * specified API endpoint. If successful, it returns the file record count;
+ * otherwise, it logs an error message and returns 0.
+ *
+ * @return {number} The file record count
+ */
 export async function fileRecCount() {
 	let fileRecCount = 0
 	try {
@@ -200,4 +207,85 @@ export async function fileRecCount() {
 		console.error('Error fetching category file count:', err)
 	}
 	return fileRecCount
+}
+
+export async function addIngredientToShoppingList(ingredient) {
+	try {
+		const response = await fetch(`/api/ingredients/shopping`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(ingredient)
+		})
+
+		if (response.ok) {
+			const newShoppingListItem = await response.json()
+			return { success: true, data: newShoppingListItem }
+		} else {
+			const errorData = await response.json()
+			throw new Error(errorData.message || 'Error creating shopping list item')
+		}
+	} catch (error) {
+		console.error('Error creating shopping list item:', error.message)
+		return { success: false, error: error.message }
+	}
+}
+
+export async function updateShoppingListItem(item) {
+	try {
+		const response = await fetch(`/api/ingredients/shopping`, {
+			method: 'PATCH',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(item)
+		})
+
+		if (!response.ok) {
+			const errorData = await response.json()
+			throw new Error(errorData.message || 'Error updating shopping list item')
+		}
+
+		return await response.json()
+	} catch (error) {
+		console.error('Error updating shopping list item:', error.message)
+		throw error // Rethrow the error if you want to handle it in the calling component (e.g., to show an error message)
+	}
+}
+
+export async function hidePurchasedItems() {
+	try {
+		const response = await fetch(`/api/ingredients/shopping/hide`, {
+			method: 'PATCH',
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		})
+
+		if (!response.ok) {
+			// If the response is not OK and not 204, attempt to read and parse the response body
+			if (response.status !== 204 && response.headers.get('Content-Length') !== '0') {
+				const errorData = await response.json()
+				throw new Error(errorData.message || 'Error hiding purchased items')
+			} else {
+				// Handle other error scenarios appropriately
+				throw new Error('Error hiding purchased items: No response body')
+			}
+		}
+
+		// For a 204 No Content response, there's no need to parse the response body, just return a success indicator
+		if (response.status === 204) {
+			return { success: true }
+		} else if (response.headers.get('Content-Length') !== '0') {
+			// If there's content, parse and return it
+			return await response.json()
+		} else {
+			// If there's no content but the status is not 204, handle as needed
+			return null
+		}
+	} catch (error) {
+		console.error('Error hiding purchased items:', error.message)
+		throw error // Rethrow the error if you want to handle it in the calling component
+	}
 }

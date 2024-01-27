@@ -14,6 +14,7 @@
 	import User from '$lib/components/svg/User.svelte'
 	import RecipeViewNotes from '$lib/components/RecipeViewNotes.svelte'
 	import List from '$lib/components/svg/List.svelte'
+	import Shopping from '$lib/components/svg/Shopping.svelte'
 
 	export let data
 	let isLoading = true
@@ -146,8 +147,10 @@
 </script>
 
 <div id="recipe-buttons">
-	<button class="home-button" data-tooltip="Go to recipe list"
-		><a href="/"><List width="30px" height="30px" /></a></button>
+	<div class="home-button">
+		<button data-tooltip="Go to recipe list"
+			><a href="/"><List width="30px" height="30px" /></a></button>
+	</div>
 	{#if recipe.userId === viewUser.userId}
 		<RecipeViewButtons {recipe} />
 	{/if}
