@@ -31,6 +31,33 @@ export function sortByKeyGeneric(inputArray, inputKey, direction) {
 	})
 }
 
+export function sortByTwoKeys(
+	inputArray,
+	primarySortKey,
+	secondarySortKey,
+	primaryDirection = 'asc',
+	secondaryDirection = 'asc'
+) {
+	// First, sort by the primary key using sortByKeyGeneric
+	let sortedArray = sortByKeyGeneric(inputArray, primarySortKey, primaryDirection)
+
+	// Then, within each group of primary key, sort by the secondary key
+	return sortedArray.sort((a, b) => {
+		// Only compare secondary key if primary keys are equal
+		if (a[primarySortKey] === b[primarySortKey]) {
+			const aValue = a[secondarySortKey]?.toString().toUpperCase() || ''
+			const bValue = b[secondarySortKey]?.toString().toUpperCase() || ''
+
+			if (secondaryDirection === 'asc') {
+				return aValue.localeCompare(bValue)
+			} else {
+				return bValue.localeCompare(aValue)
+			}
+		}
+		return 0 // Keep original order if primary keys are different
+	})
+}
+
 /**
  * Sorts an array by a date key in either ascending or descending order.
  * @param {Object[]} inputArray - Array of objects to sort.
