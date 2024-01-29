@@ -8,6 +8,7 @@
 	export let displayDryMatch
 	export let displayOriginal
 	export let selectedSystem
+	export let recipeUid
 
 	let struckThrough = false
 	let isHighlighted = false
@@ -18,7 +19,8 @@
 	}
 
 	async function handleAddToShoppingList(ingredient) {
-		let response = await addIngredientToShoppingList(ingredient)
+		let updatedIngredient = { ...ingredient, recipeUid }
+		let response = await addIngredientToShoppingList(updatedIngredient)
 
 		if (response.success) {
 			isHighlighted = true

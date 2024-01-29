@@ -1,5 +1,6 @@
 <script>
 	import { hidePurchasedItems, updateShoppingListItem } from '$lib/utils/crud.js'
+	import Link from '$lib/components/svg/Link.svelte'
 
 	export let data
 	console.log('🚀 ~ data:', data.shoppingList)
@@ -47,14 +48,16 @@
 	}
 </script>
 
-<button on:click={toggleHidden}>
-	{showHidden ? 'Hide' : 'Show'} Hidden Items
-</button>
+<h4>Shopping List</h4>
 
-<button on:click={handleHide}>Hide Purchased Items</button>
+<div class="shopping-buttons">
+	<button on:click={toggleHidden}>
+		{showHidden ? 'Hide' : 'Show'} Hidden Items
+	</button>
 
+	<button on:click={handleHide}>Hide Purchased Items</button>
+</div>
 <fieldset>
-	<legend>Shopping List</legend>
 	{#each data.shoppingList as item}
 		{#if !item.hidden || showHidden}
 			<label class:checked={item.purchased}>
@@ -66,6 +69,10 @@
 				{item.quantity}
 				{item.unit}
 				{item.name}
+				{#if item.recipeUid}
+					<a href="/recipe/{item.recipeUid}/view"
+						><Link width="20px" fill="var(--pico-primary)" /></a>
+				{/if}
 			</label>
 		{/if}
 	{/each}
@@ -74,5 +81,8 @@
 <style>
 	.checked {
 		color: var(--pico-muted-color);
+	}
+	.shopping-buttons {
+		margin-bottom: 1rem;
 	}
 </style>

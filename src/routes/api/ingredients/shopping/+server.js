@@ -23,7 +23,8 @@ export async function POST({ request, locals }) {
 				name: ingredient.ingredient,
 				quantity: ingredient.quantity,
 				userId: user.userId,
-				unit: ingredient.quantity > 1 ? ingredient.unitPlural : ingredient.unit
+				unit: ingredient.quantity > 1 ? ingredient.unitPlural : ingredient.unit,
+				recipeUid: ingredient.recipeUid
 			}
 		})
 

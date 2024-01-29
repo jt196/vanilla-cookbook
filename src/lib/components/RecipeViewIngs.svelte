@@ -11,6 +11,7 @@
 	export let scaledServings
 	export let selectedSystem
 	export let measurementSystem
+	export let recipeUid
 	export let userIsAdmin = false
 
 	let displayExtra = false
@@ -41,6 +42,7 @@
 			{#each sanitizedIngredients as ingredient}
 				<RecipeViewIng
 					{ingredient}
+					{recipeUid}
 					{scale}
 					{displayExtra}
 					{displayDryMatch}

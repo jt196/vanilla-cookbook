@@ -8,7 +8,7 @@
 	import RecipeViewCover from '$lib/components/RecipeViewCover.svelte'
 	import RecipeViewAbout from '$lib/components/RecipeViewAbout.svelte'
 	import RecipeViewDesc from '$lib/components/RecipeViewDesc.svelte'
-	import RecipeViewIng from '$lib/components/RecipeViewIngs.svelte'
+	import RecipeViewIngs from '$lib/components/RecipeViewIngs.svelte'
 	import RecipeViewOtherPhotos from '$lib/components/RecipeViewOtherPhotos.svelte'
 	import RecipeViewDirections from '$lib/components/RecipeViewDirections.svelte'
 	import User from '$lib/components/svg/User.svelte'
@@ -20,6 +20,7 @@
 	let isLoading = true
 
 	let { recipe, categories, viewUser, viewMode } = data
+	console.log('🚀 ~ recipe.uid:', recipe.uid)
 	let ingredients = []
 	let ingredientsArray = []
 
@@ -168,8 +169,9 @@
 	</div>
 	<div class="recipe-main">
 		<div class="ing-div">
-			<RecipeViewIng
+			<RecipeViewIngs
 				{ingredients}
+				recipeUid={recipe.uid}
 				{sanitizedIngredients}
 				bind:scale
 				bind:scaledServings

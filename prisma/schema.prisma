@@ -19,38 +19,39 @@ model Article {
 }
 
 model Recipe {
-    uid              String           @id @default(uuid())
-    auth_user        AuthUser         @relation(fields: [userId], references: [id])
-    userId           String
-    rating           Float?
-    photo_hash       String?
-    on_favorites     Boolean?         @default(false)
-    photo            String?
-    scale            String?
-    ingredients      String?
-    is_pinned        Boolean?         @default(false)
-    is_public        Boolean?         @default(false)
-    source           String?
-    total_time       String?
-    hash             String?
-    description      String?
-    source_url       String?
-    difficulty       String?
-    on_grocery_list  Boolean?         @default(false)
-    in_trash         Boolean?         @default(false)
-    directions       String?
-    photo_url        String?
-    cook_time        String?
-    name             String?
-    created          DateTime
-    notes            String?
-    photo_large      String?
-    image_url        String?
-    prep_time        String?
-    servings         String?
-    nutritional_info String?
-    categories       RecipeCategory[] @relation("RecipeToRecipeCategory")
-    photos           RecipePhoto[]
+    uid                String             @id @default(uuid())
+    auth_user          AuthUser           @relation(fields: [userId], references: [id])
+    userId             String
+    rating             Float?
+    photo_hash         String?
+    on_favorites       Boolean?           @default(false)
+    photo              String?
+    scale              String?
+    ingredients        String?
+    is_pinned          Boolean?           @default(false)
+    is_public          Boolean?           @default(false)
+    source             String?
+    total_time         String?
+    hash               String?
+    description        String?
+    source_url         String?
+    difficulty         String?
+    on_grocery_list    Boolean?           @default(false)
+    in_trash           Boolean?           @default(false)
+    directions         String?
+    photo_url          String?
+    cook_time          String?
+    name               String?
+    created            DateTime
+    notes              String?
+    photo_large        String?
+    image_url          String?
+    prep_time          String?
+    servings           String?
+    nutritional_info   String?
+    categories         RecipeCategory[]   @relation("RecipeToRecipeCategory")
+    photos             RecipePhoto[]
+    shopping_list_item ShoppingListItem[]
 }
 
 model RecipePhoto {
@@ -88,12 +89,15 @@ model RecipeCategory {
 model ShoppingListItem {
     uid       String   @id @default(uuid())
     auth_user AuthUser @relation(fields: [userId], references: [id])
+    recipeUid String?
+    recipe    Recipe?  @relation(fields: [recipeUid], references: [uid], onDelete: SetNull)
     userId    String
     name      String
     quantity  Float
     unit      String
     purchased Boolean  @default(false)
     hidden    Boolean  @default(false)
+    createdAt DateTime @default(now())
 }
 
 model AuthUser {
