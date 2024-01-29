@@ -1,7 +1,7 @@
 <script>
 	import {
 		addIngredientToShoppingList,
-		hidePurchasedItems,
+		deletePurchasedItems,
 		updateShoppingListItem
 	} from '$lib/utils/crud.js'
 	import { parse } from '$lib/submodules/recipe-ingredient-parser/src/index.js'
@@ -58,14 +58,20 @@
 	let isDeleteDialogOpen = false
 
 	async function handleDelete() {
+		shoppingFeedback = ''
 		try {
 			// Filter out purchased items from the local data
 			data.shoppingList = data.shoppingList.filter((item) => !item.purchased)
 			isDeleteDialogOpen = false
-			await hidePurchasedItems() // Call your API to update the database
+			const response = await deletePurchasedItems()
+			if (response.success) {
+				shoppingFeedback = 'Successfully deleted purchased items!'
+			} else {
+				shoppingFeedback = 'There was a problem deleting purchased items!'
+			}
 		} catch (error) {
 			console.error('Error deleting purchased items:', error.message)
-			// Handle the error (e.g., show an error message to the user)
+			shoppingFeedback = 'There was a problem deleting purchased items!'
 		}
 	}
 
