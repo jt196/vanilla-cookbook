@@ -3,10 +3,6 @@
 	import SortAscDesc from '$lib/components/svg/SortAscDesc.svelte' // Adjust the path if needed
 	import { sortState, searchString, searchKey } from '$lib/stores'
 	const dispatch = createEventDispatcher()
-	// export let activeButton // default active button
-	// export let sortState
-	// export let searchString // default search value
-	// export let searchKey
 
 	function updateSort(key) {
 		sortState.update((current) => {

@@ -256,7 +256,7 @@ export async function updateShoppingListItem(item) {
 
 export async function hidePurchasedItems() {
 	try {
-		const response = await fetch(`/api/ingredients/shopping/hide`, {
+		const response = await fetch(`/api/ingredients/shopping/delete`, {
 			method: 'PATCH',
 			headers: {
 				'Content-Type': 'application/json'

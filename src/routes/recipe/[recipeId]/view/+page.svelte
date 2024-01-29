@@ -11,16 +11,13 @@
 	import RecipeViewIngs from '$lib/components/RecipeViewIngs.svelte'
 	import RecipeViewOtherPhotos from '$lib/components/RecipeViewOtherPhotos.svelte'
 	import RecipeViewDirections from '$lib/components/RecipeViewDirections.svelte'
-	import User from '$lib/components/svg/User.svelte'
 	import RecipeViewNotes from '$lib/components/RecipeViewNotes.svelte'
 	import List from '$lib/components/svg/List.svelte'
-	import Shopping from '$lib/components/svg/Shopping.svelte'
 
 	export let data
 	let isLoading = true
 
-	let { recipe, categories, viewUser, viewMode } = data
-	console.log('🚀 ~ recipe.uid:', recipe.uid)
+	let { recipe, categories, viewUser } = data
 	let ingredients = []
 	let ingredientsArray = []
 

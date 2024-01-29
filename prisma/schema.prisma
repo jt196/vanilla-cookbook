@@ -93,10 +93,9 @@ model ShoppingListItem {
     recipe    Recipe?  @relation(fields: [recipeUid], references: [uid], onDelete: SetNull)
     userId    String
     name      String
-    quantity  Float
-    unit      String
+    quantity  Float?
+    unit      String?
     purchased Boolean  @default(false)
-    hidden    Boolean  @default(false)
     createdAt DateTime @default(now())
 }
 

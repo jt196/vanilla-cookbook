@@ -27,7 +27,6 @@
 
 	let sidebarOpen = false
 
-	let activeButton = 'created' // default active button
 	let filteredRecipes = [] // Declare it before the reactive statement
 
 	let selectedCategoryUids = []
@@ -169,7 +168,7 @@
 				<a href="/new" data-tooltip="New Recipe" role="button"
 					><New width="30px" height="30px" /></a>
 			</div>
-			<RecipeFilter bind:activeButton on:sort={handleSort} />
+			<RecipeFilter on:sort={handleSort} />
 			<RecipeList {filteredRecipes} {data} on:recipeDeleted={handleRecipeDeleted} />
 		</div>
 	</div>

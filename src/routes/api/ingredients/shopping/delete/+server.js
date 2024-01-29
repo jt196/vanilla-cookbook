@@ -16,14 +16,10 @@ export async function PATCH({ locals }) {
 
 	try {
 		// Update all purchased items to be hidden for the current user
-		await prisma.shoppingListItem.updateMany({
+		await prisma.shoppingListItem.deleteMany({
 			where: {
 				userId: user.id,
-				purchased: true,
-				hidden: false
-			},
-			data: {
-				hidden: true
+				purchased: true
 			}
 		})
 
