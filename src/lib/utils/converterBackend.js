@@ -15,7 +15,6 @@ export async function convertIngredientsBackend(
 	toSystem,
 	skipSmallUnits = false
 ) {
-	console.log('Converting ingredients via API!')
 	const allIngredientData = await getAllIngredientData()
 
 	// Initialize a Fuse instance with the retrieved ingredient data

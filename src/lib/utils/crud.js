@@ -241,12 +241,10 @@ export async function updateShoppingListItem(item) {
 			},
 			body: JSON.stringify(item)
 		})
-
 		if (!response.ok) {
 			const errorData = await response.json()
 			throw new Error(errorData.message || 'Error updating shopping list item')
 		}
-
 		return await response.json()
 	} catch (error) {
 		console.error('Error updating shopping list item:', error.message)
@@ -257,7 +255,7 @@ export async function updateShoppingListItem(item) {
 export async function deletePurchasedItems() {
 	try {
 		const response = await fetch(`/api/ingredients/shopping/delete`, {
-			method: 'PATCH',
+			method: 'DELETE',
 			headers: {
 				'Content-Type': 'application/json'
 			}
@@ -267,10 +265,10 @@ export async function deletePurchasedItems() {
 			// If the response is not OK and not 204, attempt to read and parse the response body
 			if (response.status !== 204 && response.headers.get('Content-Length') !== '0') {
 				const errorData = await response.json()
-				throw new Error(errorData.message || 'Error hiding purchased items')
+				throw new Error(errorData.message || 'Error deleting purchased items')
 			} else {
 				// Handle other error scenarios appropriately
-				throw new Error('Error hiding purchased items: No response body')
+				throw new Error('Error deleting purchased items: No response body')
 			}
 		}
 
@@ -285,7 +283,43 @@ export async function deletePurchasedItems() {
 			return null
 		}
 	} catch (error) {
-		console.error('Error hiding purchased items:', error.message)
+		console.error('Error deleting purchased items:', error.message)
+		throw error // Rethrow the error if you want to handle it in the calling component
+	}
+}
+
+export async function deleteShoppingListItem(uid) {
+	try {
+		const response = await fetch(`/api/ingredients/shopping/${uid}`, {
+			method: 'DELETE',
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		})
+
+		if (!response.ok) {
+			// If the response is not OK and not 204, attempt to read and parse the response body
+			if (response.status !== 204 && response.headers.get('Content-Length') !== '0') {
+				const errorData = await response.json()
+				throw new Error(errorData.message || 'Error deleting shopping list item')
+			} else {
+				// Handle other error scenarios appropriately
+				throw new Error('Error deleting shopping list item: No response body')
+			}
+		}
+
+		// For a 204 No Content response, there's no need to parse the response body, just return a success indicator
+		if (response.status === 204) {
+			return { success: true }
+		} else if (response.headers.get('Content-Length') !== '0') {
+			// If there's content, parse and return it
+			return await response.json()
+		} else {
+			// If there's no content but the status is not 204, handle as needed
+			return null
+		}
+	} catch (error) {
+		console.error('Error deleting shopping list item:', error.message)
 		throw error // Rethrow the error if you want to handle it in the calling component
 	}
 }

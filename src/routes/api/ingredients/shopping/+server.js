@@ -100,15 +100,16 @@ export async function PATCH({ request, locals }) {
 	}
 
 	const bodyText = await request.text()
-	const { uid, purchased } = JSON.parse(bodyText)
+	const { uid, purchased, name, quantity, unit } = JSON.parse(bodyText)
 	// Start constructing the data object with the purchased field
-	let updateData = { purchased }
+	let updateData = { purchased, name, quantity, unit }
 
 	try {
 		const updatedItem = await prisma.shoppingListItem.update({
 			where: { uid },
 			data: updateData
 		})
+		console.log('🚀 ~ PATCH ~ updatedItem:', updatedItem)
 
 		return new Response(JSON.stringify(updatedItem), {
 			status: 200,

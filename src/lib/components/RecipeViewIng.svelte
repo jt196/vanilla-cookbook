@@ -1,6 +1,7 @@
 <script>
 	import { addIngredientToShoppingList } from '$lib/utils/crud'
 	import { decimalToFraction, roundIngredientQuantity } from '$lib/utils/filters'
+	import Shopping from './svg/Shopping.svelte'
 
 	export let ingredient
 	export let scale
@@ -34,7 +35,8 @@
 </script>
 
 <div class="ingredient-line" class:highlight={isHighlighted}>
-	<button on:click={() => handleAddToShoppingList(ingredient)}>+</button>
+	<button on:click={() => handleAddToShoppingList(ingredient)}
+		><Shopping width="10px" fill="white" /></button>
 	<!-- svelte-ignore a11y-click-events-have-key-events -->
 	<div on:click={handleClick}>
 		{#if typeof ingredient.ingredient === 'string'}
@@ -108,9 +110,21 @@
 	.ingredient-line {
 		display: flex;
 		gap: 5px;
+
 		button {
 			padding: 0 0.2rem;
 			margin-bottom: 0.1rem;
+			max-height: 33px;
+			opacity: 0;
+			visibility: hidden;
+			transition: opacity 0.3s ease, visibility 0s linear 0.3s;
+		}
+
+		&:hover button,
+		&:focus-within button {
+			opacity: 1;
+			visibility: visible;
+			transition-delay: 0s;
 		}
 	}
 

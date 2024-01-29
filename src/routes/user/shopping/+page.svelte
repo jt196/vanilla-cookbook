@@ -2,6 +2,7 @@
 	import {
 		addIngredientToShoppingList,
 		deletePurchasedItems,
+		deleteShoppingListItem,
 		updateShoppingListItem
 	} from '$lib/utils/crud.js'
 	import { parse } from '$lib/submodules/recipe-ingredient-parser/src/index.js'
@@ -15,6 +16,7 @@
 	import New from '$lib/components/svg/New.svelte'
 	import CheckAll from '$lib/components/svg/CheckAll.svelte'
 	import FeedbackMessage from '$lib/components/FeedbackMessage.svelte'
+	import Edit from '$lib/components/svg/Edit.svelte'
 
 	export let data
 
@@ -51,6 +53,8 @@
 	function handleKeydown(event) {
 		if (event.key === 'Escape' && isDeleteDialogOpen) {
 			isDeleteDialogOpen = false
+		} else if (event.key === 'Escape' && isEditDialogOpen) {
+			isEditDialogOpen = false
 		}
 	}
 
@@ -137,6 +141,58 @@
 		}
 	}
 
+	let editDialog // Reference to the edit modal dialog
+	let isEditDialogOpen = false // State to track if the edit modal is open
+	let editingItem = {} // The item currently being edited
+
+	function openEditModal(item) {
+		editingItem = { ...item } // Create a shallow copy to edit
+		isEditDialogOpen = true
+	}
+
+	// Function to handle saving the edited item
+	async function handleSaveEdit() {
+		// Validate the edited item's data here (if necessary)
+
+		try {
+			// Update the item on the backend
+			const updatedItem = await updateShoppingListItem(editingItem)
+
+			// Update the item in the local shopping list state if the backend update is successful
+			data.shoppingList = data.shoppingList.map((item) => {
+				if (item.uid === updatedItem.uid) {
+					// Replace the old item data with the updated item data
+					return updatedItem
+				}
+				return item
+			})
+
+			isEditDialogOpen = false // Close the edit modal
+			shoppingFeedback = 'Item updated successfully!' // Optional: Show success feedback
+		} catch (error) {
+			console.error('Error updating item:', error)
+			shoppingFeedback = 'Failed to update item. Please try again.'
+		}
+	}
+
+	async function handleDeleteItem(uid) {
+		try {
+			// Update the item on the backend
+			const response = await deleteShoppingListItem(uid)
+			if (response.success) {
+				data.shoppingList = data.shoppingList.filter((item) => item.uid !== uid)
+
+				shoppingFeedback = 'Item deleted successfully!'
+			} else {
+				// Handle cases where the backend response is not successful
+				shoppingFeedback = 'Failed to delete the item. Please try again.'
+			}
+		} catch (error) {
+			console.error('Error deleting item:', error)
+			shoppingFeedback = 'Failed to delete item. Please try again.'
+		}
+	}
+
 	$: sortedList = showHidden
 		? sortByTwoKeys(data.shoppingList, 'purchased', 'name', 'asc', 'asc')
 		: sortByTwoKeys(
@@ -196,18 +252,26 @@
 						<span>{item.unit}</span>
 					{/if}
 				</div>
-				<label class:checked={item.purchased}>
-					<input
-						type="checkbox"
-						name={item.name}
-						checked={item.purchased}
-						on:change={(event) => handleCheckboxChange(item, event)} />
-					{item.name}
-					{#if item.recipeUid}
-						<a href="/recipe/{item.recipeUid}/view"
-							><Link width="20px" fill="var(--pico-primary)" /></a>
-					{/if}
-				</label>
+				<div class="item-label">
+					<label class:checked={item.purchased}>
+						<input
+							type="checkbox"
+							name={item.name}
+							checked={item.purchased}
+							on:change={(event) => handleCheckboxChange(item, event)} />
+						{item.name}
+						{#if item.recipeUid}
+							<a href="/recipe/{item.recipeUid}/view">
+								<Link width="20px" fill="var(--pico-primary)" />
+							</a>
+						{/if}
+					</label>
+					<div class="item-buttons">
+						<button on:click={() => openEditModal(item)}><Edit width="20px" fill="white" /></button>
+						<button on:click={handleDeleteItem(item.uid)}
+							><Delete width="20px" fill="white" /></button>
+					</div>
+				</div>
 			</div>
 		{/if}
 	{/each}
@@ -224,6 +288,24 @@
 	</article>
 </dialog>
 
+<dialog bind:this={editDialog} open={isEditDialogOpen}>
+	<form on:submit|preventDefault={handleSaveEdit}>
+		<label for="edit-name">Name:</label>
+		<input id="edit-name" type="text" bind:value={editingItem.name} />
+
+		<label for="edit-quantity">Quantity:</label>
+		<input id="edit-quantity" type="number" bind:value={editingItem.quantity} />
+
+		<label for="edit-unit">Unit:</label>
+		<input id="edit-unit" type="text" bind:value={editingItem.unit} />
+
+		<footer>
+			<button type="button" on:click={() => (isEditDialogOpen = false)}>Cancel</button>
+			<button type="submit">Save</button>
+		</footer>
+	</form>
+</dialog>
+
 <style lang="scss">
 	.checked {
 		color: var(--pico-muted-color);
@@ -233,6 +315,19 @@
 	}
 	label {
 		font-size: 2rem;
+	}
+	.item-label {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		button {
+			margin-left: auto; /* Pushes the button to the right */
+		}
+	}
+
+	.item-content {
+		display: flex;
+		align-items: center;
 	}
 	.unit-quantity {
 		font-size: 0.8rem;
