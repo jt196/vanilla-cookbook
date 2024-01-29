@@ -13,9 +13,10 @@
 	import ViewNo from '$lib/components/svg/ViewNo.svelte'
 	import Delete from '$lib/components/svg/Delete.svelte'
 	import New from '$lib/components/svg/New.svelte'
+	import CheckAll from '$lib/components/svg/CheckAll.svelte'
+	import FeedbackMessage from '$lib/components/FeedbackMessage.svelte'
 
 	export let data
-	console.log('🚀 ~ data:', data.shoppingList)
 
 	async function handleCheckboxChange(item, event) {
 		const purchased = event.target.checked
@@ -27,7 +28,7 @@
 				if (listItem.uid === item.uid) {
 					// If the item is unchecked (purchased is false), also set hidden to false
 					// Otherwise, just update the purchased status
-					return purchased ? { ...listItem, purchased } : { ...listItem, purchased, hidden: false }
+					return purchased ? { ...listItem, purchased } : { ...listItem, purchased }
 				}
 				return listItem
 			})
@@ -68,6 +69,8 @@
 		}
 	}
 
+	let shoppingFeedback = ''
+
 	let newIngredient = ''
 
 	async function handleAddIngredient() {
@@ -107,6 +110,27 @@
 		showHidden = !showHidden
 	}
 
+	async function checkAll() {
+		shoppingFeedback = '' // Reset or clear the feedback message before starting the updates
+
+		try {
+			const updatePromises = data.shoppingList.map((item) =>
+				updateShoppingListItem({ uid: item.uid, purchased: true }).then(() => ({
+					...item,
+					purchased: true
+				}))
+			)
+
+			const updatedItems = await Promise.all(updatePromises)
+			data.shoppingList = updatedItems // Update the local state with the updated items
+
+			shoppingFeedback = 'All items have been marked as purchased!' // Set a success message
+		} catch (error) {
+			shoppingFeedback = 'An error occurred while updating items.' // Set an error message
+			console.error('Error updating shopping list items:', error.message)
+		}
+	}
+
 	$: sortedList = showHidden
 		? sortByTwoKeys(data.shoppingList, 'purchased', 'name', 'asc', 'asc')
 		: sortByTwoKeys(
@@ -130,6 +154,10 @@
 	<button on:click={() => (isDeleteDialogOpen = true)}>
 		<Delete width="20px" fill="white" />
 	</button>
+
+	<button on:click={checkAll}>
+		<CheckAll width="20px" fill="white" />
+	</button>
 </div>
 <div class="add-ingredient">
 	<input
@@ -142,13 +170,18 @@
 		<New width="20px" fill="white" />
 	</button>
 </div>
-{#if data.shoppingList.length === 0}
-	<h5>Your shopping list is empty</h5>
-{/if}
+<div class="list-info">
+	{#if data.shoppingList.length === 0}
+		<FeedbackMessage message={'List empty: add some items!'} />
+	{:else if data.shoppingList.every((item) => item.purchased) && !showHidden}
+		<FeedbackMessage message={'List empty: all items are marked as purchased!'} />
+	{/if}
+</div>
+<FeedbackMessage message={shoppingFeedback} />
 <fieldset>
 	{#each sortedList as item (item.uid)}
 		{#if !item.purchased || showHidden}
-			<div out:fade={{ duration: 300 }}>
+			<div class="list-item" out:fade={{ duration: 300 }}>
 				<div class={`unit-quantity ${showHidden ? '' : 'hidden'}`}>
 					{#if item.quantity}
 						<span>{item.quantity}</span>
@@ -198,7 +231,8 @@
 	.unit-quantity {
 		font-size: 0.8rem;
 		margin: 0;
-		padding: 0;
+		padding: 12px 0 0 44px;
+
 		color: var(--pico-muted-color);
 	}
 	.hidden {
@@ -212,5 +246,9 @@
 		input {
 			margin-bottom: 0;
 		}
+	}
+
+	.list-item {
+		border-bottom: 0.5px solid var(--pico-primary-focus);
 	}
 </style>

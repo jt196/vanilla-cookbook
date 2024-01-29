@@ -104,11 +104,6 @@ export async function PATCH({ request, locals }) {
 	// Start constructing the data object with the purchased field
 	let updateData = { purchased }
 
-	// If an item is marked as not purchased, add hidden=false to the update data
-	if (!purchased) {
-		updateData.hidden = false
-	}
-
 	try {
 		const updatedItem = await prisma.shoppingListItem.update({
 			where: { uid },
