@@ -87,6 +87,12 @@ export async function PUT({ request, locals, params }) {
 
 	const { uid } = params
 
+	// Parse fields fields directly in recipeData
+	recipeData.cook_time = recipeData.cook_time ? recipeData.cook_time.toString() : null
+	recipeData.prep_time = recipeData.prep_time ? recipeData.prep_time.toString() : null
+	recipeData.total_time = recipeData.total_time ? recipeData.total_time.toString() : null
+	recipeData.servings = recipeData.servings ? recipeData.servings.toString() : null
+
 	if (!session || !user) {
 		return new Response('User not authenticated!', {
 			status: 401,

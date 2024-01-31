@@ -49,14 +49,14 @@ export async function POST({ request, locals, url }) {
 				description,
 				source,
 				source_url,
-				cook_time,
+				cook_time: cook_time ? cook_time.toString() : null, // Ensure cook_time is a string
 				image_url,
-				prep_time,
+				prep_time: prep_time ? prep_time.toString() : null, // Ensure prep_time is a string
 				notes,
 				ingredients,
 				directions,
-				total_time,
-				servings,
+				total_time: total_time ? total_time.toString() : null, // Ensure total_time is a string
+				servings: servings ? servings.toString() : null, // Use the string version of servings
 				nutritional_info,
 				is_public,
 				created: new Date(),
