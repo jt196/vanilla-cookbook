@@ -110,8 +110,12 @@
 	.ingredient-line {
 		display: flex;
 		gap: 5px;
+		position: relative;
 
 		button {
+			position: absolute;
+			left: 0; // Position the button to the far left
+			transform: translateX(-100%); // Move the button to the left of the container
 			padding: 0 0.2rem;
 			margin-bottom: 0.1rem;
 			max-height: 33px;
