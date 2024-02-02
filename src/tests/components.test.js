@@ -1,5 +1,7 @@
 // NOTE: jest-dom adds handy assertions to Jest and it is recommended, but not required.
 import '@testing-library/jest-dom'
+import { sortState } from '$lib/stores'
+import { get } from 'svelte/store'
 
 import { render, fireEvent, screen } from '@testing-library/svelte'
 
@@ -7,7 +9,7 @@ import Scale from '$lib/components/Scale.svelte'
 import RecipeFilter from '$lib/components/RecipeFilter.svelte'
 import RecipeList from '$lib/components/RecipeList.svelte'
 
-/* global expect, it, describe */
+/* global expect, it, describe, beforeEach */
 
 describe('Scale component', () => {
 	it('should increase the scale value correctly', async () => {
@@ -58,6 +60,11 @@ describe('Scale component', () => {
 
 describe('RecipeFilter component', () => {
 	const mockSortState = { key: 'created', direction: 'desc' }
+
+	beforeEach(() => {
+		// Reset sortState to a default value before each test
+		sortState.set({ key: 'created', direction: 'desc' })
+	})
 
 	it('renders without crashing', () => {
 		const { getByPlaceholderText } = render(RecipeFilter, { sortState: mockSortState })
@@ -113,33 +120,39 @@ describe('RecipeFilter component', () => {
 		expect(dateButton).toHaveClass('secondary')
 	})
 
-	it('dispatches sort event with correct key on date button click', async () => {
-		const { getByText, component } = render(RecipeFilter, { sortState: mockSortState })
+	it('updates sort state correctly on date button click', async () => {
+		// Render your component
+		const { getByText } = render(RecipeFilter)
+
+		// Find the button by its text
 		const dateButton = getByText('Date')
 
-		let dispatchedEvent = null
-		component.$on('sort', (event) => {
-			dispatchedEvent = event
-		})
-
+		// Click the 'Date' button
 		await fireEvent.click(dateButton)
-		expect(dispatchedEvent.detail.key).toBe('created')
+
+		// Get the current value of the sortState store
+		const updatedSortState = get(sortState)
+
+		// Check if the sortState store has been updated correctly
+		expect(updatedSortState).toEqual({ key: 'created', direction: 'asc' })
 	})
 
-	it('dispatches sort event with correct key on title button click', async () => {
-		const { getByText, component } = render(RecipeFilter, { sortState: mockSortState })
+	it('updates sort state correctly on title button click', async () => {
+		// Render your component
+		const { getByText } = render(RecipeFilter)
+
+		// Find the button by its text
 		const titleButton = getByText('Title')
 
-		let dispatchedEvent = null
-		component.$on('sort', (event) => {
-			dispatchedEvent = event
-		})
-
+		// Click the 'Title' button
 		await fireEvent.click(titleButton)
-		expect(dispatchedEvent.detail.key).toBe('name')
-	})
 
-	// Add similar tests for other buttons and behaviors as needed
+		// Get the current value of the sortState store
+		const updatedSortState = get(sortState)
+
+		// Check if the sortState store has been updated correctly
+		expect(updatedSortState).toEqual({ key: 'name', direction: 'asc' }) // or 'desc', depending on your implementation
+	})
 })
 
 describe('RecipeList component', () => {
