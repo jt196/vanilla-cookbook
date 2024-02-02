@@ -254,7 +254,7 @@ export async function updateShoppingListItem(item) {
 
 export async function deletePurchasedItems() {
 	try {
-		const response = await fetch(`/api/ingredients/shopping/delete`, {
+		const response = await fetch(`/api/ingredients/shopping/items`, {
 			method: 'DELETE',
 			headers: {
 				'Content-Type': 'application/json'
@@ -284,6 +284,42 @@ export async function deletePurchasedItems() {
 		}
 	} catch (error) {
 		console.error('Error deleting purchased items:', error.message)
+		throw error // Rethrow the error if you want to handle it in the calling component
+	}
+}
+
+export async function markPurchasedItems() {
+	try {
+		const response = await fetch(`/api/ingredients/shopping/items`, {
+			method: 'PATCH',
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		})
+
+		if (!response.ok) {
+			// If the response is not OK and not 204, attempt to read and parse the response body
+			if (response.status !== 204 && response.headers.get('Content-Length') !== '0') {
+				const errorData = await response.json()
+				throw new Error(errorData.message || 'Error marking items purchased')
+			} else {
+				// Handle other error scenarios appropriately
+				throw new Error('Error marking items purchased: No response body')
+			}
+		}
+
+		// For a 204 No Content response, there's no need to parse the response body, just return a success indicator
+		if (response.status === 204) {
+			return { success: true }
+		} else if (response.headers.get('Content-Length') !== '0') {
+			// If there's content, parse and return it
+			return await response.json()
+		} else {
+			// If there's no content but the status is not 204, handle as needed
+			return null
+		}
+	} catch (error) {
+		console.error('Error marking items purchased:', error.message)
 		throw error // Rethrow the error if you want to handle it in the calling component
 	}
 }

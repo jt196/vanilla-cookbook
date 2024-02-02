@@ -3,6 +3,7 @@
 		addIngredientToShoppingList,
 		deletePurchasedItems,
 		deleteShoppingListItem,
+		markPurchasedItems,
 		updateShoppingListItem
 	} from '$lib/utils/crud.js'
 	import { parse } from '$lib/submodules/recipe-ingredient-parser/src/index.js'
@@ -124,19 +125,21 @@
 		shoppingFeedback = '' // Reset or clear the feedback message before starting the updates
 
 		try {
-			const updatePromises = data.shoppingList.map((item) =>
-				updateShoppingListItem({ uid: item.uid, purchased: true }).then(() => ({
-					...item,
-					purchased: true
-				}))
-			)
+			const result = await markPurchasedItems() // Call the bulk update function
 
-			const updatedItems = await Promise.all(updatePromises)
-			data.shoppingList = updatedItems // Update the local state with the updated items
-
-			shoppingFeedback = 'All items have been marked as purchased!' // Set a success message
+			if (result && result.updatedCount > 0) {
+				// If items were successfully updated, reflect these changes locally
+				data.shoppingList = data.shoppingList.map((item) => ({ ...item, purchased: true }))
+				shoppingFeedback = `${result.updatedCount} item(s) have been marked as purchased!` // Inform the user about the number of items updated
+			} else if (result && result.updatedCount === 0) {
+				// If no items were updated, inform the user accordingly
+				shoppingFeedback = 'No items needed to be marked as purchased.'
+			} else {
+				// Handle unexpected outcomes
+				shoppingFeedback = 'An unexpected error occurred while updating items.'
+			}
 		} catch (error) {
-			shoppingFeedback = 'An error occurred while updating items.' // Set an error message
+			shoppingFeedback = 'An error occurred while updating items.' // Set an error message for catch block errors
 			console.error('Error updating shopping list items:', error.message)
 		}
 	}
