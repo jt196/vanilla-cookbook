@@ -18,6 +18,7 @@
 	import CheckAll from '$lib/components/svg/CheckAll.svelte'
 	import FeedbackMessage from '$lib/components/FeedbackMessage.svelte'
 	import Edit from '$lib/components/svg/Edit.svelte'
+	import ConfirmationDialog from '$lib/components/ConfirmationDialog.svelte'
 
 	export let data
 
@@ -40,27 +41,8 @@
 		}, 300)
 	}
 
-	onMount(() => {
-		deleteDialog.addEventListener('close', () => {
-			isDeleteDialogOpen = false
-		})
-		document.addEventListener('keydown', handleKeydown)
-		return () => {
-			// Cleanup when the component is destroyed
-			document.removeEventListener('keydown', handleKeydown)
-		}
-	})
-
-	function handleKeydown(event) {
-		if (event.key === 'Escape' && isDeleteDialogOpen) {
-			isDeleteDialogOpen = false
-		} else if (event.key === 'Escape' && isEditDialogOpen) {
-			isEditDialogOpen = false
-		}
-	}
-
-	let deleteDialog
 	let isDeleteDialogOpen = false
+	let isCheckAllDialogOpen = false
 
 	async function handleDelete() {
 		shoppingFeedback = ''
@@ -121,8 +103,9 @@
 		showHidden = !showHidden
 	}
 
-	async function checkAll() {
+	async function handleCheckAll() {
 		shoppingFeedback = '' // Reset or clear the feedback message before starting the updates
+		isCheckAllDialogOpen = false
 
 		try {
 			const result = await markPurchasedItems() // Call the bulk update function
@@ -203,6 +186,8 @@
 				'name',
 				'asc'
 		  )
+	$: purchasedItemCount = data.shoppingList.filter((item) => item.purchased).length
+	$: uncheckedItemCount = data.shoppingList.filter((item) => !item.purchased).length
 </script>
 
 <h4>Shopping List</h4>
@@ -216,11 +201,11 @@
 		{/if}
 	</button>
 
-	<button on:click={() => (isDeleteDialogOpen = true)}>
+	<button disabled={purchasedItemCount === 0} on:click={() => (isDeleteDialogOpen = true)}>
 		<Delete width="20px" fill="white" />
 	</button>
 
-	<button on:click={checkAll}>
+	<button disabled={uncheckedItemCount === 0} on:click={() => (isCheckAllDialogOpen = true)}>
 		<CheckAll width="20px" fill="white" />
 	</button>
 </div>
@@ -280,16 +265,19 @@
 	{/each}
 </fieldset>
 
-<dialog bind:this={deleteDialog} open={isDeleteDialogOpen}>
-	<article>
-		<h2>Delete Your purchased items?</h2>
+<ConfirmationDialog bind:isOpen={isDeleteDialogOpen} on:confirm={handleDelete}>
+	<div slot="content">
+		<h2>Delete Your Purchased Items?</h2>
 		<p>This will permanently delete all purchased items from your shopping list.</p>
-		<footer>
-			<button class="secondary" on:click={() => (isDeleteDialogOpen = false)}>Cancel</button>
-			<button on:click={handleDelete}>Confirm</button>
-		</footer>
-	</article>
-</dialog>
+	</div>
+</ConfirmationDialog>
+
+<ConfirmationDialog bind:isOpen={isCheckAllDialogOpen} on:confirm={handleCheckAll}>
+	<div slot="content">
+		<h2>Check all items as purchased?</h2>
+		<p>This will mark all your shopping as purchased.</p>
+	</div>
+</ConfirmationDialog>
 
 <dialog bind:this={editDialog} open={isEditDialogOpen}>
 	<form on:submit|preventDefault={handleSaveEdit}>
