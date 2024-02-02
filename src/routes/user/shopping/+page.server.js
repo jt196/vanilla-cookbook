@@ -12,6 +12,7 @@ export const load = async ({ url, fetch, locals }) => {
 	}
 	const shoppingListResponse = await fetch(`${url.origin}/api/ingredients/shopping`)
 	const shoppingList = await shoppingListResponse.json()
+	console.log('🚀 ~ load ~ shoppingList:', shoppingList)
 
 	return {
 		shoppingList

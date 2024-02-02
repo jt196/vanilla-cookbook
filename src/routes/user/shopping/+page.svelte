@@ -201,12 +201,12 @@
 		{/if}
 	</button>
 
-	<button disabled={purchasedItemCount === 0} on:click={() => (isDeleteDialogOpen = true)}>
-		<Delete width="20px" fill="white" />
-	</button>
-
 	<button disabled={uncheckedItemCount === 0} on:click={() => (isCheckAllDialogOpen = true)}>
 		<CheckAll width="20px" fill="white" />
+	</button>
+
+	<button disabled={purchasedItemCount === 0} on:click={() => (isDeleteDialogOpen = true)}>
+		<Delete width="20px" fill="white" />
 	</button>
 </div>
 <div class="add-ingredient">
@@ -259,6 +259,15 @@
 						<button on:click={handleDeleteItem(item.uid)}
 							><Delete width="20px" fill="white" /></button>
 					</div>
+				</div>
+				<div class={`recipe-name ${showHidden ? '' : 'hidden'}`}>
+					{#if item.recipe && item.recipe.name}
+						<span>
+							{item.recipe.name}
+						</span>
+					{:else}
+						<span class="empty-space" />
+					{/if}
 				</div>
 			</div>
 		{/if}
@@ -320,12 +329,22 @@
 		display: flex;
 		align-items: center;
 	}
-	.unit-quantity {
+	.unit-quantity,
+	.recipe-name {
 		font-size: 0.8rem;
 		margin: 0;
 		padding: 12px 0 0 44px;
 
 		color: var(--pico-muted-color);
+	}
+	.recipe-name {
+		font-weight: lighter;
+	}
+	.empty-space {
+		display: inline-block; /* Makes it occupy space */
+		width: 20px; /* Adjust the width as needed */
+		height: 1em; /* Adjust the height as needed */
+		/* You can also set other properties like background color, margin, padding, etc. */
 	}
 	.hidden {
 		visibility: hidden;
