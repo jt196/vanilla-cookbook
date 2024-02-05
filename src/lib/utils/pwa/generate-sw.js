@@ -1,8 +1,8 @@
 import { generateSW } from 'workbox-build'
 
 const workboxConfig = {
-	globDirectory: 'build/',
-	globPatterns: ['**/*.{html,js,css,svg,png,jpg}'],
+	globDirectory: 'build/client',
+	globPatterns: ['**/*.{html,css,js,svg,png,jpg}'],
 	swDest: 'static/service-worker.js',
 	skipWaiting: true,
 	clientsClaim: true,

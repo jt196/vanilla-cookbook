@@ -44,3 +44,5 @@ replace_urlpattern() {
 # Call the function for each JS file (excluding .map files)
 replace_urlpattern "build/client/service-worker.js"
 replace_urlpattern ".svelte-kit/output/client/service-worker.js"
+replace_urlpattern "build/client/service-worker.js.map"
+replace_urlpattern ".svelte-kit/output/client/service-worker.js.map"
