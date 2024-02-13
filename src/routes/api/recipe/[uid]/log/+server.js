@@ -52,7 +52,6 @@ export async function GET({ params, locals }) {
 	const session = await locals.auth.validate()
 	const user = session.user
 	const { uid } = params
-	console.log('🚀 ~ GET ~ uid:', uid)
 
 	if (!session || !user) {
 		return new Response('User not authenticated!', {
@@ -98,7 +97,6 @@ export async function GET({ params, locals }) {
 				cooked: 'desc'
 			}
 		})
-		console.log('🚀 ~ GET ~ recipeLogs:', recipeLogs)
 		return new Response(JSON.stringify(recipeLogs), {
 			status: 200,
 			headers: {
