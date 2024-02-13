@@ -141,6 +141,22 @@ describe('Filter functions', () => {
 			const result = scaleNumbersInString('The recipe needs 10 apples and 2.5 cups of water', 2)
 			expect(result).toBe('The recipe needs 20 apples and 5 cups of water')
 		})
+		it('should scale unicode fractions in string', () => {
+			const result = scaleNumbersInString('makes 1½ cups', 1)
+			expect(result).toBe('makes 1.5 cups')
+		})
+		it('should scale unicode fractions lower than 1 in string', () => {
+			const result = scaleNumbersInString('makes ½ cups', 1)
+			expect(result).toBe('makes 0.5 cups')
+		})
+		it('should scale unicode fractions no space in string', () => {
+			const result = scaleNumbersInString('makes 1 ½ cups', 1)
+			expect(result).toBe('makes 1.5 cups')
+		})
+		it('should scale simple fractions in string', () => {
+			const result = scaleNumbersInString('makes 1 1/2 cups', 1)
+			expect(result).toBe('makes 1.5 cups')
+		})
 	})
 
 	describe('decimalToFraction', () => {

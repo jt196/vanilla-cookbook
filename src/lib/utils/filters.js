@@ -111,17 +111,77 @@ export function sanitizeFilename(filename) {
 }
 
 /**
- * Scales numbers within a string by a specified factor.
+ * Scales numbers within a string by a specified factor. This includes whole numbers, fractions, Unicode fractions,
+ * decimal numbers, and combinations of whole numbers and fractions (with or without space).
  *
  * @param {string} str - The string with numbers to scale.
  * @param {number} scale - The factor to scale numbers by.
  * @returns {string} - The string with scaled numbers.
  */
 export function scaleNumbersInString(str, scale) {
-	return str.replace(/\d+(\.\d+)?/g, (match) => {
-		const scaledNumber = parseFloat(match) * scale
-		return scaledNumber.toString()
+	const fractionMap = {
+		'½': '1/2',
+		'⅓': '1/3',
+		'⅔': '2/3',
+		'¼': '1/4',
+		'¾': '3/4',
+		'⅕': '1/5',
+		'⅖': '2/5',
+		'⅗': '3/5',
+		'⅘': '4/5',
+		'⅙': '1/6',
+		'⅚': '5/6',
+		'⅐': '1/7',
+		'⅛': '1/8',
+		'⅜': '3/8',
+		'⅝': '5/8',
+		'⅞': '7/8',
+		'⅑': '1/9',
+		'⅒': '1/10'
+	}
+
+	// Insert space between a whole number and a following Unicode fraction
+	Object.keys(fractionMap).forEach((fraction) => {
+		const regex = new RegExp(`(\\d)(${fraction})`, 'g')
+		str = str.replace(regex, `$1 $2`)
 	})
+
+	// Convert Unicode fractions to numeric fractions
+	for (const [unicodeFraction, numericFraction] of Object.entries(fractionMap)) {
+		const regex = new RegExp(unicodeFraction, 'g')
+		str = str.replace(regex, numericFraction)
+	}
+
+	// Scale numbers, numeric fractions, and combinations of whole numbers and fractions
+	return str.replace(/(\d+\s*\d*\/\d+|\d+(\.\d+)?)/g, (match) => {
+		const decimal = convertToDecimal(match.trim()) // Convert to decimal, handling whole numbers and fractions
+		const scaledNumber = decimal * scale
+		// Format scaled number to ensure consistent decimal places
+		return scaledNumber % 1 === 0
+			? String(scaledNumber)
+			: scaledNumber.toFixed(2).replace(/\.?0+$/, '')
+	})
+}
+
+/**
+ * Converts a fraction string or a whole number plus fraction string to a decimal.
+ * @param {string} str - The string to convert, which can be a simple fraction or a whole number plus fraction.
+ * @returns {number} The decimal equivalent of the input.
+ */
+function convertToDecimal(str) {
+	const parts = str.split(' ')
+	let decimal = 0
+
+	parts.forEach((part) => {
+		if (part.includes('/')) {
+			const [numerator, denominator] = part.split('/').map(Number)
+			decimal += numerator / denominator // Add the fraction's decimal value
+		} else {
+			decimal += parseFloat(part) // Add the whole number or decimal
+		}
+	})
+
+	return decimal
 }
 
 /**
