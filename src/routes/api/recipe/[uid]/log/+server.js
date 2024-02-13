@@ -19,6 +19,7 @@ export async function POST({ locals, params }) {
 		recipeLog = await prisma.RecipeLog.create({
 			data: {
 				recipeUid: uid,
+				userId: user.userId,
 				cooked: new Date()
 			}
 		})
