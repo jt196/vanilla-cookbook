@@ -32,6 +32,7 @@ export function ingredientProcess(ingredientArray) {
 
 	ingredientArray.forEach((ingredientString) => {
 		const ingredientStr = sanitizeIngredient(ingredientString)
+		console.log('🚀 ~ ingredientArray.forEach ~ ingredientStr:', ingredientStr)
 		try {
 			const ingredientObject = parse(ingredientStr, 'eng')
 			if (!ingredientObject) {
@@ -54,6 +55,7 @@ export function ingredientProcess(ingredientArray) {
 			})
 		}
 	})
+	console.log('🚀 ~ ingredientProcess ~ parsedIngredients:', parsedIngredients)
 
 	return parsedIngredients
 }
@@ -88,18 +90,22 @@ export function sanitizeIngredient(str) {
 		// Add more fractions if needed
 	}
 
+	// Ensure there's a space before fractions not at the start
+	str = str.replace(/(?<!^)(?=[½⅓⅔¼¾⅕⅖⅗⅘⅙⅚⅐⅛⅜⅝⅞⅑⅒])/g, ' ')
+
 	for (let [fraction, ascii] of Object.entries(fractionMap)) {
 		const regex = new RegExp(fraction, 'g')
 		str = str.replace(regex, ascii)
 	}
 
-	str = str.replace('"', '')
+	str = str.replace(/"/g, '')
 	str = str.replace(/\\/g, '\\\\')
 	str = str.replace(/"/g, '\\"')
 	// Replace any hyphens or dashes at the beginning
 	str = str.replace(/^\s*[-–—]\s*/, '')
 
-	return str
+	// Trim any leading or trailing spaces
+	return str.trim()
 }
 
 export function sanitizeFilename(filename) {
