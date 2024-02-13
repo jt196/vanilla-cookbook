@@ -42,10 +42,13 @@ export const load = async ({ params, locals, fetch, url }) => {
 	let viewMode = userId !== recipe.userId
 
 	let recipeCategories = await fetch(`${url.origin}/api/recipe/categories/${params.recipeId}`)
+	let recipeLogs = await fetch(`${url.origin}/api/recipe/${params.recipeId}/log`)
 	const categories = await recipeCategories.json()
+	const logs = await recipeLogs.json()
 
 	return {
 		recipe,
+		logs,
 		categories,
 		viewMode,
 		viewUser

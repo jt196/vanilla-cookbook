@@ -32,7 +32,6 @@ export function ingredientProcess(ingredientArray) {
 
 	ingredientArray.forEach((ingredientString) => {
 		const ingredientStr = sanitizeIngredient(ingredientString)
-		console.log('🚀 ~ ingredientArray.forEach ~ ingredientStr:', ingredientStr)
 		try {
 			const ingredientObject = parse(ingredientStr, 'eng')
 			if (!ingredientObject) {
@@ -55,7 +54,6 @@ export function ingredientProcess(ingredientArray) {
 			})
 		}
 	})
-	console.log('🚀 ~ ingredientProcess ~ parsedIngredients:', parsedIngredients)
 
 	return parsedIngredients
 }

@@ -359,3 +359,26 @@ export async function deleteShoppingListItem(uid) {
 		throw error // Rethrow the error if you want to handle it in the calling component
 	}
 }
+
+export async function addRecipeLog(recipeUid) {
+	console.log('🚀 ~ addRecipeLog ~ recipeUid:', recipeUid)
+	try {
+		const response = await fetch(`/api/recipe/${recipeUid}/log`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		})
+
+		if (response.ok) {
+			const newRecipeLog = await response.json()
+			return { success: true, data: newRecipeLog }
+		} else {
+			const errorData = await response.json()
+			throw new Error(errorData.message || 'Error creating recipe log')
+		}
+	} catch (error) {
+		console.error('Error creating recipe log:', error.message)
+		return { success: false, error: error.message }
+	}
+}

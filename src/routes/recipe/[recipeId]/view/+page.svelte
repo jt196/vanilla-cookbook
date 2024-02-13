@@ -13,11 +13,14 @@
 	import RecipeViewDirections from '$lib/components/RecipeViewDirections.svelte'
 	import RecipeViewNotes from '$lib/components/RecipeViewNotes.svelte'
 	import List from '$lib/components/svg/List.svelte'
+	import RecipeViewLogs from '$lib/components/RecipeViewLogs.svelte'
+	import FeedbackMessage from '$lib/components/FeedbackMessage.svelte'
+	import { sortByDate } from '$lib/utils/sorting.js'
 
 	export let data
 	let isLoading = true
 
-	let { recipe, categories, viewUser } = data
+	let { recipe, categories, viewUser, logs } = data
 	let ingredients = []
 	let ingredientsArray = []
 
@@ -29,6 +32,8 @@
 	let notesLines = []
 	let measurementSystem = {}
 	let convertedIngredients = {}
+
+	let recipeFeedback = ''
 
 	let selectedSystem = viewUser?.units
 
@@ -95,6 +100,16 @@
 		isMounted = true
 	})
 
+	function updateLogs(newLog, response) {
+		if (response.success) {
+			recipeFeedback = 'You cooked this recipe!'
+		} else {
+			recipeFeedback = 'Failed to add to cooked log!'
+		}
+		logs = [...logs, newLog]
+		logs = sortByDate(logs, 'cooked', 'desc')
+	}
+
 	let isLatest = true
 
 	const sanitizeContent = async () => {
@@ -148,9 +163,10 @@
 	<div class="home-button">
 		<button data-tooltip="Go to recipe list"
 			><a href="/"><List width="30px" height="30px" /></a></button>
+		<FeedbackMessage message={recipeFeedback} />
 	</div>
 	{#if recipe.userId === viewUser.userId}
-		<RecipeViewButtons {recipe} />
+		<RecipeViewButtons {recipe} {updateLogs} />
 	{/if}
 </div>
 
@@ -181,6 +197,9 @@
 		</div>
 	</div>
 	<RecipeViewNotes {notesLines} {sanitizedNotes} />
+	{#if logs.length > 0}
+		<RecipeViewLogs {logs} />
+	{/if}
 {/if}
 
 <RecipeViewOtherPhotos {otherPhotos} recipeName={recipe.name} />
@@ -217,5 +236,9 @@
 
 	#recipe-buttons .home-button {
 		margin-right: auto; /* this pushes everything else to the right */
+		display: flex;
+		gap: 2rem;
+		justify-content: center;
+		align-items: center;
 	}
 </style>

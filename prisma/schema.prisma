@@ -51,6 +51,7 @@ model Recipe {
     nutritional_info   String?
     categories         RecipeCategory[]   @relation("RecipeToRecipeCategory")
     photos             RecipePhoto[]
+    log                RecipeLog[]
     shopping_list_item ShoppingListItem[]
 }
 
@@ -62,6 +63,13 @@ model RecipePhoto {
     isMain    Boolean @default(false)
     notes     String?
     recipe    Recipe  @relation(fields: [recipeUid], references: [uid], onDelete: Cascade)
+}
+
+model RecipeLog {
+    id        String   @id @default(uuid())
+    recipeUid String
+    cooked    DateTime @default(now())
+    recipe    Recipe   @relation(fields: [recipeUid], references: [uid], onDelete: Cascade)
 }
 
 model Category {

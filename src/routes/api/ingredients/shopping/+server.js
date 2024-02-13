@@ -53,7 +53,6 @@ export async function POST({ request, locals }) {
 export const GET = async ({ locals }) => {
 	const session = await locals.auth.validate()
 	const user = session.user
-	console.log('🚀 ~ GET ~ user:', user)
 
 	if (!session || !user) {
 		return new Response(JSON.stringify({ error: 'User not authenticated.' }), {
