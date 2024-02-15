@@ -3,7 +3,7 @@ import { prisma } from '$lib/server/prisma'
 // In your API route file, add a new function:
 export async function DELETE({ locals, params }) {
 	const session = await locals.auth.validate()
-	const user = session.user
+	const user = session?.user
 	const { uid } = params
 
 	if (!session || !user) {

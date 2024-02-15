@@ -197,7 +197,7 @@
 		</div>
 	</div>
 	<RecipeViewNotes {notesLines} {sanitizedNotes} />
-	{#if logs.length > 0}
+	{#if logs && logs.length > 0}
 		<RecipeViewLogs {logs} />
 	{/if}
 {/if}

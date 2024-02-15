@@ -8,7 +8,7 @@ import { fileTypeFromBuffer } from 'file-type'
 // Handle delete request
 export async function DELETE({ params, locals }) {
 	const session = await locals.auth.validate()
-	const user = session.user
+	const user = session?.user
 	const { uid } = params
 
 	const recipe = await prisma.recipe.findUniqueOrThrow({
@@ -76,7 +76,7 @@ export async function DELETE({ params, locals }) {
 
 export async function PUT({ request, locals, params }) {
 	const session = await locals.auth.validate()
-	const user = session.user
+	const user = session?.user
 	const formData = await request.formData()
 	// Retrieve and parse the 'recipe' field from the FormData
 	const recipeData = JSON.parse(formData.get('recipe'))
@@ -206,7 +206,7 @@ export async function PUT({ request, locals, params }) {
 // Handle GET request
 export async function GET({ params, locals }) {
 	const session = await locals.auth.validate()
-	const user = session.user
+	const user = session?.user
 	const { uid } = params
 
 	try {

@@ -2,7 +2,7 @@ import { prisma } from '$lib/server/prisma'
 
 export async function PUT({ request, locals }) {
 	const session = await locals.auth.validate()
-	const user = session.user
+	const user = session?.user
 
 	// Parse the request data
 	const bodyText = await request.text()

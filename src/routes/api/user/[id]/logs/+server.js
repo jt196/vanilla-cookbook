@@ -3,7 +3,7 @@ import { prisma } from '$lib/server/prisma'
 export async function GET({ params, locals }) {
 	// Validate the requesting user's session and get their userId
 	const session = await locals.auth.validate()
-	const user = session.user
+	const user = session?.user
 
 	if (!session || !user) {
 		console.log('User Not Authenticated!')

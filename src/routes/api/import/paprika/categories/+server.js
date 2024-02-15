@@ -9,7 +9,7 @@ import {
 // Grab the Paprika categories from their API
 export async function POST({ request, locals }) {
 	const session = await locals.auth.validate()
-	const user = session.user
+	const user = session?.user
 	if (!session || !user) {
 		return new Response(JSON.stringify({ error: 'User not authenticated.' }), {
 			status: 401,
@@ -43,7 +43,7 @@ export async function POST({ request, locals }) {
 export async function GET({ locals }) {
 	// Validate the logged-in user from the Lucia locals object
 	const session = await locals.auth.validate()
-	const user = session.user
+	const user = session?.user
 	if (!session || !user) {
 		return new Response(JSON.stringify({ error: 'User not authenticated or wrong user.' }), {
 			status: 403,
@@ -87,7 +87,7 @@ export async function GET({ locals }) {
 
 export async function PUT({ locals }) {
 	const session = await locals.auth.validate()
-	const user = session.user
+	const user = session?.user
 
 	if (!session || !user) {
 		return new Response(JSON.stringify({ error: 'User not authenticated or wrong user.' }), {

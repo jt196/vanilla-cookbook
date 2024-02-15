@@ -3,7 +3,7 @@ import { prisma } from '$lib/server/prisma'
 // In your API route file, add a new function:
 export async function DELETE({ locals }) {
 	const session = await locals.auth.validate()
-	const user = session.user
+	const user = session?.user
 
 	if (!session || !user) {
 		return new Response(JSON.stringify({ error: 'User not authenticated.' }), {
@@ -37,7 +37,7 @@ export async function DELETE({ locals }) {
 
 export async function PATCH({ locals }) {
 	const session = await locals.auth.validate()
-	const user = session.user
+	const user = session?.user
 
 	if (!session || !user) {
 		return new Response(JSON.stringify({ error: 'User not authenticated.' }), {

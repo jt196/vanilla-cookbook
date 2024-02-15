@@ -3,7 +3,7 @@ import { validatePassword } from '$lib/utils/security.js'
 
 export const POST = async ({ request, locals }) => {
 	const session = await locals.auth.validate()
-	const user = session.user
+	const user = session?.user
 	const bodyText = await request.text()
 	const userData = JSON.parse(bodyText)
 

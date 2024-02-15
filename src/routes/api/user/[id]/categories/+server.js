@@ -5,7 +5,7 @@ import { sortByNameRecursive } from '$lib/utils/sorting.js'
 // Handle GET request
 export async function GET({ params, locals }) {
 	const session = await locals.auth.validate()
-	const user = session.user
+	const user = session?.user
 	const { id } = params
 	if (!session || !user) {
 		return new Response(JSON.stringify({ error: 'User not authenticated or not authorized.' }), {

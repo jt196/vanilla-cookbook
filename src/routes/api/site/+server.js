@@ -4,7 +4,7 @@ const JSON_HEADERS = { 'Content-Type': 'application/json' }
 
 export const POST = async ({ request, locals }) => {
 	const session = await locals.auth.validate()
-	const user = session.user
+	const user = session?.user
 	const siteData = await request.json()
 	if (!session || !user) {
 		return new Response('User not authenticated!', { status: 401, headers: JSON_HEADERS })

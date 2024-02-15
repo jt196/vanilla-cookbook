@@ -9,7 +9,7 @@ import { createRecipePhotoEntry, removeRecipePhotoEntry } from '$lib/utils/api'
 
 export async function POST({ request, locals, url }) {
 	const session = await locals.auth.validate()
-	const user = session.user
+	const user = session?.user
 
 	if (!session || !user) {
 		console.log('User not authenticated!')

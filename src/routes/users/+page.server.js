@@ -4,7 +4,7 @@
  */
 export const load = async ({ url, fetch, locals }) => {
 	const session = await locals.auth.validate()
-	const user = session.user
+	const user = session?.user
 	let viewingUser
 	if (session || user) {
 		viewingUser = user

@@ -3,7 +3,7 @@ import { prisma } from '$lib/server/prisma'
 // Create a new category
 export const POST = async ({ request, locals }) => {
 	const session = await locals.auth.validate()
-	const user = session.user
+	const user = session?.user
 	const bodyText = await request.text()
 	const categoryData = JSON.parse(bodyText)
 

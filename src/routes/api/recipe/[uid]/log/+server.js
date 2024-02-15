@@ -3,7 +3,7 @@ import { prisma } from '$lib/server/prisma'
 // Handle recipe log creation
 export async function POST({ locals, params }) {
 	const session = await locals.auth.validate()
-	const user = session.user
+	const user = session?.user
 
 	const { uid } = params
 	let recipeLog
@@ -51,17 +51,8 @@ export async function POST({ locals, params }) {
 // Handle GET request
 export async function GET({ params, locals }) {
 	const session = await locals.auth.validate()
-	const user = session.user
+	const user = session?.user
 	const { uid } = params
-
-	if (!session || !user) {
-		return new Response('User not authenticated!', {
-			status: 401,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
-	}
 
 	try {
 		const recipe = await prisma.recipe.findUnique({
@@ -69,6 +60,14 @@ export async function GET({ params, locals }) {
 				uid: uid
 			}
 		})
+		if (!recipe.is_public && (!session || !user)) {
+			return new Response('User not authenticated!', {
+				status: 401,
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			})
+		}
 		if (recipe.userId !== user.userId) {
 			return new Response(
 				JSON.stringify({ error: 'Recipe does not belong to authenticated user.' }),

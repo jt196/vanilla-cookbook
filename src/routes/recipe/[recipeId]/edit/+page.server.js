@@ -11,7 +11,7 @@
  */
 export const load = async ({ url, params, locals, fetch }) => {
 	const session = await locals.auth.validate()
-	const user = session.user
+	const user = session?.user
 
 	let recipeData = await fetch(`${url.origin}/api/recipe/${params.recipeId}`)
 	const recipe = await recipeData.json()

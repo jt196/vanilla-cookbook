@@ -4,7 +4,7 @@ import { validatePassword } from '$lib/utils/security.js'
 
 export const PUT = async ({ request, locals, params }) => {
 	const session = await locals.auth.validate()
-	const user = session.user
+	const user = session?.user
 	const bodyText = await request.text()
 	const userData = JSON.parse(bodyText)
 	const { id } = params
@@ -191,7 +191,7 @@ export async function DELETE({ params, locals }) {
 	})
 
 	const session = await locals.auth.validate()
-	const user = session.user
+	const user = session?.user
 
 	if (!session || !user) {
 		console.log('User Not Authenticated!')
@@ -257,7 +257,7 @@ export async function GET({ locals, params }) {
 		where: { id: id }
 	})
 	const session = await locals.auth.validate()
-	const user = session.user
+	const user = session?.user
 	if (!userProfile.publicProfile && (!session || !user)) {
 		console.log('Not public profile, or no session or user!')
 		return new Response('User not authenticated!', {

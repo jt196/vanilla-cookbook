@@ -4,7 +4,7 @@ import { buildHierarchy } from '$lib/utils/categories.js'
 // Handle delete request
 export async function DELETE({ params, locals }) {
 	const session = await locals.auth.validate()
-	const user = session.user
+	const user = session?.user
 	const { uid } = params
 
 	if (!session || !user) {
@@ -58,7 +58,7 @@ export async function DELETE({ params, locals }) {
 // Handle post request to update an existing category
 export const POST = async ({ request, locals, params }) => {
 	const session = await locals.auth.validate()
-	const user = session.user
+	const user = session?.user
 	const bodyText = await request.text()
 	const categoryData = JSON.parse(bodyText)
 	const { uid } = params
@@ -125,7 +125,7 @@ export const POST = async ({ request, locals, params }) => {
 // Handle GET request
 export async function GET({ params, locals }) {
 	const session = await locals.auth.validate()
-	const user = session.user
+	const user = session?.user
 	const { uid } = params
 
 	const recipe = await prisma.recipe.findFirst({

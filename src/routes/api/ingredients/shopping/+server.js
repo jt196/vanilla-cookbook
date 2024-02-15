@@ -2,7 +2,7 @@ import { prisma } from '$lib/server/prisma'
 
 export async function POST({ request, locals }) {
 	const session = await locals.auth.validate()
-	const user = session.user
+	const user = session?.user
 	console.log('🚀 ~ POST ~ user:', user)
 
 	if (!session || !user) {
@@ -52,7 +52,7 @@ export async function POST({ request, locals }) {
 
 export const GET = async ({ locals }) => {
 	const session = await locals.auth.validate()
-	const user = session.user
+	const user = session?.user
 
 	if (!session || !user) {
 		return new Response(JSON.stringify({ error: 'User not authenticated.' }), {
@@ -99,7 +99,7 @@ export const GET = async ({ locals }) => {
 
 export async function PATCH({ request, locals }) {
 	const session = await locals.auth.validate()
-	const user = session.user
+	const user = session?.user
 
 	if (!session || !user) {
 		return new Response(JSON.stringify({ error: 'User not authenticated.' }), {
