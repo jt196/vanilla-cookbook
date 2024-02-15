@@ -35,8 +35,8 @@ export async function GET({ params, locals }) {
 				recipeUid: true,
 				recipe: {
 					select: {
-						name: true
-						// And any more fields you want here
+						name: true,
+						uid: true
 					}
 				}
 			}

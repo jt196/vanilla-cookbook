@@ -13,6 +13,7 @@
 	import Users from '$lib/components/svg/Users.svelte'
 	import SiteIcons from '$lib/components/SiteIcons.svelte'
 	import Shopping from '$lib/components/svg/Shopping.svelte'
+	import Calendar from '$lib/components/svg/Calendar.svelte'
 	/**
 	 * Data for the page, structure defined by the `PageData` type.
 	 * @type {PageData}
@@ -50,6 +51,7 @@
 		<ul>
 			<form method="POST">
 				<li><a href="/user/shopping"><Shopping width="25px" /></a></li>
+				<li><a href="/user/calendar"><Calendar width="25px" /></a></li>
 				<li><a href="/users"><Users width="25px" /></a></li>
 				{#if !user}
 					<a href="/login" role="button">Login</a>

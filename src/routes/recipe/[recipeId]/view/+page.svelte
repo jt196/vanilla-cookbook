@@ -21,6 +21,7 @@
 	let isLoading = true
 
 	let { recipe, categories, viewUser, logs } = data
+	console.log('🚀 ~ logs:', logs)
 	let ingredients = []
 	let ingredientsArray = []
 
