@@ -382,3 +382,46 @@ export async function addRecipeLog(recipeUid) {
 		return { success: false, error: error.message }
 	}
 }
+
+export async function updateEventInBackend(id, start, end, userId) {
+	try {
+		// Replace with your actual API call to update the event
+		const response = await fetch(`/api/log/${id}`, {
+			method: 'PUT',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ start, end, userId })
+		})
+
+		if (!response.ok) {
+			throw new Error('Network response was not ok')
+		}
+
+		// Handle success - maybe refresh the calendar or show a notification
+	} catch (error) {
+		console.error('Error updating event:', error)
+		// Handle error - maybe show an error notification
+	}
+}
+
+export async function deleteEventInBackend(id) {
+	try {
+		// Replace with your actual API call to update the event
+		const response = await fetch(`/api/log/${id}`, {
+			method: 'DELETE',
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		})
+
+		if (!response.ok) {
+			throw new Error('Network response was not ok')
+		}
+
+		// Handle success - maybe refresh the calendar or show a notification
+	} catch (error) {
+		console.error('Error deleting event:', error)
+		// Handle error - maybe show an error notification
+	}
+}

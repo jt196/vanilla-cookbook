@@ -16,11 +16,14 @@ export async function POST({ locals, params }) {
 		})
 	}
 	try {
+		const cookedTime = new Date() // Or any other time
+		const cookedEndTime = new Date(cookedTime.getTime() + 180 * 60 * 1000)
 		recipeLog = await prisma.RecipeLog.create({
 			data: {
 				recipeUid: uid,
 				userId: user.userId,
-				cooked: new Date()
+				cooked: cookedTime,
+				cookedEnd: cookedEndTime
 			}
 		})
 	} catch (err) {

@@ -66,12 +66,13 @@ model RecipePhoto {
 }
 
 model RecipeLog {
-    id        String   @id @default(uuid())
+    id        String    @id @default(uuid())
     recipeUid String
     userId    String // New field to directly link RecipeLog to an AuthUser
-    cooked    DateTime @default(now())
-    recipe    Recipe   @relation(fields: [recipeUid], references: [uid], onDelete: Cascade)
-    user      AuthUser @relation(fields: [userId], references: [id]) // New relation to AuthUser
+    cooked    DateTime  @default(now())
+    cookedEnd DateTime?
+    recipe    Recipe    @relation(fields: [recipeUid], references: [uid], onDelete: Cascade)
+    user      AuthUser  @relation(fields: [userId], references: [id]) // New relation to AuthUser
 }
 
 model Category {

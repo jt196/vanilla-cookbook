@@ -1,0 +1,35 @@
+.ec {
+	height: 640px;
+}
+.ec.ec-day-grid {
+	height: 400px;
+}
+@media (min-width: 576px) {
+	.ec {
+		height: 700px;
+	}
+	.ec.ec-day-grid {
+		height: 500px;
+	}
+}
+@media (min-width: 992px) {
+	.ec {
+		height: 800px;
+	}
+	.ec.ec-day-grid {
+		height: 700px;
+	}
+}
+@media (min-width: 1200px) {
+	.ec.ec-day-grid {
+		height: 800px;
+	}
+}
+.delete-btn {
+	padding: 0.2rem;
+	margin: 0;
+}
+
+.ec-event-title a {
+	color: var(--color);
+}

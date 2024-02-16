@@ -12,7 +12,6 @@ export const load = async ({ url, fetch, locals }) => {
 	}
 	const logResponse = await fetch(`${url.origin}/api/user/${user.userId}/logs`)
 	const logs = await logResponse.json()
-	console.log('🚀 ~ load ~ logs:', logs)
 
 	return {
 		logs

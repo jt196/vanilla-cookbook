@@ -32,6 +32,7 @@ export async function GET({ params, locals }) {
 			select: {
 				id: true,
 				cooked: true,
+				cookedEnd: true,
 				recipeUid: true,
 				recipe: {
 					select: {
