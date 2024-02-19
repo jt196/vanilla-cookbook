@@ -7,3 +7,5 @@ export const sortState = writable({
 
 export const searchString = writable('')
 export const searchKey = writable('name')
+export const cookedFilter = writable('')
+export const favouriteFilter = writable('')

@@ -12,7 +12,7 @@
 	import CategoryTree from '$lib/components/CategoryTree.svelte'
 	import { goto } from '$app/navigation'
 	import { page } from '$app/stores'
-	import { sortState, searchString, searchKey } from '$lib/stores'
+	import { sortState, searchString, searchKey, cookedFilter, favouriteFilter } from '$lib/stores'
 
 	export let data
 	const { user } = data
@@ -45,7 +45,6 @@
 		const deletedUid = event.detail
 		filteredRecipes = filteredRecipes.filter((recipe) => recipe.uid !== deletedUid)
 	}
-
 	$: {
 		let sortedRecipes = sortRecipesByKey(
 			data.recipes,
@@ -69,6 +68,20 @@
 					)
 				)
 			}
+		}
+
+		// Filtering by cooked status
+		if ($cookedFilter) {
+			console.log('🚀 ~ cookedFilter:', cookedFilter)
+			categoryFilteredRecipes = categoryFilteredRecipes.filter((recipe) => recipe.log.length > 0)
+		}
+
+		// Filtering by favourite status
+		if ($favouriteFilter) {
+			console.log('🚀 ~ favouriteFilter:', favouriteFilter)
+			categoryFilteredRecipes = categoryFilteredRecipes.filter(
+				(recipe) => recipe.on_favorites === true
+			)
 		}
 
 		filteredRecipes = filterSearch($searchString, categoryFilteredRecipes, $searchKey)

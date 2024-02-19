@@ -10,7 +10,6 @@
 	import { deleteRecipeById } from '$lib/utils/crud'
 
 	export let item
-	console.log('🚀 ~ item:', item)
 	export let data
 
 	const dispatch = createEventDispatcher()
@@ -100,12 +99,12 @@
 		gap: 1rem; // Spacing between grid items
 		align-items: center;
 		.log-badge {
-			background-color: var(--pico-ins-color);
-			border-radius: 2px;
-			color: white;
+			background-color: var(--pico-primary);
+			border-radius: 6px;
+			color: var(--pico-primary-inverse);
 
-			padding: 1px 3px;
-			font-size: 10px;
+			padding: 3px 6px;
+			font-size: 12px;
 
 			position: absolute; /* Position the badge within the relatively positioned button */
 			top: 0;
