@@ -45,6 +45,21 @@
 		const deletedUid = event.detail
 		filteredRecipes = filteredRecipes.filter((recipe) => recipe.uid !== deletedUid)
 	}
+
+	function handleRecipeFavourited(event) {
+		const favouritedUid = event.detail
+
+		// Map through the filteredRecipes array to update the favourite status of the matching recipe
+		data.recipes = data.recipes.map((recipe) => {
+			if (recipe.uid === favouritedUid) {
+				console.log('🚀 ~ filteredRecipes=filteredRecipes.map ~ recipe.uid:', recipe.uid)
+				console.log('🚀 ~ filteredRecipes=filteredRecipes.map ~ recipe before:', recipe)
+				// Toggle the on_favorites property of the recipe
+				return { ...recipe, on_favorites: !recipe.on_favorites }
+			}
+			return recipe
+		})
+	}
 	$: {
 		let sortedRecipes = sortRecipesByKey(
 			data.recipes,
@@ -182,7 +197,11 @@
 					><New width="30px" height="30px" /></a>
 			</div>
 			<RecipeFilter on:sort={handleSort} />
-			<RecipeList {filteredRecipes} {data} on:recipeDeleted={handleRecipeDeleted} />
+			<RecipeList
+				{filteredRecipes}
+				{data}
+				on:recipeDeleted={handleRecipeDeleted}
+				on:recipeFavourited={handleRecipeFavourited} />
 		</div>
 	</div>
 </div>

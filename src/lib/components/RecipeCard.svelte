@@ -3,11 +3,12 @@
 	import { createEventDispatcher } from 'svelte'
 
 	import FoodBowl from '$lib/components/svg/FoodBowl.svelte'
+	import Favourite from '$lib/components/svg/Favourite.svelte'
 	import { localDateAndTime } from '$lib/utils/dateTime'
 	import StarRating from '$lib/components/StarRating.svelte'
 	import Delete from '$lib/components/svg/Delete.svelte'
 	import Edit from '$lib/components/svg/Edit.svelte'
-	import { deleteRecipeById } from '$lib/utils/crud'
+	import { addRecipeToFavourites, deleteRecipeById } from '$lib/utils/crud'
 
 	export let item
 	export let data
@@ -24,18 +25,41 @@
 			dispatch('recipeDeleted', uid) // Emit the custom event
 		}
 	}
-	// TODO: #96 Move to using an uploads folder instead of static/recipe_photos
+
+	async function handleFavourite(uid, event) {
+		// Preventing the click through to the item view page
+		event.preventDefault()
+		// Stop the click event from bubbling up to the parent anchor
+		event.stopPropagation()
+		console.log('Handle favourites button clicked for uid: ' + uid)
+		const success = await addRecipeToFavourites(uid)
+		if (success) {
+			console.log('Recipe added to favourites!')
+			dispatch('recipeFavourited', uid)
+		}
+	}
 </script>
 
 <a href="/recipe/{item.uid}/view/">
 	<article>
 		<div class="grid">
-			{#if item.log && item.log.length > 0}
-				<span
-					data-tooltip="This recipe has been cooked {item.log.length} times"
-					data-placement="right"
-					class="log-badge">{item.log.length}</span>
-			{/if}
+			<div class="badges">
+				<div class="favourite">
+					<button on:click={(event) => handleFavourite(item.uid, event)}>
+						<Favourite
+							favourite={item.on_favorites}
+							width="15px"
+							height="15px"
+							fill="var(--pico-primary-inverse)" />
+					</button>
+				</div>
+				{#if item.log && item.log.length > 0}
+					<span
+						data-tooltip="This recipe has been cooked {item.log.length} times"
+						data-placement="right"
+						class="log-badge">{item.log.length}</span>
+				{/if}
+			</div>
 			{#if item.photos && item.photos.length > 0}
 				<img
 					class="recipe-thumbnail"
@@ -98,20 +122,41 @@
 		grid-template-columns: 100px 3fr 1fr; // 100px for the image, 3 parts for the recipe card, and 1 part for the buttons
 		gap: 1rem; // Spacing between grid items
 		align-items: center;
-		.log-badge {
-			background-color: var(--pico-primary);
-			border-radius: 6px;
-			color: var(--pico-primary-inverse);
-
-			padding: 3px 6px;
-			font-size: 12px;
+		.badges {
+			display: flex;
+			gap: 0.1rem;
+			height: 25px;
+			justify-content: center;
+			align-items: center;
 
 			position: absolute; /* Position the badge within the relatively positioned button */
 			top: 0;
-			right: 99%;
+			left: -1%;
 			@media (max-width: 767px) {
 				top: 2%;
-				right: 98%;
+				left: 0%;
+			}
+			.log-badge {
+				background: var(--pico-primary);
+				border-radius: 6px;
+				color: var(--pico-primary-inverse);
+
+				padding: 3px 6px;
+				font-size: 12px;
+			}
+			.favourite button {
+				align-items: center;
+				justify-content: center;
+				border: none;
+				z-index: 2;
+				display: flex;
+				padding: 0;
+				margin: 0;
+				border-radius: 6px;
+				height: 25px;
+				width: 25px;
+				align-items: center;
+				background: var(--pico-del-color);
 			}
 		}
 	}

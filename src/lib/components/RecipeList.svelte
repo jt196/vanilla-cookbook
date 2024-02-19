@@ -16,7 +16,11 @@
 <div class="container">
 	{#if useVirtualList}
 		<VirtualList items={filteredRecipes} bind:start bind:end let:item>
-			<RecipeCard {item} {data} on:recipeDeleted={(e) => dispatch('recipeDeleted', e.detail)} />
+			<RecipeCard
+				{item}
+				{data}
+				on:recipeDeleted={(e) => dispatch('recipeDeleted', e.detail)}
+				on:recipeFavourited={(e) => dispatch('recipeFavourited', e.detail)} />
 		</VirtualList>
 		<span class="list-indicator">
 			<p>showing items {start}-{end}</p>
@@ -24,7 +28,11 @@
 	{:else}
 		<!-- for testing purposes only -->
 		{#each filteredRecipes as item (item.uid)}
-			<RecipeCard {item} {data} on:recipeDeleted={(e) => dispatch('recipeDeleted', e.detail)} />
+			<RecipeCard
+				{item}
+				{data}
+				on:recipeDeleted={(e) => dispatch('recipeDeleted', e.detail)}
+				on:recipeFavourited={(e) => dispatch('recipeFavourited', e.detail)} />
 		{/each}
 	{/if}
 </div>

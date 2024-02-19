@@ -22,6 +22,27 @@ export async function deleteRecipeById(uid) {
 	}
 }
 
+export async function addRecipeToFavourites(uid) {
+	try {
+		const response = await fetch(`/api/recipe/${uid}/favourite`, {
+			method: 'PUT',
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		})
+
+		if (!response.ok) {
+			const errorData = await response.json()
+			throw new Error(errorData.message || 'Error favouriting recipe')
+		}
+
+		return true
+	} catch (error) {
+		console.error('Error favouriting recipe:', error.message)
+		return false
+	}
+}
+
 export async function updateRecipe(formData, recipeId) {
 	try {
 		const response = await fetch(`/api/recipe/${recipeId}`, {
