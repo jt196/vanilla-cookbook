@@ -10,6 +10,7 @@
 	import { deleteRecipeById } from '$lib/utils/crud'
 
 	export let item
+	console.log('🚀 ~ item:', item)
 	export let data
 
 	const dispatch = createEventDispatcher()
@@ -30,6 +31,12 @@
 <a href="/recipe/{item.uid}/view/">
 	<article>
 		<div class="grid">
+			{#if item.log && item.log.length > 0}
+				<span
+					data-tooltip="This recipe has been cooked {item.log.length} times"
+					data-placement="right"
+					class="log-badge">{item.log.length}</span>
+			{/if}
 			{#if item.photos && item.photos.length > 0}
 				<img
 					class="recipe-thumbnail"
@@ -88,9 +95,26 @@
 
 	.grid {
 		display: grid;
+		position: relative;
 		grid-template-columns: 100px 3fr 1fr; // 100px for the image, 3 parts for the recipe card, and 1 part for the buttons
 		gap: 1rem; // Spacing between grid items
 		align-items: center;
+		.log-badge {
+			background-color: var(--pico-ins-color);
+			border-radius: 2px;
+			color: white;
+
+			padding: 1px 3px;
+			font-size: 10px;
+
+			position: absolute; /* Position the badge within the relatively positioned button */
+			top: 0;
+			right: 99%;
+			@media (max-width: 767px) {
+				top: 2%;
+				right: 98%;
+			}
+		}
 	}
 
 	.recipe-card {
@@ -111,6 +135,8 @@
 		a {
 			margin-bottom: 0;
 			z-index: 2;
+			height: var(--button-height);
+			width: var(--button-height);
 		}
 		@media (max-width: 767px) {
 			flex-direction: column;
@@ -146,12 +172,14 @@
 	:root {
 		--dynamic-width: 30px;
 		--dynamic-height: 30px;
+		--button-height: 70px;
 	}
 
 	@media (max-width: 767px) {
 		:root {
 			--dynamic-width: 20px;
 			--dynamic-height: 20px;
+			--button-height: 60px;
 		}
 		header {
 			font-size: 0.8rem;

@@ -33,6 +33,7 @@ export async function GET({ params, locals }) {
 						}
 					}
 				},
+				log: true,
 				photos: {
 					where: {
 						isMain: true
