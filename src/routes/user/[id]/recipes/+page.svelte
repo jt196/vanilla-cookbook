@@ -52,8 +52,6 @@
 		// Map through the filteredRecipes array to update the favourite status of the matching recipe
 		data.recipes = data.recipes.map((recipe) => {
 			if (recipe.uid === favouritedUid) {
-				console.log('🚀 ~ filteredRecipes=filteredRecipes.map ~ recipe.uid:', recipe.uid)
-				console.log('🚀 ~ filteredRecipes=filteredRecipes.map ~ recipe before:', recipe)
 				// Toggle the on_favorites property of the recipe
 				return { ...recipe, on_favorites: !recipe.on_favorites }
 			}

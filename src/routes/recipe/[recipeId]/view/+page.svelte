@@ -111,6 +111,17 @@
 		logs = sortByDate(logs, 'cooked', 'desc')
 	}
 
+	function favRecipe(success) {
+		if (success) {
+			recipe.on_favorites = !recipe.on_favorites
+			recipe.on_favorites
+				? (recipeFeedback = 'Recipe favourited!')
+				: (recipeFeedback = 'Recipe unfavourited!')
+		} else {
+			recipeFeedback = 'Failed to favourite!'
+		}
+	}
+
 	let isLatest = true
 
 	const sanitizeContent = async () => {
@@ -167,7 +178,7 @@
 		<FeedbackMessage message={recipeFeedback} />
 	</div>
 	{#if recipe.userId === viewUser.userId}
-		<RecipeViewButtons {recipe} {updateLogs} />
+		<RecipeViewButtons {recipe} {updateLogs} {favRecipe} />
 	{/if}
 </div>
 
@@ -241,5 +252,8 @@
 		gap: 2rem;
 		justify-content: center;
 		align-items: center;
+		@media (max-width: 451px) {
+			display: none;
+		}
 	}
 </style>
