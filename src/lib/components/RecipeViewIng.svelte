@@ -11,6 +11,8 @@
 	export let selectedSystem
 	export let recipeUid
 
+	let scaleIng = 1
+
 	let struckThrough = false
 	let isHighlighted = false
 
@@ -32,6 +34,15 @@
 			// Handle error case, maybe show an error message to the user
 		}
 	}
+
+	function handleScale(scale) {
+		if (isNaN(scale) || scale < 0) {
+			return 1
+		}
+		return parseFloat(scale)
+	}
+
+	$: scaleIng = handleScale(scale)
 </script>
 
 <div class="ingredient-line" class:highlight={isHighlighted}>
@@ -51,24 +62,24 @@
 					<strong>
 						{#if ingredient.minQty == ingredient.maxQty && ingredient.quantity}
 							{#if selectedSystem === 'metric'}
-								{roundIngredientQuantity(ingredient.quantity * scale)}
+								{roundIngredientQuantity(ingredient.quantity * scaleIng)}
 							{:else}
-								{decimalToFraction(ingredient.quantity * scale)}
+								{decimalToFraction(ingredient.quantity * scaleIng)}
 							{/if}
 						{:else if ingredient.minQty != ingredient.maxQty && ingredient.quantity}
 							{#if selectedSystem === 'metric'}
-								{roundIngredientQuantity(ingredient.minQty * scale)}-{roundIngredientQuantity(
-									ingredient.maxQty * scale
+								{roundIngredientQuantity(ingredient.minQty * scaleIng)}-{roundIngredientQuantity(
+									ingredient.maxQty * scaleIng
 								)}
 							{:else}
-								{decimalToFraction(ingredient.minQty * scale)}-{decimalToFraction(
-									ingredient.maxQty * scale
+								{decimalToFraction(ingredient.minQty * scaleIng)}-{decimalToFraction(
+									ingredient.maxQty * scaleIng
 								)}
 							{/if}
 						{/if}
 					</strong>
 					{#if ingredient.unit && ingredient.unit !== 'q.b.'}
-						{ingredient.quantity * scale > 1 && ingredient.unitPlural
+						{ingredient.quantity * scaleIng > 1 && ingredient.unitPlural
 							? ingredient.unitPlural
 							: ingredient.unit}
 					{/if}

@@ -35,9 +35,15 @@
 
 	function handleInput(event) {
 		let value = parseFloat(event.target.value)
-		if (isNaN(value) || value < 0) {
-			value = 1 // Default to the minimum value if input is invalid
+		// Check if the input is empty
+		if (value === '') {
+			// Handle empty input case here (optional)
+			// For example, you might want to reset the scale to a default value or leave it as is
+			return // Exit the function without changing the scale
 		}
+		// if (isNaN(value) || value < 0) {
+		// 	value = 1 // Default to the minimum value if input is invalid
+		// }
 		scale = value
 	}
 </script>
