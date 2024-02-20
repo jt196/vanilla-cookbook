@@ -232,42 +232,47 @@
 	{#each sortedList as item (item.uid)}
 		{#if !item.purchased || showHidden}
 			<div class="list-item" out:fade={{ duration: 300 }}>
-				<div class={`unit-quantity ${showHidden ? '' : 'hidden'}`}>
-					{#if item.quantity}
-						<span>{item.quantity}</span>
-					{/if}
-					{#if item.unit}
-						<span>{item.unit}</span>
-					{/if}
-				</div>
-				<div class="item-label">
-					<label class:checked={item.purchased}>
-						<input
-							type="checkbox"
-							name={item.name}
-							checked={item.purchased}
-							on:change={(event) => handleCheckboxChange(item, event)} />
-						{item.name}
-						{#if item.recipeUid}
-							<a href="/recipe/{item.recipeUid}/view">
-								<Link width="20px" fill="var(--pico-primary)" />
-							</a>
+				<div class="item-qty-unit">
+					<div class={`unit-quantity ${showHidden ? '' : 'hidden'}`}>
+						{#if item.quantity}
+							<span>{item.quantity}</span>
 						{/if}
-					</label>
-					<div class="item-buttons">
-						<button on:click={() => openEditModal(item)}><Edit width="20px" fill="white" /></button>
-						<button on:click={handleDeleteItem(item.uid)}
-							><Delete width="20px" fill="white" /></button>
+						{#if item.unit}
+							<span>{item.unit}</span>
+						{/if}
+					</div>
+					<div class="item-label">
+						<label class:checked={item.purchased}>
+							<input
+								type="checkbox"
+								name={item.name}
+								checked={item.purchased}
+								on:change={(event) => handleCheckboxChange(item, event)} />
+							<p class="item-name">
+								{item.name}
+							</p>
+							{#if item.recipeUid}
+								<a href="/recipe/{item.recipeUid}/view">
+									<Link width="20px" fill="var(--pico-primary)" />
+								</a>
+							{/if}
+						</label>
+					</div>
+					<div class={`recipe-name ${showHidden ? '' : 'hidden'}`}>
+						{#if item.recipe && item.recipe.name}
+							<span>
+								{item.recipe.name}
+							</span>
+						{:else}
+							<span class="empty-space" />
+						{/if}
 					</div>
 				</div>
-				<div class={`recipe-name ${showHidden ? '' : 'hidden'}`}>
-					{#if item.recipe && item.recipe.name}
-						<span>
-							{item.recipe.name}
-						</span>
-					{:else}
-						<span class="empty-space" />
-					{/if}
+				<div class="item-buttons">
+					<button class="outline contrast" on:click={() => openEditModal(item)}
+						><Edit width="20px" height="20px" fill="var(--pico-ins-color)" /></button>
+					<button class="outline secondary" on:click={handleDeleteItem(item.uid)}
+						><Delete width="20px" height="20px" fill="var(--pico-del-color)" /></button>
 				</div>
 			</div>
 		{/if}
@@ -313,27 +318,68 @@
 	.shopping-buttons {
 		margin-bottom: 1rem;
 	}
-	label {
-		font-size: 2rem;
-	}
-	.item-label {
+	.list-item {
 		display: flex;
+		border-bottom: 0.5px solid var(--pico-primary-focus);
 		align-items: center;
-		justify-content: space-between;
-		button {
-			margin-left: auto; /* Pushes the button to the right */
+		justify-content: center;
+		.item-qty-unit {
+			display: flex;
+			flex-direction: column;
+		}
+		.item-label label {
+			display: flex;
+			align-items: center;
+			gap: 0.3rem;
+			justify-content: center;
+			max-width: 100%;
+			.item-name {
+				flex: 1 1 auto;
+				min-width: 0;
+				overflow: hidden;
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				margin: 0;
+				padding: 0;
+			}
+		}
+		.item-buttons {
+			margin-left: auto;
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			justify-content: center;
+			gap: 0.5rem;
+			@media (max-width: 767px) {
+				display: flex;
+				flex-direction: column;
+				gap: 0.2rem;
+				padding: 0.2rem 0 0.2rem 0;
+				.outline {
+					display: inline-flex;
+					align-items: center;
+					justify-content: center;
+					height: 40px;
+					padding: 0 10px;
+				}
+
+				/* Optional: Adjust SVG size if necessary */
+				.outline svg {
+					width: 20px;
+					height: 20px;
+				}
+			}
 		}
 	}
 
-	.item-content {
-		display: flex;
-		align-items: center;
-	}
 	.unit-quantity,
 	.recipe-name {
 		font-size: 0.8rem;
 		margin: 0;
-		padding: 12px 0 0 44px;
+		padding: 0 0 0 40px;
+		@media (max-width: 767px) {
+			padding: 0 0 0 34px;
+		}
 
 		color: var(--pico-muted-color);
 	}
@@ -344,7 +390,6 @@
 		display: inline-block; /* Makes it occupy space */
 		width: 20px; /* Adjust the width as needed */
 		height: 1em; /* Adjust the height as needed */
-		/* You can also set other properties like background color, margin, padding, etc. */
 	}
 	.hidden {
 		visibility: hidden;
@@ -357,9 +402,5 @@
 		input {
 			margin-bottom: 0;
 		}
-	}
-
-	.list-item {
-		border-bottom: 0.5px solid var(--pico-primary-focus);
 	}
 </style>
