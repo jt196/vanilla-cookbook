@@ -119,6 +119,10 @@ export function sanitizeFilename(filename) {
  * @returns {string} - The string with scaled numbers.
  */
 export function scaleNumbersInString(str, scale) {
+	// Check if scale is a valid number
+	if (isNaN(scale) || scale < 0) {
+		scale = 1
+	}
 	const fractionMap = {
 		'½': '1/2',
 		'⅓': '1/3',
