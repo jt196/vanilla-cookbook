@@ -1,7 +1,7 @@
 <script>
 	export let state = 'empty' // "empty", "half", or "full"
 	export let height = '20px'
-	export let fill = 'gold'
+	export let fill = 'var(--pico-secondary-focus)'
 </script>
 
 {#if state === 'empty'}

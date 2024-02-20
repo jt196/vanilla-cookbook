@@ -6,7 +6,6 @@
 	import RecipeList from '$lib/components/RecipeList.svelte'
 	import Sidebar from '$lib/components/Sidebar.svelte'
 	import Burger from '$lib/components/svg/Burger.svelte'
-	import Export from '$lib/components/svg/Export.svelte'
 	import New from '$lib/components/svg/New.svelte'
 	import House from '$lib/components/svg/House.svelte'
 	import CategoryTree from '$lib/components/CategoryTree.svelte'
@@ -39,11 +38,6 @@
 		} else {
 			selectedCategoryUids = [...selectedCategoryUids, category.uid]
 		}
-	}
-
-	function handleRecipeDeleted(event) {
-		const deletedUid = event.detail
-		filteredRecipes = filteredRecipes.filter((recipe) => recipe.uid !== deletedUid)
 	}
 
 	function handleRecipeFavourited(event) {
@@ -111,30 +105,6 @@
 		}
 	}
 
-	async function handleExport() {
-		const response = await fetch('/api/recipe/export', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify(filteredRecipes)
-		})
-
-		if (response.ok) {
-			const blob = await response.blob()
-			const url = window.URL.createObjectURL(blob)
-			const a = document.createElement('a')
-			a.style.display = 'none'
-			a.href = url
-			a.download = 'export.paprikarecipes' // Name of the file to be downloaded
-			document.body.appendChild(a)
-			a.click()
-			window.URL.revokeObjectURL(url)
-		} else {
-			console.error('Failed to export recipes')
-		}
-	}
-
 	function toggleSidebar() {
 		sidebarOpen = !sidebarOpen
 	}
@@ -189,17 +159,21 @@
 					<h3>{publicProfile.name} Recipes</h3>
 				{/if}
 				<div class="spacer" />
-				<button data-tooltip="Export Filtered Recipes" on:click={handleExport}
-					><Export width="30px" height="30px" /></button>
-				<a href="/new" data-tooltip="New Recipe" role="button"
-					><New width="30px" height="30px" /></a>
+				<div class="switches">
+					<fieldset>
+						<label>
+							Cooked
+							<input name="terms" type="checkbox" role="switch" bind:checked={$cookedFilter} />
+						</label>
+						<label>
+							Favourites
+							<input name="opt-in" type="checkbox" role="switch" bind:checked={$favouriteFilter} />
+						</label>
+					</fieldset>
+				</div>
 			</div>
 			<RecipeFilter on:sort={handleSort} />
-			<RecipeList
-				{filteredRecipes}
-				{data}
-				on:recipeDeleted={handleRecipeDeleted}
-				on:recipeFavourited={handleRecipeFavourited} />
+			<RecipeList {filteredRecipes} {data} on:recipeFavourited={handleRecipeFavourited} />
 		</div>
 	</div>
 </div>
@@ -219,6 +193,20 @@
 
 			@media (max-width: 768px) {
 				margin-left: 0;
+			}
+		}
+	}
+
+	.switches {
+		fieldset {
+			align-items: end;
+			justify-content: end;
+			display: flex;
+			flex-direction: column;
+			margin: 0;
+			label {
+				padding: 0;
+				margin: 0;
 			}
 		}
 	}

@@ -12,6 +12,19 @@ export function localDateAndTime(dateTime) {
 }
 
 /**
+ * Takes a dateTime parameter and returns the local date.
+ *
+ * @param {any} dateTime - the date and time input
+ * @return {string} the local date
+ */
+export function localDate(dateTime) {
+	if (!dateTime) return ''
+	const myDate = typeof dateTime === 'string' ? new Date(dateTime) : dateTime
+	const localDate = myDate.toLocaleDateString()
+	return localDate
+}
+
+/**
  * Returns the current datetime in ISO 8601 format.
  * @returns {string} - The current datetime in ISO 8601 format.
  */

@@ -14,6 +14,7 @@
 	import SiteIcons from '$lib/components/SiteIcons.svelte'
 	import Shopping from '$lib/components/svg/Shopping.svelte'
 	import Calendar from '$lib/components/svg/Calendar.svelte'
+	import New from '$lib/components/svg/New.svelte'
 	/**
 	 * Data for the page, structure defined by the `PageData` type.
 	 * @type {PageData}
@@ -50,6 +51,7 @@
 		</ul>
 		<ul>
 			<form method="POST">
+				<li><a href="/new"><New width="25px" /></a></li>
 				<li><a href="/user/shopping"><Shopping width="25px" /></a></li>
 				<li><a href="/user/calendar"><Calendar width="25px" /></a></li>
 				<li><a href="/users"><Users width="25px" /></a></li>
@@ -69,6 +71,6 @@
 
 <style lang="scss">
 	a {
-		padding: 12.75px;
+		padding: 0 0.5rem;
 	}
 </style>

@@ -1,6 +1,6 @@
 <script>
 	import SortAscDesc from '$lib/components/svg/SortAscDesc.svelte' // Adjust the path if needed
-	import { sortState, searchString, searchKey, favouriteFilter, cookedFilter } from '$lib/stores'
+	import { sortState, searchString, searchKey } from '$lib/stores'
 
 	function updateSort(key) {
 		sortState.update((current) => {
@@ -48,18 +48,6 @@
 		</button>
 	</div>
 </div>
-<div class="switches">
-	<fieldset>
-		<label>
-			<input name="terms" type="checkbox" role="switch" bind:checked={$cookedFilter} />
-			Cooked
-		</label>
-		<label>
-			<input name="opt-in" type="checkbox" role="switch" bind:checked={$favouriteFilter} />
-			Favourites
-		</label>
-	</fieldset>
-</div>
 
 <style lang="scss">
 	.sort {
@@ -90,13 +78,6 @@
 
 	.sort .secondary {
 		border: 1px solid white;
-	}
-
-	.switches {
-		fieldset {
-			display: flex;
-			gap: 1rem;
-		}
 	}
 
 	.recipe-filters {

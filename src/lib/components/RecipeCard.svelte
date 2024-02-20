@@ -4,7 +4,7 @@
 
 	import FoodBowl from '$lib/components/svg/FoodBowl.svelte'
 	import Favourite from '$lib/components/svg/Favourite.svelte'
-	import { localDateAndTime } from '$lib/utils/dateTime'
+	import { localDate } from '$lib/utils/dateTime'
 	import StarRating from '$lib/components/StarRating.svelte'
 	import Delete from '$lib/components/svg/Delete.svelte'
 	import Edit from '$lib/components/svg/Edit.svelte'
@@ -14,17 +14,6 @@
 	export let data
 
 	const dispatch = createEventDispatcher()
-
-	async function handleDelete(uid, event) {
-		// Preventing the click through to the item view page
-		event.preventDefault()
-		// Stop the click event from bubbling up to the parent anchor
-		event.stopPropagation()
-		const success = await deleteRecipeById(uid)
-		if (success) {
-			dispatch('recipeDeleted', uid) // Emit the custom event
-		}
-	}
 
 	async function handleFavourite(uid, event) {
 		// Preventing the click through to the item view page
@@ -43,62 +32,44 @@
 <a href="/recipe/{item.uid}/view/">
 	<article>
 		<div class="grid">
-			<div class="badges">
-				<div class="favourite">
-					<button on:click={(event) => handleFavourite(item.uid, event)}>
-						<Favourite
-							favourite={item.on_favorites}
-							width="15px"
-							height="15px"
-							fill="var(--pico-primary-inverse)" />
-					</button>
-				</div>
-				{#if item.log && item.log.length > 0}
-					<span
-						data-tooltip="This recipe has been cooked {item.log.length} times"
-						data-placement="right"
-						class="log-badge">{item.log.length}</span>
+			<div>
+				{#if item.photos && item.photos.length > 0}
+					<img
+						class="recipe-thumbnail"
+						loading="lazy"
+						src="/api/recipe/image/{item.photos[0].id}"
+						alt="{item.name} thumbnail" />
+				{:else}
+					<FoodBowl width="100px" />
 				{/if}
-			</div>
-			{#if item.photos && item.photos.length > 0}
-				<img
-					class="recipe-thumbnail"
-					loading="lazy"
-					src="/api/recipe/image/{item.photos[0].id}"
-					alt="{item.name} thumbnail" />
-			{:else}
-				<FoodBowl width="100px" />
-			{/if}
-			<div href="/recipe/{item.uid}/view/" class="recipe-card">
-				<div>
-					<header>{item.name}</header>
-					<span class="created">
-						<p>Created: <i>{localDateAndTime(item.created)}</i></p>
-					</span>
-					<StarRating rating={item.rating} />
+				<div class="badges">
+					{#if item.log && item.log.length > 0}
+						<span
+							data-tooltip="This recipe has been cooked {item.log.length} times"
+							data-placement="right"
+							class="log-badge">{item.log.length}</span>
+					{/if}
 				</div>
+			</div>
+			<div href="/recipe/{item.uid}/view/" class="recipe-card">
+				<h3>{item.name}</h3>
+				<span class="created">
+					<i>{localDate(item.created)}</i>
+				</span>
+				<StarRating rating={item.rating} />
 			</div>
 			<div class="align-right recipe-buttons">
 				{#if item.userId === data.user?.requestedUserId}
 					<button
-						on:click={(event) => handleDelete(item.uid, event)}
-						data-testid="delete-button"
+						on:click={(event) => handleFavourite(item?.uid, event)}
+						data-tooltip="Favourite Recipe"
 						class="outline secondary">
-						<Delete
-							width="var(--dynamic-width)"
-							height="var(--dynamic-height)"
+						<Favourite
+							favourite={item?.on_favorites}
+							width="30px"
+							height="30px"
 							fill="var(--pico-del-color)" />
 					</button>
-					<a
-						href="/recipe/{item.uid}/edit/"
-						role="button"
-						class="outline contrast"
-						data-testid="edit-button">
-						<Edit
-							width="var(--dynamic-width)"
-							height="var(--dynamic-height)"
-							fill="var(--pico-ins-color)" />
-					</a>
 				{/if}
 			</div>
 		</div>
@@ -109,6 +80,7 @@
 	.recipe-thumbnail {
 		width: 100px;
 		height: auto;
+		max-height: 100px;
 		object-fit: cover;
 		display: block;
 		@media (max-width: 767px) {
@@ -124,17 +96,19 @@
 		align-items: center;
 		.badges {
 			display: flex;
-			gap: 0.1rem;
+			gap: 0.3rem;
 			height: 25px;
+			align-items: center;
+			margin: 0.3rem 0 0 0;
 			justify-content: center;
 			align-items: center;
 
 			position: absolute; /* Position the badge within the relatively positioned button */
-			top: 0;
+			top: -2%;
 			left: -1%;
 			@media (max-width: 767px) {
-				top: 2%;
-				left: 0%;
+				top: -2%;
+				left: -2%;
 			}
 			.log-badge {
 				background: var(--pico-primary);
@@ -163,8 +137,19 @@
 
 	.recipe-card {
 		grid-column: 2;
-		text-decoration: none;
 		color: inherit;
+		h3 {
+			text-decoration: none;
+			margin: 0;
+			padding: 0;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			@media (max-width: 767px) {
+				font-size: 0.9rem;
+				white-space: wrap;
+			}
+		}
 	}
 
 	.recipe-buttons {
@@ -207,6 +192,10 @@
 	}
 
 	.created {
+		margin: 0;
+		padding: 0;
+		font-size: 0.8rem;
+
 		@media (max-width: 767px) {
 			display: none;
 		}

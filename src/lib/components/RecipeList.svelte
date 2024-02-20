@@ -19,7 +19,6 @@
 			<RecipeCard
 				{item}
 				{data}
-				on:recipeDeleted={(e) => dispatch('recipeDeleted', e.detail)}
 				on:recipeFavourited={(e) => dispatch('recipeFavourited', e.detail)} />
 		</VirtualList>
 		<span class="list-indicator">
@@ -31,7 +30,6 @@
 			<RecipeCard
 				{item}
 				{data}
-				on:recipeDeleted={(e) => dispatch('recipeDeleted', e.detail)}
 				on:recipeFavourited={(e) => dispatch('recipeFavourited', e.detail)} />
 		{/each}
 	{/if}
