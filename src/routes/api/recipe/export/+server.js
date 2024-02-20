@@ -2,18 +2,24 @@ import { gzip } from 'zlib'
 import { promisify } from 'util'
 import archiver from 'archiver'
 import { sanitizeFilename } from '$lib/utils/filters.js'
+import { prisma } from '$lib/server/prisma'
 
 function transformData(rawData) {
 	return {
 		uid: rawData.uid,
-		created: new Date(rawData.created).toISOString().replace('T', ' ').split('.')[0], // Convert to the desired datetime format
+		created: new Date(rawData.created).toISOString().replace('T', ' ').split('.')[0] || '', // Convert to the desired datetime format
 		hash: rawData.hash,
 		name: rawData.name,
 		description: rawData.description || '', // If null, use empty string
-		ingredients: rawData.ingredients.split('\r\n').join('\n'), // Convert all CRLF to LF
-		directions: rawData.directions.split('\r\n').join('\n'), // Convert all CRLF to LF
+		ingredients:
+			typeof rawData.ingredients === 'string' ? rawData.ingredients.split('\r\n').join('\n') : '', // Convert all CRLF to LF, ensure it's a string
+		directions:
+			typeof rawData.directions === 'string' ? rawData.directions.split('\r\n').join('\n') : '', // Convert all CRLF to LF, ensure it's a string
 		notes: rawData.notes || '', // If null, use empty string
-		nutritional_info: rawData.nutritional_info.split('\r\n').join('\n'), // Convert all CRLF to LF
+		nutritional_info:
+			typeof rawData.nutritional_info === 'string'
+				? rawData.nutritional_info.split('\r\n').join('\n')
+				: '', // Convert all CRLF to LF, ensure it's a string
 		prep_time: rawData.prep_time || '',
 		cook_time: rawData.cook_time || '',
 		total_time: rawData.total_time || '',
@@ -26,7 +32,10 @@ function transformData(rawData) {
 		photo_large: null, // As per your instruction
 		photo_hash: null,
 		image_url: rawData.image_url || '',
-		categories: rawData.categories.map((categoryObj) => categoryObj.category.name), // Transform categories array
+		categories:
+			rawData.categories && Array.isArray(rawData.categories)
+				? rawData.categories.map((categoryObj) => categoryObj.category.name)
+				: [], // Transform categories array, ensure it's an array
 		photos: []
 	}
 }
@@ -94,11 +103,42 @@ async function createZipWithGzippedRecipes(recipeData) {
 	})
 }
 
-export async function POST({ request }) {
-	const bodyText = await request.text()
-	const recipeData = JSON.parse(bodyText)
+export async function POST({ locals }) {
+	// Validate the requesting user's session and get their userId
+	const session = await locals.auth.validate()
+	const user = session?.user
+	if (!session || !user) {
+		console.log('User Not Authenticated!')
+		return new Response('User not authenticated', {
+			status: 401,
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		})
+	}
+
 	try {
-		const zipBuffer = await createZipWithGzippedRecipes(recipeData)
+		const recipes = await prisma.recipe.findMany({
+			where: {
+				userId: user.userId
+			},
+			orderBy: {
+				created: 'desc'
+			},
+			include: {
+				categories: {
+					select: {
+						category: {
+							select: {
+								name: true,
+								uid: true
+							}
+						}
+					}
+				}
+			}
+		})
+		const zipBuffer = await createZipWithGzippedRecipes(recipes)
 
 		return new Response(zipBuffer, {
 			headers: {

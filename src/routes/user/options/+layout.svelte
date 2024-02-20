@@ -36,6 +36,13 @@
 				</li>
 				<li>
 					<a
+						href="/user/options/export"
+						class={data.pathname === '/user/options/export' ? 'active-link' : ''}>
+						Export
+					</a>
+				</li>
+				<li>
+					<a
 						href="/user/options/upload"
 						class={data.pathname === '/user/options/upload' ? 'active-link' : ''}>
 						Upload
