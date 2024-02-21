@@ -29,6 +29,7 @@
 		display: flex;
 		align-items: start; // Align items to the top
 		width: 100%; // Ensure the container takes the full width
+		padding: 0;
 
 		form {
 			flex: 1; // Allow the form to take up the remaining space
