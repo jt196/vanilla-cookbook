@@ -1,5 +1,9 @@
 <script>
 	import Star from '$lib/components/svg/Star.svelte'
+	import { createEventDispatcher } from 'svelte'
+
+	const dispatch = createEventDispatcher()
+
 	export let rating = 0
 	export let editable = false
 
@@ -19,9 +23,6 @@
 			setRating(star)
 		}
 	}
-
-	import { createEventDispatcher } from 'svelte'
-	const dispatch = createEventDispatcher()
 </script>
 
 <div>

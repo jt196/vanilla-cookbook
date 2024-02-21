@@ -16,7 +16,10 @@ export const load = async ({ locals }) => {
 			return { user: null, settings }
 		}
 		const user = session?.user
-		return { user, settings }
+		return {
+			user,
+			settings
+		}
 	} catch (error) {
 		console.error('Error validating session:', error)
 		// Handle error appropriately, such as returning a minimal response or redirecting
