@@ -8,15 +8,6 @@ const workboxConfig = {
 	clientsClaim: true,
 	runtimeCaching: [
 		{
-			// Define a network-first strategy specifically for the home page ('/' path)
-			urlPattern: new RegExp('^/$'),
-			handler: 'NetworkFirst',
-			options: {
-				cacheName: 'home-page-cache',
-				networkTimeoutSeconds: 3
-			}
-		},
-		{
 			urlPattern: new RegExp(`^%%URLPATTERN%%/`),
 			handler: 'NetworkFirst',
 			options: {
