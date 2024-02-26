@@ -1,13 +1,17 @@
-import { redirect } from '@sveltejs/kit'
-
 // eslint-disable-next-line no-unused-vars
 export const load = async ({ locals }) => {
-	const session = await locals.auth.validate()
-	if (!session) {
-		throw redirect(302, `/login`)
+	let user = {}
+
+	try {
+		const session = await locals.auth.validate()
+		if (session && session.user) {
+			user = session.user
+		}
+	} catch (error) {
+		console.error('Error validating session:', error)
 	}
-	const user = session?.user
-	if (user.userId) {
-		throw redirect(302, `/user/${user.userId}/recipes`)
+
+	return {
+		user
 	}
 }
