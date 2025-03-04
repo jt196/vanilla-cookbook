@@ -41,7 +41,7 @@
 		"recipe-ingredient-parser-v3": "^1.3.0",
 		"rome": "^11.0.0",
 		"sass": "^1.64.2",
-		"svelte": "^3.55.1",
+		"svelte": "^5.0.0-next.272",
 		"svelte-check": "^3.0.3",
 		"svelte-preprocess": "^5.0.4",
 		"svelte-virtual-list": "^3.0.1",
