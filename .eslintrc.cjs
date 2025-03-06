@@ -1,12 +1,12 @@
 module.exports = {
 	root: true,
 	extends: ['eslint:recommended', 'prettier'],
-	plugins: ['svelte3'],
+	plugins: ['svelte'],
 	ignorePatterns: ['*.cjs'],
 	overrides: [
 		{
 			files: ['*.svelte'],
-			processor: 'svelte3/svelte3'
+			processor: 'svelte/svelte'
 		}
 	],
 	parserOptions: {

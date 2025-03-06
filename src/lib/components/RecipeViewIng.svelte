@@ -3,18 +3,21 @@
 	import { decimalToFraction, roundIngredientQuantity } from '$lib/utils/filters'
 	import Shopping from './svg/Shopping.svelte'
 
-	export let ingredient
-	export let scale
-	export let displayExtra
-	export let displayDryMatch
-	export let displayOriginal
-	export let selectedSystem
-	export let recipeUid
+	/** @type {{ingredient: any, scale: any, displayExtra: any, displayDryMatch: any, displayOriginal: any, selectedSystem: any, recipeUid: any}} */
+	let {
+		ingredient,
+		scale,
+		displayExtra,
+		displayDryMatch,
+		displayOriginal,
+		selectedSystem,
+		recipeUid
+	} = $props();
 
-	let scaleIng = 1
+	let scaleIng = $state(1)
 
-	let struckThrough = false
-	let isHighlighted = false
+	let struckThrough = $state(false)
+	let isHighlighted = $state(false)
 
 	// Step 2: Modify handleClick to toggle the struckThrough state
 	function handleClick() {
@@ -42,14 +45,16 @@
 		return parseFloat(scale)
 	}
 
-	$: scaleIng = handleScale(scale)
+	$effect(() => {
+		scaleIng = handleScale(scale)
+	});
 </script>
 
 <div class="ingredient-line" class:highlight={isHighlighted}>
-	<button on:click={() => handleAddToShoppingList(ingredient)}
+	<button onclick={() => handleAddToShoppingList(ingredient)}
 		><Shopping width="10px" fill="white" /></button>
-	<!-- svelte-ignore a11y-click-events-have-key-events -->
-	<div on:click={handleClick}>
+	<!-- svelte-ignore a11y_click_events_have_key_events -->
+	<div onclick={handleClick}>
 		{#if typeof ingredient.ingredient === 'string'}
 			{#if ingredient.ingredient.trim() === ''}
 				<li class:struck={struckThrough}>

@@ -1,19 +1,14 @@
 <!-- ConfirmationDialog.svelte -->
 <script>
-	import { createEventDispatcher, onMount, onDestroy } from 'svelte'
+	import { onMount, onDestroy } from 'svelte'
 	import { browser } from '$app/environment'
 
-	const dispatch = createEventDispatcher()
-	export let isOpen = false
-
-	function closeDialog() {
-		isOpen = false
-		dispatch('close') // Emit a close event
-	}
+	/** @type {{isOpen?: boolean, content?: import('svelte').Snippet}} */
+	let { isOpen = false, content, onClose, onConfirm } = $props()
 
 	function handleKeydown(event) {
 		if (event.key === 'Escape' && isOpen) {
-			closeDialog()
+			onClose && onClose()
 		}
 	}
 
@@ -28,24 +23,19 @@
 			document.removeEventListener('keydown', handleKeydown)
 		}
 	})
-
-	// External method to control the dialog visibility
-	export function toggle(open) {
-		isOpen = open
-	}
 </script>
 
 {#if isOpen}
 	<dialog open>
 		<article>
-			<slot name="content">
+			{#if content}{@render content()}{:else}
 				<!-- Default content if no slot is provided -->
 				<h2>Confirm Action</h2>
 				<p>Are you sure you want to proceed?</p>
-			</slot>
+			{/if}
 			<footer>
-				<button class="secondary" on:click={closeDialog}>Cancel</button>
-				<button on:click={() => dispatch('confirm')}>Confirm</button>
+				<button class="secondary" onclick={() => onClose && onClose()}>Cancel</button>
+				<button onclick={() => onConfirm && onConfirm()}>Confirm</button>
 			</footer>
 		</article>
 	</dialog>

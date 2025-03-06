@@ -2,11 +2,14 @@
 	import { systems } from '$lib/utils/units.js'
 	import FeedbackMessage from '$lib/components/FeedbackMessage.svelte'
 
-	export let data
-	const { user, dbRecCount } = data
-	let settingsFeedback = ''
-	let systemLabel
-	$: console.log(user.units)
+	/** @type {{data: any}} */
+	let { data } = $props();
+	const { user, dbRecCount } = $state(data)
+	let settingsFeedback = $state('')
+	let systemLabel = $derived('Selected system: ' + systems.find((system) => system.value === user.units).label)
+	$effect(() => {
+		console.log(user.units)
+	});
 
 	async function updateSettings(event) {
 		event.preventDefault()
@@ -23,9 +26,6 @@
 			settingsFeedback = 'There was a problem updating your settings!'
 		}
 	}
-
-	// Display the selected system label
-	$: systemLabel = 'Selected system: ' + systems.find((system) => system.value === user.units).label
 </script>
 
 <div class="rec-count">
@@ -37,7 +37,7 @@
 	<button id="logout" formaction="/logout" type="submit">Logout</button>
 </form>
 
-<form method="POST" action="?/updateSettings" on:submit={updateSettings}>
+<form method="POST" action="?/updateSettings" onsubmit={updateSettings}>
 	<label>
 		<input type="checkbox" name="Profile Public" bind:checked={user.skipSmallUnits} />
 		Use teaspoons and tablespoons instead of grams.

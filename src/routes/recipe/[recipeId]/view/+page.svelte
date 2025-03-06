@@ -16,38 +16,44 @@
 	import RecipeViewLogs from '$lib/components/RecipeViewLogs.svelte'
 	import FeedbackMessage from '$lib/components/FeedbackMessage.svelte'
 	import { sortByDate } from '$lib/utils/sorting.js'
+	import { recipeRatingChange } from '$lib/utils/crud.js'
 
-	export let data
-	let isLoading = true
+	/** @type {{data: any}} */
+	let { data } = $props()
+	let isLoading = $state(true)
 
-	let { recipe, categories, viewUser, logs } = data
-	console.log('🚀 ~ logs:', logs)
-	let ingredients = []
-	let ingredientsArray = []
+	let { recipe, categories, viewUser, logs } = $state(data)
 
 	// Scaling factor for the ingredients
-	let scale = 1
-	let scaledServings
+	let scale = $state(1)
 
-	let directionLines = []
-	let notesLines = []
-	let measurementSystem = {}
-	let convertedIngredients = {}
+	let convertedIngredients = $state([])
 
-	let recipeFeedback = ''
+	let recipeFeedback = $state('')
 
-	let selectedSystem = viewUser?.units
+	let selectedSystem = $state(viewUser?.units)
 
-	let mainPhoto
+	let mainPhoto = $state()
 
-	$: {
+	// Callback functions to update the state
+	function handleScaleChange(newScale) {
+		console.log('Scale updated to', newScale)
+		scale = newScale
+	}
+
+	function handleSelectedSystemChange(newSystem) {
+		console.log('Selected system updated to', newSystem)
+		selectedSystem = newSystem
+	}
+
+	$effect(() => {
 		if (recipe && recipe.photos && recipe.photos.length > 0) {
 			mainPhoto =
 				recipe.photos.find((photo) => photo.isMain) ||
 				recipe.photos.find((photo) => !photo.isMain && photo.url === null) ||
 				recipe.photos.find((photo) => !photo.isMain)
 		}
-	}
+	})
 
 	let otherPhotos = recipe.photos
 		? recipe.photos.filter((photo) => photo !== mainPhoto && photo.url === null)
@@ -80,22 +86,24 @@
 		}
 	}
 
-	/** Logic to update various variables based on the recipe data. */
-	$: if (data && data.recipe) {
-		ingredients = recipe.ingredients ? recipe.ingredients.split('\n') : []
-		ingredientsArray = ingredientProcess(ingredients)
-		measurementSystem = determineSystem(ingredientsArray)
-		recipe.directions ? (directionLines = recipe.directions.split('\n')) : null
-		recipe.notes ? (notesLines = recipe.notes.split('\n')) : null
-		scaledServings = recipe.servings ? scaleNumbersInString(recipe.servings, scale) : null
-	}
+	let ingredients = $derived(recipe.ingredients ? recipe.ingredients.split('\n') : [])
+	let ingredientsArray = $derived(ingredientProcess(ingredients))
+	let measurementSystem = $derived(determineSystem(ingredientsArray))
+	let directionLines = $derived(recipe.directions ? recipe.directions.split('\n') : [])
+	let notesLines = $derived(recipe.notes ? recipe.notes.split('\n') : [])
 
-	let sanitizedDirections = []
-	let sanitizedNotes = []
-	let sanitizedIngredients = []
+	let scaledServings = $state(null) // ✅ Use $state instead of $derived
+
+	$effect(() => {
+		scaledServings = recipe.servings ? scaleNumbersInString(recipe.servings, scale) : null
+	})
+
+	let sanitizedDirections = $state([])
+	let sanitizedNotes = $state([])
+	let sanitizedIngredients = $state([])
 	let hasAdditional
 
-	let isMounted = false
+	let isMounted = $state(false)
 
 	onMount(() => {
 		isMounted = true
@@ -120,6 +128,11 @@
 		} else {
 			recipeFeedback = 'Failed to favourite!'
 		}
+	}
+
+	function handleRecipeRatingChanged(newRating) {
+		recipeRatingChange(newRating, recipe.uid)
+		recipe.rating = newRating
 	}
 
 	let isLatest = true
@@ -160,15 +173,19 @@
 		isLoading = false
 	}
 
-	$: if (isMounted && selectedSystem && convertedIngredients) {
-		sanitizeContent()
-	}
+	$effect(() => {
+		if (isMounted && selectedSystem && convertedIngredients) {
+			sanitizeContent()
+		}
+	})
 
-	$: if (isMounted && selectedSystem !== measurementSystem.system) {
-		handleIngAPIFetch(measurementSystem, selectedSystem)
-	} else {
-		convertedIngredients = ingredientsArray
-	}
+	$effect(() => {
+		if (isMounted && selectedSystem !== measurementSystem.system) {
+			handleIngAPIFetch(measurementSystem, selectedSystem)
+		} else {
+			convertedIngredients = ingredientsArray
+		}
+	})
 </script>
 
 <div id="recipe-buttons">
@@ -187,7 +204,7 @@
 {:else}
 	<div class="recipe-details">
 		<RecipeViewCover {mainPhoto} {recipe} />
-		<RecipeViewAbout {recipe} {categories} />
+		<RecipeViewAbout {recipe} {categories} recipeRatingChanged={handleRecipeRatingChanged} />
 	</div>
 	<div class="description">
 		<RecipeViewDesc {recipe} />
@@ -198,11 +215,13 @@
 				{ingredients}
 				recipeUid={recipe.uid}
 				{sanitizedIngredients}
-				bind:scale
-				bind:scaledServings
+				{scale}
+				{scaledServings}
 				userIsAdmin={viewUser.isAdmin}
 				{measurementSystem}
-				bind:selectedSystem />
+				{selectedSystem}
+				onScaleChange={handleScaleChange}
+				onSelectedSystemChange={handleSelectedSystemChange} />
 		</div>
 		<div class="recipe-text">
 			<RecipeViewDirections {directionLines} {sanitizedDirections} />

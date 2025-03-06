@@ -3,12 +3,13 @@
 	import { fetchAndTransformCategories } from '$lib/utils/categories.js'
 	import { browser } from '$app/environment'
 
-	export let data
+	/** @type {{data: any}} */
+	let { data } = $props();
 
-	let { nodes, userId } = data
+	let { nodes, userId } = $state(data)
 
-	let newCategoryName = ''
-	let showNewCategoryInput = false
+	let newCategoryName = $state('')
+	let showNewCategoryInput = $state(false)
 
 	async function addNewCategory() {
 		try {
@@ -40,13 +41,13 @@
 	}
 </script>
 
-<button on:click={() => (showNewCategoryInput = !showNewCategoryInput)}>Add New Category</button>
+<button onclick={() => (showNewCategoryInput = !showNewCategoryInput)}>Add New Category</button>
 
 {#if showNewCategoryInput}
 	<div>
 		<input bind:value={newCategoryName} placeholder="New Category Name" />
-		<button on:click={() => (showNewCategoryInput = false)}>Cancel</button>
-		<button on:click={addNewCategory}>Save</button>
+		<button onclick={() => (showNewCategoryInput = false)}>Cancel</button>
+		<button onclick={addNewCategory}>Save</button>
 	</div>
 {/if}
 

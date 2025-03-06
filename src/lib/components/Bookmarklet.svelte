@@ -2,8 +2,8 @@
 	import Bookmark from '$lib/components/svg/Bookmark.svelte'
 	import { onMount } from 'svelte'
 
-	export let baseUrl = ''
-	let bookmarkletCode = ''
+	let bookmarkletCode
+	let baseUrl
 
 	onMount(() => {
 		// Set the base URL and generate the bookmarklet code

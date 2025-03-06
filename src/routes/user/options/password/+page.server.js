@@ -6,7 +6,7 @@ export const load = async ({ url, fetch, locals }) => {
 	const user = session?.user
 
 	if (!session || !user) {
-		throw error(401, 'Unauthorized')
+		error(401, 'Unauthorized');
 	}
 
 	return { user }

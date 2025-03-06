@@ -1,6 +1,6 @@
 <script>
-	export let isExpanded
-	export let height = '20px'
+	/** @type {{isExpanded: any, height?: string}} */
+	let { isExpanded, height = '20px' } = $props();
 </script>
 
 <svg

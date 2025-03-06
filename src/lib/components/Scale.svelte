@@ -3,19 +3,16 @@
 	 * @typedef {number} Scale
 	 */
 
-	/** @type {Scale} */
-	export let scale = 1
+	/** @type {{scale?: Scale}} */
+	let { scale = 1, onScaleChange } = $props()
 
 	/**
 	 * Increases the scale value by 0.5 when the current value is less than 5.
 	 * Otherwise, increases it by 1.
 	 */
-	let increaseNum = () => {
-		if (scale >= 5) {
-			scale += 1
-		} else {
-			scale += 0.5
-		}
+	function increaseNum() {
+		const newScale = scale >= 5 ? scale + 1 : scale + 0.5
+		onScaleChange && onScaleChange(newScale)
 	}
 
 	/**
@@ -24,34 +21,28 @@
 	 * If the scale is at 1, it sets the scale to 0.5 to avoid going below 0.5.
 	 */
 	function decreaseNum() {
+		let newScale
 		if (scale === 1) {
-			scale = 0.5
+			newScale = 0.5
 		} else if (scale > 1 && scale <= 5) {
-			scale -= 0.5
+			newScale = scale - 0.5
 		} else if (scale > 5) {
-			scale -= 1
+			newScale = scale - 1
 		}
+		onScaleChange && onScaleChange(newScale)
 	}
 
 	function handleInput(event) {
-		let value = parseFloat(event.target.value)
-		// Check if the input is empty
-		if (value === '') {
-			// Handle empty input case here (optional)
-			// For example, you might want to reset the scale to a default value or leave it as is
-			return // Exit the function without changing the scale
-		}
-		// if (isNaN(value) || value < 0) {
-		// 	value = 1 // Default to the minimum value if input is invalid
-		// }
-		scale = value
+		const value = parseFloat(event.target.value)
+		if (isNaN(value)) return
+		onScaleChange && onScaleChange(value)
 	}
 </script>
 
 <div class="scale">
-	<button on:click={increaseNum}>+</button>
-	<input type="number" bind:value={scale} min="0.1" on:input={handleInput} />
-	<button on:click={decreaseNum}>-</button>
+	<button onclick={decreaseNum}>-</button>
+	<input type="number" value={scale} min="0.1" oninput={handleInput} />
+	<button onclick={increaseNum}>+</button>
 </div>
 
 <style lang="scss">

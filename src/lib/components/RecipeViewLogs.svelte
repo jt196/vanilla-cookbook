@@ -1,7 +1,8 @@
 <script>
 	import { localDateAndTime } from '$lib/utils/dateTime'
 
-	export let logs = []
+	/** @type {{logs?: any}} */
+	let { logs = [] } = $props();
 </script>
 
 {#if logs.length > 0}

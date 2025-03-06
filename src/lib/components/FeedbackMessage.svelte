@@ -1,15 +1,18 @@
 <script>
 	import { fade } from 'svelte/transition'
 
-	export let message = ''
-	let show = false
+	/** @type {{message?: string}} */
+	let { message = '' } = $props();
+	let show = $state(false)
 
-	$: if (message) {
-		show = true
-		setTimeout(() => {
-			show = false
-		}, 3000)
-	}
+	$effect(() => {
+		if (message) {
+			show = true
+			setTimeout(() => {
+				show = false
+			}, 3000)
+		}
+	});
 </script>
 
 {#if show && message}

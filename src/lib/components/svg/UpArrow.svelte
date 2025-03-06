@@ -1,7 +1,6 @@
 <script>
-	export let width = ''
-	export let height = ''
-	export let fill = 'white'
+	/** @type {{width?: string, height?: string, fill?: string}} */
+	let { width = '', height = '', fill = 'white' } = $props();
 </script>
 
 <svg xmlns="http://www.w3.org/2000/svg" {width} {fill} {height} viewBox="0 0 512 512"

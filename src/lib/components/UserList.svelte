@@ -2,16 +2,19 @@
 	import VirtualList from 'svelte-virtual-list'
 	import UserCard from './UserCard.svelte'
 
-	export let users = []
+	/** @type {{users?: any}} */
+	let { users = [] } = $props();
 
-	let start
-	let end
+	let start = $state()
+	let end = $state()
 </script>
 
 <div class="container">
-	<VirtualList items={users} bind:start bind:end let:item>
-		<UserCard {item} />
-	</VirtualList>
+	<VirtualList items={users} bind:start bind:end >
+		{#snippet children({ item })}
+				<UserCard {item} />
+					{/snippet}
+		</VirtualList>
 	<span class="list-indicator">
 		<p>showing items {start}-{end}</p>
 	</span>

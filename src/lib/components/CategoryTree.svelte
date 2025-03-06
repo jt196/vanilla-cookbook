@@ -1,9 +1,8 @@
 <script>
 	import CategoryTree from '$lib/components/CategoryTree.svelte'
 
-	export let categories = []
-	export let onCategoryClick = () => {}
-	export let selectedCategoryUids = []
+	/** @type {{categories?: any, onCategoryClick?: any, selectedCategoryUids?: any}} */
+	let { categories = [], onCategoryClick = () => {}, selectedCategoryUids = [] } = $props();
 </script>
 
 <ul>
@@ -11,7 +10,7 @@
 		<!-- Keep the key for each loop -->
 		<li class="categories">
 			<button
-				on:click={() => onCategoryClick(category)}
+				onclick={() => onCategoryClick(category)}
 				class:selected={selectedCategoryUids.includes(category.uid)}>
 				{category.name ? category.name : 'Unnamed Cat'}
 			</button>

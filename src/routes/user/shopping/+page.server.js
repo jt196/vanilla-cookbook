@@ -8,7 +8,7 @@ export const load = async ({ url, fetch, locals }) => {
 	const session = await locals.auth.validate()
 	const user = session?.user
 	if (!session || !user) {
-		throw redirect(302, '/login')
+		redirect(302, '/login');
 	}
 	const shoppingListResponse = await fetch(`${url.origin}/api/ingredients/shopping`)
 	const shoppingList = await shoppingListResponse.json()

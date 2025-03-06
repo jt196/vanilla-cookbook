@@ -15,11 +15,9 @@
 	import Shopping from '$lib/components/svg/Shopping.svelte'
 	import Calendar from '$lib/components/svg/Calendar.svelte'
 	import New from '$lib/components/svg/New.svelte'
-	/**
-	 * Data for the page, structure defined by the `PageData` type.
-	 * @type {PageData}
-	 */
-	export let data
+	
+	/** @type {{data: PageData, children?: import('svelte').Snippet}} */
+	let { data, children } = $props();
 	const { user, settings } = data
 
 	if (browser && 'serviceWorker' in navigator) {
@@ -66,7 +64,7 @@
 			</form>
 		</ul>
 	</nav>
-	<slot />
+	{@render children?.()}
 </div>
 
 <style lang="scss">

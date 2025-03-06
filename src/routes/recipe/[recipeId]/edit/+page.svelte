@@ -15,18 +15,21 @@
 	 * @see src/lib/typeDefinitions.js for the Recipe type definition
 	 */
 
-	let recipeCategories = [] // This will store the selected category UIDs for the recipe
-	let allCategories = [] // This will store all available categories
-	let selectedFiles = []
-	let sidebarOpen = false
+	let recipeCategories = $state([]) // This will store the selected category UIDs for the recipe
+	let selectedFiles = $state([])
+	let sidebarOpen = $state(false)
 
-	/** @type {PageData} */
-	export let data
+	// /** @type {{data: PageData}} */
+	let { data } = $props()
 
-	$: ({ recipe, allCategories, user } = data)
+	let recipe = $state(data?.recipe ?? {})
+	let allCategories = $state(data?.allCategories ?? [])
+	let user = $state(data?.user ?? {})
 
-	$: recipeCategories =
-		recipe && recipe.categories ? recipe.categories.map((cat) => cat.categoryUid) : []
+	$effect(() => {
+		recipeCategories =
+			recipe && recipe.categories ? recipe.categories.map((cat) => cat.categoryUid) : []
+	})
 
 	function handleCategoryClick(category) {
 		if (recipeCategories.includes(category.uid)) {
@@ -82,29 +85,34 @@
 	function handleSidebarClose() {
 		sidebarOpen = false
 	}
+
+	function handleSelectedFilesChange(files) {
+		selectedFiles = files
+	}
 </script>
 
-<Sidebar bind:isOpen={sidebarOpen} on:close={handleSidebarClose}>
+<Sidebar isOpen={sidebarOpen} onClose={handleSidebarClose}>
 	<CategoryTree
 		categories={allCategories}
 		onCategoryClick={handleCategoryClick}
 		selectedCategoryUids={recipeCategories} />
 </Sidebar>
 
-<div class="recipe-container" class:sidebar-open={sidebarOpen} on:close={handleSidebarClose}>
-	<button data-tooltip="Display Category Selector" on:click={toggleSidebar}>
+<div class="recipe-container" class:sidebar-open={sidebarOpen} onclose={handleSidebarClose}>
+	<button data-tooltip="Display Category Selector" onclick={toggleSidebar}>
 		<Burger width="1.5rem" />
 	</button>
 	<RecipeForm
 		bind:recipe
-		editMode="true"
+		editMode={true}
 		bind:selectedFiles
 		{recipeCategories}
 		buttonText="Update Recipe"
+		onSelectedFilesChange={handleSelectedFilesChange}
 		onSubmit={handleSubmit} />
 </div>
 
-{#if recipe.userId === user.userId}
+{#if recipe?.userId === user?.userId}
 	<a
 		href="/recipe/{recipe?.uid}/view/"
 		role="button"
@@ -113,7 +121,7 @@
 		<View width="30px" height="30px" fill="var(--pico-ins-color)" />
 	</a>
 	<button
-		on:click={() => handleDelete(recipe?.uid)}
+		onclick={() => handleDelete(recipe?.uid)}
 		data-testid="delete-button"
 		class="outline secondary">
 		<Delete width="30px" height="30px" fill="var(--pico-del-color)" />

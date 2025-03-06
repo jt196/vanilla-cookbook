@@ -7,34 +7,23 @@
 	import { goto } from '$app/navigation'
 	import TrueFalse from '$lib/components/TrueFalse.svelte'
 
-	export let data
-	let users = data.users
+	/** @type {{data: any}} */
+	let { data } = $props()
+	let { users } = $state(data)
 	// If the logged in user is an admin, this will return the id
 	// If the page is attempted access by a non-admin, it'll redirect
 	let currentAdminUserId = data.adminId
-	let isDialogOpen = false // dialog is initially closed
-	let isEditMode = false
-	let password = ''
+	let isDialogOpen = $state(false) // dialog is initially closed
+	let isEditMode = $state(false)
+	let password = $state('')
 
-	$: adminCount = users.filter((user) => user.isAdmin).length
-	$: {
-		// Find the index of the user being edited in the users array
-		const index = users.findIndex((user) => user.id === editingUser.id)
-
-		// If the user is found, update its data
-		if (index !== -1) {
-			users[index] = { ...editingUser }
-		}
-	}
-	$: passwordFeedback = password.length > 0 ? validatePassword(password) : null
-
-	let editingUser = {
+	let editingUser = $state({
 		id: null,
 		name: '',
 		username: ''
-	}
+	})
 
-	let dialog
+	let dialog = $state()
 
 	onMount(() => {
 		dialog.addEventListener('close', () => {
@@ -132,9 +121,25 @@
 			console.error('Error deleting user:', error.message)
 		}
 	}
+	let adminCount = $derived(users.filter((user) => user.isAdmin).length)
+
+	$effect(() => {
+		if (!isDialogOpen || !isEditMode || !editingUser.id) return // Prevent unnecessary updates
+
+		const index = users.findIndex((user) => user.id === editingUser.id)
+
+		if (index !== -1) {
+			// Avoid unnecessary reactivity updates by comparing values first
+			if (JSON.stringify(users[index]) !== JSON.stringify(editingUser)) {
+				users = users.map((user, i) => (i === index ? { ...editingUser } : user))
+			}
+		}
+	})
+
+	let passwordFeedback = $derived(password.length > 0 ? validatePassword(password) : null)
 </script>
 
-<button data-tooltip="New User" on:click={openCreateDialog}
+<button data-tooltip="New User" onclick={openCreateDialog}
 	><New width="30px" height="30px" /></button>
 
 <table>
@@ -167,7 +172,7 @@
 				<td><TrueFalse isTrue={user.isRoot} /></td>
 				<td>
 					<button
-						on:click={() => openEditDialog(user)}
+						onclick={() => openEditDialog(user)}
 						data-testid="edit-button"
 						class="outline secondary">
 						<Edit width="20px" fill="var(--pico-ins-color)" />
@@ -175,7 +180,7 @@
 				<td>
 					{#if user.id !== currentAdminUserId || !user.isRoot}
 						<button
-							on:click={() => deleteUser(user.id)}
+							onclick={() => deleteUser(user.id)}
 							data-testid="delete-button"
 							class="outline secondary">
 							<Delete width="20px" fill="var(--pico-del-color)" />
@@ -211,8 +216,8 @@
 			{#if passwordFeedback && passwordFeedback.message}
 				<p class="feedback">{passwordFeedback.message}</p>
 			{/if}
-			<button on:click={() => (isDialogOpen = false)} class="secondary">Cancel</button>
-			<button on:click={handleSubmit}>{isEditMode ? 'Update' : 'Create'}</button>
+			<button onclick={() => (isDialogOpen = false)} class="secondary">Cancel</button>
+			<button onclick={handleSubmit}>{isEditMode ? 'Update' : 'Create'}</button>
 		</footer>
 	</article>
 </dialog>

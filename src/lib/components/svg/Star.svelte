@@ -1,7 +1,6 @@
 <script>
-	export let state = 'empty' // "empty", "half", or "full"
-	export let height = '20px'
-	export let fill = 'var(--pico-secondary-focus)'
+	/** @type {{state?: string, height?: string, fill?: string}} */
+	let { state = 'empty', height = '20px', fill = 'var(--pico-secondary-focus)' } = $props();
 </script>
 
 {#if state === 'empty'}

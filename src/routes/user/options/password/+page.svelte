@@ -1,13 +1,16 @@
 <script>
 	import { goto } from '$app/navigation'
-	let oldPass, newPass, newPassConfirm
+	let oldPass = $state(),
+		newPass = $state(),
+		newPassConfirm = $state()
 
-	export let data
+	/** @type {{data: any}} */
+	let { data } = $props()
 
-	const { user } = data
-	let feedbackMessage = ''
+	const { user } = $state(data)
+	let feedbackMessage = $state('')
 
-	$: passwordsMismatch = newPass !== newPassConfirm && newPass && newPassConfirm
+	let passwordsMismatch = $derived(newPass !== newPassConfirm && newPass && newPassConfirm)
 
 	async function updatePassword(event) {
 		event.preventDefault()
@@ -52,7 +55,7 @@
 
 <h3>Update Password</h3>
 <div class="container">
-	<form action="?/updatePassword" method="POST" on:submit={updatePassword}>
+	<form action="?/updatePassword" method="POST" onsubmit={updatePassword}>
 		<label for="old"> Old Password </label>
 		<input type="password" id="old" bind:value={oldPass} />
 		<label for="new"> New Password </label>

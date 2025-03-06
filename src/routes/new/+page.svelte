@@ -6,7 +6,7 @@
 	import RecipeNewScrape from '$lib/components/RecipeNewScrape.svelte'
 	import RecipeForm from '$lib/components/RecipeForm.svelte'
 
-	let url = ''
+	let url = $state('')
 
 	/**
 	 * The scraped recipe object.
@@ -25,7 +25,7 @@
 	 */
 
 	/** @type {Recipe} */
-	let recipe = {
+	let recipe = $state({
 		name: '',
 		source: '',
 		source_url: '',
@@ -37,7 +37,7 @@
 		total_time: '',
 		servings: '',
 		nutritional_info: ''
-	}
+	})
 
 	/**
 	 * Handles the scraping event.
@@ -79,6 +79,6 @@
 	}
 </script>
 
-<RecipeNewScrape initialUrl={url} bind:recipe />
+<RecipeNewScrape initialUrl={url} bind:recipe onUrlChange={(newUrl) => (url = newUrl)} />
 
 <RecipeForm bind:recipe onSubmit={handleCreateRecipe} />

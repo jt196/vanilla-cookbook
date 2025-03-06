@@ -2,7 +2,8 @@
 <script>
 	import User from '$lib/components/svg/User.svelte'
 
-	export let item
+	/** @type {{item: any}} */
+	let { item } = $props();
 </script>
 
 <article>

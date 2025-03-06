@@ -1,12 +1,12 @@
 import fs from 'fs'
 import { promises as fsPromises } from 'fs'
 import path from 'path'
-import FileType from 'file-type'
+import { fileTypeFromStream } from 'file-type'
 
 // Check for a single type: isValidFileType(file, 'zip')
 // Check for multiple types: isValidFileType(file, ['zip', 'gzip'])
 export async function isValidFileType(stream, desiredExtensions) {
-	const fileTypeResult = await FileType.fromStream(stream)
+	const fileTypeResult = await fileTypeFromStream(stream)
 
 	if (!fileTypeResult) {
 		return false

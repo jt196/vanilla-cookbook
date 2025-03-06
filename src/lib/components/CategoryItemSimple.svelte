@@ -1,11 +1,11 @@
 <script>
 	import CategoryItemSimple from '$lib/components/CategoryItemSimple.svelte'
 
-	export let nodes = {}
-	export let node = {}
 
 	import { flip } from 'svelte/animate'
 	import { dndzone, SHADOW_PLACEHOLDER_ITEM_ID } from 'svelte-dnd-action'
+	/** @type {{nodes?: any, node?: any}} */
+	let { nodes = $bindable({}), node = {} } = $props();
 
 	const flipDurationMs = 300
 </script>

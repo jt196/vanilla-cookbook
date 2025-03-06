@@ -1,6 +1,6 @@
 <script>
-	export let otherPhotos = []
-	export let recipeName = ''
+	/** @type {{otherPhotos?: any, recipeName?: string}} */
+	let { otherPhotos = [], recipeName = '' } = $props();
 </script>
 
 <div class="other-photos">

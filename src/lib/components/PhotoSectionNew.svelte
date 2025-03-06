@@ -1,6 +1,6 @@
 <script>
-	export let recipe
-	export let imageExists
+	/** @type {{recipe: any, imageExists: any}} */
+	let { recipe, imageExists } = $props();
 </script>
 
 {#if recipe.image_url && imageExists}

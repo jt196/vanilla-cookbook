@@ -1,6 +1,6 @@
 <script>
-	export let directionLines = []
-	export let sanitizedDirections = []
+	/** @type {{directionLines?: any, sanitizedDirections?: any}} */
+	let { directionLines = [], sanitizedDirections = [] } = $props();
 </script>
 
 {#if directionLines.length > 0}

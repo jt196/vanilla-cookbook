@@ -43,6 +43,21 @@ export async function addRecipeToFavourites(uid) {
 	}
 }
 
+export async function recipeRatingChange(newRating, uid) {
+	// Now call the endpoint
+	const response = await fetch(`/api/recipe/${uid}/rating`, {
+		method: 'PUT',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({ rating: newRating })
+	})
+	if (!response.ok) {
+		// Handle error (e.g. revert UI change, show message, etc.)
+		console.error('Failed to update rating')
+	}
+}
+
 export async function updateRecipe(formData, recipeId) {
 	try {
 		const response = await fetch(`/api/recipe/${recipeId}`, {

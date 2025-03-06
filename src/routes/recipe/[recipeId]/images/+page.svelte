@@ -1,23 +1,25 @@
 <script>
 	import FoodBowl from '$lib/components/svg/FoodBowl.svelte'
-	import UpArrow from '$lib/components/svg/UpArrow.svelte'
-	import Delete from '$lib/components/svg/Delete.svelte'
 	import View from '$lib/components/svg/View.svelte'
 
 	import { deletePhotoById, updatePhotos } from '$lib/utils/crud'
 	import RecipeImagesItem from '$lib/components/RecipeImagesItem.svelte'
 
-	/**
-	 * Data for the current page.
-	 * @type {PageData}
-	 */
-	export let data
+	
+	/** @type {{data: PageData}} */
+	let { data } = $props();
 
-	let { recipe } = data
+	let { recipe } = $state(data)
 
-	$: filteredPhotos = (recipe.photos || [])
-		.filter((photo) => photo.fileType)
-		.sort((a, b) => (b.mainPhoto || 0) - (a.mainPhoto || 0))
+	let photos = $state(data?.recipe?.photos ?? []);
+
+	let filteredPhotos = $state([]);
+
+	$effect(() => {
+		filteredPhotos = photos
+			.filter((photo) => photo.fileType)
+			.sort((a, b) => (b.mainPhoto || 0) - (a.mainPhoto || 0));
+	});
 
 	async function handleSetMainPhoto(mainPhotoId) {
 		// Immediately update local data

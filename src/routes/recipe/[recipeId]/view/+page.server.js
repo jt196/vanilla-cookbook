@@ -9,12 +9,12 @@ export const load = async ({ params, locals, fetch, url }) => {
 
 	// Check if recipe is not public and no session or user is available
 	if (!recipe.is_public && (!session || !user)) {
-		throw error(401, 'Unauthorized')
+		error(401, 'Unauthorized');
 	}
 
 	if (response.status === 403) {
 		// Redirect to a specific route on a 403 response
-		throw redirect(302, '/')
+		redirect(302, '/');
 	}
 
 	// Creating a dummy user object for non-logged in users

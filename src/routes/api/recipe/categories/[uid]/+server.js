@@ -110,15 +110,12 @@ export const POST = async ({ request, locals, params }) => {
 			}
 		})
 	} catch (error) {
-		return new Response(
-			{ error: `Failed to update category: ${error.message}` },
-			{
-				status: 500,
-				headers: {
-					'Content-Type': 'application/json'
-				}
+		return new Response(JSON.stringify({ error: `Failed to update category: ${error.message}` }), {
+			status: 500,
+			headers: {
+				'Content-Type': 'application/json'
 			}
-		)
+		})
 	}
 }
 

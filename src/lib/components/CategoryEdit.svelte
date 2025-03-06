@@ -1,32 +1,39 @@
 <script>
+	import CategoryEdit from './CategoryEdit.svelte';
+
 	import { flip } from 'svelte/animate'
 	import { dndzone, SHADOW_PLACEHOLDER_ITEM_ID } from 'svelte-dnd-action'
 	import Ellipsis from './svg/Ellipsis.svelte'
 
-	export let nodes = {}
-	export let node
+	/** @type {{nodes?: any, node: any}} */
+	let { nodes = $bindable({}), node = $bindable() } = $props();
 
 	// Sort the items when the node is updated
-	$: {
+	$effect(() => {
 		if (node && node.items) {
-			node.items = node.items.filter((item) => nodes[item.uid]) // remove items not in nodes
-			node.items.sort((a, b) => {
-				const nameA = nodes[a.uid].name.toLowerCase()
-				const nameB = nodes[b.uid].name.toLowerCase()
-				if (nameA < nameB) return -1
-				if (nameA > nameB) return 1
-				return 0
-			})
+			// Create a new sorted list instead of modifying `node.items` directly
+			const sortedItems = node.items
+				.filter((item) => nodes[item.uid]) // remove items not in nodes
+				.sort((a, b) => {
+					const nameA = nodes[a.uid].name.toLowerCase();
+					const nameB = nodes[b.uid].name.toLowerCase();
+					return nameA.localeCompare(nameB);
+				});
+
+			// Only assign if it actually changes to prevent reactivity loops
+			if (JSON.stringify(sortedItems) !== JSON.stringify(node.items)) {
+				node.items = sortedItems;
+			}
 		}
-	}
+	});
 
 	const flipDurationMs = 300
 	function handleDndConsider(e) {
 		node.items = e.detail.items
 	}
 
-	let editingId = null
-	let editedName = ''
+	let editingId = $state(null)
+	let editedName = $state('')
 
 	function startEditing(uid, name) {
 		editingId = uid
@@ -134,27 +141,27 @@
 		{#if editingId === node.uid}
 			<input
 				bind:value={editedName}
-				on:blur={() => saveChanges(node.uid)}
-				on:keydown={(e) => e.key === 'Enter' && saveChanges(node.uid)} />
-			<button on:click={() => (editingId = null)}>Cancel</button>
-			<button on:click={saveChanges(node.uid)}>Save</button>
-			<button on:click={() => deleteCategory(node.uid)}>Delete</button>
+				onblur={() => saveChanges(node.uid)}
+				onkeydown={(e) => e.key === 'Enter' && saveChanges(node.uid)} />
+			<button onclick={() => (editingId = null)}>Cancel</button>
+			<button onclick={() => saveChanges(node.uid)}>Save</button>
+			<button onclick={() => deleteCategory(node.uid)}>Delete</button>
 		{:else}
 			{node.name}
 		{/if}
 	</b>
-	<button on:click={() => startEditing(node.uid, node.name)}
+	<button onclick={() => startEditing(node.uid, node.name)}
 		><Ellipsis width="20px" fill="var(--pico-secondary)" /></button>
 </div>
 
 <section
 	use:dndzone={{ items: node.items || [], flipDurationMs, centreDraggedOnCursor: true }}
-	on:consider={handleDndConsider}
-	on:finalize={handleDndFinalize}>
+	onconsider={handleDndConsider}
+	onfinalize={handleDndFinalize}>
 	{#if node.items}
 		{#each node.items.filter((item) => item.uid !== SHADOW_PLACEHOLDER_ITEM_ID) as item (item.uid)}
 			<div animate:flip={{ duration: flipDurationMs }} class="item">
-				<svelte:self bind:nodes node={nodes[item.uid]} />
+				<CategoryEdit bind:nodes node={nodes[item.uid]} />
 			</div>
 		{/each}
 	{/if}

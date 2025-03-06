@@ -7,10 +7,11 @@
 	import '@event-calendar/core/index.css'
 	import { updateEventInBackend, deleteEventInBackend } from '$lib/utils/crud.js'
 
-	export let data
+	/** @type {{data: any}} */
+	let { data } = $props();
 
 	let logs = data.logs
-	let calendarInstance
+	let calendarInstance = $state()
 
 	function parseLogs() {
 		const events = logs.map((item) => {

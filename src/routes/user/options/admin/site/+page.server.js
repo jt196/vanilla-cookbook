@@ -6,12 +6,12 @@ export const load = async ({ locals }) => {
 	const user = session?.user
 
 	if (!session || !user) {
-		throw error(401, 'Unauthorized')
+		error(401, 'Unauthorized');
 	}
 
 	if (!user.isAdmin) {
 		// Assuming 'isAdmin' is a field in your user object
-		throw error(403, 'Forbidden')
+		error(403, 'Forbidden');
 	}
 
 	// Fetch users

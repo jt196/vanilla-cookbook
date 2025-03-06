@@ -1,6 +1,6 @@
 <script>
-	export let notesLines = []
-	export let sanitizedNotes = []
+	/** @type {{notesLines?: any, sanitizedNotes?: any}} */
+	let { notesLines = [], sanitizedNotes = [] } = $props();
 </script>
 
 {#if notesLines.length > 0}

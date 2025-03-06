@@ -12,7 +12,7 @@ export const load = async ({ locals }) => {
 	const session = await locals.auth.validate()
 	const settings = await prisma.siteSettings.findFirst()
 	if (session) {
-		throw redirect(302, '/')
+		redirect(302, '/');
 	}
 	return { settings }
 }
@@ -47,6 +47,6 @@ export const actions = {
 			console.error(err)
 			return fail(400, { message: 'Could not login user.' })
 		}
-		throw redirect(302, '/')
+		redirect(302, '/');
 	}
 }

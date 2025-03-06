@@ -11,27 +11,29 @@
 	} from '$lib/utils/crud.js'
 	import { onMount } from 'svelte'
 
-	export let data
-	const { user, importCount } = data
+	/** @type {{data: any}} */
+	let { data } = $props()
 
-	let catDb = importCount.catDb
-	let recDb = importCount.recDb
-	let catFile = importCount.catFile
-	let recFile = importCount.recFile
+	const { user, importCount } = $state(data)
 
-	let paprikaUser = ''
-	let paprikaPassword = ''
+	let catDb = $state(importCount.catDb)
+	let recDb = $state(importCount.recDb)
+	let catFile = $state(importCount.catFile)
+	let recFile = $state(importCount.recFile)
 
-	let catFeedbackMessage = ''
-	let recFeedbackMessage = ''
-	let catFileExists = false
-	let recFileExists = false
-	let importCatBusy = false
-	let importRecBusy = false
-	let downloadCatBusy = false
-	let downloadRecBusy = false
+	let paprikaUser = $state('')
+	let paprikaPassword = $state('')
 
-	let isPublic = false
+	let catFeedbackMessage = $state('')
+	let recFeedbackMessage = $state('')
+	let catFileExists = $state(false)
+	let recFileExists = $state(false)
+	let importCatBusy = $state(false)
+	let importRecBusy = $state(false)
+	let downloadCatBusy = $state(false)
+	let downloadRecBusy = $state(false)
+
+	let isPublic = $state(false)
 
 	onMount(async () => {
 		await checkCategoryFileExists(user.userId)
@@ -146,8 +148,8 @@
 		}
 	}
 
-	let catImportStatus = null
-	let recImportStatus = null
+	let catImportStatus = $state(null)
+	let recImportStatus = $state(null)
 
 	async function importCategoriesFromFile() {
 		try {
@@ -245,7 +247,7 @@
 	<input type="password" id="paprikaPassword" bind:value={paprikaPassword} />
 	<div class="paprika-api">
 		<div class="import-categories">
-			<button aria-busy={downloadCatBusy} disabled={catFileExists} on:click={downloadCategories}
+			<button aria-busy={downloadCatBusy} disabled={catFileExists} onclick={downloadCategories}
 				>Download Paprika Categories</button>
 			<div class="feedback">
 				<FeedbackMessage message={catFeedbackMessage} />
@@ -254,7 +256,7 @@
 						<button
 							class="outline secondary"
 							disabled={!catFileExists}
-							on:click={() => removeFile('categories.json')}
+							onclick={() => removeFile('categories.json')}
 							><Delete width="30px" height="30px" fill="var(--pico-del-color)" /></button>
 					{/if}
 				</div>
@@ -265,12 +267,12 @@
 				aria-busy={importCatBusy}
 				class="outline secondary delete"
 				disabled={catDb === catFile || catFile === 0 || catFile === null}
-				on:click={importCategoriesFromFile}>Import Categories</button>
+				onclick={importCategoriesFromFile}>Import Categories</button>
 			<FeedbackMessage message={catImportStatus} />
 		</div>
 		{#if user.isAdmin}
 			<div class="import-recipes">
-				<button disabled={recFileExists} aria-busy={downloadRecBusy} on:click={downloadRecipes}
+				<button disabled={recFileExists} aria-busy={downloadRecBusy} onclick={downloadRecipes}
 					>Download Paprika Recipes</button>
 				<div class="feedback">
 					<FeedbackMessage message={recFeedbackMessage} />
@@ -279,7 +281,7 @@
 							<button
 								class="outline secondary delete"
 								disabled={!recFileExists}
-								on:click={() => removeFile('recipes.json')}
+								onclick={() => removeFile('recipes.json')}
 								><Delete width="30px" height="30px" fill="var(--pico-del-color)" /></button>
 						{/if}
 					</div>
@@ -298,7 +300,7 @@
 					aria-busy={importRecBusy}
 					class="outline secondary"
 					disabled={recDb === recFile || recFile === 0 || recFile === null}
-					on:click={importRecipesFromFile}>Import Recipes</button>
+					onclick={importRecipesFromFile}>Import Recipes</button>
 				<FeedbackMessage message={recImportStatus} />
 			</div>
 		{/if}

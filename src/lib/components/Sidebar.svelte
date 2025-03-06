@@ -1,18 +1,17 @@
 <!-- Sidebar.svelte -->
 <script>
-	export let isOpen = false
 	import { createEventDispatcher } from 'svelte'
-	const dispatch = createEventDispatcher()
+	/** @type {{isOpen?: boolean, onClose?: () => void, children?: import('svelte').Snippet}} */
+	let { isOpen = false, onClose, children } = $props();
 
 	function closeSidebar() {
-		isOpen = false
-		dispatch('close')
+		onClose?.(); // Call the parent function instead of modifying `isOpen`
 	}
 </script>
 
 <div class="sidebar" class:open={isOpen}>
-	<button class="close-btn" on:click={closeSidebar}>X</button>
-	<slot />
+	<button class="close-btn" onclick={closeSidebar}>X</button>
+	{@render children?.()}
 </div>
 
 <style lang="scss">

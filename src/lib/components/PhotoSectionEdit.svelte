@@ -4,13 +4,14 @@
 
 	import { deletePhotoById, updatePhotos } from '$lib/utils/crud'
 
-	export let recipe
-	// export let selectedFiles
+	/** @type {{recipe: any, selectedFiles: any}} */
+	let { recipe, onSelectedFilesChange } = $props()
 
-	export let selectedFiles
+	let filteredPhotos = $state()
 
-	let filteredPhotos
-	$: filteredPhotos = recipe && recipe.photos ? recipe.photos.filter((photo) => photo.fileType) : []
+	$effect(() => {
+		filteredPhotos = recipe && recipe.photos ? recipe.photos.filter((photo) => photo.fileType) : []
+	})
 
 	async function handleDeletePhoto(photoId) {
 		try {
@@ -57,12 +58,15 @@
 	}
 
 	function handleFilesChange(event) {
-		selectedFiles = Array.from(event.target.files)
+		// Convert the FileList to an array of files
+		const files = Array.from(event.target.files)
+		// Use the callback to notify the parent of the change
+		onSelectedFilesChange && onSelectedFilesChange(files)
 	}
 </script>
 
 <label for="file">Upload Images</label>
-<input type="file" id="file" name="file" on:change={handleFilesChange} multiple />
+<input type="file" id="file" name="file" onchange={handleFilesChange} multiple />
 
 <div class="photos">
 	{#each filteredPhotos as photo}
@@ -72,10 +76,7 @@
 				alt="{recipe.name} photo"
 				class={photo.isMain ? 'main-photo' : ''} />
 			<div class="photo-actions">
-				<button
-					class="outline secondary"
-					type="button"
-					on:click={() => handleDeletePhoto(photo.id)}>
+				<button class="outline secondary" type="button" onclick={() => handleDeletePhoto(photo.id)}>
 					<Delete width="30px" height="30px" fill="var(--pico-del-color)" />
 				</button>
 				{#if !photo.isMain}
@@ -83,7 +84,7 @@
 						class="outline secondary"
 						data-tooltip="Promote to Main Photo"
 						type="button"
-						on:click={() => handleSetMainPhoto(photo.id)}>
+						onclick={() => handleSetMainPhoto(photo.id)}>
 						<UpArrow width="30px" height="30px" fill="var(--pico-primary)" />
 					</button>
 				{/if}

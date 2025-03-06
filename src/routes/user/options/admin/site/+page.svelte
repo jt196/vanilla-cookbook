@@ -1,9 +1,10 @@
 <script>
-	export let data
+	/** @type {{data: any}} */
+	let { data } = $props();
 
-	const { settings } = data
+	const { settings } = $state(data)
 
-	let settingsFeedback = ''
+	let settingsFeedback = $state('')
 
 	async function updateAdminSettings(event) {
 		event.preventDefault()
@@ -24,7 +25,7 @@
 
 <h3>Update Site Settings</h3>
 <div class="container">
-	<form method="POST" action="?/updateAdminSettings" on:submit={updateAdminSettings}>
+	<form method="POST" action="?/updateAdminSettings" onsubmit={updateAdminSettings}>
 		<label>
 			<input type="checkbox" name="Admin" bind:checked={settings.registrationAllowed} />
 			Allow Registrations

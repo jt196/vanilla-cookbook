@@ -8,8 +8,9 @@
 	} from '$lib/utils/crud.js'
 	import { parse } from '$lib/submodules/recipe-ingredient-parser/src/index.js'
 	import Link from '$lib/components/svg/Link.svelte'
+	import { browser } from '$app/environment'
 	import { fade } from 'svelte/transition'
-	import { onMount } from 'svelte'
+	import { onMount, onDestroy } from 'svelte'
 	import { sortByTwoKeys } from '$lib/utils/sorting.js'
 	import View from '$lib/components/svg/View.svelte'
 	import ViewNo from '$lib/components/svg/ViewNo.svelte'
@@ -20,7 +21,19 @@
 	import Edit from '$lib/components/svg/Edit.svelte'
 	import ConfirmationDialog from '$lib/components/ConfirmationDialog.svelte'
 
-	export let data
+	/** @type {{data: any}} */
+	let { data } = $props()
+
+	let { shoppingList } = $state(data)
+
+	let isDeleteDialogOpen = $state(false)
+	let isCheckAllDialogOpen = $state(false)
+	let shoppingFeedback = $state('')
+	let newIngredient = $state('')
+	let showHidden = $state(false)
+	let editDialog = $state() // Reference to the edit modal dialog
+	let isEditDialogOpen = $state(false) // State to track if the edit modal is open
+	let editingItem = $state({}) // The item currently being edited
 
 	async function handleCheckboxChange(item, event) {
 		const purchased = event.target.checked
@@ -28,7 +41,7 @@
 
 		// Update local state to reflect the change
 		setTimeout(() => {
-			const updatedList = data.shoppingList.map((listItem) => {
+			const updatedList = shoppingList.map((listItem) => {
 				if (listItem.uid === item.uid) {
 					// If the item is unchecked (purchased is false), also set hidden to false
 					// Otherwise, just update the purchased status
@@ -37,19 +50,35 @@
 				return listItem
 			})
 
-			data.shoppingList = updatedList
+			shoppingList = updatedList
 		}, 300)
 	}
 
-	let isDeleteDialogOpen = false
-	let isCheckAllDialogOpen = false
+	// Escape to close the edit dialog
+
+	onMount(() => {
+		if (browser) {
+			document.addEventListener('keydown', handleKeydown)
+		}
+	})
+
+	onDestroy(() => {
+		if (browser) {
+			document.removeEventListener('keydown', handleKeydown)
+		}
+	})
+
+	function handleKeydown(event) {
+		if (event.key === 'Escape' && isEditDialogOpen === true) {
+			isEditDialogOpen = false
+		}
+	}
 
 	async function handleDelete() {
 		shoppingFeedback = ''
 		try {
 			// Filter out purchased items from the local data
-			data.shoppingList = data.shoppingList.filter((item) => !item.purchased)
-			isDeleteDialogOpen = false
+			shoppingList = shoppingList.filter((item) => !item.purchased)
 			const response = await deletePurchasedItems()
 			if (response.success) {
 				shoppingFeedback = 'Successfully deleted purchased items!'
@@ -60,11 +89,8 @@
 			console.error('Error deleting purchased items:', error.message)
 			shoppingFeedback = 'There was a problem deleting purchased items!'
 		}
+		isDeleteDialogOpen = false
 	}
-
-	let shoppingFeedback = ''
-
-	let newIngredient = ''
 
 	async function handleAddIngredient() {
 		try {
@@ -78,7 +104,7 @@
 				// Successfully added the ingredient to the API
 				const newItem = response.data
 				console.log('🚀 ~ handleAddIngredient ~ newItem:', newItem)
-				data.shoppingList = [...data.shoppingList, newItem] // Add the new item to the local state
+				shoppingList = [...shoppingList, newItem] // Add the new item to the local state
 				newIngredient = '' // Clear the input field
 			} else {
 				// Handle errors or show an error message to the user
@@ -97,22 +123,18 @@
 		}
 	}
 
-	let showHidden = false
-
 	function toggleHidden() {
 		showHidden = !showHidden
 	}
 
 	async function handleCheckAll() {
 		shoppingFeedback = '' // Reset or clear the feedback message before starting the updates
-		isCheckAllDialogOpen = false
-
 		try {
 			const result = await markPurchasedItems() // Call the bulk update function
 
 			if (result && result.updatedCount > 0) {
 				// If items were successfully updated, reflect these changes locally
-				data.shoppingList = data.shoppingList.map((item) => ({ ...item, purchased: true }))
+				shoppingList = shoppingList.map((item) => ({ ...item, purchased: true }))
 				shoppingFeedback = `${result.updatedCount} item(s) have been marked as purchased!` // Inform the user about the number of items updated
 			} else if (result && result.updatedCount === 0) {
 				// If no items were updated, inform the user accordingly
@@ -125,11 +147,8 @@
 			shoppingFeedback = 'An error occurred while updating items.' // Set an error message for catch block errors
 			console.error('Error updating shopping list items:', error.message)
 		}
+		isCheckAllDialogOpen = false
 	}
-
-	let editDialog // Reference to the edit modal dialog
-	let isEditDialogOpen = false // State to track if the edit modal is open
-	let editingItem = {} // The item currently being edited
 
 	function openEditModal(item) {
 		editingItem = { ...item } // Create a shallow copy to edit
@@ -137,15 +156,18 @@
 	}
 
 	// Function to handle saving the edited item
-	async function handleSaveEdit() {
+	async function handleSaveEdit(event) {
+		console.log('🚀 ~ handleSaveEdit ~ event:', event)
+		event.preventDefault()
 		// Validate the edited item's data here (if necessary)
 
 		try {
 			// Update the item on the backend
 			const updatedItem = await updateShoppingListItem(editingItem)
+			console.log('🚀 ~ handleSaveEdit ~ updatedItem:', updatedItem)
 
 			// Update the item in the local shopping list state if the backend update is successful
-			data.shoppingList = data.shoppingList.map((item) => {
+			shoppingList = shoppingList.map((item) => {
 				if (item.uid === updatedItem.uid) {
 					// Replace the old item data with the updated item data
 					return updatedItem
@@ -166,7 +188,7 @@
 			// Update the item on the backend
 			const response = await deleteShoppingListItem(uid)
 			if (response.success) {
-				data.shoppingList = data.shoppingList.filter((item) => item.uid !== uid)
+				shoppingList = shoppingList.filter((item) => item.uid !== uid)
 
 				shoppingFeedback = 'Item deleted successfully!'
 			} else {
@@ -179,21 +201,23 @@
 		}
 	}
 
-	$: sortedList = showHidden
-		? sortByTwoKeys(data.shoppingList, 'purchased', 'name', 'asc', 'asc')
-		: sortByTwoKeys(
-				data.shoppingList.filter((item) => !item.purchased),
-				'name',
-				'asc'
-		  )
-	$: purchasedItemCount = data.shoppingList.filter((item) => item.purchased).length
-	$: uncheckedItemCount = data.shoppingList.filter((item) => !item.purchased).length
+	let sortedList = $derived(
+		showHidden
+			? sortByTwoKeys(shoppingList, 'purchased', 'name', 'asc', 'asc')
+			: sortByTwoKeys(
+					shoppingList.filter((item) => !item.purchased),
+					'name',
+					'asc'
+				)
+	)
+	let purchasedItemCount = $derived(shoppingList.filter((item) => item.purchased).length)
+	let uncheckedItemCount = $derived(shoppingList.filter((item) => !item.purchased).length)
 </script>
 
 <h4>Shopping List</h4>
 
 <div class="shopping-buttons">
-	<button on:click={toggleHidden}>
+	<button onclick={toggleHidden}>
 		{#if showHidden}
 			<View width="20px" fill="white" />
 		{:else}
@@ -201,11 +225,11 @@
 		{/if}
 	</button>
 
-	<button disabled={uncheckedItemCount === 0} on:click={() => (isCheckAllDialogOpen = true)}>
+	<button disabled={uncheckedItemCount === 0} onclick={() => (isCheckAllDialogOpen = true)}>
 		<CheckAll width="20px" fill="white" />
 	</button>
 
-	<button disabled={purchasedItemCount === 0} on:click={() => (isDeleteDialogOpen = true)}>
+	<button disabled={purchasedItemCount === 0} onclick={() => (isDeleteDialogOpen = true)}>
 		<Delete width="20px" fill="white" />
 	</button>
 </div>
@@ -214,16 +238,16 @@
 		type="text"
 		placeholder="Enter ingredient..."
 		bind:value={newIngredient}
-		on:keydown={handleKeyPressIngredient} />
-	<button on:click={handleAddIngredient}>
+		onkeydown={handleKeyPressIngredient} />
+	<button onclick={handleAddIngredient}>
 		<!-- You can include your New.Svelte component here for styling -->
 		<New width="20px" fill="white" />
 	</button>
 </div>
 <div class="list-info">
-	{#if data.shoppingList.length === 0}
+	{#if shoppingList.length === 0}
 		<FeedbackMessage message={'List empty: add some items!'} />
-	{:else if data.shoppingList.every((item) => item.purchased) && !showHidden}
+	{:else if shoppingList.every((item) => item.purchased) && !showHidden}
 		<FeedbackMessage message={'List empty: all items are marked as purchased!'} />
 	{/if}
 </div>
@@ -247,7 +271,7 @@
 								type="checkbox"
 								name={item.name}
 								checked={item.purchased}
-								on:change={(event) => handleCheckboxChange(item, event)} />
+								onchange={(event) => handleCheckboxChange(item, event)} />
 							<p class="item-name">
 								{item.name}
 							</p>
@@ -264,14 +288,14 @@
 								{item.recipe.name}
 							</span>
 						{:else}
-							<span class="empty-space" />
+							<span class="empty-space"></span>
 						{/if}
 					</div>
 				</div>
 				<div class="item-buttons">
-					<button class="outline contrast" on:click={() => openEditModal(item)}
+					<button class="outline contrast" onclick={() => openEditModal(item)}
 						><Edit width="20px" height="20px" fill="var(--pico-ins-color)" /></button>
-					<button class="outline secondary" on:click={handleDeleteItem(item.uid)}
+					<button class="outline secondary" onclick={() => handleDeleteItem(item.uid)}
 						><Delete width="20px" height="20px" fill="var(--pico-del-color)" /></button>
 				</div>
 			</div>
@@ -279,22 +303,32 @@
 	{/each}
 </fieldset>
 
-<ConfirmationDialog bind:isOpen={isDeleteDialogOpen} on:confirm={handleDelete}>
-	<div slot="content">
-		<h2>Delete Your Purchased Items?</h2>
-		<p>This will permanently delete all purchased items from your shopping list.</p>
-	</div>
+<ConfirmationDialog
+	isOpen={isDeleteDialogOpen}
+	onConfirm={handleDelete}
+	onClose={() => (isDeleteDialogOpen = false)}>
+	{#snippet content()}
+		<div>
+			<h2>Delete Your Purchased Items?</h2>
+			<p>This will permanently delete all purchased items from your shopping list.</p>
+		</div>
+	{/snippet}
 </ConfirmationDialog>
 
-<ConfirmationDialog bind:isOpen={isCheckAllDialogOpen} on:confirm={handleCheckAll}>
-	<div slot="content">
-		<h2>Check all items as purchased?</h2>
-		<p>This will mark all your shopping as purchased.</p>
-	</div>
+<ConfirmationDialog
+	isOpen={isCheckAllDialogOpen}
+	onConfirm={handleCheckAll}
+	onClose={() => (isCheckAllDialogOpen = false)}>
+	{#snippet content()}
+		<div>
+			<h2>Check all items as purchased?</h2>
+			<p>This will mark all your shopping as purchased.</p>
+		</div>
+	{/snippet}
 </ConfirmationDialog>
 
-<dialog bind:this={editDialog} open={isEditDialogOpen}>
-	<form on:submit|preventDefault={handleSaveEdit}>
+<dialog this={editDialog} open={isEditDialogOpen}>
+	<form onsubmit={handleSaveEdit}>
 		<label for="edit-name">Name:</label>
 		<input id="edit-name" type="text" bind:value={editingItem.name} />
 
@@ -305,7 +339,7 @@
 		<input id="edit-unit" type="text" bind:value={editingItem.unit} />
 
 		<footer>
-			<button type="button" on:click={() => (isEditDialogOpen = false)}>Cancel</button>
+			<button type="button" onclick={() => (isEditDialogOpen = false)}>Cancel</button>
 			<button type="submit">Save</button>
 		</footer>
 	</form>

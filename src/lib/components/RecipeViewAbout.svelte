@@ -5,8 +5,8 @@
 	import CategoryTree from '$lib/components/CategoryTree.svelte'
 	import StarRating from '$lib/components/StarRating.svelte'
 
-	export let recipe
-	export let categories
+	/** @type {{recipe: any, categories: any}} */
+	let { recipe, categories, recipeRatingChanged } = $props()
 </script>
 
 <div class="recipe-about">
@@ -17,7 +17,12 @@
 		Source:
 		<a href={recipe?.source_url}>{recipe?.source}</a>
 	</p>
-	<StarRating bind:rating={recipe.rating} />
+	<StarRating
+		rating={recipe.rating}
+		editable={true}
+		ratingChanged={(newRating) => {
+			recipeRatingChanged?.(newRating) // Call only if defined
+		}} />
 	<div id="categories">
 		<CategoryTree {categories} selectedCategoryUids={collectSelectedUids(categories)} />
 	</div>

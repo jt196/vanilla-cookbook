@@ -5,18 +5,35 @@
 	import RecipeViewExtra from './RecipeViewExtra.svelte'
 	import RecipeViewIng from './RecipeViewIng.svelte'
 
-	export let ingredients
-	export let sanitizedIngredients
-	export let scale
-	export let scaledServings
-	export let selectedSystem
-	export let measurementSystem
-	export let recipeUid
-	export let userIsAdmin = false
+	/** @type {{ingredients: any, sanitizedIngredients: any, scale: any, scaledServings: any, selectedSystem: any, measurementSystem: any, recipeUid: any, userIsAdmin?: boolean}} */
+	let {
+		ingredients,
+		sanitizedIngredients,
+		onScaleChange,
+		scaledServings,
+		onSelectedSystemChange,
+		measurementSystem,
+		recipeUid,
+		userIsAdmin = false,
+		scale,
+		selectedSystem
+	} = $props()
 
-	let displayExtra = false
-	let displayDryMatch = false
-	let displayOriginal = false
+	let displayExtra = $state(false)
+	let displayDryMatch = $state(false)
+	let displayOriginal = $state(false)
+
+	// Define callbacks to update these states:
+	function handleDisplayDryMatchChange(newVal) {
+		displayDryMatch = newVal
+	}
+	function handleDisplayOriginalChange(newVal) {
+		displayOriginal = newVal
+	}
+
+	function handleDisplayExtraChange(newVal) {
+		displayOriginal = newVal
+	}
 </script>
 
 <div class="ing-div">
@@ -28,15 +45,21 @@
 			<p>Servings: {scaledServings}</p>
 		{/if}
 		{#if sanitizedIngredients.some((item) => item.ingredient)}
-			<p><Scale bind:scale /></p>
+			<p>
+				<Scale {scale} {onScaleChange} />
+			</p>
 		{/if}
 	{/if}
 	<div class="ingredients">
 		{#if sanitizedIngredients.some((item) => item.additional)}
-			<RecipeViewExtra bind:displayExtra />
+			<RecipeViewExtra onDisplayExtraChange={handleDisplayExtraChange} />
 		{/if}
 		{#if sanitizedIngredients.some((item) => item.dryIngredient) && userIsAdmin}
-			<RecipeViewIngAdmin bind:displayDryMatch bind:displayOriginal />
+			<RecipeViewIngAdmin
+				{displayDryMatch}
+				{displayOriginal}
+				onDisplayDryMatchChange={handleDisplayDryMatchChange}
+				onDisplayOriginalChange={handleDisplayOriginalChange} />
 		{/if}
 		<ul>
 			{#each sanitizedIngredients as ingredient}
@@ -53,7 +76,7 @@
 	</div>
 	{#if measurementSystem}
 		<div class="convert">
-			<RecipeViewDropdown bind:selectedSystem {measurementSystem} />
+			<RecipeViewDropdown {selectedSystem} {onSelectedSystemChange} {measurementSystem} />
 		</div>
 	{/if}
 </div>

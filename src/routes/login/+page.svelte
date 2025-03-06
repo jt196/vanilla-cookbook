@@ -1,6 +1,7 @@
 <script>
-	export let data
-	const { settings } = data
+	/** @type {{data: any}} */
+	let { data } = $props()
+	const { settings } = $state(data)
 </script>
 
 <form method="POST">

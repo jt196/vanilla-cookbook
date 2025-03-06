@@ -31,19 +31,19 @@
 		<button
 			data-tooltip="Sort by Date"
 			class:secondary={$sortState.key === 'created'}
-			on:click={() => updateSort('created')}>
+			onclick={() => updateSort('created')}>
 			Date <SortAscDesc sort={$sortState.key === 'created' ? $sortState.direction : ''} />
 		</button>
 		<button
 			data-tooltip="Sort by Name"
 			class:secondary={$sortState.key === 'name'}
-			on:click={() => updateSort('name')}>
+			onclick={() => updateSort('name')}>
 			Title <SortAscDesc sort={$sortState.key === 'name' ? $sortState.direction : ''} />
 		</button>
 		<button
 			data-tooltip="Sort by Rating"
 			class:secondary={$sortState.key === 'rating'}
-			on:click={() => updateSort('rating')}>
+			onclick={() => updateSort('rating')}>
 			Rating <SortAscDesc sort={$sortState.key === 'rating' ? $sortState.direction : ''} />
 		</button>
 	</div>

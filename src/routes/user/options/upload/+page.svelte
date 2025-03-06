@@ -2,17 +2,20 @@
 	import FeedbackMessage from '$lib/components/FeedbackMessage.svelte'
 	import Delete from '$lib/components/svg/Delete.svelte'
 	import { dbRecCount, uploadPaprikaFile } from '$lib/utils/crud.js'
-	export let data
-	const { user } = data
-	let recDb = data.dbRecCount
-	let paprikarecipesFiles = data.paprikarecipesFiles
+	/** @type {{data: any}} */
+	let { data } = $props()
 
-	let recUploadMessage = ''
-	let recImportMessage = ''
+	const { user } = $state(data)
 
-	let isPublic = false
-	let importPaprikaFileBusy = false
-	let selectedFiles = []
+	let recDb = $state(data.dbRecCount)
+	let paprikarecipesFiles = $state(data.paprikarecipesFiles)
+
+	let recUploadMessage = $state('')
+	let recImportMessage = $state('')
+
+	let isPublic = $state(false)
+	let importPaprikaFileBusy = $state(false)
+	let selectedFiles = $state([])
 
 	async function removeFile(filename) {
 		if (!confirm('Are you sure you want to remove this file?')) {
@@ -111,9 +114,9 @@
 <div class="paprika-file-upload">
 	<h3>Upload a Paprika File</h3>
 	<label for="file">Click browse to upload a .paprikarecipes file</label>
-	<input type="file" id="file" name="file" on:change={handlePaprikaUpload} />
+	<input type="file" id="file" name="file" onchange={handlePaprikaUpload} />
 	{#if selectedFiles.length > 0}
-		<button class="outline secondary" disabled={selectedFiles.length == 0} on:click={handleSubmit}
+		<button class="outline secondary" disabled={selectedFiles.length == 0} onclick={handleSubmit}
 			>Upload .paprikarecipes File</button>
 	{/if}
 	<div class="feedback">
@@ -137,8 +140,8 @@
 				aria-busy={importPaprikaFileBusy}
 				class="outline secondary"
 				disabled={!paprikarecipesFiles || paprikarecipesFiles.length === 0}
-				on:click={() => importFromPaprikaFile(file)}>Import {file}</button>
-			<button class="outline secondary" on:click={() => removeFile(file)}
+				onclick={() => importFromPaprikaFile(file)}>Import {file}</button>
+			<button class="outline secondary" onclick={() => removeFile(file)}
 				><Delete width="30px" height="30px" fill="var(--pico-del-color)" /></button>
 		{/each}
 	</div>

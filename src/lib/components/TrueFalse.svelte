@@ -2,9 +2,8 @@
 	import TickSymbol from '$lib/components/svg/TickSymbol.svelte'
 	import X from '$lib/components/svg/X.svelte'
 
-	export let isTrue = true
-	export let width = '20px'
-	export let fill = 'white'
+	/** @type {{isTrue?: boolean, width?: string, fill?: string}} */
+	let { isTrue = true, width = '20px', fill = 'white' } = $props();
 </script>
 
 {#if isTrue}

@@ -33,9 +33,8 @@
 		}
 	}
 
-	export let recipe
-	export let updateLogs
-	export let favRecipe
+	/** @type {{recipe: any, updateLogs: any, favRecipe: any}} */
+	let { recipe, updateLogs, favRecipe } = $props();
 </script>
 
 <div class="buttons">
@@ -48,7 +47,7 @@
 		<Edit width="30px" height="30px" fill="var(--pico-ins-color)" />
 	</a>
 	<button
-		on:click={(event) => handleFavourite(recipe?.uid)}
+		onclick={(event) => handleFavourite(recipe?.uid)}
 		data-tooltip="Favourite Recipe"
 		class="outline secondary">
 		<Favourite
@@ -58,14 +57,14 @@
 			fill="var(--pico-del-color)" />
 	</button>
 	<button
-		on:click={() => handleDelete(recipe?.uid)}
+		onclick={() => handleDelete(recipe?.uid)}
 		data-testid="delete-button"
 		data-tooltip="Delete Recipe"
 		class="outline secondary">
 		<Delete width="30px" height="30px" fill="var(--pico-del-color)" />
 	</button>
 	<button
-		on:click={() => handleLog(recipe?.uid)}
+		onclick={() => handleLog(recipe?.uid)}
 		class="outline contrast"
 		data-tooltip="Mark Recipe Cooked Today"
 		data-testid="check-button">

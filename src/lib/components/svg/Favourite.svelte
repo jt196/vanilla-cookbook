@@ -1,8 +1,11 @@
 <script>
-	export let width = ''
-	export let height = ''
-	export let fill = 'var(--lightAccent)'
-	export let favourite = false
+	/** @type {{width?: string, height?: string, fill?: string, favourite?: boolean}} */
+	let {
+		width = '',
+		height = '',
+		fill = 'var(--lightAccent)',
+		favourite = false
+	} = $props();
 </script>
 
 {#if favourite}

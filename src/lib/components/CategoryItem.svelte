@@ -1,11 +1,11 @@
 <script>
 	import CategoryItem from '$lib/components/CategoryItem.svelte'
 
-	export let node
-	export let nodes
+	/** @type {{node: any, nodes: any}} */
+	let { node = $bindable(), nodes = $bindable() } = $props();
 
-	let isEditing = false
-	let editedName = node.name
+	let isEditing = $state(false)
+	let editedName = $state(node.name)
 
 	async function saveChanges() {
 		if (editedName !== node.name) {
@@ -36,13 +36,13 @@
 {#if isEditing}
 	<input
 		bind:value={editedName}
-		on:blur={saveChanges}
-		on:keydown={(e) => e.key === 'Enter' && saveChanges()} />
-	<button on:click={() => (isEditing = false)}>Cancel</button>
-	<button on:click={saveChanges}>Save</button>
+		onblur={saveChanges}
+		onkeydown={(e) => e.key === 'Enter' && saveChanges()} />
+	<button onclick={() => (isEditing = false)}>Cancel</button>
+	<button onclick={saveChanges}>Save</button>
 {:else}
 	<span>{node.name}</span>
-	<button on:click={() => (isEditing = true)}>Edit</button>
+	<button onclick={() => (isEditing = true)}>Edit</button>
 {/if}
 
 {#if node.hasOwnProperty('items')}

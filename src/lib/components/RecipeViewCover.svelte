@@ -1,8 +1,8 @@
 <script>
 	import FoodBowl from '$lib/components/svg/FoodBowl.svelte'
 
-	export let mainPhoto
-	export let recipe
+	/** @type {{mainPhoto: any, recipe: any}} */
+	let { mainPhoto, recipe } = $props();
 </script>
 
 <div class="recipe-cover">

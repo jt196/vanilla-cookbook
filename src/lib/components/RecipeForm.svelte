@@ -6,35 +6,42 @@
 	import PhotoSectionNew from './PhotoSectionNew.svelte'
 	import StarRating from '$lib/components/StarRating.svelte'
 
-	export let recipe
-	export let onSubmit
-	export let buttonText = 'Add Recipe' // Default button text
-	export let selectedFiles = null
-
-	export let baseUrl = ''
-	export let editMode = false
 	// If new recipe, default set to false
-	if (!editMode) {
-		recipe.is_public = false
-	}
-	export let recipeCategories = null
+	/** @type {{recipe: any, onSubmit: any, buttonText?: string, selectedFiles?: any, baseUrl?: string, editMode?: boolean, recipeCategories?: any}} */
+	let {
+		recipe = $bindable(),
+		onSubmit,
+		buttonText = 'Add Recipe',
+		onSelectedFilesChange,
+		baseUrl = '',
+		editMode = false,
+		recipeCategories = null
+	} = $props()
+
+	$effect(() => {
+		if (!editMode) {
+			recipe.is_public = false
+		}
+	})
 
 	onMount(() => {
 		baseUrl = window.location.origin
 	})
 
-	let imageExists = false
+	let imageExists = $state(false)
 
 	function handleRatingChange(event) {
 		recipe.rating = event.detail
 		console.log('New Rating:', recipe.rating)
 	}
 
-	$: if (recipe.image_url && baseUrl) {
-		checkImageExistence(recipe.image_url, baseUrl).then((result) => {
-			return (imageExists = result)
-		})
-	}
+	$effect(() => {
+		if (recipe.image_url && baseUrl) {
+			checkImageExistence(recipe.image_url, baseUrl).then((result) => {
+				return (imageExists = result)
+			})
+		}
+	})
 </script>
 
 <p>
@@ -42,7 +49,7 @@
 	ingredients, directions and notes.
 </p>
 
-<form on:submit|preventDefault={onSubmit}>
+<form onsubmit={onSubmit}>
 	{#if !editMode}
 		<h3>New Recipe</h3>
 	{:else}
@@ -68,25 +75,25 @@
 	<input type="text" id="image_url" name="image_url" bind:value={recipe.image_url} />
 
 	{#if editMode}
-		<PhotoSectionEdit bind:recipe bind:selectedFiles />
+		<PhotoSectionEdit {recipe} {onSelectedFilesChange} />
 	{:else}
-		<PhotoSectionNew bind:recipe bind:imageExists />
+		<PhotoSectionNew {recipe} {imageExists} />
 	{/if}
 
 	<label for="prep_time"> Prep Time </label>
 	<input type="text" id="prep_time" name="prep_time" bind:value={recipe.prep_time} />
 
 	<label for="ingredients"> Ingredients </label>
-	<textarea id="ingredients" name="ingredients" rows="5" bind:value={recipe.ingredients} />
+	<textarea id="ingredients" name="ingredients" rows="5" bind:value={recipe.ingredients}></textarea>
 
 	<label for="description"> Description </label>
-	<textarea id="description" name="description" rows="5" bind:value={recipe.description} />
+	<textarea id="description" name="description" rows="5" bind:value={recipe.description}></textarea>
 
 	<label for="directions"> Directions </label>
-	<textarea id="directions" name="directions" rows="5" bind:value={recipe.directions} />
+	<textarea id="directions" name="directions" rows="5" bind:value={recipe.directions}></textarea>
 
 	<label for="notes"> Notes </label>
-	<textarea id="notes" name="notes" rows="5" bind:value={recipe.notes} />
+	<textarea id="notes" name="notes" rows="5" bind:value={recipe.notes}></textarea>
 
 	<label for="total_time"> Total Time </label>
 	<input type="text" id="total_time" name="total_time" bind:value={recipe.total_time} />
@@ -99,7 +106,7 @@
 		id="nutritional_info"
 		name="nutritional_info"
 		rows="5"
-		bind:value={recipe.nutritional_info} />
+		bind:value={recipe.nutritional_info}></textarea>
 
 	<label>
 		<input

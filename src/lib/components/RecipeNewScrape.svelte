@@ -1,14 +1,20 @@
 <script>
 	import { handleScrape } from '$lib/utils/parse/parseHelpersClient'
 
-	export let initialUrl = ''
-	export let recipe
+	/**
+	 * @type {{
+	 *   initialUrl?: string,
+	 *   recipe: any,
+	 *   onUrlChange?: (newUrl: string) => void
+	 * }}
+	 */
+	let { initialUrl = '', recipe = $bindable(), onUrlChange } = $props()
 
-	let url = initialUrl
-
+	// Instead of having a separate reactive state, use the prop directly.
 	async function scrapeEventHandler(event) {
+		event.preventDefault()
 		console.log('Handling Scrape!')
-		const scrapedData = await handleScrape(event, url)
+		const scrapedData = await handleScrape(event, initialUrl)
 		if (scrapedData) {
 			recipe = { ...recipe, ...scrapedData }
 		}
@@ -17,9 +23,14 @@
 
 <h3>Scrape Recipe</h3>
 <div class="container">
-	<form action="?/scrapeRecipe" method="POST" on:submit={scrapeEventHandler}>
+	<form action="?/scrapeRecipe" method="POST" onsubmit={scrapeEventHandler}>
 		<label for="url"> URL </label>
-		<input type="text" id="url" bind:value={url} />
+		<!-- Use the prop directly and call onUrlChange when input changes -->
+		<input
+			type="text"
+			id="url"
+			value={initialUrl}
+			oninput={(e) => onUrlChange && onUrlChange(e.target.value)} />
 		<button type="submit">Scrape Recipe</button>
 	</form>
 </div>

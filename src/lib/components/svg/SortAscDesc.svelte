@@ -1,5 +1,6 @@
 <script>
-	export let sort = 'asc';
+	/** @type {{sort?: string}} */
+	let { sort = 'asc' } = $props();
 </script>
 
 {#if sort == 'asc'}

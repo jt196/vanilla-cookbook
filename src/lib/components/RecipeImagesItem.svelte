@@ -1,16 +1,18 @@
 <script>
 	import UpArrow from '$lib/components/svg/UpArrow.svelte'
 	import Delete from '$lib/components/svg/Delete.svelte'
-	import { deletePhotoById, updatePhotos } from '$lib/utils/crud'
 
-	export let photo
-	export let recipeName = ''
-	export let onSetMainPhoto
-	export let onDeletePhoto
-	export let onSaveEditedNotes
+	/** @type {{photo: any, recipeName?: string, onSetMainPhoto: any, onDeletePhoto: any, onSaveEditedNotes: any}} */
+	let {
+		photo,
+		recipeName = '',
+		onSetMainPhoto,
+		onDeletePhoto,
+		onSaveEditedNotes
+	} = $props();
 
-	let editingPhotoId = null
-	let editingPhotoNotes = photo.notes || ''
+	let editingPhotoId = $state(null)
+	let editingPhotoNotes = $state(photo.notes || '')
 
 	function startEditing() {
 		editingPhotoId = photo.id
@@ -31,15 +33,15 @@
 <div class="photo-note">
 	{#if editingPhotoId === photo.id}
 		<input bind:value={editingPhotoNotes} type="text" placeholder="Enter notes..." />
-		<button on:click={saveNotes}>Save</button>
-		<button on:click={cancelEditing}>Cancel</button>
+		<button onclick={saveNotes}>Save</button>
+		<button onclick={cancelEditing}>Cancel</button>
 	{:else}
 		{photo.notes || 'No notes for this photo.'}
-		<button on:click={startEditing}>Edit</button>
+		<button onclick={startEditing}>Edit</button>
 	{/if}
 </div>
 <div class="photo-actions">
-	<button class="outline secondary" type="button" on:click={() => onDeletePhoto(photo.id)}>
+	<button class="outline secondary" type="button" onclick={() => onDeletePhoto(photo.id)}>
 		<Delete width="30px" height="30px" fill="var(--pico-del-color)" />
 	</button>
 	{#if !photo.isMain}
@@ -47,7 +49,7 @@
 			class="outline secondary"
 			data-tooltip="Promote to Main Photo"
 			type="button"
-			on:click={() => onSetMainPhoto(photo.id)}>
+			onclick={() => onSetMainPhoto(photo.id)}>
 			<UpArrow width="30px" height="30px" fill="var(--pico-primary)" />
 		</button>
 	{/if}

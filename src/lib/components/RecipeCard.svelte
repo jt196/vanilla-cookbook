@@ -1,19 +1,13 @@
 <!-- RecipeCard.svelte -->
 <script>
-	import { createEventDispatcher } from 'svelte'
-
 	import FoodBowl from '$lib/components/svg/FoodBowl.svelte'
 	import Favourite from '$lib/components/svg/Favourite.svelte'
 	import { localDate } from '$lib/utils/dateTime'
 	import StarRating from '$lib/components/StarRating.svelte'
-	import Delete from '$lib/components/svg/Delete.svelte'
-	import Edit from '$lib/components/svg/Edit.svelte'
-	import { addRecipeToFavourites, deleteRecipeById } from '$lib/utils/crud'
+	import { addRecipeToFavourites } from '$lib/utils/crud'
 
-	export let item
-	export let data
-
-	const dispatch = createEventDispatcher()
+	/** @type {{item: any, data: any, recipeFavourited?: (uid: string) => void, recipeRatingChanged?: (uid: string, rating: number) => void}}, */
+	let { item, data, recipeFavourited, recipeRatingChanged } = $props();
 
 	async function handleFavourite(uid, event) {
 		// Preventing the click through to the item view page
@@ -22,9 +16,8 @@
 		event.stopPropagation()
 		console.log('Handle favourites button clicked for uid: ' + uid)
 		const success = await addRecipeToFavourites(uid)
-		if (success) {
-			console.log('Recipe added to favourites!')
-			dispatch('recipeFavourited', uid)
+		if (success && recipeFavourited) {
+			recipeFavourited(uid);
 		}
 	}
 </script>
@@ -56,12 +49,19 @@
 				<span class="created">
 					<i>{localDate(item.created)}</i>
 				</span>
-				<StarRating rating={item.rating} />
+				<StarRating 
+					rating={item.rating} 
+					editable={true} 
+					ratingChanged={(newRating) => {
+						console.log("🚀 RecipeCard ratingChanged triggered:", newRating);
+						recipeRatingChanged?.(item.uid, newRating); // Call only if defined
+					}} 
+				/>
 			</div>
 			<div class="align-right recipe-buttons">
 				{#if item.userId === data.user?.requestedUserId}
 					<button
-						on:click={(event) => handleFavourite(item?.uid, event)}
+						onclick={(event) => handleFavourite(item?.uid, event)}
 						data-tooltip="Favourite Recipe"
 						class="outline secondary">
 						<Favourite

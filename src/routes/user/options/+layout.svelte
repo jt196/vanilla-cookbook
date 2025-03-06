@@ -1,5 +1,6 @@
 <script>
-	export let data
+	/** @type {{data: any, children?: import('svelte').Snippet}} */
+	let { data, children } = $props();
 </script>
 
 <div class="container">
@@ -67,7 +68,7 @@
 			</form>
 		</ul>
 	</nav>
-	<slot />
+	{@render children?.()}
 </div>
 
 <style>
