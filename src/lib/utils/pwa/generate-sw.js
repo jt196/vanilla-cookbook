@@ -13,6 +13,10 @@ const workboxConfig = {
 			urlPattern: /^\/(\?.*)?$/,
 			handler: 'NetworkOnly'
 		},
+		{
+			urlPattern: /\/login/,
+			handler: 'NetworkOnly'
+		},
 		// Your existing runtime caching rule (if needed for other assets/routes)
 		{
 			urlPattern: new RegExp(`^%%URLPATTERN%%/`),
