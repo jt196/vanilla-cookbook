@@ -28,7 +28,8 @@ export const auth = lucia({
 	},
 	sessionCookie: {
 		attributes: {
-			sameSite: 'strict'
+			sameSite: isDev ? 'lax' : 'strict',
+			secure: isDev ? false : true
 		}
 	}
 })

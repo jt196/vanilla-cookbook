@@ -1,7 +1,7 @@
 {
-	"name": "Fork It! Recipes",
-	"short_name": "FIR",
-	"description": "Fork it! Save and share your recipes",
+	"name": "Cookrr Personal Cookbook",
+	"short_name": "Cookrr",
+	"description": "Save and share your recipes",
 	"start_url": "/",
 	"display": "standalone",
 	"background_color": "#13171f",
