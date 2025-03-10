@@ -10,10 +10,9 @@
 	import CategoryTree from '$lib/components/CategoryTree.svelte'
 	import { goto } from '$app/navigation'
 	import { page } from '$app/stores'
-	import { sortState, searchString, searchKey, cookedFilter, favouriteFilter } from '$lib/stores'
 
 	/** @type {{data: any}} */
-	let { data = $bindable() } = $props();
+	let { data = $bindable() } = $props()
 	const { user } = data
 	const { viewingUserId, publicProfile } = user
 	let viewOnly = $state()
@@ -22,15 +21,17 @@
 	$effect(() => {
 		const { params } = $page
 		viewOnly = params.id !== viewingUserId
-	});
+	})
 
 	let sidebarOpen = $state(false)
-
 	let filteredRecipes = $state([]) // Declare it before the reactive statement
-
 	let selectedCategoryUids = $state([])
-
 	let useAndLogic = $state(false) // Default to OR logic
+	let sortState = $state({ key: 'created', direction: 'asc' })
+	let searchString = $state('')
+	let searchKey = $state('name')
+	let cookedFilter = $state(false)
+	let favouriteFilter = $state(false)
 
 	function handleCategoryClick(category) {
 		if (selectedCategoryUids.includes(category.uid)) {
@@ -41,37 +42,35 @@
 	}
 
 	function handleRecipeFavourited(uid) {
-		console.log(`Recipe ${uid} (de)favourited!`);
+		console.log(`Recipe ${uid} (de)favourited!`)
 
 		// Force a reactivity trigger by creating a new object reference
 		data = {
 			...data,
-			recipes: data.recipes.map(recipe =>
-				recipe.uid === uid
-					? { ...recipe, on_favorites: !recipe.on_favorites }
-					: recipe
+			recipes: data.recipes.map((recipe) =>
+				recipe.uid === uid ? { ...recipe, on_favorites: !recipe.on_favorites } : recipe
 			)
-		};
+		}
 	}
 
 	function handleRecipeRatingChanged(uid, newRating) {
-		console.log(`🚀 Rating changed for UID ${uid}: ${newRating}`);
+		console.log(`🚀 Rating changed for UID ${uid}: ${newRating}`)
 
 		data = {
 			...data,
-			recipes: data.recipes.map(recipe =>
+			recipes: data.recipes.map((recipe) =>
 				recipe.uid === uid
 					? { ...recipe, rating: newRating } // Trigger reactivity
 					: recipe
 			)
-		};
+		}
 	}
 
 	$effect(() => {
 		let sortedRecipes = sortRecipesByKey(
 			data.recipes,
-			$sortState.key,
-			$sortState.direction
+			sortState.key,
+			sortState.direction
 		).sortedRecipes
 
 		let categoryFilteredRecipes = sortedRecipes
@@ -93,29 +92,33 @@
 		}
 
 		// Filtering by cooked status
-		if ($cookedFilter) {
+		if (cookedFilter) {
 			categoryFilteredRecipes = categoryFilteredRecipes.filter((recipe) => recipe.log.length > 0)
 		}
 
 		// Filtering by favourite status
-		if ($favouriteFilter) {
+		if (favouriteFilter) {
 			categoryFilteredRecipes = categoryFilteredRecipes.filter(
 				(recipe) => recipe.on_favorites === true
 			)
 		}
 
-		filteredRecipes = filterSearch($searchString, categoryFilteredRecipes, $searchKey)
-	});
-	function handleSort(event) {
-		if ($sortState.key === event.detail.key) {
-			sortState.update((state) => ({
-				...state,
-				direction: state.direction === 'asc' ? 'desc' : 'asc'
-			})) // Update store
-		} else {
-			sortState.key = event.detail.key
-			sortState.set({ key: event.detail.key, direction: 'desc' }) // Update store
+		filteredRecipes = filterSearch(searchString, categoryFilteredRecipes, searchKey)
+	})
+
+	function handleSort(key) {
+		sortState = {
+			key,
+			direction: sortState.key === key && sortState.direction === 'asc' ? 'desc' : 'asc'
 		}
+	}
+
+	function updateSearchString(value) {
+		searchString = value
+	}
+
+	function updateSearchKey(value) {
+		searchKey = value
 	}
 
 	function toggleSidebar() {
@@ -132,28 +135,25 @@
 </script>
 
 {#if !viewOnly}
-	<Sidebar	
-		isOpen={sidebarOpen}
-		onClose={handleSidebarClose}
-		onCategoryClick={handleCategoryClick}>
-				<div class="sidebar-buttons">
-				{#if selectedCategoryUids}
-					<button onclick={clearCategory}>Clear</button>
-				{/if}
-				<a href="/categories" role="button">Edit</a>
-			</div>
-			<div class="sidebar-check">
-				<label>
-					<input type="checkbox" bind:checked={useAndLogic} />
-					{useAndLogic ? 'Using AND logic' : 'Using OR logic'}
-				</label>
-			</div>
-			<CategoryTree
-				categories={data.categories}
-				onCategoryClick={handleCategoryClick}
-				{selectedCategoryUids}
-				on:clearCategory={clearCategory} />
-		</Sidebar>
+	<Sidebar isOpen={sidebarOpen} onClose={handleSidebarClose} onCategoryClick={handleCategoryClick}>
+		<div class="sidebar-buttons">
+			{#if selectedCategoryUids}
+				<button onclick={clearCategory}>Clear</button>
+			{/if}
+			<a href="/categories" role="button">Edit</a>
+		</div>
+		<div class="sidebar-check">
+			<label>
+				<input type="checkbox" bind:checked={useAndLogic} />
+				{useAndLogic ? 'Using AND logic' : 'Using OR logic'}
+			</label>
+		</div>
+		<CategoryTree
+			categories={data.categories}
+			onCategoryClick={handleCategoryClick}
+			{selectedCategoryUids}
+			on:clearCategory={clearCategory} />
+	</Sidebar>
 {/if}
 
 <div class="content" class:sidebar-open={sidebarOpen} onclose={handleSidebarClose}>
@@ -177,17 +177,27 @@
 					<fieldset>
 						<label>
 							Cooked
-							<input name="terms" type="checkbox" role="switch" bind:checked={$cookedFilter} />
+							<input name="terms" type="checkbox" role="switch" bind:checked={cookedFilter} />
 						</label>
 						<label>
 							Favourites
-							<input name="opt-in" type="checkbox" role="switch" bind:checked={$favouriteFilter} />
+							<input name="opt-in" type="checkbox" role="switch" bind:checked={favouriteFilter} />
 						</label>
 					</fieldset>
 				</div>
 			</div>
-			<RecipeFilter on:sort={handleSort} />
-			<RecipeList {filteredRecipes} {data} recipeFavourited={handleRecipeFavourited} recipeRatingChanged={handleRecipeRatingChanged} />
+			<RecipeFilter
+				{sortState}
+				{searchString}
+				{searchKey}
+				{handleSort}
+				{updateSearchString}
+				{updateSearchKey} />
+			<RecipeList
+				{filteredRecipes}
+				{data}
+				recipeFavourited={handleRecipeFavourited}
+				recipeRatingChanged={handleRecipeRatingChanged} />
 		</div>
 	</div>
 </div>

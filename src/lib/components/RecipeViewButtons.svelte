@@ -7,6 +7,9 @@
 	import { addRecipeLog, addRecipeToFavourites, deleteRecipeById } from '$lib/utils/crud'
 	import Favourite from './svg/Favourite.svelte'
 
+	/** @type {{recipe: any, updateLogs: any, favRecipe: any}} */
+	let { recipe, updateLogs, favRecipe } = $props()
+
 	async function handleDelete(uid) {
 		const success = await deleteRecipeById(uid)
 		if (success) {
@@ -32,9 +35,6 @@
 			console.log('Failed to log recipe!')
 		}
 	}
-
-	/** @type {{recipe: any, updateLogs: any, favRecipe: any}} */
-	let { recipe, updateLogs, favRecipe } = $props();
 </script>
 
 <div class="buttons">
