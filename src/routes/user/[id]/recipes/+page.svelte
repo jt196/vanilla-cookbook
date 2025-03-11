@@ -10,6 +10,13 @@
 	import CategoryTree from '$lib/components/CategoryTree.svelte'
 	import { goto } from '$app/navigation'
 	import { page } from '$app/stores'
+	import {
+		sortState,
+		searchString,
+		searchKey,
+		cookedFilter,
+		favouriteFilter
+	} from '$lib/stores/recipeFilter'
 
 	/** @type {{data: any}} */
 	let { data = $bindable() } = $props()
@@ -24,14 +31,12 @@
 	})
 
 	let sidebarOpen = $state(false)
+
 	let filteredRecipes = $state([]) // Declare it before the reactive statement
+
 	let selectedCategoryUids = $state([])
+
 	let useAndLogic = $state(false) // Default to OR logic
-	let sortState = $state({ key: 'created', direction: 'asc' })
-	let searchString = $state('')
-	let searchKey = $state('name')
-	let cookedFilter = $state(false)
-	let favouriteFilter = $state(false)
 
 	function handleCategoryClick(category) {
 		if (selectedCategoryUids.includes(category.uid)) {
@@ -69,8 +74,8 @@
 	$effect(() => {
 		let sortedRecipes = sortRecipesByKey(
 			data.recipes,
-			sortState.key,
-			sortState.direction
+			$sortState.key,
+			$sortState.direction
 		).sortedRecipes
 
 		let categoryFilteredRecipes = sortedRecipes
@@ -92,33 +97,29 @@
 		}
 
 		// Filtering by cooked status
-		if (cookedFilter) {
+		if ($cookedFilter) {
 			categoryFilteredRecipes = categoryFilteredRecipes.filter((recipe) => recipe.log.length > 0)
 		}
 
 		// Filtering by favourite status
-		if (favouriteFilter) {
+		if ($favouriteFilter) {
 			categoryFilteredRecipes = categoryFilteredRecipes.filter(
 				(recipe) => recipe.on_favorites === true
 			)
 		}
 
-		filteredRecipes = filterSearch(searchString, categoryFilteredRecipes, searchKey)
+		filteredRecipes = filterSearch($searchString, categoryFilteredRecipes, $searchKey)
 	})
-
-	function handleSort(key) {
-		sortState = {
-			key,
-			direction: sortState.key === key && sortState.direction === 'asc' ? 'desc' : 'asc'
+	function handleSort(event) {
+		if ($sortState.key === event.detail.key) {
+			sortState.update((state) => ({
+				...state,
+				direction: state.direction === 'asc' ? 'desc' : 'asc'
+			})) // Update store
+		} else {
+			sortState.key = event.detail.key
+			sortState.set({ key: event.detail.key, direction: 'desc' }) // Update store
 		}
-	}
-
-	function updateSearchString(value) {
-		searchString = value
-	}
-
-	function updateSearchKey(value) {
-		searchKey = value
 	}
 
 	function toggleSidebar() {
@@ -177,22 +178,16 @@
 					<fieldset>
 						<label>
 							Cooked
-							<input name="terms" type="checkbox" role="switch" bind:checked={cookedFilter} />
+							<input name="terms" type="checkbox" role="switch" bind:checked={$cookedFilter} />
 						</label>
 						<label>
 							Favourites
-							<input name="opt-in" type="checkbox" role="switch" bind:checked={favouriteFilter} />
+							<input name="opt-in" type="checkbox" role="switch" bind:checked={$favouriteFilter} />
 						</label>
 					</fieldset>
 				</div>
 			</div>
-			<RecipeFilter
-				{sortState}
-				{searchString}
-				{searchKey}
-				{handleSort}
-				{updateSearchString}
-				{updateSearchKey} />
+			<RecipeFilter on:sort={handleSort} />
 			<RecipeList
 				{filteredRecipes}
 				{data}

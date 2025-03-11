@@ -1,8 +1,14 @@
 <script>
 	import SortAscDesc from '$lib/components/svg/SortAscDesc.svelte' // Adjust the path if needed
+	import { sortState, searchString, searchKey } from '$lib/stores/recipeFilter'
 
-	let { sortState, searchString, searchKey, handleSort, updateSearchString, updateSearchKey } =
-		$props()
+	function updateSort(key) {
+		sortState.update((current) => {
+			// Toggle direction if the same key is clicked again, otherwise set to 'asc'
+			const direction = current.key === key && current.direction === 'asc' ? 'desc' : 'asc'
+			return { key, direction }
+		})
+	}
 </script>
 
 <div class="grid recipe-filters">
@@ -11,39 +17,34 @@
 			type="text"
 			name="search"
 			placeholder="Search my recipes by..."
-			value={searchString}
-			oninput={(e) => updateSearchString(e.target.value)} />
+			bind:value={$searchString} />
 	</div>
 	<div data-tooltip="Choose Search Key">
-		<select
-			name="selections"
-			id="selections"
-			aria-label="selections"
-			onchange={(e) => updateSearchKey(e.target.value)}>
-			<option value="name" selected={searchKey === 'name'}>Name</option>
-			<option value="ingredients" selected={searchKey === 'ingredients'}>Ingredients</option>
-			<option value="source" selected={searchKey === 'source'}>Source</option>
-			<option value="notes" selected={searchKey === 'notes'}>Notes</option>
+		<select name="selections" bind:value={$searchKey} id="selections" aria-label="selections">
+			<option selected value="name">Name</option>
+			<option value="ingredients">Ingredients</option>
+			<option value="source">Source</option>
+			<option value="notes">Notes</option>
 		</select>
 	</div>
 	<div class="sort">
 		<button
 			data-tooltip="Sort by Date"
-			class:secondary={sortState.key === 'created'}
-			onclick={() => handleSort('created')}>
-			Date <SortAscDesc sort={sortState.key === 'created' ? sortState.direction : ''} />
+			class:secondary={$sortState.key === 'created'}
+			onclick={() => updateSort('created')}>
+			Date <SortAscDesc sort={$sortState.key === 'created' ? $sortState.direction : ''} />
 		</button>
 		<button
 			data-tooltip="Sort by Name"
-			class:secondary={sortState.key === 'name'}
-			onclick={() => handleSort('name')}>
-			Title <SortAscDesc sort={sortState.key === 'name' ? sortState.direction : ''} />
+			class:secondary={$sortState.key === 'name'}
+			onclick={() => updateSort('name')}>
+			Title <SortAscDesc sort={$sortState.key === 'name' ? $sortState.direction : ''} />
 		</button>
 		<button
 			data-tooltip="Sort by Rating"
-			class:secondary={sortState.key === 'rating'}
-			onclick={() => handleSort('rating')}>
-			Rating <SortAscDesc sort={sortState.key === 'rating' ? sortState.direction : ''} />
+			class:secondary={$sortState.key === 'rating'}
+			onclick={() => updateSort('rating')}>
+			Rating <SortAscDesc sort={$sortState.key === 'rating' ? $sortState.direction : ''} />
 		</button>
 	</div>
 </div>

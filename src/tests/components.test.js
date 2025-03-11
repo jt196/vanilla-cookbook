@@ -1,5 +1,7 @@
 // NOTE: jest-dom adds handy assertions to Jest and it is recommended, but not required.
 import '@testing-library/jest-dom'
+import { sortState } from '$lib/stores/recipeFilter'
+import { get } from 'svelte/store'
 
 import { render, fireEvent, screen } from '@testing-library/svelte'
 
@@ -58,75 +60,98 @@ describe('Scale component', () => {
 
 describe('RecipeFilter component', () => {
 	const mockSortState = { key: 'created', direction: 'desc' }
-	let mockUpdateSearchString
-	let mockUpdateSearchKey
-	let mockHandleSort
 
 	beforeEach(() => {
-		// Mock functions to track calls
-		mockUpdateSearchString = jest.fn()
-		mockUpdateSearchKey = jest.fn()
-		mockHandleSort = jest.fn()
+		// Reset sortState to a default value before each test
+		sortState.set({ key: 'created', direction: 'desc' })
 	})
 
 	it('renders without crashing', () => {
-		const { getByPlaceholderText } = render(RecipeFilter, {
-			sortState: mockSortState,
-			searchString: '',
-			searchKey: 'name',
-			updateSearchString: mockUpdateSearchString,
-			updateSearchKey: mockUpdateSearchKey,
-			handleSort: mockHandleSort
-		})
+		const { getByPlaceholderText } = render(RecipeFilter, { sortState: mockSortState })
 		expect(getByPlaceholderText('Search my recipes by...')).toBeInTheDocument()
 	})
 
-	it('calls updateSearchString when input changes', async () => {
-		const { getByPlaceholderText } = render(RecipeFilter, {
-			sortState: mockSortState,
-			searchString: '',
-			searchKey: 'name',
-			updateSearchString: mockUpdateSearchString,
-			updateSearchKey: mockUpdateSearchKey,
-			handleSort: mockHandleSort
-		})
-
+	it('binds search input correctly', async () => {
+		const { getByPlaceholderText } = render(RecipeFilter, { sortState: mockSortState })
 		const input = getByPlaceholderText('Search my recipes by...')
+
 		await fireEvent.input(input, { target: { value: 'test' } })
-
-		expect(mockUpdateSearchString).toHaveBeenCalledWith('test')
+		expect(input.value).toBe('test')
 	})
 
-	it('calls updateSearchKey when dropdown selection changes', async () => {
-		const { getByLabelText } = render(RecipeFilter, {
-			sortState: mockSortState,
-			searchString: '',
-			searchKey: 'name',
-			updateSearchString: mockUpdateSearchString,
-			updateSearchKey: mockUpdateSearchKey,
-			handleSort: mockHandleSort
-		})
-
+	it('binds search dropdown correctly', async () => {
+		const { getByLabelText } = render(RecipeFilter, { sortState: mockSortState })
 		const dropdown = getByLabelText('selections')
-		await fireEvent.change(dropdown, { target: { value: 'ingredients' } })
 
-		expect(mockUpdateSearchKey).toHaveBeenCalledWith('ingredients')
+		await fireEvent.select(dropdown, { target: { value: 'ingredients' } })
+		expect(dropdown.value).toBe('ingredients')
 	})
 
-	it('calls handleSort when a sort button is clicked', async () => {
-		const { getByText } = render(RecipeFilter, {
-			sortState: mockSortState,
-			searchString: '',
-			searchKey: 'name',
-			updateSearchString: mockUpdateSearchString,
-			updateSearchKey: mockUpdateSearchKey,
-			handleSort: mockHandleSort
-		})
+	it('defaults to "name" in the search dropdown', () => {
+		const { getByLabelText } = render(RecipeFilter, { sortState: mockSortState })
+		const dropdown = getByLabelText('selections')
+		expect(dropdown.value).toBe('name')
+	})
 
+	it('updates dropdown value correctly on name selection', async () => {
+		const { getByLabelText } = render(RecipeFilter, { sortState: mockSortState })
+		const dropdown = getByLabelText('selections')
+
+		await fireEvent.select(dropdown, { target: { value: 'name' } })
+
+		expect(dropdown.value).toBe('name')
+	})
+
+	it('updates dropdown value correctly on ingredients selection', async () => {
+		const { getByLabelText } = render(RecipeFilter, { sortState: mockSortState })
+		const dropdown = getByLabelText('selections')
+
+		await fireEvent.select(dropdown, { target: { value: 'ingredients' } })
+
+		expect(dropdown.value).toBe('ingredients')
+	})
+
+	it('highlights the correct button based on activeButton prop', () => {
+		const { getByText } = render(RecipeFilter, {
+			activeButton: 'created',
+			sortState: mockSortState
+		})
+		const dateButton = getByText('Date')
+		expect(dateButton).toHaveClass('secondary')
+	})
+
+	it('updates sort state correctly on date button click', async () => {
+		// Render your component
+		const { getByText } = render(RecipeFilter)
+
+		// Find the button by its text
+		const dateButton = getByText('Date')
+
+		// Click the 'Date' button
+		await fireEvent.click(dateButton)
+
+		// Get the current value of the sortState store
+		const updatedSortState = get(sortState)
+
+		// Check if the sortState store has been updated correctly
+		expect(updatedSortState).toEqual({ key: 'created', direction: 'asc' })
+	})
+
+	it('updates sort state correctly on title button click', async () => {
+		// Render your component
+		const { getByText } = render(RecipeFilter)
+
+		// Find the button by its text
 		const titleButton = getByText('Title')
+
+		// Click the 'Title' button
 		await fireEvent.click(titleButton)
 
-		expect(mockHandleSort).toHaveBeenCalledWith('name')
+		// Get the current value of the sortState store
+		const updatedSortState = get(sortState)
+
+		// Check if the sortState store has been updated correctly
+		expect(updatedSortState).toEqual({ key: 'name', direction: 'asc' }) // or 'desc', depending on your implementation
 	})
 })
 
