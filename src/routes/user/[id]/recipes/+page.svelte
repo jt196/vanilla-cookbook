@@ -1,14 +1,10 @@
 <script>
 	import { filterSearch } from '$lib/utils/filters'
 	import { sortRecipesByKey } from '$lib/utils/sorting'
-
 	import RecipeFilter from '$lib/components/RecipeFilter.svelte'
 	import RecipeList from '$lib/components/RecipeList.svelte'
 	import Sidebar from '$lib/components/Sidebar.svelte'
-	import Burger from '$lib/components/svg/Burger.svelte'
-	import House from '$lib/components/svg/House.svelte'
 	import CategoryTree from '$lib/components/CategoryTree.svelte'
-	import { goto } from '$app/navigation'
 	import { page } from '$app/stores'
 	import {
 		sortState,
@@ -160,34 +156,7 @@
 <div class="content" class:sidebar-open={sidebarOpen} onclose={handleSidebarClose}>
 	<div class="grid">
 		<div>
-			<div class="menu-buttons">
-				{#if !viewOnly}
-					<button data-tooltip="Display Category Filter" onclick={toggleSidebar}>
-						<Burger width="1.5rem" />
-					</button>
-				{:else}
-					<button
-						data-tooltip="Go to my recipes"
-						onclick={() => goto(`/user/${viewingUserId}/recipes`)}>
-						<House width="1.5rem" />
-					</button>
-					<h3>{publicProfile.name} Recipes</h3>
-				{/if}
-				<div class="spacer"></div>
-				<div class="switches">
-					<fieldset>
-						<label>
-							Cooked
-							<input name="terms" type="checkbox" role="switch" bind:checked={$cookedFilter} />
-						</label>
-						<label>
-							Favourites
-							<input name="opt-in" type="checkbox" role="switch" bind:checked={$favouriteFilter} />
-						</label>
-					</fieldset>
-				</div>
-			</div>
-			<RecipeFilter on:sort={handleSort} />
+			<RecipeFilter on:sort={handleSort} {toggleSidebar} {viewOnly} />
 			<RecipeList
 				{filteredRecipes}
 				{data}

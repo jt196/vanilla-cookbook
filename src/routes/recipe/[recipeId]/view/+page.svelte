@@ -12,7 +12,7 @@
 	import RecipeViewOtherPhotos from '$lib/components/RecipeViewOtherPhotos.svelte'
 	import RecipeViewDirections from '$lib/components/RecipeViewDirections.svelte'
 	import RecipeViewNotes from '$lib/components/RecipeViewNotes.svelte'
-	import List from '$lib/components/svg/List.svelte'
+	import Back from '$lib/components/svg/Back.svelte'
 	import RecipeViewLogs from '$lib/components/RecipeViewLogs.svelte'
 	import FeedbackMessage from '$lib/components/FeedbackMessage.svelte'
 	import { sortByDate } from '$lib/utils/sorting.js'
@@ -190,8 +190,8 @@
 
 <div id="recipe-buttons">
 	<div class="home-button">
-		<button data-tooltip="Go to recipe list"
-			><a href="/"><List width="30px" height="30px" /></a></button>
+		<button class="outline contrast" data-tooltip="Go to recipe list"
+			><a href="/"><Back width="30px" height="30px" /></a></button>
 		<FeedbackMessage message={recipeFeedback} />
 	</div>
 	{#if recipe.userId === viewUser.userId}
@@ -262,7 +262,7 @@
 		display: flex;
 		justify-content: flex-end;
 		gap: 1rem;
-		margin-bottom: 1rem;
+		margin: 1rem 0 1rem 0;
 	}
 
 	#recipe-buttons .home-button {

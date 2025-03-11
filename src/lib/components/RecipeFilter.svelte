@@ -1,6 +1,19 @@
 <script>
 	import SortAscDesc from '$lib/components/svg/SortAscDesc.svelte' // Adjust the path if needed
-	import { sortState, searchString, searchKey } from '$lib/stores/recipeFilter'
+	import Favourite from '$lib/components/svg/Favourite.svelte'
+	import Check from '$lib/components/svg/Check.svelte'
+	import Burger from '$lib/components/svg/Burger.svelte'
+	import { goto } from '$app/navigation'
+	import House from '$lib/components/svg/House.svelte'
+	import {
+		sortState,
+		searchString,
+		searchKey,
+		cookedFilter,
+		favouriteFilter
+	} from '$lib/stores/recipeFilter'
+
+	let { toggleSidebar, viewOnly } = $props()
 
 	function updateSort(key) {
 		sortState.update((current) => {
@@ -11,23 +24,59 @@
 	}
 </script>
 
-<div class="grid recipe-filters">
-	<div class="search-box">
-		<input
-			type="text"
-			name="search"
-			placeholder="Search my recipes by..."
-			bind:value={$searchString} />
-	</div>
-	<div data-tooltip="Choose Search Key">
-		<select name="selections" bind:value={$searchKey} id="selections" aria-label="selections">
-			<option selected value="name">Name</option>
-			<option value="ingredients">Ingredients</option>
-			<option value="source">Source</option>
-			<option value="notes">Notes</option>
-		</select>
+<div class="recipe-filters">
+	<div class="search">
+		<div>
+			{#if !viewOnly}
+				<button data-tooltip="Display Category Filter" onclick={toggleSidebar}>
+					<Burger width="1.5rem" />
+				</button>
+			{:else}
+				<button
+					data-tooltip="Go to my recipes"
+					onclick={() => goto(`/user/${viewingUserId}/recipes`)}>
+					<House width="1.5rem" />
+				</button>
+				<h3>{publicProfile.name} Recipes</h3>
+			{/if}
+		</div>
+		<div class="search-box">
+			<input
+				type="text"
+				name="search"
+				placeholder="Search my recipes by..."
+				bind:value={$searchString} />
+		</div>
+		<div data-tooltip="Choose Search Key">
+			<select name="selections" bind:value={$searchKey} id="selections" aria-label="selections">
+				<option selected value="name">Name</option>
+				<option value="ingredients">Ingredients</option>
+				<option value="source">Source</option>
+				<option value="notes">Notes</option>
+			</select>
+		</div>
 	</div>
 	<div class="sort">
+		<button
+			onclick={() => ($favouriteFilter = !$favouriteFilter)}
+			data-tooltip="Filter by Favourites"
+			class="outline secondary">
+			<Favourite
+				favourite={$favouriteFilter}
+				width="30px"
+				height="30px"
+				fill="var(--pico-del-color)" />
+		</button>
+		<button
+			onclick={() => ($cookedFilter = !$cookedFilter)}
+			data-tooltip="Filter by Cooked"
+			class="outline secondary">
+			<Check
+				checked={$cookedFilter}
+				width="30px"
+				height="30px"
+				fill={$cookedFilter ? 'var(--pico-ins-color)' : 'var(--pico-del-color)'} />
+		</button>
 		<button
 			data-tooltip="Sort by Date"
 			class:secondary={$sortState.key === 'created'}
@@ -50,64 +99,82 @@
 </div>
 
 <style lang="scss">
-	.sort {
-		display: flex;
-		justify-content: flex-end;
-		gap: 0.5rem;
-		@media (max-width: 1023px) {
-			grid-column: 1 / 3; // Span the buttons across both columns
-			grid-row: 2; // Place the buttons in the second row
-			justify-content: center; // Center the buttons horizontally
-			flex-wrap: wrap; // Allow the buttons to wrap to the next line
-			gap: 0.5rem; // Add some gap between wrapped buttons for spacing
-		}
-		@media (max-width: 767px) {
-			grid-column: 1; // Ensure buttons take up the full width
-			grid-row: 3; // Place the buttons in the third row
-		}
-
-		button {
-			white-space: nowrap;
-			margin-bottom: 0.5rem;
-			svg {
-				display: inline-block; // or just 'inline' depending on your needs
-				vertical-align: middle; // to align it with the text
-			}
-		}
-	}
-
-	.sort .secondary {
-		border: 1px solid white;
-	}
-
 	.recipe-filters {
-		margin: 0.5rem 0 0 0;
-		input {
-			margin-bottom: 0.5rem;
-		}
-		grid-template-columns: 1fr auto 1fr;
-		gap: 0.5rem; // Space between grid items
-		align-items: center; // Vertically center the grid items
-		@media (max-width: 1023px) {
-			grid-template-columns: 2fr 1fr; // Let the search and select take up the full width
-			grid-template-rows: repeat(2, auto); // Two rows: one for search and dropdown, one for buttons
-			gap: 0.5rem; // Gap between rows
-			input {
-				height: 2.5rem;
-				margin-bottom: 0;
-			}
-			#selections {
-				line-height: 1rem;
-				margin-bottom: 0;
-			}
-		}
+		display: flex;
+		flex-wrap: wrap;
+		gap: 1rem;
+		align-items: center;
+		justify-content: space-between;
+		padding: 1rem 0 1rem 0;
+		border-bottom: 1px solid #ccc;
+	}
 
-		@media (max-width: 767px) {
-			grid-template-columns: 1fr; // Stack items on top of each other
-		}
+	.search {
+		display: flex;
+		flex-grow: 1;
+		align-items: center;
+		gap: 0.5rem;
+		min-width: 0; // Ensures it can shrink properly
+	}
+
+	.search input,
+	.search select,
+	.search button {
+		height: 45px; /* Ensures all inputs, selects, and buttons are uniform */
+		margin-bottom: 0;
+	}
+
+	.search-box {
+		flex-grow: 1;
+	}
+
+	.search-box input {
+		width: 100%;
+		min-width: 150px;
+		padding: 0.5rem;
 	}
 
 	#selections {
-		margin-bottom: 0.5rem;
+		flex-shrink: 0;
+		min-width: 150px;
+		padding: 0.5rem;
+	}
+
+	.sort {
+		display: flex;
+		gap: 0.5rem;
+		flex-wrap: wrap;
+	}
+
+	.sort button {
+		padding: 0.5rem;
+		white-space: nowrap;
+	}
+
+	/* Mobile - Stack search and sort */
+	@media (max-width: 1024px) {
+		.recipe-filters {
+			flex-direction: column;
+			align-items: stretch;
+		}
+
+		.search {
+			width: 100%;
+		}
+
+		.search-box input {
+			flex-grow: 1;
+		}
+
+		.sort {
+			width: 100%;
+			display: flex;
+			flex-wrap: wrap;
+		}
+
+		.sort button {
+			flex: 1;
+			text-align: center;
+		}
 	}
 </style>
