@@ -12,7 +12,7 @@
 		displayOriginal,
 		selectedSystem,
 		recipeUid
-	} = $props();
+	} = $props()
 
 	let scaleIng = $state(1)
 
@@ -47,7 +47,7 @@
 
 	$effect(() => {
 		scaleIng = handleScale(scale)
-	});
+	})
 </script>
 
 <div class="ingredient-line" class:highlight={isHighlighted}>
@@ -88,17 +88,18 @@
 							? ingredient.unitPlural
 							: ingredient.unit}
 					{/if}
-					<span
-						>{@html ingredient.ingredient}
-						{#if displayExtra && ingredient.additional}
-							<i> | {ingredient.additional}</i>
-						{/if}
-						{#if displayDryMatch && ingredient.dryIngredient}
-							<i>
-								| {ingredient.dryIngredient.name} ({ingredient.dryIngredient.gramsPerCup} g/cup)</i>
-						{/if}
+					<span>
 						{#if displayOriginal}
 							<i> | {ingredient.originalString}</i>
+						{:else}
+							{@html ingredient.ingredient}
+							{#if displayExtra && ingredient.additional}
+								<i> | {ingredient.additional}</i>
+							{/if}
+							{#if displayDryMatch && ingredient.dryIngredient}
+								<i>
+									| {ingredient.dryIngredient.name} ({ingredient.dryIngredient.gramsPerCup} g/cup)</i>
+							{/if}
 						{/if}
 					</span>
 				</li>
@@ -137,7 +138,9 @@
 			max-height: 33px;
 			opacity: 0;
 			visibility: hidden;
-			transition: opacity 0.3s ease, visibility 0s linear 0.3s;
+			transition:
+				opacity 0.3s ease,
+				visibility 0s linear 0.3s;
 		}
 
 		&:hover button,

@@ -32,7 +32,7 @@
 	}
 
 	function handleDisplayExtraChange(newVal) {
-		displayOriginal = newVal
+		displayExtra = newVal
 	}
 </script>
 
