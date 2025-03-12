@@ -109,6 +109,13 @@
 		font-size: 1.7rem;
 	}
 
+	@media (max-width: 576px) {
+		h3 {
+			font-size: 1rem;
+			margin-bottom: 1rem;
+		}
+	}
+
 	.created {
 		font-size: 1rem;
 		color: var(--pico-muted-color);
