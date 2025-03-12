@@ -219,18 +219,18 @@
 <div class="shopping-buttons">
 	<button onclick={toggleHidden}>
 		{#if showHidden}
-			<View width="20px" fill="white" />
+			<View width="20px" height="20px" fill="white" />
 		{:else}
-			<ViewNo width="20px" fill="white" />
+			<ViewNo width="20px" height="20px" fill="white" />
 		{/if}
 	</button>
 
 	<button disabled={uncheckedItemCount === 0} onclick={() => (isCheckAllDialogOpen = true)}>
-		<CheckAll width="20px" fill="white" />
+		<CheckAll width="20px" height="20px" fill="white" />
 	</button>
 
 	<button disabled={purchasedItemCount === 0} onclick={() => (isDeleteDialogOpen = true)}>
-		<Delete width="20px" fill="white" />
+		<Delete width="20px" height="20px" fill="white" />
 	</button>
 </div>
 <div class="add-ingredient">
@@ -257,14 +257,6 @@
 		{#if !item.purchased || showHidden}
 			<div class="list-item" out:fade={{ duration: 300 }}>
 				<div class="item-qty-unit">
-					<div class={`unit-quantity ${showHidden ? '' : 'hidden'}`}>
-						{#if item.quantity}
-							<span>{item.quantity}</span>
-						{/if}
-						{#if item.unit}
-							<span>{item.unit}</span>
-						{/if}
-					</div>
 					<div class="item-label">
 						<label class:checked={item.purchased}>
 							<input
@@ -275,21 +267,22 @@
 							<p class="item-name">
 								{item.name}
 							</p>
+							<div class="unit-quantity">
+								{#if item.quantity}
+									<span>{item.quantity}</span>
+								{/if}
+								{#if item.unit}
+									<span>{item.unit}</span>
+								{/if}
+							</div>
 							{#if item.recipeUid}
-								<a href="/recipe/{item.recipeUid}/view">
-									<Link width="20px" fill="var(--pico-primary)" />
+								<a
+									href="/recipe/{item.recipeUid}/view"
+									data-tooltip={item.recipe.name ? item.recipe.name : ''}>
+									<Link width="20px" fill="var(--pico-muted-color)" />
 								</a>
 							{/if}
 						</label>
-					</div>
-					<div class={`recipe-name ${showHidden ? '' : 'hidden'}`}>
-						{#if item.recipe && item.recipe.name}
-							<span>
-								{item.recipe.name}
-							</span>
-						{:else}
-							<span class="empty-space"></span>
-						{/if}
 					</div>
 				</div>
 				<div class="item-buttons">
@@ -357,6 +350,7 @@
 		border-bottom: 0.5px solid var(--pico-primary-focus);
 		align-items: center;
 		justify-content: center;
+		padding: 0.5rem 0;
 		.item-qty-unit {
 			display: flex;
 			flex-direction: column;
@@ -365,6 +359,7 @@
 			display: flex;
 			align-items: center;
 			gap: 0.3rem;
+			margin: 0;
 			justify-content: center;
 			max-width: 100%;
 			.item-name {
@@ -408,13 +403,8 @@
 
 	.unit-quantity,
 	.recipe-name {
-		font-size: 0.8rem;
 		margin: 0;
-		padding: 0 0 0 40px;
-		@media (max-width: 767px) {
-			padding: 0 0 0 34px;
-		}
-
+		padding: 0 0.5rem;
 		color: var(--pico-muted-color);
 	}
 	.recipe-name {
@@ -431,10 +421,11 @@
 
 	.add-ingredient {
 		display: flex;
-		gap: 1rem;
+		gap: 0.5rem;
 		margin-bottom: 1rem;
 		input {
 			margin-bottom: 0;
+			min-height: 40px;
 		}
 	}
 </style>
