@@ -252,9 +252,6 @@
 			{scaledServings}
 			recipeRatingChanged={handleRecipeRatingChanged} />
 	</div>
-	<div class="description">
-		<RecipeViewDesc {recipe} />
-	</div>
 	<div class="recipe-main">
 		<div class="ing-div">
 			<RecipeViewIngs
@@ -269,6 +266,7 @@
 				onSelectedSystemChange={handleSelectedSystemChange} />
 		</div>
 		<div class="recipe-text">
+			<RecipeViewDesc {recipe} />
 			<RecipeViewDirections {directionLines} {sanitizedDirections} />
 		</div>
 	</div>
