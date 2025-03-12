@@ -54,6 +54,7 @@
 	<button onclick={() => handleAddToShoppingList(ingredient)}
 		><Shopping width="10px" fill="white" /></button>
 	<!-- svelte-ignore a11y_click_events_have_key_events -->
+	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<div onclick={handleClick}>
 		{#if typeof ingredient.ingredient === 'string'}
 			{#if ingredient.ingredient.trim() === ''}
@@ -126,8 +127,13 @@
 
 	.ingredient-line {
 		display: flex;
-		gap: 5px;
+		gap: 10px;
 		position: relative;
+		padding-left: 3px;
+		transition: background-color 0.3s ease;
+		&:hover {
+			background-color: var(--pico-secondary-focus);
+		}
 
 		button {
 			position: absolute;

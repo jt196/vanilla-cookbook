@@ -2,7 +2,7 @@
 	import { ingredientProcess, scaleNumbersInString } from '$lib/utils/filters'
 	import { determineSystem, parseRecipeText } from '$lib/utils/converter'
 	import { getSanitizedHTML } from '$lib/utils/render'
-	import { onMount } from 'svelte'
+	import { onMount, onDestroy } from 'svelte'
 
 	import RecipeViewButtons from '$lib/components/RecipeViewButtons.svelte'
 	import RecipeViewCover from '$lib/components/RecipeViewCover.svelte'
@@ -186,6 +186,48 @@
 			convertedIngredients = ingredientsArray
 		}
 	})
+
+	// Prevent Screen from Sleeping
+
+	let wakeLock = null
+
+	async function requestWakeLock() {
+		try {
+			if ('wakeLock' in navigator) {
+				wakeLock = await navigator.wakeLock.request('screen')
+				wakeLock.addEventListener('release', () => {
+					console.log('Screen Wake Lock released')
+				})
+			}
+		} catch (err) {
+			console.error(`Wake Lock error: ${err.name}, ${err.message}`)
+		}
+	}
+
+	async function releaseWakeLock() {
+		if (wakeLock) {
+			await wakeLock.release()
+			wakeLock = null
+		}
+	}
+
+	onMount(() => {
+		requestWakeLock()
+		document.addEventListener('visibilitychange', handleVisibilityChange)
+	})
+
+	onDestroy(() => {
+		releaseWakeLock()
+		document.removeEventListener('visibilitychange', handleVisibilityChange)
+	})
+
+	function handleVisibilityChange() {
+		if (document.visibilityState === 'visible') {
+			requestWakeLock()
+		} else {
+			releaseWakeLock()
+		}
+	}
 </script>
 
 <div id="recipe-buttons">
@@ -204,7 +246,11 @@
 {:else}
 	<div class="recipe-details">
 		<RecipeViewCover {mainPhoto} {recipe} />
-		<RecipeViewAbout {recipe} {categories} recipeRatingChanged={handleRecipeRatingChanged} />
+		<RecipeViewAbout
+			{recipe}
+			{categories}
+			{scaledServings}
+			recipeRatingChanged={handleRecipeRatingChanged} />
 	</div>
 	<div class="description">
 		<RecipeViewDesc {recipe} />
@@ -216,7 +262,6 @@
 				recipeUid={recipe.uid}
 				{sanitizedIngredients}
 				{scale}
-				{scaledServings}
 				userIsAdmin={viewUser.isAdmin}
 				{measurementSystem}
 				{selectedSystem}

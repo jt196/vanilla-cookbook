@@ -8,11 +8,9 @@
 		ingredients,
 		sanitizedIngredients,
 		onScaleChange,
-		scaledServings,
 		onSelectedSystemChange,
 		measurementSystem,
 		recipeUid,
-		userIsAdmin = false,
 		scale,
 		selectedSystem
 	} = $props()
@@ -28,9 +26,6 @@
 	</div>
 
 	{#if ingredients}
-		{#if scaledServings}
-			<p>Servings: {scaledServings}</p>
-		{/if}
 		{#if sanitizedIngredients.some((item) => item.ingredient)}
 			<p>
 				<Scale {scale} {onScaleChange} />
@@ -58,19 +53,19 @@
 		</ul>
 		<div class="ing-settings">
 			<div class="checks">
-				<fieldset data-tooltip="When converting from/to cups, display matched ingredients">
+				<fieldset>
 					{#if sanitizedIngredients.some((item) => item.additional)}
-						<label>
+						<label data-tooltip="Display extra ingredient text">
 							<input type="checkbox" bind:checked={displayExtra} />
 							Extra
 						</label>
 					{/if}
 					{#if sanitizedIngredients.some((item) => item.dryIngredient)}
-						<label>
+						<label data-tooltip="When converting from/to cups, display matched ingredients">
 							<input type="checkbox" bind:checked={displayDryMatch} />
 							Cup Match
 						</label>
-						<label>
+						<label data-tooltip="Display original ingredient text">
 							<input type="checkbox" bind:checked={displayOriginal} />
 							Original
 						</label>
