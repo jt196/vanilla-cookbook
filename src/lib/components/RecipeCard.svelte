@@ -81,11 +81,6 @@
 		transition: background-color 0.2s ease;
 		text-decoration: none;
 		color: inherit;
-		// background: var(--pico-primary-background);
-
-		&:hover {
-			background-color: var(--pico-secondary-focus);
-		}
 	}
 
 	.stars {
@@ -101,6 +96,9 @@
 		min-height: 100px;
 		gap: 0.5rem;
 		max-width: calc(100% - 110px); /* Leave space for image */
+		&:hover {
+			background-color: var(--pico-secondary-focus);
+		}
 	}
 
 	h3 {
