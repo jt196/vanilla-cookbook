@@ -1,13 +1,13 @@
 <!-- RecipeCard.svelte -->
 <script>
-	import FoodBowl from '$lib/components/svg/FoodBowl.svelte'
 	import Favourite from '$lib/components/svg/Favourite.svelte'
+	import Check from '$lib/components/svg/Check.svelte'
 	import { localDate } from '$lib/utils/dateTime'
 	import StarRating from '$lib/components/StarRating.svelte'
 	import { addRecipeToFavourites } from '$lib/utils/crud'
 
 	/** @type {{item: any, data: any, recipeFavourited?: (uid: string) => void, recipeRatingChanged?: (uid: string, rating: number) => void}}, */
-	let { item, data, recipeFavourited, recipeRatingChanged } = $props();
+	let { item, data, recipeFavourited, recipeRatingChanged } = $props()
 
 	async function handleFavourite(uid, event) {
 		// Preventing the click through to the item view page
@@ -17,205 +17,145 @@
 		console.log('Handle favourites button clicked for uid: ' + uid)
 		const success = await addRecipeToFavourites(uid)
 		if (success && recipeFavourited) {
-			recipeFavourited(uid);
+			recipeFavourited(uid)
 		}
 	}
 </script>
 
-<a href="/recipe/{item.uid}/view/">
-	<article>
-		<div class="grid">
-			<div>
-				{#if item.photos && item.photos.length > 0}
-					<img
-						class="recipe-thumbnail"
-						loading="lazy"
-						src="/api/recipe/image/{item.photos[0].id}"
-						alt="{item.name} thumbnail" />
-				{:else}
-					<FoodBowl width="100px" />
-				{/if}
-				<div class="badges">
-					{#if item.log && item.log.length > 0}
-						<span
-							data-tooltip="This recipe has been cooked {item.log.length} times"
-							data-placement="right"
-							class="log-badge">{item.log.length}</span>
-					{/if}
-				</div>
+<a href="/recipe/{item.uid}/view/" class="recipe-container">
+	<article class="recipe-card">
+		<h3>{item.name}</h3>
+		<div class="star-fav">
+			<div class="stars">
+				<StarRating
+					rating={item.rating}
+					editable={true}
+					ratingChanged={(newRating) => recipeRatingChanged?.(item.uid, newRating)} />
 			</div>
-			<div href="/recipe/{item.uid}/view/" class="recipe-card">
-				<h3>{item.name}</h3>
-				<span class="created">
-					<i>{localDate(item.created)}</i>
-				</span>
-				<StarRating 
-					rating={item.rating} 
-					editable={true} 
-					ratingChanged={(newRating) => {
-						console.log("🚀 RecipeCard ratingChanged triggered:", newRating);
-						recipeRatingChanged?.(item.uid, newRating); // Call only if defined
-					}} 
-				/>
-			</div>
-			<div class="align-right recipe-buttons">
-				{#if item.userId === data.user?.requestedUserId}
-					<button
-						onclick={(event) => handleFavourite(item?.uid, event)}
-						data-tooltip="Favourite Recipe"
-						class="outline secondary">
-						<Favourite
-							favourite={item?.on_favorites}
-							width="30px"
-							height="30px"
-							fill="var(--pico-del-color)" />
-					</button>
-				{/if}
-			</div>
+			{#if item.userId === data.user?.requestedUserId}
+				<button
+					onclick={(event) => handleFavourite(item?.uid, event)}
+					data-tooltip="Favourite Recipe"
+					class="card-button outline secondary">
+					<Favourite
+						favourite={item?.on_favorites}
+						width="15px"
+						height="15px"
+						fill="var(--pico-del-color)" />
+				</button>
+			{/if}
+			{#if item.log && item.log.length > 0}
+				<button
+					class="card-button"
+					data-tooltip="This recipe has been cooked {item.log.length} times">
+					<Check
+						checked={item.log.length > 0}
+						width="15px"
+						height="15px"
+						fill={item.log.length > 0 ? 'var(--pico-ins-color)' : 'var(--pico-del-color)'} />
+				</button>
+			{/if}
+			<span class="created"><i>{localDate(item.created)}</i></span>
 		</div>
 	</article>
+	{#if item.photos && item.photos.length > 0}
+		<div class="recipe-image">
+			<img
+				class="recipe-thumbnail"
+				loading="lazy"
+				src="/api/recipe/image/{item.photos[0].id}"
+				alt="{item.name} thumbnail" />
+		</div>
+	{/if}
 </a>
 
 <style lang="scss">
-	.recipe-thumbnail {
-		width: 100px;
-		height: auto;
-		max-height: 100px;
-		object-fit: cover;
-		display: block;
-		@media (max-width: 767px) {
-			max-height: 75px;
-		}
-	}
-
-	.grid {
-		display: grid;
-		position: relative;
-		grid-template-columns: 100px 3fr 1fr; // 100px for the image, 3 parts for the recipe card, and 1 part for the buttons
-		gap: 1rem; // Spacing between grid items
-		align-items: center;
-		.badges {
-			display: flex;
-			gap: 0.3rem;
-			height: 25px;
-			align-items: center;
-			margin: 0.3rem 0 0 0;
-			justify-content: center;
-			align-items: center;
-
-			position: absolute; /* Position the badge within the relatively positioned button */
-			top: -2%;
-			left: -1%;
-			@media (max-width: 767px) {
-				top: -2%;
-				left: -2%;
-			}
-			.log-badge {
-				background: var(--pico-primary);
-				border-radius: 6px;
-				color: var(--pico-primary-inverse);
-
-				padding: 3px 6px;
-				font-size: 12px;
-			}
-			.favourite button {
-				align-items: center;
-				justify-content: center;
-				border: none;
-				z-index: 2;
-				display: flex;
-				padding: 0;
-				margin: 0;
-				border-radius: 6px;
-				height: 25px;
-				width: 25px;
-				align-items: center;
-				background: var(--pico-del-color);
-			}
-		}
-	}
-
-	.recipe-card {
-		grid-column: 2;
-		color: inherit;
-		h3 {
-			text-decoration: none;
-			margin: 0;
-			padding: 0;
-			white-space: nowrap;
-			overflow: hidden;
-			text-overflow: ellipsis;
-			@media (max-width: 767px) {
-				font-size: 0.9rem;
-				white-space: wrap;
-			}
-		}
-	}
-
-	.recipe-buttons {
-		grid-column: 3;
-		padding: 0.2rem;
+	/* Recipe card container - flexbox layout */
+	.recipe-container {
 		display: flex;
-		justify-content: flex-end; // Aligns the buttons to the right side
-		align-items: center; // Vertically centers the buttons if the container has a height
-		gap: 0.5rem; // Adds spacing between the buttons
-		z-index: 1;
-		button,
-		a {
-			margin-bottom: 0;
-			z-index: 2;
-			height: var(--button-height);
-			width: var(--button-height);
-		}
-		@media (max-width: 767px) {
-			flex-direction: column;
-			align-items: end;
-			button,
-			a {
-				padding: 0.4rem;
-			}
-		}
-	}
-
-	article {
+		align-items: center;
+		justify-content: space-between;
+		padding: 0;
+		margin-bottom: 0.5rem;
+		border-radius: 6px;
 		transition: background-color 0.2s ease;
-		padding: 1rem;
-		margin-bottom: 1rem;
-		@media (max-width: 767px) {
-			padding: 0.5rem;
-			margin-bottom: 0.5rem;
+		text-decoration: none;
+		color: inherit;
+		// background: var(--pico-primary-background);
+
+		&:hover {
+			background-color: var(--pico-secondary-focus);
 		}
 	}
 
-	article:hover {
-		background-color: var(--pico-secondary-focus);
+	.stars {
+		padding-bottom: 3px;
+	}
+
+	/* Recipe text section (left) */
+	.recipe-card {
+		flex-grow: 1;
+		display: flex;
+		margin-bottom: 0;
+		flex-direction: column;
+		min-height: 100px;
+		gap: 0.5rem;
+		max-width: calc(100% - 110px); /* Leave space for image */
+	}
+
+	h3 {
+		margin: 0;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		font-size: 1.7rem;
 	}
 
 	.created {
-		margin: 0;
-		padding: 0;
-		font-size: 0.8rem;
+		font-size: 1rem;
+		color: var(--pico-muted-color);
+	}
 
-		@media (max-width: 767px) {
-			display: none;
+	/* Star rating and favorite button */
+	.star-fav {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+	}
+
+	.card-button {
+		background: none;
+		border: none;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		padding: 0.5rem 0;
+	}
+
+	/* Badge styling */
+	.log-badge {
+		background: var(--pico-primary);
+		color: var(--pico-primary-inverse);
+		border-radius: 6px;
+		padding: 3px 6px;
+		font-size: 12px;
+	}
+
+	/* Image section (right) */
+	.recipe-image {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		img {
+			min-height: 100px;
+			min-width: 100px;
 		}
 	}
 
-	// Using CSS to adjust the button size variables
-	:root {
-		--dynamic-width: 30px;
-		--dynamic-height: 30px;
-		--button-height: 70px;
-	}
-
-	@media (max-width: 767px) {
-		:root {
-			--dynamic-width: 20px;
-			--dynamic-height: 20px;
-			--button-height: 60px;
-		}
-		header {
-			font-size: 0.8rem;
-		}
+	.recipe-thumbnail {
+		object-fit: cover;
+		border-radius: 6px;
+		width: 100px;
+		height: 100px;
 	}
 </style>

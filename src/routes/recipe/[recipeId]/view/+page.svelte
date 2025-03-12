@@ -191,7 +191,7 @@
 <div id="recipe-buttons">
 	<div class="home-button">
 		<button class="outline contrast" data-tooltip="Go to recipe list"
-			><a href="/"><Back width="30px" height="30px" /></a></button>
+			><a href="/"><Back width="20px" height="20px" /></a></button>
 		<FeedbackMessage message={recipeFeedback} />
 	</div>
 	{#if recipe.userId === viewUser.userId}
@@ -271,8 +271,5 @@
 		gap: 2rem;
 		justify-content: center;
 		align-items: center;
-		@media (max-width: 451px) {
-			display: none;
-		}
 	}
 </style>

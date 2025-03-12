@@ -44,7 +44,7 @@
 		class="outline contrast"
 		data-tooltip="Edit Recipe"
 		data-testid="edit-button">
-		<Edit width="30px" height="30px" fill="var(--pico-ins-color)" />
+		<Edit width="20px" height="20px" fill="var(--pico-ins-color)" />
 	</a>
 	<button
 		onclick={(event) => handleFavourite(recipe?.uid)}
@@ -52,8 +52,8 @@
 		class="outline secondary">
 		<Favourite
 			favourite={recipe?.on_favorites}
-			width="30px"
-			height="30px"
+			width="20px"
+			height="20px"
 			fill="var(--pico-del-color)" />
 	</button>
 	<button
@@ -61,14 +61,14 @@
 		data-testid="delete-button"
 		data-tooltip="Delete Recipe"
 		class="outline secondary">
-		<Delete width="30px" height="30px" fill="var(--pico-del-color)" />
+		<Delete width="20px" height="20px" fill="var(--pico-del-color)" />
 	</button>
 	<button
 		onclick={() => handleLog(recipe?.uid)}
 		class="outline contrast"
 		data-tooltip="Mark Recipe Cooked Today"
 		data-testid="check-button">
-		<TickRound width="30px" height="30px" fill="var(--pico-ins-color)" />
+		<TickRound width="20px" height="20px" fill="var(--pico-ins-color)" />
 	</button>
 	<a
 		href="/recipe/{recipe?.uid}/images/"
@@ -76,7 +76,7 @@
 		data-tooltip="Edit Recipe Images"
 		class="outline contrast"
 		data-testid="edit-button">
-		<Images width="30px" height="30px" fill="var(--pico-ins-color)" />
+		<Images width="20px" height="20px" fill="var(--pico-ins-color)" />
 	</a>
 </div>
 
@@ -85,8 +85,9 @@
 		display: flex;
 		flex-direction: row;
 		gap: 0.3rem;
-		@media (max-width: 451px) {
-			width: 100%;
-		}
+		flex-wrap: nowrap;
+	}
+	.buttons a {
+		padding: 0.5rem;
 	}
 </style>

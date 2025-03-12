@@ -106,7 +106,6 @@
 		align-items: center;
 		justify-content: space-between;
 		padding: 1rem 0 1rem 0;
-		border-bottom: 1px solid #ccc;
 	}
 
 	.search {
