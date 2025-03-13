@@ -217,7 +217,9 @@
 <h4>Shopping List</h4>
 
 <div class="shopping-buttons">
-	<button onclick={toggleHidden}>
+	<button
+		onclick={toggleHidden}
+		data-tooltip={showHidden ? 'Show Unpurchased Items' : 'Show Purchased Items'}>
 		{#if showHidden}
 			<View width="20px" height="20px" fill="white" />
 		{:else}
@@ -225,11 +227,17 @@
 		{/if}
 	</button>
 
-	<button disabled={uncheckedItemCount === 0} onclick={() => (isCheckAllDialogOpen = true)}>
+	<button
+		disabled={uncheckedItemCount === 0}
+		onclick={() => (isCheckAllDialogOpen = true)}
+		data-tooltip="Mark all items as purchased">
 		<CheckAll width="20px" height="20px" fill="white" />
 	</button>
 
-	<button disabled={purchasedItemCount === 0} onclick={() => (isDeleteDialogOpen = true)}>
+	<button
+		disabled={purchasedItemCount === 0}
+		onclick={() => (isDeleteDialogOpen = true)}
+		data-tooltip="Delete all purchased items">
 		<Delete width="20px" height="20px" fill="white" />
 	</button>
 </div>
@@ -286,10 +294,8 @@
 					</div>
 				</div>
 				<div class="item-buttons">
-					<button class="outline contrast" onclick={() => openEditModal(item)}
+					<button class="outline contrast" id="edit-item" onclick={() => openEditModal(item)}
 						><Edit width="20px" height="20px" fill="var(--pico-ins-color)" /></button>
-					<button class="outline secondary" onclick={() => handleDeleteItem(item.uid)}
-						><Delete width="20px" height="20px" fill="var(--pico-del-color)" /></button>
 				</div>
 			</div>
 		{/if}
@@ -333,6 +339,8 @@
 
 		<footer>
 			<button type="button" onclick={() => (isEditDialogOpen = false)}>Cancel</button>
+			<button class="outline secondary" id="delete-item" onclick={() => handleDeleteItem(item.uid)}
+				><Delete width="15px" height="15px" fill="var(--pico-del-color)" /></button>
 			<button type="submit">Save</button>
 		</footer>
 	</form>
@@ -345,12 +353,33 @@
 	.shopping-buttons {
 		margin-bottom: 1rem;
 	}
+
+	form > footer {
+		display: flex;
+		gap: 0.5rem;
+		justify-content: space-between; /* Ensures even spacing */
+		button {
+			flex: 1; /* Makes buttons take equal width */
+		}
+
+		#delete-item {
+			flex: 0 1 35px; /* Ensures it doesn't expand but can shrink */
+			padding: 0 0.5rem;
+			max-height: 35px;
+		}
+	}
 	.list-item {
 		display: flex;
 		border-bottom: 0.5px solid var(--pico-primary-focus);
 		align-items: center;
 		justify-content: center;
 		padding: 0.5rem 0;
+		@media (max-width: 767px) {
+			padding: 0;
+			#delete-item {
+				display: none;
+			}
+		}
 		.item-qty-unit {
 			display: flex;
 			flex-direction: column;
@@ -383,7 +412,7 @@
 				display: flex;
 				flex-direction: column;
 				gap: 0.2rem;
-				padding: 0.2rem 0 0.2rem 0;
+				padding: 0.2rem 0;
 				.outline {
 					display: inline-flex;
 					align-items: center;

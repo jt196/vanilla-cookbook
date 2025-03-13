@@ -109,13 +109,6 @@
 		font-size: 1.7rem;
 	}
 
-	@media (max-width: 576px) {
-		h3 {
-			font-size: 1rem;
-			margin-bottom: 1rem;
-		}
-	}
-
 	.created {
 		font-size: 1rem;
 		color: var(--pico-muted-color);
@@ -162,5 +155,19 @@
 		border-radius: 6px;
 		width: 100px;
 		height: 100px;
+	}
+
+	@media (max-width: 576px) {
+		h3 {
+			font-size: 1rem;
+			margin-bottom: 1rem;
+			white-space: normal;
+			overflow: visible;
+			text-overflow: unset;
+			word-wrap: break-word;
+		}
+		.star-fav {
+			display: none;
+		}
 	}
 </style>
