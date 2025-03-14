@@ -9,6 +9,9 @@
 	/** @type {{item: any, data: any, recipeFavourited?: (uid: string) => void, recipeRatingChanged?: (uid: string, rating: number) => void}}, */
 	let { item, data, recipeFavourited, recipeRatingChanged } = $props()
 
+	let logged = $derived(item.log?.length > 0)
+	let favourite = $derived(item?.on_favorites)
+
 	async function handleFavourite(uid, event) {
 		// Preventing the click through to the item view page
 		event.preventDefault()
@@ -38,24 +41,21 @@
 					data-tooltip="Favourite Recipe"
 					class="card-button outline secondary">
 					<Favourite
-						favourite={item?.on_favorites}
+						{favourite}
 						width="15px"
 						height="15px"
-						fill="var(--pico-del-color)" />
+						fill={favourite ? 'var(--pico-del-color)' : 'var(--pico-secondary-focus)'} />
 				</button>
-			{/if}
-			{#if item.log && item.log.length > 0}
 				<button
 					class="card-button"
 					data-tooltip="This recipe has been cooked {item.log.length} times">
 					<Check
-						checked={item.log.length > 0}
+						checked={logged}
 						width="15px"
 						height="15px"
-						fill={item.log.length > 0 ? 'var(--pico-ins-color)' : 'var(--pico-del-color)'} />
+						fill={logged ? 'var(--pico-ins-color)' : 'var(--pico-secondary-focus)'} />
 				</button>
 			{/if}
-			<span class="created"><i>{localDate(item.created)}</i></span>
 		</div>
 	</article>
 	<div class="recipe-image">

@@ -65,7 +65,7 @@
 				favourite={$favouriteFilter}
 				width="30px"
 				height="30px"
-				fill="var(--pico-del-color)" />
+				fill={$favouriteFilter ? 'var(--pico-del-color)' : 'var(--pico-secondary-focus)'} />
 		</button>
 		<button
 			onclick={() => ($cookedFilter = !$cookedFilter)}
@@ -75,7 +75,7 @@
 				checked={$cookedFilter}
 				width="30px"
 				height="30px"
-				fill={$cookedFilter ? 'var(--pico-ins-color)' : 'var(--pico-del-color)'} />
+				fill={$cookedFilter ? 'var(--pico-del-color)' : 'var(--pico-secondary-focus)'} />
 		</button>
 		<button
 			data-tooltip="Sort by Date"

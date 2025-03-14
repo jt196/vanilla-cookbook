@@ -2,12 +2,12 @@
 	import Star from '$lib/components/svg/Star.svelte'
 
 	/** @type {{rating?: number, editable?: boolean, ratingChanged?: (rating: number) => void}} */
-	let { rating = 0, editable = false, ratingChanged } = $props();
+	let { rating = 0, editable = false, ratingChanged } = $props()
 
 	function setRating(value) {
 		if (editable) {
-			let newRating = rating === value - 0.5 ? value : value - 0.5;
-			ratingChanged?.(newRating); // Call function instead of modifying rating
+			let newRating = rating === value - 0.5 ? value : value - 0.5
+			ratingChanged?.(newRating) // Call function instead of modifying rating
 		}
 	}
 
@@ -28,7 +28,9 @@
 			}}
 			onkeydown={(event) => handleKeydown(event, star)}
 			tabindex="0">
-			<Star state={rating >= star ? 'full' : rating >= star - 0.5 ? 'half' : 'empty'} />
+			<Star
+				state={rating >= star ? 'full' : rating >= star - 0.5 ? 'half' : 'empty'}
+				fill="var(--pico-primary)" />
 		</button>
 	{/each}
 </div>

@@ -202,11 +202,11 @@
 <div id="recipe-buttons">
 	<div class="home-button">
 		<button class="outline contrast" data-tooltip="Go to recipe list"
-			><a href="/"><Back width="20px" height="20px" /></a></button>
+			><a href="/"><Back width="20px" height="20px" fill="var(--pico-primary)" /></a></button>
 		<FeedbackMessage message={recipeFeedback} />
 	</div>
 	{#if recipe.userId === viewUser.userId}
-		<RecipeViewButtons {recipe} {updateLogs} {favRecipe} />
+		<RecipeViewButtons {recipe} {updateLogs} {favRecipe} {logs} />
 	{/if}
 </div>
 

@@ -86,6 +86,7 @@ article > footer {
 	/* Original: var(--pico-border-radius) */
 }
 
-button.outline {
-	border: 1px solid var(--pico-muted-border-color);
+button.outline,
+a.outline {
+	border: 1px solid var(--pico-secondary-focus);
 }

@@ -24,11 +24,13 @@
 			width: auto; // Maintain aspect ratio
 			object-fit: cover;
 			display: block;
+			border-radius: 1rem;
 		}
 
 		@media (max-width: 768px) {
 			height: 250px; // Fixed height to crop
 			overflow: hidden; // Hide overflow
+			margin-bottom: 0;
 
 			img {
 				width: 100%; // Fill full width
