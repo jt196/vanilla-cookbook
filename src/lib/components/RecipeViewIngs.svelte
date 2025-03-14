@@ -34,11 +34,6 @@
 	{/if}
 
 	<div class="ingredients">
-		<div class="convert">
-			{#if measurementSystem}
-				<RecipeViewDropdown {selectedSystem} {onSelectedSystemChange} {measurementSystem} />
-			{/if}
-		</div>
 		<ul>
 			{#each sanitizedIngredients as ingredient}
 				<RecipeViewIng
@@ -51,6 +46,11 @@
 					{selectedSystem} />
 			{/each}
 		</ul>
+		<div class="convert">
+			{#if measurementSystem}
+				<RecipeViewDropdown {selectedSystem} {onSelectedSystemChange} {measurementSystem} />
+			{/if}
+		</div>
 		<div class="ing-settings">
 			<div class="checks">
 				<fieldset>
