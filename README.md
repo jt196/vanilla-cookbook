@@ -5,23 +5,24 @@
 3. Create the folders for the uploads and the db
    - uploads/imports
    - uploads/images
-   - prisma/db
-4. Generate the Prisma client and types (is this typescript?): `npx prisma generate`
-5. Add your admin user details and Paprika log in details to the .env.template file.
-6. Rename this to .env, or just run `cp .env.example .env` in the root of the project.
+4. Generate the Prisma client and types: `npx prisma generate`
+5. At the root of the project, create a .env file: `cp .env.template .env`
+6. In the _.env_ file
+   1. Add your admin user details
+   2. Change the _ORIGIN_ to something like http://locahost:3000, or http://locahost:5173, depending on whether you're running dev or prod.
 7. Build the DB: `npx prisma migrate deploy`
 8. Seed the DB: `npx prisma db seed`
 
 # Getting Started with Docker
 
-1. Add the _.env.example_ file from the repo to the project folder
-2. Rename it _.env_
-3. Add the admin user details, as well as the Paprika details (optional)
-4. Add the _docker-compose.yml_ file to the folder
-5. Create db and uploads folders for persistence
-6. If you're importing a .paprikarecipes file, add that to the _uploads/import_ folder
-7. If you're importing categories too, and already have the _categories.json_, add that to the folder.
-8. Run `docker-compose up -d`
+1. At the root of the project, create the .env file: `cp .env.template .env`
+2. In the _.env_ file
+   1. Add the admin user details.
+   2. Change the _ORIGIN_ to the URL it's going to be hosted on.
+3. Create db and uploads folders for persistence in your docker folder, make sure the share paths are correct in the docker-compose file.
+4. If you're importing a .paprikarecipes file, add that to the _uploads/import_ folder
+5. If you're importing categories too, and already have the _categories.json_, add that to the folder.
+6. Run `docker-compose up -d`
 
 # .env Files
 
@@ -47,23 +48,6 @@ export const appRootPath =
   - And the `path.join(__dirname, '../../../../..')` part is for `npm run dev` when docker or localproduction .env variables haven't been specified.
 
 - I'm going to work to make this simpler, but you shouldn't need to do anything unless you're running a localproduction server, in which case you'll need a _.env.localproduction_ file, and to run the build process with the `:localprod` tag as specified above.
-
-# Deployment/Change Workflow
-
-As it stands with the current local/NAS setup
-
-1. Make changes on local disk
-2. Confirm they work - run tests etc
-3. Sync with the Git repo
-4. This should build the Docker image
-5. Either wait for Watchtower to update it OR
-6. Update it manually:
-   1. log into wherever the Docker images are
-   2. `docker pull jt196/cookrr`
-   3. `cd` into the project folder
-   4. `docker-compose up -d`
-
-Another option is to run a simple Express or Flask docker image that checks for updates and pings the Watchtower API. Honestly not sure if that's worth bothering with.
 
 # Paprika Importing
 
