@@ -1,0 +1,14 @@
+version: '3'
+services:
+  app:
+    image: recipe-manager:latest
+    container_name: recipe-manager
+    ports:
+      - '3021:3000'
+    volumes:
+      - ./prisma/db:/app/prisma/db
+      - ./uploads:/app/uploads
+      - ./src:/app/src
+      - ./.env:/app/.env
+    env_file:
+      - .env

@@ -20,3 +20,4 @@ uploads/*
 *.backup
 service-worker.js*
 workbox-*.js*
+docker-compose.yml
