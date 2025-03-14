@@ -8,6 +8,8 @@
 <div class="recipe-cover">
 	{#if mainPhoto}
 		<img src="/api/recipe/image/{mainPhoto.id}" alt="{recipe.name} photo" />
+	{:else if recipe.image_url}
+		<img src={recipe.image_url} alt="{recipe.name} photo" />
 	{/if}
 </div>
 

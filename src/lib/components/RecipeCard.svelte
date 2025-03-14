@@ -58,15 +58,21 @@
 			<span class="created"><i>{localDate(item.created)}</i></span>
 		</div>
 	</article>
-	{#if item.photos && item.photos.length > 0}
-		<div class="recipe-image">
+	<div class="recipe-image">
+		{#if item.photos && item.photos.length > 0}
 			<img
 				class="recipe-thumbnail"
 				loading="lazy"
 				src="/api/recipe/image/{item.photos[0].id}"
 				alt="{item.name} thumbnail" />
-		</div>
-	{/if}
+		{:else if item.image_url}
+			<img
+				class="recipe-thumbnail"
+				loading="lazy"
+				src={item.image_url}
+				alt="{item.name} thumbnail" />
+		{/if}
+	</div>
 </a>
 
 <style lang="scss">
