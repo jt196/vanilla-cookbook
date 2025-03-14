@@ -8,13 +8,19 @@ import { prisma } from '$lib/server/prisma'
  * @param {Object} context - The context object.
  * @param {AppLocals} context.locals - Local variables.
  */
-export const load = async ({ locals }) => {
+export const load = async ({ locals, url }) => {
 	const session = await locals.auth.validate()
 	const settings = await prisma.siteSettings.findFirst()
 	if (session) {
 		redirect(302, '/')
 	}
-	return { settings }
+
+	// Capture form failure messages from query parameters (SSR safe)
+	const form = {
+		message: url.searchParams.get('message') ?? null
+	}
+
+	return { settings, form }
 }
 
 /**
@@ -35,6 +41,10 @@ export const actions = {
 		const formData = Object.fromEntries(await request.formData())
 		const { username, password } = /** @type {Record<string, string>} */ (formData)
 
+		if (!username || !password) {
+			return fail(400, { message: 'Missing username or password.' })
+		}
+
 		try {
 			const key = await auth.useKey('username', username, password)
 			// const session = await auth.createSession(key.userId)
@@ -45,6 +55,7 @@ export const actions = {
 			locals.auth.setSession(session)
 		} catch (err) {
 			console.error(err)
+			console.error(err.message)
 			return fail(400, { message: 'Could not login user.' })
 		}
 		redirect(302, '/')

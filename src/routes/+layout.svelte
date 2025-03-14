@@ -15,9 +15,9 @@
 	import Shopping from '$lib/components/svg/Shopping.svelte'
 	import Calendar from '$lib/components/svg/Calendar.svelte'
 	import New from '$lib/components/svg/New.svelte'
-	
+
 	/** @type {{data: PageData, children?: import('svelte').Snippet}} */
-	let { data, children } = $props();
+	let { data, children } = $props()
 	const { user, settings } = data
 
 	if (browser && 'serviceWorker' in navigator) {
@@ -69,6 +69,6 @@
 
 <style lang="scss">
 	a {
-		padding: 0 0.5rem;
+		padding: 0.5rem;
 	}
 </style>

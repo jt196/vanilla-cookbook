@@ -1,8 +1,15 @@
 <script>
+	import FeedbackMessage from '$lib/components/FeedbackMessage.svelte'
+
 	/** @type {{data: any}} */
-	let { data } = $props()
+	let { data, form } = $props()
 	const { settings } = $state(data)
+	let errorMessage = $state(form?.message)
 </script>
+
+{#if settings.registrationAllowed}
+	<p>Don't have an account? <a href="/register">Register</a></p>
+{/if}
 
 <form method="POST">
 	<hgroup>
@@ -17,6 +24,6 @@
 
 	<button type="submit">Login</button>
 </form>
-{#if settings.registrationAllowed}
-	<p>Don't have an account? <a href="/register">Register</a></p>
+{#if errorMessage}
+	<FeedbackMessage message={errorMessage} type="error" />
 {/if}
