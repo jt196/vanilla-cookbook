@@ -36,6 +36,9 @@
 <style lang="scss">
 	.recipe-about {
 		flex: 2;
+		padding: 1rem;
+		border-radius: 1rem;
+		background: var(--pico-secondary-focus);
 		#categories,
 		#scale {
 			margin-top: 1rem;

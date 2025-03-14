@@ -133,6 +133,7 @@
 		transition: background-color 0.3s ease;
 		&:hover {
 			background-color: var(--pico-secondary-focus);
+			border-radius: 5px;
 		}
 
 		button {
