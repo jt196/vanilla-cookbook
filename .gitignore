@@ -16,8 +16,12 @@ vite.config.ts.timestamp-*
 # Test
 package-lock.json
 *.diff
-uploads/*
+uploads/images/*
+uploads/imports/*
 *.backup
 service-worker.js*
 workbox-*.js*
 docker-compose.yml
+# Whitelist
+!uploads/images/.gitkeep
+!uploads/imports/.gitkeep
