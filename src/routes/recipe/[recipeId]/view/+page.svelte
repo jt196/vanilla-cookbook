@@ -3,6 +3,8 @@
 	import { determineSystem, parseRecipeText } from '$lib/utils/converter'
 	import { getSanitizedHTML } from '$lib/utils/render'
 	import { onMount, onDestroy } from 'svelte'
+	import { setupWakeLock, cleanupWakeLock } from '$lib/utils/wakeLock.js'
+	import { browser } from '$app/environment'
 
 	import RecipeViewButtons from '$lib/components/RecipeViewButtons.svelte'
 	import RecipeViewCover from '$lib/components/RecipeViewCover.svelte'
@@ -188,46 +190,13 @@
 	})
 
 	// Prevent Screen from Sleeping
-
-	let wakeLock = null
-
-	async function requestWakeLock() {
-		try {
-			if ('wakeLock' in navigator) {
-				wakeLock = await navigator.wakeLock.request('screen')
-				wakeLock.addEventListener('release', () => {
-					console.log('Screen Wake Lock released')
-				})
-			}
-		} catch (err) {
-			console.error(`Wake Lock error: ${err.name}, ${err.message}`)
-		}
-	}
-
-	async function releaseWakeLock() {
-		if (wakeLock) {
-			await wakeLock.release()
-			wakeLock = null
-		}
-	}
-
 	onMount(() => {
-		requestWakeLock()
-		document.addEventListener('visibilitychange', handleVisibilityChange)
+		setupWakeLock()
 	})
 
 	onDestroy(() => {
-		releaseWakeLock()
-		document.removeEventListener('visibilitychange', handleVisibilityChange)
+		cleanupWakeLock()
 	})
-
-	function handleVisibilityChange() {
-		if (document.visibilityState === 'visible') {
-			requestWakeLock()
-		} else {
-			releaseWakeLock()
-		}
-	}
 </script>
 
 <div id="recipe-buttons">
