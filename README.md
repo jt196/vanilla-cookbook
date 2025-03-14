@@ -1,28 +1,29 @@
 # Getting Started Locally
 
 1. Clone the repo and the recipe-ingredient-parser submodule: `git clone --recursive https://github.com/jt196/recipe-manager-prisma.git`
-2. Install the base packages: `npm i`
-3. Create the folders for the uploads and the db
-   - uploads/imports
-   - uploads/images
-4. Generate the Prisma client and types: `npx prisma generate`
-5. At the root of the project, create a .env file: `cp .env.template .env`
-6. In the _.env_ file
+2. At the root of the project, create the .env file: `cp .env.template .env`
+3. In the _.env_ file
    1. Add your admin user details
    2. Change the _ORIGIN_ to something like http://locahost:3000, or http://locahost:5173, depending on whether you're running dev or prod.
-7. Build the DB: `npx prisma migrate deploy`
-8. Seed the DB: `npx prisma db seed`
+4. Make sure the setup script is executable: `chmod +x local-setup.sh`
+5. Run it: `./local-setup.sh`
 
 # Getting Started with Docker
 
-1. At the root of the project, create the .env file: `cp .env.template .env`
-2. In the _.env_ file
-   1. Add the admin user details.
-   2. Change the _ORIGIN_ to the URL it's going to be hosted on.
-3. Create db and uploads folders for persistence in your docker folder, make sure the share paths are correct in the docker-compose file.
-4. If you're importing a .paprikarecipes file, add that to the _uploads/import_ folder
-5. If you're importing categories too, and already have the _categories.json_, add that to the folder.
-6. Run `docker-compose up -d`
+1. In the project folder, paste this command into your terminal:
+
+```bash
+curl -sL https://github.com/jt196/recipe-manager-prisma.git/.env.template -o .env && \
+curl -sL https://github.com/jt196/recipe-manager-prisma.git/docker-compose.yml.template -o docker-compose.yml && \
+mkdir -p ./db ./uploads/import ./uploads/images && \
+echo "Setup complete! Edit .env with admin details and ORIGIN URL, then run: docker-compose up -d"
+```
+
+This will clone the _.env_ file and _docker-compose.yml_ files to the project folder, and create 2 folders (db and uploads) for persistent storage for your project. 2. In the _.env_ file
+
+1.  Change the admin user details.
+2.  Change the _ORIGIN_ to the URL it's going to be hosted on.
+3.  Run `docker-compose up -d`
 
 # .env Files
 
