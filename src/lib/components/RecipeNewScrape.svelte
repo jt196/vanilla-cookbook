@@ -1,5 +1,6 @@
 <script>
 	import { handleScrape } from '$lib/utils/parse/parseHelpersClient'
+	import FeedbackMessage from '$lib/components/FeedbackMessage.svelte'
 
 	/**
 	 * @type {{
@@ -10,13 +11,32 @@
 	 */
 	let { initialUrl = '', recipe = $bindable(), onUrlChange } = $props()
 
+	let feedbackMessage = $state('')
+	let feedbackType = $state('info')
+
 	// Instead of having a separate reactive state, use the prop directly.
 	async function scrapeEventHandler(event) {
 		event.preventDefault()
 		console.log('Handling Scrape!')
-		const scrapedData = await handleScrape(event, initialUrl)
-		if (scrapedData) {
-			recipe = { ...recipe, ...scrapedData }
+
+		feedbackMessage = ''
+		feedbackType = 'info'
+
+		try {
+			const scrapedData = await handleScrape(event, initialUrl)
+			if (scrapedData && scrapedData.ingredients && scrapedData.directions) {
+				recipe = { ...recipe, ...scrapedData }
+				feedbackMessage = 'Recipe successfully scraped!'
+				feedbackType = 'success'
+			} else if (scrapedData) {
+				recipe = { ...recipe, ...scrapedData }
+				feedbackMessage = 'Recipe partially scraped!'
+				feedbackType = 'error'
+			}
+		} catch (error) {
+			console.error('Error:', error)
+			feedbackMessage = 'Error scraping recipe. Please check the URL or try again.'
+			feedbackType = 'error'
 		}
 	}
 </script>
@@ -33,6 +53,12 @@
 			oninput={(e) => onUrlChange && onUrlChange(e.target.value)} />
 		<button type="submit">Scrape Recipe</button>
 	</form>
+</div>
+
+<div>
+	{#if feedbackMessage}
+		<FeedbackMessage message={feedbackMessage} type={feedbackType} timeout={4000} />
+	{/if}
 </div>
 
 <style lang="scss">
