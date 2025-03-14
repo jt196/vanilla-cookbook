@@ -5,5 +5,6 @@
 			"$lib/*": ["src/lib/*"]
 		}
 	},
+	"extends": "./.svelte-kit/tsconfig.json",
 	"include": ["src/**/*", "static/*.js"]
 }

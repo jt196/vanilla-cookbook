@@ -185,20 +185,6 @@
 		}
 	}
 
-	.switches {
-		fieldset {
-			align-items: end;
-			justify-content: end;
-			display: flex;
-			flex-direction: column;
-			margin: 0;
-			label {
-				padding: 0;
-				margin: 0;
-			}
-		}
-	}
-
 	.sidebar-buttons {
 		display: flex; // Use flexbox
 		justify-content: center; // Center horizontally
@@ -209,13 +195,5 @@
 
 	.sidebar-check {
 		margin-left: 1rem;
-	}
-	.menu-buttons {
-		display: flex;
-		justify-content: space-between;
-		gap: 1rem;
-		.spacer {
-			flex-grow: 1;
-		}
 	}
 </style>

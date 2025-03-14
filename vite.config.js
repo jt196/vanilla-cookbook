@@ -8,6 +8,13 @@ const config = {
 		environment: 'jsdom',
 		include: ['src/**/*.{test,spec}.{js,ts}']
 	},
+	css: {
+		preprocessorOptions: {
+			scss: {
+				api: 'modern-compiler' // or "modern"
+			}
+		}
+	},
 	server: {
 		fs: {
 			allow: ['.']

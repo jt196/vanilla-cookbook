@@ -130,15 +130,6 @@
 		padding: 0.5rem 0;
 	}
 
-	/* Badge styling */
-	.log-badge {
-		background: var(--pico-primary);
-		color: var(--pico-primary-inverse);
-		border-radius: 6px;
-		padding: 3px 6px;
-		font-size: 12px;
-	}
-
 	/* Image section (right) */
 	.recipe-image {
 		display: flex;
@@ -166,7 +157,7 @@
 			text-overflow: unset;
 			word-wrap: break-word;
 		}
-		.star-fav {
+		.created {
 			display: none;
 		}
 	}
