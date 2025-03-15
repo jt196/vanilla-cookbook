@@ -25,3 +25,4 @@ docker-compose.yml
 # Whitelist
 !uploads/images/.gitkeep
 !uploads/imports/.gitkeep
+site/*

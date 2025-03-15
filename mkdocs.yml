@@ -7,7 +7,7 @@ theme:
       toggle:
         icon: material/weather-sunny
         name: Dark mode
-      primary: green
+      primary: brown
       accent: deep purple
 
     # Light Mode
@@ -49,24 +49,21 @@ markdown_extensions:
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
 
 nav:
-  - Home: index.md
-  - API Reference:
-      - Assets: api/assets.md
-      - Resources: api/resources.md
-      - Utilities: api/utils.md
-  - Project Reference:
-      - Main: notes/main.md
-      - Readme: notes/Readme.md
+  - Manual:
+      - Installation: manual/installation.md
+      - Usage: manual/usage.md
+      - Apps: manual/apps.md
+      - Import/Export: manual/import.md
 
 extra:
   social:
-    - icon: simple/homeassistantcommunitystore
+    - icon: material/home
       link: https://jamestorr.com
       name: 'James Torr home page'
-    - icon: simple/linkedin
+    - icon: fontawesome/brands/linkedin
       link: https://www.linkedin.com/in/jamestorr/
       name: 'James Torr on LinkedIn'
-    - icon: simple/github
+    - icon: fontawesome/brands/github
       link: https://www.github.com/jt196/vanilla-cookbook
       name: 'Vanilla Cookbook on GitHub'
   generator: false
