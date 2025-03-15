@@ -118,9 +118,16 @@ export async function PATCH({ request, locals }) {
 	try {
 		const updatedItem = await prisma.shoppingListItem.update({
 			where: { uid },
-			data: updateData
+			data: updateData,
+			include: {
+				recipe: {
+					select: {
+						name: true,
+						uid: true
+					}
+				}
+			}
 		})
-		console.log('🚀 ~ PATCH ~ updatedItem:', updatedItem)
 
 		return new Response(JSON.stringify(updatedItem), {
 			status: 200,
