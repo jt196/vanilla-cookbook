@@ -1,3 +1,5 @@
+For a full getting started guide, [read the docs](https://vanilla-cookbook.readthedocs.io/en/latest/).
+
 # Getting Started Locally
 
 1. Clone the repo and the recipe-ingredient-parser submodule: `git clone --recursive https://github.com/jt196/recipe-manager-prisma.git`
