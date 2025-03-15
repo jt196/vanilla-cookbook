@@ -1,6 +1,7 @@
 site_name: Vanilla Cookbook Documentation
 theme:
   name: material
+  logo: images/vanilla-notype.png # Path to the logo inside docs/
   palette:
     # Dark Mode
     - scheme: slate
