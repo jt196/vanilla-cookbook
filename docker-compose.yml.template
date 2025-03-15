@@ -1,7 +1,7 @@
 services:
   app:
-    image: jt196/cookrr:latest
-    container_name: recipe-manager
+    image: jt196/vanilla-cookbook:latest
+    container_name: vanilla-cookbook
     ports:
       - '3000:3000'
     volumes:

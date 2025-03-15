@@ -26,4 +26,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: jt196/cookrr:latest
+          tags: jt196/vanilla-cookbook:latest

@@ -1,7 +1,7 @@
 {
-	"name": "Cookrr Personal Cookbook",
-	"short_name": "Cookrr",
-	"description": "Save and share your recipes",
+	"name": "Vanilla Cookbook",
+	"short_name": "Vanilla",
+	"description": "Your vanilla cookbook",
 	"start_url": "/",
 	"display": "standalone",
 	"background_color": "#13171f",
