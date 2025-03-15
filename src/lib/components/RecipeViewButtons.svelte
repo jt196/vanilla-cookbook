@@ -62,7 +62,7 @@
 			favourite={recipe?.on_favorites}
 			width="20px"
 			height="20px"
-			fill="var(--pico-del-color)" />
+			fill={recipe?.on_favorites ? 'var(--pico-del-color)' : 'var(--pico-secondary-focus)'} />
 	</button>
 	<button
 		onclick={() => handleLog(recipe?.uid)}
@@ -73,7 +73,7 @@
 			width="20px"
 			height="20px"
 			checked={logs?.length > 0}
-			fill={logs?.length > 0 ? 'var(--pico-ins-color)' : 'var(--pico-del-color)'} />
+			fill={logs?.length > 0 ? 'var(--pico-ins-color)' : 'var(--pico-secondary-focus)'} />
 	</button>
 	<button
 		onclick={() => handleDelete(recipe?.uid)}
