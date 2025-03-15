@@ -75,7 +75,7 @@
 				checked={$cookedFilter}
 				width="30px"
 				height="30px"
-				fill={$cookedFilter ? 'var(--pico-del-color)' : 'var(--pico-secondary-focus)'} />
+				fill={$cookedFilter ? 'var(--pico-ins-color)' : 'var(--pico-secondary-focus)'} />
 		</button>
 		<button
 			data-tooltip="Sort by Date"
