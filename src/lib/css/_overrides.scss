@@ -1,11 +1,4 @@
 // Gets rid of odd dotted line at bottom of a tooltip div
-[data-tooltip]:not(a, button, input) {
+[data-tooltip]:not(a, button, input, [role='button']) {
 	border-bottom: none;
 }
-
-// Trying to reduce the button size but this doesn't reduce the inputs
-// button,
-// select,
-// input {
-// 	padding: 0.6rem;
-// }
