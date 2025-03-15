@@ -1,0 +1,74 @@
+site_name: Vanilla Cookbook Documentation
+theme:
+  name: material
+  palette:
+    # Dark Mode
+    - scheme: slate
+      toggle:
+        icon: material/weather-sunny
+        name: Dark mode
+      primary: green
+      accent: deep purple
+
+    # Light Mode
+    - scheme: default
+      toggle:
+        icon: material/weather-night
+        name: Light mode
+      primary: blue
+      accent: deep orange
+  font:
+    text: Merriweather Sans
+    code: Red Hat Mono
+  features:
+    - navigation.footer
+    - footer
+
+plugins:
+  - search
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          options:
+            docstring_style: google
+            show_source: true
+            show_category_heading: true
+            members_order: source
+            filters: ['!^_'] # Exclude private members
+            show_submodules: true
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - attr_list
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+nav:
+  - Home: index.md
+  - API Reference:
+      - Assets: api/assets.md
+      - Resources: api/resources.md
+      - Utilities: api/utils.md
+  - Project Reference:
+      - Main: notes/main.md
+      - Readme: notes/Readme.md
+
+extra:
+  social:
+    - icon: simple/homeassistantcommunitystore
+      link: https://jamestorr.com
+      name: 'James Torr home page'
+    - icon: simple/linkedin
+      link: https://www.linkedin.com/in/jamestorr/
+      name: 'James Torr on LinkedIn'
+    - icon: simple/github
+      link: https://www.github.com/jt196/vanilla-cookbook
+      name: 'Vanilla Cookbook on GitHub'
+  generator: false
+
+copyright: 'Made by James Torr'
