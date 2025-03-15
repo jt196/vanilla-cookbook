@@ -20,7 +20,7 @@
 	<p>1. Drag This Bookmark to Your Browser Toolbar</p>
 	<a href={bookmarkletCode} role="button"><Bookmark width="25px" /></a><br />
 	<p>
-		2. Rename to something convenient and easy to remember, like <strong>Cookrr Import</strong>.
+		2. Rename to something convenient and easy to remember, like <strong>Vanilla Import</strong>.
 		Usually, right click on it and <italic>Edit Bookmark</italic>.
 	</p>
 	<p>

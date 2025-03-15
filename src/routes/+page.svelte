@@ -1,1 +1,1 @@
-<h1>Cookrr Personal Cookbook</h1>
+<h1>Vanilla Cookbook</h1>

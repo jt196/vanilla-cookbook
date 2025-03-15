@@ -40,9 +40,10 @@
 			<li>
 				<strong>
 					{#if user}
-						<a href="/user/{user.userId}/recipes"> Cookrr </a>
+						<a href="/user/{user.userId}/recipes"
+							><img id="vanilla-logo" src="/vanilla-notype.png" alt="Vanilla" /></a>
 					{:else}
-						<a href="/"> Cookrr </a>
+						<img id="vanilla-logo" src="/vanilla-notype.png" alt="Vanilla" />
 					{/if}
 				</strong>
 			</li>
@@ -70,5 +71,10 @@
 <style lang="scss">
 	a {
 		padding: 0.5rem;
+	}
+
+	#vanilla-logo {
+		max-width: 60px;
+		padding: none;
 	}
 </style>
