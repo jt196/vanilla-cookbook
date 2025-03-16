@@ -4,15 +4,15 @@
 	"private": true,
 	"scripts": {
 		"dev": "vite dev",
+		"build": "pnpm prisma generate && pnpm generate-sw && vite build",
+		"serve": "pnpm prisma migrate deploy && pnpm prisma db seed && ./sw-domain.sh && node build/index.js",
 		"generate-sw": "node src/lib/utils/pwa/generate-sw.js",
-		"build:localprod": "vite build --mode localproduction",
-		"build": "vite build",
-		"preview": "vite preview",
 		"test": "vitest",
-		"test:watch": "npm run test -- --watch",
+		"test:watch": "pnpm test -- --watch",
 		"coverage": "vitest run --coverage",
 		"lint": "prettier --plugin-search-dir . --check . && eslint .",
-		"format": "prettier --plugin-search-dir . --write ."
+		"format": "prettier --plugin-search-dir . --write .",
+		"start": "pnpm install && pnpm build && pnpm serve"
 	},
 	"devDependencies": {
 		"@event-calendar/core": "^3.10.0",

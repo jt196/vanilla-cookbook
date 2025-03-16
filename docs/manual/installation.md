@@ -4,9 +4,10 @@
 2. At the root of the project, create the .env file: `cp .env.template .env`
 3. In the _.env_ file
    1. Add your admin user details
-   2. Change the _ORIGIN_ to something like http://locahost:3000, or http://locahost:5173, depending on whether you're running dev or prod.
-4. Make sure the setup script is executable: `chmod +x local-setup.sh`
-5. Run it: `./local-setup.sh`
+   2. Set `ORIGIN` to `http://localhost:3000` (prod) or `http://localhost:5173` (dev).
+4. Run it
+   1. Dev style with hot updates: `pnpm dev`
+   2. Prod style: `pnpm start`
 
 # Getting Started with Docker
 

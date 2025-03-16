@@ -13,6 +13,7 @@ vite.config.ts.timestamp-*
 *.sqlite-journal
 *.code-workspace
 *.sqlite*
+pnpm-lock.yaml
 # Test
 package-lock.json
 *.diff
