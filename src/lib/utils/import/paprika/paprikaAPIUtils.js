@@ -17,10 +17,7 @@ config()
 const BASE_URL = 'https://www.paprikaapp.com/api/v1/sync/'
 const __filename = fileURLToPath(import.meta.url)
 export const __dirname = path.dirname(__filename)
-export const appRootPath =
-	import.meta.env.VITE_APP_ROOT_PATH ||
-	process.env.APP_ROOT_PATH ||
-	path.join(__dirname, '../../../../..')
+export const appRootPath = process.env.APP_ROOT_PATH || path.join(__dirname, '../../../../..')
 
 /**
  * Fetches data from the Paprika API for a given endpoint.
