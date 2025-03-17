@@ -304,7 +304,8 @@ export const manipulateIngredient = (ingredientObj, fromSystem, toSystem, fuse) 
 					unit === 'teaspoon' ||
 					unit === 'tablespoon' ||
 					unit === 'quarts' ||
-					unit === 'gallons'
+					unit === 'gallons' ||
+					unit === 'floz'
 				) {
 					const { quantity: quantityInCups } = converter(quantityToUse, fromUnit, 'cup')
 					let convertedQuantityGrams = quantityInCups * dryIngredient.gramsPerCup
