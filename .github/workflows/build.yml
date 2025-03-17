@@ -29,7 +29,7 @@ jobs:
 
       - name: Set environment variables
         run: |
-          echo "ORIGIN=http://localhost:3000" >> .env
+          echo "ORIGIN=http://127.0.0.1:3000" >> .env
           echo "ADMIN_USER=admin" >> .env
           echo "ADMIN_PASSWORD=password" >> .env
           echo "ADMIN_EMAIL=email@example.com" >> .env
@@ -47,12 +47,12 @@ jobs:
       - name: Start Server in Background
         run: pnpm serve &
         env:
-          ORIGIN: http://localhost:3000
+          ORIGIN: http://127.0.0.1:3000
 
       - name: Wait for Server to be Ready
         run: |
           echo "Waiting for server to be ready..."
-          until curl --output /dev/null --silent --head --fail http://localhost:3000; do
+          until curl --output /dev/null --silent --head --fail http://127.0.0.1:3000; do
             printf '.'
             sleep 1
           done
