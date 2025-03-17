@@ -209,6 +209,40 @@ export function getDietLabel(prefs) {
 }
 
 /**
+ * Normalizes an ingredient object by standardizing units, rounding quantity, and adding metadata.
+ * @param {Object} ingredientObj - The original ingredient object.
+ * @param {Object} options - Optional settings.
+ * @param {boolean} options.skipRounding - If true, skip rounding quantity.
+ * @returns {Object} - Normalized ingredient object.
+ */
+export function normalizeIngredient(ingredientObj, options = {}) {
+	console.log('🚀 ~ normalizeIngredient ~ ingredientObj:', ingredientObj)
+	const { quantity, unit } = ingredientObj
+	const unitData = units.find((u) => u.names.includes(unit))
+
+	// If unit is unknown, return as-is with optional fallback handling
+	if (!unitData) return { ...ingredientObj }
+
+	const normalizedUnit = unitData.names[0]
+	const plural = normalizedUnit + 's'
+	const symbol = normalizedUnit.charAt(0)
+	const decimalPlaces = unitData.decimalPlaces ?? 2
+
+	const roundedQuantity =
+		quantity && !options.skipRounding ? parseFloat(quantity.toFixed(decimalPlaces)) : quantity
+
+	return {
+		...ingredientObj,
+		quantity: roundedQuantity,
+		unit: normalizedUnit,
+		unitPlural: plural,
+		symbol: symbol,
+		minQty: roundedQuantity,
+		maxQty: roundedQuantity
+	}
+}
+
+/**
  * Manipulates an ingredient object to convert its quantity and unit from one system to another.
  *
  * @param {Object} ingredientObj - The ingredient object to be manipulated.
@@ -220,7 +254,7 @@ export const manipulateIngredient = (ingredientObj, fromSystem, toSystem, fuse) 
 	const { quantity, unit, ingredient } = ingredientObj
 	// If no unit is provided, return the original ingredientObj
 	if (!unit) {
-		return ingredientObj
+		return normalizeIngredient(ingredientObj)
 	}
 
 	// Looking up the units to normalise them
@@ -378,25 +412,32 @@ export const manipulateIngredient = (ingredientObj, fromSystem, toSystem, fuse) 
 	const target = converter(intermediate.quantity, 'gram', targetUnit)
 	if (target.error) return { error: target.error }
 
-	// Find the unit details from the units array
-	const targetUnitDetails = units.find((unit) => unit.names.includes(target.unit))
+	// // Find the unit details from the units array
+	// const targetUnitDetails = units.find((unit) => unit.names.includes(target.unit))
 
-	// Get the number of decimal places, or use a default value (e.g., 2)
-	const decimalPlaces = targetUnitDetails?.decimalPlaces ?? 2
+	// // Get the number of decimal places, or use a default value (e.g., 2)
+	// const decimalPlaces = targetUnitDetails?.decimalPlaces ?? 2
 
-	// Round the quantity to the specified number of decimal places
-	const roundedQuantity = parseFloat(target.quantity.toFixed(decimalPlaces))
+	// // Round the quantity to the specified number of decimal places
+	// const roundedQuantity = parseFloat(target.quantity.toFixed(decimalPlaces))
 
-	// Step 5: Update Object
-	return {
+	// // Step 5: Update Object
+	// return {
+	// 	...ingredientObj,
+	// 	quantity: roundedQuantity,
+	// 	unit: target.unit ? target.unit : '',
+	// 	unitPlural: target.unit ? target.unit + 's' : '',
+	// 	symbol: target.unit?.charAt(0),
+	// 	minQty: roundedQuantity,
+	// 	maxQty: roundedQuantity
+	// }
+	const updatedIngredient = {
 		...ingredientObj,
-		quantity: roundedQuantity,
-		unit: target.unit ? target.unit : '',
-		unitPlural: target.unit ? target.unit + 's' : '',
-		symbol: target.unit?.charAt(0),
-		minQty: roundedQuantity,
-		maxQty: roundedQuantity
+		quantity: target.quantity,
+		unit: target.unit
 	}
+
+	return normalizeIngredient(updatedIngredient)
 }
 
 /**

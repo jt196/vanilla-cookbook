@@ -1,5 +1,6 @@
 <script>
 	import { ingredientProcess, scaleNumbersInString } from '$lib/utils/filters'
+	import { normalizeIngredient } from '$lib/utils/converter'
 	import { determineSystem, parseRecipeText } from '$lib/utils/converter'
 	import { getSanitizedHTML } from '$lib/utils/render'
 	import { onMount, onDestroy } from 'svelte'
@@ -182,10 +183,12 @@
 	})
 
 	$effect(() => {
-		if (isMounted && selectedSystem !== measurementSystem.system) {
-			handleIngAPIFetch(measurementSystem, selectedSystem)
+		if (!isMounted || !selectedSystem) return
+
+		if (selectedSystem === measurementSystem.system) {
+			convertedIngredients = ingredientsArray.map(normalizeIngredient)
 		} else {
-			convertedIngredients = ingredientsArray
+			handleIngAPIFetch(measurementSystem, selectedSystem)
 		}
 	})
 

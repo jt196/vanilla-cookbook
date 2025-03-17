@@ -27,7 +27,6 @@ export async function convertIngredientsBackend(
 	const fuse = new Fuse(allIngredientData, fuseOptions)
 
 	// If no system selected, return the raw ingredients
-	if (!toSystem || fromSystem === toSystem) return ingredients
 	return ingredients.map((ingredient) => {
 		// Get the dietary preferences for the ingredient
 		// const prefs = addFoodPreferences(ingredient.ingredient)
