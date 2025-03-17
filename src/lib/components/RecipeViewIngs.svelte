@@ -19,6 +19,7 @@
 	let displayDryMatch = $state(false)
 	let displayOriginal = $state(false)
 
+	// Check if any of the ingredients have a default density
 	let hasDefaultDensity = $derived(sanitizedIngredients.some((i) => i.usedDefaultDensity === true))
 </script>
 
@@ -27,12 +28,14 @@
 		<h3>Ingredients</h3>
 	</div>
 
-	{#if ingredients}
+	{#if ingredients.length > 0}
 		{#if sanitizedIngredients.some((item) => item.ingredient)}
 			<p>
 				<Scale {scale} {onScaleChange} />
 			</p>
 		{/if}
+	{:else}
+		<p>Loading...</p>
 	{/if}
 
 	<div class="ingredients">

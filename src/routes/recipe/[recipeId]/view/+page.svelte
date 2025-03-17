@@ -38,6 +38,8 @@
 
 	let mainPhoto = $state()
 
+	let loadingIngredients = $state(true)
+
 	// Callback functions to update the state
 	function handleScaleChange(newScale) {
 		console.log('Scale updated to', newScale)
@@ -64,6 +66,7 @@
 
 	// Function to handle the API fetch
 	async function handleIngAPIFetch(measurementSystem, selectedSystem) {
+		loadingIngredients = true
 		try {
 			const response = await fetch(`/api/ingredients`, {
 				method: 'POST',
@@ -81,6 +84,7 @@
 			if (response.ok) {
 				const data = await response.json()
 				convertedIngredients = data // Update convertedIngredients with the fetched data
+				loadingIngredients = false
 			} else {
 				console.error('API request failed:', response.statusText)
 			}
@@ -187,6 +191,7 @@
 
 		if (selectedSystem === measurementSystem.system) {
 			convertedIngredients = ingredientsArray.map(normalizeIngredient)
+			loadingIngredients = false
 		} else {
 			handleIngAPIFetch(measurementSystem, selectedSystem)
 		}
@@ -214,7 +219,7 @@
 </div>
 
 {#if isLoading}
-	<div aria-busy="true">Waiting for the kettle to boil...</div>
+	<div aria-busy="true">Waiting for the pan to boil...</div>
 {:else}
 	<div class="recipe-details">
 		<RecipeViewCover {mainPhoto} {recipe} />
@@ -226,16 +231,20 @@
 	</div>
 	<div class="recipe-main">
 		<div class="ing-div">
-			<RecipeViewIngs
-				{ingredients}
-				recipeUid={recipe.uid}
-				{sanitizedIngredients}
-				{scale}
-				userIsAdmin={viewUser.isAdmin}
-				{measurementSystem}
-				{selectedSystem}
-				onScaleChange={handleScaleChange}
-				onSelectedSystemChange={handleSelectedSystemChange} />
+			{#if !loadingIngredients}
+				<RecipeViewIngs
+					{ingredients}
+					recipeUid={recipe.uid}
+					{sanitizedIngredients}
+					{scale}
+					userIsAdmin={viewUser.isAdmin}
+					{measurementSystem}
+					{selectedSystem}
+					onScaleChange={handleScaleChange}
+					onSelectedSystemChange={handleSelectedSystemChange} />
+			{:else}
+				<div aria-busy="true">Getting ingredients ready...</div>
+			{/if}
 		</div>
 		<div class="recipe-text">
 			<RecipeViewDesc {recipe} />
