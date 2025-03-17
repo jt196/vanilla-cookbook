@@ -216,7 +216,6 @@ export function getDietLabel(prefs) {
  * @returns {Object} - Normalized ingredient object.
  */
 export function normalizeIngredient(ingredientObj, options = {}) {
-	console.log('🚀 ~ normalizeIngredient ~ ingredientObj:', ingredientObj)
 	const { quantity, unit } = ingredientObj
 	const unitData = units.find((u) => u.names.includes(unit))
 
@@ -276,12 +275,12 @@ export const manipulateIngredient = (ingredientObj, fromSystem, toSystem, fuse) 
 		// Return the object
 		return {
 			...ingredientObj,
-			quantity: parseFloat(convertedQuantityFinal).toFixed(1),
+			quantity: parseFloat(convertedQuantityFinal).toFixed(2),
 			unit: targetUnit,
 			unitPlural: targetUnit + 's',
 			symbol: targetUnit?.charAt(0),
-			minQty: parseFloat(convertedQuantityFinal).toFixed(1),
-			maxQty: parseFloat(convertedQuantityFinal).toFixed(1)
+			minQty: parseFloat(convertedQuantityFinal).toFixed(2),
+			maxQty: parseFloat(convertedQuantityFinal).toFixed(2)
 		}
 	}
 

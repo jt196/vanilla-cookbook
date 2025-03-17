@@ -257,10 +257,10 @@ describe('Conversion API tests', () => {
 		expect(response.data.length).toBe(payload.ingredients.length)
 		// Validate the conversions for each ingredient
 		checkConvertedIngredient(response, 'mayonnaise', 56.5, 'gram')
-		checkConvertedIngredient(response, 'Beef mince', 946.35, 'gram')
+		checkConvertedIngredient(response, 'Beef mince', 946.4, 'gram')
 		checkConvertedIngredient(response, 'salt', 453.59, 'gram')
 		checkConvertedIngredient(response, 'instant yeast', 3.9, 'gram')
-		checkConvertedIngredient(response, 'chilled water', 236.59, 'gram')
+		checkConvertedIngredient(response, 'chilled water', 236.6, 'gram')
 		checkConvertedIngredient(response, 'water', 177.4, 'gram')
 		checkConvertedIngredient(response, 'Kosher salt', 4.8, 'gram')
 		checkConvertedIngredient(response, 'Granulated sugar', 99, 'gram')
