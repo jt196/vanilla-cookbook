@@ -297,11 +297,16 @@ export const manipulateIngredient = (ingredientObj, fromSystem, toSystem, fuse) 
 	}
 
 	let dryIngredient = null
+	let usedDefaultDensity = false
 
 	if (toSystem === 'americanVolumetric' || fromSystem === 'americanVolumetric') {
 		const result = fuse.search(ingredient)
 		if (result.length > 0 && result[0].score < 0.3) {
 			dryIngredient = result[0].item
+		} else {
+			// Use water density if no match found
+			dryIngredient = { name: 'Water (default)', gramsPerCup: 236.588 } // 1g/ml → 236.588g per cup
+			usedDefaultDensity = true
 		}
 
 		if (dryIngredient) {
@@ -329,7 +334,8 @@ export const manipulateIngredient = (ingredientObj, fromSystem, toSystem, fuse) 
 					unitPlural: targetUnit + 's',
 					symbol: targetUnit?.charAt(0),
 					minQty: convertedQuantity,
-					maxQty: convertedQuantity
+					maxQty: convertedQuantity,
+					usedDefaultDensity
 				}
 			} else if (fromSystem === 'americanVolumetric' && toSystem === 'metric') {
 				// Only run the conversion if the units match up with the AmVol units
@@ -367,7 +373,8 @@ export const manipulateIngredient = (ingredientObj, fromSystem, toSystem, fuse) 
 						unitPlural: targetMetricUnit + 's',
 						symbol: targetMetricUnit?.charAt(0),
 						minQty: convertedQuantityMetric,
-						maxQty: convertedQuantityMetric
+						maxQty: convertedQuantityMetric,
+						usedDefaultDensity
 					}
 				}
 			} else if (fromSystem === 'americanVolumetric' && toSystem === 'imperial') {
@@ -396,7 +403,8 @@ export const manipulateIngredient = (ingredientObj, fromSystem, toSystem, fuse) 
 						unitPlural: targetImperialUnit + 's',
 						symbol: targetImperialUnit?.charAt(0),
 						minQty: convertedQuantityImperial,
-						maxQty: convertedQuantityImperial
+						maxQty: convertedQuantityImperial,
+						usedDefaultDensity
 					}
 				}
 			}

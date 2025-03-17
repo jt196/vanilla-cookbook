@@ -102,6 +102,9 @@
 									| {ingredient.dryIngredient.name} ({ingredient.dryIngredient.gramsPerCup} g/cup)</i>
 							{/if}
 						{/if}
+						{#if ingredient.usedDefaultDensity === true}
+							*
+						{/if}
 					</span>
 				</li>
 			{/if}

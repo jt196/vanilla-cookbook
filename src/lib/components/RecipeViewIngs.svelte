@@ -18,6 +18,8 @@
 	let displayExtra = $state(false)
 	let displayDryMatch = $state(false)
 	let displayOriginal = $state(false)
+
+	let hasDefaultDensity = $derived(sanitizedIngredients.some((i) => i.usedDefaultDensity === true))
 </script>
 
 <div class="ing-div">
@@ -46,6 +48,9 @@
 					{selectedSystem} />
 			{/each}
 		</ul>
+		{#if hasDefaultDensity}
+			<div class="default"><i> * Converted using default water density </i></div>
+		{/if}
 		<div class="convert">
 			{#if measurementSystem}
 				<RecipeViewDropdown {selectedSystem} {onSelectedSystemChange} {measurementSystem} />
@@ -81,5 +86,8 @@
 		ul {
 			padding-left: 0;
 		}
+	}
+	.default {
+		margin-bottom: 1rem;
 	}
 </style>
