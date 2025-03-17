@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="sv" dir="ltr">
+
+<head>
+    <script src="https://cdn.cookielaw.org/scripttemplates/otSDKStub.js" data-document-language="true"
+        data-domain-script="459efdf2-da30-4466-9e0b-54954e95b859"></script>
+    <script>
+        var isCustomCookieScriptRun = false
+
+        function openCookiePopup() {
+            var banner = document.getElementById("onetrust-banner-sdk");
+            if (banner) {
+                banner.style = "display: none !important;";
+            }
+            var prefpc = document.getElementById("onetrust-pc-sdk");
+            var filter = document.getElementsByClassName("onetrust-pc-dark-filter")[0];
+            prefpc.style = "display: flex !important;";
+            filter.style = "display: block !important;";
+
+        }
+
+        function reOpenCookiePopup() {
+            var banner = document.getElementById("onetrust-consent-sdk");
+            banner.style = "display: flex !important;";
+            var prefpc = document.getElementById("onetrust-pc-sdk");
+            var filter = document.getElementsByClassName("onetrust-pc-dark-filter")[0];
+            prefpc.style = "display: flex !important;";
+            filter.style = "display: block !important;";
+        }
+
+        function OptanonWrapper() {
+            if (!isCustomCookieScriptRun) {
+                isCustomCookieScriptRun = true
+                var accept = document.getElementById('accept-recommended-btn-handler');
+                var nothanks = document.querySelector('.ot-btn-container');
+                var btndiv = document.createElement('div');
+                btndiv.className = 'ontrust-content-buttons'
+
+                var content = document.getElementById('ot-pc-content');
+                content.appendChild(btndiv)
+                btndiv.appendChild(accept)
+                btndiv.appendChild(nothanks)
+
+                var firstAccordionItem = content.querySelector('.ot-always-active')
+                var disabledCheckbox = document.createElement('div')
+                disabledCheckbox.className = 'ot-tgl ot-always-active-tgl'
+                disabledCheckbox.innerHTML =
+                    '<input type="checkbox" checked aria-checked="true" role="switch" class="category-switch-handler"> <label class="ot-switch"><span class="ot-switch-nob"></span> <span class="ot-label-txt">Mandatory Cookies</span></label>'
+                firstAccordionItem.parentNode.appendChild(disabledCheckbox)
+
+                var modal = document.getElementById('onetrust-pc-sdk');
+                var backButtonContainer = modal.querySelector('#ot-lst-cnt')
+                var originalBackButton = modal.querySelector('.back-btn-handler');
+                var goBackButton = document.createElement('button');
+                goBackButton.className = 'onetrust-pc-sdk__back-button'
+                goBackButton.innerHTML = '<span class="onetrust-pc-sdk__back-button-arrow"></span>' + 'Spara'
+                backButtonContainer.appendChild(goBackButton)
+                goBackButton.addEventListener('click', function (e) {
+                    e.preventDefault()
+                    originalBackButton.click()
+                })
+            }
+
+            if (!getOpCookie("OptanonAlertBoxClosed")) {
+                openCookiePopup()
+            } else {
+                var mainModal = document.getElementById('onetrust-consent-sdk')
+                mainModal.style.display = 'none'
+            }
+
+            if (Optanon && !Optanon.IsAlertBoxClosed()) {
+                Optanon.OnConsentChanged(function () {
+                    if (document.activeElement) {
+                        document.activeElement.blur();
+                    }
+                });
+            }
+            if (Optanon.IsAlertBoxClosedAndValid()) {
+                window.dataLayer.push({
+                    'event': 'oneTrustBannerInteractionState',
+                    'oneTrustBannerInteraction': 'TRUE'
+                })
+            } else {
+                window.dataLayer.push({
+                    'event': 'oneTrustBannerInteractionState',
+                    'oneTrustBannerInteraction': 'FALSE'
+                })
+            }
+        }
+
+        function getOpCookie(name) {
+            var value = "; " + document.cookie;
+            var parts = value.split("; " + name + "=");
+            if (parts.length == 2)
+                return parts.pop().split(";").shift();
+        }
+    </script>
+
+    <script>
+        gtmData = {
+            "brandName": "Arla",
+            "breadCrumb": ["Recept & mat", "Ranchdressing"],
+            "pageID": "56",
+            "pageName": "Recept & mat",
+            "pageTitle": "Ranchdressing - Recept",
+            "primaryCategory": "Recept & mat",
+            "pageType": "FacetOverviewPageType",
+            "language": "sv",
+            "geoRegion": "US",
+            "loginStatus": "False",
+            "loginUserType": "privat",
+            "userId": "",
+            "sysEnv": "Responsive",
+            "destinationURL": "https://www.arla.se/recept/ranchdressing/",
+            "destinationPath": "/recept/ranchdressing/",
+            "hostname": "www.arla.se",
+            "referringURL": "https://www.arla.se/",
+            "brandName": "Arla Mat",
+            "recipeName": "Ranchdressing",
+            "recipeMealOrBaking": "Non-baking recipe",
+            "recipeArlaProducts": "Arla Köket Crème fraiche",
+            "productName": "Arla Köket Crème fraiche",
+            "productBrand": "Arla Köket",
+            "recipeMealType": "Förrätt, Mellanmål",
+            "recipeMainIngredient": "Uncategorized",
+            "recipeType": "Sallad, Sås",
+            "recipeID": "3286691088",
+            "recipeOccasion": "Fest, Tillbehör, Vardag, Smårätter, Brunch",
+            "recipeWayOfCooking": "Uncategorized",
+            "recipeAttribute": "Snabba, Budget, Vegetariska, Glutenfri",
+            "recipeCookingTime": 15,
+            "recipePublishDate": "2023-08-27",
+            "publishDate": "2023-08-27",
+            "pageType": "RecipePageType",
+            "pageName": "Recipe"
+        };
+        dataLayer = [];
+        dataLayer.push(gtmData);
+        digitalData = dataLayer;
+        gtmSettings = {
+            "enableEnhancedEcommerce": true,
+            "currency": null
+        };
+    </script>
+    <!-- Google Tag Manager -->
+    <script>
+        (function (w, d, s, l, i) {
+            w[l] = w[l] || [];
+            w[l].push({
+                'gtm.start': new Date().getTime(),
+                event: 'gtm.js'
+            });
+            var f = d.getElementsByTagName(s)[0],
+                j = d.createElement(s),
+                dl = l != 'dataLayer' ? '&l=' + l : '';
+            j.async = true;
+            j.src =
+                'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+            f.parentNode.insertBefore(j, f);
+        })(window, document, 'script', 'dataLayer', 'GTM-KBPZ34');
+    </script>
+    <!-- End Google Tag Manager -->
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ranchdressing - Recept | Arla</title>
+
+    <meta name="description"
+        content="Ranchdressing &#xE4;r en amerikansk salladsdressing. Den kan smaks&#xE4;ttas p&#xE5; lite olika s&#xE4;tt. Vi har valt att blanda &#xAE; Cr&#xE8;me fraiche med majonn&#xE4;s, gr&#xE4;sl&#xF6;k och tabasco. Gott att dippa gr&#xF6;nsaksstavar och chips i, eller att ringla &#xF6;ver en sallad.">
+    <meta name="robots" content="all">
+    <meta name="google-site-verification" content="VML8UFpyddw4W2uYByJeDiugf5BzDG3NSunX-T8PsZU">
+    <meta name="apple-itunes-app" content="app-id=415895347, app-argument=https://www.arla.se/recept/ranchdressing/" />
+    <link rel="canonical" href="https://www.arla.se/recept/ranchdressing/">
+
+    <meta property="og:title" content="Ranchdressing">
+    <meta property="og:type" content="artikel">
+    <meta property="og:url" content="https://www.arla.se/recept/ranchdressing/">
+    <meta property="og:site_name" content="Arla">
+    <meta property="og:description"
+        content="Ranchdressing &#xE4;r en amerikansk salladsdressing. Den kan smaks&#xE4;ttas p&#xE5; lite olika s&#xE4;tt. Vi har valt att blanda &#xAE; Cr&#xE8;me fraiche med majonn&#xE4;s, gr&#xE4;sl&#xF6;k och tabasco. Gott att dippa gr&#xF6;nsaksstavar och chips i, eller att ringla &#xF6;ver en sallad. ">
+    <meta property="og:image"
+        content="https://images.arla.com/recordid/8966E79C-B11B-4151-81665CDEE4DD409C/ranchdressing.jpg?width=1200&amp;height=630&amp;mode=crop&amp;crop=(0,0,0,-240)">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:locale" content="sv_se">
+    <meta name="msapplication-TileColor" content="#ffffff" />
+    <meta name="msapplication-TileImage" content="arla-touch-icon-144x144-precomposed.png" />
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/arla-touch-icon-144x144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="/arla-touch-icon-114x114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="/arla-touch-icon-72x72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="/arla-touch-icon-57x57-precomposed.png">
+    <link rel="shortcut icon" href="/favicon.png" type="image/png">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <script type="application/ld+json">
+        [{
+            "@context": "https://schema.org/",
+            "type": "Organization",
+            "url": "https://www.arla.se/",
+            "logo": "https://www.arla.se/UI/img/arla-logo@2x.02d13ae2.png",
+            "@type": "Organization"
+        }, {
+            "@context": "https://schema.org/",
+            "type": "BreadcrumbList",
+            "itemListElement": [{
+                "type": "ListItem",
+                "position": 1,
+                "name": "Arla",
+                "item": "https://www.arla.se/",
+                "@type": "ListItem"
+            }, {
+                "type": "ListItem",
+                "position": 2,
+                "name": "Recept & mat",
+                "item": "https://www.arla.se/recept/",
+                "@type": "ListItem"
+            }, {
+                "type": "ListItem",
+                "position": 3,
+                "name": "Ranchdressing",
+                "item": "https://www.arla.se/recept/ranchdressing/",
+                "@type": "ListItem"
+            }],
+            "@type": "BreadcrumbList"
+        }, {
+            "@context": "https://schema.org/",
+            "type": "Recipe",
+            "name": "Ranchdressing",
+            "image": "https://images.arla.com/recordid/8966E79C-B11B-4151-81665CDEE4DD409C/ranchdressing.jpg?width=1300&height=525",
+            "author": {
+                "type": "Person",
+                "name": "Arla Mat",
+                "@type": "Person"
+            },
+            "description": "Ranchdressing är en amerikansk salladsdressing. Den kan smaksättas på lite olika sätt. Vi har valt att blanda ® Crème fraiche med majonnäs, gräslök och tabasco. Gott att dippa grönsaksstavar och chips i, eller att ringla över en sallad. ",
+            "totalTime": "PT15M",
+            "recipeYield": "4 port",
+            "recipeCategory": "Buffé",
+            "recipeCuisine": "Amerikansk",
+            "keywords": "Dressing,Dipp,Billig",
+            "nutrition": null,
+            "recipeIngredient": ["2 dl Arla Köket® Crème fraiche", "2 msk majonnäs", "1 tsk dijonsenap",
+                "1 vitlöksklyfta, finhackad", "3 msk färsk gräslök, fint skuren", "1 tsk paprikapulver",
+                "1 krm tabasco", "salt och svartpeppar"
+            ],
+            "recipeInstructions": [],
+            "aggregateRating": null,
+            "video": null,
+            "@type": "Recipe"
+        }]
+    </script>

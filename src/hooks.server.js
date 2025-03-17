@@ -20,7 +20,12 @@ export const handle = async ({ event, resolve }) => {
 	const response = await resolve(event)
 
 	// Only apply CORS headers during test/CI/dev environments
-	const allowedOrigins = ['http://127.0.0.1:3000', 'http://localhost:3000']
+	const allowedOrigins = [
+		'http://127.0.0.1:3000',
+		'http://localhost:3000',
+		'http://127.0.0.1:5173',
+		'http://localhost:5173'
+	]
 	const requestOrigin = event.request.headers.get('origin')
 	console.log('[CORS]', requestOrigin)
 

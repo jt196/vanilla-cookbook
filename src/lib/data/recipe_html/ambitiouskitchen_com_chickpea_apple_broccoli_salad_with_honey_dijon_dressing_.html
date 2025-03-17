@@ -1,0 +1,1179 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script>
+        ! function () {
+            "use strict";
+            var t = window.location.search.substring(1).split("&");
+            const e = t => t.replace(/\s/g, ""),
+                n = t => new Promise(e => {
+                    if (!("msCrypto" in window) && "https:" === location.protocol && "crypto" in window &&
+                        "TextEncoder" in window) {
+                        const n = (new TextEncoder).encode(t);
+                        crypto.subtle.digest("SHA-256", n).then(t => {
+                            const n = Array.from(new Uint8Array(t)).map(t => ("00" + t.toString(16)).slice(-
+                                2)).join("");
+                            e(n)
+                        })
+                    } else e("")
+                });
+            for (var o = 0; o < t.length; o++) {
+                var i = "adt_ei",
+                    r = t[o];
+                if (0 === r.indexOf(i)) {
+                    var s = r.split(i + "=")[1];
+                    if ((t => {
+                            const e = t.match(
+                                /((?=([a-zA-Z0-9._!#$%+^&*()[\]<>-]+))\2@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi);
+                            return e ? e[0] : ""
+                        })(e(s.toLowerCase()))) {
+                        n(s).then(e => {
+                            e.length && (localStorage.setItem(i, e), t.splice(o, 1), history.replaceState(null,
+                                "", "?" + t.join("&")))
+                        });
+                        break
+                    }
+                }
+            }
+        }();
+    </script>
+    <meta name='robots' content='index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' />
+    <link data-minify="1" rel="preload"
+        href="https://www.ambitiouskitchen.com/wp-content/cache/min/1/wp-content/themes/ambitiouskitchen/style.css?ver=1691787267"
+        as="style" />
+    <link rel="preload" href="https://www.ambitiouskitchen.com/wp-includes/js/jquery/jquery.min.js?ver=3.7.0"
+        as="script" />
+    <script data-no-optimize="1" data-cfasync="false">
+        window.adthriveCLS = {
+            enabledLocations: ['Content', 'Recipe'],
+            injectedSlots: [],
+            injectedFromPlugin: true,
+            branch: 'e85f24d',
+            bucket: 'prod',
+        };
+        window.adthriveCLS.siteAds = {
+            "siteId": "5442822159a4128f3a70bdf7",
+            "siteName": "Ambitious Kitchen",
+            "betaTester": false,
+            "targeting": [{
+                "value": "5442822159a4128f3a70bdf7",
+                "key": "siteId"
+            }, {
+                "value": "6233884d791308708853fddd",
+                "key": "organizationId"
+            }, {
+                "value": "Ambitious Kitchen",
+                "key": "siteName"
+            }, {
+                "value": "AdThrive Edge",
+                "key": "service"
+            }, {
+                "value": "on",
+                "key": "bidding"
+            }, {
+                "value": ["Food", "Health and Wellness", "Fitness"],
+                "key": "verticals"
+            }],
+            "breakpoints": {
+                "tablet": 768,
+                "desktop": 1024
+            },
+            "adUnits": [{
+                "sequence": 1,
+                "targeting": [{
+                    "value": ["Sidebar"],
+                    "key": "location"
+                }, {
+                    "value": ["block adx"],
+                    "key": "special"
+                }],
+                "devices": ["desktop", "tablet"],
+                "name": "Sidebar_1",
+                "sticky": false,
+                "location": "Sidebar",
+                "dynamic": {
+                    "pageSelector": "",
+                    "spacing": 0,
+                    "max": 2,
+                    "lazy": false,
+                    "lazyMax": null,
+                    "elementSelector": ".sidebar > .widget-area > *",
+                    "skip": 1,
+                    "classNames": [],
+                    "position": "beforebegin",
+                    "every": 1,
+                    "enabled": true
+                },
+                "adSizes": [
+                    [160, 600],
+                    [336, 280],
+                    [320, 50],
+                    [300, 600],
+                    [250, 250],
+                    [1, 1],
+                    [320, 100],
+                    [300, 1050],
+                    [300, 50],
+                    [300, 420],
+                    [300, 250]
+                ],
+                "priority": 299,
+                "autosize": true
+            }, {
+                "sequence": 9,
+                "targeting": [{
+                    "value": ["Sidebar"],
+                    "key": "location"
+                }, {
+                    "value": true,
+                    "key": "sticky"
+                }],
+                "devices": ["desktop", "tablet"],
+                "name": "Sidebar_9",
+                "sticky": true,
+                "location": "Sidebar",
+                "dynamic": {
+                    "pageSelector": "",
+                    "spacing": 0,
+                    "max": 1,
+                    "lazy": false,
+                    "lazyMax": null,
+                    "elementSelector": ".sidebar",
+                    "skip": 0,
+                    "classNames": [],
+                    "position": "beforeend",
+                    "every": 1,
+                    "enabled": true
+                },
+                "stickyOverlapSelector": ".postnl.section",
+                "adSizes": [
+                    [160, 600],
+                    [336, 280],
+                    [320, 50],
+                    [300, 600],
+                    [250, 250],
+                    [1, 1],
+                    [320, 100],
+                    [300, 1050],
+                    [300, 50],
+                    [300, 420],
+                    [300, 250]
+                ],
+                "priority": 291,
+                "autosize": true
+            }, {
+                "sequence": null,
+                "targeting": [{
+                    "value": ["Content"],
+                    "key": "location"
+                }],
+                "devices": ["phone", "tablet", "desktop"],
+                "name": "Content",
+                "sticky": false,
+                "location": "Content",
+                "dynamic": {
+                    "pageSelector": "body.home",
+                    "spacing": 0,
+                    "max": 3,
+                    "lazy": false,
+                    "lazyMax": null,
+                    "elementSelector": ".homerecent .post-list.four-grid, .dmc-bakery-video-row",
+                    "skip": 0,
+                    "classNames": [],
+                    "position": "afterend",
+                    "every": 1,
+                    "enabled": true
+                },
+                "adSizes": [
+                    [728, 90],
+                    [336, 280],
+                    [320, 50],
+                    [468, 60],
+                    [970, 90],
+                    [250, 250],
+                    [1, 1],
+                    [320, 100],
+                    [970, 250],
+                    [1, 2],
+                    [300, 50],
+                    [300, 300],
+                    [552, 334],
+                    [728, 250],
+                    [300, 250]
+                ],
+                "priority": 199,
+                "autosize": true
+            }, {
+                "sequence": null,
+                "targeting": [{
+                    "value": ["Content"],
+                    "key": "location"
+                }],
+                "devices": ["phone", "tablet", "desktop"],
+                "name": "Content",
+                "sticky": false,
+                "location": "Content",
+                "dynamic": {
+                    "pageSelector": "body.category",
+                    "spacing": 0,
+                    "max": 2,
+                    "lazy": false,
+                    "lazyMax": null,
+                    "elementSelector": "div.cat-favorite.section, div.category-popular.section",
+                    "skip": 0,
+                    "classNames": [],
+                    "position": "beforeend",
+                    "every": 1,
+                    "enabled": true
+                },
+                "adSizes": [
+                    [728, 90],
+                    [336, 280],
+                    [320, 50],
+                    [468, 60],
+                    [970, 90],
+                    [250, 250],
+                    [1, 1],
+                    [320, 100],
+                    [970, 250],
+                    [1, 2],
+                    [300, 50],
+                    [300, 300],
+                    [552, 334],
+                    [728, 250],
+                    [300, 250]
+                ],
+                "priority": 199,
+                "autosize": true
+            }, {
+                "sequence": null,
+                "targeting": [{
+                    "value": ["Content"],
+                    "key": "location"
+                }],
+                "devices": ["tablet", "desktop"],
+                "name": "Content",
+                "sticky": false,
+                "location": "Content",
+                "dynamic": {
+                    "pageSelector": "body.single:not(.postid-65597)",
+                    "spacing": 2,
+                    "max": 2,
+                    "lazy": false,
+                    "lazyMax": null,
+                    "elementSelector": ".content > *:not(h2)",
+                    "skip": 6,
+                    "classNames": [],
+                    "position": "afterend",
+                    "every": 1,
+                    "enabled": true
+                },
+                "adSizes": [
+                    [728, 90],
+                    [336, 280],
+                    [320, 50],
+                    [468, 60],
+                    [970, 90],
+                    [250, 250],
+                    [1, 1],
+                    [320, 100],
+                    [970, 250],
+                    [1, 2],
+                    [300, 50],
+                    [300, 300],
+                    [552, 334],
+                    [728, 250],
+                    [300, 250]
+                ],
+                "priority": 199,
+                "autosize": true
+            }, {
+                "sequence": null,
+                "targeting": [{
+                    "value": ["Content"],
+                    "key": "location"
+                }],
+                "devices": ["phone"],
+                "name": "Content",
+                "sticky": false,
+                "location": "Content",
+                "dynamic": {
+                    "pageSelector": "body.single:not(.postid-65597), body.page",
+                    "spacing": 1.2,
+                    "max": 2,
+                    "lazy": true,
+                    "lazyMax": 2,
+                    "elementSelector": ".content > *:not(h2)",
+                    "skip": 7,
+                    "classNames": [],
+                    "position": "afterend",
+                    "every": 1,
+                    "enabled": true
+                },
+                "adSizes": [
+                    [728, 90],
+                    [336, 280],
+                    [320, 50],
+                    [468, 60],
+                    [970, 90],
+                    [250, 250],
+                    [1, 1],
+                    [320, 100],
+                    [970, 250],
+                    [1, 2],
+                    [300, 50],
+                    [300, 300],
+                    [552, 334],
+                    [728, 250],
+                    [300, 250]
+                ],
+                "priority": 199,
+                "autosize": true
+            }, {
+                "sequence": null,
+                "targeting": [{
+                    "value": ["Recipe"],
+                    "key": "location"
+                }],
+                "devices": ["desktop", "tablet"],
+                "name": "Recipe",
+                "sticky": false,
+                "location": "Recipe",
+                "dynamic": {
+                    "pageSelector": "",
+                    "spacing": 0.5,
+                    "max": 4,
+                    "lazy": false,
+                    "lazyMax": null,
+                    "elementSelector": ".wprm-recipe-ingredients-container, .wprm-recipe-instructions-container li",
+                    "skip": 0,
+                    "classNames": [],
+                    "position": "afterbegin",
+                    "every": 1,
+                    "enabled": true
+                },
+                "adSizes": [
+                    [320, 50],
+                    [250, 250],
+                    [1, 1],
+                    [320, 100],
+                    [1, 2],
+                    [300, 50],
+                    [320, 300],
+                    [300, 390],
+                    [300, 250]
+                ],
+                "priority": -101,
+                "autosize": true
+            }, {
+                "sequence": 4,
+                "targeting": [{
+                    "value": ["Recipe"],
+                    "key": "location"
+                }],
+                "devices": ["phone"],
+                "name": "Recipe_4",
+                "sticky": false,
+                "location": "Recipe",
+                "dynamic": {
+                    "pageSelector": "",
+                    "spacing": 0,
+                    "max": 1,
+                    "lazy": false,
+                    "lazyMax": null,
+                    "elementSelector": ".wprm-recipe-ingredients-container",
+                    "skip": 0,
+                    "classNames": [],
+                    "position": "beforebegin",
+                    "every": 1,
+                    "enabled": true
+                },
+                "adSizes": [
+                    [300, 250],
+                    [300, 420],
+                    [320, 300]
+                ],
+                "priority": -104,
+                "autosize": false
+            }, {
+                "sequence": 1,
+                "targeting": [{
+                    "value": ["Recipe"],
+                    "key": "location"
+                }],
+                "devices": ["phone"],
+                "name": "Recipe_1",
+                "sticky": false,
+                "location": "Recipe",
+                "dynamic": {
+                    "pageSelector": "",
+                    "spacing": 0.8,
+                    "max": 2,
+                    "lazy": true,
+                    "lazyMax": 1,
+                    "elementSelector": ".wprm-recipe-ingredients-container, .wprm-recipe-instructions-container li",
+                    "skip": 0,
+                    "classNames": [],
+                    "position": "afterend",
+                    "every": 1,
+                    "enabled": true
+                },
+                "adSizes": [
+                    [300, 250],
+                    [300, 420],
+                    [320, 300]
+                ],
+                "priority": -101,
+                "autosize": false
+            }, {
+                "sequence": null,
+                "targeting": [{
+                    "value": ["Recipe"],
+                    "key": "location"
+                }],
+                "devices": ["desktop", "tablet"],
+                "name": "Recipe",
+                "sticky": false,
+                "location": "Recipe",
+                "dynamic": {
+                    "pageSelector": "",
+                    "spacing": 0,
+                    "max": 1,
+                    "lazy": false,
+                    "lazyMax": null,
+                    "elementSelector": ".ERSIngredients li",
+                    "skip": 0,
+                    "classNames": [],
+                    "position": "beforebegin",
+                    "every": 1,
+                    "enabled": true
+                },
+                "adSizes": [
+                    [320, 50],
+                    [250, 250],
+                    [1, 1],
+                    [320, 100],
+                    [1, 2],
+                    [300, 50],
+                    [320, 300],
+                    [300, 390],
+                    [300, 250]
+                ],
+                "priority": -101,
+                "autosize": true
+            }, {
+                "sequence": null,
+                "targeting": [{
+                    "value": ["Recipe"],
+                    "key": "location"
+                }],
+                "devices": ["phone"],
+                "name": "Recipe",
+                "sticky": false,
+                "location": "Recipe",
+                "dynamic": {
+                    "pageSelector": "",
+                    "spacing": 0,
+                    "max": 1,
+                    "lazy": false,
+                    "lazyMax": null,
+                    "elementSelector": ".ERSInstructionsHeader",
+                    "skip": 0,
+                    "classNames": [],
+                    "position": "beforebegin",
+                    "every": 1,
+                    "enabled": true
+                },
+                "adSizes": [
+                    [320, 50],
+                    [250, 250],
+                    [1, 1],
+                    [320, 100],
+                    [1, 2],
+                    [300, 50],
+                    [320, 300],
+                    [300, 390],
+                    [300, 250]
+                ],
+                "priority": -101,
+                "autosize": true
+            }, {
+                "sequence": 2,
+                "targeting": [{
+                    "value": ["Recipe"],
+                    "key": "location"
+                }],
+                "devices": ["phone"],
+                "name": "Recipe_2",
+                "sticky": false,
+                "location": "Recipe",
+                "dynamic": {
+                    "pageSelector": "",
+                    "spacing": 0,
+                    "max": 1,
+                    "lazy": false,
+                    "lazyMax": null,
+                    "elementSelector": ".ERSInstructions ol",
+                    "skip": 0,
+                    "classNames": [],
+                    "position": "afterend",
+                    "every": 1,
+                    "enabled": true
+                },
+                "adSizes": [
+                    [320, 50],
+                    [250, 250],
+                    [1, 1],
+                    [320, 100],
+                    [1, 2],
+                    [300, 50],
+                    [320, 300],
+                    [300, 390],
+                    [300, 250]
+                ],
+                "priority": -102,
+                "autosize": true
+            }, {
+                "sequence": null,
+                "targeting": [{
+                    "value": ["Footer"],
+                    "key": "location"
+                }, {
+                    "value": true,
+                    "key": "sticky"
+                }],
+                "devices": ["phone", "tablet", "desktop"],
+                "name": "Footer",
+                "sticky": true,
+                "location": "Footer",
+                "dynamic": {
+                    "pageSelector": "",
+                    "spacing": 0,
+                    "max": 1,
+                    "lazy": false,
+                    "lazyMax": null,
+                    "elementSelector": "body:not(.post-type-archive-gift-guide)",
+                    "skip": 0,
+                    "classNames": [],
+                    "position": "beforeend",
+                    "every": 1,
+                    "enabled": true
+                },
+                "adSizes": [
+                    [320, 50],
+                    [320, 100],
+                    [728, 90],
+                    [970, 90],
+                    [468, 60],
+                    [1, 1],
+                    [300, 50]
+                ],
+                "priority": -1,
+                "autosize": true
+            }, {
+                "sequence": 1,
+                "targeting": [{
+                    "value": ["Content"],
+                    "key": "location"
+                }],
+                "devices": ["desktop", "tablet", "phone"],
+                "name": "Content_1",
+                "sticky": false,
+                "location": "Content",
+                "dynamic": {
+                    "pageSelector": "body.postid-65597",
+                    "spacing": 1,
+                    "max": 2,
+                    "lazy": true,
+                    "lazyMax": 4,
+                    "elementSelector": ".content > *:not(h2)",
+                    "skip": 6,
+                    "classNames": [],
+                    "position": "afterend",
+                    "every": 1,
+                    "enabled": true
+                },
+                "adSizes": [
+                    [728, 90],
+                    [336, 280],
+                    [320, 50],
+                    [468, 60],
+                    [970, 90],
+                    [250, 250],
+                    [1, 1],
+                    [320, 100],
+                    [970, 250],
+                    [1, 2],
+                    [300, 50],
+                    [300, 300],
+                    [552, 334],
+                    [728, 250],
+                    [300, 250]
+                ],
+                "priority": 199,
+                "autosize": true
+            }],
+            "adDensityLayout": {
+                "mobile": {
+                    "adDensity": 0.24,
+                    "onePerViewport": true
+                },
+                "pageOverrides": [{
+                    "mobile": {
+                        "adDensity": 0.3,
+                        "onePerViewport": false
+                    },
+                    "pageSelector": "body.category",
+                    "desktop": {
+                        "adDensity": 0.3,
+                        "onePerViewport": false
+                    }
+                }, {
+                    "mobile": {
+                        "adDensity": 0.3,
+                        "onePerViewport": false
+                    },
+                    "pageSelector": "body.archive",
+                    "desktop": {
+                        "adDensity": 0.2,
+                        "onePerViewport": false
+                    }
+                }, {
+                    "mobile": {
+                        "adDensity": 0.26,
+                        "onePerViewport": false
+                    },
+                    "pageSelector": "body.postid-65597",
+                    "desktop": {
+                        "adDensity": 0.26,
+                        "onePerViewport": false
+                    }
+                }],
+                "desktop": {
+                    "adDensity": 0.2,
+                    "onePerViewport": true
+                }
+            },
+            "adDensityEnabled": true,
+            "siteExperiments": [],
+            "adTypes": {
+                "nativeDesktopContent": true,
+                "outstreamDesktop": false,
+                "nativeBelowPostDesktop": true,
+                "miniscroller": true,
+                "animatedFooter": true,
+                "largeFormatsMobile": false,
+                "nativeMobileContent": true,
+                "inRecipeRecommendationMobile": true,
+                "nativeMobileRecipe": true,
+                "expandableFooter": false,
+                "nativeDesktopSidebar": true,
+                "interscroller": false,
+                "nativeDesktopRecipe": true,
+                "outstreamMobile": true,
+                "nativeHeaderDesktop": true,
+                "nativeHeaderMobile": true,
+                "nativeBelowPostMobile": true,
+                "largeFormatsDesktop": false,
+                "inRecipeRecommendationDesktop": true
+            },
+            "adOptions": {
+                "theTradeDesk": true,
+                "rtbhouse": true,
+                "verizon": true,
+                "undertone": true,
+                "concert": false,
+                "footerCloseButton": true,
+                "teads": true,
+                "pmp": true,
+                "thirtyThreeAcross": false,
+                "sharethrough": true,
+                "removeVideoTitleWrapper": true,
+                "pubMatic": true,
+                "roundel": true,
+                "infiniteScroll": false,
+                "yahoossp": true,
+                "improvedigital": true,
+                "spa": false,
+                "stickyContainerConfig": {
+                    "recipe": {
+                        "minHeight": null,
+                        "enabled": false
+                    },
+                    "blockedSelectors": [],
+                    "stickyHeaderSelectors": [],
+                    "content": {
+                        "minHeight": null,
+                        "enabled": false
+                    }
+                },
+                "sonobi": true,
+                "yieldmo": true,
+                "footerSelector": "",
+                "amazonUAM": true,
+                "gamMCMEnabled": true,
+                "gamMCMChildNetworkCode": "56680444",
+                "stickyContainerAds": false,
+                "rubicon": true,
+                "conversant": true,
+                "resetdigital": true,
+                "openx": true,
+                "mobileHeaderHeight": 1,
+                "unruly": true,
+                "mediaGrid": true,
+                "bRealTime": true,
+                "gumgum": true,
+                "comscoreFooter": true,
+                "desktopInterstitial": false,
+                "footerCloseButtonDesktop": true,
+                "isAutoOptimized": false,
+                "comscoreTAL": true,
+                "brightroll": true,
+                "targetaff": false,
+                "advancePlaylistOptions": {
+                    "playlistPlayer": {
+                        "enabled": true
+                    },
+                    "relatedPlayer": {
+                        "enabled": true,
+                        "applyToFirst": true
+                    }
+                },
+                "kargo": true,
+                "liveRampATS": true,
+                "footerCloseButtonMobile": true,
+                "interstitialBlockedPageSelectors": "",
+                "allowSmallerAdSizes": true,
+                "comscore": "Food",
+                "mobileInterstitial": false,
+                "tripleLift": true,
+                "sensitiveCategories": ["alc", "drg", "conl", "gamv"],
+                "liveRamp": true,
+                "mobileInterstitialBlockedPageSelectors": "",
+                "adthriveEmailIdentity": true,
+                "criteo": true,
+                "nativo": true,
+                "infiniteScrollOptions": {
+                    "selector": "",
+                    "heightThreshold": 0
+                },
+                "dynamicContentSlotLazyLoading": true,
+                "clsOptimizedAds": true,
+                "colossus": true,
+                "verticals": ["Food", "Health and Wellness", "Fitness"],
+                "inImage": false,
+                "advancePlaylist": true,
+                "delayLoading": false,
+                "inImageZone": null,
+                "appNexus": true,
+                "liveRampId": "",
+                "infiniteScrollRefresh": false,
+                "indexExchange": true
+            },
+            "videoPlayers": {
+                "contextual": {
+                    "autoplayCollapsibleEnabled": true,
+                    "overrideEmbedLocation": true,
+                    "defaultPlayerType": "collapse"
+                },
+                "videoEmbed": "wordpress",
+                "footerSelector": ".postnl.section",
+                "contentSpecificPlaylists": [],
+                "players": [{
+                    "pageSelector": "body.single",
+                    "devices": ["mobile"],
+                    "mobileLocation": "bottom-right",
+                    "description": "",
+                    "elementSelector": ".entry_content > *, .content > *",
+                    "skip": 3,
+                    "id": 4047220,
+                    "position": "afterend",
+                    "title": "Sticky related player - mobile",
+                    "type": "stickyRelated",
+                    "enabled": true,
+                    "playerId": "mWG5vDOx"
+                }, {
+                    "devices": ["desktop", "mobile"],
+                    "description": "",
+                    "id": 4047218,
+                    "title": "Stationary related player - desktop and mobile",
+                    "type": "stationaryRelated",
+                    "enabled": true,
+                    "playerId": "mWG5vDOx"
+                }, {
+                    "pageSelector": "body.single",
+                    "devices": ["desktop"],
+                    "description": "",
+                    "elementSelector": ".entry_content > *, .content > *",
+                    "skip": 3,
+                    "id": 4047219,
+                    "position": "afterend",
+                    "title": "Sticky related player - desktop",
+                    "type": "stickyRelated",
+                    "enabled": true,
+                    "playerId": "mWG5vDOx"
+                }, {
+                    "playlistId": "CEn5QjEv",
+                    "pageSelector": "body.single",
+                    "devices": ["desktop"],
+                    "description": "",
+                    "skip": 4,
+                    "title": "MY LATEST VIDEOS",
+                    "type": "stickyPlaylist",
+                    "enabled": true,
+                    "footerSelector": ".postnl.section",
+                    "elementSelector": ".entry_content > *, .content > *",
+                    "id": 4047221,
+                    "position": "afterend",
+                    "saveVideoCloseState": false,
+                    "shuffle": true,
+                    "playerId": "fzcZbH3W"
+                }, {
+                    "playlistId": "CEn5QjEv",
+                    "pageSelector": "body.single, body.page",
+                    "devices": ["mobile"],
+                    "mobileLocation": "bottom-right",
+                    "description": "",
+                    "skip": 2,
+                    "title": "MY LATEST VIDEOS",
+                    "type": "stickyPlaylist",
+                    "enabled": true,
+                    "footerSelector": ".postnl.section",
+                    "elementSelector": ".entry_content > *, .content > *",
+                    "id": 4047222,
+                    "position": "afterend",
+                    "saveVideoCloseState": false,
+                    "shuffle": true,
+                    "mobileHeaderSelector": null,
+                    "playerId": "fzcZbH3W"
+                }],
+                "partners": {
+                    "theTradeDesk": true,
+                    "unruly": true,
+                    "mediaGrid": true,
+                    "undertone": true,
+                    "gumgum": true,
+                    "pmp": true,
+                    "kargo": true,
+                    "thirtyThreeAcross": false,
+                    "stickyOutstream": {
+                        "desktop": {
+                            "enabled": false
+                        },
+                        "blockedPageSelectors": "",
+                        "mobileLocation": "",
+                        "allowOnHomepage": false,
+                        "mobile": {
+                            "enabled": false
+                        },
+                        "saveVideoCloseState": false,
+                        "mobileHeaderSelector": "",
+                        "allowForPageWithStickyPlayer": {
+                            "enabled": false
+                        }
+                    },
+                    "sharethrough": true,
+                    "tripleLift": true,
+                    "pubMatic": true,
+                    "roundel": true,
+                    "yahoossp": true,
+                    "criteo": true,
+                    "improvedigital": true,
+                    "colossus": true,
+                    "telaria": true,
+                    "yieldmo": true,
+                    "amazonUAM": true,
+                    "rubicon": true,
+                    "appNexus": true,
+                    "resetdigital": true,
+                    "openx": true,
+                    "spotx": true,
+                    "indexExchange": true
+                }
+            }
+        };
+    </script>
+
+    <script data-no-optimize="1" data-cfasync="false">
+        (function (w, d) {
+            w.adthrive = w.adthrive || {};
+            w.adthrive.cmd = w.adthrive.cmd || [];
+            w.adthrive.plugin = 'adthrive-ads-3.4.1';
+            w.adthrive.host = 'ads.adthrive.com';
+            w.adthrive.integration = 'plugin';
+
+            var commitParam = (w.adthriveCLS && w.adthriveCLS.bucket !== 'prod' && w.adthriveCLS.branch) ?
+                '&commit=' + w.adthriveCLS.branch : '';
+
+            var s = d.createElement('script');
+            s.async = true;
+            s.referrerpolicy = 'no-referrer-when-downgrade';
+            s.src = 'https://' + w.adthrive.host + '/sites/5442822159a4128f3a70bdf7/ads.min.js?referrer=' + w
+                .encodeURIComponent(w.location.href) + commitParam + '&cb=' + (Math.floor(Math.random() * 100) +
+                    1) + '';
+            var n = d.getElementsByTagName('script')[0];
+            n.parentNode.insertBefore(s, n);
+        })(window, document);
+    </script>
+    <link rel="preload" href="https://www.ambitiouskitchen.com/wp-content/themes/ambitiouskitchen/fonts/Biko-Bold.woff2"
+        as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="https://www.ambitiouskitchen.com/wp-content/themes/ambitiouskitchen/fonts/Biko.woff2"
+        as="font" type="font/woff2" crossorigin>
+    <link rel="preload"
+        href="https://use.typekit.net/af/5464d5/00000000000000000001205a/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=i4&v=3"
+        as="font" type="font/woff2" crossorigin>
+    <link rel="preload"
+        href="https://use.typekit.net/af/ac6334/000000000000000000012059/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3"
+        as="font" type="font/woff2" crossorigin>
+
+    <!-- This site is optimized with the Yoast SEO plugin v20.7 - https://yoast.com/wordpress/plugins/seo/ -->
+    <title>Chickpea Apple Broccoli Salad | Ambitious Kitchen</title>
+    <meta name="description"
+        content="Healthy apple broccoli salad with veggies, chickpeas, delicious mix-ins, and a light honey dijon dressing. Great for meal prep and parties!" />
+    <link rel="canonical"
+        href="https://www.ambitiouskitchen.com/chickpea-apple-broccoli-salad-with-honey-dijon-dressing/" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Chickpea Apple Broccoli Salad | Ambitious Kitchen" />
+    <meta property="og:description"
+        content="Healthy apple broccoli salad with veggies, chickpeas, delicious mix-ins, and a light honey dijon dressing. Great for meal prep and parties!" />
+    <meta property="og:url"
+        content="https://www.ambitiouskitchen.com/chickpea-apple-broccoli-salad-with-honey-dijon-dressing/" />
+    <meta property="og:site_name" content="Ambitious Kitchen" />
+    <meta property="article:publisher" content="http://facebook.com/ambitiouskitchen" />
+    <meta property="article:published_time" content="2023-08-30T16:00:20+00:00" />
+    <meta property="article:modified_time" content="2023-08-31T21:35:18+00:00" />
+    <meta property="og:image" content="https://www.ambitiouskitchen.com/wp-content/uploads/2023/08/Salad-FB.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/png" />
+    <meta name="author" content="Monique" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:creator" content="@ambitiouskitch" />
+    <meta name="twitter:site" content="@ambitiouskitch" />
+    <meta name="twitter:label1" content="Written by" />
+    <meta name="twitter:data1" content="Monique" />
+    <meta name="twitter:label2" content="Est. reading time" />
+    <meta name="twitter:data2" content="3 minutes" />
+    <script type="application/ld+json" class="yoast-schema-graph">
+        {
+            "@context": "https://schema.org",
+            "@graph": [{
+                "@type": "Article",
+                "@id": "https://www.ambitiouskitchen.com/chickpea-apple-broccoli-salad-with-honey-dijon-dressing/#article",
+                "isPartOf": {
+                    "@id": "https://www.ambitiouskitchen.com/chickpea-apple-broccoli-salad-with-honey-dijon-dressing/"
+                },
+                "author": {
+                    "name": "Monique",
+                    "@id": "https://www.ambitiouskitchen.com/#/schema/person/1c82f82166ff54c01fa010babe96c5bc"
+                },
+                "headline": "Chickpea Apple Broccoli Salad with Honey Dijon Dressing",
+                "datePublished": "2023-08-30T16:00:20+00:00",
+                "dateModified": "2023-08-31T21:35:18+00:00",
+                "wordCount": 1196,
+                "commentCount": 73,
+                "publisher": {
+                    "@id": "https://www.ambitiouskitchen.com/#organization"
+                },
+                "image": {
+                    "@id": "https://www.ambitiouskitchen.com/chickpea-apple-broccoli-salad-with-honey-dijon-dressing/#primaryimage"
+                },
+                "thumbnailUrl": "https://www.ambitiouskitchen.com/wp-content/uploads/2018/09/applebroccolisalad-5-1.jpg",
+                "articleSection": ["Cooking Methods", "Dairy Free", "Dairy Free Lunch",
+                    "Dairy Free Side Dishes", "Diet Type", "Fall", "Food", "Gluten Free",
+                    "Gluten Free Lunch", "Gluten Free Side Dishes", "Grain Free", "Grain Free Lunch",
+                    "Grain Free Side Dishes", "Holiday Recipes", "Holiday Sides", "Lunch", "Meal Prep",
+                    "Salad", "Seasonal", "Side Dishes", "Thanksgiving", "Vegetarian", "Vegetarian Lunch",
+                    "Vegetarian Salad", "Vegetarian Side Dishes"
+                ],
+                "inLanguage": "en-US",
+                "potentialAction": [{
+                    "@type": "CommentAction",
+                    "name": "Comment",
+                    "target": [
+                        "https://www.ambitiouskitchen.com/chickpea-apple-broccoli-salad-with-honey-dijon-dressing/#respond"
+                    ]
+                }]
+            }, {
+                "@type": "WebPage",
+                "@id": "https://www.ambitiouskitchen.com/chickpea-apple-broccoli-salad-with-honey-dijon-dressing/",
+                "url": "https://www.ambitiouskitchen.com/chickpea-apple-broccoli-salad-with-honey-dijon-dressing/",
+                "name": "Chickpea Apple Broccoli Salad | Ambitious Kitchen",
+                "isPartOf": {
+                    "@id": "https://www.ambitiouskitchen.com/#website"
+                },
+                "primaryImageOfPage": {
+                    "@id": "https://www.ambitiouskitchen.com/chickpea-apple-broccoli-salad-with-honey-dijon-dressing/#primaryimage"
+                },
+                "image": {
+                    "@id": "https://www.ambitiouskitchen.com/chickpea-apple-broccoli-salad-with-honey-dijon-dressing/#primaryimage"
+                },
+                "thumbnailUrl": "https://www.ambitiouskitchen.com/wp-content/uploads/2018/09/applebroccolisalad-5-1.jpg",
+                "datePublished": "2023-08-30T16:00:20+00:00",
+                "dateModified": "2023-08-31T21:35:18+00:00",
+                "description": "Healthy apple broccoli salad with veggies, chickpeas, delicious mix-ins, and a light honey dijon dressing. Great for meal prep and parties!",
+                "breadcrumb": {
+                    "@id": "https://www.ambitiouskitchen.com/chickpea-apple-broccoli-salad-with-honey-dijon-dressing/#breadcrumb"
+                },
+                "inLanguage": "en-US",
+                "potentialAction": [{
+                    "@type": "ReadAction",
+                    "target": [
+                        "https://www.ambitiouskitchen.com/chickpea-apple-broccoli-salad-with-honey-dijon-dressing/"
+                    ]
+                }]
+            }, {
+                "@type": "ImageObject",
+                "inLanguage": "en-US",
+                "@id": "https://www.ambitiouskitchen.com/chickpea-apple-broccoli-salad-with-honey-dijon-dressing/#primaryimage",
+                "url": "https://www.ambitiouskitchen.com/wp-content/uploads/2018/09/applebroccolisalad-5-1.jpg",
+                "contentUrl": "https://www.ambitiouskitchen.com/wp-content/uploads/2018/09/applebroccolisalad-5-1.jpg",
+                "width": 1067,
+                "height": 1600,
+                "caption": "apple broccoli salad on a plate with a fork"
+            }, {
+                "@type": "BreadcrumbList",
+                "@id": "https://www.ambitiouskitchen.com/chickpea-apple-broccoli-salad-with-honey-dijon-dressing/#breadcrumb",
+                "itemListElement": [{
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "Home",
+                    "item": "https://www.ambitiouskitchen.com/"
+                }, {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": "Blog",
+                    "item": "https://www.ambitiouskitchen.com/blog/"
+                }, {
+                    "@type": "ListItem",
+                    "position": 3,
+                    "name": "Chickpea Apple Broccoli Salad with Honey Dijon Dressing"
+                }]
+            }, {
+                "@type": "WebSite",
+                "@id": "https://www.ambitiouskitchen.com/#website",
+                "url": "https://www.ambitiouskitchen.com/",
+                "name": "Ambitious Kitchen",
+                "description": "Inspiring you in and out of the kitchen",
+                "publisher": {
+                    "@id": "https://www.ambitiouskitchen.com/#organization"
+                },
+                "potentialAction": [{
+                    "@type": "SearchAction",
+                    "target": {
+                        "@type": "EntryPoint",
+                        "urlTemplate": "https://www.ambitiouskitchen.com/?s={search_term_string}"
+                    },
+                    "query-input": "required name=search_term_string"
+                }],
+                "inLanguage": "en-US"
+            }, {
+                "@type": "Organization",
+                "@id": "https://www.ambitiouskitchen.com/#organization",
+                "name": "Ambitious Kitchen",
+                "url": "https://www.ambitiouskitchen.com/",
+                "logo": {
+                    "@type": "ImageObject",
+                    "inLanguage": "en-US",
+                    "@id": "https://www.ambitiouskitchen.com/#/schema/logo/image/",
+                    "url": "https://www.ambitiouskitchen.com/wp-content/uploads/2020/05/AK-for-small-sizes.png",
+                    "contentUrl": "https://www.ambitiouskitchen.com/wp-content/uploads/2020/05/AK-for-small-sizes.png",
+                    "width": 900,
+                    "height": 900,
+                    "caption": "Ambitious Kitchen"
+                },
+                "image": {
+                    "@id": "https://www.ambitiouskitchen.com/#/schema/logo/image/"
+                },
+                "sameAs": ["http://facebook.com/ambitiouskitchen", "https://twitter.com/ambitiouskitch",
+                    "http://instagram.com/ambitiouskitchen", "http://pinterest.com/moniquevolz"
+                ]
+            }, {
+                "@type": "Person",
+                "@id": "https://www.ambitiouskitchen.com/#/schema/person/1c82f82166ff54c01fa010babe96c5bc",
+                "name": "Monique",
+                "image": {
+                    "@type": "ImageObject",
+                    "inLanguage": "en-US",
+                    "@id": "https://www.ambitiouskitchen.com/#/schema/person/image/",
+                    "url": "https://secure.gravatar.com/avatar/6f70016c0e4f37df52313a8b264d620f?s=96&d=blank&r=g",
+                    "contentUrl": "https://secure.gravatar.com/avatar/6f70016c0e4f37df52313a8b264d620f?s=96&d=blank&r=g",
+                    "caption": "Monique"
+                },
+                "sameAs": ["https://www.ambitiouskitchen.com"],
+                "url": "https://www.ambitiouskitchen.com/author/admin/"
+            }, {
+                "@type": "Recipe",
+                "name": "Chickpea Apple Broccoli Salad with Honey Dijon Dressing",
+                "author": {
+                    "@type": "Person",
+                    "name": "Monique Volz of AmbitiousKitchen.com"
+                },
+                "description": "Healthy apple broccoli salad with chickpeas, dried cherries, carrots, pecans and fresh herbs. Toss everything together in a light honey dijon dressing to bring this salad together. Easy to make, great for lunch or parties and makes excellent leftovers!",
+                "datePublished": "2023-08-30T11:00:20+00:00",
+                "image": [
+                    "https://www.ambitiouskitchen.com/wp-content/uploads/2018/09/applebroccolisalad-5-1-725x725-1.jpg",
+                    "https://www.ambitiouskitchen.com/wp-content/uploads/fly-images/35594/applebroccolisalad-5-1-725x725-1-500x500-c.jpg",
+                    "https://www.ambitiouskitchen.com/wp-content/uploads/fly-images/35594/applebroccolisalad-5-1-725x725-1-500x375-c.jpg",
+                    "https://www.ambitiouskitchen.com/wp-content/uploads/fly-images/35594/applebroccolisalad-5-1-725x725-1-480x270-c.jpg"
+                ],
+                "recipeYield": ["4", "4 servings"],
+                "prepTime": "PT20M",
+                "totalTime": "PT20M",
+                "recipeIngredient": ["For the salad:", "1  head broccoli, very finely chopped",
+                    "1  (15 ounce) can of chickpeas, rinsed and drained",
+                    "2 cups diced honeycrisp apples (from about 2 medium honeycrisp apples)",
+                    "1 cup shredded carrots (or 1 cup matchstick cut carrots)", "⅓ cup diced green onion",
+                    "⅓ cup dried cherries", "⅓ cup chopped pecans", "½ cup chopped flat leaf parsley",
+                    "For the dressing:", "3 tablespoons olive oil", "1 ½ tablespoons apple cider vinegar",
+                    "1 tablespoon dijon mustard", "½ tablespoon honey", "1 clove of garlic, minced",
+                    "Freshly ground salt and pepper, to taste", "To garnish:", "Extra cherries and pecans"
+                ],
+                "recipeInstructions": [{
+                    "@type": "HowToStep",
+                    "text": "In a large bowl, add finely chopped broccoli, chickpeas, apples, carrots, green onion, dried cherries, pecans, and parsley. Set aside.",
+                    "name": "In a large bowl, add finely chopped broccoli, chickpeas, apples, carrots, green onion, dried cherries, pecans, and parsley. Set aside.",
+                    "url": "https://www.ambitiouskitchen.com/chickpea-apple-broccoli-salad-with-honey-dijon-dressing/#wprm-recipe-30264-step-0-0"
+                }, {
+                    "@type": "HowToStep",
+                    "text": "Make the dressing by whisking together the following ingredients in a small bowl: olive oil, apple cider vinegar, dijon mustard, honey, garlic, salt and pepper. Immediately drizzle over salad and toss to combine.&nbsp;",
+                    "name": "Make the dressing by whisking together the following ingredients in a small bowl: olive oil, apple cider vinegar, dijon mustard, honey, garlic, salt and pepper. Immediately drizzle over salad and toss to combine.&nbsp;",
+                    "url": "https://www.ambitiouskitchen.com/chickpea-apple-broccoli-salad-with-honey-dijon-dressing/#wprm-recipe-30264-step-0-1"
+                }, {
+                    "@type": "HowToStep",
+                    "text": "Taste and add more salt and pepper, if necessary. Garnish with extra cherries and pecans and serve immediately or place in the fridge for later. Salad will keep well up to 5 days. Serves 4.",
+                    "name": "Taste and add more salt and pepper, if necessary. Garnish with extra cherries and pecans and serve immediately or place in the fridge for later. Salad will keep well up to 5 days. Serves 4.",
+                    "url": "https://www.ambitiouskitchen.com/chickpea-apple-broccoli-salad-with-honey-dijon-dressing/#wprm-recipe-30264-step-0-2"
+                }],
+                "aggregateRating": {
+                    "@type": "AggregateRating",
+                    "ratingValue": "4.96",
+                    "ratingCount": "21"
+                },
+                "recipeCategory": ["Dairy Free", "Gluten Free", "Grain Free", "Lunch", "Vegan", "Vegetarian"],
+                "recipeCuisine": ["American"],
+                "keywords": "apple broccoli salad",
+                "nutrition": {
+                    "@type": "NutritionInformation",
+                    "servingSize": "1 serving",
+                    "calories": "410 kcal",
+                    "carbohydrateContent": "54.7 g",
+                    "proteinContent": "11 g",
+                    "fatContent": "19.2 g",
+                    "saturatedFatContent": "2.3 g",
+                    "fiberContent": "13.7 g",
+                    "sugarContent": "19.5 g"
+                },
+                "@id": "https://www.ambitiouskitchen.com/chickpea-apple-broccoli-salad-with-honey-dijon-dressing/#recipe",
+                "isPartOf": {
+                    "@id": "https://www.ambitiouskitchen.com/chickpea-apple-broccoli-salad-with-honey-dijon-dressing/#article"
+                },
+                "mainEntityOfPage": "https://www.ambitiouskitchen.com/chickpea-apple-broccoli-salad-with-honey-dijon-dressing/"
+            }]
+        }
+    </script>
+    <!-- / Yoast SEO plugin. -->

@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+    <meta charset="UTF-8">
+    <script>
+        if (navigator.userAgent.match(/MSIE|Internet Explorer/i) || navigator.userAgent.match(
+                /Trident\/7\..*?rv:11/i)) {
+            var href = document.location.href;
+            if (!href.match(/[?&]nowprocket/)) {
+                if (href.indexOf("?") == -1) {
+                    if (href.indexOf("#") == -1) {
+                        document.location.href = href + "?nowprocket=1"
+                    } else {
+                        document.location.href = href.replace("#", "?nowprocket=1#")
+                    }
+                } else {
+                    if (href.indexOf("#") == -1) {
+                        document.location.href = href + "&nowprocket=1"
+                    } else {
+                        document.location.href = href.replace("#", "&nowprocket=1#")
+                    }
+                }
+            }
+        }
+    </script>
+    <script>
+        class RocketLazyLoadScripts {
+            constructor() {
+                this.v = "1.2.3", this.triggerEvents = ["keydown", "mousedown", "mousemove", "touchmove",
+                        "touchstart", "touchend", "wheel"
+                    ], this.userEventHandler = this._triggerListener.bind(this), this.touchStartHandler = this
+                    ._onTouchStart.bind(this), this.touchMoveHandler = this._onTouchMove.bind(this), this
+                    .touchEndHandler = this._onTouchEnd.bind(this), this.clickHandler = this._onClick.bind(this),
+                    this.interceptedClicks = [], window.addEventListener("pageshow", t => {
+                        this.persisted = t.persisted
+                    }), window.addEventListener("DOMContentLoaded", () => {
+                        this._preconnect3rdParties()
+                    }), this.delayedScripts = {
+                        normal: [],
+                        async: [],
+                        defer: []
+                    }, this.trash = [], this.allJQueries = []
+            }
+            _addUserInteractionListener(t) {
+                if (document.hidden) {
+                    t._triggerListener();
+                    return
+                }
+                this.triggerEvents.forEach(e => window.addEventListener(e, t.userEventHandler, {
+                    passive: !0
+                })), window.addEventListener("touchstart", t.touchStartHandler, {
+                    passive: !0
+                }), window.addEventListener("mousedown", t.touchStartHandler), document.addEventListener(
+                    "visibilitychange", t.userEventHandler)
+            }
+            _removeUserInteractionListener() {
+                this.triggerEvents.forEach(t => window.removeEventListener(t, this.userEventHandler, {
+                    passive: !0
+                })), document.removeEventListener("visibilitychange", this.userEventHandler)
+            }
+            _onTouchStart(t) {
+                "HTML" !== t.target.tagName && (window.addEventListener("touchend", this.touchEndHandler), window
+                    .addEventListener("mouseup", this.touchEndHandler), window.addEventListener("touchmove",
+                        this.touchMoveHandler, {
+                            passive: !0
+                        }), window.addEventListener("mousemove", this.touchMoveHandler), t.target
+                    .addEventListener("click", this.clickHandler), this._renameDOMAttribute(t.target, "onclick",
+                        "rocket-onclick"), this._pendingClickStarted())
+            }
+            _onTouchMove(t) {
+                window.removeEventListener("touchend", this.touchEndHandler), window.removeEventListener("mouseup",
+                        this.touchEndHandler), window.removeEventListener("touchmove", this.touchMoveHandler, {
+                        passive: !0
+                    }), window.removeEventListener("mousemove", this.touchMoveHandler), t.target
+                    .removeEventListener("click", this.clickHandler), this._renameDOMAttribute(t.target,
+                        "rocket-onclick", "onclick"), this._pendingClickFinished()
+            }
+            _onTouchEnd(t) {
+                window.removeEventListener("touchend", this.touchEndHandler), window.removeEventListener("mouseup",
+                    this.touchEndHandler), window.removeEventListener("touchmove", this.touchMoveHandler, {
+                    passive: !0
+                }), window.removeEventListener("mousemove", this.touchMoveHandler)
+            }
+            _onClick(t) {
+                t.target.removeEventListener("click", this.clickHandler), this._renameDOMAttribute(t.target,
+                        "rocket-onclick", "onclick"), this.interceptedClicks.push(t), t.preventDefault(), t
+                    .stopPropagation(), t.stopImmediatePropagation(), this._pendingClickFinished()
+            }
+            _replayClicks() {
+                window.removeEventListener("touchstart", this.touchStartHandler, {
+                        passive: !0
+                    }), window.removeEventListener("mousedown", this.touchStartHandler), this.interceptedClicks
+                    .forEach(t => {
+                        t.target.dispatchEvent(new MouseEvent("click", {
+                            view: t.view,
+                            bubbles: !0,
+                            cancelable: !0
+                        }))
+                    })
+            }
+            _waitForPendingClicks() {
+                return new Promise(t => {
+                    this._isClickPending ? this._pendingClickFinished = t : t()
+                })
+            }
+            _pendingClickStarted() {
+                this._isClickPending = !0
+            }
+            _pendingClickFinished() {
+                this._isClickPending = !1
+            }
+            _renameDOMAttribute(t, e, r) {
+                t.hasAttribute && t.hasAttribute(e) && (event.target.setAttribute(r, event.target.getAttribute(e)),
+                    event.target.removeAttribute(e))
+            }
+            _triggerListener() {
+                this._removeUserInteractionListener(this), "loading" === document.readyState ? document
+                    .addEventListener("DOMContentLoaded", this._loadEverythingNow.bind(this)) : this
+                    ._loadEverythingNow()
+            }
+            _preconnect3rdParties() {
+                let t = [];
+                document.querySelectorAll("script[type=rocketlazyloadscript]").forEach(e => {
+                        if (e.hasAttribute("src")) {
+                            let r = new URL(e.src).origin;
+                            r !== location.origin && t.push({
+                                src: r,
+                                crossOrigin: e.crossOrigin || "module" === e.getAttribute(
+                                    "data-rocket-type")
+                            })
+                        }
+                    }), t = [...new Map(t.map(t => [JSON.stringify(t), t])).values()], this
+                    ._batchInjectResourceHints(t, "preconnect")
+            }
+            async _loadEverythingNow() {
+                this.lastBreath = Date.now(), this._delayEventListeners(this), this._delayJQueryReady(this), this
+                    ._handleDocumentWrite(), this._registerAllDelayedScripts(), this._preloadAllScripts(),
+                    await this._loadScriptsFromList(this.delayedScripts.normal), await this._loadScriptsFromList(
+                        this.delayedScripts.defer), await this._loadScriptsFromList(this.delayedScripts.async);
+                try {
+                    await this._triggerDOMContentLoaded(), await this._triggerWindowLoad()
+                } catch (t) {
+                    console.error(t)
+                }
+                window.dispatchEvent(new Event("rocket-allScriptsLoaded")), this._waitForPendingClicks().then(
+                    () => {
+                        this._replayClicks()
+                    }), this._emptyTrash()
+            }
+            _registerAllDelayedScripts() {
+                document.querySelectorAll("script[type=rocketlazyloadscript]").forEach(t => {
+                    t.hasAttribute("data-rocket-src") ? t.hasAttribute("async") && !1 !== t.async ? this
+                        .delayedScripts.async.push(t) : t.hasAttribute("defer") && !1 !== t.defer ||
+                        "module" === t.getAttribute("data-rocket-type") ? this.delayedScripts.defer.push(
+                            t) : this.delayedScripts.normal.push(t) : this.delayedScripts.normal.push(t)
+                })
+            }
+            async _transformScript(t) {
+                return new Promise((await this._littleBreath(), navigator.userAgent.indexOf("Firefox/") > 0 ||
+                    "" === navigator.vendor) ? e => {
+                    let r = document.createElement("script");
+                    [...t.attributes].forEach(t => {
+                        let e = t.nodeName;
+                        "type" !== e && ("data-rocket-type" === e && (e = "type"),
+                            "data-rocket-src" === e && (e = "src"), r.setAttribute(e, t
+                                .nodeValue))
+                    }), t.text && (r.text = t.text), r.hasAttribute("src") ? (r.addEventListener("load",
+                        e), r.addEventListener("error", e)) : (r.text = t.text, e());
+                    try {
+                        t.parentNode.replaceChild(r, t)
+                    } catch (i) {
+                        e()
+                    }
+                } : async e => {
+                    function r() {
+                        t.setAttribute("data-rocket-status", "failed"), e()
+                    }
+                    try {
+                        let i = t.getAttribute("data-rocket-type"),
+                            n = t.getAttribute("data-rocket-src");
+                        t.text, i ? (t.type = i, t.removeAttribute("data-rocket-type")) : t
+                            .removeAttribute("type"), t.addEventListener("load", function r() {
+                                t.setAttribute("data-rocket-status", "executed"), e()
+                            }), t.addEventListener("error", r), n ? (t.removeAttribute(
+                                "data-rocket-src"), t.src = n) : t.src =
+                            "data:text/javascript;base64," + window.btoa(unescape(encodeURIComponent(t
+                                .text)))
+                    } catch (s) {
+                        r()
+                    }
+                })
+            }
+            async _loadScriptsFromList(t) {
+                let e = t.shift();
+                return e && e.isConnected ? (await this._transformScript(e), this._loadScriptsFromList(t)) : Promise
+                    .resolve()
+            }
+            _preloadAllScripts() {
+                this._batchInjectResourceHints([...this.delayedScripts.normal, ...this.delayedScripts.defer, ...this
+                    .delayedScripts.async
+                ], "preload")
+            }
+            _batchInjectResourceHints(t, e) {
+                var r = document.createDocumentFragment();
+                t.forEach(t => {
+                    let i = t.getAttribute && t.getAttribute("data-rocket-src") || t.src;
+                    if (i) {
+                        let n = document.createElement("link");
+                        n.href = i, n.rel = e, "preconnect" !== e && (n.as = "script"), t.getAttribute &&
+                            "module" === t.getAttribute("data-rocket-type") && (n.crossOrigin = !0), t
+                            .crossOrigin && (n.crossOrigin = t.crossOrigin), t.integrity && (n.integrity = t
+                                .integrity), r.appendChild(n), this.trash.push(n)
+                    }
+                }), document.head.appendChild(r)
+            }
+            _delayEventListeners(t) {
+                let e = {};
+
+                function r(t, r) {
+                    ! function t(r) {
+                        !e[r] && (e[r] = {
+                            originalFunctions: {
+                                add: r.addEventListener,
+                                remove: r.removeEventListener
+                            },
+                            eventsToRewrite: []
+                        }, r.addEventListener = function () {
+                            arguments[0] = i(arguments[0]), e[r].originalFunctions.add.apply(r, arguments)
+                        }, r.removeEventListener = function () {
+                            arguments[0] = i(arguments[0]), e[r].originalFunctions.remove.apply(r,
+                                arguments)
+                        });
+
+                        function i(t) {
+                            return e[r].eventsToRewrite.indexOf(t) >= 0 ? "rocket-" + t : t
+                        }
+                    }(t), e[t].eventsToRewrite.push(r)
+                }
+
+                function i(t, e) {
+                    let r = t[e];
+                    Object.defineProperty(t, e, {
+                        get: () => r || function () {},
+                        set(i) {
+                            t["rocket" + e] = r = i
+                        }
+                    })
+                }
+                r(document, "DOMContentLoaded"), r(window, "DOMContentLoaded"), r(window, "load"), r(window,
+                    "pageshow"), r(document, "readystatechange"), i(document, "onreadystatechange"), i(window,
+                    "onload"), i(window, "onpageshow")
+            }
+            _delayJQueryReady(t) {
+                let e;
+
+                function r(r) {
+                    if (r && r.fn && !t.allJQueries.includes(r)) {
+                        r.fn.ready = r.fn.init.prototype.ready = function (e) {
+                            return t.domReadyFired ? e.bind(document)(r) : document.addEventListener(
+                                "rocket-DOMContentLoaded", () => e.bind(document)(r)), r([])
+                        };
+                        let i = r.fn.on;
+                        r.fn.on = r.fn.init.prototype.on = function () {
+                            if (this[0] === window) {
+                                function t(t) {
+                                    return t.split(" ").map(t => "load" === t || 0 === t.indexOf("load.") ?
+                                        "rocket-jquery-load" : t).join(" ")
+                                }
+                                "string" == typeof arguments[0] || arguments[0] instanceof String ? arguments[
+                                    0] = t(arguments[0]) : "object" == typeof arguments[0] && Object.keys(
+                                    arguments[0]).forEach(e => {
+                                    let r = arguments[0][e];
+                                    delete arguments[0][e], arguments[0][t(e)] = r
+                                })
+                            }
+                            return i.apply(this, arguments), this
+                        }, t.allJQueries.push(r)
+                    }
+                    e = r
+                }
+                r(window.jQuery), Object.defineProperty(window, "jQuery", {
+                    get: () => e,
+                    set(t) {
+                        r(t)
+                    }
+                })
+            }
+            async _triggerDOMContentLoaded() {
+                this.domReadyFired = !0, await this._littleBreath(), document.dispatchEvent(new Event(
+                        "rocket-DOMContentLoaded")), await this._littleBreath(), window.dispatchEvent(new Event(
+                        "rocket-DOMContentLoaded")), await this._littleBreath(), document.dispatchEvent(new Event(
+                        "rocket-readystatechange")), await this._littleBreath(), document
+                    .rocketonreadystatechange && document.rocketonreadystatechange()
+            }
+            async _triggerWindowLoad() {
+                await this._littleBreath(), window.dispatchEvent(new Event("rocket-load")), await this
+                    ._littleBreath(), window.rocketonload && window.rocketonload(), await this._littleBreath(), this
+                    .allJQueries.forEach(t => t(window).trigger("rocket-jquery-load")), await this._littleBreath();
+                let t = new Event("rocket-pageshow");
+                t.persisted = this.persisted, window.dispatchEvent(t), await this._littleBreath(), window
+                    .rocketonpageshow && window.rocketonpageshow({
+                        persisted: this.persisted
+                    })
+            }
+            _handleDocumentWrite() {
+                let t = new Map;
+                document.write = document.writeln = function (e) {
+                    let r = document.currentScript;
+                    r || console.error("WPRocket unable to document.write this: " + e);
+                    let i = document.createRange(),
+                        n = r.parentElement,
+                        s = t.get(r);
+                    void 0 === s && (s = r.nextSibling, t.set(r, s));
+                    let a = document.createDocumentFragment();
+                    i.setStart(a, 0), a.appendChild(i.createContextualFragment(e)), n.insertBefore(a, s)
+                }
+            }
+            async _littleBreath() {
+                Date.now() - this.lastBreath > 45 && (await this._requestAnimFrame(), this.lastBreath = Date.now())
+            }
+            async _requestAnimFrame() {
+                return document.hidden ? new Promise(t => setTimeout(t)) : new Promise(t => requestAnimationFrame(
+                    t))
+            }
+            _emptyTrash() {
+                this.trash.forEach(t => t.remove())
+            }
+            static run() {
+                let t = new RocketLazyLoadScripts;
+                t._addUserInteractionListener(t)
+            }
+        }
+        RocketLazyLoadScripts.run();
+    </script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <script type='text/javascript'
+        src='https://platform-api.sharethis.com/js/sharethis.js#property=62ab2e7fa05e690019903973&product=inline-share-buttons'
+        async='async'></script>
+
+
+
+    <link rel="preload" href="https://fonts.gstatic.com/s/firasans/v9/va9C4kDNxMZdWfMOD5VvkrjJYTQ.woff" as="font"
+        type="font/woff2" crossorigin>
+    <link rel="preload" href="https://fonts.gstatic.com/s/firasans/v9/va9f4kDNxMZdWfMOD5VvkrAWRSf4VF8.woff" as="font"
+        type="font/woff2" crossorigin>
+    <link rel="preload" href="https://fonts.gstatic.com/s/firasans/v9/va9f4kDNxMZdWfMOD5VvkrByRCf4VF8.woff" as="font"
+        type="font/woff2" crossorigin>
+    <link rel="preload" href="https://fonts.gstatic.com/s/firasans/v9/va9E4kDNxMZdWfMOD5Vvl4jN.woff" as="font"
+        type="font/woff2" crossorigin>
+    <link rel="preload" href="https://fonts.gstatic.com/s/firasans/v9/va9B4kDNxMZdWfMOD5VnSKzeRhf8.woff" as="font"
+        type="font/woff2" crossorigin>
+    <link rel="preload" href="https://fonts.gstatic.com/s/firasans/v9/va9B4kDNxMZdWfMOD5VnLK3eRhf8.woff" as="font"
+        type="font/woff2" crossorigin>
+    <link rel="preload"
+        href="https://fonts.gstatic.com/s/firasanscondensed/v4/wEOhEADFm8hSaQTFG18FErVhsC9x-tarUfbtqw.woff" as="font"
+        type="font/woff2" crossorigin>
+    <link rel="preload"
+        href="https://fonts.gstatic.com/s/firasanscondensed/v4/wEOsEADFm8hSaQTFG18FErVhsC9x-tarWSnJuMR0dA.woff"
+        as="font" type="font/woff2" crossorigin>
+    <link rel="preload"
+        href="https://fonts.gstatic.com/s/firasanscondensed/v4/wEOsEADFm8hSaQTFG18FErVhsC9x-tarWU3IuMR0dA.woff"
+        as="font" type="font/woff2" crossorigin>
+    <link rel="preload"
+        href="https://fonts.gstatic.com/s/firasanscondensed/v4/wEOjEADFm8hSaQTFG18FErVhsC9x-tarUfPdr-NX.woff" as="font"
+        type="font/woff2" crossorigin>
+    <link rel="preload"
+        href="https://fonts.gstatic.com/s/firasanscondensed/v4/wEOuEADFm8hSaQTFG18FErVhsC9x-tarUfPVcMdEcD5Z.woff"
+        as="font" type="font/woff2" crossorigin>
+    <link rel="preload"
+        href="https://fonts.gstatic.com/s/firasanscondensed/v4/wEOuEADFm8hSaQTFG18FErVhsC9x-tarUfPVFMZEcD5Z.woff"
+        as="font" type="font/woff2" crossorigin>
+    <script type="rocketlazyloadscript">!function(){"use strict";var t=window.location.search.substring(1).split("&");const e=t=>t.replace(/\s/g,""),n=t=>new Promise(e=>{if(!("msCrypto"in window)&&"https:"===location.protocol&&"crypto"in window&&"TextEncoder"in window){const n=(new TextEncoder).encode(t);crypto.subtle.digest("SHA-256",n).then(t=>{const n=Array.from(new Uint8Array(t)).map(t=>("00"+t.toString(16)).slice(-2)).join("");e(n)})}else e("")});for(var o=0;o<t.length;o++){var i="adt_ei",r=t[o];if(0===r.indexOf(i)){var s=r.split(i+"=")[1];if((t=>{const e=t.match(/((?=([a-zA-Z0-9._!#$%+^&*()[\]<>-]+))\2@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi);return e?e[0]:""})(e(s.toLowerCase()))){n(s).then(e=>{e.length&&(localStorage.setItem(i,e),t.splice(o,1),history.replaceState(null,"","?"+t.join("&")))});break}}}}();
+</script>
+    <meta name='robots' content='index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' />
+
+    <script data-no-optimize="1" data-cfasync="false">
+        (function (w, d) {
+            w.adthrive = w.adthrive || {};
+            w.adthrive.cmd = w.adthrive.cmd || [];
+            w.adthrive.plugin = 'adthrive-ads-3.4.1';
+            w.adthrive.host = 'ads.adthrive.com';
+            w.adthrive.integration = 'plugin';
+
+            var commitParam = (w.adthriveCLS && w.adthriveCLS.bucket !== 'prod' && w.adthriveCLS.branch) ?
+                '&commit=' + w.adthriveCLS.branch : '';
+
+            var s = d.createElement('script');
+            s.async = true;
+            s.referrerpolicy = 'no-referrer-when-downgrade';
+            s.src = 'https://' + w.adthrive.host + '/sites/60a2f0855c0e65b7013b0a2a/ads.min.js?referrer=' + w
+                .encodeURIComponent(w.location.href) + commitParam + '&cb=' + (Math.floor(Math.random() * 100) +
+                    1) + '';
+            var n = d.getElementsByTagName('script')[0];
+            n.parentNode.insertBefore(s, n);
+        })(window, document);
+    </script>
+
+    <!-- This site is optimized with the Yoast SEO Premium plugin v16.5 (Yoast SEO v21.0) - https://yoast.com/wordpress/plugins/seo/ -->
+    <title>A Killer Smoked BBQ Ribs Recipe That Shames The 3-2-1 Method</title>
+    <meta name="description"
+        content="Mastering smoked ribs -- whether they are St. Louis style ribs, spare ribs, or baby back ribs -- with our comprehensive tutorial and recipe will make you a backyard all star." />
+    <link rel="canonical" href="https://amazingribs.com/best-barbecue-ribs-recipe/" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="A Killer Smoked BBQ Ribs Recipe That Shames The 3-2-1 Method" />
+    <meta property="og:description"
+        content="Mastering smoked ribs -- whether they are St. Louis style ribs, spare ribs, or baby back ribs -- with our comprehensive tutorial and recipe will make you a backyard all star." />
+    <meta property="og:url" content="https://amazingribs.com/best-barbecue-ribs-recipe/" />
+    <meta property="og:site_name" content="Meathead&#039;s AmazingRibs.com" />
+    <meta property="article:publisher" content="http://www.facebook.com/amazingribs" />
+    <meta property="article:published_time" content="2015-11-26T19:06:00+00:00" />
+    <meta property="article:modified_time" content="2023-08-29T02:30:55+00:00" />
+    <meta property="og:image" content="https://amazingribs.com/wp-content/uploads/2020/10/last_meal_ribs_0.jpg" />
+    <meta property="og:image:width" content="475" />
+    <meta property="og:image:height" content="274" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta name="author" content="Kris Coppieters" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:creator" content="@meathead" />
+    <meta name="twitter:site" content="@meathead" />
+    <meta name="twitter:label1" content="Written by" />
+    <meta name="twitter:data1" content="Kris Coppieters" />
+    <meta name="twitter:label2" content="Est. reading time" />
+    <meta name="twitter:data2" content="7 minutes" />
+    <script type="application/ld+json" class="yoast-schema-graph">
+        {
+            "@context": "https://schema.org",
+            "@graph": [{
+                "@type": "Article",
+                "@id": "https://amazingribs.com/best-barbecue-ribs-recipe/#article",
+                "isPartOf": {
+                    "@id": "https://amazingribs.com/best-barbecue-ribs-recipe/"
+                },
+                "author": {
+                    "name": "Kris Coppieters",
+                    "@id": "https://amazingribs.com/#/schema/person/8f7c28e642d880a5f8491f332d8160a8"
+                },
+                "headline": "A Killer Smoked BBQ Ribs Recipe That Shames The 3-2-1 Method",
+                "datePublished": "2015-11-26T19:06:00+00:00",
+                "dateModified": "2023-08-29T02:30:55+00:00",
+                "wordCount": 3547,
+                "commentCount": 0,
+                "publisher": {
+                    "@id": "https://amazingribs.com/#organization"
+                },
+                "image": {
+                    "@id": "https://amazingribs.com/best-barbecue-ribs-recipe/#primaryimage"
+                },
+                "thumbnailUrl": "https://amazingribs.com/wp-content/uploads/2020/10/last_meal_ribs_0.jpg",
+                "articleSection": ["- Home Page -", "Our Top 15 Recipes", "Paleo Recipes for BBQ Lovers",
+                    "Pork Ribs Recipes", "The Ultimate Super Bowl Spread Couchgating with a Food Stadium"
+                ],
+                "inLanguage": "en-US",
+                "potentialAction": [{
+                    "@type": "CommentAction",
+                    "name": "Comment",
+                    "target": ["https://amazingribs.com/best-barbecue-ribs-recipe/#respond"]
+                }]
+            }, {
+                "@type": "WebPage",
+                "@id": "https://amazingribs.com/best-barbecue-ribs-recipe/",
+                "url": "https://amazingribs.com/best-barbecue-ribs-recipe/",
+                "name": "A Killer Smoked BBQ Ribs Recipe That Shames The 3-2-1 Method",
+                "isPartOf": {
+                    "@id": "https://amazingribs.com/#website"
+                },
+                "primaryImageOfPage": {
+                    "@id": "https://amazingribs.com/best-barbecue-ribs-recipe/#primaryimage"
+                },
+                "image": {
+                    "@id": "https://amazingribs.com/best-barbecue-ribs-recipe/#primaryimage"
+                },
+                "thumbnailUrl": "https://amazingribs.com/wp-content/uploads/2020/10/last_meal_ribs_0.jpg",
+                "datePublished": "2015-11-26T19:06:00+00:00",
+                "dateModified": "2023-08-29T02:30:55+00:00",
+                "description": "Mastering smoked ribs -- whether they are St. Louis style ribs, spare ribs, or baby back ribs -- with our comprehensive tutorial and recipe will make you a backyard all star.",
+                "breadcrumb": {
+                    "@id": "https://amazingribs.com/best-barbecue-ribs-recipe/#breadcrumb"
+                },
+                "inLanguage": "en-US",
+                "potentialAction": [{
+                    "@type": "ReadAction",
+                    "target": ["https://amazingribs.com/best-barbecue-ribs-recipe/"]
+                }]
+            }, {
+                "@type": "ImageObject",
+                "inLanguage": "en-US",
+                "@id": "https://amazingribs.com/best-barbecue-ribs-recipe/#primaryimage",
+                "url": "https://amazingribs.com/wp-content/uploads/2020/10/last_meal_ribs_0.jpg",
+                "contentUrl": "https://amazingribs.com/wp-content/uploads/2020/10/last_meal_ribs_0.jpg",
+                "width": 475,
+                "height": 274,
+                "caption": "Last meal ribs ready to be served"
+            }, {
+                "@type": "BreadcrumbList",
+                "@id": "https://amazingribs.com/best-barbecue-ribs-recipe/#breadcrumb",
+                "itemListElement": [{
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "AmazingRibs",
+                    "item": "https://amazingribs.com/"
+                }, {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": "Killer Tested Barbecue And Grilling Recipes",
+                    "item": "https://amazingribs.com/category/tested-recipes/"
+                }, {
+                    "@type": "ListItem",
+                    "position": 3,
+                    "name": "Pork Ribs Recipes",
+                    "item": "https://amazingribs.com/category/tested-recipes/pork-ribs-recipes-tested-recipes/"
+                }, {
+                    "@type": "ListItem",
+                    "position": 4,
+                    "name": "A Killer Smoked BBQ Ribs Recipe That Shames The 3-2-1 Method"
+                }]
+            }, {
+                "@type": "WebSite",
+                "@id": "https://amazingribs.com/#website",
+                "url": "https://amazingribs.com/",
+                "name": "Meathead&#039;s AmazingRibs.com",
+                "description": "The Science &amp; Art Of BBQ &amp; Grilling Since 2005",
+                "publisher": {
+                    "@id": "https://amazingribs.com/#organization"
+                },
+                "potentialAction": [{
+                    "@type": "SearchAction",
+                    "target": {
+                        "@type": "EntryPoint",
+                        "urlTemplate": "https://amazingribs.com/?s={search_term_string}"
+                    },
+                    "query-input": "required name=search_term_string"
+                }],
+                "inLanguage": "en-US"
+            }, {
+                "@type": "Organization",
+                "@id": "https://amazingribs.com/#organization",
+                "name": "AmazingRibs.com",
+                "url": "https://amazingribs.com/",
+                "logo": {
+                    "@type": "ImageObject",
+                    "inLanguage": "en-US",
+                    "@id": "https://amazingribs.com/#/schema/logo/image/",
+                    "url": "https://amazingribs.com/wp-content/uploads/2022/11/ARC-logo.png",
+                    "contentUrl": "https://amazingribs.com/wp-content/uploads/2022/11/ARC-logo.png",
+                    "width": 1060,
+                    "height": 210,
+                    "caption": "AmazingRibs.com"
+                },
+                "image": {
+                    "@id": "https://amazingribs.com/#/schema/logo/image/"
+                },
+                "sameAs": ["http://www.facebook.com/amazingribs", "https://twitter.com/meathead",
+                    "http://www.instagram.com/amazingribs", "http://www.linkedin.com/in/meathead/",
+                    "http://www.pinterest.com/amazingribs", "http://www.youtube.com/AmazingRibs",
+                    "https://en.wikipedia.org/wiki/Meathead_Goldwyn"
+                ]
+            }, {
+                "@type": "Person",
+                "@id": "https://amazingribs.com/#/schema/person/8f7c28e642d880a5f8491f332d8160a8",
+                "name": "Kris Coppieters",
+                "image": {
+                    "@type": "ImageObject",
+                    "inLanguage": "en-US",
+                    "@id": "https://amazingribs.com/#/schema/person/image/",
+                    "url": "https://secure.gravatar.com/avatar/0d714618830e27edf3abdfdf8f2fddc0?s=96&d=mm&r=g",
+                    "contentUrl": "https://secure.gravatar.com/avatar/0d714618830e27edf3abdfdf8f2fddc0?s=96&d=mm&r=g",
+                    "caption": "Kris Coppieters"
+                }
+            }, {
+                "@type": "Recipe",
+                "name": "Meathead's Last Meal Ribs Recipe",
+                "author": {
+                    "@id": "https://amazingribs.com/#/schema/person/8f7c28e642d880a5f8491f332d8160a8"
+                },
+                "description": "These are the best BBQ pork ribs you will ever eat. They are so good you would ask for them as your &quot;last meal&quot;. We&#039;re talking classic Southern barbecue ribs here, the barbecue ribs that win barbecue championships. The recipe is a melange of flavors: A complex spice rub, elegant hardwood smoke, tangy sweet sauce, all underpinned and held together by the distinct flavor of pork.",
+                "datePublished": "2015-11-26T19:06:00+00:00",
+                "image": ["https://amazingribs.com/wp-content/uploads/2020/10/ribs-with-flame.jpg",
+                    "https://amazingribs.com/wp-content/uploads/2020/10/ribs-with-flame-500x313.jpg",
+                    "https://amazingribs.com/wp-content/uploads/2020/10/ribs-with-flame-480x270.jpg"
+                ],
+                "video": {
+                    "name": "How To Make The Best BBQ Smoked Pork Ribs You've Ever Tasted!",
+                    "description": "Make the best smoked BBQ pork ribs you've ever tasted. \n\nMastering smoked ribs — whether they are St. Louis style ribs, spare ribs, or baby back ribs — with our comprehensive tutorial and recipe will make you a barbecue / backyard all-star.\n\nYou can make it happen. Here’s the real smoked ribs recipe, good enough to bring home a trophy in a cook-off. In fact, many readers have done exactly that with this ribs recipe.\n\nWhile many sites out there tell you to use something known as the 3-2-1 method, cooking the ribs in foil for 2 hours is far too long and can make the meat mushy and overcooked, a.k.a. “fall-of-the-bone ribs,” which, despite what others might tell you is actually a sign that they are overcooked. Instead, you should be able to take a bite that is pulled easily away from the bone without taking all of the meat with you. \n\nIt’s time to master the basic concepts, after which you’ll be cooking killer authentic smoked BBQ ribs on most charcoal and gas grills, whether spare ribs, baby back ribs, or St. Louis spare ribs!\nCreate championship Southern style, low & slow, tender and juicy barbecue ribs on a simple grill. For the recipe and more on cooking ribs, go to: https://amazingribs.com/best-barbecue-ribs-recipe\n\nRecipe: https://amazingribs.com/tested-recipes/pork-ribs-recipes/last-meal-ribs-recipe-best-barbecue-ribs-youve-ever-tasted\n\nGet a free 30-day trial to our Pitmaster Club: https://pitmaster.amazingribs.com/join-pitmaster\n\nGet tested recipes, proven techniques, ratings and reviews, and so much more at https://amazingribs.com\n\n#barbecue #ribs #bbq #smoke #smokedribs #howtobbqright #pork #porkribs #babybackribs\n#grillright #recipe",
+                    "uploadDate": "2015-06-24T15:14:09+00:00",
+                    "duration": "PT7M36S",
+                    "thumbnailUrl": "https://i.ytimg.com/vi/9GTvBjWioYY/hqdefault.jpg",
+                    "embedUrl": "https://www.youtube.com/embed/9GTvBjWioYY?feature=oembed",
+                    "contentUrl": "https://www.youtube.com/watch?v=9GTvBjWioYY",
+                    "@type": "VideoObject"
+                },
+                "recipeYield": ["3"],
+                "prepTime": "PT30M",
+                "cookTime": "PT330M",
+                "totalTime": "PT360M",
+                "recipeIngredient": ["1 slab ribs (any cut (baby back, spare ribs, St. Louis cut))",
+                    "4 tablespoons Meathead&#039;s Memphis Dust ((see notes below if you would prefer to use our bottled pork rub))",
+                    "1 teaspoon Morton Coarse Kosher Salt ((¼ teaspoon per pound of meat))",
+                    "6 tablespoons barbecue sauce ((Sauce is optional. See notes below if you would prefer to use our bottled KC BBQ sauce))"
+                ],
+                "recipeInstructions": [{
+                    "@type": "HowToStep",
+                    "text": "Prep. Rinse the ribs in cool water to remove any bone bits from the butchering.",
+                    "name": "Prep. Rinse the ribs in cool water to remove any bone bits from the butchering.",
+                    "url": "https://amazingribs.com/best-barbecue-ribs-recipe/#wprm-recipe-1597-step-0-0",
+                    "image": "https://amazingribs.com/wp-content/uploads/2015/11/6.jpg"
+                }, {
+                    "@type": "HowToStep",
+                    "text": "If the butcher has not removed the membrane from the under side, do it yourself. It gets leathery and hard to chew, it keeps fat in, and it keeps sauce out. To remove it, insert a butter knife under the membrane, then your fingers, work a section loose, grip it with a paper towel, and peel it off. If you can&#039;t get the skin off, with a sharp knife, cut slashes through it every inch so some of the fat will render out during the cooking. Click here to see more photos of how to skin &#039;n&#039; trim ribs and here&#039;s a quickie 1 minute video of the technique.",
+                    "name": "If the butcher has not removed the membrane from the under side, do it yourself. It gets leathery and hard to chew, it keeps fat in, and it keeps sauce out. To remove it, insert a butter knife under the membrane, then your fingers, work a section loose, grip it with a paper towel, and peel it off. If you can&#039;t get the skin off, with a sharp knife, cut slashes through it every inch so some of the fat will render out during the cooking. Click here to see more photos of how to skin &#039;n&#039; trim ribs and here&#039;s a quickie 1 minute video of the technique.",
+                    "url": "https://amazingribs.com/best-barbecue-ribs-recipe/#wprm-recipe-1597-step-0-1",
+                    "video": {
+                        "name": "How To Removing the Membrane On Pork Ribs - Quickly & Easily",
+                        "description": "Watch this \"how to\" video to quickly and easily remove the membrane on ribs.  Whether you're cooking indoors or outdoor on the BBQ. Get detailed step by step instructions as to how to remove the membrane on pork ribs here: https://tinyurl.com/y76k2394\n\nDid you enjoy this video?  Subscribe to our channel. \n\nAlso, subscribe to our newsletter, Smoke Signals and receive tested recipes, proven techniques, reviews, and so much more. Click here: https://tinyurl.com/y8ctxfzf\n\nLearn everything you need to know about outdoor cooking and up your BBQ IQ at: https://amazingribs.com\n\nGet a free 30 day trial to our Pitmaster Club: https://pitmaster.amazingribs.com/join-pitmaster",
+                        "uploadDate": "2018-07-13T17:19:43+00:00",
+                        "duration": "PT19S",
+                        "thumbnailUrl": "https://i.ytimg.com/vi/EiKW1F9bSu0/hqdefault.jpg",
+                        "embedUrl": "https://www.youtube.com/embed/EiKW1F9bSu0?feature=oembed",
+                        "contentUrl": "https://www.youtube.com/watch?v=EiKW1F9bSu0",
+                        "@type": "VideoObject"
+                    }
+                }, {
+                    "@type": "HowToStep",
+                    "text": "Trim the excess fat from both sides of the rack of ribs.",
+                    "name": "Trim the excess fat from both sides of the rack of ribs.",
+                    "url": "https://amazingribs.com/best-barbecue-ribs-recipe/#wprm-recipe-1597-step-0-2"
+                }, {
+                    "@type": "HowToStep",
+                    "text": "Next it is time to add the salt. The rule of thumb is 1/2 teaspoon of kosher salt per pound of meat, but ribs are about 50% bone, so use about 1/4 teaspoon per pound. You can simply eyeball it by sprinkling on the same amount of salt you would sprinkle on the ribs if they were served to you unsalted. If you can, give the salt 1 to 2 hours to be absorbed. The process of salting in advance is called dry brining.",
+                    "name": "Next it is time to add the salt. The rule of thumb is 1/2 teaspoon of kosher salt per pound of meat, but ribs are about 50% bone, so use about 1/4 teaspoon per pound. You can simply eyeball it by sprinkling on the same amount of salt you would sprinkle on the ribs if they were served to you unsalted. If you can, give the salt 1 to 2 hours to be absorbed. The process of salting in advance is called dry brining.",
+                    "url": "https://amazingribs.com/best-barbecue-ribs-recipe/#wprm-recipe-1597-step-0-3"
+                }, {
+                    "@type": "HowToStep",
+                    "text": "Before adding a BBQ rub, be aware of double salt jeopardy! Rubs and spice blends are a great way to add flavor to meat, but almost all commercial rubs contain salt so be careful not to pre-salt the ribs if you plan on using one of these rubs otherwise they will be unbearably salty. Also note that some ribs sold in grocery stores are labeled as &quot;enhanced&quot; or &quot;flavor enhanced&quot; or &quot;self-basting&quot; or &quot;basted,&quot; meaning that they have been injected with a brine at the packing plant so if you are using these you probably want to use a rub that doesn&#039;t include salt like our Meathead&#039;s Memphis Dust recipe.Some folks insist on putting the barbecue rub on the night before, but it isn&#039;t necessary. The molecules in spices are too large to penetrate more than a tiny fraction of an inch. Read this for the science. ",
+                    "name": "Before adding a BBQ rub, be aware of double salt jeopardy! Rubs and spice blends are a great way to add flavor to meat, but almost all commercial rubs contain salt so be careful not to pre-salt the ribs if you plan on using one of these rubs otherwise they will be unbearably salty. Also note that some ribs sold in grocery stores are labeled as &quot;enhanced&quot; or &quot;flavor enhanced&quot; or &quot;self-basting&quot; or &quot;basted,&quot; meaning that they have been injected with a brine at the packing plant so if you are using these you probably want to use a rub that doesn&#039;t include salt like our Meathead&#039;s Memphis Dust recipe.Some folks insist on putting the barbecue rub on the night before, but it isn&#039;t necessary. The molecules in spices are too large to penetrate more than a tiny fraction of an inch. Read this for the science. ",
+                    "url": "https://amazingribs.com/best-barbecue-ribs-recipe/#wprm-recipe-1597-step-0-4"
+                }, {
+                    "@type": "HowToStep",
+                    "text": "Before applying the rub, just coat the meat with a thin layer of water. The water helps dissolve the spices. A lot of cooks like to use mustard under the rub as a form of glue. Mustard is water, vinegar, and maybe white wine (all mostly water) with mustard powder mixed in. The amount of mustard powder is so small that by the time the water steams off and drips away, the mustard powder remaining is miniscule. My experience is that using a mustard slather makes little or no difference in the final outcome. If you want a mustard flavor, you will do much better by simply sprinkling it on the meat. Once wet, sprinkle enough Meathead&#039;s Memphis Dust to coat all surfaces but not so much that the meat doesn&#039;t show through. That is about 2 tablespoons per side depending on the size of the slab. Spread the Memphis Dust on the meat and rub it in.",
+                    "name": "Before applying the rub, just coat the meat with a thin layer of water. The water helps dissolve the spices. A lot of cooks like to use mustard under the rub as a form of glue. Mustard is water, vinegar, and maybe white wine (all mostly water) with mustard powder mixed in. The amount of mustard powder is so small that by the time the water steams off and drips away, the mustard powder remaining is miniscule. My experience is that using a mustard slather makes little or no difference in the final outcome. If you want a mustard flavor, you will do much better by simply sprinkling it on the meat. Once wet, sprinkle enough Meathead&#039;s Memphis Dust to coat all surfaces but not so much that the meat doesn&#039;t show through. That is about 2 tablespoons per side depending on the size of the slab. Spread the Memphis Dust on the meat and rub it in.",
+                    "url": "https://amazingribs.com/best-barbecue-ribs-recipe/#wprm-recipe-1597-step-0-5",
+                    "image": "https://amazingribs.com/wp-content/uploads/2020/10/ribs-rub.jpg"
+                }, {
+                    "@type": "HowToStep",
+                    "text": "Fire up. Pre-heat your barbecue smoker or set up your grill for 2-zone (indirect) cooking. Adjust the dampers on your cooker to bring the temperature to about 225°F (107°C) and try to keep it there throughout the cook. Cooking at 225°F (107°C) will allow the meat to roast low and slow, liquefying the collagen in connective tissues and melting fats without getting the proteins knotted in a bunch. It&#39;s a magic temp that creates silky texture, adds moisture, and keeps the meat tender. If you can&#39;t hit 225°F (107°C), get as close as you can. Don&#39;t go under 200°F (93°C) and try not to go over 250°F (121°C).When monitoring the cooker temperature you can absolutely positively noway nohow rely on bi-metal dial thermometers. If you are not monitoring your cooker with a good digital oven thermometer, you are setting yourself up for disappointment. Using a dial thermometer is like trying to send email with a typewriter. Click here to read my buyer&#39;s guide to thermometers.Once you have reached the desired temperature, add about 4 ounces (113 g) of dry wood, placing it as close to the flame as possible.",
+                    "name": "Fire up. Pre-heat your barbecue smoker or set up your grill for 2-zone (indirect) cooking. Adjust the dampers on your cooker to bring the temperature to about 225°F (107°C) and try to keep it there throughout the cook. Cooking at 225°F (107°C) will allow the meat to roast low and slow, liquefying the collagen in connective tissues and melting fats without getting the proteins knotted in a bunch. It&#39;s a magic temp that creates silky texture, adds moisture, and keeps the meat tender. If you can&#39;t hit 225°F (107°C), get as close as you can. Don&#39;t go under 200°F (93°C) and try not to go over 250°F (121°C).When monitoring the cooker temperature you can absolutely positively noway nohow rely on bi-metal dial thermometers. If you are not monitoring your cooker with a good digital oven thermometer, you are setting yourself up for disappointment. Using a dial thermometer is like trying to send email with a typewriter. Click here to read my buyer&#39;s guide to thermometers.Once you have reached the desired temperature, add about 4 ounces (113 g) of dry wood, placing it as close to the flame as possible.",
+                    "url": "https://amazingribs.com/best-barbecue-ribs-recipe/#wprm-recipe-1597-step-0-6"
+                }, {
+                    "@type": "HowToStep",
+                    "text": "Cook. Put the slabs in the cooker in indirect heat, meaty side up, close the lid, go drink a beer, read a book, or make love.",
+                    "name": "Cook. Put the slabs in the cooker in indirect heat, meaty side up, close the lid, go drink a beer, read a book, or make love.",
+                    "url": "https://amazingribs.com/best-barbecue-ribs-recipe/#wprm-recipe-1597-step-0-7"
+                }, {
+                    "@type": "HowToStep",
+                    "text": "When the smoke dwindles after 20 to 30 minutes, add another 4 ounces (113 g) of wood. After that, DO NOT add any more wood. On your first attempt, resist the temptation. Nothing will ruin a meal faster and waste money better than over-smoked meat. You can always add more the next time you cook, but you cannot take it away if you over-smoke. ",
+                    "name": "When the smoke dwindles after 20 to 30 minutes, add another 4 ounces (113 g) of wood. After that, DO NOT add any more wood. On your first attempt, resist the temptation. Nothing will ruin a meal faster and waste money better than over-smoked meat. You can always add more the next time you cook, but you cannot take it away if you over-smoke. ",
+                    "url": "https://amazingribs.com/best-barbecue-ribs-recipe/#wprm-recipe-1597-step-0-8",
+                    "image": "https://amazingribs.com/wp-content/uploads/2020/10/wood-chunk-gas-grill.jpg"
+                }, {
+                    "@type": "HowToStep",
+                    "text": "If you have more than one slab on, halfway through the cook you will need to move the ribs closest to the fire away from the heat, and the slabs farthest from the flame in closer. Leave the meat side up. There is no need to flip the slabs. You can peek if you must, but don&#039;t leave the lid open for long.",
+                    "name": "If you have more than one slab on, halfway through the cook you will need to move the ribs closest to the fire away from the heat, and the slabs farthest from the flame in closer. Leave the meat side up. There is no need to flip the slabs. You can peek if you must, but don&#039;t leave the lid open for long.",
+                    "url": "https://amazingribs.com/best-barbecue-ribs-recipe/#wprm-recipe-1597-step-0-9"
+                }, {
+                    "@type": "HowToStep",
+                    "text": "This next step is known as the Texas Crutch. This optional trick involves wrapping the slab in foil with about an ounce of water for up to an hour to speed cooking and tenderize a bit. Almost all barbecue ribs competition cooks use the Texas Crutch to get an edge. But the improvement is really slight and I never bother for backyard cooking. If you crutch too long you can turn the meat to mush and time in foil can soften the bark and remove a lot of rub. I recommend it only for barbecue competitions when the tiniest improvement can mean thousands of dollars. Skip it and you&#039;ll still have killer ribs. But if you&#039;ve seen it on TV and must try it, click here to learn more about The Texas Crutch. The Texas Crutch is it is baked into a popular technique called the 3-2-1 method which I do not recommend. Two hours in foil or butcher paper is far too long and can make the meat mushy. Try the Texas Crutch after you master the basics.",
+                    "name": "This next step is known as the Texas Crutch. This optional trick involves wrapping the slab in foil with about an ounce of water for up to an hour to speed cooking and tenderize a bit. Almost all barbecue ribs competition cooks use the Texas Crutch to get an edge. But the improvement is really slight and I never bother for backyard cooking. If you crutch too long you can turn the meat to mush and time in foil can soften the bark and remove a lot of rub. I recommend it only for barbecue competitions when the tiniest improvement can mean thousands of dollars. Skip it and you&#039;ll still have killer ribs. But if you&#039;ve seen it on TV and must try it, click here to learn more about The Texas Crutch. The Texas Crutch is it is baked into a popular technique called the 3-2-1 method which I do not recommend. Two hours in foil or butcher paper is far too long and can make the meat mushy. Try the Texas Crutch after you master the basics.",
+                    "url": "https://amazingribs.com/best-barbecue-ribs-recipe/#wprm-recipe-1597-step-0-10"
+                }, {
+                    "@type": "HowToStep",
+                    "text": "For cooking time, allow 5 to 7 hours for St. Louis Cut (SLC) Ribs or Spare Ribs, and 3 to 5 hours for Baby Back Ribs. Thicker, meatier slabs take longer. If you use rib holders so they are crammed close to each other, add another hour.",
+                    "name": "For cooking time, allow 5 to 7 hours for St. Louis Cut (SLC) Ribs or Spare Ribs, and 3 to 5 hours for Baby Back Ribs. Thicker, meatier slabs take longer. If you use rib holders so they are crammed close to each other, add another hour.",
+                    "url": "https://amazingribs.com/best-barbecue-ribs-recipe/#wprm-recipe-1597-step-0-11"
+                }, {
+                    "@type": "HowToStep",
+                    "text": "When it is time to find out whether or not the ribs are ready, we us the bend test (a.k.a. the bounce test). Although we insist that you buy a good digital meat thermometer for most smoking and grilling, this is one of the few meats on which you cannot use a meat thermometer because the bones have an impact on the meat temp and because the meat is so thin. To conduct the bend test, pick up the slab with tongs and bounce it gently. If the surface cracks as in the picture above, it is ready. Here are some other tricks to tell when ribs are ready.",
+                    "name": "When it is time to find out whether or not the ribs are ready, we us the bend test (a.k.a. the bounce test). Although we insist that you buy a good digital meat thermometer for most smoking and grilling, this is one of the few meats on which you cannot use a meat thermometer because the bones have an impact on the meat temp and because the meat is so thin. To conduct the bend test, pick up the slab with tongs and bounce it gently. If the surface cracks as in the picture above, it is ready. Here are some other tricks to tell when ribs are ready.",
+                    "url": "https://amazingribs.com/best-barbecue-ribs-recipe/#wprm-recipe-1597-step-0-12",
+                    "image": "https://amazingribs.com/wp-content/uploads/2020/10/bend-test.jpg"
+                }, {
+                    "@type": "HowToStep",
+                    "text": "Once the ribs are done cooking it is time to add the sauce unless you intend to serve them &quot;dry&quot; like they do in Memphis. The key to saucing ribs is to go easy on it so that the meat can shine through. Simply paint both sides of the rack with your favorite home made barbecue sauce or store-bought barbecue sauce and cook for another 15 minutes or so.  Don&#039;t put the sauce on earlier than that. It has sugar and there is a risk it can burn. Now here&#039;s a trick I like: Sizzle on the sauce. Put the ribs with sauce directly over the hottest part of a grill in order to caramelize and crisp the sauce. On a charcoal grill, just move the slab over the coals. On a gas grill, crank up all the burners. On a water smoker, remove the water pan and move the meat close to the coals. On an offset smoker, put a grate over the coals in the firebox and put the meat there. With the lid open so you don&#039;t roast the meat from above, sizzle the sauce on one side and then the other. The sauce will actually sizzle and bubble. Stand by your grill and watch because sweet sauce can go from caramelized to carbonized in less than a minute! One coat of a thick sauce should be enough, but if you need two, go ahead, but don&#039;t hide all the fabulous flavors under too much sauce. If you think you&#039;ll want more sauce, put some in a bowl on the table.",
+                    "name": "Once the ribs are done cooking it is time to add the sauce unless you intend to serve them &quot;dry&quot; like they do in Memphis. The key to saucing ribs is to go easy on it so that the meat can shine through. Simply paint both sides of the rack with your favorite home made barbecue sauce or store-bought barbecue sauce and cook for another 15 minutes or so.  Don&#039;t put the sauce on earlier than that. It has sugar and there is a risk it can burn. Now here&#039;s a trick I like: Sizzle on the sauce. Put the ribs with sauce directly over the hottest part of a grill in order to caramelize and crisp the sauce. On a charcoal grill, just move the slab over the coals. On a gas grill, crank up all the burners. On a water smoker, remove the water pan and move the meat close to the coals. On an offset smoker, put a grate over the coals in the firebox and put the meat there. With the lid open so you don&#039;t roast the meat from above, sizzle the sauce on one side and then the other. The sauce will actually sizzle and bubble. Stand by your grill and watch because sweet sauce can go from caramelized to carbonized in less than a minute! One coat of a thick sauce should be enough, but if you need two, go ahead, but don&#039;t hide all the fabulous flavors under too much sauce. If you think you&#039;ll want more sauce, put some in a bowl on the table.",
+                    "url": "https://amazingribs.com/best-barbecue-ribs-recipe/#wprm-recipe-1597-step-0-13"
+                }, {
+                    "@type": "HowToStep",
+                    "text": "Serve. Once sauced, slice the rack between the bones. If you&#039;ve done all this right, you will notice that there is a thin pink layer beneath the surface of the meat. This does not mean it is undercooked! It is the highly prized smoke ring caused by the combustion gases and the smoke. It is a sign of Amazing Ribs. Now plate, serve to your guests, and take a bow when the applause swells from the audience.",
+                    "name": "Serve. Once sauced, slice the rack between the bones. If you&#039;ve done all this right, you will notice that there is a thin pink layer beneath the surface of the meat. This does not mean it is undercooked! It is the highly prized smoke ring caused by the combustion gases and the smoke. It is a sign of Amazing Ribs. Now plate, serve to your guests, and take a bow when the applause swells from the audience.",
+                    "url": "https://amazingribs.com/best-barbecue-ribs-recipe/#wprm-recipe-1597-step-0-14",
+                    "image": "https://amazingribs.com/wp-content/uploads/2020/10/glazed-baby-back-ribss.jpg"
+                }, {
+                    "@type": "HowToStep",
+                    "text": "Finally, here&#039;s a video from our fan Jason King that shows the whole process.",
+                    "name": "Finally, here&#039;s a video from our fan Jason King that shows the whole process.",
+                    "url": "https://amazingribs.com/best-barbecue-ribs-recipe/#wprm-recipe-1597-step-0-15",
+                    "video": {
+                        "name": "Best BBQ Ribs Ever - Recipe from AmazingRibs.com - BBQFOOD4U",
+                        "description": "This is the recipe for making the best barbecue ribs you ever tasted. They are marinated in a dry rub, then smoked low and slow, the sauce is added near the end and sizzled on. Just like the champion pitmasters and the best rib joints do it.\" Meathead Goldwyn - AmazingRibs.com\nFull recipe information - http://amazingribs.com/recipes/porknography/best_BBQ_ribs_ever.html\nMemphis Dust information - http://amazingribs.com/recipes/rubs_pastes_marinades_and_brines/meatheads_memphis_dust.html\nGet Meatheads Book on Amazon - https://amzn.to/2ILykxr\n\nGet Meathead's Book - https://amzn.to/2ILykxr Named Southern Living 100 best cookbooks of all time. NY Times Bestseller. I'd say the best BBQ book that has great in-depth information for everyone to cook better BBQ. https://amzn.to/2ILykxr\n\nHelp support a small food video creator so I can make more recipes for people to enjoy. I have over 150 original recipes creations to get done but can't really afford to get it done without outside help so anything truly helps. https://bbqfood4u.com/help-support\nThanks for watching.\n\nEquipment & Products Used Available on Amazon\nBBQ - https://amzn.to/2Guofj8\nKnifes - https://amzn.to/2Iybrdd\nCharcoal - https://amzn.to/2k4A0UK\nTongs - https://amzn.to/2LctnMo\nMeatheads Number #1 BBQ Book -  https://amzn.to/2ILykxr",
+                        "uploadDate": "2014-07-18T13:59:38+00:00",
+                        "duration": "PT6M34S",
+                        "thumbnailUrl": "https://i.ytimg.com/vi/Pf03vpxk96M/hqdefault.jpg",
+                        "embedUrl": "https://www.youtube.com/embed/Pf03vpxk96M?feature=oembed",
+                        "contentUrl": "https://www.youtube.com/watch?v=Pf03vpxk96M",
+                        "@type": "VideoObject"
+                    }
+                }],
+                "aggregateRating": {
+                    "@type": "AggregateRating",
+                    "ratingValue": "4.77",
+                    "ratingCount": "1561"
+                },
+                "recipeCategory": ["Dinner", "Lunch", "Main Course"],
+                "recipeCuisine": ["American"],
+                "keywords": "baby back ribs, babyback ribs, barbecue, bbq ribs, Candied BBQ Ribs, grill, ribs, SLC ribs, smoked ribs, spare ribs, St. Louis Cut ribs",
+                "nutrition": {
+                    "@type": "NutritionInformation",
+                    "calories": "61 kcal",
+                    "carbohydrateContent": "14 g",
+                    "proteinContent": "1 g",
+                    "fatContent": "1 g",
+                    "saturatedFatContent": "1 g",
+                    "cholesterolContent": "1 mg",
+                    "sodiumContent": "1135 mg",
+                    "fiberContent": "1 g",
+                    "sugarContent": "12 g",
+                    "servingSize": "1 serving"
+                },
+                "@id": "https://amazingribs.com/best-barbecue-ribs-recipe/#recipe",
+                "isPartOf": {
+                    "@id": "https://amazingribs.com/best-barbecue-ribs-recipe/#article"
+                },
+                "mainEntityOfPage": "https://amazingribs.com/best-barbecue-ribs-recipe/"
+            }]
+        }
+    </script>
