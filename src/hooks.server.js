@@ -27,7 +27,6 @@ export const handle = async ({ event, resolve }) => {
 		'http://localhost:5173'
 	]
 	const requestOrigin = event.request.headers.get('origin')
-	console.log('[CORS]', requestOrigin)
 
 	if (allowedOrigins.includes(requestOrigin)) {
 		response.headers.set('Access-Control-Allow-Origin', requestOrigin)
