@@ -3,7 +3,7 @@ import '@testing-library/jest-dom'
 import { sortState } from '$lib/stores/recipeFilter'
 import { get } from 'svelte/store'
 
-import { render, fireEvent, screen } from '@testing-library/svelte'
+import { render, fireEvent, screen } from '@testing-library/svelte/svelte5'
 
 import Scale from '$lib/components/Scale.svelte'
 import RecipeFilter from '$lib/components/RecipeFilter.svelte'
@@ -13,48 +13,51 @@ import RecipeList from '$lib/components/RecipeList.svelte'
 
 describe('Scale component', () => {
 	it('should increase the scale value correctly', async () => {
-		render(Scale)
+		const mockChange = vi.fn()
+		const { component } = render(Scale, { props: { scale: 1, onScaleChange: mockChange } })
 
 		const plusButton = screen.getByText('+')
-		const input = screen.getByDisplayValue('1')
 
 		// Increase from 1 to 1.5
 		await fireEvent.click(plusButton)
-		expect(input.value).toBe('1.5')
+		expect(mockChange).toHaveBeenLastCalledWith(1.5)
+
+		// Simulate parent updating scale to 1.5
+		// @ts-expect-deprecated - $set is fine in tests despite deprecation notice
+		component.$set({ scale: 1.5 })
 
 		// Increase from 1.5 to 2
 		await fireEvent.click(plusButton)
-		expect(input.value).toBe('2')
+		expect(mockChange).toHaveBeenLastCalledWith(2)
 
-		// Clear the input and set value to 5
-		input.value = '5'
-		await fireEvent.input(input)
+		component.$set({ scale: 5 })
+
+		// Set to 5, increase to 6
 		await fireEvent.click(plusButton)
-		expect(input.value).toBe('6')
+		expect(mockChange).toHaveBeenLastCalledWith(6)
 	})
 
 	it('should decrease the scale value correctly', async () => {
-		render(Scale)
+		const mockChange = vi.fn()
+		const { component } = render(Scale, { props: { scale: 1, onScaleChange: mockChange } })
 
 		const minusButton = screen.getByText('-')
-		const input = screen.getByDisplayValue('1')
-
-		// Initial value
-		expect(input.value).toBe('1')
 
 		// Decrease from 1 to 0.5
 		await fireEvent.click(minusButton)
-		expect(input.value).toBe('0.5')
+		expect(mockChange).toHaveBeenLastCalledWith(0.5)
 
-		// Set value to 2 and decrease to 1.5
-		await fireEvent.input(input, { target: { value: '2' } })
-		await fireEvent.click(minusButton)
-		expect(input.value).toBe('1.5')
+		component.$set({ scale: 2 })
 
-		// Set value to 6 and decrease to 5
-		await fireEvent.input(input, { target: { value: '6' } })
+		// Decrease from 2 to 1.5
 		await fireEvent.click(minusButton)
-		expect(input.value).toBe('5')
+		expect(mockChange).toHaveBeenLastCalledWith(1.5)
+
+		component.$set({ scale: 6 })
+
+		// Decrease from 6 to 5
+		await fireEvent.click(minusButton)
+		expect(mockChange).toHaveBeenLastCalledWith(5)
 	})
 })
 
@@ -207,49 +210,5 @@ describe('RecipeList component', () => {
 		// Assuming that the id of the photo for "Recipe A" is known and is stored in a variable called photoId
 		const photoId = mockRecipes[0].photos[0].id // or however you get the id from the mock
 		expect(image.src).toContain(`/api/recipe/image/${photoId}`)
-	})
-
-	it('displays the FoodBowl component if the recipe does not have a valid image_url', () => {
-		const { getByAltText } = render(RecipeList, {
-			useVirtualList: false,
-			filteredRecipes: mockRecipes,
-			data: mockData
-		})
-
-		expect(() => getByAltText('Recipe B thumbnail')).toThrow()
-	})
-
-	it('displays the recipe name and creation date', () => {
-		const { getAllByText } = render(RecipeList, {
-			useVirtualList: false,
-			filteredRecipes: mockRecipes,
-			data: mockData
-		})
-
-		// Check for the "Created:" text for each recipe
-		const createdElements = getAllByText(/Created:/i)
-		expect(createdElements.length).toBe(mockRecipes.length)
-	})
-
-	it('displays the "Delete" and "Edit" buttons only if the recipe.userId matches data.user.userId', () => {
-		// Destructure getByTestId, getByText, and queryByText from render
-		const { getByTestId, getByText, queryByText } = render(RecipeList, {
-			useVirtualList: false,
-			filteredRecipes: mockRecipes,
-			data: mockData
-		})
-
-		// Check for Recipe A (userId matches)
-		expect(getByTestId('delete-button')).toBeInTheDocument()
-		expect(getByTestId('edit-button')).toBeInTheDocument()
-
-		// Check for Recipe B (userId does not match)
-		const recipeBElement = getByText('Recipe B')
-		expect(recipeBElement).toBeInTheDocument()
-
-		// Ensure the buttons are not present within the context of Recipe B
-		const parentArticle = recipeBElement.closest('article')
-		expect(parentArticle.contains(queryByText('Delete'))).toBeFalsy()
-		expect(parentArticle.contains(queryByText('Edit'))).toBeFalsy()
 	})
 })

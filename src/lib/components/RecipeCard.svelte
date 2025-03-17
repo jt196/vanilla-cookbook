@@ -48,7 +48,9 @@
 				</button>
 				<button
 					class="card-button"
-					data-tooltip="This recipe has been cooked {item.log.length} times">
+					data-tooltip={item.log?.length > 0
+						? 'This recipe has been cooked ' + item.log.length + ' times'
+						: 'This recipe has never been cooked'}>
 					<Check
 						checked={logged}
 						width="15px"

@@ -27,7 +27,7 @@
 		</span>
 	{:else}
 		{#each filteredRecipes as item, i (item.uid)}
-			<RecipeCard bind:item={filteredRecipes[i]} {data} {recipeFavourited} {recipeRatingChanged} />
+			<RecipeCard {item} {data} {recipeFavourited} {recipeRatingChanged} />
 		{/each}
 	{/if}
 </div>
