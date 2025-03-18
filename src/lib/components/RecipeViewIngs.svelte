@@ -55,7 +55,7 @@
 			<div class="default"><i> * Converted using default water density </i></div>
 		{/if}
 		<div class="convert">
-			{#if measurementSystem}
+			{#if measurementSystem && measurementSystem.system != 'inconclusive'}
 				<RecipeViewDropdown {selectedSystem} {onSelectedSystemChange} {measurementSystem} />
 			{/if}
 		</div>
