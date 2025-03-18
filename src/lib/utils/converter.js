@@ -471,113 +471,6 @@ export function parseRecipeText(directions, toSystem, fromSystem) {
 	return directions.map((direction) => parseTemperature(direction, toSystem, fromSystem))
 }
 
-/**
- * Converts temperatures in a given string from one system to another.
- *
- * The function identifies temperatures in Celsius, Fahrenheit, and generic "degrees" format.
- * It then converts them based on the specified target system.
- *
- * @param {string} direction - The input string containing temperature values to be converted.
- * @param {string} toSystem - The target temperature system.
- *                            Accepted values: 'metric', 'imperial', 'americanVolumetric'.
- *                            Note: 'americanVolumetric' is treated as a subtype of 'imperial'.
- * @param {string} fromSystem - The original temperature system of the values in the input string.
- *                              Accepted values: 'metric', 'imperial'.
- *
- * @returns {string} - The input string with temperatures converted to the target system.
- *
- * @example
- * parseTemperature("Preheat oven to 350°F", "metric", "imperial");
- * // Returns: "Preheat oven to 176°C"
- *
- * @example
- * parseTemperature("Heat to 180C", "imperial", "metric");
- * // Returns: "Heat to 356°F"
- */
-export function parseTemperature(direction, toSystem, fromSystem) {
-	const celsiusRegex = /(\d+-\d+|\d+(\.\d+)?)\s?(°C|ºC|C|degrees C)(?![a-zA-Z])/gi
-	const fahrenheitRegex = /(\d+-\d+|\d+(\.\d+)?)\s?(°F|ºF|F|degrees F)(?![a-zA-Z])/gi
-	const gasMarkRegex = /Gas Mark (\d+)|gas (\d+)/gi
-	const genericDegreesRegex = /(\d+(\.\d+)?) degrees(?: (F(ahrenheit)?|C(elcius)?))?\b/gi
-
-	// Find all matches for each temperature type in the given direction
-	const celsiusMatches = direction.match(celsiusRegex) || []
-	const fahrenheitMatches = direction.match(fahrenheitRegex) || []
-	// Matches any "Gas Mark 4 or gas 4" references in the text, at the moment, not processing these.
-	// eslint-disable-next-line no-unused-vars
-	const gasMarkMatches = direction.match(gasMarkRegex) || []
-	const genericDegreesMatches = direction.match(genericDegreesRegex) || []
-	// Logging the matches for debugging purposes
-	const isTargetImperial = ['imperial', 'americanVolumetric'].includes(toSystem)
-	const isSourceImperial = ['imperial', 'americanVolumetric'].includes(fromSystem)
-
-	if (celsiusMatches.length && fahrenheitMatches.length) {
-		return direction // Rule 1
-	}
-
-	if (celsiusMatches.length && toSystem === 'metric') {
-		return direction // Rule 2
-	}
-
-	if (fahrenheitMatches.length && toSystem === 'imperial') {
-		return direction // Rule 3
-	}
-
-	function convertValue(value, from, to) {
-		if (from === 'imperial' && to === 'metric') {
-			return ((value - 32) * 5) / 9
-		} else if (from === 'metric' && to === 'imperial') {
-			return (value * 9) / 5 + 32
-		}
-		return value
-	}
-
-	function convertMatch(match, from, to, toUnit) {
-		// Split the match by '-' to handle ranges.
-		// If it's a single value, it'll result in an array with one element.
-		const values = match.split('-').map(parseFloat)
-
-		// Convert each value in the array using the convertValue function.
-		// The result is an array of converted values.
-		const convertedValues = values.map((value) => convertValue(value, from, to).toFixed(0))
-
-		// Join the converted values with '-' (if it's a range) and append the target unit.
-		return '**' + convertedValues.join('-') + toUnit + '**'
-	}
-
-	// Handling generic "degrees" format
-	if (genericDegreesMatches.length > 0) {
-		// Skip this if from/toSystem are the same, or both imperial
-		if (fromSystem === toSystem || (isSourceImperial && isTargetImperial)) {
-			return direction
-		} else {
-			if ((fromSystem === 'imperial' || 'americanVolumetric') && !isTargetImperial) {
-				return direction.replace(genericDegreesRegex, (match) =>
-					convertMatch(match, 'imperial', 'metric', '°C')
-				)
-			} else if (fromSystem === 'metric' && isTargetImperial) {
-				return direction.replace(genericDegreesRegex, (match) =>
-					convertMatch(match, fromSystem, toSystem, '°F')
-				)
-			}
-		}
-	}
-
-	// Handling Celsius and Fahrenheit conversions
-	if (celsiusMatches.length && isTargetImperial) {
-		return direction.replace(celsiusRegex, (match) =>
-			convertMatch(match, 'metric', 'imperial', '°F')
-		)
-	}
-
-	if (fahrenheitMatches.length && !isTargetImperial) {
-		return direction.replace(fahrenheitRegex, (match) =>
-			convertMatch(match, 'imperial', 'metric', '°C')
-		)
-	}
-	return direction
-}
-
 export function convertIngredients(ingredients, fromSystem, toSystem) {
 	const fuse = new Fuse(dryIngredientsConversion, fuseOptions)
 	// If no system selected, return the raw ingredients
@@ -613,4 +506,135 @@ export function convertIngredients(ingredients, fromSystem, toSystem) {
 			// dietLabel: dietLabel
 		}
 	})
+}
+
+/**
+ * Converts temperatures in a given string from one system to another.
+ *
+ * The function identifies temperatures in Celsius, Fahrenheit, and generic "degrees" format.
+ * It supports both single values and ranges (e.g., "70C", "70 to 80 degrees F").
+ * Conversion is based on the specified source and target system.
+ *
+ * @param {string} direction - The input string containing temperature values.
+ * @param {string} toSystem - The target system: 'metric', 'imperial', or 'americanVolumetric'.
+ *                            Note: 'americanVolumetric' is treated as a subtype of 'imperial'.
+ * @param {string} fromSystem - The source system: 'metric' or 'imperial'.
+ *
+ * @returns {string} - The string with converted temperatures, wrapped in `**`, or original if no conversion needed.
+ *
+ * @example
+ * parseTemperature("Preheat oven to 350°F", "metric", "imperial");
+ * // => "Preheat oven to **176°C**"
+ *
+ * parseTemperature("Set water to 70 to 80 degrees C", "imperial", "metric");
+ * // => "Set water to **158-176°F**"
+ */
+export function parseTemperature(direction, toSystem, fromSystem) {
+	// ─────────────────────────────────────────────
+	// Regex to match Celsius temperatures
+	// Matches single values ("70C") and ranges ("70-80C", "70 to 80C")
+	// Capture groups:
+	//   p1 = first number
+	//   p2 = optional second number for range
+	//   unit = °C, ºC, C, or degrees C
+	const celsiusRegex =
+		/(\d+(?:\.\d+)?)(?:\s*(?:-|–|to)\s*(\d+(?:\.\d+)?))?\s?(°C|ºC|C|degrees C)(?![a-zA-Z])/gi
+
+	// Same structure as above for Fahrenheit values
+	const fahrenheitRegex =
+		/(\d+(?:\.\d+)?)(?:\s*(?:-|–|to)\s*(\d+(?:\.\d+)?))?\s?(°F|ºF|F|degrees F)(?![a-zA-Z])/gi
+
+	// Matches Gas Mark (e.g., "Gas Mark 4"), not currently converted
+	const gasMarkRegex = /Gas Mark (\d+)|gas (\d+)/gi
+
+	// Matches generic "degrees" without °C/°F (e.g., "175 degrees", "175 degrees Fahrenheit")
+	const genericDegreesRegex = /(\d+(?:\.\d+)?) degrees(?: (F(ahrenheit)?|C(elcius)?))?\b/gi
+
+	// ─────────────────────────────────────────────
+	// Determine if conversion is to/from imperial system
+	const isTargetImperial = ['imperial', 'americanVolumetric'].includes(toSystem)
+	const isSourceImperial = ['imperial', 'americanVolumetric'].includes(fromSystem)
+
+	// Find all temperature matches in the string
+	const celsiusMatches = direction.match(celsiusRegex) || []
+	const fahrenheitMatches = direction.match(fahrenheitRegex) || []
+	const genericDegreesMatches = direction.match(genericDegreesRegex) || []
+
+	// ─────────────────────────────────────────────
+	// Rule 1: Skip if both Celsius and Fahrenheit exist (likely already dual-labeled)
+	if (celsiusMatches.length && fahrenheitMatches.length) {
+		return direction
+	}
+	// Rule 2: Skip if Celsius only and target is metric (no change needed)
+	if (celsiusMatches.length && toSystem === 'metric') {
+		return direction
+	}
+	// Rule 3: Skip if Fahrenheit only and target is imperial (no change needed)
+	if (fahrenheitMatches.length && toSystem === 'imperial') {
+		return direction
+	}
+
+	// ─────────────────────────────────────────────
+	// Converts a numeric value from one system to another
+	function convertValue(value, from, to) {
+		if (from === 'imperial' && to === 'metric') {
+			return ((value - 32) * 5) / 9
+		} else if (from === 'metric' && to === 'imperial') {
+			return (value * 9) / 5 + 32
+		}
+		return value // Same system, return unchanged
+	}
+
+	// ─────────────────────────────────────────────
+	// Handles matched temperatures (both ranges and single values)
+	function convertMatch(match, p1, p2, unit, from, to, toUnit) {
+		const val1 = parseFloat(p1)
+		const val2 = p2 ? parseFloat(p2) : null
+
+		if (val2 !== null) {
+			// Convert both numbers in a range
+			const converted1 = convertValue(val1, from, to).toFixed(0)
+			const converted2 = convertValue(val2, from, to).toFixed(0)
+			return `**${converted1}-${converted2}${toUnit}**`
+		} else {
+			// Single value conversion
+			const converted = convertValue(val1, from, to).toFixed(0)
+			return `**${converted}${toUnit}**`
+		}
+	}
+
+	// ─────────────────────────────────────────────
+	// Replace Celsius matches if converting to imperial
+	if (celsiusMatches.length && isTargetImperial) {
+		return direction.replace(celsiusRegex, (match, p1, p2, unit) =>
+			convertMatch(match, p1, p2, unit, 'metric', 'imperial', '°F')
+		)
+	}
+
+	// Replace Fahrenheit matches if converting to metric
+	if (fahrenheitMatches.length && !isTargetImperial) {
+		return direction.replace(fahrenheitRegex, (match, p1, p2, unit) =>
+			convertMatch(match, p1, p2, unit, 'imperial', 'metric', '°C')
+		)
+	}
+
+	// ─────────────────────────────────────────────
+	// Replace generic "degrees" matches, e.g., "175 degrees"
+	if (genericDegreesMatches.length > 0) {
+		// Skip if systems are the same or both imperial
+		if (fromSystem === toSystem || (isSourceImperial && isTargetImperial)) {
+			return direction
+		} else {
+			// Convert each generic "degrees" match
+			return direction.replace(genericDegreesRegex, (match, value, _, unit) => {
+				const converted = convertValue(parseFloat(value), fromSystem, toSystem).toFixed(0)
+				const targetUnit = isTargetImperial ? '°F' : '°C'
+				return `**${converted}${targetUnit}**`
+			})
+		}
+	}
+
+	// ─────────────────────────────────────────────
+	// No matches or conversions required
+	return direction
 }

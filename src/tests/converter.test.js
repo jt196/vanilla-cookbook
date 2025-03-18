@@ -90,6 +90,30 @@ describe('parseTemperature function', () => {
 		expect(result).toBe('Bake for 30–35 minutes or until golden.')
 	})
 
+	it('should not change "Bake for 30 to 35 minutes or until golden."', () => {
+		const result = parseTemperature(
+			'Bake for 30 to 35 minutes or until golden.',
+			'metric',
+			'imperial'
+		)
+		expect(result).toBe('Bake for 30 to 35 minutes or until golden.')
+	})
+
+	it('should convert "Set the water to 70 to 80C."', () => {
+		const result = parseTemperature('Set the water to 70 to 80C.', 'imperial')
+		expect(result).toBe('Set the water to **158-176°F**.')
+	})
+
+	it('should convert "Set the water to 70 to 80 degrees C."', () => {
+		const result = parseTemperature('Set the water to 70 to 80 degrees C.', 'imperial')
+		expect(result).toBe('Set the water to **158-176°F**.')
+	})
+
+	it('should convert "Heat to 158 to 176°F."', () => {
+		const result = parseTemperature('Heat to 158 to 176°F.', 'metric')
+		expect(result).toBe('Heat to **70-80°C**.')
+	})
+
 	it('should convert "Preheat oven to 340 degrees F (171 C)."', () => {
 		const result = parseTemperature('Preheat oven to 340 degrees F (171 C).', 'metric', 'imperial')
 		expect(result).toBe('Preheat oven to 340 degrees F (171 C).')
@@ -103,6 +127,19 @@ describe('parseTemperature function', () => {
 	it('should convert "Preheat a Philips air fryer to 200-205C"', () => {
 		const result = parseTemperature('Preheat a Philips air fryer to 200-205C.', 'imperial')
 		expect(result).toBe('Preheat a Philips air fryer to **392-401°F**.')
+	})
+
+	it('should convert "The sous-vide should be set to 70-80C for best results."', () => {
+		const result = parseTemperature(
+			'The sous-vide should be set to 70-80C for best results.',
+			'imperial'
+		)
+		expect(result).toBe('The sous-vide should be set to **158-176°F** for best results.')
+	})
+
+	it('should convert "Keep the bath at 158-176°F."', () => {
+		const result = parseTemperature('Keep the bath at 158-176°F.', 'metric')
+		expect(result).toBe('Keep the bath at **70-80°C**.')
 	})
 
 	it('should convert "Preheat a Philips air fryer to 392-401°F."', () => {
