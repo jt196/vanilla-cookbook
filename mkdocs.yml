@@ -55,6 +55,7 @@ nav:
       - Usage: manual/usage.md
       - Apps: manual/apps.md
       - Import/Export: manual/import.md
+  - Roadmap: roadmap.md
 
 extra:
   social:
