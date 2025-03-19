@@ -11,10 +11,6 @@
 
 	let timeoutId
 
-	$effect(() => {
-		console.log('Message ' + message)
-	})
-
 	const colors = {
 		success: 'var(--pico-ins-color)',
 		error: 'var(--pico-del-color)',

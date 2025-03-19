@@ -26,10 +26,6 @@
 
 	let { shoppingList } = $state(data)
 
-	$effect(() => {
-		console.log('🚀 ~ shoppingFeedback:', shoppingFeedback)
-	})
-
 	let isDeleteDialogOpen = $state(false)
 	let isCheckAllDialogOpen = $state(false)
 	let shoppingFeedback = $state('')
