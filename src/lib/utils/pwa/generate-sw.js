@@ -7,8 +7,6 @@ const workboxConfig = {
 	skipWaiting: true,
 	clientsClaim: true,
 	mode: 'production', // Ensures minimal output
-	// This forces CDN usage for Workbox libs
-	useLocalWorkboxLibraries: false, // optional but explicit
 	runtimeCaching: [
 		{
 			urlPattern: /^\/(\?.*)?$/,
