@@ -20,7 +20,7 @@
 	let { data, children } = $props()
 	const { user, settings } = data
 
-	if (browser && 'serviceWorker' in navigator) {
+	if (browser && 'serviceWorker' in navigator && !import.meta.env.DEV) {
 		navigator.serviceWorker
 			.register('/service-worker.js', { scope: '/' })
 			.then(function (registration) {

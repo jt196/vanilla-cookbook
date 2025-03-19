@@ -22,6 +22,7 @@ export const handle = async ({ event, resolve }) => {
 	// Only apply CORS headers during test/CI/dev environments
 	const allowedOrigins = [
 		'http://127.0.0.1:3000',
+		'http://0.0.0.0:3000',
 		'http://localhost:3000',
 		'http://127.0.0.1:5173',
 		'http://localhost:5173'
