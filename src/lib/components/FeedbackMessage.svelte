@@ -6,28 +6,32 @@
 		message = '',
 		timeout = 3000,
 		type = 'info',
-		background = 'var(--pico-secondary-focus)'
+		background = 'var(--pico-background-color)'
 	} = $props()
-	let show = $state(false)
+
+	let timeoutId
 
 	$effect(() => {
-		if (message) {
-			show = true
-			setTimeout(() => {
-				show = false
-			}, timeout)
-		}
+		console.log('Message ' + message)
 	})
 
-	// Define colors based on the message type
 	const colors = {
 		success: 'var(--pico-ins-color)',
 		error: 'var(--pico-del-color)',
 		info: 'var(--pico-primary)'
 	}
+
+	$effect(() => {
+		if (message) {
+			clearTimeout(timeoutId) // Prevent overlapping timeouts
+			timeoutId = setTimeout(() => {
+				message = ''
+			}, timeout)
+		}
+	})
 </script>
 
-{#if show && message}
+{#if message}
 	<div
 		transition:fade
 		class="feedback-message"
@@ -39,16 +43,17 @@
 <style>
 	.feedback-message {
 		position: fixed;
-		top: 20px;
+		top: calc(env(safe-area-inset-top, 0px) + 20px);
 		left: 50%;
 		transform: translateX(-50%);
 		z-index: 1000;
 		padding: 10px 20px;
+		border: 1px solid var(--pico-muted-border-color);
 		border-radius: 5px;
 		font-weight: bold;
 		box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-		/* opacity: 0.95; */
 		max-width: 80%;
 		text-align: center;
+		background-clip: padding-box;
 	}
 </style>

@@ -26,6 +26,10 @@
 
 	let { shoppingList } = $state(data)
 
+	$effect(() => {
+		console.log('🚀 ~ shoppingFeedback:', shoppingFeedback)
+	})
+
 	let isDeleteDialogOpen = $state(false)
 	let isCheckAllDialogOpen = $state(false)
 	let shoppingFeedback = $state('')
@@ -98,12 +102,10 @@
 
 			// Send the object to the API and create a new shopping list item
 			const response = await addIngredientToShoppingList(ingredientObject)
-			console.log('🚀 ~ handleAddIngredient ~ response:', response)
 
 			if (response.success) {
 				// Successfully added the ingredient to the API
 				const newItem = response.data
-				console.log('🚀 ~ handleAddIngredient ~ newItem:', newItem)
 				shoppingList = [...shoppingList, newItem] // Add the new item to the local state
 				newIngredient = '' // Clear the input field
 			} else {
@@ -157,14 +159,12 @@
 
 	// Function to handle saving the edited item
 	async function handleSaveEdit(event) {
-		console.log('🚀 ~ handleSaveEdit ~ event:', event)
 		event.preventDefault()
 		// Validate the edited item's data here (if necessary)
 
 		try {
-			// Update the item on the backend
+			// 🔧 Call backend to update item, assign result
 			const updatedItem = await updateShoppingListItem(editingItem)
-			console.log('🚀 ~ handleSaveEdit ~ updatedItem:', updatedItem)
 
 			// Update the item in the local shopping list state if the backend update is successful
 			shoppingList = shoppingList.map((item) => {
@@ -184,15 +184,20 @@
 	}
 
 	async function handleDeleteItem(uid) {
+		shoppingFeedback = ''
 		try {
-			// Update the item on the backend
 			const response = await deleteShoppingListItem(uid)
 			if (response.success) {
+				// Remove from shopping list
 				shoppingList = shoppingList.filter((item) => item.uid !== uid)
 
+				// 🔒 Reset editing item if it's the one deleted
+				if (editingItem?.uid === uid) {
+					isEditDialogOpen = false
+					editingItem = {}
+				}
 				shoppingFeedback = 'Item deleted successfully!'
 			} else {
-				// Handle cases where the backend response is not successful
 				shoppingFeedback = 'Failed to delete the item. Please try again.'
 			}
 		} catch (error) {
@@ -340,6 +345,7 @@
 		<footer>
 			<button type="button" onclick={() => (isEditDialogOpen = false)}>Cancel</button>
 			<button
+				type="button"
 				class="outline secondary"
 				id="delete-item"
 				onclick={() => handleDeleteItem(editingItem.uid)}
