@@ -339,7 +339,10 @@
 
 		<footer>
 			<button type="button" onclick={() => (isEditDialogOpen = false)}>Cancel</button>
-			<button class="outline secondary" id="delete-item" onclick={() => handleDeleteItem(item.uid)}
+			<button
+				class="outline secondary"
+				id="delete-item"
+				onclick={() => handleDeleteItem(editingItem.uid)}
 				><Delete width="15px" height="15px" fill="var(--pico-del-color)" /></button>
 			<button type="submit">Save</button>
 		</footer>
