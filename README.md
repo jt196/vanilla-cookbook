@@ -10,7 +10,9 @@ For a full getting started guide, [read the docs](https://vanilla-cookbook.readt
 3. In the _.env_ file
    1. Add your admin user details
    2. Set `ORIGIN` to `http://localhost:3000` (prod) or `http://localhost:5173` (dev).
-4. Run it
+4. Install the node packages: `pnpm i`
+5. Run the build command: `pnpm build`
+6. Run it
    1. Dev style with hot updates: `pnpm dev`
    2. Prod style: `pnpm start`
 
