@@ -72,6 +72,9 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: jt196/vanilla-cookbook
+          tags: |
+            latest
+            stable
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
