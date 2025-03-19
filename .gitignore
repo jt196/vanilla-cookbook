@@ -10,7 +10,6 @@ vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 */dev.sqlite
 *.sqlite-journal
-*.code-workspace
 *.sqlite*
 # Test
 package-lock.json
