@@ -8,7 +8,7 @@
 		"serve": "pnpm prisma migrate deploy && pnpm seed && ./sw-domain.sh && node build/index.js",
 		"generate-sw": "node src/lib/utils/pwa/generate-sw.js",
 		"seed": "pnpm prisma db seed",
-		"dev:setup": "pnpm prisma generate && pnpm seed && pnpm generate-sw",
+		"dev:setup": "pnpm prisma generate && pnpm generate-sw && pnpm prisma migrate deploy && pnpm seed && ./sw-domain.sh ",
 		"test": "vitest",
 		"test:watch": "pnpm test -- --watch",
 		"coverage": "vitest run --coverage",
