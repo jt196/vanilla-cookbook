@@ -5,8 +5,10 @@
 	"scripts": {
 		"dev": "vite dev",
 		"build": "pnpm prisma generate && pnpm generate-sw && vite build",
-		"serve": "pnpm prisma migrate deploy && pnpm prisma db seed && ./sw-domain.sh && node build/index.js",
+		"serve": "pnpm prisma migrate deploy && pnpm seed && ./sw-domain.sh && node build/index.js",
 		"generate-sw": "node src/lib/utils/pwa/generate-sw.js",
+		"seed": "pnpm prisma db seed",
+		"dev:setup": "pnpm prisma generate && pnpm seed && pnpm generate-sw",
 		"test": "vitest",
 		"test:watch": "pnpm test -- --watch",
 		"coverage": "vitest run --coverage",

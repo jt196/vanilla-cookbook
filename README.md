@@ -11,10 +11,12 @@ For a full getting started guide, [read the docs](https://vanilla-cookbook.readt
    1. Add your admin user details
    2. Set `ORIGIN` to `http://localhost:3000` (prod) or `http://localhost:5173` (dev).
 4. Install the node packages: `pnpm i`
-5. Run the build command: `pnpm build`
-6. Run it
-   1. Dev style with hot updates: `pnpm dev`
-   2. Prod style: `pnpm start`
+5. Run it
+   - Dev
+     - `pnpm dev:setup` (this should only need to be run the first time to generate the )
+     - `pnpm dev`
+   - Prod:
+     - `pnpm start`
 
 # Getting Started with Docker
 
