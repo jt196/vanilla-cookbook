@@ -3,20 +3,17 @@ For a full getting started guide, [read the docs](https://vanilla-cookbook.readt
 ![Recipe List](docs/images/screen-list-large.jpg)
 ![Recipe View](docs/images/screen-recipe-large.jpg)
 
-# Getting Started Locally
+# Getting Started for Local Dev
 
 1. Clone the repo and the recipe-ingredient-parser submodule: `git clone --recursive https://github.com/jt196/vanilla-cookbook.git`
 2. At the root of the project, create the .env file: `cp .env.template .env`
 3. In the _.env_ file
    1. Add your admin user details
-   2. Set `ORIGIN` to `http://localhost:3000` (prod) or `http://localhost:5173` (dev).
+   2. Set `ORIGIN` to `http://localhost:5173` (dev).
 4. Install the node packages: `pnpm i`
 5. Run it
-   - Dev
-     - `pnpm dev:setup` (this should only need to be run the first time to generate the )
-     - `pnpm dev`
-   - Prod:
-     - `pnpm start`
+   - `pnpm dev:setup` (this should only need to be run the first time to generate the )
+   - `pnpm dev`
 
 # Getting Started with Docker
 
