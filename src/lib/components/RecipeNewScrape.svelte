@@ -9,29 +9,42 @@
 	 *   onUrlChange?: (newUrl: string) => void
 	 * }}
 	 */
-	let { initialUrl = '', recipe = $bindable(), onUrlChange } = $props()
+	let {
+		initialUrl = '',
+		recipe = $bindable(),
+		onUrlChange,
+		apiKeyPresent = false,
+		aiEnabled = false
+	} = $props()
 
 	let feedbackMessage = $state('')
 	let feedbackType = $state('info')
 
+	$effect(() => {
+		console.log('🚀 ~ aiEnabled:', aiEnabled)
+		console.log('🚀 ~ apiKeyPresent:', apiKeyPresent)
+	})
+
 	// Instead of having a separate reactive state, use the prop directly.
 	async function scrapeEventHandler(event) {
 		event.preventDefault()
-		console.log('Handling Scrape!')
-
-		feedbackMessage = ''
+		feedbackMessage = 'Scraping recipe...'
 		feedbackType = 'info'
 
 		try {
 			const scrapedData = await handleScrape(event, initialUrl)
-			if (scrapedData && scrapedData.ingredients && scrapedData.directions) {
-				recipe = { ...recipe, ...scrapedData }
-				feedbackMessage = 'Recipe successfully scraped!'
+			// Always update recipe with the scraped data
+			recipe = { ...recipe, ...scrapedData }
+
+			// Determine feedback based on _status and _source
+			if (scrapedData._status === 'complete') {
+				feedbackMessage =
+					scrapedData._source === 'AI' ? 'AI scrape success!' : 'Manual scrape success!'
 				feedbackType = 'success'
-			} else if (scrapedData) {
-				recipe = { ...recipe, ...scrapedData }
-				feedbackMessage = 'Recipe partially scraped!'
-				feedbackType = 'error'
+			} else {
+				feedbackMessage =
+					scrapedData._source === 'AI' ? 'AI partially scraped.' : 'Manual partially scraped.'
+				feedbackType = 'warning'
 			}
 		} catch (error) {
 			console.error('Error:', error)
@@ -42,9 +55,18 @@
 </script>
 
 <h3>Scrape Recipe</h3>
+<p class="warning">
+	{#if aiEnabled}
+		{#if !apiKeyPresent}
+			Please add your OpenAI Key to the <code>.env</code> file to use the AI functionality.
+		{:else}
+			Your OpenAI Key is present in the <code>.env</code> file. Will use on scrape fail.
+		{/if}
+	{/if}
+</p>
+
 <div class="container">
 	<form action="?/scrapeRecipe" method="POST" onsubmit={scrapeEventHandler}>
-		<label for="url"> URL </label>
 		<!-- Use the prop directly and call onUrlChange when input changes -->
 		<input
 			type="text"
@@ -69,7 +91,16 @@
 		padding: 0;
 
 		form {
-			flex: 1; // Allow the form to take up the remaining space
+			display: flex;
+			align-items: stretch;
+			width: 100%;
+			gap: 0.5rem;
+			button {
+				width: auto;
+			}
+			input {
+				flex: 1;
+			}
 		}
 	}
 </style>

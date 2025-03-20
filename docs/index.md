@@ -12,6 +12,10 @@ Bring in and export your data in Paprika format. Category hierarchy is supported
 
 Scrape recipes using a browser bookmarklet or simply paste a URL in. Hundreds of sites supported.
 
+## AI Scrape Assist
+
+Add an OpenAI key to assist in parsing recipe data.
+
 ## Unit Conversion
 
 Smart conversion from US Volumetric to imperial and metric weight. Thousands of ingredients supported in this conversion. Inline temperature conversion is also supported.

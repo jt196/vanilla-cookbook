@@ -211,7 +211,7 @@ export function parseUsingSiteConfig(root, config) {
 		recipeCategory: config.categorySelector
 			? [...root.querySelectorAll(config.categorySelector)].map((el) => {
 					return el.text.trim()
-			  })
+				})
 			: [],
 		description: config.descriptionSelector
 			? root.querySelector(config.descriptionSelector)?.text.trim()
@@ -253,7 +253,7 @@ export function extractMicrodata(root) {
 	if (isRecipeSchemaFound) {
 		name = extractTextFromSelector(item, '[itemprop="name"]')[0]
 	} else {
-		name = root.querySelector('title').text
+		name = root.querySelector('title')?.text ?? ''
 	}
 	let recipeIngredient = []
 	try {
@@ -269,8 +269,8 @@ export function extractMicrodata(root) {
 		}
 
 		// If still no ingredients found, try the custom extraction method
-		if (!recipeIngredient.length) {
-			recipeIngredient = extractIngredientText(item)
+		if (!recipeIngredient?.length) {
+			recipeIngredient = extractIngredientText(item) ?? []
 		}
 	} catch (error) {
 		console.error('Error extracting ingredients:', error)
@@ -358,7 +358,7 @@ export function extractNestedProperties(root, mainSelector) {
 export function extractTextFromSelector(root, ...selectors) {
 	for (let selector of selectors) {
 		// console.log('Trying selector:', selector) // Debugging line
-		const elements = root.querySelectorAll(selector)
+		const elements = root.querySelectorAll(selector) ?? []
 		if (elements && elements.length) {
 			// console.log('Found elements for selector:', selector) // Debugging line
 			if (selector.includes('instructions')) {

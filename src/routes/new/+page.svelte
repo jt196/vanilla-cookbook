@@ -39,6 +39,10 @@
 		nutritional_info: ''
 	})
 
+	let { data } = $props()
+
+	let { apiKeyPresent, aiEnabled } = $state(data)
+
 	/**
 	 * Handles the scraping event.
 	 * @param {Event} event - The scrape event.
@@ -79,6 +83,11 @@
 	}
 </script>
 
-<RecipeNewScrape initialUrl={url} bind:recipe onUrlChange={(newUrl) => (url = newUrl)} />
+<RecipeNewScrape
+	initialUrl={url}
+	{apiKeyPresent}
+	{aiEnabled}
+	bind:recipe
+	onUrlChange={(newUrl) => (url = newUrl)} />
 
 <RecipeForm bind:recipe onSubmit={handleCreateRecipe} />

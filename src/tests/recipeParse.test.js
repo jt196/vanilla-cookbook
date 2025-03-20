@@ -23,7 +23,8 @@ describe('parseURL function', () => {
 			// Assuming parseURL is an async function
 			let recipe
 			try {
-				recipe = await parseURL(url)
+				const { parsedHTML } = await parseURL(url)
+				recipe = parsedHTML
 			} catch (error) {
 				console.log('Error:', error)
 			}

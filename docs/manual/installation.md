@@ -1,4 +1,6 @@
-# Getting Started for Local Dev
+# Installation
+
+## Local Dev
 
 1. Clone the repo and the recipe-ingredient-parser submodule: `git clone --recursive https://github.com/jt196/vanilla-cookbook.git`
 2. At the root of the project, create the .env file: `cp .env.template .env`
@@ -10,7 +12,7 @@
    - `pnpm dev:setup` (this should only need to be run the first time to generate the )
    - `pnpm dev`
 
-# Getting Started with Docker
+## Docker
 
 1. In your project directory, create the _.env_ and _docker-compose.yml_ files using the respective _.template_ files in the repo root:
    ```bash

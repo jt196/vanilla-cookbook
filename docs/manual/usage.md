@@ -75,7 +75,23 @@ Add your recipe here.
 
 Either use the old skool bookmarklet (found in /user/options/bookmark), or paste the URL in the first box, then press scrape.
 
-Not all websites are supported, but quite a few, mostly those that have good Schema.org recipe data. Not all of them do unfortunately.
+Not all websites are supported, but quite a few, mostly those that have good Schema.org recipe data.
+
+If the standard recipe scrape fails, it'll try with an OpenAI API key.
+
+## AI Assist
+
+Add your OpenAI key to the .env variables. The model will default to 3.5 turbo, but you can change it there.
+
+Set `OPEN_API_ENABLED=true`. The default model should work.
+
+Test the demo on [this URL](https://pastebin.com/raw/zwgsuVKd) to check it works.
+
+It's using the [openai](https://www.npmjs.com/package/openai) npm package, so read the docs there for more info.
+
+Here's a demo of it working:
+
+![AI Scrape Demo](../videos/scrape_manual_ai.mp4)
 
 ## Add it
 

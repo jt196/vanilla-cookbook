@@ -124,3 +124,10 @@
 		{/each}
 	{/if}
 </form>
+
+<style lang="scss">
+	button {
+		width: auto;
+		margin: 1rem 0;
+	}
+</style>
