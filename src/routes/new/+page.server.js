@@ -1,5 +1,8 @@
 import { redirect } from '@sveltejs/kit'
-import { OPENAI_API_KEY, OPENAI_API_ENABLED } from '$env/static/private'
+import { env } from '$env/dynamic/private'
+
+const OPENAI_API_KEY = env.OPENAI_API_KEY
+const OPENAI_API_ENABLED = env.OPENAI_API_ENABLED || 'false'
 
 export const load = async ({ locals }) => {
 	const session = await locals.auth.validate()

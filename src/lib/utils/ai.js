@@ -1,18 +1,26 @@
 // src/lib/utils/ai/ai.js
 import OpenAI from 'openai'
-import { OPENAI_API_KEY, OPENAI_API_ENGINE } from '$env/static/private'
+import { env } from '$env/dynamic/private'
+
+const OPENAI_API_KEY = env.OPENAI_API_KEY
+const OPENAI_API_ENGINE = env.OPENAI_API_ENGINE || 'gpt-3.5-turbo'
 
 export async function gptExtractRecipe(html, url) {
-	const openai = new OpenAI({
-		apiKey: OPENAI_API_KEY
-	})
-
-	const openaiEngine = OPENAI_API_ENGINE ? OPENAI_API_ENGINE : 'gpt-3.5-turbo'
+	if (env.OPENAI_API_ENABLED !== 'true') {
+		console.warn('⚠️ OpenAI API is disabled in this environment. Skipping AI extraction.')
+		throw new Error('OpenAI API is disabled in this environment')
+	}
 
 	if (!OPENAI_API_KEY || OPENAI_API_KEY === 'sk-xxxxxxxxxxxxxxxxxxxxxxxxx') {
 		console.warn('⚠️ No OpenAI API key provided. Skipping AI extraction.')
 		throw new Error('Missing OpenAI API key.')
 	}
+
+	const openai = new OpenAI({
+		apiKey: OPENAI_API_KEY
+	})
+
+	const openaiEngine = OPENAI_API_ENGINE ? OPENAI_API_ENGINE : 'gpt-3.5-turbo'
 
 	const maxChars = 40000 // Number of characters submitted to LLM
 	const trimmedHtml = html.substring(0, maxChars)

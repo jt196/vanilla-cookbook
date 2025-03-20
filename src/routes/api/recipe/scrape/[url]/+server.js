@@ -1,6 +1,9 @@
 import { parseURL } from '$lib/utils/parse/recipeParse'
 import { gptExtractRecipe } from '$lib/utils/ai'
-import { OPENAI_API_KEY, OPENAI_API_ENABLED } from '$env/static/private'
+import { env } from '$env/dynamic/private'
+
+const OPENAI_API_KEY = env.OPENAI_API_KEY || 'sk-xxxxxxxxxxxxxxxxxxxxxxxxx'
+const OPENAI_API_ENABLED = env.OPENAI_API_ENABLED || 'false'
 
 export async function GET({ params }) {
 	const url = decodeURIComponent(params.url)
