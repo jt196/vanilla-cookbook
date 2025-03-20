@@ -20,11 +20,6 @@
 	let feedbackMessage = $state('')
 	let feedbackType = $state('info')
 
-	$effect(() => {
-		console.log('🚀 ~ aiEnabled:', aiEnabled)
-		console.log('🚀 ~ apiKeyPresent:', apiKeyPresent)
-	})
-
 	// Instead of having a separate reactive state, use the prop directly.
 	async function scrapeEventHandler(event) {
 		event.preventDefault()
