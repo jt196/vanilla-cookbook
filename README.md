@@ -1,7 +1,7 @@
 For a full getting started guide, [read the docs](https://vanilla-cookbook.readthedocs.io/en/latest/).
 
-![Recipe List](docs/images/screen-list-large.jpg)
-![Recipe View](docs/images/screen-recipe-large.jpg)
+![Recipe List](docs/images/screen-list-large.png)
+![Recipe View](docs/images/screen-first-recipe-large.png)
 
 ## Control Your Data
 

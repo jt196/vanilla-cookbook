@@ -1,6 +1,6 @@
 # Shopping
 
-![Shopping](../images/shopping.jpg)
+![Shopping](../images/screen-shopping-large.png)
 
 This is a pretty simple checklist.
 
@@ -20,6 +20,6 @@ From left to right
 
 # Calendar
 
-![Calendar](../images/calendar.jpg)
+![Calendar](../images/screen-calendar-large.png)
 
 Very simple calendar view of your cooking history.

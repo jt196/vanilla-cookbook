@@ -1,6 +1,6 @@
 # Recipe List View
 
-![Recipe View Desktop](../images/screen-list-large-annotated.jpg)
+![Recipe View Desktop](../images/screen-list-large.png)
 
 ## Buttons
 
@@ -29,7 +29,7 @@ Displays info about your recipes.
 
 # Recipe View
 
-![Recipe Card](../images/screen-recipe-large-annotated.jpg)
+![Recipe Card](../images/screen-recipe-large.png)
 
 ## Recipe Buttons
 
@@ -67,7 +67,7 @@ Hover over and click to the left of the ingredient to add it to the shopping lis
 
 # Add Recipe
 
-![Recipe View Desktop](../images/screen-recipe-add.jpg)
+![Recipe View Desktop](../images/screen-new-large.png)
 
 Add your recipe here.
 
@@ -102,16 +102,31 @@ Otherwise, add your recipe details and click the **Add Recipe** button at the bo
 
 # Options
 
-![Settings](../images/settings.jpg)
+![Settings](../images/screen-settings-large.png)
 
 I've tried to keep most of the under the hood stuff here.
 
-- **Settings**
-  - **Teaspoons instead of grams** - use these instead of weight for smaller measures
-  - **Profile public** - show/hide your profile in the _/users_ view
-  - **Recipes public** - make your recipe public by default
-  - **Selected System** - Choose your preferred measurement system
-- **Bookmark** - grab your bookmarklet for saving recipes to the site.
-- **Import**, **Export**, **Upload** see the [Import Docs](import.md).
-- **Users** - admin only. User management. Change passwords, add and remove users etc.
-- **Site** - admin only. Turn on/off registrations.
+**Settings**
+
+- **Teaspoons instead of grams** - use these instead of weight for smaller measures
+- **Profile public** - show/hide your profile in the _/users_ view
+- **Recipes public** - make your recipe public by default
+- **Selected System** - Choose your preferred measurement system
+
+![Bookmark](../images/screen-bookmark-large.png)
+
+**Bookmark** - grab your bookmarklet for saving recipes to the site.
+
+![Import](../images/screen-import-large.png)
+![Export](../images/screen-export-large.png)
+![Upload](../images/screen-upload-large.png)
+
+**Import**, **Export**, **Upload** see the [Import Docs](import.md).
+
+![Users](../images/screen-admin-users-large.png)
+
+**Users** - admin only. User management. Change passwords, add and remove users etc.
+
+![Site](../images/screen-admin-site-large.png)
+
+**Site** - admin only. Turn on/off registrations.
