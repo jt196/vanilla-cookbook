@@ -7,6 +7,5 @@ services:
     volumes:
       - ./db:/app/prisma/db
       - ./uploads:/app/uploads
-      - ./.env:/app/.env
     env_file:
       - .env
