@@ -12,6 +12,10 @@ button {
 	padding: 0.5rem;
 }
 
+button[type='submit'] {
+	width: auto;
+}
+
 :root {
 	--pico-font-family-sans-serif:
 		Inter, system-ui, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, Helvetica, Arial,

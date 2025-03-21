@@ -381,9 +381,6 @@
 		padding: 0.5rem 0;
 		@media (max-width: 767px) {
 			padding: 0;
-			#delete-item {
-				display: none;
-			}
 		}
 		.item-qty-unit {
 			display: flex;
@@ -425,32 +422,14 @@
 					height: 40px;
 					padding: 0 10px;
 				}
-
-				/* Optional: Adjust SVG size if necessary */
-				.outline svg {
-					width: 20px;
-					height: 20px;
-				}
 			}
 		}
 	}
 
-	.unit-quantity,
-	.recipe-name {
+	.unit-quantity {
 		margin: 0;
 		padding: 0 0.5rem;
 		color: var(--pico-muted-color);
-	}
-	.recipe-name {
-		font-weight: lighter;
-	}
-	.empty-space {
-		display: inline-block; /* Makes it occupy space */
-		width: 20px; /* Adjust the width as needed */
-		height: 1em; /* Adjust the height as needed */
-	}
-	.hidden {
-		visibility: hidden;
 	}
 
 	.add-ingredient {

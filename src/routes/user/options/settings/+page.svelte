@@ -3,13 +3,15 @@
 	import FeedbackMessage from '$lib/components/FeedbackMessage.svelte'
 
 	/** @type {{data: any}} */
-	let { data } = $props();
+	let { data } = $props()
 	const { user, dbRecCount } = $state(data)
 	let settingsFeedback = $state('')
-	let systemLabel = $derived('Selected system: ' + systems.find((system) => system.value === user.units).label)
+	let systemLabel = $derived(
+		'Selected system: ' + systems.find((system) => system.value === user.units).label
+	)
 	$effect(() => {
 		console.log(user.units)
-	});
+	})
 
 	async function updateSettings(event) {
 		event.preventDefault()
@@ -73,3 +75,9 @@
 		<FeedbackMessage message={settingsFeedback} />
 	</footer>
 </form>
+
+<style>
+	.dropdown {
+		width: fit-content;
+	}
+</style>

@@ -222,15 +222,19 @@
 	<div aria-busy="true">Waiting for the pan to boil...</div>
 {:else}
 	<div class="recipe-details">
-		<RecipeViewCover {mainPhoto} {recipe} />
-		<RecipeViewAbout
-			{recipe}
-			{categories}
-			{scaledServings}
-			recipeRatingChanged={handleRecipeRatingChanged} />
+		<div class="recipe-image">
+			<RecipeViewCover {mainPhoto} {recipe} />
+		</div>
+		<div class="recipe-about">
+			<RecipeViewAbout
+				{recipe}
+				{categories}
+				{scaledServings}
+				recipeRatingChanged={handleRecipeRatingChanged} />
+		</div>
 	</div>
 	<div class="recipe-main">
-		<div class="ing-div">
+		<div class="recipe-ingredients">
 			{#if !loadingIngredients}
 				<RecipeViewIngs
 					{ingredients}
@@ -260,28 +264,25 @@
 <RecipeViewOtherPhotos {otherPhotos} recipeName={recipe.name} />
 
 <style lang="scss">
-	.recipe-main {
-		margin-top: 2rem;
+	.recipe-main,
+	.recipe-details {
+		margin: 1rem 0;
 		display: flex;
-		gap: 2rem;
-		.recipe-text {
-			flex: 2;
-		}
-		.ing-div {
-			flex: 1;
-		}
+		gap: 1rem;
 		@media (max-width: 767px) {
 			flex-direction: column;
 		}
 	}
 
-	.recipe-details {
-		display: flex;
-		gap: 2rem;
-		@media (max-width: 767px) {
-			flex-direction: column;
-		}
+	.recipe-ingredients,
+	.recipe-image {
+		flex: 1;
 	}
+	.recipe-text,
+	.recipe-about {
+		flex: 2;
+	}
+
 	#recipe-buttons {
 		display: flex;
 		justify-content: flex-end;

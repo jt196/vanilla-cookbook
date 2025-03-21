@@ -117,11 +117,6 @@
 		font-size: 1.7rem;
 	}
 
-	.created {
-		font-size: 1rem;
-		color: var(--pico-muted-color);
-	}
-
 	/* Star rating and favorite button */
 	.star-fav {
 		display: flex;
@@ -164,9 +159,6 @@
 			overflow: visible;
 			text-overflow: unset;
 			word-wrap: break-word;
-		}
-		.created {
-			display: none;
 		}
 	}
 </style>

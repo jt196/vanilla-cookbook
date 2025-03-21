@@ -15,26 +15,18 @@
 
 <style lang="scss">
 	.recipe-cover {
-		flex: 1; // Normal flex behavior above 768px
-		margin-bottom: 1rem;
-
 		img {
-			height: 100%; // Maintain height
+			width: 100%; // Maintain height
 			max-height: 400px; // Limit max height
-			width: auto; // Maintain aspect ratio
+			height: auto; // Maintain aspect ratio
 			object-fit: cover;
 			display: block;
 			border-radius: 1rem;
 		}
 
 		@media (max-width: 768px) {
-			height: 250px; // Fixed height to crop
-			overflow: hidden; // Hide overflow
-			margin-bottom: 0;
-
 			img {
-				width: 100%; // Fill full width
-				height: 250px; // Maintain cropping behavior
+				max-height: 250px;
 			}
 		}
 	}

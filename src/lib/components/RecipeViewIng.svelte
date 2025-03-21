@@ -113,13 +113,6 @@
 </div>
 
 <style lang="scss">
-	// Ingredients headers in the middle of text to have some spacing
-	h4:not(:first-child) {
-		margin-top: 20px;
-	}
-	h4:first-child {
-		margin-top: 0;
-	}
 	li {
 		list-style-type: none;
 	}
