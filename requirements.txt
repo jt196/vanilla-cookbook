@@ -1,3 +1,5 @@
 mkdocs
 mkdocs-material
 mkdocstrings[python]
+mkdocs-macros-plugin
+mkdocs-include-markdown-plugin
