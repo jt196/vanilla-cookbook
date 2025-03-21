@@ -5,9 +5,6 @@
 		}
 	],
 	"settings": {
-		"files.exclude": {
-			"src/lib/data": true
-		},
 		"search.exclude": {
 			"src/lib/data": true
 		},
