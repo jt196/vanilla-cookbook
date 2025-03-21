@@ -15,3 +15,6 @@ jobs:
       docker_tags: |
         stable
         type=ref,event=tag
+    secrets:
+      DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+      DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
