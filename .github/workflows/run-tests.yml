@@ -1,12 +1,10 @@
-name: CI - Test and Build Docker Image
+name: Run Tests
 
 on:
-  push:
-    branches:
-      - main
+  workflow_call:
 
 jobs:
-  test-and-build:
+  test:
     runs-on: ubuntu-latest
 
     steps:
@@ -62,29 +60,3 @@ jobs:
 
       - name: Run Tests
         run: pnpm test
-
-      - name: Log in to Docker Hub
-        if: success()
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-
-      - name: Docker Metadata
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: jt196/vanilla-cookbook
-          tags: |
-            latest
-            stable
-
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v6
-        with:
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}
-          annotations: ${{ steps.meta.outputs.annotations }}
-        env:
-          DOCKER_BUILDKIT: 1
-          BUILDKIT_PROGRESS: plain

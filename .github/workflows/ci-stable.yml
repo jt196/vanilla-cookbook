@@ -1,0 +1,17 @@
+name: CI - Test and Build (Stable Release)
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  run-tests:
+    uses: ./.github/workflows/run-tests.yml
+
+  docker-build-stable:
+    needs: run-tests
+    uses: ./.github/workflows/docker-build.yml
+    with:
+      docker_tags: |
+        stable
+        type=ref,event=tag

@@ -1,0 +1,16 @@
+name: CI - Test and Build (Latest)
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  run-tests:
+    uses: ./.github/workflows/run-tests.yml
+
+  docker-build-latest:
+    needs: run-tests
+    uses: ./.github/workflows/docker-build.yml
+    with:
+      docker_tags: latest
