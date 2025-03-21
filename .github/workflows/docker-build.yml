@@ -17,6 +17,10 @@ jobs:
         with:
           submodules: 'recursive'
 
+      - name: Debug Secrets Inside Reusable Workflow
+        run: |
+          echo "Secrets passed: ${{ toJson(secrets) }}"
+
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
