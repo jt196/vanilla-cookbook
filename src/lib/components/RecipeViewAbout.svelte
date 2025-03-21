@@ -14,9 +14,16 @@
 
 	<p>Created: <i>{localDateAndTime(recipe.created)}</i></p>
 	<p>
-		Source:
-		<a href={recipe?.source_url}>{recipe?.source}</a>
+		{#if recipe?.source && recipe?.source_url}
+			Source:
+			<a href={recipe.source_url} target="_blank" rel="noopener noreferrer">{recipe.source}</a>
+		{:else if recipe?.source}
+			Source: {recipe.source}
+		{:else if recipe?.source_url}
+			<a href={recipe.source_url} target="_blank" rel="noopener noreferrer">Source</a>
+		{/if}
 	</p>
+
 	<StarRating
 		rating={recipe.rating}
 		editable={true}
