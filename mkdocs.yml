@@ -52,11 +52,14 @@ markdown_extensions:
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
 
 nav:
+  - Home: index.md
   - Installation: manual/installation.md
   - Usage: manual/usage.md
   - Apps: manual/apps.md
   - Import/Export: manual/import.md
   - Roadmap: roadmap.md
+  - Technical:
+      - Screenshots: technical/screenshots.md
 
 extra:
   social:

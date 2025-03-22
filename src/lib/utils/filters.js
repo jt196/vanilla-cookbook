@@ -30,7 +30,6 @@ export function filterSearch(searchString, data, key) {
 export function ingredientProcess(ingredientArray, language) {
 	const parsedIngredients = []
 	language ? '' : (language = 'eng')
-	console.log('🚀 ~ ingredientProcess ~ language:', language)
 
 	ingredientArray.forEach((ingredientString) => {
 		const ingredientStr = sanitizeIngredient(ingredientString)

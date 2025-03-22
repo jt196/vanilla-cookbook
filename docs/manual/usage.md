@@ -29,7 +29,7 @@ Displays info about your recipes.
 
 # Recipe View
 
-![Recipe Card](../images/screen-recipe-large.png)
+![Recipe Card](../images/screen-first-recipe-large.png)
 
 ## Recipe Buttons
 
@@ -106,12 +106,28 @@ Otherwise, add your recipe details and click the **Add Recipe** button at the bo
 
 I've tried to keep most of the under the hood stuff here.
 
-**Settings**
+## Settings
+
+### Ingredients
 
 - **Teaspoons instead of grams** - use these instead of weight for smaller measures
+- **Display Cup Match** volumetric ingredients by default when converting to and from US Cups. This is a bit "fuzzy" and not always perfect, so sometimes useful to check what ingredient the system. If no ingredient has been found, you'll see a '\*' and a note that it has been matched to water.
+- **Display Original** ingredient line text instead of parsed text. The parser will go through an ingredient line and attempt to separate quantity, unit, ingredient and any extra information. If this fails, you can simply use a fallback, but the scaling won't work.
+- **Display Extra** ingredient text, eg after the comma in "1 clove garlic, chopped"
+- **Selected System** - Choose your preferred measurement system
+- **Selected Language** - Choose your language, currently limited to English, Italian, German.
+
+Here's a demo of the language and **Display Original** setting working.
+
+<video width="640" height="360" controls>
+  <source src="../../videos/lang_settings.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
+### Privacy
+
 - **Profile public** - show/hide your profile in the _/users_ view
 - **Recipes public** - make your recipe public by default
-- **Selected System** - Choose your preferred measurement system
 
 ![Bookmark](../images/screen-bookmark-large.png)
 

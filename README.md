@@ -3,6 +3,8 @@ For a full getting started guide, [read the docs](https://vanilla-cookbook.readt
 ![Recipe List](docs/images/screen-list-large.png)
 ![Recipe View](docs/images/screen-first-recipe-large.png)
 
+# Features
+
 ## Control Your Data
 
 Bring in and export your data in Paprika format. Category hierarchy is supported.
@@ -38,6 +40,10 @@ Recipes and your personal cookbook can be made public, so you can share them wit
 ## Easy Installation
 
 Designed to be as easy and stress free to set up as possible. Docker or local node instance.
+
+## Multiple Language Ingredient Parsing
+
+Currently 3 languages supported (English, German, Italian) for ingredient parsing.
 
 # Installation
 
