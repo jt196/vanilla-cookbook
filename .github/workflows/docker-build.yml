@@ -37,7 +37,9 @@ jobs:
 
       - name: Get Git version
         id: git_version
-        run: echo "version=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+        run: |
+          version=$(git describe --tags --abbrev=0)-$(git rev-parse --short HEAD)
+          echo "version=$version" >> $GITHUB_OUTPUT
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
