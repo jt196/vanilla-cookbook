@@ -37,6 +37,8 @@
 
 	let mainPhoto = $state()
 
+	let otherPhotos = $state([])
+
 	let loadingIngredients = $state(true)
 
 	// Callback functions to update the state
@@ -52,16 +54,18 @@
 
 	$effect(() => {
 		if (recipe && recipe.photos && recipe.photos.length > 0) {
-			mainPhoto =
+			const selectedMainPhoto =
 				recipe.photos.find((photo) => photo.isMain) ||
 				recipe.photos.find((photo) => !photo.isMain && photo.url === null) ||
 				recipe.photos.find((photo) => !photo.isMain)
+
+			mainPhoto = selectedMainPhoto
+			otherPhotos = recipe.photos.filter((photo) => photo.id !== selectedMainPhoto?.id)
+		} else {
+			mainPhoto = null
+			otherPhotos = []
 		}
 	})
-
-	let otherPhotos = recipe.photos
-		? recipe.photos.filter((photo) => photo !== mainPhoto && photo.url === null)
-		: []
 
 	// Function to handle the API fetch
 	async function handleIngAPIFetch(measurementSystem, selectedSystem) {
