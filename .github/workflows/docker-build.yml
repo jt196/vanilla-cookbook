@@ -35,12 +35,18 @@ jobs:
           images: jt196/vanilla-cookbook
           tags: ${{ inputs.docker_tags }}
 
+      - name: Get Git version
+        id: git_version
+        run: echo "version=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           annotations: ${{ steps.meta.outputs.annotations }}
+          build-args: |
+            GIT_VERSION=${{ steps.git_version.outputs.version }}
         env:
           DOCKER_BUILDKIT: 1
           BUILDKIT_PROGRESS: plain

@@ -17,6 +17,10 @@ RUN pnpm install
 ENV PNPM_HOME=/root/.pnpm
 ENV PATH=$PNPM_HOME:$PATH
 
+# Set git version
+ARG GIT_VERSION=unknown
+ENV GIT_VERSION=${GIT_VERSION}
+
 # Specify base directory env variable
 ENV APP_ROOT_PATH=/app
 

@@ -5,7 +5,7 @@ export const load = async ({ url, fetch, locals }) => {
 	const session = await locals.auth.validate()
 	const user = session?.user
 	if (!session || !user) {
-		error(401, 'Unauthorized');
+		error(401, 'Unauthorized')
 	}
 
 	let dbRecCount = 0
@@ -20,5 +20,5 @@ export const load = async ({ url, fetch, locals }) => {
 		// You might want to handle this error differently based on your application's needs
 	}
 
-	return { user, dbRecCount }
+	return { user, dbRecCount, version: process.env.GIT_VERSION || 'Dev Version' }
 }

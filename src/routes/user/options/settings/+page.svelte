@@ -36,6 +36,8 @@
 
 <div class="rec-count">
 	You have {dbRecCount} recipes in your account.
+	<br />
+	Version: <i>{data.version}</i>
 </div>
 
 <form method="POST">
