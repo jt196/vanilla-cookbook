@@ -1,2 +1,2 @@
 # Ignore all files in src/lib/data/ folder
-src/lib/data/* linguist-detectable=false
+src/lib/data/** linguist-detectable=false
