@@ -141,7 +141,11 @@ export const PUT = async ({ request, locals, params }) => {
 					'publicProfile' in userData ? userData.publicProfile : updatingUser.publicProfile,
 				publicRecipes:
 					'publicRecipes' in userData ? userData.publicRecipes : updatingUser.publicRecipes,
-				isAdmin: 'isAdmin' in userData ? userData.isAdmin : updatingUser.isAdmin
+				isAdmin: 'isAdmin' in userData ? userData.isAdmin : updatingUser.isAdmin,
+				ingMatch: 'ingMatch' in userData ? userData.ingMatch : updatingUser.ingMatch,
+				ingOriginal: 'ingOriginal' in userData ? userData.ingOriginal : updatingUser.ingOriginal,
+				ingExtra: 'ingExtra' in userData ? userData.ingExtra : updatingUser.ingExtra,
+				language: 'language' in userData ? userData.language : updatingUser.language
 			}
 		})
 

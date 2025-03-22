@@ -333,3 +333,9 @@ export const systems = [
 	{ value: 'imperial', label: 'Imperial' },
 	{ value: 'americanVolumetric', label: 'US Cups' }
 ]
+
+export const languages = [
+	{ value: 'eng', label: 'English' },
+	{ value: 'deu', label: 'Deutsch' },
+	{ value: 'ita', label: 'Italiano' }
+]

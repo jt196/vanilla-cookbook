@@ -117,9 +117,13 @@ model AuthUser {
     email              String             @unique
     about              String?
     units              String?            @default("metric")
+    language           String             @default("eng")
     publicProfile      Boolean            @default(false)
     publicRecipes      Boolean            @default(false)
     skipSmallUnits     Boolean            @default(false)
+    ingMatch           Boolean            @default(false)
+    ingOriginal        Boolean            @default(false)
+    ingExtra           Boolean            @default(false)
     isAdmin            Boolean            @default(false)
     isRoot             Boolean            @default(false)
     articles           Article[]

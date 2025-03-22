@@ -41,6 +41,10 @@ export async function GET({ locals }) {
 				skipSmallUnits: true,
 				isAdmin: true,
 				isRoot: true,
+				ingMatch: true,
+				ingOriginal: true,
+				ingExtra: true,
+				language: true,
 				_count: {
 					select: {
 						recipes: true

@@ -3,7 +3,7 @@
 	import RecipeViewDropdown from './RecipeViewDropdown.svelte'
 	import RecipeViewIng from './RecipeViewIng.svelte'
 
-	/** @type {{ingredients: any, sanitizedIngredients: any, scale: any, scaledServings: any, selectedSystem: any, measurementSystem: any, recipeUid: any, userIsAdmin?: boolean}} */
+	/** @type {{ingredients: any, sanitizedIngredients: any, scale: any, scaledServings: any, selectedSystem: any, measurementSystem: any, recipeUid: any }} */
 	let {
 		ingredients,
 		sanitizedIngredients,
@@ -12,12 +12,13 @@
 		measurementSystem,
 		recipeUid,
 		scale,
-		selectedSystem
+		selectedSystem,
+		user
 	} = $props()
 
-	let displayExtra = $state(false)
-	let displayDryMatch = $state(false)
-	let displayOriginal = $state(false)
+	let displayExtra = $state(user.ingExtra)
+	let displayDryMatch = $state(user.ingMatch)
+	let displayOriginal = $state(user.ingOriginal)
 
 	// Check if any of the ingredients have a default density
 	let hasDefaultDensity = $derived(sanitizedIngredients.some((i) => i.usedDefaultDensity === true))
@@ -61,22 +62,22 @@
 	<div class="ing-settings">
 		<div class="checks">
 			<fieldset>
-				{#if sanitizedIngredients.some((item) => item.additional)}
+				{#if sanitizedIngredients.some((item) => item.additional) && !displayOriginal}
 					<label data-tooltip="Display extra ingredient text">
 						<input type="checkbox" bind:checked={displayExtra} />
 						Extra
 					</label>
 				{/if}
-				{#if sanitizedIngredients.some((item) => item.dryIngredient)}
+				{#if sanitizedIngredients.some((item) => item.dryIngredient) && !displayOriginal}
 					<label data-tooltip="When converting from/to cups, display matched ingredients">
 						<input type="checkbox" bind:checked={displayDryMatch} />
 						Cup Match
 					</label>
-					<label data-tooltip="Display original ingredient text">
-						<input type="checkbox" bind:checked={displayOriginal} />
-						Original
-					</label>
 				{/if}
+				<label data-tooltip="Display original ingredient text">
+					<input type="checkbox" bind:checked={displayOriginal} />
+					Original
+				</label>
 			</fieldset>
 		</div>
 	</div>

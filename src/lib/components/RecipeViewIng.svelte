@@ -65,34 +65,36 @@
 				<div data-heading>{@html ingredient.ingredient}</div>
 			{:else}
 				<li class:struck={struckThrough}>
-					<strong>
-						{#if ingredient.minQty == ingredient.maxQty && ingredient.quantity}
-							{#if selectedSystem === 'metric'}
-								{roundIngredientQuantity(ingredient.quantity * scaleIng)}
-							{:else}
-								{decimalToFraction(ingredient.quantity * scaleIng)}
+					{#if displayOriginal}
+						<i>{ingredient.originalString}</i>
+					{:else}
+						<strong>
+							{#if ingredient.minQty == ingredient.maxQty && ingredient.quantity}
+								{#if selectedSystem === 'metric'}
+									{roundIngredientQuantity(ingredient.quantity * scaleIng)}
+								{:else}
+									{decimalToFraction(ingredient.quantity * scaleIng)}
+								{/if}
+							{:else if ingredient.minQty != ingredient.maxQty && ingredient.quantity}
+								{#if selectedSystem === 'metric'}
+									{roundIngredientQuantity(ingredient.minQty * scaleIng)}-{roundIngredientQuantity(
+										ingredient.maxQty * scaleIng
+									)}
+								{:else}
+									{decimalToFraction(ingredient.minQty * scaleIng)}-{decimalToFraction(
+										ingredient.maxQty * scaleIng
+									)}
+								{/if}
 							{/if}
-						{:else if ingredient.minQty != ingredient.maxQty && ingredient.quantity}
-							{#if selectedSystem === 'metric'}
-								{roundIngredientQuantity(ingredient.minQty * scaleIng)}-{roundIngredientQuantity(
-									ingredient.maxQty * scaleIng
-								)}
-							{:else}
-								{decimalToFraction(ingredient.minQty * scaleIng)}-{decimalToFraction(
-									ingredient.maxQty * scaleIng
-								)}
+						</strong>
+						<i>
+							{#if ingredient.unit && ingredient.unit !== 'q.b.'}
+								{ingredient.quantity * scaleIng > 1 && ingredient.unitPlural
+									? ingredient.unitPlural
+									: ingredient.unit}
 							{/if}
-						{/if}
-					</strong>
-					{#if ingredient.unit && ingredient.unit !== 'q.b.'}
-						{ingredient.quantity * scaleIng > 1 && ingredient.unitPlural
-							? ingredient.unitPlural
-							: ingredient.unit}
-					{/if}
-					<span>
-						{#if displayOriginal}
-							<i> | {ingredient.originalString}</i>
-						{:else}
+						</i>
+						<span>
 							{@html ingredient.ingredient}
 							{#if displayExtra && ingredient.additional}
 								<i> | {ingredient.additional}</i>
@@ -101,11 +103,11 @@
 								<i>
 									| {ingredient.dryIngredient.name} ({ingredient.dryIngredient.gramsPerCup} g/cup)</i>
 							{/if}
-						{/if}
-						{#if ingredient.usedDefaultDensity === true}
-							*
-						{/if}
-					</span>
+							{#if ingredient.usedDefaultDensity === true}
+								*
+							{/if}
+						</span>
+					{/if}
 				</li>
 			{/if}
 		{/if}

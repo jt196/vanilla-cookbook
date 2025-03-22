@@ -5,7 +5,6 @@
 	import { getSanitizedHTML } from '$lib/utils/render'
 	import { onMount, onDestroy } from 'svelte'
 	import { setupWakeLock, cleanupWakeLock } from '$lib/utils/wakeLock.js'
-	import { browser } from '$app/environment'
 
 	import RecipeViewButtons from '$lib/components/RecipeViewButtons.svelte'
 	import RecipeViewCover from '$lib/components/RecipeViewCover.svelte'
@@ -77,7 +76,8 @@
 					ingredients: ingredientsArray,
 					fromSystem: measurementSystem.system,
 					toSystem: selectedSystem,
-					skipSmallUnits: viewUser.skipSmallUnits
+					skipSmallUnits: viewUser.skipSmallUnits,
+					language: viewUser.language
 				})
 			})
 
@@ -94,7 +94,7 @@
 	}
 
 	let ingredients = $derived(recipe.ingredients ? recipe.ingredients.split('\n') : [])
-	let ingredientsArray = $derived(ingredientProcess(ingredients))
+	let ingredientsArray = $derived(ingredientProcess(ingredients, viewUser.language))
 	let measurementSystem = $derived(determineSystem(ingredientsArray))
 	let directionLines = $derived(recipe.directions ? recipe.directions.split('\n') : [])
 	let notesLines = $derived(recipe.notes ? recipe.notes.split('\n') : [])
@@ -241,7 +241,7 @@
 					recipeUid={recipe.uid}
 					{sanitizedIngredients}
 					{scale}
-					userIsAdmin={viewUser.isAdmin}
+					user={viewUser}
 					{measurementSystem}
 					{selectedSystem}
 					onScaleChange={handleScaleChange}

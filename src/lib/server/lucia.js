@@ -23,7 +23,11 @@ export const auth = lucia({
 			publicProfile: userData.publicProfile,
 			publicRecipes: userData.publicRecipes,
 			units: userData.units,
-			skipSmallUnits: userData.skipSmallUnits
+			skipSmallUnits: userData.skipSmallUnits,
+			ingMatch: userData.ingMatch,
+			ingOriginal: userData.ingOriginal,
+			ingExtra: userData.ingExtra,
+			language: userData.language
 		}
 	},
 	sessionCookie: {

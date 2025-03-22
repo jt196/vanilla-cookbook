@@ -22,13 +22,11 @@ Not totally sure about this, it might be a bit overkill, but it could be useful 
 
 See (closed) [Issue #176](https://github.com/jt196/vanilla-cookbook/issues/176)
 
-## Markdown Text Shortcuts
+## Adding More Languages
 
-Simple text editing features like ctrl + i for italic, bullet/numbered lists etc.
+The ingredient parser module already has a couple of extra languages (deu, ita), let's add in some more.
 
-This does fit in with the aesthetic of text edit/markdown. GitHub has this, I guess there may be a lib for it.
-
-See (closed) [Issue #191](https://github.com/jt196/vanilla-cookbook/issues/191)
+See (closed) [Issue #233](https://github.com/jt196/vanilla-cookbook/issues/233)
 
 ## Backup Database
 
@@ -41,6 +39,14 @@ Number of copies of db kept specified in .env or admin user table. I'd be tempte
 See (closed) [Issue #194](https://github.com/jt196/vanilla-cookbook/issues/194)
 
 # Medium Priority
+
+## Markdown Text Shortcuts
+
+Simple text editing features like ctrl + i for italic, bullet/numbered lists etc.
+
+This does fit in with the aesthetic of text edit/markdown. GitHub has this, I guess there may be a lib for it.
+
+See (closed) [Issue #191](https://github.com/jt196/vanilla-cookbook/issues/191)
 
 ## Categories
 

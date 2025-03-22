@@ -99,7 +99,7 @@ describe('Filter functions', () => {
 
 		it('should process ingredient strings', () => {
 			const ingredients = ['1 cup sugar', '2 tbsp salt']
-			const result = ingredientProcess(ingredients)
+			const result = ingredientProcess(ingredients, 'eng')
 			expect(result.length).toBe(2)
 		})
 	})

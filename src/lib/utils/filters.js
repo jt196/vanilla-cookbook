@@ -27,13 +27,15 @@ export function filterSearch(searchString, data, key) {
  * @param {string[]} ingredientArray - The ingredient strings to process.
  * @returns {parsedIngredient[]} - An array of parsed ingredient objects.
  */
-export function ingredientProcess(ingredientArray) {
+export function ingredientProcess(ingredientArray, language) {
 	const parsedIngredients = []
+	language ? '' : (language = 'eng')
+	console.log('🚀 ~ ingredientProcess ~ language:', language)
 
 	ingredientArray.forEach((ingredientString) => {
 		const ingredientStr = sanitizeIngredient(ingredientString)
 		try {
-			const ingredientObject = parse(ingredientStr, 'eng')
+			const ingredientObject = parse(ingredientStr, language)
 			if (!ingredientObject) {
 				throw new Error('Parsed ingredient is null')
 			}
