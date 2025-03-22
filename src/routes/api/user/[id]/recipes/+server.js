@@ -35,9 +35,10 @@ export async function GET({ params, locals }) {
 				},
 				log: true,
 				photos: {
-					where: {
-						isMain: true
-					},
+					orderBy: [
+						{ isMain: 'desc' }, // true first
+						{ id: 'asc' } // fallback to earliest if no isMain
+					],
 					select: {
 						id: true,
 						fileType: true
@@ -46,7 +47,15 @@ export async function GET({ params, locals }) {
 			}
 		})
 
-		return new Response(JSON.stringify(recipes), {
+		const updatedRecipes = recipes.map((recipe) => {
+			const mainOrFirstPhoto = recipe.photos[0] || null
+			return {
+				...recipe,
+				photos: mainOrFirstPhoto ? [mainOrFirstPhoto] : []
+			}
+		})
+
+		return new Response(JSON.stringify(updatedRecipes), {
 			status: 200,
 			headers: {
 				'Content-Type': 'application/json'

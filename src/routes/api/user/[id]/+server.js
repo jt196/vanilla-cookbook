@@ -103,7 +103,6 @@ export const PUT = async ({ request, locals, params }) => {
 		}
 
 		if ('isAdmin' in userData) {
-			console.log('Is Admin is in user data!')
 			// Check if this user is the only admin
 			if (updatingUser.isAdmin) {
 				const adminCount = await prisma.authUser.count({
