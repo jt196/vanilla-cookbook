@@ -337,5 +337,12 @@ export const systems = [
 export const languages = [
 	{ value: 'eng', label: 'English' },
 	{ value: 'deu', label: 'Deutsch' },
-	{ value: 'ita', label: 'Italiano' }
+	{ value: 'ita', label: 'Italiano' },
+	{ value: 'esp', label: 'Español' },
+	{ value: 'fra', label: 'Français' },
+	{ value: 'por', label: 'Português' },
+	{ value: 'rus', label: 'Русский' },
+	{ value: 'hin', label: 'हिन्दी' },
+	{ value: 'ind', label: 'Bahasa Indonesia' },
+	{ value: 'ara', label: 'العربية' }
 ]
