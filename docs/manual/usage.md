@@ -127,7 +127,7 @@ I've tried to keep most of the under the hood stuff here.
 - **Display Original** - set as default
 - **Display Extra** - set as default
 - **Selected System** - Choose your preferred measurement system
-- **Selected Language** - Choose your language, currently limited to English, Italian, German.
+- **Selected Language** - Choose your language
 
 Here's a demo of the language and **Display Original** setting working.
 

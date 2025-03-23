@@ -25,6 +25,10 @@ Scrape recipes using a browser bookmarklet or simply paste a URL in. Hundreds of
 
 Add an OpenAI key to assist in parsing recipe data.
 
+### Progressive Web App
+
+Install on your mobile from a browser.
+
 ### Unit Conversion
 
 Smart conversion from US Volumetric to imperial and metric weight. Thousands of ingredients supported in this conversion. Inline temperature conversion, fractions and ranges are also supported.
@@ -51,7 +55,20 @@ Designed to be as easy and stress free to set up as possible. Docker or local no
 
 ### Multiple Language Ingredient Parsing
 
-Currently 3 languages supported (English, German, Italian) for ingredient parsing.
+Multiple languages supported for ingredient parsing.
+
+Currently:
+
+- English
+- German
+- Italian
+- Spanish
+- French
+- Portuguese
+- Indonesian
+- Hindi
+- Russian
+- Arabic
 
 ## Installation
 
