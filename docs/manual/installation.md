@@ -1,9 +1,9 @@
-# Installation
+## Installation
 
 {% include-markdown "../../README.md" start="# Installation" end="# Upgrade" %}
 
 ---
 
-# Upgrade
+## Upgrade
 
 {% include-markdown "../../README.md" start="# Upgrade" %}

@@ -1,4 +1,4 @@
-# Shopping
+## Shopping
 
 ![Shopping](../images/screen-shopping-large.png)
 
@@ -10,7 +10,7 @@ Checked items are hidden by default, and when they're checked they're not saved.
 
 Edit or delete individual items using the edit button.
 
-## Buttons
+### Buttons
 
 From left to right
 
@@ -18,8 +18,12 @@ From left to right
 - Mark everything as checked
 - Delete ALL checked items
 
-# Calendar
+## Calendar
 
 ![Calendar](../images/screen-calendar-large.png)
 
 Very simple calendar view of your cooking history.
+
+Month, week or list views.
+
+You'll be able to click on an item to go through to a recipe. Drag and drop to change the cook date/time.

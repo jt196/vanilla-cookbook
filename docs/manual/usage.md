@@ -1,8 +1,10 @@
-# Recipe List View
+# Usage
+
+## Recipe List View
 
 ![Recipe View Desktop](../images/screen-list-large.png)
 
-## Buttons
+### Buttons
 
 From left to right:
 
@@ -12,7 +14,7 @@ From left to right:
 - **Users**: List of the users on your instance
 - **Settings**: Configuration section
 
-## Filters
+### Filters
 
 From left to right
 
@@ -23,15 +25,15 @@ From left to right
 - **Filter cooked** - List all the cooked recipes
 - **Sort by Date, Title or Rating** - Sort the recipes by various means
 
-## Recipe Card
+### Recipe Card
 
 Displays info about your recipes.
 
-# Recipe View
+## Recipe View
 
 ![Recipe Card](../images/screen-first-recipe-large.png)
 
-## Recipe Buttons
+### Recipe Buttons
 
 From left to right:
 
@@ -42,15 +44,15 @@ From left to right:
 - **Mark Recipe as Cooked today**
 - **Delete Recipe**
 
-## Recipe About
+### Recipe About
 
 All your recipe info is here. Ratings, source, creation date, servings.
 
-## Recipe Instructions
+### Recipe Instructions
 
 Description, Instructions and Notes sections will appear here. Markdown is fully supported.
 
-## Recipe Ingredients
+### Recipe Ingredients
 
 Your list of ingredients and scaling appear here. Markdown is also fully supported. The ingredients are stored as plain text and parsed by the backend. This allows for conversion from US volumetric to weight conversion.
 
@@ -75,13 +77,13 @@ You have three checkboxes here:
 
 You can set your default options in the settings section.
 
-# Add Recipe
+## Add Recipe
 
 ![Recipe View Desktop](../images/screen-new-large.png)
 
 Add your recipe here.
 
-## Scrape It
+### Scrape It
 
 Either use the old skool bookmarklet (found in /user/options/bookmark), or paste the URL in the first box, then press scrape.
 
@@ -89,7 +91,7 @@ Not all websites are supported, but quite a few, mostly those that have good Sch
 
 If the standard recipe scrape fails, it'll try with an OpenAI API key.
 
-## AI Assist
+### AI Assist
 
 Add your OpenAI key to the .env variables. The model will default to 3.5 turbo, but you can change it there.
 
@@ -106,19 +108,19 @@ Here's a demo of it working:
   Your browser does not support the video tag.
 </video>
 
-## Add it
+### Add it
 
 Otherwise, add your recipe details and click the **Add Recipe** button at the bottom. The Edit page is basically the same as this. If the images are successfully saved, they'll be in the _uploads/images_ folder.
 
-# Options
+## Options
 
 ![Settings](../images/screen-settings-large.png)
 
 I've tried to keep most of the under the hood stuff here.
 
-## Settings
+### Settings
 
-### Ingredients
+#### Ingredients
 
 - **Teaspoons instead of grams** - use these instead of weight for smaller measures
 - **Display Cup Match** - set as default
@@ -134,7 +136,7 @@ Here's a demo of the language and **Display Original** setting working.
   Your browser does not support the video tag.
 </video>
 
-### Privacy
+#### Privacy
 
 - **Profile public** - show/hide your profile in the _/users_ view
 - **Recipes public** - make your recipe public by default

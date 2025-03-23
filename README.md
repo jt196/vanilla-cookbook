@@ -1,59 +1,61 @@
+# Vanilla Cookbook
+
 For a full getting started guide, [read the docs](https://vanilla-cookbook.readthedocs.io/en/latest/).
 
 ![Recipe List](docs/images/screen-list-large.png)
 ![Recipe View](docs/images/screen-first-recipe-large.png)
 
-# Overview
+## Overview
 
 Vanilla Cookbook is a self hosted recipe manager built with Svelte(kit). It is designed with complexity under the hood, keeping the user experience as uncluttered, simply vanilla as possible.
 
 Most of the web's recipes are stored as text, without much thought to a consistent language or structure. Many self-hosted apps go down the structuring route, automating, or asking the user to organise their data. This can lead to cluttered and complex interfaces, limiting user experiences to those technically minded. The philosophy behind Vanilla was to do as much as I could with that text as it was, limiting the work the user has to do to a minimum. You should be able to get cooking with a few clicks.
 
-# Features
+## Features
 
-## Control Your Data
+### Control Your Data
 
 Import and export your data in Paprika format. Category hierarchy is supported for imports.
 
-## Scraping Recipes
+### Scraping Recipes
 
 Scrape recipes using a browser bookmarklet or simply paste a URL in. Hundreds of sites supported.
 
-## AI Scrape Assist
+### AI Scrape Assist
 
 Add an OpenAI key to assist in parsing recipe data.
 
-## Unit Conversion
+### Unit Conversion
 
 Smart conversion from US Volumetric to imperial and metric weight. Thousands of ingredients supported in this conversion. Inline temperature conversion, fractions and ranges are also supported.
 
-## Shopping List
+### Shopping List
 
 Simple shopping list section. Add ingredients from your recipe. Checked ingredients persist but hidden, show them to make your next shopping list.
 
-## Cooking Logs
+### Cooking Logs
 
 Log when you've cooked a recipe. Calendar view, recipe view of logs.
 
-## User Management
+### User Management
 
 User authentication is supported. You can add users, turn on/off registration.
 
-## Public Recipes
+### Public Recipes
 
 Recipes and your personal cookbook can be made public, so you can share them with friends and family.
 
-## Easy Installation
+### Easy Installation
 
 Designed to be as easy and stress free to set up as possible. Docker or local node instance.
 
-## Multiple Language Ingredient Parsing
+### Multiple Language Ingredient Parsing
 
 Currently 3 languages supported (English, German, Italian) for ingredient parsing.
 
-# Installation
+## Installation
 
-## Docker
+### Docker
 
 1. In your project directory, create the _.env_ and _docker-compose.yml_ files using the respective _.template_ files in the repo root:
    ```bash
@@ -67,7 +69,7 @@ Currently 3 languages supported (English, German, Italian) for ingredient parsin
 4. Use `:latest` tags for bleedin' edge, `:stable` for stable release.
 5. Run `docker-compose up -d`
 
-## Local Dev
+### Local Dev
 
 1. Clone the repo and the recipe-ingredient-parser submodule: `git clone --recursive https://github.com/jt196/vanilla-cookbook.git`
 2. At the root of the project, create the .env file: `cp .env.template .env`
@@ -79,7 +81,7 @@ Currently 3 languages supported (English, German, Italian) for ingredient parsin
    - `pnpm dev:setup` (this should only need to be run the first time to generate the )
    - `pnpm dev`
 
-# Upgrade
+## Upgrade
 
 1. Grab the latest image: `docker pull jt196/vanilla-cookbook`
 2. Check the _.env.template_ and _docker-compose.yml.template_ files haven't been modified. Add any additional fields. The _.env_ is the most likely to change.

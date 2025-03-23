@@ -32,6 +32,6 @@ _(Not recommended)_
 
 Note this should kind of work, but it's super slow and may cause polling issues. You're downloading a small file which is a list of recipes containing only the _id_ and a few other bits, then polling the API for the full recipe, one by one. It's slow and arduous and will take several minutes. If you have a local file, it'll be much quicker and easier.
 
-# Exporting Paprika Recipes Files
+## Exporting Paprika Recipes Files
 
 Head to _user/options/export_ and download your recipes there. Images won't export unfortunately.
