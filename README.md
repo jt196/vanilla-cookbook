@@ -3,11 +3,17 @@ For a full getting started guide, [read the docs](https://vanilla-cookbook.readt
 ![Recipe List](docs/images/screen-list-large.png)
 ![Recipe View](docs/images/screen-first-recipe-large.png)
 
+# Overview
+
+Vanilla Cookbook is a self hosted recipe manager built with Svelte(kit). It is designed with complexity under the hood, keeping the user experience as uncluttered, simply vanilla as possible.
+
+Most of the web's recipes are stored as text, without much thought to a consistent language or structure. Many self-hosted apps go down the structuring route, automating, or asking the user to organise their data. This can lead to cluttered and complex interfaces, limiting user experiences to those technically minded. The philosophy behind Vanilla was to do as much as I could with that text as it was, limiting the work the user has to do to a minimum. You should be able to get cooking with a few clicks.
+
 # Features
 
 ## Control Your Data
 
-Bring in and export your data in Paprika format. Category hierarchy is supported.
+Import and export your data in Paprika format. Category hierarchy is supported for imports.
 
 ## Scraping Recipes
 
@@ -19,15 +25,15 @@ Add an OpenAI key to assist in parsing recipe data.
 
 ## Unit Conversion
 
-Smart conversion from US Volumetric to imperial and metric weight. Thousands of ingredients supported in this conversion. Inline temperature conversion is also supported.
+Smart conversion from US Volumetric to imperial and metric weight. Thousands of ingredients supported in this conversion. Inline temperature conversion, fractions and ranges are also supported.
 
 ## Shopping List
 
-Simple shopping list section. Add ingredients from your recipe.
+Simple shopping list section. Add ingredients from your recipe. Checked ingredients persist but hidden, show them to make your next shopping list.
 
 ## Cooking Logs
 
-Log when you've cooked a recipe. Calendar view.
+Log when you've cooked a recipe. Calendar view, recipe view of logs.
 
 ## User Management
 

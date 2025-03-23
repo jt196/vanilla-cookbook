@@ -58,12 +58,22 @@ A typical ingredient should appear like this:
 
 - 1 cup of sugar, granulated
 - 200g of flour (sifted)
+- 1-2 teaspoons of salt, kosher
+- 1½ cups of water
 
 The comma or the brackets are accepted as "extras". If you've got extra extras, this is likely why your ingredient isn't parsing correctly. Open up the editor and adjust the ingredient line to be closer to type.
 
 Click on the ingredient line to mark as "checked" for the duration of the recipe.
 
-Hover over and click to the left of the ingredient to add it to the shopping list.
+Hover over and click the shopping basket button to the left of the ingredient to add it to the shopping list.
+
+You have three checkboxes here:
+
+- **Display Cup Match** volumetric ingredients by default when converting to and from US Cups. This is a bit "fuzzy" and not always perfect, so sometimes useful to check what ingredient the system. If no ingredient has been found, you'll see a '\*' and a note that it has been matched to water.
+- **Display Original** ingredient line text instead of parsed text. The parser will go through an ingredient line and attempt to separate quantity, unit, ingredient and any extra information. If this fails, you can simply use a fallback, but the scaling won't work.
+- **Display Extra** ingredient text, eg after the comma in "1 clove garlic, chopped"
+
+You can set your default options in the settings section.
 
 # Add Recipe
 
@@ -111,9 +121,9 @@ I've tried to keep most of the under the hood stuff here.
 ### Ingredients
 
 - **Teaspoons instead of grams** - use these instead of weight for smaller measures
-- **Display Cup Match** volumetric ingredients by default when converting to and from US Cups. This is a bit "fuzzy" and not always perfect, so sometimes useful to check what ingredient the system. If no ingredient has been found, you'll see a '\*' and a note that it has been matched to water.
-- **Display Original** ingredient line text instead of parsed text. The parser will go through an ingredient line and attempt to separate quantity, unit, ingredient and any extra information. If this fails, you can simply use a fallback, but the scaling won't work.
-- **Display Extra** ingredient text, eg after the comma in "1 clove garlic, chopped"
+- **Display Cup Match** - set as default
+- **Display Original** - set as default
+- **Display Extra** - set as default
 - **Selected System** - Choose your preferred measurement system
 - **Selected Language** - Choose your language, currently limited to English, Italian, German.
 
