@@ -1,21 +1,37 @@
 {
 	"name": "Vanilla Cookbook",
 	"short_name": "Vanilla",
-	"description": "Your vanilla cookbook",
+	"description": "Your cookbook, vanilla and simple.",
 	"start_url": "/",
+	"orientation": "any",
+	"scope": "/",
 	"display": "standalone",
-	"background_color": "#13171f",
-	"theme_color": "#0172ad",
+	"theme_color": "#0072ac",
+	"background_color": "#12171e",
 	"icons": [
 		{
-			"src": "/android-chrome-192x192.png",
+			"src": "/icons/icon_192.png",
 			"sizes": "192x192",
-			"type": "image/png"
+			"type": "image/png",
+			"purpose": "any"
 		},
 		{
-			"src": "/android-chrome-512x512.png",
+			"src": "/icons/icon_512.png",
 			"sizes": "512x512",
-			"type": "image/png"
+			"type": "image/png",
+			"purpose": "any"
+		},
+		{
+			"src": "/icons/maskable_192.png",
+			"sizes": "192x192",
+			"type": "image/png",
+			"purpose": "maskable"
+		},
+		{
+			"src": "/icons/maskable_512.png",
+			"sizes": "512x512",
+			"type": "image/png",
+			"purpose": "maskable"
 		}
 	]
 }

@@ -40,10 +40,21 @@
 			<li>
 				<strong>
 					{#if user}
-						<a href="/user/{user.userId}/recipes"
-							><img id="vanilla-logo" src="/vanilla-notype.png" alt="Vanilla" /></a>
+						<a href={`/user/${user.userId}/recipes`}>
+							<img
+								id="vanilla-logo"
+								src="/icons/site-logo.svg"
+								alt="Vanilla"
+								width="120"
+								height="120" />
+						</a>
 					{:else}
-						<img id="vanilla-logo" src="/vanilla-notype.png" alt="Vanilla" />
+						<img
+							id="vanilla-logo"
+							src="/icons/site-logo.svg"
+							alt="Vanilla"
+							width="120"
+							height="120" />
 					{/if}
 				</strong>
 			</li>
