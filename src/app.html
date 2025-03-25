@@ -4,6 +4,19 @@
 <head>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width" />
+
+	<!-- Apply user's preferred theme before Svelte hydrates -->
+	<script>
+		try {
+			const stored = localStorage.getItem('theme');
+			const prefersDark = window.matchMedia?.('(prefers-color-scheme: dark)').matches;
+			const theme = stored || (prefersDark ? 'dark' : 'light');
+			document.documentElement.setAttribute('data-theme', theme);
+		} catch (e) {
+			document.documentElement.setAttribute('data-theme', 'dark');
+		}
+	</script>
+
 	%sveltekit.head%
 </head>
 

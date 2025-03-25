@@ -48,9 +48,10 @@
 	function toggleTheme() {
 		theme = theme === 'dark' ? 'light' : 'dark'
 		document.documentElement.setAttribute('data-theme', theme)
-		user.theme = theme
+		localStorage.setItem('theme', theme)
 
 		if (user) {
+			user.theme = theme
 			fetch(`/api/user/${user.userId}`, {
 				method: 'PUT',
 				headers: { 'Content-Type': 'application/json' },
