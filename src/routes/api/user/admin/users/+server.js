@@ -45,6 +45,7 @@ export async function GET({ locals }) {
 				ingOriginal: true,
 				ingExtra: true,
 				language: true,
+				theme: true,
 				_count: {
 					select: {
 						recipes: true

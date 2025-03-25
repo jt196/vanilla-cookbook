@@ -73,7 +73,6 @@
 
 <style>
 	.active-link {
-		color: white;
 		font-weight: bold;
 	}
 	form li {

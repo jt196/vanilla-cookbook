@@ -6,6 +6,7 @@
 	let { data } = $props()
 	const { user, dbRecCount } = $state(data)
 	let settingsFeedback = $state('')
+
 	let systemLabel = $derived(
 		'Selected system: ' + systems.find((system) => system.value === user.units).label
 	)
@@ -13,6 +14,7 @@
 	let languageLabel = $derived(
 		'Selected language: ' + languages.find((language) => language.value === user.language).label
 	)
+
 	$effect(() => {
 		console.log(user.units)
 	})

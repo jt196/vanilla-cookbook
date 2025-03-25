@@ -2,10 +2,10 @@
 <script>
 	import { createEventDispatcher } from 'svelte'
 	/** @type {{isOpen?: boolean, onClose?: () => void, children?: import('svelte').Snippet}} */
-	let { isOpen = false, onClose, children } = $props();
+	let { isOpen = false, onClose, children } = $props()
 
 	function closeSidebar() {
-		onClose?.(); // Call the parent function instead of modifying `isOpen`
+		onClose?.() // Call the parent function instead of modifying `isOpen`
 	}
 </script>
 
@@ -19,9 +19,9 @@
 		width: 250px;
 		padding-top: 50px;
 		height: 100%;
-		background-color: #333;
+		background-color: var(--pico-color);
 		overflow-y: auto; // Makes the sidebar scrollable
-		color: white;
+		color: var(--pico-background-color);
 		position: fixed;
 		top: 0;
 		left: 0;
@@ -54,7 +54,7 @@
 			right: 10px;
 			background: none;
 			border: none;
-			color: white;
+			color: var(--pico-background-color);
 			font-size: 1.5rem;
 			cursor: pointer;
 		}

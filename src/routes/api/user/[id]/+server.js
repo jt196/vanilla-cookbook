@@ -144,7 +144,8 @@ export const PUT = async ({ request, locals, params }) => {
 				ingMatch: 'ingMatch' in userData ? userData.ingMatch : updatingUser.ingMatch,
 				ingOriginal: 'ingOriginal' in userData ? userData.ingOriginal : updatingUser.ingOriginal,
 				ingExtra: 'ingExtra' in userData ? userData.ingExtra : updatingUser.ingExtra,
-				language: 'language' in userData ? userData.language : updatingUser.language
+				language: 'language' in userData ? userData.language : updatingUser.language,
+				theme: 'theme' in userData ? userData.theme : updatingUser.theme
 			}
 		})
 

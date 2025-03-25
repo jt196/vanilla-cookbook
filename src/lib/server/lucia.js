@@ -27,7 +27,8 @@ export const auth = lucia({
 			ingMatch: userData.ingMatch,
 			ingOriginal: userData.ingOriginal,
 			ingExtra: userData.ingExtra,
-			language: userData.language
+			language: userData.language,
+			theme: userData.theme
 		}
 	},
 	sessionCookie: {

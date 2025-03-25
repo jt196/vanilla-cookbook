@@ -195,5 +195,8 @@
 
 	.sidebar-check {
 		margin-left: 1rem;
+		label {
+			color: var(--pico-background-color);
+		}
 	}
 </style>
