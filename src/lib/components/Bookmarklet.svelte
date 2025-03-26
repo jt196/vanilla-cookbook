@@ -10,7 +10,7 @@
 		baseUrl = window.location.origin
 		bookmarkletCode = `javascript:(function() {
             var currentUrl = encodeURIComponent(window.location.href);
-            var newUrl = '${baseUrl}/new?url=' + currentUrl;
+            var newUrl = '${baseUrl}/recipe/new?url=' + currentUrl;
             window.open(newUrl, '_blank');
         })();`
 	})

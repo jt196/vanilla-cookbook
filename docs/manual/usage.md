@@ -76,6 +76,8 @@ You can set your default options in the settings section.
 
 Add your recipe here.
 
+**Android PWA sharing** a URL or text to the new page is supported.
+
 ### Scrape It
 
 Either use the old skool bookmarklet (found in /user/options/bookmark), or paste the URL in the first box, then press scrape.

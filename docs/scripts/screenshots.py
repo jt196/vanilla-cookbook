@@ -15,7 +15,7 @@ RECIPE_LIST = re.compile(fr"{re.escape(ORIGIN)}/user/.+/recipes")
 # Named routes with login
 PAGES_TO_CAPTURE = [
     {"name": "login", "route": "/login"},
-    {"name": "new", "route": "/new"},
+    {"name": "new", "route": "recipe/new"},
     {"name": "shopping", "route": "/user/shopping"},
     {"name": "calendar", "route": "/user/calendar"},
     {"name": "settings", "route": "/user/options/settings"},

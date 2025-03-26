@@ -106,7 +106,7 @@
 						<Theme {theme} width="25px" />
 					</button>
 				</li>
-				<li><a href="/new"><New width="25px" /></a></li>
+				<li><a href="/recipe/new"><New width="25px" /></a></li>
 				<li><a href="/user/shopping"><Shopping width="25px" /></a></li>
 				<li><a href="/user/calendar"><Calendar width="25px" /></a></li>
 				<li><a href="/users"><Users width="25px" /></a></li>

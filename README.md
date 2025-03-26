@@ -29,6 +29,8 @@ Add an OpenAI key to assist in parsing recipe data.
 
 Install on your mobile from a browser.
 
+Share URL via browser to scrape a recipe, or select text and share to parse text.
+
 ### Unit Conversion
 
 Smart conversion from US Volumetric to imperial and metric weight. Thousands of ingredients supported in this conversion. Inline temperature conversion, fractions and ranges are also supported.
