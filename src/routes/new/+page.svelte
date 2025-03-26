@@ -44,7 +44,6 @@
 	 */
 	onMount(async () => {
 		const urlParams = new URLSearchParams(window.location.search)
-		console.log('🚀 ~ onMount ~ urlParams:', urlParams)
 		let rawUrl = urlParams.get('url')
 		let text = urlParams.get('text')
 
