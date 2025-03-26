@@ -121,7 +121,7 @@ If it's truly borked and you don't want to edit the recipe, just check **Display
 
 ## Conversion
 
-_tldr;_ Set your default measurement system in the settings, or change it in the dropdown below the ingredients.
+_tldr;_ Set your default measurement system in the settings, or change it in the dropdown below the ingredients. Metric, imperial are supported well, US Cups/Volumetric is supported, kind of.
 
 At the bottom of the ingredients section is a rather nifty feature, ingredient conversion.
 
@@ -140,6 +140,8 @@ First we figure out the measurement system from the units contained within the i
 - grams + kilograms + litres => **Metric**
 - pounds + ounces + fluid ounces => **Imperial**
 - cups => **US Cups**
+
+If they're mixed, it'll try and get the system by counting the instances of each one belonging to whatever category, e.g. grams _ 2, cups _ 1 => metric. If they're equal, it'll get a bit confused. They shouldn't be there anyway, so take them out!
 
 Note, teaspoons/tablespoons is system agnostic, as many folks use them for smaller ingredient quantities in recipes. However, if the system is found to be **US Cups**, it will attempt to convert them to grams. You can prevent this behaviour by checking **Use teaspoons and tablespoons instead of grams.** in the user settings.
 
