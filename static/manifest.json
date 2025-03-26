@@ -7,7 +7,7 @@
 	"scope": "/",
 	"display": "standalone",
 	"share_target": {
-		"action": "/share",
+		"action": "/new",
 		"method": "GET",
 		"params": {
 			"url": "url",
