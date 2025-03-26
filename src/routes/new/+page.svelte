@@ -44,8 +44,17 @@
 	 */
 	onMount(async () => {
 		const urlParams = new URLSearchParams(window.location.search)
-		url = urlParams.get('url')
-		sharedText = urlParams.get('text')
+		console.log('🚀 ~ onMount ~ urlParams:', urlParams)
+		let rawUrl = urlParams.get('url')
+		let text = urlParams.get('text')
+
+		// If there's no dedicated url param, but text looks like a URL, treat it as such
+		if (!rawUrl && text && /^https?:\/\//.test(text)) {
+			rawUrl = text
+		}
+
+		url = rawUrl
+		sharedText = !rawUrl ? text : null
 
 		if (url) {
 			url = decodeURIComponent(url)
