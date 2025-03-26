@@ -56,14 +56,7 @@ Description, Instructions and Notes sections will appear here. Markdown is fully
 
 Your list of ingredients and scaling appear here. Markdown is also fully supported. The ingredients are stored as plain text and parsed by the backend. This allows for conversion from US volumetric to weight conversion.
 
-A typical ingredient should appear like this:
-
-- 1 cup of sugar, granulated
-- 200g of flour (sifted)
-- 1-2 teaspoons of salt, kosher
-- 1½ cups of water
-
-The comma or the brackets are accepted as "extras". If you've got extra extras, this is likely why your ingredient isn't parsing correctly. Open up the editor and adjust the ingredient line to be closer to type.
+Please see the [ingredients docs](ingredients.md) for more details about how to correctly format your ingredients.
 
 Click on the ingredient line to mark as "checked" for the duration of the recipe.
 
@@ -121,6 +114,8 @@ I've tried to keep most of the under the hood stuff here.
 ### Settings
 
 #### Ingredients
+
+See also [ingredients docs](./ingredients.md)
 
 - **Teaspoons instead of grams** - use these instead of weight for smaller measures
 - **Display Cup Match** - set as default
