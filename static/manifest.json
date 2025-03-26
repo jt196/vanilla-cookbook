@@ -6,6 +6,14 @@
 	"orientation": "any",
 	"scope": "/",
 	"display": "standalone",
+	"share_target": {
+		"action": "/share",
+		"method": "GET",
+		"params": {
+			"url": "url",
+			"text": "text"
+		}
+	},
 	"theme_color": "#0072ac",
 	"background_color": "#12171e",
 	"icons": [
