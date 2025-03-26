@@ -5,12 +5,13 @@
 	import { handleScrape } from '$lib/utils/parse/parseHelpersClient'
 	import RecipeNewScrape from '$lib/components/RecipeNewScrape.svelte'
 	import RecipeForm from '$lib/components/RecipeForm.svelte'
-
-	let url = $state('')
+	import Chain from '$lib/components/svg/Chain.svelte'
+	import Note from '$lib/components/svg/Note.svelte'
+	import FeedbackMessage from '$lib/components/FeedbackMessage.svelte'
+	import { defaultRecipe } from '$lib/utils/config'
 
 	/**
 	 * The scraped recipe object.
-	 * @typedef {Object} Recipe
 	 * @property {string} name - Name of the recipe.
 	 * @property {string} source - Source of the recipe.
 	 * @property {string} source_url - URL source of the recipe.
@@ -24,20 +25,13 @@
 	 * @property {string} nutritional_info - Nutritional information of the recipe.
 	 */
 
-	/** @type {Recipe} */
-	let recipe = $state({
-		name: '',
-		source: '',
-		source_url: '',
-		cook_time: '',
-		image_url: '',
-		prep_time: '',
-		ingredients: '',
-		directions: '',
-		total_time: '',
-		servings: '',
-		nutritional_info: ''
-	})
+	let recipe = $state({ ...defaultRecipe })
+
+	let url = $state(null)
+	let sharedText = $state(null)
+	let scrapeActive = $state(true)
+	let feedbackMessage = $state('')
+	let feedbackType = $state('info')
 
 	let { data } = $props()
 
@@ -49,16 +43,12 @@
 	 * @returns {Promise<void>}
 	 */
 	onMount(async () => {
-		// Check for the 'scrape' parameter and populate the form
 		const urlParams = new URLSearchParams(window.location.search)
-		const scrapeUrl = urlParams.get('scrape')
-		scrapeUrl ? (url = scrapeUrl) : null
+		url = urlParams.get('url')
+		sharedText = urlParams.get('text')
 
-		if (scrapeUrl) {
-			// Populate the URL input field
-			url = decodeURIComponent(scrapeUrl)
-
-			// Call the handleScrape function directly and get the scraped data
+		if (url) {
+			url = decodeURIComponent(url)
 			try {
 				const scrapedData = await handleScrape(null, url)
 				if (scrapedData) {
@@ -67,6 +57,10 @@
 			} catch (error) {
 				console.error('Error during scrape:', error)
 			}
+		} else if (sharedText && apiKeyPresent && aiEnabled) {
+			scrapeActive = false
+		} else if (sharedText && (!apiKeyPresent || !aiEnabled)) {
+			feedbackMessage = 'AI not enabled!'
 		}
 	})
 
@@ -83,11 +77,28 @@
 	}
 </script>
 
-<RecipeNewScrape
-	initialUrl={url}
-	{apiKeyPresent}
-	{aiEnabled}
-	bind:recipe
-	onUrlChange={(newUrl) => (url = newUrl)} />
+{#if aiEnabled && apiKeyPresent}
+	<div class="tab-toggle">
+		<button
+			onclick={() => {
+				scrapeActive = !scrapeActive
+				url = null
+				sharedText = null
+				recipe = defaultRecipe
+			}}>
+			{#if scrapeActive}
+				<Note width="20px" /> Parse
+			{:else}
+				<Chain width="20px" /> Scrape
+			{/if}
+		</button>
+	</div>
+{/if}
+
+<RecipeNewScrape bind:url bind:sharedText {scrapeActive} {apiKeyPresent} {aiEnabled} bind:recipe />
 
 <RecipeForm bind:recipe onSubmit={handleCreateRecipe} />
+
+{#if feedbackMessage}
+	<FeedbackMessage message={feedbackMessage} type={feedbackType} timeout={4000} />
+{/if}

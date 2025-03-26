@@ -86,6 +86,10 @@ If the standard recipe scrape fails, it'll try with an OpenAI API key.
 
 ### AI Assist
 
+#### Scrape Fallback
+
+If the recipe parse fails, and you have the ai option enabled, plus key set in the variables, it'll submit the HTML of the recipe page for an AI to parse.
+
 Add your OpenAI key to the .env variables. The model will default to 3.5 turbo, but you can change it there.
 
 Set `OPEN_API_ENABLED=true`. The default model should work.
@@ -97,13 +101,17 @@ It's using the [openai](https://www.npmjs.com/package/openai) npm package, so re
 Here's a demo of it working:
 
 <video width="640" height="360" controls>
-  <source src="../../videos/scrape_manual_ai.mp4" type="video/mp4">
+  <source src="../../videos/scrape_and_parse_demo.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
 
+#### Text Parsing
+
+Click on the Parse button at the top of the + new page (hidden if you don't have API key or AI enabled in the `.env` file) and you'll be presented with a large input box. Paste your recipe in there and see whether an LLM can make something of the data! It works pretty well in the demo above.
+
 ### Add it
 
-Otherwise, add your recipe details and click the **Add Recipe** button at the bottom. The Edit page is basically the same as this. If the images are successfully saved, they'll be in the _uploads/images_ folder.
+Complete the recipe form, then click the **Add Recipe** button at the bottom. The Edit page is basically the same as this. If the images are successfully saved, they'll be in the _uploads/images_ folder. Image URLs should grab the image and save it there.
 
 ## Options
 

@@ -1,5 +1,5 @@
 <script>
-	import { systems, languages } from '$lib/utils/units.js'
+	import { systems, languages } from '$lib/utils/config.js'
 	import FeedbackMessage from '$lib/components/FeedbackMessage.svelte'
 
 	/** @type {{data: any}} */

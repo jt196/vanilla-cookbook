@@ -1,5 +1,5 @@
 <script>
-	import { systems } from '$lib/utils/units'
+	import { systems } from '$lib/utils/config'
 
 	/** @type {{selectedSystem?: string, measurementSystem?: string}} */
 	let {

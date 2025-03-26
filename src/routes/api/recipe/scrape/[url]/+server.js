@@ -1,5 +1,5 @@
 import { parseURL } from '$lib/utils/parse/recipeParse'
-import { gptExtractRecipe } from '$lib/utils/ai'
+import { gptExtractRecipeFromContent } from '$lib/utils/ai'
 import { env } from '$env/dynamic/private'
 
 const OPENAI_API_KEY = env.OPENAI_API_KEY || 'sk-xxxxxxxxxxxxxxxxxxxxxxxxx'
@@ -36,7 +36,7 @@ export async function GET({ params }) {
 	if (OPENAI_API_KEY && html && OPENAI_API_ENABLED) {
 		console.log('Attempting AI scrape...')
 		try {
-			const aiRecipe = await gptExtractRecipe(html, url)
+			const aiRecipe = await gptExtractRecipeFromContent(html, 'html', url)
 
 			if (
 				aiRecipe &&

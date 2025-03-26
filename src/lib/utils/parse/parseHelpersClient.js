@@ -38,6 +38,37 @@ export async function handleScrape(event = null, url) {
 	}
 }
 
+export async function handleParse(event = null, text) {
+	if (event) event.preventDefault()
+
+	try {
+		const response = await fetch('/api/recipe/parse', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ text })
+		})
+
+		if (!response.ok) {
+			const error = await response.json()
+			throw new Error(error?.error || 'Failed to parse text.')
+		}
+
+		const raw = await response.json()
+		const formatted = formatScrapedRecipe(raw)
+
+		return {
+			...formatted,
+			_source: raw._source,
+			_status: raw._status
+		}
+	} catch (err) {
+		console.error('handleParse error:', err)
+		throw err
+	}
+}
+
 // Reusable formatting function for both methods
 export function formatScrapedRecipe(raw) {
 	return {
