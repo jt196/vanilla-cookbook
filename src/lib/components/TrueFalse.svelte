@@ -3,7 +3,7 @@
 	import X from '$lib/components/svg/X.svelte'
 
 	/** @type {{isTrue?: boolean, width?: string, fill?: string}} */
-	let { isTrue = true, width = '20px', fill = 'white' } = $props();
+	let { isTrue = true, width = '20px', fill = 'var(--pico-color)' } = $props()
 </script>
 
 {#if isTrue}

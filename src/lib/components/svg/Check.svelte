@@ -1,6 +1,6 @@
 <script>
 	/** @type {{width?: string, height?: string, fill?: string, favourite?: boolean}} */
-	let { width = '', height = '', fill = 'var(--lightAccent)', checked = false } = $props()
+	let { width = '20px', height = '20px', fill = 'var(--lightAccent)', checked = false } = $props()
 </script>
 
 {#if checked}
