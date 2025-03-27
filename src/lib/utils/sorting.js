@@ -31,6 +31,19 @@ export function sortByKeyGeneric(inputArray, inputKey, direction) {
 	})
 }
 
+/**
+ * Sorts an array of objects by two keys, with specified sort directions for each key.
+ * The array is first sorted by the `primarySortKey` in the specified `primaryDirection`.
+ * If two elements have the same value for the `primarySortKey`, they are then sorted
+ * by the `secondarySortKey` in the specified `secondaryDirection`.
+ *
+ * @param {Object[]} inputArray - The array of objects to sort.
+ * @param {string} primarySortKey - The key to sort the array by initially.
+ * @param {string} secondarySortKey - The key to sort the array by when the primary key values are equal.
+ * @param {string} [primaryDirection='asc'] - The sort direction for the primary key ('asc' or 'desc').
+ * @param {string} [secondaryDirection='asc'] - The sort direction for the secondary key ('asc' or 'desc').
+ * @returns {Object[]} - The array sorted by the specified primary and secondary keys.
+ */
 export function sortByTwoKeys(
 	inputArray,
 	primarySortKey,

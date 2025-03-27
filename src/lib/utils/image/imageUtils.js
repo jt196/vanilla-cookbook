@@ -1,3 +1,9 @@
+/**
+ * Fetches the Content-Type of a given URL by making a HEAD request.
+ *
+ * @param {string} url - The URL to fetch the Content-Type for.
+ * @returns {Promise<string|null>} A promise that resolves to the Content-Type of the URL, or null if the request fails.
+ */
 export async function getContentTypeFromUrl(url) {
 	try {
 		const response = await fetch(url, { method: 'HEAD' })
@@ -11,6 +17,13 @@ export async function getContentTypeFromUrl(url) {
 	}
 }
 
+/**
+ * Maps a given Content-Type to its corresponding file type and extension.
+ *
+ * @param {string} contentType - The Content-Type to map.
+ * @returns {Object} An object containing the fileType and extension.
+ *                   Defaults to 'image/jpeg' and 'jpg' if the Content-Type is unrecognized.
+ */
 export function mapContentTypeToFileTypeAndExtension(contentType) {
 	switch (contentType) {
 		case 'image/jpeg':
@@ -26,6 +39,14 @@ export function mapContentTypeToFileTypeAndExtension(contentType) {
 	}
 }
 
+/**
+ * Checks if the given image URL exists remotely.
+ *
+ * @param {string} imageUrl - The URL of the image to check.
+ * @param {string} baseUrl - The base URL of the API to make the request to.
+ *
+ * @returns {Promise<boolean>} A promise that resolves to a boolean indicating whether the image exists or not.
+ */
 export async function checkImageExistence(imageUrl, baseUrl) {
 	console.log('Checking image existence!')
 	try {

@@ -3,8 +3,16 @@ import { promises as fsPromises } from 'fs'
 import path from 'path'
 import { fileTypeFromStream } from 'file-type'
 
-// Check for a single type: isValidFileType(file, 'zip')
-// Check for multiple types: isValidFileType(file, ['zip', 'gzip'])
+/**
+ * Validates the file type of a given stream against desired extensions.
+ * Check for multiple types: isValidFileType(file, ['zip', 'gzip'])
+ * Check for a single type: isValidFileType(file, 'zip')
+ *
+ * @param {ReadableStream} stream - The stream of the file to be checked.
+ * @param {string|string[]} desiredExtensions - The extension(s) to validate against.
+ * @returns {Promise<boolean>} A promise that resolves to true if the file type matches
+ * any of the desired extensions, false otherwise.
+ */
 export async function isValidFileType(stream, desiredExtensions) {
 	const fileTypeResult = await fileTypeFromStream(stream)
 
@@ -21,6 +29,14 @@ export async function isValidFileType(stream, desiredExtensions) {
 
 export const validImageTypes = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp']
 
+/**
+ * Saves a given file data to a specified filename in a given directory.
+ * If the file already exists, this function will not overwrite it.
+ * @param {ArrayBuffer|string} fileData - The data of the file to be saved.
+ * @param {string} filename - The name of the file to be saved.
+ * @param {string} directory - The directory in which to save the file.
+ * @throws {Error} If there is an error while saving the file.
+ */
 export async function saveFile(fileData, filename, directory) {
 	const filePath = path.join(directory, filename)
 
@@ -45,6 +61,15 @@ export async function saveFile(fileData, filename, directory) {
 	}
 }
 
+/**
+ * Checks if the given recipes data structure is valid.
+ * This function checks if the given data is an array of objects,
+ * and if the first object in the array has the required fields.
+ * The required fields are:
+ * - name: a string
+ * @param {Array} recipes - The recipes data structure to be validated.
+ * @return {boolean} true if the structure is valid, false otherwise.
+ */
 export function isValidRecipeStructure(recipes) {
 	// We're expecting an array of recipes
 	if (!Array.isArray(recipes) || recipes.length === 0) return false

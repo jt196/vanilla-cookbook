@@ -249,6 +249,13 @@ export function decimalToFraction(decimal, decimalPlaces = 10, tolerance = 1e-10
 	}
 }
 
+/**
+ * Rounds an ingredient quantity to the nearest whole number if greater than 10,
+ * or to one decimal place if 10 or less.
+ *
+ * @param {number} decimal - The decimal quantity to round.
+ * @returns {number} - The rounded quantity.
+ */
 export function roundIngredientQuantity(decimal) {
 	if (decimal > 10) return roundToDecimalPlaces(decimal, 0)
 	else return roundToDecimalPlaces(decimal, 1)

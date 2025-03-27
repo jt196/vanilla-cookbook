@@ -3,12 +3,29 @@ import { shouldSkipConversion } from './units'
 import { prisma } from '$lib/server/prisma'
 import Fuse from 'fuse.js'
 
-// Function to retrieve all ingredient data from your database
+/**
+ * Retrieves all ingredient data from the database.
+ *
+ * @returns {Promise<Object[]>} A promise that resolves to an array of ingredient objects from the database.
+ */
 async function getAllIngredientData() {
 	const ingredientData = await prisma.ingredient.findMany()
 	return ingredientData
 }
 
+/**
+ * Converts a list of ingredients from one measurement system to another.
+ *
+ * Uses fuzzy matching (via Fuse.js) against ingredient data stored in the database
+ * to assist in identifying appropriate conversion logic. Can optionally skip
+ * conversion of small units (e.g. "pinch", "dash") if specified.
+ *
+ * @param {Object[]} ingredients - An array of ingredient objects to convert.
+ * @param {string} fromSystem - The measurement system to convert from (e.g., 'metric').
+ * @param {string} toSystem - The measurement system to convert to (e.g., 'imperial').
+ * @param {boolean} [skipSmallUnits=false] - Whether to skip conversion of small units like 'pinch' or 'dash'.
+ * @returns {Promise<Object[]>} A promise that resolves to the array of converted ingredient objects.
+ */
 export async function convertIngredientsBackend(
 	ingredients,
 	fromSystem,

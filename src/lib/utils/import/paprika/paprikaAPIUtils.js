@@ -79,6 +79,12 @@ const download = async (uri, filename) => {
 	})
 }
 
+/**
+ * Downloads an image from a given URL and returns it as a buffer.
+ *
+ * @param {string} url - The URL of the image to download.
+ * @returns {Promise<Buffer>} A promise that resolves with the downloaded image as a buffer.
+ */
 export async function downloadImageAsBuffer(url) {
 	const response = await axios.get(url, {
 		responseType: 'arraybuffer'
@@ -223,8 +229,14 @@ const getCategories = async (email, password, userId) => {
 }
 
 /**
- * 1. Loads categories either from a local file
- * @returns {Promise<Array>} - An array of categories.
+ * 1. Loads categories from a specified file path.
+ * Tries to access and read the file, parsing its contents as JSON.
+ * If the file does not exist or an error occurs during reading,
+ * logs the error and returns an empty array.
+ *
+ * @param {string} filepath - The path to the categories file.
+ * @returns {Promise<Array>} - A promise that resolves to an array of categories,
+ *                             or an empty array if the file cannot be accessed or read.
  */
 export async function loadCategories(filepath) {
 	try {
@@ -245,8 +257,16 @@ export async function loadCategories(filepath) {
 	}
 }
 
-// Load recipes from a given filename
-// Parses either a .json file or a .paprikarecipes archive
+/**
+ * Loads recipes from a given filename, which can be either a .json file or a .paprikarecipes archive.
+ * If the file is a .json file, it is parsed as JSON. If it is a .paprikarecipes archive,
+ * it is extracted using the extractRecipes function.
+ * The recipes structure is then validated using the isValidRecipeStructure function.
+ * If the recipes structure is invalid, an error is thrown.
+ * If there is an error loading the recipes, an error is logged to the console and an empty array is returned.
+ * @param {string} filename - The name of the file to load recipes from.
+ * @returns {Promise<Array>} - The loaded recipes, or an empty array if there was an error.
+ */
 export async function loadRecipes(filename) {
 	try {
 		const recipesPath = path.join(appRootPath, 'uploads/imports', filename)
@@ -314,6 +334,13 @@ export async function addCategoriesToDB(categories, userId) {
 	}
 }
 
+/**
+ * Adds recipes to the database.
+ * @param {Array} declaredRecipes - An array of declared recipes (i.e. recipes
+ * stripped of any fields that don't exist on the recipe table in the DB).
+ * @param {string} userId - The user's ID.
+ * @returns {Promise<Array>} - An array of created recipes.
+ */
 export async function addRecipesToDB(declaredRecipes, userId) {
 	const createdRecipes = []
 	for (const recipe of declaredRecipes) {
@@ -329,6 +356,17 @@ export async function addRecipesToDB(declaredRecipes, userId) {
 	return createdRecipes
 }
 
+/**
+ * Handles all of the photo-related processing for recipes that have been added to the database.
+ * This includes:
+ * - Saving the main photo to the uploads directory
+ * - Creating a RecipePhoto record for the main photo
+ * - Handling the photos array by saving each photo to the uploads directory and creating a RecipePhoto record
+ * - If the recipe is in .json format, downloading the photo from the photo_url field
+ * - If all of the above haven't managed to grab an image, downloading it from the image_url field
+ * @param {Array} createdRecipes - An array of created recipes.
+ * @returns {Promise<void>}
+ */
 export async function handlePhotosForRecipes(createdRecipes) {
 	const uploadDir = path.join(appRootPath, 'uploads/images')
 
@@ -424,6 +462,11 @@ export async function handlePhotosForRecipes(createdRecipes) {
 	}
 }
 
+/**
+ * Adds categories to recipes in the database.
+ * @param {Array} createdRecipes - An array of created recipes.
+ * @param {Array} rawRecipes - An array of raw recipes.
+ */
 export async function addRecipeCategoriesToDB(createdRecipes, rawRecipes) {
 	for (const recipe of createdRecipes) {
 		const originalRecipe = rawRecipes.find((raw) => raw.uid === recipe.uid)
@@ -448,7 +491,14 @@ export async function addRecipeCategoriesToDB(createdRecipes, rawRecipes) {
 	}
 }
 
-// Parse a recipe object and create any categories that don't exist
+/**
+ * Parse a recipe object and create any categories that don't exist
+ * Ensures that all categories from the raw recipes exist in the database.
+ * @param {Array} rawRecipes - An array of raw recipes.
+ * @param {string} adminUserId - The ID of the admin user to create the categories under.
+ * @returns {Promise<Array>} A promise that resolves to an array of all categories, both existing
+ * and newly created.
+ */
 export async function ensureCategoriesExist(rawRecipes, adminUserId) {
 	const allCategoriesFromRecipes = rawRecipes.flatMap((recipe) => recipe.categories)
 	const uniqueCategories = [...new Set(allCategoriesFromRecipes)]
@@ -480,10 +530,30 @@ export async function ensureCategoriesExist(rawRecipes, adminUserId) {
 	return [...existingCategories, ...categoriesToCreate]
 }
 
+/**
+ * Extracts the file extension from a given filename.
+ *
+ * @param {string} filename - The name of the file to extract the extension from.
+ * @returns {string} - The file extension.
+ */
+
+/**
+ * Extracts the file extension from a given filename.
+ *
+ * @param {string} filename - The name of the file to extract the extension from.
+ * @returns {string} - The file extension.
+ */
 export function getFileType(filename) {
 	return filename.split('.').pop()
 }
 
+/**
+ * Takes an array of raw recipes and returns a new array with the recipe fields
+ * remapped to match the columns in the Recipe table.
+ * @param {Array} rawRecipes - The array of raw recipes.
+ * @param {boolean} isPublic - Whether the recipes should be marked as public.
+ * @returns {Promise<Array>} A promise that resolves to an array of remapped recipe objects.
+ */
 export async function declareRecipes(rawRecipes, isPublic) {
 	return rawRecipes.map((recipe) => {
 		// eslint-disable-next-line no-unused-vars
@@ -496,6 +566,15 @@ export async function declareRecipes(rawRecipes, isPublic) {
 	})
 }
 
+/**
+ * Reads a JSON file and returns the length of the array stored in the file. If the file
+ * does not exist, or if the file is not a valid JSON file, or if the JSON content is not
+ * an array, returns null. If the file is empty, returns 0.
+ *
+ * @param {string} filePath - The path to the JSON file.
+ * @returns {Promise<number | null>} A promise that resolves to the length of the array
+ * stored in the file, or null if the file does not exist or is malformed.
+ */
 export async function getJSONLength(filePath) {
 	try {
 		const data = await fsPromises.readFile(filePath, 'utf-8')
@@ -518,6 +597,16 @@ export async function getJSONLength(filePath) {
 	}
 }
 
+/**
+ * Filters out recipes that already exist in the database from a given array of raw recipes.
+ *
+ * This function takes an array of raw recipe objects and checks their unique identifiers (UIDs)
+ * against those stored in the database. It returns a new array containing only the recipes
+ * that are not already present in the database.
+ *
+ * @param {Array} rawRecipes - An array of raw recipe objects, each containing a unique identifier (UID).
+ * @returns {Promise<Array>} A promise that resolves to an array of recipes that do not exist in the database.
+ */
 export async function filterExistingRecipes(rawRecipes) {
 	// Extract UIDs from rawRecipes
 	const uidsToCheck = rawRecipes.map((recipe) => recipe.uid)

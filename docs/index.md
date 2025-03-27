@@ -1,5 +1,5 @@
-![Recipes List Desktop](images/screen-list-large.png)
-![Recipe View Desktop](images/screen-first-recipe-large.png)
+![Recipes List Desktop](images/screen-desktop-list-dark.png)
+![Recipe View Desktop](images/screen-desktop-first-recipe-dark.png)
 
 # Overview
 

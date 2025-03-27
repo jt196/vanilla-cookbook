@@ -5,6 +5,15 @@ import { env } from '$env/dynamic/private'
 const OPENAI_API_KEY = env.OPENAI_API_KEY
 const OPENAI_API_ENGINE = env.OPENAI_API_ENGINE || 'gpt-3.5-turbo'
 
+/**
+ * Extracts a recipe from the provided content using the OpenAI API.
+ *
+ * @param {string} content - The input content containing the recipe in HTML or plain text.
+ * @param {string} [type='html'] - The type of the content, either 'html' or 'text'.
+ * @param {string} [url=''] - The URL where the content originated, used only for HTML content.
+ * @returns {Promise<Object>} A promise that resolves to an object representing the extracted recipe.
+ * @throws {Error} Throws an error if the OpenAI API is disabled, the API key is missing, or if the content parsing fails.
+ */
 export async function gptExtractRecipeFromContent(content, type = 'html', url = '') {
 	// Validation
 	if (env.OPENAI_API_ENABLED !== 'true') throw new Error('OpenAI API is disabled')
