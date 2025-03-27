@@ -1,3 +1,8 @@
+/**
+ * Validate a password to ensure it meets the security requirements.
+ * @param {string} password
+ * @returns {{ isValid: boolean, message: string }}
+ */
 export function validatePassword(password) {
 	if (password.length < 8)
 		return { isValid: false, message: 'Password should be at least 8 characters long.' }

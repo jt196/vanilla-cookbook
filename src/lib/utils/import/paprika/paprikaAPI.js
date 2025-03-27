@@ -29,6 +29,15 @@ import {
 	appRootPath
 } from './paprikaAPIUtils.js'
 
+/**
+ * Fetches data from the Paprika API and saves it to a JSON file.
+ *
+ * @param {string} fetchType - The type of data to fetch (e.g., 'categories', 'recipes', 'groceries', etc.).
+ * @param {string} email - The user's email.
+ * @param {string} password - The user's password.
+ * @param {string} userId - The ID of the user whose data to fetch.
+ * @returns {Promise<string>} - A promise that resolves with a success message if the fetch is successful, or rejects with an error message if the fetch fails.
+ */
 export async function fetchData(fetchType, email, password, userId) {
 	// 1. Determine which function to call based on the fetchType provided
 	let fetchFunction, outputFilename

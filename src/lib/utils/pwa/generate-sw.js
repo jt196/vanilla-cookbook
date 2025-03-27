@@ -1,5 +1,10 @@
 import { generateSW } from 'workbox-build'
 
+/**
+ * Configuration object for Workbox to generate a service worker.
+ *
+ * @type {import('workbox-build').GenerateSWOptions}
+ */
 const workboxConfig = {
 	globDirectory: 'build/client/',
 	globPatterns: ['**/*.{css,js,svg,png,jpg,webp}'],
@@ -30,6 +35,10 @@ const workboxConfig = {
 	]
 }
 
+/**
+ * Generates a service worker using the given Workbox configuration.
+ * Logs success or error information to the console.
+ */
 generateSW(workboxConfig)
 	.then(() => {
 		console.log('Service worker generated successfully!')

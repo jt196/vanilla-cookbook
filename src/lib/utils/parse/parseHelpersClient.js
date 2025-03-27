@@ -1,6 +1,14 @@
 import { nutritionProcess } from '$lib/utils/filters'
 import { durationToText } from '$lib/utils/parse/parseHelpers'
 
+/**
+ * Scrapes recipe data from a given URL.
+ *
+ * @param {string} url - The URL of the page to scrape.
+ * @returns {Promise<Object>} A promise that resolves to an object with a success flag and either the scraped recipe data or an error message.
+ *   If successful, the object contains the scraped recipe data under the `data` property.
+ *   If unsuccessful, the object contains an error message under the `error` property.
+ */
 export async function scrapeRecipeFromURL(url) {
 	try {
 		const response = await fetch(`/api/recipe/scrape/${encodeURIComponent(url)}`)
@@ -17,6 +25,16 @@ export async function scrapeRecipeFromURL(url) {
 	}
 }
 
+/**
+ * Handles the scraping of a recipe from a given URL.
+ * Optionally prevents the default behavior of a passed event.
+ *
+ * @param {Event|null} event - The optional event to prevent default on.
+ * @param {string} url - The URL from which to scrape the recipe.
+ * @returns {Promise<Object>} A promise that resolves to an object containing the formatted recipe data,
+ *   along with `_source` and `_status` properties from the raw data.
+ * @throws Will throw an error if the scraping fails.
+ */
 export async function handleScrape(event = null, url) {
 	if (event) event.preventDefault()
 
@@ -38,6 +56,16 @@ export async function handleScrape(event = null, url) {
 	}
 }
 
+/**
+ * Parses text for recipe data.
+ * Optionally prevents the default behavior of a passed event.
+ *
+ * @param {Event|null} event - The optional event to prevent default on.
+ * @param {string} text - The text to parse for recipe data.
+ * @returns {Promise<Object>} A promise that resolves to an object containing the formatted recipe data,
+ *   along with `_source` and `_status` properties from the raw data.
+ * @throws Will throw an error if the parsing fails.
+ */
 export async function handleParse(event = null, text) {
 	if (event) event.preventDefault()
 
@@ -69,7 +97,13 @@ export async function handleParse(event = null, text) {
 	}
 }
 
-// Reusable formatting function for both methods
+/**
+ * Reusable formatting function for both methods
+ * Formats scraped recipe data into a standardized object.
+ *
+ * @param {Object} raw - The scraped recipe data.
+ * @returns {Object} The formatted recipe data.
+ */
 export function formatScrapedRecipe(raw) {
 	return {
 		name: raw.name,

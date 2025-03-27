@@ -23,7 +23,6 @@ theme:
     code: Red Hat Mono
   features:
     - navigation.footer
-    - footer
 
 plugins:
   - search
@@ -61,7 +60,11 @@ nav:
   - Import/Export: manual/import.md
   - Roadmap: roadmap.md
   - Technical:
-      - Screenshots: technical/screenshots.md
+      - General Utils: technical/utils.md
+      - Image Utils: technical/utils_image.md
+      - Import Utils: technical/utils_import.md
+      - Parse Utils: technical/utils_parse.md
+      - PWA Utils: technical/utils_pwa.md
 
 extra:
   social:

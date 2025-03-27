@@ -1,4 +1,11 @@
 // deleteHelper.js
+
+/**
+ * Deletes a recipe by its unique identifier.
+ *
+ * @param {number|string} uid - Unique identifier for the recipe to be deleted.
+ * @returns {Promise<boolean>} A promise that resolves to true if the recipe was deleted successfully, or false if not.
+ */
 export async function deleteRecipeById(uid) {
 	if (confirm('Are you sure you want to delete this recipe?')) {
 		try {
@@ -22,6 +29,12 @@ export async function deleteRecipeById(uid) {
 	}
 }
 
+/**
+ * Adds a recipe to the user's favourites.
+ *
+ * @param {number|string} uid - Unique identifier for the recipe to be added.
+ * @returns {Promise<boolean>} A promise that resolves to true if the recipe was added to favourites successfully, or false if not.
+ */
 export async function addRecipeToFavourites(uid) {
 	try {
 		const response = await fetch(`/api/recipe/${uid}/favourite`, {
@@ -43,6 +56,14 @@ export async function addRecipeToFavourites(uid) {
 	}
 }
 
+/**
+ * Updates the rating of a recipe on the server.
+ *
+ * @param {number} newRating - The new rating to be set, between 1 and 5.
+ * @param {number|string} uid - Unique identifier for the recipe to be updated.
+ *
+ * @returns {Promise<void>} A promise that resolves if the update was successful. If not, the promise is rejected.
+ */
 export async function recipeRatingChange(newRating, uid) {
 	// Now call the endpoint
 	const response = await fetch(`/api/recipe/${uid}/rating`, {
@@ -58,6 +79,15 @@ export async function recipeRatingChange(newRating, uid) {
 	}
 }
 
+/**
+ * Updates an existing recipe on the server.
+ *
+ * @param {FormData} formData - The form data containing the updated recipe information.
+ * @param {number|string} recipeId - Unique identifier for the recipe to be updated.
+ * @returns {Promise<Object>} A promise that resolves to an object indicating success or failure.
+ *   If successful, the object contains the updated recipe data under the `data` property.
+ *   If unsuccessful, the object contains an error message under the `error` property.
+ */
 export async function updateRecipe(formData, recipeId) {
 	try {
 		const response = await fetch(`/api/recipe/${recipeId}`, {
@@ -78,6 +108,25 @@ export async function updateRecipe(formData, recipeId) {
 	}
 }
 
+/**
+ * Creates a new recipe on the server.
+ *
+ * @param {Object} recipe - The new recipe information, with the following properties:
+ *   - name: string
+ *   - source: string
+ *   - source_url: string
+ *   - cook_time: string
+ *   - image_url: string
+ *   - prep_time: string
+ *   - ingredients: string
+ *   - directions: string
+ *   - total_time: string
+ *   - servings: string
+ *   - nutritional_info: string
+ * @returns {Promise<Object>} A promise that resolves to an object indicating success or failure.
+ *   If successful, the object contains the newly created recipe data under the `data` property.
+ *   If unsuccessful, the object contains an error message under the `error` property.
+ */
 export async function createRecipe(recipe) {
 	try {
 		const response = await fetch(`/api/recipe`, {
@@ -101,6 +150,11 @@ export async function createRecipe(recipe) {
 	}
 }
 
+/**
+ * Deletes a single photo by its unique identifier.
+ * @param {number|string} id - The unique identifier of the photo to be deleted.
+ * @returns {Promise<boolean>} A promise that resolves to true if the photo was deleted successfully, or false if not.
+ */
 export async function deletePhotoById(id) {
 	if (confirm('Are you sure you want to delete this photo?')) {
 		try {
@@ -124,7 +178,16 @@ export async function deletePhotoById(id) {
 	}
 }
 
-// Send a list of one or more photos to the backend to update
+/**
+ * Updates one or more photos for a recipe on the server.
+ *
+ * @param {Array<Object>} photos - An array of objects with the following properties:
+ *   - id: number|string - The unique identifier for the photo to be updated.
+ *   - notes: string - The new notes for the photo.
+ *   - isMain: boolean - Whether the photo should be set as the main photo.
+ *
+ * @returns {Promise<boolean>} A promise that resolves to true if the photos were updated successfully, or false if not.
+ */
 export async function updatePhotos(photos) {
 	try {
 		const response = await fetch('/api/recipe/images', {
@@ -147,6 +210,12 @@ export async function updatePhotos(photos) {
 	}
 }
 
+/**
+ * Checks if a file exists in the /uploads/import directory.
+ *
+ * @param {string} filename - The name of the file to look for.
+ * @returns {Promise<boolean>} A promise that resolves to true if the file exists, or false if not.
+ */
 export async function importFileExists(filename) {
 	const response = await fetch('/api/import/paprika/file', {
 		method: 'POST',
@@ -160,6 +229,14 @@ export async function importFileExists(filename) {
 	return result.exists
 }
 
+/**
+ * Uploads a .paprikarecipes zip file to the server.
+ *
+ * @param {FormData} formData - A FormData object containing the file to be uploaded.
+ * @returns {Promise<Object>} A promise that resolves to an object with the following properties:
+ *   - `success`: A boolean indicating whether the upload was successful.
+ *   - `message`: A string containing an error message if the upload failed, or a success message if the upload succeeded.
+ */
 export async function uploadPaprikaFile(formData) {
 	try {
 		const response = await fetch(`/api/import/paprika/paprikarecipes`, {
@@ -180,6 +257,13 @@ export async function uploadPaprikaFile(formData) {
 	}
 }
 
+/**
+ * Fetches the count of categories from the database for a given user.
+ *
+ * @param {string|number} userId - The unique identifier of the user whose categories are being counted.
+ * @returns {Promise<number>} A promise that resolves to the number of categories in the user's database.
+ *   If an error occurs during the fetch operation, it returns 0.
+ */
 export async function dbCatCount(userId) {
 	let dbCategoryCount = 0
 	try {
@@ -195,6 +279,13 @@ export async function dbCatCount(userId) {
 	return dbCategoryCount
 }
 
+/**
+ * Fetches the count of recipes from the database for a given user.
+ *
+ * @param {string|number} userId - The unique identifier of the user whose recipes are being counted.
+ * @returns {Promise<number>} A promise that resolves to the number of recipes in the user's database.
+ *   If an error occurs during the fetch operation, it returns 0.
+ */
 export async function dbRecCount(userId) {
 	// Fetch the category count for the user
 	let dbRecCount = 0
@@ -210,6 +301,13 @@ export async function dbRecCount(userId) {
 	return dbRecCount
 }
 
+/**
+ * Retrieves the file category count by making an asynchronous request to the
+ * specified API endpoint. If successful, it returns the file category count;
+ * otherwise, it logs an error message and returns 0.
+ *
+ * @return {number} The file category count
+ */
 export async function fileCatCount() {
 	let fileCategoryCount = 0
 	try {
@@ -245,6 +343,17 @@ export async function fileRecCount() {
 	return fileRecCount
 }
 
+/**
+ * Adds a new ingredient to the user's shopping list by making an asynchronous
+ * POST request to the /api/ingredients/shopping API endpoint. If successful, it
+ * returns an object with a success flag and the newly created shopping list
+ * item's data; otherwise, it logs an error message and returns an object with
+ * a success flag and an error message.
+ *
+ * @param {object} ingredient The ingredient object to add to the shopping list
+ * @return {object} An object with a success flag and either the newly created
+ *                  shopping list item's data or an error message
+ */
 export async function addIngredientToShoppingList(ingredient) {
 	try {
 		const response = await fetch(`/api/ingredients/shopping`, {
@@ -268,6 +377,18 @@ export async function addIngredientToShoppingList(ingredient) {
 	}
 }
 
+/**
+ * Updates an existing shopping list item by sending a PATCH request to the
+ * /api/ingredients/shopping endpoint. If the update is successful, it returns
+ * the updated item data. If the request fails, it throws an error with a
+ * relevant message.
+ *
+ * @param {object} item - The shopping list item object to update, containing
+ * the necessary properties like uid, name, quantity, etc.
+ * @returns {Promise<object>} A promise that resolves to the updated shopping
+ * list item data.
+ * @throws {Error} If the request fails or the server responds with an error.
+ */
 export async function updateShoppingListItem(item) {
 	try {
 		const response = await fetch(`/api/ingredients/shopping`, {
@@ -288,6 +409,16 @@ export async function updateShoppingListItem(item) {
 	}
 }
 
+/**
+ * Deletes all purchased items from the user's shopping list by making a DELETE
+ * request to the /api/ingredients/shopping/items endpoint. If successful, it
+ * returns an object with a success flag; otherwise, it logs an error message
+ * and rethrows the error.
+ *
+ * @return {Promise<object>} A promise that resolves to an object with a success
+ *                  flag or an error message.
+ * @throws {Error} If the request fails or the server responds with an error.
+ */
 export async function deletePurchasedItems() {
 	try {
 		const response = await fetch(`/api/ingredients/shopping/items`, {
@@ -324,6 +455,16 @@ export async function deletePurchasedItems() {
 	}
 }
 
+/**
+ * Marks all unchecked items in the user's shopping list as purchased by making a PATCH
+ * request to the /api/ingredients/shopping/items endpoint. If successful, it returns
+ * an object with a success flag; otherwise, it logs an error message and rethrows the
+ * error.
+ *
+ * @return {Promise<object>} A promise that resolves to an object with a success
+ *                  flag or an error message.
+ * @throws {Error} If the request fails or the server responds with an error.
+ */
 export async function markPurchasedItems() {
 	try {
 		const response = await fetch(`/api/ingredients/shopping/items`, {
@@ -360,6 +501,17 @@ export async function markPurchasedItems() {
 	}
 }
 
+/**
+ * Deletes a single shopping list item from the user's shopping list by making a DELETE
+ * request to the /api/ingredients/shopping/:uid endpoint. If successful, it returns
+ * an object with a success flag; otherwise, it logs an error message and rethrows the
+ * error.
+ *
+ * @param {string} uid The unique identifier for the shopping list item to delete.
+ * @return {Promise<object>} A promise that resolves to an object with a success
+ *                  flag or an error message.
+ * @throws {Error} If the request fails or the server responds with an error.
+ */
 export async function deleteShoppingListItem(uid) {
 	try {
 		const response = await fetch(`/api/ingredients/shopping/${uid}`, {
@@ -396,8 +548,20 @@ export async function deleteShoppingListItem(uid) {
 	}
 }
 
+/**
+ * Creates a new recipe log entry for the given recipe by making a POST request
+ * to the /api/recipe/:recipeUid/log endpoint. If successful, it returns an
+ * object with a success flag and the newly created recipe log entry's data;
+ * otherwise, it logs an error message and returns an object with a success
+ * flag and an error message.
+ *
+ * @param {string} recipeUid The unique identifier for the recipe to log.
+ * @return {Promise<object>} A promise that resolves to an object with a success
+ *                  flag and either the newly created recipe log entry's data
+ *                  or an error message.
+ * @throws {Error} If the request fails or the server responds with an error.
+ */
 export async function addRecipeLog(recipeUid) {
-	console.log('🚀 ~ addRecipeLog ~ recipeUid:', recipeUid)
 	try {
 		const response = await fetch(`/api/recipe/${recipeUid}/log`, {
 			method: 'POST',
@@ -419,6 +583,17 @@ export async function addRecipeLog(recipeUid) {
 	}
 }
 
+/**
+ * Updates a recipe log entry for the given event by making a PUT request to the
+ * /api/log/:id endpoint. If successful, it does not return anything; otherwise,
+ * it logs an error message and throws an error.
+ *
+ * @param {number} id The unique identifier for the recipe log entry to update.
+ * @param {Date|string} start The new start time for the recipe log entry.
+ * @param {Date|string} end The new end time for the recipe log entry.
+ * @param {number} userId The user ID to associate with the recipe log entry.
+ * @throws {Error} If the request fails or the server responds with an error.
+ */
 export async function updateEventInBackend(id, start, end, userId) {
 	try {
 		// Replace with your actual API call to update the event
@@ -441,6 +616,14 @@ export async function updateEventInBackend(id, start, end, userId) {
 	}
 }
 
+/**
+ * Deletes a recipe log entry for the given event by making a DELETE request to the
+ * /api/log/:id endpoint. If successful, it does not return anything; otherwise,
+ * it logs an error message and throws an error.
+ *
+ * @param {number} id The unique identifier for the recipe log entry to delete.
+ * @throws {Error} If the request fails or the server responds with an error.
+ */
 export async function deleteEventInBackend(id) {
 	try {
 		// Replace with your actual API call to update the event

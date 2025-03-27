@@ -1,7 +1,15 @@
 import { marked } from 'marked'
 import DOMPurify from 'dompurify'
 
-// I need to run different functions based on whether it's SSR or Client rendered
+/**
+ * Takes Markdown content and returns sanitized HTML.
+ *
+ * Server-side rendering is done using `sanitize-html` while client-side rendering
+ * is done using `DOMPurify`.
+ *
+ * @param {string} content - Markdown content to be sanitized and rendered as HTML.
+ * @returns {Promise<string>} Sanitized HTML content.
+ */
 export async function getSanitizedHTML(content) {
 	const dirtyHTML = marked(content)
 

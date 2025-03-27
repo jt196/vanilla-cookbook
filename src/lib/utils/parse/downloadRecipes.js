@@ -296,7 +296,6 @@ export const sitesCantFix = [
  * @example
  * await downloadAndSave('https://example.com/recipe');
  */
-
 export async function downloadAndSave(url) {
 	const filename = urlToFilename(url)
 	const saveDirectory = path.join(process.cwd(), 'src', 'lib', 'data', 'recipe_html')
@@ -391,6 +390,7 @@ export async function downloadAndSave(url) {
 	}
 }
 
+// // Commented out, uncomment and run the file manually if you need to download recipes from the URLs above.
 // sites.forEach((url) => {
 // 	downloadAndSave(url)
 // })

@@ -2,8 +2,8 @@
 
 For a full getting started guide, [read the docs](https://vanilla-cookbook.readthedocs.io/en/latest/).
 
-![Recipe List](docs/images/screen-list-large.png)
-![Recipe View](docs/images/screen-first-recipe-large.png)
+![Recipe List](docs/images/screen-desktop-list-dark.png)
+![Recipe View](docs/images/screen-desktop-first-recipe-dark.png)
 
 ## Overview
 

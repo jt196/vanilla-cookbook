@@ -24,6 +24,15 @@ export async function deleteSinglePhotoFile(id, fileType) {
 	}
 }
 
+/**
+ * Downloads an image from a given URL and saves it to the file system.
+ *
+ * @param {string} url - The URL of the image to download.
+ * @param {string} photoFilename - The filename of the downloaded image.
+ * @param {string} directory - The directory to save the downloaded image in.
+ * @throws {Error} If the image type is not supported.
+ * @returns {Promise<void>} A promise that resolves when the image has been downloaded and saved.
+ */
 // eslint-disable-next-line no-unused-vars
 async function downloadImage(url, photoFilename, directory) {
 	console.log('Downloading Image!')
@@ -41,6 +50,13 @@ async function downloadImage(url, photoFilename, directory) {
 	await saveFile(buffer, photoFilename, directory)
 }
 
+/**
+ * Resizes an image to fit within a given maximum size.
+ * @param {string} inputPath - The path to the image to be resized.
+ * @param {string} outputPath - The path to write the resized image to.
+ * @param {number} maxSize - The maximum width and height of the resized image.
+ * @returns {Promise<void>} A promise that resolves when the image has been resized and saved.
+ */
 async function resizeImage(inputPath, outputPath, maxSize) {
 	console.log('Resizing Image!')
 	const image = sharp(inputPath)
@@ -54,6 +70,16 @@ async function resizeImage(inputPath, outputPath, maxSize) {
 	}
 }
 
+/**
+ * Downloads an image, validates its type, saves it to a file, resizes it,
+ * and saves the resized version back to the same file.
+ *
+ * @param {string} imageUrl - The URL of the image to be downloaded.
+ * @param {string} uid - The unique identifier for the image.
+ * @param {string} fileExtension - The extension of the image file.
+ * @returns {Promise<boolean>} A promise that resolves to a boolean indicating
+ * if the image was successfully processed and saved.
+ */
 export async function processImage(imageUrl, uid, fileExtension) {
 	const filename = `${uid}.${fileExtension}`
 	const imagePath = `uploads/images/`
@@ -87,7 +113,12 @@ export async function processImage(imageUrl, uid, fileExtension) {
 	}
 }
 
-// Helper function to download image as buffer
+/**
+ * Downloads an image from a given URL and returns it as a buffer.
+ *
+ * @param {string} url - The URL of the image to download.
+ * @returns {Promise<Buffer>} A promise that resolves with the downloaded image as a buffer.
+ */
 async function downloadImageAsBuffer(url) {
 	const response = await fetch(url)
 	const arrayBuffer = await response.arrayBuffer()

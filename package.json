@@ -14,6 +14,9 @@
 		"coverage": "vitest run --coverage",
 		"lint": "prettier --plugin-search-dir . --check . && eslint .",
 		"format": "prettier --plugin-search-dir . --write .",
+		"docs:jsdocs": "python docs/scripts/generate_jsdocs.py",
+		"docs:screen": "python docs/scripts/screenshots.py",
+		"docs:build": "pnpm docs:jsdocs && pnpm docs:screen",
 		"start": "pnpm build && pnpm serve"
 	},
 	"devDependencies": {

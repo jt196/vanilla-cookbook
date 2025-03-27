@@ -2,7 +2,7 @@
 
 ## Recipe List View
 
-![Recipe View Desktop](../images/screen-list-large.png)
+![Recipe View Desktop](../images/screen-desktop-list-light.png)
 
 ### Buttons
 
@@ -31,7 +31,7 @@ Displays info about your recipes.
 
 ## Recipe View
 
-![Recipe Card](../images/screen-first-recipe-large.png)
+![Recipe Card](../images/screen-desktop-first-recipe-light.png)
 
 ### Recipe Buttons
 
@@ -72,7 +72,7 @@ You can set your default options in the settings section.
 
 ## Add Recipe
 
-![Recipe View Desktop](../images/screen-new-large.png)
+![Recipe View Desktop](../images/screen-desktop-new-dark.png)
 
 Add your recipe here.
 
@@ -117,7 +117,7 @@ Complete the recipe form, then click the **Add Recipe** button at the bottom. Th
 
 ## Options
 
-![Settings](../images/screen-settings-large.png)
+![Settings](../images/screen-desktop-settings-dark.png)
 
 I've tried to keep most of the under the hood stuff here.
 
@@ -146,20 +146,20 @@ Here's a demo of the language and **Display Original** setting working.
 - **Profile public** - show/hide your profile in the _/users_ view
 - **Recipes public** - make your recipe public by default
 
-![Bookmark](../images/screen-bookmark-large.png)
+![Bookmark](../images/screen-desktop-bookmark-dark.png)
 
 **Bookmark** - grab your bookmarklet for saving recipes to the site.
 
-![Import](../images/screen-import-large.png)
-![Export](../images/screen-export-large.png)
-![Upload](../images/screen-upload-large.png)
+![Import](../images/screen-desktop-import-dark.png)
+![Export](../images/screen-desktop-export-dark.png)
+![Upload](../images/screen-desktop-upload-dark.png)
 
 **Import**, **Export**, **Upload** see the [Import Docs](import.md).
 
-![Users](../images/screen-admin-users-large.png)
+![Users](../images/screen-desktop-admin-users-dark.png)
 
 **Users** - admin only. User management. Change passwords, add and remove users etc.
 
-![Site](../images/screen-admin-site-large.png)
+![Site](../images/screen-desktop-admin-site-dark.png)
 
 **Site** - admin only. Turn on/off registrations.

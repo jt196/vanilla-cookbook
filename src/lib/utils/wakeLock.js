@@ -2,6 +2,12 @@ import { browser } from '$app/environment'
 
 let wakeLock = null
 
+/**
+ * Requests a Wake Lock from the browser, which keeps the screen awake while the document is visible.
+ * If the Wake Lock API is not supported, logs a warning to the console.
+ *
+ * @returns {Promise<void>}
+ */
 export async function requestWakeLock() {
 	if (!browser) return
 
@@ -20,6 +26,13 @@ export async function requestWakeLock() {
 	}
 }
 
+/**
+ * Releases the Wake Lock if it is currently held, allowing the screen to turn off.
+ * Logs a message to the console when the Wake Lock is released.
+ * If the Wake Lock is not held or the environment is not a browser, the function returns immediately.
+ *
+ * @returns {Promise<void>}
+ */
 export async function releaseWakeLock() {
 	if (!browser) return
 
@@ -30,6 +43,12 @@ export async function releaseWakeLock() {
 	}
 }
 
+/**
+ * Handles changes in the document's visibility state.
+ * Requests a Wake Lock when the document becomes visible,
+ * and releases it when the document is hidden.
+ * Logs the current visibility state to the console.
+ */
 export function handleVisibilityChange() {
 	if (!browser) return
 
@@ -42,6 +61,12 @@ export function handleVisibilityChange() {
 	}
 }
 
+/**
+ * Sets up the Wake Lock.
+ * If the environment is not a browser, the function returns immediately.
+ * Requests a Wake Lock and listens for visibility changes on the document.
+ * Logs a message to the console when the function is called.
+ */
 export function setupWakeLock() {
 	if (!browser) return
 
@@ -50,6 +75,11 @@ export function setupWakeLock() {
 	document.addEventListener('visibilitychange', handleVisibilityChange)
 }
 
+/**
+ * Releases the Wake Lock and removes the event listener for visibility changes on the document.
+ * This function is called when the Svelte app is being torn down, to release any held resources.
+ * If the environment is not a browser, the function returns immediately.
+ */
 export function cleanupWakeLock() {
 	if (!browser) return
 
