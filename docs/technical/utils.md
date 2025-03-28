@@ -2,12 +2,27 @@
 
 ## security.js
 ### validatePassword
-Validate a password to ensure it meets the security requirements.
+Validates a password to ensure it meets the security requirements.
 
-@param {string} password
-{% raw %}
-@returns {{ isValid: boolean, message: string }}
-{% endraw %}
+
+The password must satisfy the following conditions:
+- Be at least 8 characters long
+- Contain at least one uppercase letter
+- Contain at least one lowercase letter
+- Contain at least one number
+- Contain at least one special character
+
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| password | `{string}` | The password to validate. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{isValid: boolean, message: string}` | An object indicating whether the password is valid and a message explaining the validation result. |
 
 
 ## converterBackend.js
@@ -15,7 +30,11 @@ Validate a password to ensure it meets the security requirements.
 Retrieves all ingredient data from the database.
 
 
-@returns {Promise<Object[]>} A promise that resolves to an array of ingredient objects from the database.
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{Promise<Object[]>}` | A promise that resolves to an array of ingredient objects from the database. |
 
 ### convertIngredientsBackend
 Converts a list of ingredients from one measurement system to another.
@@ -25,11 +44,20 @@ to assist in identifying appropriate conversion logic. Can optionally skip
 conversion of small units (e.g. "pinch", "dash") if specified.
 
 
-@param {Object[]} ingredients - An array of ingredient objects to convert.
-@param {string} fromSystem - The measurement system to convert from (e.g., 'metric').
-@param {string} toSystem - The measurement system to convert to (e.g., 'imperial').
-@param {boolean} [skipSmallUnits=false] - Whether to skip conversion of small units like 'pinch' or 'dash'.
-@returns {Promise<Object[]>} A promise that resolves to the array of converted ingredient objects.
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| ingredients | `{Object[]}` | An array of ingredient objects to convert. |
+| fromSystem | `{string}` | The measurement system to convert from (e.g., 'metric'). |
+| toSystem | `{string}` | The measurement system to convert to (e.g., 'imperial'). |
+| skipSmallUnits | `{boolean}` | Whether to skip conversion of small units like 'pinch' or 'dash'. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{Promise<Object[]>}` | A promise that resolves to the array of converted ingredient objects. |
 
 
 ## ai.js
@@ -37,11 +65,25 @@ conversion of small units (e.g. "pinch", "dash") if specified.
 Extracts a recipe from the provided content using the OpenAI API.
 
 
-@param {string} content - The input content containing the recipe in HTML or plain text.
-@param {string} [type='html'] - The type of the content, either 'html' or 'text'.
-@param {string} [url=''] - The URL where the content originated, used only for HTML content.
-@returns {Promise<Object>} A promise that resolves to an object representing the extracted recipe.
-@throws {Error} Throws an error if the OpenAI API is disabled, the API key is missing, or if the content parsing fails.
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| content | `{string}` | The input content containing the recipe in HTML or plain text. |
+| type | `{string}` | The type of the content, either 'html' or 'text'. |
+| url | `{string}` | The URL where the content originated, used only for HTML content. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{Promise<Object>}` | A promise that resolves to an object representing the extracted recipe. |
+
+**Throws**
+
+| Type | Description |
+| --- | --- |
+| `{Error}` | Throws an error if the OpenAI API is disabled, the API key is missing, or if the content parsing fails. |
 
 
 ## categories.js
@@ -51,65 +93,135 @@ This is used for taking a user's categories and building a structure from them
 They're stored in a flat structure in the DB
 
 
-@param {Array} categories - An array of category objects with uid, parent_uid, and other properties.
-@returns {Array} An array of root categories, each with a nested structure of children.
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| categories | `{Array}` | An array of category objects with uid, parent_uid, and other properties. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{Array}` | An array of root categories, each with a nested structure of children. |
 
 ### transformToNodes
 Transforms a hierarchical category structure into a format suitable for svelte-dnd-action.
 
 
-@param {Array} categories - An array of hierarchical category objects.
-@returns {Object} An object of nodes, each representing a category.
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| categories | `{Array}` | An array of hierarchical category objects. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{Object}` | An object of nodes, each representing a category. |
 
 ### wrapTopLevelNodes
 Wraps all top-level nodes in an outer node.
 
 
-@param {Object} data - An object of nodes, each representing a category.
-@returns {Object} The input data with all top-level nodes wrapped in an outer node.
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| data | `{Object}` | An object of nodes, each representing a category. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{Object}` | The input data with all top-level nodes wrapped in an outer node. |
 
 ### fetchAndTransformCategories
 Fetches categories for a user and transforms them into a suitable format.
 
 
-@param {Function} fetch - The fetch function to use.
-@param {URL} url - The base URL to fetch from.
-@param {string} userId - The ID of the user whose categories to fetch.
-@returns {Promise<Object>} An object of nodes, each representing a category.
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| fetch | `{Function}` | The fetch function to use. |
+| url | `{URL}` | The base URL to fetch from. |
+| userId | `{string}` | The ID of the user whose categories to fetch. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{Promise<Object>}` | An object of nodes, each representing a category. |
 
 ### sortItemsAlphabetically
 Sorts the items in each node alphabetically by name.
 
 
-@param {Object} nodes - An object of nodes, each representing a category.
-@returns {Object} The input nodes with items sorted alphabetically.
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| nodes | `{Object}` | An object of nodes, each representing a category. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{Object}` | The input nodes with items sorted alphabetically. |
 
 ### collectSelectedUids
 Collects the UIDs of all selected categories from a hierarchical structure.
 
 
-@param {Array} categories - An array of hierarchical category objects.
-@returns {Array<string>} An array of UIDs of selected categories.
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| categories | `{Array}` | An array of hierarchical category objects. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{Array<string>}` | An array of UIDs of selected categories. |
 
 
 ## sorting.js
 ### sortRecipesByKey
 Sorts an array of recipes by a given key.
 
-@param {Object[]} recipes - Array of recipes to sort.
-@param {string} key - The key by which to sort the recipes.
-@param {string} [currentSort] - The current sort direction ('asc' or 'desc').
-{% raw %}
-@returns {{sortedRecipes: Object[], newSort: string}} - An object containing the sorted recipes and the new sort direction.
-{% endraw %}
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| recipes | `{Object[]}` | Array of recipes to sort. |
+| key | `{string}` | The key by which to sort the recipes. |
+| currentSort | `{string}` | The current sort direction ('asc' or 'desc'). |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{sortedRecipes: Object[], newSort: string}` | An object containing the sorted recipes and the new sort direction. |
 
 ### sortByKeyGeneric
 Sorts an array by a given key in either ascending or descending order.
 
-@param {Object[]} inputArray - Array of objects to sort.
-@param {string} inputKey - The key by which to sort the array.
-@param {string} direction - The sort direction ('asc' or 'desc').
-@returns {Object[]} - The sorted array.
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| inputArray | `{Object[]}` | Array of objects to sort. |
+| inputKey | `{string}` | The key by which to sort the array. |
+| direction | `{string}` | The sort direction ('asc' or 'desc'). |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{Object[]}` | The sorted array. |
 
 ### sortByTwoKeys
 Sorts an array of objects by two keys, with specified sort directions for each key.
@@ -118,33 +230,69 @@ If two elements have the same value for the `primarySortKey`, they are then sort
 by the `secondarySortKey` in the specified `secondaryDirection`.
 
 
-@param {Object[]} inputArray - The array of objects to sort.
-@param {string} primarySortKey - The key to sort the array by initially.
-@param {string} secondarySortKey - The key to sort the array by when the primary key values are equal.
-@param {string} [primaryDirection='asc'] - The sort direction for the primary key ('asc' or 'desc').
-@param {string} [secondaryDirection='asc'] - The sort direction for the secondary key ('asc' or 'desc').
-@returns {Object[]} - The array sorted by the specified primary and secondary keys.
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| inputArray | `{Object[]}` | The array of objects to sort. |
+| primarySortKey | `{string}` | The key to sort the array by initially. |
+| secondarySortKey | `{string}` | The key to sort the array by when the primary key values are equal. |
+| primaryDirection | `{string}` | The sort direction for the primary key ('asc' or 'desc'). |
+| secondaryDirection | `{string}` | The sort direction for the secondary key ('asc' or 'desc'). |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{Object[]}` | The array sorted by the specified primary and secondary keys. |
 
 ### sortByDate
 Sorts an array by a date key in either ascending or descending order.
 
-@param {Object[]} inputArray - Array of objects to sort.
-@param {string} dateKey - The date key by which to sort the array.
-@param {string} direction - The sort direction ('asc' or 'desc').
-@returns {Object[]} - The sorted array.
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| inputArray | `{Object[]}` | Array of objects to sort. |
+| dateKey | `{string}` | The date key by which to sort the array. |
+| direction | `{string}` | The sort direction ('asc' or 'desc'). |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{Object[]}` | The sorted array. |
 
 ### randomSortArray
 Sorts the input array randomly.
 
 
-@param {stringDateRecord[]} inputArray - Array of records to sort.
-@returns {stringDateRecord[]} - Randomly sorted array.
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| inputArray | `{stringDateRecord[]}` | Array of records to sort. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{stringDateRecord[]}` | Randomly sorted array. |
 
 ### sortByNameRecursive
 Recursively sorts an array of objects by their 'name' property.
 
-@param {Object[]} data - Array of objects to sort.
-@returns {Object[]} - The sorted array.
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| data | `{Object[]}` | Array of objects to sort. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{Object[]}` | The sorted array. |
 
 
 ## dryIngredientsConversion.js
@@ -152,7 +300,11 @@ Recursively sorts an array of objects by their 'name' property.
 List of weights for 1 cup of different dried ingredients
 The names uses an array so can be for multiple names of an ingredient
 
-@type {Object}
+**Type**
+
+```JS
+{ Object }
+```
 
 
 ## converter.js
@@ -160,61 +312,149 @@ The names uses an array so can be for multiple names of an ingredient
 Converts a quantity from one unit to another.
 
 
-@param {number} quantity - The quantity of the 'from' unit.
-@param {string} from - The original unit to be converted.
-@param {string} [to='grams'] - The unit to be converted to.
-{% raw %}
-@returns {{quantity: number, unit: string} | {error: string}} - Returns an object containing either the converted quantity and unit or an error message.
-{% endraw %}
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| quantity | `{number}` | The quantity of the 'from' unit. |
+| from | `{string}` | The original unit to be converted. |
+| to | `{string}` | The unit to be converted to. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{quantity: number, unit: string} \| {error: string}` | Returns an object containing either the converted quantity and unit or an error message. |
 
 ### determineSystem
 Determines the dominant measurement system used in an array of ingredients.
 
 
-@param {Array} ingredientArray - An array of ingredient objects.
-{% raw %}
-@returns {{system: string, counts: Object}} - The dominant system and the counts of each system.
-{% endraw %}
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| ingredientArray | `{Array}` | An array of ingredient objects. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{system: string, counts: Object}` | The dominant system and the counts of each system. |
 
 ### systemToUnitsMap
 Mapping of measurement systems to their respective units.
 
-@type {Object}
+**Type**
+
+```JS
+{ Object }
+```
 
 ### measurementSystems
 Manipulates an ingredient object to convert its quantity and unit from one system to another.
 
 
-@param {Object} ingredientObj - The ingredient object to be manipulated.
-@param {string} fromSystem - The original measurement system.
-@param {string} toSystem - The target measurement system.
-@returns {Object} - The manipulated ingredient object with converted quantity and unit.
+**Parameters**
 
-### Function 5
+| Parameter | Type | Description |
+| --- | --- | --- |
+| ingredientObj | `{Object}` | The ingredient object to be manipulated. |
+| fromSystem | `{string}` | The original measurement system. |
+| toSystem | `{string}` | The target measurement system. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{Object}` | The manipulated ingredient object with converted quantity and unit. |
+
+### fuzzyMatch
 Attempts to find a match for an ingredient in a lookup table.
 This was used in the manipulate ingredients function before I transitioned to the database version
 
 
-@param {string} ingredient - The ingredient name to match.
-@param {Array} lookupTable - The table of ingredients to search within.
-@returns {Object|null} - Returns the matched ingredient object or null if no match is found.
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| ingredient | `{string}` | The ingredient name to match. |
+| lookupTable | `{Array}` | The table of ingredients to search within. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{Object\|null}` | Returns the matched ingredient object or null if no match is found. |
+
+### addFoodPreferences
+Searches through the food preferences database to find a match for the given ingredient name.
+Returns an object with the following properties: vegan, vegetarian, pescatarian, canBeVegan.
+If no match is found, returns an object with all properties set to true.
+
+
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| ingredientName | `{string}` | The ingredient name to search for. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{Object}` | An object with the search results. |
+
+### getDietLabel
+Generates a string label indicating the dietary preference
+of the given ingredient based on the given preferences.
+
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| prefs | `{Object}` | The preferences object for the ingredient. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{string}` | A string label indicating the dietary preference. |
 
 ### normalizeIngredient
 Normalizes an ingredient object by standardizing units, rounding quantity, and adding metadata.
 
-@param {Object} ingredientObj - The original ingredient object.
-@param {Object} options - Optional settings.
-@param {boolean} options.skipRounding - If true, skip rounding quantity.
-@returns {Object} - Normalized ingredient object.
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| ingredientObj | `{Object}` | The original ingredient object. |
+| options | `{Object}` | Optional settings. |
+| options | `{boolean}` |  |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{Object}` | Normalized ingredient object. |
 
 ### manipulateIngredient
 Manipulates an ingredient object to convert its quantity and unit from one system to another.
 
 
-@param {Object} ingredientObj - The ingredient object to be manipulated.
-@param {string} fromSystem - The original measurement system.
-@param {string} toSystem - The target measurement system.
-@returns {Object} - The manipulated ingredient object with converted quantity and unit.
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| ingredientObj | `{Object}` | The ingredient object to be manipulated. |
+| fromSystem | `{string}` | The original measurement system. |
+| toSystem | `{string}` | The target measurement system. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{Object}` | The manipulated ingredient object with converted quantity and unit. |
 
 ### parseRecipeText
 Converts temperatures in an array of direction strings from one system to another.
@@ -227,15 +467,29 @@ Accepted values: 'metric', 'imperial', 'americanVolumetric'.
 Accepted values: 'metric', 'imperial'.
 
 
+
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| directions | `{string[]}` | An array of direction strings containing temperature values to be converted. |
+| toSystem | `{string}` | The target temperature system for conversion. |
+| fromSystem | `{string}` | The original temperature system of the values in the direction strings. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{string[]}` | An array of direction strings with temperatures converted to the target system. |
+
+**Example**
+
+```JS
+
 parseRecipeText(["Preheat oven to 350°F", "Bake at 180C"], "metric", "imperial");
 // Returns: ["Preheat oven to 176°C", "Bake at 356°F"]
 
-
-@param {string[]} directions - An array of direction strings containing temperature values to be converted.
-@param {string} toSystem - The target temperature system for conversion.
-@param {string} fromSystem - The original temperature system of the values in the direction strings.
-@returns {string[]} - An array of direction strings with temperatures converted to the target system.
-@example
+```
 
 ### parseTemperature
 Converts temperatures in a given string from one system to another.
@@ -247,17 +501,31 @@ Conversion is based on the specified source and target system.
 Note: 'americanVolumetric' is treated as a subtype of 'imperial'.
 
 
+
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| direction | `{string}` | The input string containing temperature values. |
+| toSystem | `{string}` | The target system: 'metric', 'imperial', or 'americanVolumetric'. |
+| fromSystem | `{string}` | The source system: 'metric' or 'imperial'. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{string}` | The string with converted temperatures, wrapped in `**`, or original if no conversion needed. |
+
+**Example**
+
+```JS
+
 parseTemperature("Preheat oven to 350°F", "metric", "imperial");
 // => "Preheat oven to **176°C**"
 
 parseTemperature("Set water to 70 to 80 degrees C", "imperial", "metric");
 // => "Set water to **158-176°F**"
-
-@param {string} direction - The input string containing temperature values.
-@param {string} toSystem - The target system: 'metric', 'imperial', or 'americanVolumetric'.
-@param {string} fromSystem - The source system: 'metric' or 'imperial'.
-@returns {string} - The string with converted temperatures, wrapped in `**`, or original if no conversion needed.
-@example
+```
 
 
 ## wakeLock.js
@@ -266,7 +534,11 @@ Requests a Wake Lock from the browser, which keeps the screen awake while the do
 If the Wake Lock API is not supported, logs a warning to the console.
 
 
-@returns {Promise<void>}
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{Promise<void>}` |  |
 
 ### releaseWakeLock
 Releases the Wake Lock if it is currently held, allowing the screen to turn off.
@@ -274,7 +546,11 @@ Logs a message to the console when the Wake Lock is released.
 If the Wake Lock is not held or the environment is not a browser, the function returns immediately.
 
 
-@returns {Promise<void>}
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{Promise<void>}` |  |
 
 ### handleVisibilityChange
 Handles changes in the document's visibility state.
@@ -302,32 +578,68 @@ Server-side rendering is done using `sanitize-html` while client-side rendering
 is done using `DOMPurify`.
 
 
-@param {string} content - Markdown content to be sanitized and rendered as HTML.
-@returns {Promise<string>} Sanitized HTML content.
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| content | `{string}` | Markdown content to be sanitized and rendered as HTML. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{Promise<string>}` | Sanitized HTML content. |
 
 
 ## units.js
 ### units
 Represents an array of unit objects.
 
-@type {Object[]}
-@property {string[]} names - Different names for a given unit.
-@property {number} grams - The gram equivalent of the unit.
-@property {boolean} skipConversion - Whether to skip conversion, often used for volumetric units like teaspoons.
-@property {number} decimalPlaces - Number of decimal places for display.
+**Type**
+
+```JS
+{ Object[] }
+```
+
+**Properties**
+
+| Property | Type | Description |
+| --- | --- | --- |
+| names | `{ string[] }` | Different names for a given unit. |
+| grams | `{ number }` | The gram equivalent of the unit. |
+| skipConversion | `{ boolean }` | Whether to skip conversion, often used for volumetric units like teaspoons. |
+| decimalPlaces | `{ number }` | Number of decimal places for display. |
 
 ### shouldSkipConversion
 Determines if a unit should skip conversion based on its name.
 
-@param {string} unit - The name of the unit.
-@returns {boolean} - Returns true if the unit should skip conversion, otherwise false.
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| unit | `{string}` | The name of the unit. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{boolean}` | Returns true if the unit should skip conversion, otherwise false. |
 
 ### findSuitableUnit
 Finds a suitable unit for a given system and quantity in grams.
 
-@param {string} system - The system to use ('imperial', 'metric', or 'americanVolumetric').
-@param {number} quantityInGrams - The quantity in grams.
-@returns {string} - The name of the suitable unit.
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| system | `{string}` | The system to use ('imperial', 'metric', or 'americanVolumetric'). |
+| quantityInGrams | `{number}` | The quantity in grams. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{string}` | The name of the suitable unit. |
 
 
 ## config.js
@@ -336,24 +648,33 @@ Supported measurement systems for recipe data.
 Each system includes a machine-readable value and a user-friendly label.
 
 
-{% raw %}
-@type {{ value: string, label: string }[]}
-{% endraw %}
+**Type**
+
+```JS
+{ { value: string, label: string }
+```
 
 ### languages
 Supported languages for the application.
 Each language includes a language code and its display label.
 
 
-{% raw %}
-@type {{ value: string, label: string }[]}
-{% endraw %}
+**Type**
+
+```JS
+{ { value: string, label: string }
+```
 
 ### defaultRecipe
 Default structure for a recipe object.
 Used to initialize empty recipe forms or reset state.
 
-name: string,
+
+
+**Type**
+
+```JS
+{ name: string,
 source: string,
 source_url: string,
 cook_time: string,
@@ -364,49 +685,91 @@ directions: string,
 total_time: string,
 servings: string,
 nutritional_info: string
-}}
-
-{% raw %}
-@type {{
-{% endraw %}
+ }
+```
 
 
 ## dateTime.js
 ### localDateAndTime
 Accepts date objects or strings and returns a string in local date and time format.
 
-@param {(string|Date|null)} dateTime - A date object, date string, or null.
-@returns {string} - The local date and time in string format.
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| dateTime | `{(string\|Date\|null)}` | A date object, date string, or null. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{string}` | The local date and time in string format. |
 
 ### localDate
 Takes a dateTime parameter and returns the local date.
 
 
-@param {any} dateTime - the date and time input
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| dateTime | `{any}` | the date and time input |
+
 @return {string} the local date
 
 ### getIsoDateTimeString
 Returns the current datetime in ISO 8601 format.
 
-@returns {string} - The current datetime in ISO 8601 format.
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{string}` | The current datetime in ISO 8601 format. |
 
 ### stringToISOString
 Parse a date string and convert it to ISO format.
 
-@param {string} dateString - The date string to be parsed.
-@returns {string} - The ISO format of the parsed date string.
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| dateString | `{string}` | The date string to be parsed. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{string}` | The ISO format of the parsed date string. |
 
 ### convertToMinutes
 Convert a text input into minutes.
 
-@param {string} input - The input string containing duration in text format.
-@returns {(number|null)} - The total number of minutes represented by the input string, or null if parsing failed.
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| input | `{string}` | The input string containing duration in text format. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{(number\|null)}` | The total number of minutes represented by the input string, or null if parsing failed. |
 
 ### convertMinutesToTime
 Convert a number of minutes into a readable string.
 
-@param {number} minutes - The total number of minutes.
-@returns {string} - The duration in a readable string format.
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| minutes | `{number}` | The total number of minutes. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{string}` | The duration in a readable string format. |
 
 
 ## filters.js
@@ -414,106 +777,235 @@ Convert a number of minutes into a readable string.
 Filters data based on a search string and a key.
 
 
-@param {string | null} searchString - The search string.
-@param {IGenericRecord[]} data - An array of data to search through.
-@param {string} key - The key in the data objects to search against.
-@returns {IGenericRecord[]} - The filtered array.
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| searchString | `{string \| null}` | The search string. |
+| data | `{IGenericRecord[]}` | An array of data to search through. |
+| key | `{string}` | The key in the data objects to search against. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{IGenericRecord[]}` | The filtered array. |
 
 ### ingredientProcess
 Processes an array of ingredient strings to return parsed ingredient objects.
 
 
-@param {string[]} ingredientArray - The ingredient strings to process.
-@returns {parsedIngredient[]} - An array of parsed ingredient objects.
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| ingredientArray | `{string[]}` | The ingredient strings to process. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{parsedIngredient[]}` | An array of parsed ingredient objects. |
 
 ### sanitizeIngredient
 Sanitize a string for YAML front matter.
 
-@param {string} str - The input string to sanitize.
-@returns {string} The sanitized string.
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| str | `{string}` | The input string to sanitize. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{string}` | The sanitized string. |
 
 ### scaleNumbersInString
 Scales numbers within a string by a specified factor. This includes whole numbers, fractions, Unicode fractions,
 decimal numbers, and combinations of whole numbers and fractions (with or without space).
 
 
-@param {string} str - The string with numbers to scale.
-@param {number} scale - The factor to scale numbers by.
-@returns {string} - The string with scaled numbers.
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| str | `{string}` | The string with numbers to scale. |
+| scale | `{number}` | The factor to scale numbers by. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{string}` | The string with scaled numbers. |
 
 ### convertToDecimal
 Converts a fraction string or a whole number plus fraction string to a decimal.
 
-@param {string} str - The string to convert, which can be a simple fraction or a whole number plus fraction.
-@returns {number} The decimal equivalent of the input.
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| str | `{string}` | The string to convert, which can be a simple fraction or a whole number plus fraction. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{number}` | The decimal equivalent of the input. |
 
 ### decimalToFraction
 Converts a decimal number to its fraction representation, if possible.
 
 
-@param {number} decimal - The decimal number to convert.
-@returns {string | number} - The fraction representation or original number.
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| decimal | `{number}` | The decimal number to convert. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{string \| number}` | The fraction representation or original number. |
 
 ### roundIngredientQuantity
 Rounds an ingredient quantity to the nearest whole number if greater than 10,
 or to one decimal place if 10 or less.
 
 
-@param {number} decimal - The decimal quantity to round.
-@returns {number} - The rounded quantity.
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| decimal | `{number}` | The decimal quantity to round. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{number}` | The rounded quantity. |
 
 ### roundToDecimalPlaces
 Rounds a number to a specified number of decimal places.
 
 
-roundToDecimalPlaces(123.4567, 2); // returns 123.46
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| num | `{number}` | The number to be rounded. |
+| decimalPlaces | `{number}` | The number of decimal places to round to. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{number}` | The rounded number. |
 
 @function
-@param {number} num - The number to be rounded.
-@param {number} decimalPlaces - The number of decimal places to round to.
-@returns {number} - The rounded number.
-@example
+
+**Example**
+
+```JS
+
+
+roundToDecimalPlaces(123.4567, 2); // returns 123.46
+```
 
 ### roundToTolerance
 Rounds a number to the nearest integer if it's within a specified tolerance.
 
 
-roundToTolerance(123.00000000001); // returns 123
-roundToTolerance(123.0001, 0.001); // returns 123
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| num | `{number}` | The number to be checked and potentially rounded. |
+| tolerance | `{number}` | The tolerance within which the number will be rounded to the nearest integer. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{number}` | The original number or its rounded value if it's within the tolerance. |
 
 @function
-@param {number} num - The number to be checked and potentially rounded.
-@param {number} [tolerance=1e-10] - The tolerance within which the number will be rounded to the nearest integer.
-@returns {number} - The original number or its rounded value if it's within the tolerance.
-@example
+
+**Example**
+
+```JS
+
+
+roundToTolerance(123.00000000001); // returns 123
+roundToTolerance(123.0001, 0.001); // returns 123
+```
 
 ### unicodeToAscii
 Converts unicode characters in a string to their ASCII representation.
 
 
-@param {string} str - The string to convert.
-@returns {string} - The string with unicode characters converted to ASCII.
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| str | `{string}` | The string to convert. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{string}` | The string with unicode characters converted to ASCII. |
 
 ### decodeHTMLEntities
 Decodes HTML entities in a string.
 
 
-@param {string} str - The string with HTML entities.
-@returns {string} - The decoded string.
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| str | `{string}` | The string with HTML entities. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{string}` | The decoded string. |
 
 ### startsWithHttp
 Checks if a string starts with "http".
 
 
-@param {string} str - The string to check.
-@returns {boolean} - True if the string starts with "http", otherwise false.
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| str | `{string}` | The string to check. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{boolean}` | True if the string starts with "http", otherwise false. |
 
 ### nutritionProcess
 Processes a nutrition object and converts it to a readable string.
 
 
-@param {object} nutritionObject - The nutrition object to process.
-@returns {string} - A string representation of the nutrition object.
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| nutritionObject | `{object}` | The nutrition object to process. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{string}` | A string representation of the nutrition object. |
 
 
 ## crud.js
@@ -521,24 +1013,51 @@ Processes a nutrition object and converts it to a readable string.
 Deletes a recipe by its unique identifier.
 
 
-@param {number|string} uid - Unique identifier for the recipe to be deleted.
-@returns {Promise<boolean>} A promise that resolves to true if the recipe was deleted successfully, or false if not.
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| uid | `{number\|string}` | Unique identifier for the recipe to be deleted. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{Promise<boolean>}` | A promise that resolves to true if the recipe was deleted successfully, or false if not. |
 
 ### addRecipeToFavourites
 Adds a recipe to the user's favourites.
 
 
-@param {number|string} uid - Unique identifier for the recipe to be added.
-@returns {Promise<boolean>} A promise that resolves to true if the recipe was added to favourites successfully, or false if not.
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| uid | `{number\|string}` | Unique identifier for the recipe to be added. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{Promise<boolean>}` | A promise that resolves to true if the recipe was added to favourites successfully, or false if not. |
 
 ### recipeRatingChange
 Updates the rating of a recipe on the server.
 
 
 
-@param {number} newRating - The new rating to be set, between 1 and 5.
-@param {number|string} uid - Unique identifier for the recipe to be updated.
-@returns {Promise<void>} A promise that resolves if the update was successful. If not, the promise is rejected.
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| newRating | `{number}` | The new rating to be set, between 1 and 5. |
+| uid | `{number\|string}` | Unique identifier for the recipe to be updated. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{Promise<void>}` | A promise that resolves if the update was successful. If not, the promise is rejected. |
 
 ### updateRecipe
 Updates an existing recipe on the server.
@@ -546,9 +1065,18 @@ Updates an existing recipe on the server.
 If successful, the object contains the updated recipe data under the `data` property.
 If unsuccessful, the object contains an error message under the `error` property.
 
-@param {FormData} formData - The form data containing the updated recipe information.
-@param {number|string} recipeId - Unique identifier for the recipe to be updated.
-@returns {Promise<Object>} A promise that resolves to an object indicating success or failure.
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| formData | `{FormData}` | The form data containing the updated recipe information. |
+| recipeId | `{number\|string}` | Unique identifier for the recipe to be updated. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{Promise<Object>}` | A promise that resolves to an object indicating success or failure. |
 
 ### createRecipe
 Creates a new recipe on the server.
@@ -567,14 +1095,32 @@ Creates a new recipe on the server.
 If successful, the object contains the newly created recipe data under the `data` property.
 If unsuccessful, the object contains an error message under the `error` property.
 
-@param {Object} recipe - The new recipe information, with the following properties:
-@returns {Promise<Object>} A promise that resolves to an object indicating success or failure.
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| recipe | `{Object}` | The new recipe information, with the following properties: |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{Promise<Object>}` | A promise that resolves to an object indicating success or failure. |
 
 ### deletePhotoById
 Deletes a single photo by its unique identifier.
 
-@param {number|string} id - The unique identifier of the photo to be deleted.
-@returns {Promise<boolean>} A promise that resolves to true if the photo was deleted successfully, or false if not.
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| id | `{number\|string}` | The unique identifier of the photo to be deleted. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{Promise<boolean>}` | A promise that resolves to true if the photo was deleted successfully, or false if not. |
 
 ### updatePhotos
 Updates one or more photos for a recipe on the server.
@@ -584,15 +1130,33 @@ Updates one or more photos for a recipe on the server.
 - isMain: boolean - Whether the photo should be set as the main photo.
 
 
-@param {Array<Object>} photos - An array of objects with the following properties:
-@returns {Promise<boolean>} A promise that resolves to true if the photos were updated successfully, or false if not.
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| photos | `{Array<Object>}` | An array of objects with the following properties: |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{Promise<boolean>}` | A promise that resolves to true if the photos were updated successfully, or false if not. |
 
 ### importFileExists
 Checks if a file exists in the /uploads/import directory.
 
 
-@param {string} filename - The name of the file to look for.
-@returns {Promise<boolean>} A promise that resolves to true if the file exists, or false if not.
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| filename | `{string}` | The name of the file to look for. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{Promise<boolean>}` | A promise that resolves to true if the file exists, or false if not. |
 
 ### uploadPaprikaFile
 Uploads a .paprikarecipes zip file to the server.
@@ -600,24 +1164,51 @@ Uploads a .paprikarecipes zip file to the server.
 - `success`: A boolean indicating whether the upload was successful.
 - `message`: A string containing an error message if the upload failed, or a success message if the upload succeeded.
 
-@param {FormData} formData - A FormData object containing the file to be uploaded.
-@returns {Promise<Object>} A promise that resolves to an object with the following properties:
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| formData | `{FormData}` | A FormData object containing the file to be uploaded. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{Promise<Object>}` | A promise that resolves to an object with the following properties: |
 
 ### dbCatCount
 Fetches the count of categories from the database for a given user.
 
 If an error occurs during the fetch operation, it returns 0.
 
-@param {string|number} userId - The unique identifier of the user whose categories are being counted.
-@returns {Promise<number>} A promise that resolves to the number of categories in the user's database.
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| userId | `{string\|number}` | The unique identifier of the user whose categories are being counted. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{Promise<number>}` | A promise that resolves to the number of categories in the user's database. |
 
 ### dbRecCount
 Fetches the count of recipes from the database for a given user.
 
 If an error occurs during the fetch operation, it returns 0.
 
-@param {string|number} userId - The unique identifier of the user whose recipes are being counted.
-@returns {Promise<number>} A promise that resolves to the number of recipes in the user's database.
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| userId | `{string\|number}` | The unique identifier of the user whose recipes are being counted. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{Promise<number>}` | A promise that resolves to the number of recipes in the user's database. |
 
 ### fileCatCount
 Retrieves the file category count by making an asynchronous request to the
@@ -644,7 +1235,12 @@ a success flag and an error message.
 
 shopping list item's data or an error message
 
-@param {object} ingredient The ingredient object to add to the shopping list
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| ingredient | `{object}` |  |
+
 @return {object} An object with a success flag and either the newly created
 
 ### updateShoppingListItem
@@ -656,9 +1252,23 @@ relevant message.
 the necessary properties like uid, name, quantity, etc.
 list item data.
 
-@param {object} item - The shopping list item object to update, containing
-@returns {Promise<object>} A promise that resolves to the updated shopping
-@throws {Error} If the request fails or the server responds with an error.
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| item | `{object}` | The shopping list item object to update, containing |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{Promise<object>}` | A promise that resolves to the updated shopping |
+
+**Throws**
+
+| Type | Description |
+| --- | --- |
+| `{Error}` | If the request fails or the server responds with an error. |
 
 ### deletePurchasedItems
 Deletes all purchased items from the user's shopping list by making a DELETE
@@ -668,8 +1278,13 @@ and rethrows the error.
 
 flag or an error message.
 
+**Throws**
+
+| Type | Description |
+| --- | --- |
+| `{Error}` | If the request fails or the server responds with an error. |
+
 @return {Promise<object>} A promise that resolves to an object with a success
-@throws {Error} If the request fails or the server responds with an error.
 
 ### markPurchasedItems
 Marks all unchecked items in the user's shopping list as purchased by making a PATCH
@@ -679,8 +1294,13 @@ error.
 
 flag or an error message.
 
+**Throws**
+
+| Type | Description |
+| --- | --- |
+| `{Error}` | If the request fails or the server responds with an error. |
+
 @return {Promise<object>} A promise that resolves to an object with a success
-@throws {Error} If the request fails or the server responds with an error.
 
 ### deleteShoppingListItem
 Deletes a single shopping list item from the user's shopping list by making a DELETE
@@ -690,9 +1310,19 @@ error.
 
 flag or an error message.
 
-@param {string} uid The unique identifier for the shopping list item to delete.
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| uid | `{string}` |  |
+
+**Throws**
+
+| Type | Description |
+| --- | --- |
+| `{Error}` | If the request fails or the server responds with an error. |
+
 @return {Promise<object>} A promise that resolves to an object with a success
-@throws {Error} If the request fails or the server responds with an error.
 
 ### addRecipeLog
 Creates a new recipe log entry for the given recipe by making a POST request
@@ -704,9 +1334,19 @@ flag and an error message.
 flag and either the newly created recipe log entry's data
 or an error message.
 
-@param {string} recipeUid The unique identifier for the recipe to log.
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| recipeUid | `{string}` |  |
+
+**Throws**
+
+| Type | Description |
+| --- | --- |
+| `{Error}` | If the request fails or the server responds with an error. |
+
 @return {Promise<object>} A promise that resolves to an object with a success
-@throws {Error} If the request fails or the server responds with an error.
 
 ### updateEventInBackend
 Updates a recipe log entry for the given event by making a PUT request to the
@@ -714,11 +1354,20 @@ Updates a recipe log entry for the given event by making a PUT request to the
 it logs an error message and throws an error.
 
 
-@param {number} id The unique identifier for the recipe log entry to update.
-@param {Date|string} start The new start time for the recipe log entry.
-@param {Date|string} end The new end time for the recipe log entry.
-@param {number} userId The user ID to associate with the recipe log entry.
-@throws {Error} If the request fails or the server responds with an error.
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| id | `{number}` |  |
+| start | `{Date\|string}` |  |
+| end | `{Date\|string}` |  |
+| userId | `{number}` |  |
+
+**Throws**
+
+| Type | Description |
+| --- | --- |
+| `{Error}` | If the request fails or the server responds with an error. |
 
 ### deleteEventInBackend
 Deletes a recipe log entry for the given event by making a DELETE request to the
@@ -726,8 +1375,17 @@ Deletes a recipe log entry for the given event by making a DELETE request to the
 it logs an error message and throws an error.
 
 
-@param {number} id The unique identifier for the recipe log entry to delete.
-@throws {Error} If the request fails or the server responds with an error.
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| id | `{number}` |  |
+
+**Throws**
+
+| Type | Description |
+| --- | --- |
+| `{Error}` | If the request fails or the server responds with an error. |
 
 
 ## api.js
@@ -735,15 +1393,33 @@ it logs an error message and throws an error.
 Creates a new recipe photo entry in the database.
 
 
-@param {string} recipeUid - Unique identifier for the recipe.
-@param {string} imageUrl - URL of the photo.
-@param {string} fileType - The file type of the photo.
-@param {boolean} [isMain=false] - Flag indicating if the photo is the main image.
-@returns {Promise<Object>} A promise that resolves to the created recipe photo entry.
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| recipeUid | `{string}` | Unique identifier for the recipe. |
+| imageUrl | `{string}` | URL of the photo. |
+| fileType | `{string}` | The file type of the photo. |
+| isMain | `{boolean}` | Flag indicating if the photo is the main image. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{Promise<Object>}` | A promise that resolves to the created recipe photo entry. |
 
 ### removeRecipePhotoEntry
 Removes a recipe photo entry from the database.
 
 
-@param {number|string} uid - Unique identifier for the photo entry to be removed.
-@returns {Promise<void>} A promise that resolves when the entry has been deleted.
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| uid | `{number\|string}` | Unique identifier for the photo entry to be removed. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{Promise<void>}` | A promise that resolves when the entry has been deleted. |
