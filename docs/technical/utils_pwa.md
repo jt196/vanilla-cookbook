@@ -5,7 +5,11 @@
 Configuration object for Workbox to generate a service worker.
 
 
-@type {import('workbox-build').GenerateSWOptions}
+**Type**
+
+```JS
+{ import('workbox-build').GenerateSWOptions }
+```
 
 ### Function 2
 Generates a service worker using the given Workbox configuration.

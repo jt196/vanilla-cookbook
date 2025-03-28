@@ -130,7 +130,7 @@ const fuseOptions = {
  * @returns {Object|null} - Returns the matched ingredient object or null if no match is found.
  */
 // eslint-disable-next-line no-unused-vars
-function fuzzyMatch(ingredient, lookupTable) {
+export function fuzzyMatch(ingredient, lookupTable) {
 	const words = ingredient.toLowerCase().split(/\W+/) // Split by non-word characters
 	for (const word of words) {
 		for (const item of lookupTable) {
@@ -158,6 +158,14 @@ const fuseVeganOptions = {
 
 const veganFuse = new Fuse(foodPreferences, fuseVeganOptions)
 
+/**
+ * Searches through the food preferences database to find a match for the given ingredient name.
+ * Returns an object with the following properties: vegan, vegetarian, pescatarian, canBeVegan.
+ * If no match is found, returns an object with all properties set to true.
+ *
+ * @param {string} ingredientName - The ingredient name to search for.
+ * @returns {Object} - An object with the search results.
+ */
 export function addFoodPreferences(ingredientName) {
 	// Primary search with fuzzy check
 	const results = veganFuse.search(ingredientName)
@@ -195,6 +203,12 @@ export function addFoodPreferences(ingredientName) {
 	} // default values if ingredient is not found or doesn't match closely enough
 }
 
+/**
+ * Generates a string label indicating the dietary preference
+ * of the given ingredient based on the given preferences.
+ * @param {Object} prefs - The preferences object for the ingredient.
+ * @returns {string} - A string label indicating the dietary preference.
+ */
 export function getDietLabel(prefs) {
 	if (prefs.vegan) {
 		return ''
