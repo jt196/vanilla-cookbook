@@ -13,6 +13,14 @@ Most of the web's recipes are stored as text, without much thought to a consiste
 
 ## Features
 
+### Unit Conversion
+
+Smart conversion from US Volumetric to imperial and metric weight. Thousands of ingredients supported in this conversion. Inline temperature conversion, fractions and ranges are also supported.
+
+### Recipe Scaling
+
+Scale your recipe ingredients. No complicated data entry, it's all done under the hood.
+
 ### Control Your Data
 
 Import and export your data in Paprika format. Category hierarchy is supported for imports.
@@ -30,10 +38,6 @@ Add an OpenAI key to assist in parsing recipe data.
 Install on your mobile from a browser.
 
 Share URL via browser to scrape a recipe, or select text and share to parse text.
-
-### Unit Conversion
-
-Smart conversion from US Volumetric to imperial and metric weight. Thousands of ingredients supported in this conversion. Inline temperature conversion, fractions and ranges are also supported.
 
 ### Shopping List
 
