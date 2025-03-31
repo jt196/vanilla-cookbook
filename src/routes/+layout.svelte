@@ -23,6 +23,8 @@
 
 	let theme = $state('dark')
 
+	const siteName = import.meta.env.VITE_SITE_NAME || 'Vanilla Cookbook'
+
 	// Initial theme setup
 	if (browser) {
 		const prefersDark = window.matchMedia?.('(prefers-color-scheme: dark)').matches
@@ -71,6 +73,10 @@
 			})
 	}
 </script>
+
+<svelte:head>
+	<title>{siteName}</title>
+</svelte:head>
 
 <SiteIcons />
 
