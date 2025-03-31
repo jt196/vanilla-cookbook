@@ -120,6 +120,13 @@ Click on the Parse button at the top of the + new page (hidden if you don't have
 
 Beta-ish, but working on my test computer. Upload an image, and process it with an LLM of your choice. It'll resize it and send it off to be processed. It'll take a bit longer than the text parsing, but not too long. Pukka!
 
+Here's a demo, feel free to fast forward the middle bit where it's waiting for the response... Unless 20 seconds of me wiggling my mouse around sounds attractive.
+
+<video width="640" height="360" controls>
+  <source src="../../videos/image_parsing.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 ### Add it
 
 Complete the recipe form, then click the **Add Recipe** button at the bottom. The Edit page is basically the same as this. If the images are successfully saved, they'll be in the _uploads/images_ folder. Image URLs should grab the image and save it there.
