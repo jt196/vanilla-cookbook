@@ -61,29 +61,84 @@ conversion of small units (e.g. "pinch", "dash") if specified.
 
 
 ## ai.js
-### gptExtractRecipeFromContent
-Extracts a recipe from the provided content using the OpenAI API.
+### bufferToBase64ImageDataURI
+Converts a Buffer to a base64 encoded image data URI.
+
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| buffer | `{Buffer}` | Input buffer |
+| mimeType | `{string}` | MIME type of the image |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{string}` | A base64 encoded image data URI |
+
+### buildRecipePrompt
+Builds a prompt for a recipe extraction AI from the given inputLabel and content.
+
+Returns a string prompt that includes the content and any relevant information
+such as a URL if the inputLabel is 'HTML'.
+
+The generated prompt will instruct the AI to:
+1. Check for structured data in the content.
+2. Parse the content like user-pasted recipe text or OCR from an image.
+3. Populate all fields that exist. Use empty strings or arrays if data is missing.
+4. Never guess or fabricate values.
+5. Return raw JSON only, no Markdown or code formatting.
+6. Return ingredients and instructions/directions as arrays of strings.
+7. Each ingredient to be a separate array element.
+8. Each instruction paragraph to be a separate array element.
 
 
 **Parameters**
 
 | Parameter | Type | Description |
 | --- | --- | --- |
-| content | `{string}` | The input content containing the recipe in HTML or plain text. |
-| type | `{string}` | The type of the content, either 'html' or 'text'. |
-| url | `{string}` | The URL where the content originated, used only for HTML content. |
+| inputLabel | `{string}` | The label for the content. |
+| content | `{string}` | The content to extract from. |
+| url | `{string}` | A URL to include in the prompt. |
 
 **Returns**
 
 | Type | Description |
 | --- | --- |
-| `{Promise<Object>}` | A promise that resolves to an object representing the extracted recipe. |
+| `{string}` | The generated prompt. |
+
+### extractRecipeWithLLM
+Extract a recipe from the given content using a Large Language Model (LLM).
+
+
+
+
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| options | `{Object}` | Options to control the extraction. |
+| options | `{string}` |  |
+| options | `{string}` |  |
+| options | `{string}` |  |
+| options | `{string}` |  |
+| options | `{Buffer}` |  |
+| options | `{string}` |  |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{Promise<Object>}` | A promise that resolves to the extracted recipe as a JSON object. |
 
 **Throws**
 
 | Type | Description |
 | --- | --- |
-| `{Error}` | Throws an error if the OpenAI API is disabled, the API key is missing, or if the content parsing fails. |
+| `{Error}` | If the LLM API is disabled or the OpenAI API key is missing. |
+| `{Error}` | If the provider is not supported. |
+| `{Error}` | If the image data is missing. |
 
 
 ## categories.js

@@ -515,6 +515,24 @@ along with `_source` and `_status` properties from the raw data.
 | --- | --- |
 | @throws Will throw an error if the parsing fails. |  |
 
+### handleImage
+Handles image-based recipe parsing.
+Sends image to the backend and formats the result.
+
+
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| event | `{Event\|null}` | Optional event to prevent default form behavior |
+| imageFile | `{File}` | The image file selected from an <input type="file"> |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{Promise<Object>}` | The parsed and formatted recipe object |
+
 ### formatScrapedRecipe
 Reusable formatting function for both methods
 Formats scraped recipe data into a standardized object.

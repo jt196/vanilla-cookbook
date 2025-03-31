@@ -33,8 +33,9 @@ jobs:
           echo "ADMIN_EMAIL=email@example.com" >> .env
           echo "ADMIN_NAME=Administrator" >> .env
           echo "OPENAI_API_KEY=dummy_key" >> .env
-          echo "OPENAI_API_ENGINE=gpt-3.5-turbo" >> .env
-          echo "OPENAI_API_ENABLED=false" >> .env
+          echo "LLM_API_ENGINE_TEXT=gpt-3.5-turbo" >> .env
+          echo "LLM_API_ENGINE_IMAGE=gpt-4o" >> .env
+          echo "LLM_API_ENABLED=false" >> .env
 
       - name: Create Directories
         run: |

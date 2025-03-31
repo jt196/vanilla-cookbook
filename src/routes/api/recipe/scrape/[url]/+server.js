@@ -1,9 +1,9 @@
 import { parseURL } from '$lib/utils/parse/recipeParse'
-import { gptExtractRecipeFromContent } from '$lib/utils/ai'
+import { extractRecipeWithLLM } from '$lib/utils/ai'
 import { env } from '$env/dynamic/private'
 
 const OPENAI_API_KEY = env.OPENAI_API_KEY || 'sk-xxxxxxxxxxxxxxxxxxxxxxxxx'
-const OPENAI_API_ENABLED = env.OPENAI_API_ENABLED || 'false'
+const LLM_API_ENABLED = env.LLM_API_ENABLED || 'false'
 
 export async function GET({ params }) {
 	const url = decodeURIComponent(params.url)
@@ -33,11 +33,15 @@ export async function GET({ params }) {
 	}
 
 	// AI fallback
-	if (OPENAI_API_KEY && html && OPENAI_API_ENABLED) {
+	if (OPENAI_API_KEY && html && LLM_API_ENABLED) {
 		console.log('Attempting AI scrape...')
 		try {
-			const aiRecipe = await gptExtractRecipeFromContent(html, 'html', url)
-
+			const aiRecipe = await extractRecipeWithLLM({
+				provider: 'openai',
+				type: 'html',
+				content: html,
+				url
+			})
 			if (
 				aiRecipe &&
 				typeof aiRecipe === 'object' &&
@@ -52,10 +56,7 @@ export async function GET({ params }) {
 		} catch (aiErr) {
 			console.error('AI scrape failed:', aiErr)
 		}
-	} else {
-		console.warn('No OpenAI API key or HTML missing, skipping AI scrape.')
 	}
-
 	// Return partial scrape if possible
 	if (scrapedRecipe) {
 		console.log('Partial scrape return.')

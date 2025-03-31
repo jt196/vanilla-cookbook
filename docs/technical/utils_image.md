@@ -88,6 +88,24 @@ Downloads an image from a given URL and returns it as a buffer.
 | --- | --- |
 | `{Promise<Buffer>}` | A promise that resolves with the downloaded image as a buffer. |
 
+### resizeImageBuffer
+Resize a buffer-based image to a max size.
+Returns a new buffer (e.g. for uploading or embedding).
+
+
+**Parameters**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| buffer | `{Buffer}` | Original image buffer |
+| maxSize | `{number}` | Max width or height (e.g. 1024) |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `{Promise<Buffer>}` | Resized image buffer |
+
 
 ## imageUtils.js
 ### getContentTypeFromUrl

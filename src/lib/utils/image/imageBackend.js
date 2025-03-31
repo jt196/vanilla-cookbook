@@ -124,3 +124,23 @@ async function downloadImageAsBuffer(url) {
 	const arrayBuffer = await response.arrayBuffer()
 	return Buffer.from(arrayBuffer)
 }
+
+/**
+ * Resize a buffer-based image to a max size.
+ * Returns a new buffer (e.g. for uploading or embedding).
+ *
+ * @param {Buffer} buffer - Original image buffer
+ * @param {number} maxSize - Max width or height (e.g. 1024)
+ * @returns {Promise<Buffer>} Resized image buffer
+ */
+export async function resizeImageBuffer(buffer, maxSize = 1024) {
+	const image = sharp(buffer)
+	const metadata = await image.metadata()
+
+	if (metadata.width > maxSize || metadata.height > maxSize) {
+		return await image.resize({ width: maxSize, height: maxSize, fit: 'inside' }).toBuffer()
+	}
+
+	// No resize needed
+	return buffer
+}

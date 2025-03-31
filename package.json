@@ -63,6 +63,9 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@langchain/anthropic": "^0.3.15",
+		"@langchain/core": "^0.3.43",
+		"@langchain/openai": "^0.5.2",
 		"@lucia-auth/adapter-prisma": "^3.0.2",
 		"@picocss/pico": "^2.0.6",
 		"@prisma/client": "^4.9.0",
@@ -75,6 +78,7 @@
 		"fuse.js": "^6.6.2",
 		"he": "^1.2.0",
 		"humanize-duration": "^3.29.0",
+		"langchain": "^0.3.19",
 		"lucia": "^2.7.6",
 		"marked": "^9.0.0",
 		"node-html-parser": "^6.1.10",

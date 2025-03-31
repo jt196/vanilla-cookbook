@@ -98,6 +98,45 @@ export async function handleParse(event = null, text) {
 }
 
 /**
+ * Handles image-based recipe parsing.
+ * Sends image to the backend and formats the result.
+ *
+ * @param {Event|null} event - Optional event to prevent default form behavior
+ * @param {File} imageFile - The image file selected from an <input type="file">
+ * @returns {Promise<Object>} The parsed and formatted recipe object
+ */
+export async function handleImage(event = null, imageFile) {
+	if (event) event.preventDefault()
+
+	try {
+		const formData = new FormData()
+		formData.append('image', imageFile)
+
+		const response = await fetch('/api/recipe/parse/image', {
+			method: 'POST',
+			body: formData
+		})
+
+		if (!response.ok) {
+			const error = await response.json()
+			throw new Error(error?.error || 'Failed to parse image.')
+		}
+
+		const raw = await response.json()
+		const formatted = formatScrapedRecipe(raw)
+
+		return {
+			...formatted,
+			_source: raw._source,
+			_status: raw._status
+		}
+	} catch (err) {
+		console.error('handleImage error:', err)
+		throw err
+	}
+}
+
+/**
  * Reusable formatting function for both methods
  * Formats scraped recipe data into a standardized object.
  *

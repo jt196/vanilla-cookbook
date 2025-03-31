@@ -70,21 +70,26 @@ You have three checkboxes here:
 
 You can set your default options in the settings section.
 
-## Add Recipe
+## Recipe Add
 
 ![Recipe View Desktop](../images/screen-desktop-new-dark.png)
 
-Add your recipe here.
+Add your recipe here. Multiple sources accepted:
+
+- Websites with Schema.org recipe schema (most of the web)
+- Websites with no schema
+- Pasted Text
+- Images of recipes
 
 **Android PWA sharing** a URL or text to the new page is supported.
 
-### Scrape It
+### Websites
 
 Either use the old skool bookmarklet (found in /user/options/bookmark), or paste the URL in the first box, then press scrape.
 
-Not all websites are supported, but quite a few, mostly those that have good Schema.org recipe data.
+If the site has a well-formed Schema.org recipe object, you should get a returned, fully formed recipe quite quickly.
 
-If the standard recipe scrape fails, it'll try with an OpenAI API key.
+If the standard recipe scrape fails (criteria being: no name, no ingredients), it'll try with an OpenAI API key.
 
 ### AI Assist
 
@@ -94,11 +99,11 @@ If the recipe parse fails, and you have the ai option enabled, plus key set in t
 
 Add your OpenAI key to the .env variables. The model will default to 3.5 turbo, but you can change it there.
 
-Set `OPEN_API_ENABLED=true`. The default model should work.
+Set `LLM_API_ENABLED=true`. The default model should work.
 
 Test the demo on [this URL](https://pastebin.com/raw/zwgsuVKd) to check it works.
 
-It's using the [openai](https://www.npmjs.com/package/openai) npm package, so read the docs there for more info.
+It's using the Langchain npm package, so read the docs there for more info. I'll integrate more models in the future, but it's currently working with OpenAI.
 
 Here's a demo of it working:
 
@@ -110,6 +115,10 @@ Here's a demo of it working:
 #### Text Parsing
 
 Click on the Parse button at the top of the + new page (hidden if you don't have API key or AI enabled in the `.env` file) and you'll be presented with a large input box. Paste your recipe in there and see whether an LLM can make something of the data! It works pretty well in the demo above.
+
+#### Image Recognition
+
+Beta-ish, but working on my test computer. Upload an image, and process it with an LLM of your choice. It'll resize it and send it off to be processed. It'll take a bit longer than the text parsing, but not too long. Pukka!
 
 ### Add it
 

@@ -5,8 +5,6 @@
 	import { handleScrape } from '$lib/utils/parse/parseHelpersClient'
 	import RecipeNewScrape from '$lib/components/RecipeNewScrape.svelte'
 	import RecipeForm from '$lib/components/RecipeForm.svelte'
-	import Chain from '$lib/components/svg/Chain.svelte'
-	import Note from '$lib/components/svg/Note.svelte'
 	import FeedbackMessage from '$lib/components/FeedbackMessage.svelte'
 	import { defaultRecipe } from '$lib/utils/config'
 
@@ -29,9 +27,10 @@
 
 	let url = $state(null)
 	let sharedText = $state(null)
-	let scrapeActive = $state(true)
 	let feedbackMessage = $state('')
 	let feedbackType = $state('info')
+
+	let initialMode = $state('url') // 'url' | 'text' | 'image'
 
 	let { data } = $props()
 
@@ -42,12 +41,12 @@
 	 * @param {Event} event - The scrape event.
 	 * @returns {Promise<void>}
 	 */
+
 	onMount(async () => {
 		const urlParams = new URLSearchParams(window.location.search)
 		let rawUrl = urlParams.get('url')
 		let text = urlParams.get('text')
 
-		// If there's no dedicated url param, but text looks like a URL, treat it as such
 		if (!rawUrl && text && /^https?:\/\//.test(text)) {
 			rawUrl = text
 		}
@@ -57,6 +56,7 @@
 
 		if (url) {
 			url = decodeURIComponent(url)
+			initialMode = 'url'
 			try {
 				const scrapedData = await handleScrape(null, url)
 				if (scrapedData) {
@@ -66,8 +66,9 @@
 				console.error('Error during scrape:', error)
 			}
 		} else if (sharedText && apiKeyPresent && aiEnabled) {
-			scrapeActive = false
+			initialMode = 'text'
 		} else if (sharedText && (!apiKeyPresent || !aiEnabled)) {
+			initialMode = 'text'
 			feedbackMessage = 'AI not enabled!'
 		}
 	})
@@ -85,25 +86,7 @@
 	}
 </script>
 
-{#if aiEnabled && apiKeyPresent}
-	<div class="tab-toggle">
-		<button
-			onclick={() => {
-				scrapeActive = !scrapeActive
-				url = null
-				sharedText = null
-				recipe = defaultRecipe
-			}}>
-			{#if scrapeActive}
-				<Note width="20px" /> Parse
-			{:else}
-				<Chain width="20px" /> Scrape
-			{/if}
-		</button>
-	</div>
-{/if}
-
-<RecipeNewScrape bind:url bind:sharedText {scrapeActive} {apiKeyPresent} {aiEnabled} bind:recipe />
+<RecipeNewScrape bind:url bind:sharedText bind:recipe {apiKeyPresent} {aiEnabled} {initialMode} />
 
 <RecipeForm bind:recipe onSubmit={handleCreateRecipe} />
 
