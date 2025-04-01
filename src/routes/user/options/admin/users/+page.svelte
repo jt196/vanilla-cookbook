@@ -63,7 +63,8 @@
 
 	function openEditDialog(user) {
 		isEditMode = true
-		editingUser = { ...user }
+		// Use a deep clone to avoid unintentional two-way binding
+		editingUser = JSON.parse(JSON.stringify(user))
 		isDialogOpen = true
 	}
 
@@ -87,6 +88,9 @@
 
 		// Handle response (e.g., refresh data, close modal)
 		if (response.ok) {
+			// Update the local users array with the new editingUser data
+			const updatedUsers = users.map((u) => (u.id === editingUser.id ? editingUser : u))
+			users = updatedUsers
 			isDialogOpen = false
 			if (currentAdminUserId === editingUser.id && editingUser.isAdmin === false) {
 				await fetch('/logout', { method: 'POST' })
@@ -122,19 +126,6 @@
 		}
 	}
 	let adminCount = $derived(users.filter((user) => user.isAdmin).length)
-
-	$effect(() => {
-		if (!isDialogOpen || !isEditMode || !editingUser.id) return // Prevent unnecessary updates
-
-		const index = users.findIndex((user) => user.id === editingUser.id)
-
-		if (index !== -1) {
-			// Avoid unnecessary reactivity updates by comparing values first
-			if (JSON.stringify(users[index]) !== JSON.stringify(editingUser)) {
-				users = users.map((user, i) => (i === index ? { ...editingUser } : user))
-			}
-		}
-	})
 
 	let passwordFeedback = $derived(password.length > 0 ? validatePassword(password) : null)
 </script>
@@ -224,11 +215,7 @@
 
 <style lang="scss">
 	.you-label {
-		font-size: 0.9em;
-		color: var(
-			--highlight-color,
-			#007bff
-		); // Use a CSS variable for highlight color or a fixed value.
+		color: var(--pico-primary); // Use a CSS variable for highlight color or a fixed value.
 		margin-left: 0.5em;
 	}
 </style>

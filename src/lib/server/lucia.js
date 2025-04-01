@@ -34,7 +34,8 @@ export const auth = lucia({
 	sessionCookie: {
 		attributes: {
 			sameSite: isDev ? 'lax' : 'strict',
-			secure: isDev ? false : true
+			secure: isDev ? false : true,
+			path: '/'
 		}
 	}
 })
