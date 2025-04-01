@@ -24,6 +24,5 @@
 
 	<button type="submit">Login</button>
 </form>
-{#if errorMessage}
-	<FeedbackMessage message={errorMessage} type="error" />
-{/if}
+
+<FeedbackMessage message={errorMessage} type="error" />

@@ -33,10 +33,10 @@ export const load = async ({ locals }) => {
 	const session = await locals.auth.validate()
 	const settings = await prisma.siteSettings.findFirst()
 	if (session) {
-		redirect(302, '/');
+		redirect(302, '/')
 	}
 	if (!settings.registrationAllowed) {
-		redirect(302, '/login');
+		redirect(302, '/login')
 	}
 }
 
@@ -75,8 +75,19 @@ export const actions = {
 			})
 		} catch (err) {
 			console.error(err)
+			// Check for Prisma's duplicate entry error code
+			if (err.code === 'P2002') {
+				console.log('Duplicate entry error:', err)
+				if (err.meta?.target?.includes('email')) {
+					console.log('Duplicate email error:')
+					return fail(400, { message: 'Email already taken!' })
+				} else if (err.meta?.target?.includes('username')) {
+					console.log('Duplicate username error:')
+					return fail(400, { message: 'Username already taken!' })
+				}
+			}
 			return fail(400, { message: 'Could not register user' })
 		}
-		redirect(302, '/login');
+		redirect(302, '/login')
 	}
 }

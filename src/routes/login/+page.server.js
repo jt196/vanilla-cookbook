@@ -56,6 +56,13 @@ export const actions = {
 		} catch (err) {
 			console.error(err)
 			console.error(err.message)
+			if (err.message === 'AUTH_INVALID_PASSWORD') {
+				console.log('Invalid Password')
+				return fail(400, { message: 'Incorrect Password!' })
+			} else if (err.message === 'AUTH_INVALID_KEY_ID') {
+				console.log('Non-existent Username')
+				return fail(400, { message: "User Doesn't Exist!" })
+			}
 			return fail(400, { message: 'Could not login user.' })
 		}
 		redirect(302, '/')

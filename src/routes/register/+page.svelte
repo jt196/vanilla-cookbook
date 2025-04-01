@@ -1,3 +1,11 @@
+<script>
+	import FeedbackMessage from '$lib/components/FeedbackMessage.svelte'
+
+	let { form } = $props()
+
+	let errorMessage = $derived(form?.message)
+</script>
+
 <form method="POST">
 	<hgroup>
 		<h2>Register</h2>
@@ -22,3 +30,5 @@
 	<button type="submit">Register</button>
 </form>
 <p>Already have an account? <a href="/login">Login</a></p>
+
+<FeedbackMessage message={errorMessage} type="error" />
