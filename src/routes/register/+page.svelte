@@ -22,7 +22,7 @@
 	<input type="text" id="email" name="email" required />
 
 	<label for="about">About</label>
-	<input type="text" id="about" name="about" required />
+	<input type="text" id="about" name="about" />
 
 	<label for="password">Password</label>
 	<input type="password" id="password" name="password" required />
