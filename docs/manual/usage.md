@@ -83,6 +83,10 @@ Add your recipe here. Multiple sources accepted:
 
 **Android PWA sharing** a URL or text to the new page is supported.
 
+![PWA Share 1](../images/PWA_share_1.png)
+
+![PWA Share 2](../images/PWA_share_2.png)
+
 ### Websites
 
 Either use the old skool bookmarklet (found in /user/options/bookmark), or paste the URL in the first box, then press scrape.

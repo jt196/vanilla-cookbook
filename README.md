@@ -15,7 +15,7 @@ Most of the web's recipes are stored as text, without much thought to a consiste
 
 ### Unit Conversion
 
-Smart conversion from US Volumetric to imperial and metric weight. Thousands of ingredients supported in this conversion. Inline temperature conversion, fractions and ranges are also supported.
+Smart conversion from US Volumetric to imperial and metric weight. Thousands of ingredients supported in this conversion. Inline temperature conversion, fractions and ranges are also supported. [Docs](https://vanilla-cookbook.readthedocs.io/en/latest/manual/ingredients/#conversion)
 
 ### Recipe Scaling
 
@@ -23,33 +23,39 @@ Scale your recipe ingredients. No complicated data entry, it's all done under th
 
 ### Control Your Data
 
-Import and export your data in Paprika format. Category hierarchy is supported for imports.
+Import and export your data in Paprika format. Category hierarchy is supported for imports. [Docs](https://vanilla-cookbook.readthedocs.io/en/latest/manual/import/)
 
 ### Scraping Recipes
 
-Scrape recipes using a browser bookmarklet or simply paste a URL in. Hundreds of sites supported.
+Scrape recipes using a browser bookmarklet or simply paste a URL in. Hundreds of sites supported. [Docs](https://vanilla-cookbook.readthedocs.io/en/latest/manual/usage/#recipe-add)
 
 ### AI Scrape Assist
 
-Add an OpenAI key to assist in parsing recipe data.
+Add an LLM API key to assist in:
+
+- Parsing HTML on fail
+- Parsing plain text paste
+- Processing an image
+
+[Docs](https://vanilla-cookbook.readthedocs.io/en/latest/manual/usage/#ai-assist)
 
 ### Progressive Web App
 
-Install on your mobile from a browser.
+Install on your mobile from a browser. [Docs](https://vanilla-cookbook.readthedocs.io/en/latest/manual/installation/#mobile)
 
 Share URL via browser to scrape a recipe, or select text and share to parse text.
 
 ### Shopping List
 
-Simple shopping list section. Add ingredients from your recipe. Checked ingredients persist but hidden, show them to make your next shopping list.
+Simple shopping list section. Add ingredients from your recipe. Checked ingredients persist but hidden, show them to make your next shopping list. [Docs](https://vanilla-cookbook.readthedocs.io/en/latest/manual/apps/#shopping)
 
 ### Cooking Logs
 
-Log when you've cooked a recipe. Calendar view, recipe view of logs.
+Log when you've cooked a recipe. Calendar view, recipe view of logs. [Docs](https://vanilla-cookbook.readthedocs.io/en/latest/manual/apps/#calendar)
 
 ### User Management
 
-User authentication is supported. You can add users, turn on/off registration.
+User authentication is supported. You can add users, turn on/off registration. [Docs](https://vanilla-cookbook.readthedocs.io/en/latest/manual/usage/#privacy)
 
 ### Public Recipes
 
@@ -61,7 +67,7 @@ Designed to be as easy and stress free to set up as possible. Docker or local no
 
 ### Multiple Language Ingredient Parsing
 
-Multiple languages supported for ingredient parsing.
+Multiple languages supported for ingredient parsing. [Docs](https://vanilla-cookbook.readthedocs.io/en/latest/manual/ingredients/#languages)
 
 Currently:
 
