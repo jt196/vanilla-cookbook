@@ -112,8 +112,16 @@ By default, the Extra is hidden, to allow for a clean ingredients list. You can 
 
 If your ingredients are looking a bit wonky, then this is likely the cause of it. Our parser doesn't like:
 
-- Ingredient separated from unit by comma: "1 teaspoon, sugar"
-- Double brackets: "1 cup water (bottled water is great, pond water is best (muddier the better))"
+- Ingredient separated from unit by comma
+  - ❌ "1 teaspoon, sugar"
+  - ✅ "1 teaspoon sugar"
+- Double brackets
+  - ❌ "1 cup water (bottled water is great, pond water is best (muddier the better))"
+  - ✅ "1 cup water (bottled water is great, pond water is best, muddier the better)"
+- Multiple units or quantities
+  - ❌ "2 13.5 ounce cans full-fat coconut milk"
+  - ✅ "2 cans full-fat coconut milk (13.5 ounces)"
+  - ✅ "2 cans full-fat coconut milk, 13.5 ounces"
 
 I'll try to add to more of these (or fix the parsing error) as and when they come up.
 
