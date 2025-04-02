@@ -6,6 +6,7 @@
 	import { onMount } from 'svelte'
 	import { goto } from '$app/navigation'
 	import TrueFalse from '$lib/components/TrueFalse.svelte'
+	import FeedbackMessage from '$lib/components/FeedbackMessage.svelte'
 
 	/** @type {{data: any}} */
 	let { data } = $props()
@@ -16,6 +17,7 @@
 	let isDialogOpen = $state(false) // dialog is initially closed
 	let isEditMode = $state(false)
 	let password = $state('')
+	let userFeedback = $state('')
 
 	let editingUser = $state({
 		id: null,
@@ -86,6 +88,8 @@
 			body: JSON.stringify(editingUser)
 		})
 
+		const data = await response.json()
+
 		// Handle response (e.g., refresh data, close modal)
 		if (response.ok) {
 			// Update the local users array with the new editingUser data
@@ -101,7 +105,17 @@
 				await fetchData() // Refresh data after successful update
 			}
 		} else {
-			// Handle error
+			console.error('Error updating user:', data.error)
+			// Optionally, tailor error messages based on content
+			if (data.error && data.error.toLowerCase().includes('username already taken')) {
+				userFeedback = 'Username already taken!'
+				console.log('🚀 ~ handleSubmit ~ userFeedback:', userFeedback)
+			} else if (data.error && data.error.toLowerCase().includes('email already taken')) {
+				userFeedback = 'Email already taken!'
+			} else {
+				console.log('🚀 An unknown error occurred:', data.error)
+				userFeedback = 'There was an error updating the user!'
+			}
 		}
 	}
 	async function deleteUser(id) {
@@ -182,6 +196,8 @@
 		{/each}
 	</tbody>
 </table>
+
+<FeedbackMessage message={userFeedback} type="error" />
 
 <dialog bind:this={dialog} open={isDialogOpen}>
 	<article>

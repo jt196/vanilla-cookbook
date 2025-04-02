@@ -183,11 +183,26 @@ export const PUT = async ({ request, locals, params }) => {
 			})
 		}
 	} catch (error) {
+		// console.error('Error updating user:', error)
+		// Check for duplicate entry errors from Prisma
+		if (error.code === 'P2002') {
+			if (error.meta?.target?.includes('username')) {
+				// console.error('Duplicate username error:', error)
+				return new Response(JSON.stringify({ error: 'Username already taken!' }), {
+					status: 400,
+					headers: { 'Content-Type': 'application/json' }
+				})
+			} else if (error.meta?.target?.includes('email')) {
+				// console.error('Duplicate email error:', error)
+				return new Response(JSON.stringify({ error: 'Email already taken!' }), {
+					status: 400,
+					headers: { 'Content-Type': 'application/json' }
+				})
+			}
+		}
 		return new Response(JSON.stringify({ error: `Failed to update user: ${error.message}` }), {
 			status: 500,
-			headers: {
-				'Content-Type': 'application/json'
-			}
+			headers: { 'Content-Type': 'application/json' }
 		})
 	}
 }
