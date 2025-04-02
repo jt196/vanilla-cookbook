@@ -122,6 +122,7 @@ model AuthUser {
     publicProfile      Boolean            @default(false)
     publicRecipes      Boolean            @default(false)
     skipSmallUnits     Boolean            @default(false)
+    ingSymbol          Boolean            @default(true)
     ingMatch           Boolean            @default(false)
     ingOriginal        Boolean            @default(false)
     ingExtra           Boolean            @default(false)

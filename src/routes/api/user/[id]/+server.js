@@ -146,6 +146,7 @@ export const PUT = async ({ request, locals, params }) => {
 				ingMatch: 'ingMatch' in userData ? userData.ingMatch : updatingUser.ingMatch,
 				ingOriginal: 'ingOriginal' in userData ? userData.ingOriginal : updatingUser.ingOriginal,
 				ingExtra: 'ingExtra' in userData ? userData.ingExtra : updatingUser.ingExtra,
+				ingSymbol: 'ingSymbol' in userData ? userData.ingSymbol : updatingUser.ingSymbol,
 				language: 'language' in userData ? userData.language : updatingUser.language,
 				theme: 'theme' in userData ? userData.theme : updatingUser.theme
 			}
@@ -161,7 +162,6 @@ export const PUT = async ({ request, locals, params }) => {
 				attributes: {}
 			})
 			locals.auth.setSession(newSession)
-			console.log('🚀 ~ PUT ~ admin user cookie updated', updatedUser)
 			return new Response(
 				JSON.stringify({ message: 'Role updated successfully. Please log in again.' }),
 				{
@@ -174,7 +174,6 @@ export const PUT = async ({ request, locals, params }) => {
 		} else {
 			// Invalidate all of the user's sessions
 			await auth.invalidateAllUserSessions(id)
-			console.log('🚀 ~ PUT ~ updatedUser logged out!', updatedUser)
 			return new Response(JSON.stringify(updatedUser), {
 				status: 200,
 				headers: {
@@ -209,16 +208,13 @@ export const PUT = async ({ request, locals, params }) => {
 
 export async function DELETE({ params, locals }) {
 	const { id } = params
-	console.log('🚀 ~ DELETE ~ id:', id)
 
 	const deletingUser = await prisma.authUser.findUnique({
 		where: { id: id }
 	})
-	console.log('🚀 ~ DELETE ~ deletingUser:', deletingUser)
 
 	const session = await locals.auth.validate()
 	const user = session?.user
-	console.log('🚀 ~ DELETE ~ user:', user)
 
 	if (!session || !user) {
 		console.log('User Not Authenticated!')

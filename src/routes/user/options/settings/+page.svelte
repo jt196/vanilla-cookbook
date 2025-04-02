@@ -61,6 +61,10 @@
 		<b>Display Original</b> ingredient line text instead of parsed text
 	</label>
 	<label>
+		<input type="checkbox" name="Profile Public" bind:checked={user.ingSymbol} />
+		<b>Display Symbols</b> Display short form instead of long form units. e.g. g vs grams
+	</label>
+	<label>
 		<input type="checkbox" name="Profile Public" bind:checked={user.ingExtra} />
 		<b>Display Extra</b> ingredient text, eg after the comma in "1 clove garlic, chopped"
 		<details class="dropdown">

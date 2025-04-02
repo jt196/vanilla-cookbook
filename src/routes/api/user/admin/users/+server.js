@@ -44,6 +44,7 @@ export async function GET({ locals }) {
 				ingMatch: true,
 				ingOriginal: true,
 				ingExtra: true,
+				ingSymbol: true,
 				language: true,
 				theme: true,
 				_count: {

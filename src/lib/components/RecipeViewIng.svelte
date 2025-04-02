@@ -9,6 +9,7 @@
 		scale,
 		displayExtra,
 		displayDryMatch,
+		displaySymbol,
 		displayOriginal,
 		selectedSystem,
 		recipeUid
@@ -89,9 +90,13 @@
 						</strong>
 						<i>
 							{#if ingredient.unit && ingredient.unit !== 'q.b.'}
-								{ingredient.quantity * scaleIng > 1 && ingredient.unitPlural
-									? ingredient.unitPlural
-									: ingredient.unit}
+								{#if displaySymbol && ingredient.symbol}
+									{ingredient.symbol}
+								{:else}
+									{ingredient.quantity * scaleIng > 1 && ingredient.unitPlural
+										? ingredient.unitPlural
+										: ingredient.unit}
+								{/if}
 							{/if}
 						</i>
 						<span>
