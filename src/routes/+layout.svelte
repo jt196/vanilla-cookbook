@@ -16,6 +16,7 @@
 	import Calendar from '$lib/components/svg/Calendar.svelte'
 	import New from '$lib/components/svg/New.svelte'
 	import Theme from '$lib/components/svg/Theme.svelte'
+	import CookBook from '$lib/components/svg/CookBook.svelte'
 
 	/** @type {{data: PageData, children?: import('svelte').Snippet}} */
 	let { data, children } = $props()
@@ -87,6 +88,7 @@
 				<strong>
 					{#if user}
 						<a href={`/user/${user.userId}/recipes`}>
+							<CookBook width="45px" height="45px" />
 							<img
 								id="vanilla-logo"
 								src="/icons/site-logo.svg"
