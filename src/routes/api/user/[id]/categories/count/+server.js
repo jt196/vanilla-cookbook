@@ -9,7 +9,7 @@ export async function GET({ params, locals }) {
 	// eslint-disable-next-line no-unused-vars
 	const session = await locals.auth.validate()
 	const user = session?.user
-	if (!user || user.userId !== id) {
+	if (!session || !user || user.userId !== id) {
 		return new Response(JSON.stringify({ error: 'User not authenticated or wrong user.' }), {
 			status: 403,
 			headers: {

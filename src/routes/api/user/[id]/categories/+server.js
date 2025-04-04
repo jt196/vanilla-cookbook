@@ -7,8 +7,8 @@ export async function GET({ params, locals }) {
 	const session = await locals.auth.validate()
 	const user = session?.user
 	const { id } = params
-	if (!session || !user) {
-		return new Response(JSON.stringify({ error: 'User not authenticated or not authorized.' }), {
+	if (!session || !user || user.userId !== id) {
+		return new Response(JSON.stringify({ error: 'User not authenticated or wrong user.' }), {
 			status: 403,
 			headers: {
 				'Content-Type': 'application/json'

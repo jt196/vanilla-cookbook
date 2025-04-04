@@ -267,6 +267,7 @@ export async function uploadPaprikaFile(formData) {
 export async function dbCatCount(userId) {
 	let dbCategoryCount = 0
 	try {
+		console.log('dbCatCount!')
 		const response = await fetch(`/api/user/${userId}/categories/count`)
 		const data = await response.json()
 
@@ -290,6 +291,7 @@ export async function dbRecCount(userId) {
 	// Fetch the category count for the user
 	let dbRecCount = 0
 	try {
+		console.log('dbRecCount!')
 		const response = await fetch(`/api/user/${userId}/recipes/count`)
 		const data = await response.json()
 		if (data && data.count) {

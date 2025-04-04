@@ -20,6 +20,7 @@ export const load = async ({ params, locals, fetch, url }) => {
 	// Creating a dummy user object for non-logged in users
 	const nullUser = {
 		isAdmin: false,
+		isRoot: false,
 		userId: null,
 		units: 'metric',
 		language: 'eng',
@@ -27,7 +28,8 @@ export const load = async ({ params, locals, fetch, url }) => {
 		ingOriginal: false,
 		ingExtra: false,
 		ingSymbol: true,
-		skipSmallUnits: false
+		skipSmallUnits: false,
+		language: 'eng'
 	}
 
 	// Using nullish coalescing operator to assign user or nullUser to viewUser

@@ -71,7 +71,7 @@
 	}
 
 	async function handleSubmit() {
-		const endpoint = isEditMode ? `/api/user/${editingUser.id}` : '/api/user/'
+		const endpoint = isEditMode ? `/api/user/${editingUser.id}/admin` : '/api/user/'
 		const method = isEditMode ? 'PUT' : 'POST'
 		if (passwordFeedback) {
 			if (!passwordFeedback.isValid) {
@@ -123,7 +123,8 @@
 			return
 		}
 		try {
-			const response = await fetch(`/api/user/${id}`, {
+			console.log('Deleting User!')
+			const response = await fetch(`/api/user/${id}/admin`, {
 				method: 'DELETE',
 				headers: {
 					'Content-Type': 'application/json'

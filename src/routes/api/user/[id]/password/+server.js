@@ -4,15 +4,29 @@ import { validatePassword } from '$lib/utils/security.js'
 
 // eslint-disable-next-line no-unused-vars
 export const POST = async ({ request, locals, params }) => {
-	const body = await request.json()
-	const { oldPass, newPass, newPassConfirm } = body
+	const session = await locals.auth.validate()
+	const user = session?.user
 	const userId = params.id
-	const user = await prisma.authUser.findUnique({
+
+	if (!session || !user || user.userId !== id) {
+		return new Response(JSON.stringify({ error: 'User not authenticated or wrong user.' }), {
+			status: 403,
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		})
+	}
+
+	const body = await request.json()
+
+	const { oldPass, newPass, newPassConfirm } = body
+
+	const updatingUser = await prisma.authUser.findUnique({
 		where: {
 			id: userId
 		}
 	})
-	const username = user.username
+	const username = updatingUser.username
 
 	if (newPass !== newPassConfirm) {
 		return new Response('Passwords do not match!', {
@@ -42,11 +56,11 @@ export const POST = async ({ request, locals, params }) => {
 			await auth.updateKeyPassword('username', username, newPass)
 
 			// Invalidate all of the user's sessions
-			await auth.invalidateAllUserSessions(user.id)
+			await auth.invalidateAllUserSessions(updatingUser.id)
 
 			// // Create a new session for the user
 			const newSession = await auth.createSession({
-				userId: user.id,
+				userId: updatingUser.id,
 				attributes: {}
 			})
 			locals.auth.setSession(newSession)

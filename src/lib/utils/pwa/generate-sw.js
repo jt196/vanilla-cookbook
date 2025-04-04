@@ -22,6 +22,10 @@ const workboxConfig = {
 			handler: 'NetworkOnly'
 		},
 		{
+			urlPattern: /^\/user\/admin\/.*/i,
+			handler: 'NetworkOnly'
+		},
+		{
 			urlPattern: new RegExp(`^%%URLPATTERN%%/`),
 			handler: 'NetworkFirst',
 			options: {
