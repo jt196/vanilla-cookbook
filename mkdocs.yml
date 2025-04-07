@@ -63,8 +63,11 @@ nav:
       - General Utils: technical/utils.md
       - Image Utils: technical/utils_image.md
       - Import Utils: technical/utils_import.md
+      - Paprika Utils: technical/utils_paprika.md
       - Parse Utils: technical/utils_parse.md
       - PWA Utils: technical/utils_pwa.md
+      - Prisma Utils: technical/utils_prisma.md
+      - Documentation: technical/docs.md
 
 extra:
   social:

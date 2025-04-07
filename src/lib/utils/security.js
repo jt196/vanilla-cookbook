@@ -5,6 +5,7 @@
  * @returns {{ isValid: boolean, message: string }} An object indicating whether the password is valid and a message explaining the validation result.
  *
  * The password must satisfy the following conditions:
+ *
  * - Be at least 8 characters long
  * - Contain at least one uppercase letter
  * - Contain at least one lowercase letter

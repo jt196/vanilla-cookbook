@@ -66,6 +66,7 @@ export async function saveFile(fileData, filename, directory) {
  * This function checks if the given data is an array of objects,
  * and if the first object in the array has the required fields.
  * The required fields are:
+ *
  * - name: a string
  * @param {Array} recipes - The recipes data structure to be validated.
  * @return {boolean} true if the structure is valid, false otherwise.

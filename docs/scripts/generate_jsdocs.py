@@ -1,13 +1,32 @@
 import re
 from pathlib import Path
 
-INPUT_DIR = Path("src/lib/utils")
-OUTPUT_DIR = Path("docs/technical")
-OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+# ----------------------------------------------------------------------
+# Configuration
+# ----------------------------------------------------------------------
+# Each dictionary specifies:
+#   - "source": the folder containing the JS files (non-recursive)
+#   - "destination": the folder to write the docs into
+#   - "name": the output file name (extension optional)
+FOLDERS = [
+    {"source": "src/lib/utils", "destination": "docs/technical", "name": "utils"},
+    {"source": "src/lib/utils/image", "destination": "docs/technical", "name": "utils_image"},
+    {"source": "src/lib/utils/import", "destination": "docs/technical", "name": "utils_import"},
+    {"source": "src/lib/utils/import/paprika", "destination": "docs/technical", "name": "utils_paprika"},
+    {"source": "src/lib/utils/parse", "destination": "docs/technical", "name": "utils_parse"},
+    {"source": "src/lib/utils/prisma", "destination": "docs/technical", "name": "utils_prisma"},
+    {"source": "src/lib/utils/pwa", "destination": "docs/technical", "name": "utils_pwa"},
+]
 
-# Matches /** ... */ including multiline, non-greedy.
+# ----------------------------------------------------------------------
+# Constants and Regex Patterns
+# ----------------------------------------------------------------------
+# Regex to match JSDoc blocks (/** ... */) including multiline, non-greedy.
 JSDOC_BLOCK = re.compile(r"/\*\*[\s\S]*?\*/", re.MULTILINE)
 
+# ----------------------------------------------------------------------
+# Utility Functions
+# ----------------------------------------------------------------------
 def clean_type(type_str):
     """
     Post-process a type string:
@@ -16,14 +35,13 @@ def clean_type(type_str):
     """
     if type_str.startswith("{{") and type_str.endswith("}}"):
         type_str = "{" + type_str[2:-2].strip() + "}"
-    # Escape pipe characters.
     type_str = type_str.replace("|", r"\|")
     return type_str
 
 def extract_jsdoc_blocks(js_path):
     """
+    Extracts JSDoc blocks and the following code line from a JavaScript file.
     Returns a list of (docstring, code_line) tuples.
-    Skips over lines (e.g. ESLint comments) to capture the actual function declaration.
     """
     with open(js_path, "r", encoding="utf-8") as f:
         content = f.read()
@@ -33,7 +51,7 @@ def extract_jsdoc_blocks(js_path):
         doc = match.group()
         after = content[match.end():].lstrip().splitlines()
         code_line = ""
-        # Skip lines that are empty or start with a comment.
+        # Skip empty or comment lines to capture the actual function declaration.
         for line in after:
             striped = line.strip()
             if striped and not striped.startswith("//"):
@@ -43,6 +61,10 @@ def extract_jsdoc_blocks(js_path):
     return blocks
 
 def clean_and_format_doc(block, code_line, index):
+    """
+    Cleans and formats a single JSDoc block and its associated code line into
+    Markdown documentation.
+    """
     # --- Preprocess: Extract multi-line @type (if present) and remove it from the block.
     extracted_type = None
     multi_type_match = re.search(r"@type\s+\{\{([\s\S]*?)\}\}", block)
@@ -89,7 +111,7 @@ def clean_and_format_doc(block, code_line, index):
             else:
                 description.append(line)
 
-    # If no single-line @type was found but a multi-line one was extracted, use that.
+    # Determine the type information.
     if not type_line and extracted_type:
         lines = extracted_type.splitlines()
         cleaned_lines = [re.sub(r'^\s*\*\s*', '', l).strip() for l in lines if l.strip()]
@@ -100,6 +122,7 @@ def clean_and_format_doc(block, code_line, index):
     else:
         const_type = None
 
+    # Try to extract a function name.
     fn_name = f"Function {index}"
     fn_match = (
         re.search(r"@function\s+(\w+)", block) or
@@ -112,12 +135,16 @@ def clean_and_format_doc(block, code_line, index):
     if fn_match:
         fn_name = fn_match.group(1)
 
-    block_lines = [f"### {fn_name}"]
+    # Start building the Markdown block.
+    block_lines = []
+    # Function name as a heading (with a blank line before and after)
+    block_lines.append(f"### {fn_name}\n")
     if description:
         block_lines.append("\n".join(description))
+        block_lines.append("")  # Ensure a blank line after description
 
     if param_tags:
-        block_lines.append("\n**Parameters**\n")
+        block_lines.append("#### Parameters\n")
         block_lines.append("| Parameter | Type | Description |")
         block_lines.append("| --- | --- | --- |")
         for tag in param_tags:
@@ -132,9 +159,10 @@ def clean_and_format_doc(block, code_line, index):
                 block_lines.append(f"| {param_name} | `{param_type}` | {param_desc} |")
             else:
                 block_lines.append(f"| {tag} |  |  |")
+        block_lines.append("")
 
     if returns_tags:
-        block_lines.append("\n**Returns**\n")
+        block_lines.append("#### Returns\n")
         block_lines.append("| Type | Description |")
         block_lines.append("| --- | --- |")
         for tag in returns_tags:
@@ -145,9 +173,10 @@ def clean_and_format_doc(block, code_line, index):
                 block_lines.append(f"| `{ret_type}` | {ret_desc} |")
             else:
                 block_lines.append(f"| {tag} |  |")
+        block_lines.append("")
 
     if throws_tags:
-        block_lines.append("\n**Throws**\n")
+        block_lines.append("#### Throws\n")
         block_lines.append("| Type | Description |")
         block_lines.append("| --- | --- |")
         for tag in throws_tags:
@@ -158,15 +187,17 @@ def clean_and_format_doc(block, code_line, index):
                 block_lines.append(f"| `{throw_type}` | {throw_desc} |")
             else:
                 block_lines.append(f"| {tag} |  |")
+        block_lines.append("")
 
     if const_type:
-        block_lines.append("\n**Type**\n")
+        block_lines.append("#### Type\n")
         block_lines.append("```JS")
         block_lines.append(f"{{ {const_type} }}")
         block_lines.append("```")
+        block_lines.append("")
 
     if property_lines:
-        block_lines.append("\n**Properties**\n")
+        block_lines.append("#### Properties\n")
         block_lines.append("| Property | Type | Description |")
         block_lines.append("| --- | --- | --- |")
         for prop in property_lines:
@@ -178,51 +209,62 @@ def clean_and_format_doc(block, code_line, index):
                 block_lines.append(f"| {prop_name} | `{{ {prop_type} }}` | {prop_desc} |")
             else:
                 block_lines.append(f"| {prop} |  |  |")
+        block_lines.append("")
 
     if other_tags:
+        block_lines.append("\n".join(other_tags))
         block_lines.append("")
-        block_lines.extend(other_tags)
 
     if example_lines:
-        block_lines.append("\n**Example**\n")
+        block_lines.append("#### Example\n")
         block_lines.append("```JS")
         block_lines.extend(example_lines)
         block_lines.append("```")
+        block_lines.append("")
 
-    block_lines.append("")
-    return "\n".join(block_lines)
+    # Join all block lines and collapse multiple blank lines into a maximum of one.
+    md_block = "\n".join(block_lines)
+    md_block = re.sub(r'\n{3,}', '\n\n', md_block)
+    return md_block
 
 def generate_markdown(file_path, jsdoc_blocks):
-    lines = [f"## {file_path.name}"]
+    """
+    Generates Markdown documentation for a given JS file.
+    """
+    lines = [f"## {file_path.name}\n"]
     for i, (block, code_line) in enumerate(jsdoc_blocks, 1):
         lines.append(clean_and_format_doc(block, code_line, i))
-    return "\n".join(lines)
+    markdown = "\n".join(lines)
+    # Ensure that we collapse any accidental multiple blank lines.
+    markdown = re.sub(r'\n{3,}', '\n\n', markdown)
+    return markdown
 
-# Group outputs.
-top_level_docs = []
-subfolder_docs = {}
+# ----------------------------------------------------------------------
+# Process each folder configuration
+# ----------------------------------------------------------------------
+for config in FOLDERS:
+    source_dir = Path(config["source"])
+    output_dir = Path(config["destination"])
+    output_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Allow specifying the output file name with or without .md extension.
+    output_name = config["name"] if config["name"].endswith(".md") else f"{config['name']}.md"
 
-for js_file in INPUT_DIR.rglob("*.js"):
-    rel = js_file.relative_to(INPUT_DIR)
-    jsdoc_blocks = extract_jsdoc_blocks(js_file)
-    if not jsdoc_blocks:
-        continue
+    docs = []
+    # Use non-recursive glob to list only the files in the source directory.
+    for js_file in source_dir.glob("*.js"):
+        jsdoc_blocks = extract_jsdoc_blocks(js_file)
+        if not jsdoc_blocks:
+            continue
+        markdown = generate_markdown(js_file, jsdoc_blocks)
+        docs.append(markdown)
 
-    markdown = generate_markdown(js_file, jsdoc_blocks)
-
-    if len(rel.parts) == 1:
-        top_level_docs.append(markdown)
+    if docs:
+        out_path = output_dir / output_name
+        with open(out_path, "w", encoding="utf-8") as f:
+            # Use a title based on the source directory name.
+            title = f"# Utility Functions – {source_dir.name.title()}\n\n"
+            f.write(title + "\n\n".join(docs))
+        print(f"✅ Wrote {out_path}")
     else:
-        folder = rel.parts[0]
-        subfolder_docs.setdefault(folder, []).append(markdown)
-
-if top_level_docs:
-    with open(OUTPUT_DIR / "utils.md", "w", encoding="utf-8") as f:
-        f.write("# Utility Functions\n\n" + "\n\n".join(top_level_docs))
-    print("✅ Wrote docs/technical/utils.md")
-
-for folder, sections in subfolder_docs.items():
-    out_path = OUTPUT_DIR / f"utils_{folder}.md"
-    with open(out_path, "w", encoding="utf-8") as f:
-        f.write(f"# Utility Functions – {folder.title()}\n\n" + "\n\n".join(sections))
-    print(f"✅ Wrote {out_path}")
+        print(f"⚠️ No JSDoc blocks found in {source_dir}")
