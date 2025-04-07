@@ -40,7 +40,7 @@ export const PUT = async ({ request, locals, params }) => {
 	}
 
 	const updatedUser = await prisma.authUser.update({
-		where: { id },
+		where: { id: id },
 		data: updates
 	})
 	console.log('🚀 ~ PUT ~ updatedUser:', updatedUser)

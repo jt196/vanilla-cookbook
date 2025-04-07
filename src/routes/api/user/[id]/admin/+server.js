@@ -107,15 +107,15 @@ export const PUT = async ({ request, locals, params }) => {
 			}
 		}
 
+		// Check if this user is the only admin
 		if ('isAdmin' in userData) {
-			// Check if this user is the only admin
 			if (updatingUser.isAdmin) {
 				const adminCount = await prisma.authUser.count({
 					where: {
 						isAdmin: true
 					}
 				})
-
+				// Return error if they are the only admin
 				if (adminCount === 1 && !userData.isAdmin) {
 					return new Response(
 						JSON.stringify({ error: "The only admin user can't make themselves non-admin." }),
@@ -135,7 +135,6 @@ export const PUT = async ({ request, locals, params }) => {
 			where: { id: id },
 			data: {
 				name: userData.name || updatingUser.name,
-				username: userData.username || updatingUser.username,
 				email: userData.email || updatingUser.email,
 				about: userData.about || updatingUser.about,
 				units: userData.units || updatingUser.units,
@@ -177,8 +176,8 @@ export const PUT = async ({ request, locals, params }) => {
 				}
 			)
 		} else {
-			console.log('3rd invalidate session: ', user)
-			console.log('3rd invalidate session: ', userData)
+			console.log('3rd invalidate session (current user): ', user)
+			console.log('3rd invalidate session (editing user): ', userData)
 			// Invalidate all of the user's sessions
 			await auth.invalidateAllUserSessions(id)
 			return new Response(JSON.stringify(updatedUser), {
@@ -232,6 +231,7 @@ export async function DELETE({ params, locals }) {
 		where: { id: id }
 	})
 
+	// Error if user tries to delete themself
 	if (user.userId === id) {
 		console.log('Cannot delete yourself!')
 		return new Response('Cannot delete yourself!', {
@@ -242,6 +242,7 @@ export async function DELETE({ params, locals }) {
 		})
 	}
 
+	// Error if user is not admin
 	if (!user.isAdmin) {
 		console.log('Unauthorised to delete this user!')
 		return new Response('Unauthorised to delete this user!', {
@@ -252,6 +253,7 @@ export async function DELETE({ params, locals }) {
 		})
 	}
 
+	// Error if user is root
 	if (deletingUser.isRoot) {
 		console.log('Unauthorised to delete root user!')
 		return new Response('Cannot delete root user!', {
@@ -263,6 +265,7 @@ export async function DELETE({ params, locals }) {
 	}
 	try {
 		console.log('Attempting to delete user!')
+		console.log('🚀 ~ DELETE ~ id:', id)
 		await auth.deleteUser(id)
 		return new Response(JSON.stringify('User successfully deleted!.'), {
 			status: 200,

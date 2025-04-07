@@ -14,7 +14,6 @@
 	import RecipeViewOtherPhotos from '$lib/components/RecipeViewOtherPhotos.svelte'
 	import RecipeViewDirections from '$lib/components/RecipeViewDirections.svelte'
 	import RecipeViewNotes from '$lib/components/RecipeViewNotes.svelte'
-	import Back from '$lib/components/svg/Back.svelte'
 	import RecipeViewLogs from '$lib/components/RecipeViewLogs.svelte'
 	import FeedbackMessage from '$lib/components/FeedbackMessage.svelte'
 	import { sortByDate } from '$lib/utils/sorting.js'
@@ -288,13 +287,5 @@
 		justify-content: flex-end;
 		gap: 1rem;
 		margin: 1rem 0 1rem 0;
-	}
-
-	#recipe-buttons .home-button {
-		margin-right: auto; /* this pushes everything else to the right */
-		display: flex;
-		gap: 2rem;
-		justify-content: center;
-		align-items: center;
 	}
 </style>
