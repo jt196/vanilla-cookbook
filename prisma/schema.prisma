@@ -20,7 +20,7 @@ model Article {
 
 model Recipe {
     uid                String             @id @default(uuid())
-    auth_user          AuthUser           @relation(fields: [userId], references: [id])
+    auth_user          AuthUser           @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId             String
     rating             Float?
     photo_hash         String?
