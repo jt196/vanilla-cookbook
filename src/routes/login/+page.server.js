@@ -1,7 +1,7 @@
 import { auth } from '$lib/server/lucia'
 import { fail, redirect } from '@sveltejs/kit'
 import { prisma } from '$lib/server/prisma'
-import { dbExists } from '$lib/utils/seedHelpers'
+import { dbSeeded } from '$lib/utils/seedHelpers'
 
 /**
  * Validates if the user is logged in and redirects if necessary.
@@ -12,8 +12,8 @@ import { dbExists } from '$lib/utils/seedHelpers'
 export const load = async ({ locals, url }) => {
 	const session = await locals.auth.validate()
 	const user = session?.user
-	const db = await dbExists()
-	if (db) {
+	const dbSeed = await dbSeeded(prisma)
+	if (dbSeed) {
 		const settings = await prisma.siteSettings.findFirst()
 		if (session) {
 			redirect(302, '/user/' + user.userId + '/recipes')

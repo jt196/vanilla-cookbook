@@ -1,5 +1,6 @@
 <script>
 	import { goto } from '$app/navigation'
+	import Spinner from '$lib/components/Spinner.svelte'
 
 	let { data } = $props()
 	const { dbSeed } = data
@@ -10,11 +11,16 @@
 	let adminPassword = $state('')
 	let recipeSeed = $state('true')
 
+	let spinnerVisible = $state(false)
+
 	async function handleSubmit(event) {
-		event.preventDefault() // extra safety if needed
+		event.preventDefault()
+		spinnerVisible = true // Show the spinner
+
 		const formData = {
 			adminUser: { adminName, adminUsername, adminEmail, adminPassword, recipeSeed }
 		}
+
 		try {
 			const res = await fetch('/api/site/seed', {
 				method: 'POST',
@@ -23,6 +29,7 @@
 			})
 			const result = await res.json()
 			if (res.ok && result.success) {
+				spinnerVisible = false // Hide the spinner before redirecting
 				goto(`/login`)
 			} else {
 				console.error('Error seeding DB:', result.error)
@@ -57,3 +64,6 @@
 {:else}
 	<h1>Something went wrong!</h1>
 {/if}
+
+<!-- Pass the spinner snippet as a prop -->
+<Spinner visible={spinnerVisible} spinnerContent="Creating Admin User..." />

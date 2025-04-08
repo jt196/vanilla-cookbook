@@ -32,7 +32,7 @@ export const load = async ({ locals }) => {
 		} catch (error) {
 			console.error('Error validating session:', error)
 			// Handle error appropriately, such as returning a minimal response or redirecting
-			return { user: null, settings: null }
+			return { user: null, settings: { registrationAllowed: false } }
 		}
 	} else {
 		// throw redirect(302, '/')
