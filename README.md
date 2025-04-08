@@ -94,7 +94,6 @@ Currently:
    ```
 
 2. In the _.env_ file
-   - Add the admin user details.
    - Change the _ORIGIN_ to the URL it's going to be hosted on. If you get any login CORS messages, this not being set correctly will be the reason. The default `ORIGIN=http://localhost:3000` should work with the default _docker-compose.yml_ file unless you have anything else on that port.
 3. Create _db_ and _uploads_ folders for persistence in your docker folder, make sure the share paths are correct in the docker-compose file: `mkdir -p ./db ./uploads`
 4. Use `:latest` tags for bleedin' edge, `:stable` for stable release.

@@ -1,6 +1,6 @@
 // src/routes/api/site/seed/+server.js
 import { json } from '@sveltejs/kit'
-import { dbExists, dbSeeded, seedIngredients, seedRecipes } from '$lib/utils/seedHelpers'
+import { dbExists, seedIngredients, seedRecipes } from '$lib/utils/seedHelpers'
 import { execSync } from 'child_process'
 import { prisma as client } from '$lib/server/prisma'
 import { auth } from '$lib/server/lucia'

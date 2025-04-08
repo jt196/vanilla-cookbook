@@ -59,5 +59,20 @@ jobs:
             sleep 1
           done
 
+      - name: Seed the Database
+        run: |
+          curl -X POST \
+            -H "Content-Type: application/json" \
+            -d '{
+                  "adminUser": {
+                    "adminName": "Administrator",
+                    "adminUsername": "admin",
+                    "adminEmail": "email@example.com",
+                    "adminPassword": "password",
+                    "recipeSeed": true
+                  }
+                }' \
+            http://127.0.0.1:3000/api/site/seed
+
       - name: Run Tests
         run: pnpm test
