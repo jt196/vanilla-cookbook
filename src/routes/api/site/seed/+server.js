@@ -2,16 +2,8 @@
 import { json } from '@sveltejs/kit'
 import { dbExists, dbSeeded, seedIngredients, seedRecipes } from '$lib/utils/seedHelpers'
 import { execSync } from 'child_process'
-import fs from 'fs'
-import path from 'path'
-import { PrismaClient } from '@prisma/client'
-import { prisma } from '@lucia-auth/adapter-prisma'
 import { prisma as client } from '$lib/server/prisma'
 import { auth } from '$lib/server/lucia'
-import { lucia } from 'lucia'
-import { sveltekit } from 'lucia/middleware'
-
-const isDev = process.env.VITE_ENV === 'development'
 
 /**
  * POST /api/site/seed
@@ -42,27 +34,6 @@ export async function POST({ request }) {
 			console.log('Database file does not exist. Running migrations...')
 			execSync('pnpm dev:setup', { stdio: 'inherit' })
 		}
-
-		// // Prevent read only errors!
-		// await client.$disconnect()
-
-		// // Instantiate a new client to seed the db
-		// const prismaForSeed = new PrismaClient({
-		// 	datasources: {
-		// 		db: {
-		// 			url: 'file:./db/dev.sqlite'
-		// 		}
-		// 	}
-		// })
-
-		// const auth = lucia({
-		// 	adapter: prisma(prismaForSeed, {
-		// 		user: 'authUser',
-		// 		key: 'authKey',
-		// 		session: 'authSession'
-		// 	}),
-		// 	middleware: sveltekit()
-		// })
 
 		// Create admin user if not already created.
 		await auth.createUser({
