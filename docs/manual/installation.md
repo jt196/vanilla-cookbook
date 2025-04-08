@@ -5,7 +5,7 @@
 Quick video run through of Docker setup:
 
 <video width="400" height="360" controls>
-  <source src="../videos/docker_install.mp4" type="video/mp4">
+  <source src="../../videos/docker_install.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
 
