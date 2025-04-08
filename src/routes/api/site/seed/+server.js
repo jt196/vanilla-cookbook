@@ -7,8 +7,7 @@ import path from 'path'
 import { PrismaClient } from '@prisma/client'
 import { prisma } from '@lucia-auth/adapter-prisma'
 import { prisma as client } from '$lib/server/prisma'
-// import { auth } from '$lib/server/lucia'
-import { auth } from '$lib/server/prisma'
+import { auth } from '$lib/server/lucia'
 import { lucia } from 'lucia'
 import { sveltekit } from 'lucia/middleware'
 
@@ -30,7 +29,6 @@ const isDev = process.env.VITE_ENV === 'development'
 export async function POST({ request }) {
 	try {
 		const { adminUser } = await request.json()
-		console.log('🚀 ~ POST ~ user:', adminUser)
 		const { adminName, adminUsername, adminEmail, adminPassword, recipeSeed } = adminUser
 
 		// Basic validation
@@ -45,26 +43,26 @@ export async function POST({ request }) {
 			execSync('pnpm dev:setup', { stdio: 'inherit' })
 		}
 
-		// Prevent read only errors!
-		await client.$disconnect()
+		// // Prevent read only errors!
+		// await client.$disconnect()
 
-		// Instantiate a new client to seed the db
-		const prismaForSeed = new PrismaClient({
-			datasources: {
-				db: {
-					url: 'file:./db/dev.sqlite'
-				}
-			}
-		})
+		// // Instantiate a new client to seed the db
+		// const prismaForSeed = new PrismaClient({
+		// 	datasources: {
+		// 		db: {
+		// 			url: 'file:./db/dev.sqlite'
+		// 		}
+		// 	}
+		// })
 
-		const auth = lucia({
-			adapter: prisma(prismaForSeed, {
-				user: 'authUser',
-				key: 'authKey',
-				session: 'authSession'
-			}),
-			middleware: sveltekit()
-		})
+		// const auth = lucia({
+		// 	adapter: prisma(prismaForSeed, {
+		// 		user: 'authUser',
+		// 		key: 'authKey',
+		// 		session: 'authSession'
+		// 	}),
+		// 	middleware: sveltekit()
+		// })
 
 		// Create admin user if not already created.
 		await auth.createUser({
@@ -82,7 +80,7 @@ export async function POST({ request }) {
 			}
 		})
 
-		const newUser = await prismaForSeed.authUser.findUnique({
+		const newUser = await client.authUser.findUnique({
 			where: { username: adminUsername }
 		})
 		if (!newUser) {
@@ -95,18 +93,18 @@ export async function POST({ request }) {
 		}
 
 		// Create site settings if not already created.
-		await prismaForSeed.siteSettings.create({
+		await client.siteSettings.create({
 			data: { registrationAllowed: false }
 		})
 
 		// Run the seeding functions.
-		await seedIngredients(prismaForSeed)
+		await seedIngredients(client)
 
 		if (recipeSeed) {
-			await seedRecipes(newUser.id, prismaForSeed)
+			await seedRecipes(newUser.id, client)
 		}
 
-		await prismaForSeed.$disconnect()
+		await client.$disconnect()
 
 		return new Response(
 			JSON.stringify({

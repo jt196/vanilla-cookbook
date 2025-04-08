@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation'
 
 	let { data } = $props()
-	const { db, dbSeed } = data
+	const { dbSeed } = data
 
 	let adminName = $state('')
 	let adminUsername = $state('')
@@ -33,7 +33,7 @@
 	}
 </script>
 
-{#if !db}
+{#if !dbSeed}
 	<form onsubmit={handleSubmit} method="POST">
 		<hgroup>
 			<h2>Welcome to Vanilla Cookbook</h2>
@@ -54,7 +54,6 @@
 		<br />
 		<button type="submit">Create Admin</button>
 	</form>
-{:else if !dbSeed}
-	<h1>Your database seed got borked!</h1>
-	<p>Please remove dev.sqlite at prisma/db and reload the page.</p>
+{:else}
+	<h1>Something went wrong!</h1>
 {/if}

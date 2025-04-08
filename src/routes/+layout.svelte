@@ -20,7 +20,7 @@
 
 	/** @type {{data: PageData, children?: import('svelte').Snippet}} */
 	let { data, children } = $props()
-	const { user, settings, db } = data
+	const { user, settings, dbSeed } = data
 
 	let theme = $state('dark')
 
@@ -107,7 +107,7 @@
 				</strong>
 			</li>
 		</ul>
-		{#if db}
+		{#if dbSeed}
 			<ul>
 				<form method="POST">
 					<li>
