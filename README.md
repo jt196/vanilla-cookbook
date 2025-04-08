@@ -98,6 +98,7 @@ Currently:
 3. Create _db_ and _uploads_ folders for persistence in your docker folder, make sure the share paths are correct in the docker-compose file: `mkdir -p ./db ./uploads`
 4. Use `:latest` tags for bleedin' edge, `:stable` for stable release.
 5. Run `docker-compose up -d`
+6. On first run, you'll be prompted to enter Admin user details.
 
 ### Local Dev
 
