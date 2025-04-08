@@ -16,10 +16,6 @@
 		user
 	} = $props()
 
-	$effect(() => {
-		console.log('Sanitised ings: ', sanitizedIngredients)
-	})
-
 	let displayExtra = $state(user.ingExtra)
 	let displaySymbol = $state(user.ingSymbol)
 	let displayDryMatch = $state(user.ingMatch)

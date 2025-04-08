@@ -47,6 +47,7 @@ export async function deleteAndDisconnect() {
  * @param {string} newPassword - The new password to set for the user.
  * @returns {Promise<void>} - A promise that resolves when the password has been updated.
  */
+
 export async function updatePassword(username, newPassword) {
 	await auth.updateKeyPassword('username', username, newPassword)
 }

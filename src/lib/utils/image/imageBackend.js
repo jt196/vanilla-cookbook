@@ -1,5 +1,6 @@
 import sharp from 'sharp'
 import { promises as fsPromises } from 'fs'
+import { readFile } from 'fs/promises'
 import path from 'path'
 import { saveFile, validImageTypes } from '$lib/utils/import/files'
 import { fileTypeFromBuffer } from 'file-type'
@@ -120,9 +121,15 @@ export async function processImage(imageUrl, uid, fileExtension) {
  * @returns {Promise<Buffer>} A promise that resolves with the downloaded image as a buffer.
  */
 async function downloadImageAsBuffer(url) {
-	const response = await fetch(url)
-	const arrayBuffer = await response.arrayBuffer()
-	return Buffer.from(arrayBuffer)
+	if (url.startsWith('file://')) {
+		// Strip the file:// prefix and read the file from disk.
+		const filePath = url.slice(7)
+		return await readFile(filePath)
+	} else {
+		const response = await fetch(url)
+		const arrayBuffer = await response.arrayBuffer()
+		return Buffer.from(arrayBuffer)
+	}
 }
 
 /**

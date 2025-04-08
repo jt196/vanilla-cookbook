@@ -1,5 +1,4 @@
 import { prisma } from '$lib/server/prisma'
-import { auth } from '$lib/server/lucia'
 
 export const PUT = async ({ request, locals, params }) => {
 	const session = await locals.auth.validate()
@@ -43,7 +42,6 @@ export const PUT = async ({ request, locals, params }) => {
 		where: { id: id },
 		data: updates
 	})
-	console.log('🚀 ~ PUT ~ updatedUser:', updatedUser)
 
 	return new Response(JSON.stringify(updatedUser), {
 		status: 200,

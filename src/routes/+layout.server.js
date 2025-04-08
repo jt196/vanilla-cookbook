@@ -1,4 +1,6 @@
 import { prisma } from '$lib/server/prisma'
+import { redirect } from '@sveltejs/kit'
+import { dbExists } from '$lib/utils/seedHelpers'
 
 /**
  * Validates the current user's authentication status and returns user data.
@@ -9,20 +11,32 @@ import { prisma } from '$lib/server/prisma'
  */
 
 export const load = async ({ locals }) => {
-	try {
-		const session = await locals.auth.validate()
-		const settings = await prisma.siteSettings.findFirst()
-		if (!session) {
-			return { user: null, settings }
+	// Check if the SQLite database file exists
+	const db = await dbExists()
+	console.log('Loading layout...')
+
+	// If the database exists, validate the session and redirect accordingly.
+	if (db) {
+		console.log('Found db!')
+		try {
+			const session = await locals.auth.validate()
+			const settings = await prisma.siteSettings.findFirst()
+			if (!session) {
+				return { user: null, settings }
+			}
+			const user = session?.user
+			return {
+				user,
+				settings,
+				db
+			}
+		} catch (error) {
+			console.error('Error validating session:', error)
+			// Handle error appropriately, such as returning a minimal response or redirecting
+			return { user: null, settings: null }
 		}
-		const user = session?.user
-		return {
-			user,
-			settings
-		}
-	} catch (error) {
-		console.error('Error validating session:', error)
-		// Handle error appropriately, such as returning a minimal response or redirecting
-		return { user: null, settings: null }
+	} else {
+		// throw redirect(302, '/')
+		return { user: null, settings: { registrationAllowed: false }, db }
 	}
 }

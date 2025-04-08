@@ -20,7 +20,7 @@
 
 	/** @type {{data: PageData, children?: import('svelte').Snippet}} */
 	let { data, children } = $props()
-	const { user, settings } = data
+	const { user, settings, db } = data
 
 	let theme = $state('dark')
 
@@ -107,27 +107,33 @@
 				</strong>
 			</li>
 		</ul>
-		<ul>
-			<form method="POST">
-				<li>
-					<button type="button" class="icon-button" onclick={toggleTheme} aria-label="Toggle theme">
-						<Theme {theme} width="25px" />
-					</button>
-				</li>
-				<li><a href="/recipe/new"><New width="25px" /></a></li>
-				<li><a href="/user/shopping"><Shopping width="25px" /></a></li>
-				<li><a href="/user/calendar"><Calendar width="25px" /></a></li>
-				<li><a href="/users"><Users width="25px" /></a></li>
-				{#if !user}
-					<a href="/login" role="button">Login</a>
-					{#if settings.registrationAllowed}
-						<li><a href="/register">Register</a></li>
+		{#if db}
+			<ul>
+				<form method="POST">
+					<li>
+						<button
+							type="button"
+							class="icon-button"
+							onclick={toggleTheme}
+							aria-label="Toggle theme">
+							<Theme {theme} width="25px" />
+						</button>
+					</li>
+					<li><a href="/recipe/new"><New width="25px" /></a></li>
+					<li><a href="/user/shopping"><Shopping width="25px" /></a></li>
+					<li><a href="/user/calendar"><Calendar width="25px" /></a></li>
+					<li><a href="/users"><Users width="25px" /></a></li>
+					{#if !user}
+						<a href="/login" role="button">Login</a>
+						{#if settings?.registrationAllowed}
+							<li><a href="/register">Register</a></li>
+						{/if}
+					{:else}
+						<li><a href="/user/options/settings"><Settings width="25px" /></a></li>
 					{/if}
-				{:else}
-					<li><a href="/user/options/settings"><Settings width="25px" /></a></li>
-				{/if}
-			</form>
-		</ul>
+				</form>
+			</ul>
+		{/if}
 	</nav>
 	{@render children?.()}
 </div>

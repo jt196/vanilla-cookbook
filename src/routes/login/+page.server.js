@@ -1,6 +1,7 @@
 import { auth } from '$lib/server/lucia'
 import { fail, redirect } from '@sveltejs/kit'
 import { prisma } from '$lib/server/prisma'
+import { dbExists } from '$lib/utils/seedHelpers'
 
 /**
  * Validates if the user is logged in and redirects if necessary.
@@ -10,17 +11,22 @@ import { prisma } from '$lib/server/prisma'
  */
 export const load = async ({ locals, url }) => {
 	const session = await locals.auth.validate()
-	const settings = await prisma.siteSettings.findFirst()
-	if (session) {
+	const user = session?.user
+	const db = await dbExists()
+	if (db) {
+		const settings = await prisma.siteSettings.findFirst()
+		if (session) {
+			redirect(302, '/user/' + user.userId + '/recipes')
+		}
+		// Capture form failure messages from query parameters (SSR safe)
+		const form = {
+			message: url.searchParams.get('message') ?? null
+		}
+
+		return { settings, form }
+	} else {
 		redirect(302, '/')
 	}
-
-	// Capture form failure messages from query parameters (SSR safe)
-	const form = {
-		message: url.searchParams.get('message') ?? null
-	}
-
-	return { settings, form }
 }
 
 /**
