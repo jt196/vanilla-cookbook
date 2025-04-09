@@ -6,7 +6,11 @@
 	import StarRating from '$lib/components/StarRating.svelte'
 
 	/** @type {{recipe: any, categories: any}} */
-	let { recipe, categories, recipeRatingChanged, scaledServings } = $props()
+	let { recipe, categories, recipeRatingChanged, scaledServings, useCats } = $props()
+
+	$effect(() => {
+		console.log('🚀 ~ useCats:', useCats)
+	})
 </script>
 
 <div class="recipe-about">
@@ -35,9 +39,11 @@
 			<p>Servings: {scaledServings}</p>
 		{/if}
 	</div>
-	<div id="categories">
-		<CategoryTree {categories} selectedCategoryUids={collectSelectedUids(categories)} />
-	</div>
+	{#if useCats}
+		<div id="categories">
+			<CategoryTree {categories} selectedCategoryUids={collectSelectedUids(categories)} />
+		</div>
+	{/if}
 </div>
 
 <style lang="scss">

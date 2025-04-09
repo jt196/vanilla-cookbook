@@ -27,7 +27,8 @@ export const PUT = async ({ request, locals, params }) => {
 		'ingExtra',
 		'ingSymbol',
 		'about',
-		'name'
+		'name',
+		'useCats'
 	]
 
 	const updates = Object.fromEntries(

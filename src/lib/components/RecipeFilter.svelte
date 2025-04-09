@@ -13,7 +13,7 @@
 		favouriteFilter
 	} from '$lib/stores/recipeFilter'
 
-	let { toggleSidebar, viewOnly } = $props()
+	let { toggleSidebar, viewOnly, useCats, username } = $props()
 
 	function updateSort(key) {
 		sortState.update((current) => {
@@ -26,20 +26,20 @@
 
 <div class="recipe-filters">
 	<div class="search">
-		<div>
-			{#if !viewOnly}
+		{#if !viewOnly}
+			{#if useCats}
 				<button data-tooltip="Display Category Filter" onclick={toggleSidebar}>
 					<Burger width="1.5rem" />
 				</button>
-			{:else}
-				<button
-					data-tooltip="Go to my recipes"
-					onclick={() => goto(`/user/${viewingUserId}/recipes`)}>
-					<House width="1.5rem" />
-				</button>
-				<h3>{publicProfile.name} Recipes</h3>
 			{/if}
-		</div>
+		{:else}
+			<button
+				data-tooltip="Go to my recipes"
+				onclick={() => goto(`/user/${viewingUserId}/recipes`)}>
+				<House width="1.5rem" />
+			</button>
+			<h3>{username} Recipes</h3>
+		{/if}
 		<div class="search-box">
 			<input
 				type="text"

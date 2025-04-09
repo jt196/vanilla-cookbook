@@ -239,6 +239,7 @@
 			<RecipeViewAbout
 				{recipe}
 				{categories}
+				useCats={viewUser?.useCats}
 				{scaledServings}
 				recipeRatingChanged={handleRecipeRatingChanged} />
 		</div>

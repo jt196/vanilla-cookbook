@@ -49,61 +49,65 @@
 <form method="POST" action="?/updateSettings" onsubmit={updateSettings}>
 	<h2>Ingredients</h2>
 	<label>
-		<input type="checkbox" name="Profile Public" bind:checked={user.skipSmallUnits} />
+		<input type="checkbox" name="Skip Small" bind:checked={user.skipSmallUnits} />
 		Use teaspoons and tablespoons instead of grams.
 	</label>
 	<label>
-		<input type="checkbox" name="Profile Public" bind:checked={user.ingMatch} />
+		<input type="checkbox" name="Cup Match" bind:checked={user.ingMatch} />
 		<b>Display Cup Match</b> volumetric ingredients by default when converting to and from US Cups
 	</label>
 	<label>
-		<input type="checkbox" name="Profile Public" bind:checked={user.ingOriginal} />
+		<input type="checkbox" name="Display Original" bind:checked={user.ingOriginal} />
 		<b>Display Original</b> ingredient line text instead of parsed text
 	</label>
 	<label>
-		<input type="checkbox" name="Profile Public" bind:checked={user.ingSymbol} />
+		<input type="checkbox" name="Display Symbols" bind:checked={user.ingSymbol} />
 		<b>Display Symbols</b> Display short form instead of long form units. e.g. g vs grams
 	</label>
 	<label>
-		<input type="checkbox" name="Profile Public" bind:checked={user.ingExtra} />
+		<input type="checkbox" name="Display Extra" bind:checked={user.ingExtra} />
 		<b>Display Extra</b> ingredient text, eg after the comma in "1 clove garlic, chopped"
-		<details class="dropdown">
-			<summary>{systemLabel}</summary>
-			<ul>
-				{#each systems as system}
-					<li>
-						<label>
-							<input
-								type="radio"
-								bind:group={user.units}
-								name="system"
-								value={system.value}
-								checked={system.value === user.units} />
-							{system.label}
-						</label>
-					</li>
-				{/each}
-			</ul>
-		</details>
-		<details class="dropdown">
-			<summary>{languageLabel}</summary>
-			<ul>
-				{#each languages as language}
-					<li>
-						<label>
-							<input
-								type="radio"
-								bind:group={user.language}
-								name="language"
-								value={language.value}
-								checked={language.value === user.language} />
-							{language.label}
-						</label>
-					</li>
-				{/each}
-			</ul>
-		</details>
 	</label>
+	<label>
+		<input type="checkbox" name="Use Categories" bind:checked={user.useCats} />
+		<b>Use Categories</b> enables the user to filter by category.
+	</label>
+	<details class="dropdown">
+		<summary>{systemLabel}</summary>
+		<ul>
+			{#each systems as system}
+				<li>
+					<label>
+						<input
+							type="radio"
+							bind:group={user.units}
+							name="system"
+							value={system.value}
+							checked={system.value === user.units} />
+						{system.label}
+					</label>
+				</li>
+			{/each}
+		</ul>
+	</details>
+	<details class="dropdown">
+		<summary>{languageLabel}</summary>
+		<ul>
+			{#each languages as language}
+				<li>
+					<label>
+						<input
+							type="radio"
+							bind:group={user.language}
+							name="language"
+							value={language.value}
+							checked={language.value === user.language} />
+						{language.label}
+					</label>
+				</li>
+			{/each}
+		</ul>
+	</details>
 	<h2>Privacy</h2>
 	<label>
 		<input type="checkbox" name="Profile Public" bind:checked={user.publicProfile} />

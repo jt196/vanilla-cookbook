@@ -99,9 +99,11 @@
 </Sidebar>
 
 <div class="recipe-container" class:sidebar-open={sidebarOpen} onclose={handleSidebarClose}>
-	<button data-tooltip="Display Category Selector" onclick={toggleSidebar}>
-		<Burger width="1.5rem" />
-	</button>
+	{#if user.useCats}
+		<button data-tooltip="Display Category Selector" onclick={toggleSidebar}>
+			<Burger width="1.5rem" />
+		</button>
+	{/if}
 	<RecipeForm
 		bind:recipe
 		editMode={true}

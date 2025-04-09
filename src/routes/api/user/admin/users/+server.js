@@ -47,6 +47,7 @@ export async function GET({ locals }) {
 				ingSymbol: true,
 				language: true,
 				theme: true,
+				useCats: true,
 				_count: {
 					select: {
 						recipes: true

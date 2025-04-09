@@ -156,7 +156,12 @@
 <div class="content" class:sidebar-open={sidebarOpen} onclose={handleSidebarClose}>
 	<div class="grid">
 		<div>
-			<RecipeFilter on:sort={handleSort} {toggleSidebar} {viewOnly} />
+			<RecipeFilter
+				on:sort={handleSort}
+				{toggleSidebar}
+				{viewOnly}
+				useCats={user.publicProfile.useCats}
+				username={user.publicProfile.username} />
 			<RecipeList
 				{filteredRecipes}
 				{data}

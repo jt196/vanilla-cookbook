@@ -27,6 +27,7 @@ export const load = async ({ params, locals, fetch, url }) => {
 		ingMatch: false,
 		ingOriginal: false,
 		ingExtra: false,
+		useCats: false,
 		ingSymbol: true,
 		skipSmallUnits: false,
 		language: 'eng'
