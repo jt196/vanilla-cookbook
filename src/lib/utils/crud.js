@@ -35,7 +35,7 @@ export async function deleteRecipeById(uid) {
  * @param {number|string} uid - Unique identifier for the recipe to be added.
  * @returns {Promise<boolean>} A promise that resolves to true if the recipe was added to favourites successfully, or false if not.
  */
-export async function addRecipeToFavourites(uid) {
+export async function changeRecipeFavourite(uid) {
 	try {
 		const response = await fetch(`/api/recipe/${uid}/favourite`, {
 			method: 'PUT',
@@ -52,6 +52,33 @@ export async function addRecipeToFavourites(uid) {
 		return true
 	} catch (error) {
 		console.error('Error favouriting recipe:', error.message)
+		return false
+	}
+}
+
+/**
+ * Toggles the public status of a recipe.
+ *
+ * @param {number|string} uid - Unique identifier for the recipe to be toggled.
+ * @returns {Promise<boolean>} A promise that resolves to true if the recipe's public status was changed successfully, or false if not.
+ */
+export async function changeRecipePublic(uid) {
+	try {
+		const response = await fetch(`/api/recipe/${uid}/public`, {
+			method: 'PUT',
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		})
+
+		if (!response.ok) {
+			const errorData = await response.json()
+			throw new Error(errorData.message || 'Error changing recipe public status')
+		}
+
+		return true
+	} catch (error) {
+		console.error('Error sharing recipe:', error.message)
 		return false
 	}
 }

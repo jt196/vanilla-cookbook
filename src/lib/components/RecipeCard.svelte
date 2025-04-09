@@ -4,7 +4,7 @@
 	import Check from '$lib/components/svg/Check.svelte'
 	import { localDate } from '$lib/utils/dateTime'
 	import StarRating from '$lib/components/StarRating.svelte'
-	import { addRecipeToFavourites } from '$lib/utils/crud'
+	import { changeRecipeFavourite } from '$lib/utils/crud'
 
 	/** @type {{item: any, data: any, recipeFavourited?: (uid: string) => void, recipeRatingChanged?: (uid: string, rating: number) => void}}, */
 	let { item, data, recipeFavourited, recipeRatingChanged } = $props()
@@ -18,7 +18,7 @@
 		// Stop the click event from bubbling up to the parent anchor
 		event.stopPropagation()
 		console.log('Handle favourites button clicked for uid: ' + uid)
-		const success = await addRecipeToFavourites(uid)
+		const success = await changeRecipeFavourite(uid)
 		if (success && recipeFavourited) {
 			recipeFavourited(uid)
 		}

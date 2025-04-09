@@ -140,6 +140,17 @@
 		}
 	}
 
+	function pubRecipe(success) {
+		if (success) {
+			recipe.is_public = !recipe.is_public
+			recipe.is_public
+				? (recipeFeedback = 'Recipe Made Public!')
+				: (recipeFeedback = 'Recipe Made Private!')
+		} else {
+			recipeFeedback = 'Failed to change public status!'
+		}
+	}
+
 	function handleRecipeRatingChanged(newRating) {
 		recipeRatingChange(newRating, recipe.uid)
 		recipe.rating = newRating
@@ -213,7 +224,7 @@
 <FeedbackMessage message={recipeFeedback} />
 <div id="recipe-buttons">
 	{#if recipe.userId === viewUser.userId}
-		<RecipeViewButtons {recipe} {updateLogs} {favRecipe} {logs} />
+		<RecipeViewButtons {recipe} {updateLogs} {favRecipe} {pubRecipe} {logs} />
 	{/if}
 </div>
 

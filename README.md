@@ -105,11 +105,11 @@ Currently:
 1. Clone the repo and the recipe-ingredient-parser submodule: `git clone --recursive https://github.com/jt196/vanilla-cookbook.git`
 2. At the root of the project, create the .env file: `cp .env.template .env`
 3. In the _.env_ file
-   1. Add your admin user details
-   2. Set `ORIGIN` to `http://localhost:5173` (dev).
+   1. Set `ORIGIN` to `http://localhost:5173` (dev).
 4. Run it
    - `pnpm dev:install` (node packages and prisma client install)
    - `pnpm dev`
+5. You'll be prompted for admin user details on accessing root
 
 ## Upgrade
 
