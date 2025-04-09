@@ -13,7 +13,7 @@
 		favouriteFilter
 	} from '$lib/stores/recipeFilter'
 
-	let { toggleSidebar, viewOnly, useCats, username } = $props()
+	let { toggleSidebar, viewOnly, useCats = 'false', username } = $props()
 
 	function updateSort(key) {
 		sortState.update((current) => {

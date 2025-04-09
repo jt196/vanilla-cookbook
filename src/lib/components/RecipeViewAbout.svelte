@@ -6,11 +6,7 @@
 	import StarRating from '$lib/components/StarRating.svelte'
 
 	/** @type {{recipe: any, categories: any}} */
-	let { recipe, categories, recipeRatingChanged, scaledServings, useCats } = $props()
-
-	$effect(() => {
-		console.log('🚀 ~ useCats:', useCats)
-	})
+	let { recipe, categories, recipeRatingChanged, scaledServings, useCats = 'false' } = $props()
 </script>
 
 <div class="recipe-about">

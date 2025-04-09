@@ -4,12 +4,6 @@ _Grouped by priority, unordered otherwise._
 
 ## Higher Priority Features
 
-### User themes/dark mode
-
-I guess light/dark mode might be a nice easy win for an hour or so work.
-
-See (closed) [Issue #173](https://github.com/jt196/vanilla-cookbook/issues/173)
-
 ### Parsing the Text For Ingredients
 
 e.g. "Add 1 litre of water to the pan" gets scaled to "Add 2 litres...".
@@ -23,12 +17,6 @@ See (closed) [Issue #94](https://github.com/jt196/vanilla-cookbook/issues/94)
 Not totally sure about this, it might be a bit overkill, but it could be useful to see what went wrong etc and have a little note next to it.
 
 See (closed) [Issue #176](https://github.com/jt196/vanilla-cookbook/issues/176)
-
-### Adding More Languages
-
-The ingredient parser module already has a couple of extra languages (deu, ita), let's add in some more.
-
-See (closed) [Issue #233](https://github.com/jt196/vanilla-cookbook/issues/233)
 
 ### Backup Database
 
@@ -50,18 +38,18 @@ This does fit in with the aesthetic of text edit/markdown. GitHub has this, I gu
 
 See (closed) [Issue #191](https://github.com/jt196/vanilla-cookbook/issues/191)
 
-### Categories
+### Advanced Filtering
 
-I know, it's a shitshow right now. I've half a mind to just remove them frankly.
+It might be nice to automate away some of this categorical filtering - ingredient groups for example...
 
-This is terrible on mobile right now, I think it needs simplification - perhaps a simpler method, like text filtering/scrolling.
+The categories have been hidden away as a power user option as per [Issue #262](https://github.com/jt196/vanilla-cookbook/issues/126). Frankly, they look is terrible on mobile right now, I think it needs simplification - perhaps a simpler method, like text filtering/scrolling.
 
-    Checkbox next to each category
-    User checks the category they want to move
-    Then the user is presented with the list (minus their category)
-    They check another item to make it the parent
-    User can filter the list if they want
-    Confirm make parent button
+- Checkbox next to each category
+- User checks the category they want to move
+- Then the user is presented with the list (minus their category)
+- They check another item to make it the parent
+- User can filter the list if they want
+- Confirm make parent button
 
 I don't want to faff around with the Category edit on the new recipe or edit page, but when we want to add some, save and add a back option to the category edit page.
 
@@ -119,3 +107,17 @@ See (closed) [Issue #83](https://github.com/jt196/vanilla-cookbook/issues/83)
 I guess a table to say who can see a recipe or not? Very very far down the line though...
 
 See (closed) [Issue #167](https://github.com/jt196/vanilla-cookbook/issues/167)
+
+## Done
+
+### User themes/dark mode
+
+I guess light/dark mode might be a nice easy win for an hour or so work.
+
+See (closed) [Issue #173](https://github.com/jt196/vanilla-cookbook/issues/173)
+
+### Adding More Languages
+
+The ingredient parser module already has a couple of extra languages (deu, ita), let's add in some more.
+
+See (closed) [Issue #233](https://github.com/jt196/vanilla-cookbook/issues/233)
