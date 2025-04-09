@@ -35,8 +35,8 @@
 		if (shareSupported) {
 			try {
 				await navigator.share({
-					text: 'Vanilla Recipe share:',
-					name,
+					title: `Vanilla Cookbook recipe: ${name}`,
+					text: `Check out this Vanilla Cookbook share:\n\n${name}`,
 					url
 				})
 			} catch (err) {
