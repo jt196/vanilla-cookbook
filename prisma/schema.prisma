@@ -121,7 +121,7 @@ model AuthUser {
     theme              String             @default("dark")
     publicProfile      Boolean            @default(false)
     publicRecipes      Boolean            @default(false)
-    skipSmallUnits     Boolean            @default(false)
+    skipSmallUnits     Boolean            @default(true)
     ingSymbol          Boolean            @default(true)
     ingMatch           Boolean            @default(false)
     ingOriginal        Boolean            @default(false)

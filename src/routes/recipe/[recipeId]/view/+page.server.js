@@ -29,7 +29,7 @@ export const load = async ({ params, locals, fetch, url }) => {
 		ingExtra: false,
 		useCats: false,
 		ingSymbol: true,
-		skipSmallUnits: false,
+		skipSmallUnits: true,
 		language: 'eng'
 	}
 
