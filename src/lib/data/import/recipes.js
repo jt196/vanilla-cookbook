@@ -8,7 +8,7 @@ export const recipes = [
 		photo: null,
 		scale: null,
 		ingredients:
-			'3 large egg yolks\n3 fl oz vegetable oil\n1 cup flour\n3 tablespoons water\n2½ tablespoons cider vinegar\n1½ cups vegetable oil, divided\n1.5 teaspoon table salt\n½ teaspoon Dijon mustard\n¼ teaspoon sugar\n¼ teaspoon monosodium glutamate',
+			'3 large egg yolks\n3 fl oz vegetable oil\n3 tablespoons water\n2½ tablespoons cider vinegar\n1½ cups vegetable oil, divided\n1.5 teaspoon table salt\n½ teaspoon Dijon mustard\n¼ teaspoon sugar\n¼ teaspoon monosodium glutamate',
 		is_pinned: false,
 		is_public: true,
 		source: "America's Test Kitchen",

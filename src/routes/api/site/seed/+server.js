@@ -15,6 +15,8 @@ import { auth } from '$lib/server/lucia'
  *     adminName: string,
  *     adminUser: string,
  *     adminEmail: string,
+ *     adminUnits: string,
+ *     adminLanguage: string,
  *     adminPassword: string
  *   }
  * }
@@ -22,10 +24,26 @@ import { auth } from '$lib/server/lucia'
 export async function POST({ request }) {
 	try {
 		const { adminUser } = await request.json()
-		const { adminName, adminUsername, adminEmail, adminPassword, recipeSeed } = adminUser
+		const {
+			adminName,
+			adminUsername,
+			adminEmail,
+			adminPassword,
+			adminUnits,
+			adminLanguage,
+			recipeSeed
+		} = adminUser
+		console.log('🚀 ~ POST ~ adminUser:', adminUser)
 
 		// Basic validation
-		if (!adminName || !adminUsername || !adminEmail || !adminPassword) {
+		if (
+			!adminName ||
+			!adminUsername ||
+			!adminEmail ||
+			!adminPassword ||
+			!adminLanguage ||
+			!adminUnits
+		) {
 			return json({ error: 'All fields are required.' }, { status: 400 })
 		}
 
@@ -46,6 +64,8 @@ export async function POST({ request }) {
 			attributes: {
 				name: adminName,
 				username: adminUsername,
+				units: adminUnits,
+				language: adminLanguage,
 				email: adminEmail,
 				isAdmin: true,
 				isRoot: true
