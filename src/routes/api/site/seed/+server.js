@@ -36,15 +36,13 @@ export async function POST({ request }) {
 		console.log('🚀 ~ POST ~ adminUser:', adminUser)
 
 		// Basic validation
-		if (
-			!adminName ||
-			!adminUsername ||
-			!adminEmail ||
-			!adminPassword ||
-			!adminLanguage ||
-			!adminUnits
-		) {
-			return json({ error: 'All fields are required.' }, { status: 400 })
+		if (!adminName || !adminUsername || !adminEmail || !adminPassword) {
+			return new Response(JSON.stringify({ error: 'All fields are required.' }), {
+				status: 400,
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			})
 		}
 
 		// Check if the database file exists. If not, run migrations.
