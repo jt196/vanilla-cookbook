@@ -32,12 +32,13 @@ export async function convertIngredientsBackend(
 	toSystem,
 	skipSmallUnits = false
 ) {
+	// Retrieve all ingredient data
 	const allIngredientData = await getAllIngredientData()
 
 	// Initialize a Fuse instance with the retrieved ingredient data
 	const fuseOptions = {
 		keys: ['name'], // Specify the property to search on
-		threshold: 0.8, // Adjust the threshold as needed
+		threshold: 0.4, // Adjust the threshold as needed
 		includeScore: true,
 		caseSensitive: false
 	}
@@ -45,34 +46,16 @@ export async function convertIngredientsBackend(
 
 	// If no system selected, return the raw ingredients
 	return ingredients.map((ingredient) => {
-		// Get the dietary preferences for the ingredient
-		// const prefs = addFoodPreferences(ingredient.ingredient)
-		// const dietLabel = getDietLabel(prefs)
-
-		if (
-			shouldSkipConversion(ingredient.unit, skipSmallUnits) ||
-			!manipulateIngredient(ingredient, fromSystem, toSystem, fuse)
-		) {
-			// Return the original ingredient with the added dietary label
-			return {
-				...ingredient
-				// dietLabel: dietLabel
-			}
+		if (shouldSkipConversion(ingredient.unit, skipSmallUnits)) {
+			return { ...ingredient }
 		}
 
 		const converted = manipulateIngredient(ingredient, fromSystem, toSystem, fuse)
-		if (converted === null || converted.error) {
-			// Return the original ingredient with the added dietary label
-			return {
-				...ingredient
-				// dietLabel: dietLabel
-			}
+		// If the conversion failed, return the original ingredient
+		if (!converted || converted.error) {
+			return { ...ingredient }
 		}
 
-		// Return the converted ingredient with the added dietary label
-		return {
-			...converted
-			// dietLabel: dietLabel
-		}
+		return { ...converted }
 	})
 }

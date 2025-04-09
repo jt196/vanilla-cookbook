@@ -1,6 +1,5 @@
-import { units, findSuitableUnit, shouldSkipConversion } from '$lib/utils/units'
+import { units, findSuitableUnit } from '$lib/utils/units'
 import Fuse from 'fuse.js'
-import { dryIngredientsConversion } from '$lib/utils/dryIngredientsConversion'
 import { foodPreferences } from '$lib/data/ingredients/vegan/vegan'
 
 /**
@@ -113,13 +112,6 @@ const measurementSystems = Object.keys(systemToUnitsMap).reduce((acc, system) =>
 	})
 	return acc
 }, {})
-
-const fuseOptions = {
-	keys: ['names'], // Changed from 'name' to 'names'
-	includeScore: true,
-	caseSensitive: false,
-	threshold: 0.3 // Lower the threshold, the stricter the match. Range [0, 1]
-}
 
 /**
  * Attempts to find a match for an ingredient in a lookup table.
@@ -483,43 +475,6 @@ export const manipulateIngredient = (ingredientObj, fromSystem, toSystem, fuse) 
  */
 export function parseRecipeText(directions, toSystem, fromSystem) {
 	return directions.map((direction) => parseTemperature(direction, toSystem, fromSystem))
-}
-
-export function convertIngredients(ingredients, fromSystem, toSystem) {
-	const fuse = new Fuse(dryIngredientsConversion, fuseOptions)
-	// If no system selected, return the raw ingredients
-	if (!toSystem || fromSystem === toSystem) return ingredients
-	return ingredients.map((ingredient) => {
-		// Get the dietary preferences for the ingredient
-		// const prefs = addFoodPreferences(ingredient.ingredient)
-		// const dietLabel = getDietLabel(prefs)
-
-		if (
-			shouldSkipConversion(ingredient.unit) ||
-			!manipulateIngredient(ingredient, fromSystem, toSystem, fuse)
-		) {
-			// Return the original ingredient with the added dietary label
-			return {
-				...ingredient
-				// dietLabel: dietLabel
-			}
-		}
-
-		const converted = manipulateIngredient(ingredient, fromSystem, toSystem, fuse)
-		if (converted === null || converted.error) {
-			// Return the original ingredient with the added dietary label
-			return {
-				...ingredient
-				// dietLabel: dietLabel
-			}
-		}
-
-		// Return the converted ingredient with the added dietary label
-		return {
-			...converted
-			// dietLabel: dietLabel
-		}
-	})
 }
 
 /**
