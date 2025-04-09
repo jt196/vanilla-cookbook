@@ -36,7 +36,7 @@
 			try {
 				await navigator.share({
 					text: 'Vanilla Recipe share:',
-					title,
+					name,
 					url
 				})
 			} catch (err) {
