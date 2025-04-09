@@ -164,7 +164,7 @@ model AuthKey {
 model SiteSettings {
     id                  Int     @id @default(autoincrement())
     version             Float   @default(0)
-    registrationAllowed Boolean
+    registrationAllowed Boolean @default(false)
 }
 
 model Ingredient {

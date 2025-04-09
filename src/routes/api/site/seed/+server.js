@@ -1,6 +1,7 @@
 // src/routes/api/site/seed/+server.js
 import { json } from '@sveltejs/kit'
-import { dbExists, seedIngredients, seedRecipes } from '$lib/utils/seedHelpers'
+import { dbExists, seedRecipes } from '$lib/utils/seed/seedHelpers'
+import { seedIngredients } from '$lib/utils/seed/seedIng'
 import { execSync } from 'child_process'
 import { prisma as client } from '$lib/server/prisma'
 import { auth } from '$lib/server/lucia'
@@ -62,11 +63,6 @@ export async function POST({ request }) {
 				}
 			})
 		}
-
-		// Create site settings if not already created.
-		await client.siteSettings.create({
-			data: { registrationAllowed: false }
-		})
 
 		// Run the seeding functions.
 		await seedIngredients(client)

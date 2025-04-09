@@ -244,6 +244,16 @@ describe('Conversion API tests', () => {
 					quantity: 12,
 					unit: 'cup',
 					ingredient: 'brown sugar'
+				},
+				{
+					quantity: 1,
+					unit: 'cup',
+					ingredient: 'Bread crumbs (Japanese Panko)'
+				},
+				{
+					quantity: 1,
+					unit: 'cup',
+					ingredient: 'panko bread crumbs'
 				}
 			],
 			fromSystem: 'americanVolumetric',
@@ -265,6 +275,8 @@ describe('Conversion API tests', () => {
 		checkConvertedIngredient(response, 'Kosher salt', 4.8, 'gram')
 		checkConvertedIngredient(response, 'Granulated sugar', 99, 'gram')
 		checkConvertedIngredient(response, 'brown sugar', 2.6, 'kilogram')
+		checkConvertedIngredient(response, 'Bread crumbs (Japanese Panko)', 50, 'gram')
+		checkConvertedIngredient(response, 'panko bread crumbs', 50, 'gram')
 	})
 })
 

@@ -1,5 +1,5 @@
 import { prisma } from '$lib/server/prisma'
-import { dbSeeded } from '$lib/utils/seedHelpers'
+import { dbSeeded } from '$lib/utils/seed/seedHelpers'
 
 /**
  * Validates the current user's authentication status and returns user data.

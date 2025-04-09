@@ -16,6 +16,7 @@ FOLDERS = [
     {"source": "src/lib/utils/parse", "destination": "docs/technical", "name": "utils_parse"},
     {"source": "src/lib/utils/prisma", "destination": "docs/technical", "name": "utils_prisma"},
     {"source": "src/lib/utils/pwa", "destination": "docs/technical", "name": "utils_pwa"},
+    {"source": "src/lib/utils/seed", "destination": "docs/technical", "name": "utils_seed"},
 ]
 
 # ----------------------------------------------------------------------

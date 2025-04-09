@@ -359,20 +359,6 @@ Recursively sorts an array of objects by their 'name' property.
 | `{Object[]}` | The sorted array. |
 
 
-## dryIngredientsConversion.js
-
-### dryIngredientsConversion
-
-List of weights for 1 cup of different dried ingredients
-The names uses an array so can be for multiple names of an ingredient
-
-#### Type
-
-```JS
-{ Object }
-```
-
-
 ## converter.js
 
 ### converter
@@ -1110,7 +1096,7 @@ Deletes a recipe by its unique identifier.
 | --- | --- |
 | `{Promise<boolean>}` | A promise that resolves to true if the recipe was deleted successfully, or false if not. |
 
-### addRecipeToFavourites
+### changeRecipeFavourite
 
 Adds a recipe to the user's favourites.
 
@@ -1125,6 +1111,22 @@ Adds a recipe to the user's favourites.
 | Type | Description |
 | --- | --- |
 | `{Promise<boolean>}` | A promise that resolves to true if the recipe was added to favourites successfully, or false if not. |
+
+### changeRecipePublic
+
+Toggles the public status of a recipe.
+
+#### Parameters
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| uid | `{number\|string}` | Unique identifier for the recipe to be toggled. |
+
+#### Returns
+
+| Type | Description |
+| --- | --- |
+| `{Promise<boolean>}` | A promise that resolves to true if the recipe's public status was changed successfully, or false if not. |
 
 ### recipeRatingChange
 

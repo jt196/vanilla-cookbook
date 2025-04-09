@@ -1,7 +1,4 @@
-import { fail } from '@sveltejs/kit'
 import * as fsPromise from 'fs/promises'
-import fs from 'fs'
-import csv from 'csv-parser'
 import path from 'path'
 
 import { createRecipePhotoEntry } from '$lib/utils/api.js'
@@ -39,73 +36,21 @@ export async function dbExists() {
 export async function dbSeeded(prismaClient) {
 	const db = await dbExists()
 	if (!db) return false
-	return !!(await prismaClient.siteSettings.findFirst())
+	return !!(await prismaClient.authUser.findFirst())
 }
 
-export async function seedIngredients(prismaClient) {
-	try {
-		const folderPath = './src/lib/data/ingredients' // Specify the folder path
-
-		const filePath = path.join(folderPath, 'dry_ingredient_data.csv')
-
-		if (!fs.existsSync(filePath)) {
-			console.log('dry_ingredient_data.csv not found, cannot continue seeding.')
-			return
-		}
-
-		// Check the current version from SiteSettings
-		const siteSettings = await prismaClient.siteSettings.findFirst()
-		const currentVersion = siteSettings?.version || 0
-
-		// Define the expected version
-		const expectedVersion = 2.36 // Change this as needed
-
-		// Proceed with seeding if currentVersion is less than expectedVersion
-		if (currentVersion < expectedVersion) {
-			// Clear the existing data in the Ingredient table
-			await prismaClient.ingredient.deleteMany()
-
-			// Read the CSV file using csv-parser with proper configuration
-			const rows = []
-			await new Promise((resolve, reject) => {
-				fs.createReadStream(filePath)
-					.pipe(csv({ separator: ',' })) // Specify the separator as a comma
-					.on('data', (row) => {
-						const name = row.name
-						const gramsPerCup = parseFloat(row.gramsPerCup)
-
-						// Add the data to the rows array
-						rows.push({
-							name: name,
-							gramsPerCup: gramsPerCup
-						})
-					})
-					.on('end', resolve)
-					.on('error', reject)
-			})
-
-			// Begin the transaction
-			await prismaClient.$transaction(
-				rows.map((row) => prismaClient.ingredient.create({ data: row }))
-			)
-
-			console.log(`Data from ${filePath} has been seeded.`)
-
-			// Update the version in SiteSettings
-			await prismaClient.siteSettings.update({
-				where: { id: siteSettings?.id || 1 },
-				data: { version: expectedVersion }
-			})
-
-			console.log('All data has been seeded.')
-		} else {
-			console.log('Data is up to date. No need to seed.')
-		}
-	} catch (error) {
-		console.error('Error seeding data:', error)
-	}
-}
-
+/**
+ * Seeds the database with predefined recipes for a given admin user.
+ *
+ * This function iterates over the predefined `recipes` array, inserting each recipe
+ * into the database associated with the provided admin user ID. For each recipe, it also
+ * attempts to create entries for any associated photos and processes the images.
+ *
+ * @async
+ * @function
+ * @param {string} adminUserId - The ID of the admin user to associate the recipes with.
+ * @param {PrismaClient} prismaClient - The Prisma client instance used for database operations.
+ */
 export async function seedRecipes(adminUserId, prismaClient) {
 	for (const recipe of recipes) {
 		try {

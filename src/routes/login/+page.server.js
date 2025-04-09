@@ -1,7 +1,7 @@
 import { auth } from '$lib/server/lucia'
 import { fail, redirect } from '@sveltejs/kit'
 import { prisma } from '$lib/server/prisma'
-import { dbSeeded } from '$lib/utils/seedHelpers'
+import { dbSeeded } from '$lib/utils/seed/seedHelpers'
 
 /**
  * Validates if the user is logged in and redirects if necessary.

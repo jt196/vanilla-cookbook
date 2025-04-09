@@ -1,6 +1,6 @@
 // src/routes/+page.server.js
 import { redirect } from '@sveltejs/kit'
-import { dbSeeded } from '$lib/utils/seedHelpers'
+import { dbSeeded } from '$lib/utils/seed/seedHelpers'
 import { prisma } from '$lib/server/prisma'
 
 export const load = async ({ locals }) => {

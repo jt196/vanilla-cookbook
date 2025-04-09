@@ -60,3 +60,5 @@ export const defaultRecipe = {
 	servings: '',
 	nutritional_info: ''
 }
+
+export const ingVersion = 2.36

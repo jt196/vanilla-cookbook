@@ -3,9 +3,10 @@
 	"version": "0.0.1",
 	"private": true,
 	"scripts": {
-		"dev": "pnpm prisma migrate deploy && vite dev",
+		"dev": "pnpm prisma migrate deploy && pnpm seed && vite dev",
+		"seed": "node ./src/lib/utils/seed/seed.js",
 		"build": "pnpm prisma generate && pnpm generate-sw && vite build",
-		"serve": "pnpm prisma migrate deploy && ./sw-domain.sh && node build/index.js",
+		"serve": "pnpm prisma migrate deploy && ./sw-domain.sh && pnpm seed && node build/index.js",
 		"generate-sw": "node src/lib/utils/pwa/generate-sw.js",
 		"dev:install": "pnpm i && pnpm prisma generate",
 		"dev:setup": "pnpm generate-sw && pnpm prisma migrate deploy && ./sw-domain.sh",
