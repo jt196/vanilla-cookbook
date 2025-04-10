@@ -207,7 +207,12 @@
 		<input type="text" id="name" name="name" bind:value={editingUser.name} />
 
 		<label data-tooltip="Username is not editable" for="source"> Username </label>
-		<input type="text" id="source" name="source" disabled bind:value={editingUser.username} />
+		<input
+			type="text"
+			id="source"
+			name="source"
+			disabled={isEditMode}
+			bind:value={editingUser.username} />
 		<label for="source"> Email </label>
 		<input type="text" id="source" name="source" bind:value={editingUser.email} />
 		<label for="source"> About </label>
