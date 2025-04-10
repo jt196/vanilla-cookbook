@@ -2,18 +2,20 @@
 <script>
 	/** @type {{item: any}} */
 	let { item } = $props()
+
+	let recipeCount = $derived(item._count.recipes)
 </script>
 
-<a href="/user/{item.id}/recipes/" class="user-card">
-	<article>
-		<h3>
-			{item.username}
-		</h3>
-		<span>
-			Public Recipes: <i>{item._count.recipes}</i>
-		</span>
-	</article>
-</a>
+{#if recipeCount > 0}
+	<a href="/user/{item.id}/recipes/" class="user-card">
+		<article>
+			<h3>{item.username}</h3>
+			<span>
+				Public Recipes: <i>{recipeCount}</i>
+			</span>
+		</article>
+	</a>
+{/if}
 
 <style lang="scss">
 	article {
@@ -26,7 +28,7 @@
 		}
 	}
 
-	article:hover {
+	a:hover {
 		background-color: var(--pico-secondary-focus);
 	}
 
