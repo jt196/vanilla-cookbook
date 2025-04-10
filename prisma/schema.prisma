@@ -10,14 +10,6 @@ datasource db {
     url      = "file:./db/dev.sqlite"
 }
 
-model Article {
-    id        String   @id @default(uuid())
-    title     String
-    content   String
-    auth_user AuthUser @relation(fields: [userId], references: [id])
-    userId    String
-}
-
 model Recipe {
     uid                String             @id @default(uuid())
     auth_user          AuthUser           @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -68,17 +60,17 @@ model RecipePhoto {
 model RecipeLog {
     id        String    @id @default(uuid())
     recipeUid String
-    userId    String // New field to directly link RecipeLog to an AuthUser
+    userId    String
     cooked    DateTime  @default(now())
     cookedEnd DateTime?
     recipe    Recipe    @relation(fields: [recipeUid], references: [uid], onDelete: Cascade)
-    user      AuthUser  @relation(fields: [userId], references: [id]) // New relation to AuthUser
+    user      AuthUser  @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Category {
     uid        String           @id @default(uuid())
     userId     String // This is just a scalar field
-    user       AuthUser         @relation(fields: [userId], references: [id]) // This establishes the relationship
+    user       AuthUser         @relation(fields: [userId], references: [id], onDelete: Cascade)
     order_flag Int?
     parent_uid String?
     name       String?
@@ -99,7 +91,7 @@ model RecipeCategory {
 
 model ShoppingListItem {
     uid       String   @id @default(uuid())
-    auth_user AuthUser @relation(fields: [userId], references: [id])
+    auth_user AuthUser @relation(fields: [userId], references: [id], onDelete: Cascade)
     recipeUid String?
     recipe    Recipe?  @relation(fields: [recipeUid], references: [uid], onDelete: SetNull)
     userId    String
@@ -129,7 +121,6 @@ model AuthUser {
     isAdmin            Boolean            @default(false)
     isRoot             Boolean            @default(false)
     useCats            Boolean            @default(false)
-    articles           Article[]
     recipes            Recipe[]
     recipe_logs        RecipeLog[]
     categories         Category[]
