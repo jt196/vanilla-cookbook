@@ -22,7 +22,8 @@
 	let editingUser = $state({
 		id: null,
 		name: '',
-		username: ''
+		username: '',
+		userSeed: true
 	})
 
 	let dialog = $state()
@@ -49,7 +50,8 @@
 		editingUser = {
 			id: null,
 			name: '',
-			username: ''
+			username: '',
+			userSeed: true
 		}
 		isDialogOpen = true
 	}
@@ -219,12 +221,16 @@
 		<input type="text" id="source" name="source" bind:value={editingUser.about} />
 		<label for="source"> Password </label>
 		<input type="text" id="source" name="source" bind:value={password} />
-		{#if !editingUser.isAdmin || (editingUser.isAdmin && adminCount > 1)}
+		{#if !isEditMode || !editingUser.isAdmin || adminCount > 1}
 			<label>
 				<input type="checkbox" name="Admin" bind:checked={editingUser.isAdmin} />
 				Admin
 			</label>
 		{/if}
+		<label>
+			<input type="checkbox" name="Seed Recipes" bind:checked={editingUser.userSeed} />
+			Seed Recipes
+		</label>
 		<footer>
 			{#if passwordFeedback && passwordFeedback.message}
 				<p class="feedback">{passwordFeedback.message}</p>
