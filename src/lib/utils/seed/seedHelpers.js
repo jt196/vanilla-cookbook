@@ -57,7 +57,6 @@ export async function seedRecipes(adminUserId, prismaClient) {
 			// Create the recipe record in the DB.
 			const recipeRecord = await prismaClient.recipe.create({
 				data: {
-					uid: recipe.uid, // if you want to preserve the provided uid
 					userId: adminUserId,
 					rating: recipe.rating,
 					photo_hash: recipe.photo_hash,
@@ -79,7 +78,7 @@ export async function seedRecipes(adminUserId, prismaClient) {
 					photo_url: recipe.photo_url,
 					cook_time: recipe.cook_time,
 					name: recipe.name,
-					created: new Date(recipe.created),
+					created: new Date(),
 					notes: recipe.notes,
 					photo_large: recipe.photo_large,
 					image_url: recipe.image_url,
@@ -121,7 +120,7 @@ export async function seedRecipes(adminUserId, prismaClient) {
 					// Create the recipe photo entry using your helper function.
 					const photoEntry = await createRecipePhotoEntry(
 						recipeRecord.uid,
-						fileUrl,
+						photo.url,
 						fileType,
 						photo.isMain
 					)
