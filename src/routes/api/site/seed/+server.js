@@ -33,7 +33,6 @@ export async function POST({ request }) {
 			adminLanguage,
 			recipeSeed
 		} = adminUser
-		console.log('🚀 ~ POST ~ adminUser:', adminUser)
 
 		// Basic validation
 		if (!adminName || !adminUsername || !adminEmail || !adminPassword) {

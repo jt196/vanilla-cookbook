@@ -118,14 +118,12 @@ export async function extractRecipeWithLLM({
 	messages.push(new SystemMessage('You are an expert recipe extraction AI.'))
 
 	if (type === 'image') {
-		console.log('🚀 ~ type:', type)
 		if (!imageBuffer || !imageMimeType) {
 			throw new Error('Missing image data')
 		}
 
 		const imageDataURI = bufferToBase64ImageDataURI(imageBuffer, imageMimeType)
 		const fullPrompt = buildRecipePrompt('Image')
-		console.log('🚀 ~ fullPrompt:', fullPrompt)
 
 		messages.push(
 			new HumanMessage({
@@ -136,7 +134,6 @@ export async function extractRecipeWithLLM({
 			})
 		)
 	} else {
-		console.log('🚀 ~ (Not image) type:', type)
 		const trimmedContent = content.substring(0, 40000)
 		const blockType = type === 'html' ? 'HTML' : 'Text'
 		const prompt = buildRecipePrompt(blockType, trimmedContent, url)
@@ -146,16 +143,13 @@ export async function extractRecipeWithLLM({
 
 	try {
 		const result = await chat.invoke(messages)
-		console.log('🚀 ~ result:', result)
 		let output = result.content.trim()
-		console.log('🚀 ~ output:', output)
 
 		if (output.startsWith('```')) {
 			output = output.replace(/```json\s*|\s*```/g, '')
 		}
 		output = output.replace(/,\s*([\]}])/g, '$1')
 
-		console.log('🚀 ~ JSON.parse(output):', JSON.parse(output))
 		return JSON.parse(output)
 	} catch (err) {
 		console.error('LLM recipe parse failed:', err)

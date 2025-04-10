@@ -55,7 +55,7 @@
 	}
 
 	function handleRecipeRatingChanged(uid, newRating) {
-		console.log(`🚀 Rating changed for UID ${uid}: ${newRating}`)
+		console.log(`Rating changed for UID ${uid}: ${newRating}`)
 
 		data = {
 			...data,

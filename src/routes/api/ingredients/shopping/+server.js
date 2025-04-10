@@ -3,7 +3,6 @@ import { prisma } from '$lib/server/prisma'
 export async function POST({ request, locals }) {
 	const session = await locals.auth.validate()
 	const user = session?.user
-	console.log('🚀 ~ POST ~ user:', user)
 
 	if (!session || !user) {
 		return new Response(JSON.stringify({ error: 'User not authenticated.' }), {

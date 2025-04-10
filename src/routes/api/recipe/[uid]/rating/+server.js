@@ -5,7 +5,6 @@ export async function PUT({ request, locals, params }) {
 	const session = await locals.auth.validate()
 	const user = session?.user
 	const { uid } = params
-	console.log('🚀 ~ PUT ~ uid:', uid)
 
 	if (!session || !user) {
 		return new Response('User not authenticated!', {

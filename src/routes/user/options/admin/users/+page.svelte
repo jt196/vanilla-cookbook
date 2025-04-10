@@ -111,11 +111,10 @@
 			// Optionally, tailor error messages based on content
 			if (data.error && data.error.toLowerCase().includes('username already taken')) {
 				userFeedback = 'Username already taken!'
-				console.log('🚀 ~ handleSubmit ~ userFeedback:', userFeedback)
 			} else if (data.error && data.error.toLowerCase().includes('email already taken')) {
 				userFeedback = 'Email already taken!'
 			} else {
-				console.log('🚀 An unknown error occurred:', data.error)
+				console.log('An unknown error occurred:', data.error)
 				userFeedback = 'There was an error updating the user!'
 			}
 		}

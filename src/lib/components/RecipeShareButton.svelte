@@ -13,10 +13,6 @@
 		baseUrl = window.location.origin
 	})
 
-	$effect(() => {
-		console.log('🚀 ~ onMount ~ baseUrl:', baseUrl)
-	})
-
 	let feedback = $state('')
 	let showConfirmDialog = $state(false)
 

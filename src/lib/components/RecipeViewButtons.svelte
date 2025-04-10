@@ -44,7 +44,6 @@
 		let response = await addRecipeLog(uid)
 		if (response.success) {
 			const newLog = response.data
-			console.log('🚀 ~ handleLog ~ newLog:', newLog.recipeLog)
 			updateLogs(newLog.recipeLog, response)
 		} else {
 			console.log('Failed to log recipe!')

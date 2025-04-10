@@ -8,7 +8,7 @@
 	import { updateEventInBackend, deleteEventInBackend } from '$lib/utils/crud.js'
 
 	/** @type {{data: any}} */
-	let { data } = $props();
+	let { data } = $props()
 
 	let logs = data.logs
 	let calendarInstance = $state()
@@ -45,23 +45,23 @@
 				// Return simpler content for 'dayGridMonth' view
 				return info.event.display === 'auto'
 					? { html: `<div class="ec-event-title">${info.event.title}</div>` }
-					: '';
+					: ''
 			} else {
 				// Return more detailed content for other views
-					return info.event.display === 'auto'
-						? {
+				return info.event.display === 'auto'
+					? {
 							html: `<div class="ec-event-time">${info.timeText}</div>
 								<button class="delete-btn">Delete</button>
 								<div class="ec-event-title">${info.event.title}</div>`
 						}
-						: '';
-				}
-			},
+					: ''
+			}
+		},
 		eventClick: function (info) {
 			if (info.event.display === 'auto') {
-				let btn = info.el.querySelector('.delete-btn');
+				let btn = info.el.querySelector('.delete-btn')
 				if (info.jsEvent.target === btn) {
-					removeEvent(info.event.id, info.event.resourceIds[0]);
+					removeEvent(info.event.id, info.event.resourceIds[0])
 				}
 			}
 		},
@@ -82,7 +82,6 @@
 	function handleEventDrop(eventDropInfo) {
 		// Extract the new start and end times, and the event's ID
 		const { event } = eventDropInfo
-		console.log('🚀 ~ handleEventDrop ~ event:', event)
 		const newStart = event.start
 		const newEnd = event.end
 		const id = event.resourceIds[0]
@@ -91,15 +90,12 @@
 		updateEventInBackend(id, newStart, newEnd)
 	}
 
-    function removeEvent(eventId, logId) {
+	function removeEvent(eventId, logId) {
 		deleteEventInBackend(logId)
-        if (calendarInstance) {
-            console.log("🚀 ~ removeEventById ~ event resource ID:", event)
+		if (calendarInstance) {
 			calendarInstance.removeEventById(eventId)
-        }
-    }
-
+		}
+	}
 </script>
 
 <Calendar {plugins} {options} bind:this={calendarInstance} />
-

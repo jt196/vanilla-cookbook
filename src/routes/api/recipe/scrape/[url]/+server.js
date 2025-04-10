@@ -13,7 +13,6 @@ export async function GET({ params }) {
 	try {
 		console.log('Attempting regular scrape...')
 		const result = await parseURL(url)
-		console.log('🚀 ~ GET ~ result:', result)
 		scrapedRecipe = result.parsedHTML
 		html = result.html
 

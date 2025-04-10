@@ -11,7 +11,6 @@ export const load = async ({ url, fetch, locals }) => {
 	}
 	const usersResponse = await fetch(`${url.origin}/api/site/users`)
 	const users = await usersResponse.json()
-	console.log('🚀 ~ load ~ users:', users)
 
 	// Remove the user viewing from the list
 	const noSelfUsers = users.filter((user) => user.id !== viewingUser?.userId)
@@ -24,8 +23,6 @@ export const load = async ({ url, fetch, locals }) => {
 	} else {
 		filteredUsers = noSelfUsers.filter((user) => user.publicRecipesCount > 0)
 	}
-
-	console.log('🚀 ~ load ~ filteredUsers:', filteredUsers)
 
 	return {
 		users,
