@@ -38,7 +38,7 @@
 			<input
 				type="text"
 				name="search"
-				placeholder="Search my recipes by..."
+				placeholder="Search recipes by..."
 				bind:value={$searchString} />
 		</div>
 		<div data-tooltip="Choose Search Key">

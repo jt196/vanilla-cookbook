@@ -175,7 +175,13 @@
 				<td>{user.name}</td>
 				<td>{user.email}</td>
 				<td>{user.about}</td>
-				<td>{user.recipesCount}</td>
+				<td>
+					{#if user.recipesCount > 0}
+						<a href="/user/{user.id}/recipes">{user.recipesCount}</a>
+					{:else}
+						0
+					{/if}
+				</td>
 				<td><TrueFalse isTrue={user.isAdmin} /></td>
 				<td><TrueFalse isTrue={user.isRoot} /></td>
 				<td>

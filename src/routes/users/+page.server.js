@@ -12,10 +12,21 @@ export const load = async ({ url, fetch, locals }) => {
 	const usersResponse = await fetch(`${url.origin}/api/site/users`)
 	const users = await usersResponse.json()
 
-	const filteredUsers = users.filter((user) => user.id !== viewingUser?.userId)
+	// Remove the user viewing from the list
+	const noSelfUsers = users.filter((user) => user.id !== viewingUser?.userId)
+
+	let filteredUsers
+
+	// Filter users based on recipe count, admin user can see private recipes
+	if (user?.isAdmin) {
+		filteredUsers = noSelfUsers.filter((user) => user.publicRecipesCount > 0)
+	} else {
+		filteredUsers = noSelfUsers.filter((user) => user.totalRecipesCount > 0)
+	}
 
 	return {
 		users,
-		filteredUsers
+		filteredUsers,
+		userCount: filteredUsers.length
 	}
 }

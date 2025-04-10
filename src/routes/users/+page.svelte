@@ -3,16 +3,14 @@
 
 	/** @type {{data: any}} */
 	let { data } = $props()
-	const { filteredUsers } = $state(data)
-
-	let usersLength = $derived(filteredUsers.length)
+	const { filteredUsers, userCount } = $state(data)
 </script>
 
 <div class="user-title">
 	<h3>Vanilla Users</h3>
 </div>
-{#if usersLength === 0}
-	<p>There are currently no public profiles on this site!</p>
+{#if userCount === 0}
+	<p>There are currently no other users with recipes!</p>
 {:else}
 	<UserList users={filteredUsers} />
 {/if}

@@ -7,6 +7,9 @@
 
 	let start = $state()
 	let end = $state()
+
+	// TODO: Fix start/end
+	// TODO: Fix invisible users
 </script>
 
 <div class="container">

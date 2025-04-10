@@ -71,12 +71,12 @@ describe('RecipeFilter component', () => {
 
 	it('renders without crashing', () => {
 		const { getByPlaceholderText } = render(RecipeFilter, { sortState: mockSortState })
-		expect(getByPlaceholderText('Search my recipes by...')).toBeInTheDocument()
+		expect(getByPlaceholderText('Search recipes by...')).toBeInTheDocument()
 	})
 
 	it('binds search input correctly', async () => {
 		const { getByPlaceholderText } = render(RecipeFilter, { sortState: mockSortState })
-		const input = getByPlaceholderText('Search my recipes by...')
+		const input = getByPlaceholderText('Search recipes by...')
 
 		await fireEvent.input(input, { target: { value: 'test' } })
 		expect(input.value).toBe('test')

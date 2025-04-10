@@ -267,6 +267,9 @@ export async function DELETE({ params, locals }) {
 	try {
 		console.log('Attempting to delete user!')
 		console.log('🚀 ~ DELETE ~ id:', id)
+		// TODO: Fix this not working!
+		// Invalid `prisma.authUser.delete()` invocation:
+		// Foreign key constraint failed on the field: `foreign key`
 		await auth.deleteUser(id)
 		return new Response(JSON.stringify('User successfully deleted!.'), {
 			status: 200,
