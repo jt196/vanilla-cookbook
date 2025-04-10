@@ -3,8 +3,6 @@
 	import Favourite from '$lib/components/svg/Favourite.svelte'
 	import Check from '$lib/components/svg/Check.svelte'
 	import Burger from '$lib/components/svg/Burger.svelte'
-	import { goto } from '$app/navigation'
-	import House from '$lib/components/svg/House.svelte'
 	import {
 		sortState,
 		searchString,
@@ -24,21 +22,17 @@
 	}
 </script>
 
+{#if viewOnly}
+	<div class="user-title">
+		<h3>{username}'s Cookbook</h3>
+	</div>
+{/if}
 <div class="recipe-filters">
 	<div class="search">
-		{#if !viewOnly}
-			{#if useCats}
-				<button data-tooltip="Display Category Filter" onclick={toggleSidebar}>
-					<Burger width="1.5rem" />
-				</button>
-			{/if}
-		{:else}
-			<button
-				data-tooltip="Go to my recipes"
-				onclick={() => goto(`/user/${viewingUserId}/recipes`)}>
-				<House width="1.5rem" />
+		{#if useCats}
+			<button data-tooltip="Display Category Filter" onclick={toggleSidebar}>
+				<Burger width="1.5rem" />
 			</button>
-			<h3>{username} Recipes</h3>
 		{/if}
 		<div class="search-box">
 			<input

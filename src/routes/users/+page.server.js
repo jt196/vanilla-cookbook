@@ -12,8 +12,10 @@ export const load = async ({ url, fetch, locals }) => {
 	const usersResponse = await fetch(`${url.origin}/api/site/users`)
 	const users = await usersResponse.json()
 
+	const filteredUsers = users.filter((user) => user.id !== viewingUser?.userId)
+
 	return {
 		users,
-		viewingUser
+		filteredUsers
 	}
 }

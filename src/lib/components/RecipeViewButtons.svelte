@@ -15,7 +15,7 @@
 	import Public from './svg/Public.svelte'
 
 	/** @type {{recipe: any, updateLogs: any, favRecipe: any}} */
-	let { recipe, updateLogs, favRecipe, pubRecipe, logs } = $props()
+	let { recipe, updateLogs, favRecipe, pubRecipe, logs, viewOnly } = $props()
 
 	async function handleDelete(uid) {
 		const success = await deleteRecipeById(uid)
@@ -53,61 +53,71 @@
 </script>
 
 <div class="buttons">
-	<RecipeShareButton name={recipe.name} isPublic={recipe.is_public} uid={recipe.uid} {pubRecipe} />
-	<a
-		href="/recipe/{recipe?.uid}/edit/"
-		role="button"
-		class="outline secondary"
-		data-tooltip="Edit Recipe"
-		data-testid="edit-button">
-		<Edit width="20px" height="20px" fill="var(--pico-ins-color)" />
-	</a>
-	<a
-		href="/recipe/{recipe?.uid}/images/"
-		role="button"
-		data-tooltip="Edit Recipe Images"
-		class="outline contrast"
-		data-testid="edit-button">
-		<Images width="20px" height="20px" fill="var(--pico-ins-color)" />
-	</a>
-	<button
-		onclick={(event) => handlePublic(recipe?.uid)}
-		data-tooltip={recipe?.is_public ? 'Private Recipe?' : 'Public Recipe?'}
-		class="outline secondary">
-		<Public
-			isPublic={recipe?.is_public}
-			width="20px"
-			height="20px"
-			fill={recipe?.is_public ? 'var(--pico-ins-color)' : 'var(--pico-del-color)'} />
-	</button>
-	<button
-		onclick={(event) => handleFavourite(recipe?.uid)}
-		data-tooltip={recipe?.on_favorites ? 'Unfavourite Recipe' : 'Favourite Recipe'}
-		class="outline secondary">
-		<Favourite
-			favourite={recipe?.on_favorites}
-			width="20px"
-			height="20px"
-			fill={recipe?.on_favorites ? 'var(--pico-del-color)' : 'var(--pico-secondary-focus)'} />
-	</button>
-	<button
-		onclick={() => handleLog(recipe?.uid)}
-		class="outline secondary"
-		data-tooltip="Mark Recipe Cooked Today"
-		data-testid="check-button">
-		<Check
-			width="20px"
-			height="20px"
-			checked={logs?.length > 0}
-			fill={logs?.length > 0 ? 'var(--pico-ins-color)' : 'var(--pico-secondary-focus)'} />
-	</button>
-	<button
-		onclick={() => handleDelete(recipe?.uid)}
-		data-testid="delete-button"
-		data-tooltip="Delete Recipe"
-		class="outline secondary">
-		<Delete width="20px" height="20px" fill="var(--pico-del-color)" />
-	</button>
+	{#if !viewOnly || recipe.is_public}
+		<RecipeShareButton
+			name={recipe.name}
+			isPublic={recipe.is_public}
+			uid={recipe.uid}
+			{pubRecipe} />
+	{:else}
+		<Public isPublic={recipe.is_public} width="20px" height="20px" fill="var(--pico-del-color)" />
+	{/if}
+	{#if !viewOnly}
+		<a
+			href="/recipe/{recipe?.uid}/edit/"
+			role="button"
+			class="outline secondary"
+			data-tooltip="Edit Recipe"
+			data-testid="edit-button">
+			<Edit width="20px" height="20px" fill="var(--pico-ins-color)" />
+		</a>
+		<a
+			href="/recipe/{recipe?.uid}/images/"
+			role="button"
+			data-tooltip="Edit Recipe Images"
+			class="outline contrast"
+			data-testid="edit-button">
+			<Images width="20px" height="20px" fill="var(--pico-ins-color)" />
+		</a>
+		<button
+			onclick={(event) => handlePublic(recipe?.uid)}
+			data-tooltip={recipe?.is_public ? 'Private Recipe?' : 'Public Recipe?'}
+			class="outline secondary">
+			<Public
+				isPublic={recipe?.is_public}
+				width="20px"
+				height="20px"
+				fill={recipe?.is_public ? 'var(--pico-ins-color)' : 'var(--pico-del-color)'} />
+		</button>
+		<button
+			onclick={(event) => handleFavourite(recipe?.uid)}
+			data-tooltip={recipe?.on_favorites ? 'Unfavourite Recipe' : 'Favourite Recipe'}
+			class="outline secondary">
+			<Favourite
+				favourite={recipe?.on_favorites}
+				width="20px"
+				height="20px"
+				fill={recipe?.on_favorites ? 'var(--pico-del-color)' : 'var(--pico-secondary-focus)'} />
+		</button>
+		<button
+			onclick={() => handleLog(recipe?.uid)}
+			class="outline secondary"
+			data-tooltip="Mark Recipe Cooked Today"
+			data-testid="check-button">
+			<Check
+				width="20px"
+				height="20px"
+				checked={logs?.length > 0}
+				fill={logs?.length > 0 ? 'var(--pico-ins-color)' : 'var(--pico-secondary-focus)'} />
+		</button>
+		<button
+			onclick={() => handleDelete(recipe?.uid)}
+			data-testid="delete-button"
+			data-tooltip="Delete Recipe"
+			class="outline secondary">
+			<Delete width="20px" height="20px" fill="var(--pico-del-color)" />
+		</button>
+	{/if}
 </div>
 
 <style lang="scss">

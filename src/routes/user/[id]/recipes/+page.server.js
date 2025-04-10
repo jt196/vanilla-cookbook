@@ -11,7 +11,7 @@ export const load = async ({ params, url, fetch, locals }) => {
 	const session = await locals.auth.validate()
 	const user = session?.user
 	if (!userIsPublic.publicProfile && (!session || !user)) {
-		redirect(302, '/login');
+		redirect(302, '/users')
 	}
 	let viewingUserId
 	user ? (viewingUserId = user.userId) : null

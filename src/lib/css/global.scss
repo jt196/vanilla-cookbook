@@ -94,3 +94,8 @@ button.outline,
 a.outline {
 	border: 1px solid var(--pico-secondary-focus);
 }
+
+.user-title {
+	display: flex;
+	justify-content: center;
+}

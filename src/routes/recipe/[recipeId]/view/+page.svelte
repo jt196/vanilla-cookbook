@@ -40,6 +40,8 @@
 
 	let loadingIngredients = $state(true)
 
+	let viewOnly = $derived(recipe.userId !== viewUser.userId)
+
 	// Callback functions to update the state
 	function handleScaleChange(newScale) {
 		console.log('Scale updated to', newScale)
@@ -221,11 +223,14 @@
 	})
 </script>
 
+{#if viewOnly}
+	<div class="user-title">
+		<h3>{recipe.auth_user.username}'s Recipe</h3>
+	</div>
+{/if}
 <FeedbackMessage message={recipeFeedback} />
 <div id="recipe-buttons">
-	{#if recipe.userId === viewUser.userId}
-		<RecipeViewButtons {recipe} {updateLogs} {favRecipe} {pubRecipe} {logs} />
-	{/if}
+	<RecipeViewButtons {recipe} {updateLogs} {favRecipe} {pubRecipe} {logs} {viewOnly} />
 </div>
 
 {#if isLoading}

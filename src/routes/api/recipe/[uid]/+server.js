@@ -125,7 +125,7 @@ export async function PUT({ request, locals, params }) {
 		}
 
 		if (recipe.userId !== user.userId) {
-			console.log('Unauthorised!')
+			console.log('Unauthorised to update!')
 			return new Response('Unauthorized to update this recipe!', {
 				status: 401,
 				headers: {
@@ -224,11 +224,17 @@ export async function GET({ params, locals }) {
 						notes: true
 					}
 				},
+				auth_user: {
+					select: {
+						id: true,
+						username: true
+					}
+				},
 				categories: true
 			}
 		})
 
-		if (!recipe.is_public && (!session || !user)) {
+		if (!recipe.is_public && (!session || !user) && !user.isAdmin) {
 			return new Response(JSON.stringify({ error: 'User not authenticated and recipe private.' }), {
 				status: 401,
 				headers: {
@@ -245,8 +251,8 @@ export async function GET({ params, locals }) {
 				}
 			})
 		}
-		if (!recipe.is_public && recipe.userId !== user.userId) {
-			console.log('Unauthorised!')
+		if (!recipe.is_public && recipe.userId !== user.userId && !user.isAdmin) {
+			console.log('Unauthorised to view!')
 			return new Response(JSON.stringify({ error: 'Unauthorised!' }), {
 				status: 403,
 				headers: {

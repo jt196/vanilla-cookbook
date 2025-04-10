@@ -12,7 +12,7 @@ export async function GET({ params, locals }) {
 	}
 
 	// If the requesting user's ID doesn't match the requested ID, only fetch public recipes
-	if (!user || user.userId !== requestedUserId) {
+	if (!user || (user.userId !== requestedUserId && !user.isAdmin)) {
 		whereClause.is_public = true // Assuming `isPublic` is a field in your Recipe model indicating if a recipe is public or not
 	}
 

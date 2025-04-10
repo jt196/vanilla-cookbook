@@ -8,7 +8,7 @@ export const load = async ({ params, locals, fetch, url }) => {
 	const recipe = await response.json()
 
 	// Check if recipe is not public and no session or user is available
-	if (!recipe.is_public && (!session || !user)) {
+	if (!recipe.is_public && (!session || !user) && !user.isAdmin) {
 		error(401, 'Unauthorized')
 	}
 

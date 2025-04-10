@@ -31,7 +31,7 @@ export async function PUT({ locals, params }) {
 		}
 
 		if (recipe.userId !== user.userId) {
-			console.log('Unauthorised!')
+			console.log('Unauthorised to public!')
 			return new Response('Unauthorized to update this recipe!', {
 				status: 401,
 				headers: {
