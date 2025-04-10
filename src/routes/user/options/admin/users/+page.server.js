@@ -21,6 +21,5 @@ export const load = async ({ url, fetch, locals }) => {
 	}
 
 	const users = await res.json()
-	console.log('🚀 ~ load ~ users:', users)
 	return { users, adminId: user.userId }
 }

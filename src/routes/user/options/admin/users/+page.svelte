@@ -213,7 +213,6 @@
 		<h2>{isEditMode ? 'Edit User' : 'Create User'}</h2>
 		<label for="name"> Name </label>
 		<input type="text" id="name" name="name" bind:value={editingUser.name} />
-
 		<label data-tooltip="Username is not editable" for="source"> Username </label>
 		<input
 			type="text"
