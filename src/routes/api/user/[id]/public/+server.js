@@ -1,5 +1,3 @@
-// src/routes/api/user/recipes/count/[id].js
-
 import { prisma } from '$lib/server/prisma'
 
 export async function GET({ params }) {
@@ -8,15 +6,16 @@ export async function GET({ params }) {
 
 	try {
 		// Count the number of recipes for this user
-		const user = await prisma.authUser.findUnique({
-			where: {
-				id: id
+		const userProfile = await prisma.authUser.findUnique({
+			where: { id: id },
+			select: {
+				username: true,
+				id: true,
+				publicProfile: true
 			}
 		})
 
-		let publicProfile = user
-
-		return new Response(JSON.stringify(publicProfile), {
+		return new Response(JSON.stringify({ userProfile }), {
 			status: 200,
 			headers: {
 				'Content-Type': 'application/json'

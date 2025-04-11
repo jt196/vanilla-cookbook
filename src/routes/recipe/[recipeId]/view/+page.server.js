@@ -7,14 +7,17 @@ export const load = async ({ params, locals, fetch, url }) => {
 	let response = await fetch(`${url.origin}/api/recipe/${params.recipeId}`)
 	const recipe = await response.json()
 
-	// Check if recipe is not public and no session or user is available
-	if (!recipe.is_public && (!session || !user) && !user.isAdmin) {
-		error(401, 'Unauthorized')
-	}
-
 	if (response.status === 403) {
 		// Redirect to a specific route on a 403 response
 		redirect(302, '/')
+	}
+
+	// If recipe is not public
+	// Check whether user is logged in, and whether user is owner of recipe or admin
+	if (!recipe.is_public) {
+		if (!user || (recipe.userId !== user.userId && !user.isAdmin)) {
+			error(401, 'Unauthorized')
+		}
 	}
 
 	// Creating a dummy user object for non-logged in users
@@ -29,8 +32,7 @@ export const load = async ({ params, locals, fetch, url }) => {
 		ingExtra: false,
 		useCats: false,
 		ingSymbol: true,
-		skipSmallUnits: true,
-		language: 'eng'
+		skipSmallUnits: true
 	}
 
 	// Using nullish coalescing operator to assign user or nullUser to viewUser
@@ -40,16 +42,19 @@ export const load = async ({ params, locals, fetch, url }) => {
 	const userId = user?.userId
 	const viewMode = userId !== recipe.userId
 
-	let recipeCategories = await fetch(`${url.origin}/api/recipe/categories/${params.recipeId}`)
-	let recipeLogs = await fetch(`${url.origin}/api/recipe/${params.recipeId}/log`)
-	const categories = await recipeCategories.json()
-	const logs = await recipeLogs.json()
+	let recipeCatsResponse = await fetch(`${url.origin}/api/recipe/categories/${params.recipeId}`)
+	let recipeLogsResponse = await fetch(`${url.origin}/api/recipe/${params.recipeId}/log`)
+	let recipeUserResponse = await fetch(`${url.origin}/api/user/${recipe.userId}/public`)
+	const categories = await recipeCatsResponse.json()
+	const recUser = await recipeUserResponse.json()
+	const logs = await recipeLogsResponse.json()
 
 	return {
 		recipe,
 		logs,
 		categories,
 		viewMode,
-		viewUser
+		viewUser,
+		recUser: recUser.userProfile
 	}
 }

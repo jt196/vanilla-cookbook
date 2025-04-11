@@ -17,6 +17,7 @@
 	/** @type {{data: any}} */
 	let { data = $bindable() } = $props()
 	const { user } = data
+	console.log('🚀 ~ user:', user)
 	const { viewingUserId, publicProfile } = user
 	let viewOnly = $state()
 	// Changing user won't update the viewOnly attribute, so we need to get the id from params
@@ -160,8 +161,8 @@
 				on:sort={handleSort}
 				{toggleSidebar}
 				{viewOnly}
-				useCats={user.publicProfile.useCats}
-				username={user.publicProfile.username} />
+				useCats={publicProfile.useCats}
+				username={publicProfile.username} />
 			<RecipeList
 				{filteredRecipes}
 				{data}

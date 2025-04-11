@@ -191,6 +191,7 @@ export async function PUT({ request, locals, params }) {
 			}
 		})
 	} catch (error) {
+		console.error('Error updating recipe:', error)
 		return new Response(
 			{ error: `Failed to update recipe: ${error.message}` },
 			{
@@ -222,12 +223,6 @@ export async function GET({ params, locals }) {
 						fileType: true,
 						isMain: true,
 						notes: true
-					}
-				},
-				auth_user: {
-					select: {
-						id: true,
-						username: true
 					}
 				},
 				categories: true

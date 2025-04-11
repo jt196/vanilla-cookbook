@@ -6,13 +6,15 @@ import { redirect } from '@sveltejs/kit'
  */
 export const load = async ({ params, url, fetch, locals }) => {
 	const requestedUserId = params.id // Extracting the uid from the request parameters
-	const userIsPublicResponse = await fetch(`${url.origin}/api/user/${requestedUserId}/public`)
-	const userIsPublic = await userIsPublicResponse.json()
+	const userPublicResponse = await fetch(`${url.origin}/api/user/${requestedUserId}/public`)
+	const userPublic = await userPublicResponse.json()
 	const session = await locals.auth.validate()
 	const user = session?.user
-	if (!userIsPublic.publicProfile && (!session || !user)) {
+
+	if (!userPublic.publicProfile && !user.isAdmin) {
 		redirect(302, '/users')
 	}
+
 	let viewingUserId
 	user ? (viewingUserId = user.userId) : null
 	const recipeResponse = await fetch(`${url.origin}/api/user/${requestedUserId}/recipes`)
@@ -26,7 +28,7 @@ export const load = async ({ params, url, fetch, locals }) => {
 		user: {
 			requestedUserId: requestedUserId,
 			viewingUserId: viewingUserId,
-			publicProfile: userIsPublic
+			publicProfile: userPublic.userProfile
 		}
 	}
 }

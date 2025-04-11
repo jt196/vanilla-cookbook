@@ -23,7 +23,7 @@
 	let { data } = $props()
 	let isLoading = $state(true)
 
-	let { recipe, categories, viewUser, logs } = $state(data)
+	let { recipe, categories, viewUser, logs, recUser } = $state(data)
 
 	// Scaling factor for the ingredients
 	let scale = $state(1)
@@ -225,7 +225,7 @@
 
 {#if viewOnly}
 	<div class="user-title">
-		<h3>{recipe.auth_user.username}'s Recipe</h3>
+		<h3>{recUser.username}'s Recipe</h3>
 	</div>
 {/if}
 <FeedbackMessage message={recipeFeedback} />
