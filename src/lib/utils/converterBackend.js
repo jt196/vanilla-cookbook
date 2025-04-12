@@ -30,7 +30,8 @@ export async function convertIngredientsBackend(
 	ingredients,
 	fromSystem,
 	toSystem,
-	skipSmallUnits = false
+	skipSmallUnits = false,
+	lang = 'eng'
 ) {
 	// Retrieve all ingredient data
 	const allIngredientData = await getAllIngredientData()
@@ -50,7 +51,7 @@ export async function convertIngredientsBackend(
 			return { ...ingredient }
 		}
 
-		const converted = manipulateIngredient(ingredient, fromSystem, toSystem, fuse)
+		const converted = manipulateIngredient(ingredient, fromSystem, toSystem, fuse, lang)
 		// If the conversion failed, return the original ingredient
 		if (!converted || converted.error) {
 			return { ...ingredient }

@@ -1,6 +1,7 @@
 import { units, findSuitableUnit } from '$lib/utils/units'
 import Fuse from 'fuse.js'
 import { foodPreferences } from '$lib/data/ingredients/vegan/vegan'
+import { getSymbol } from '$lib/submodules/recipe-ingredient-parser/src'
 
 /**
  * Converts a quantity from one unit to another.
@@ -221,7 +222,7 @@ export function getDietLabel(prefs) {
  * @param {boolean} options.skipRounding - If true, skip rounding quantity.
  * @returns {Object} - Normalized ingredient object.
  */
-export function normalizeIngredient(ingredientObj, options = {}) {
+export function normalizeIngredient(ingredientObj, options = {}, lang = 'eng') {
 	const { quantity, unit } = ingredientObj
 	const unitData = units.find((u) => u.names.includes(unit))
 
@@ -230,7 +231,7 @@ export function normalizeIngredient(ingredientObj, options = {}) {
 
 	const normalizedUnit = unitData.names[0]
 	const plural = normalizedUnit + 's'
-	const symbol = normalizedUnit.charAt(0)
+	const symbol = getSymbol(normalizedUnit, lang)
 	const decimalPlaces = unitData.decimalPlaces ?? 2
 
 	const roundedQuantity =
@@ -255,11 +256,11 @@ export function normalizeIngredient(ingredientObj, options = {}) {
  * @param {string} toSystem - The target measurement system.
  * @returns {Object} - The manipulated ingredient object with converted quantity and unit.
  */
-export const manipulateIngredient = (ingredientObj, fromSystem, toSystem, fuse) => {
+export const manipulateIngredient = (ingredientObj, fromSystem, toSystem, fuse, lang) => {
 	const { quantity, unit, ingredient } = ingredientObj
 	// If no unit is provided, return the original ingredientObj
 	if (!unit) {
-		return normalizeIngredient(ingredientObj)
+		return normalizeIngredient(ingredientObj, lang)
 	}
 
 	// Looking up the units to normalise them
@@ -284,7 +285,7 @@ export const manipulateIngredient = (ingredientObj, fromSystem, toSystem, fuse) 
 			quantity: parseFloat(convertedQuantityFinal).toFixed(2),
 			unit: targetUnit,
 			unitPlural: targetUnit + 's',
-			symbol: targetUnit?.charAt(0),
+			symbol: getSymbol(targetUnit, lang),
 			minQty: parseFloat(convertedQuantityFinal).toFixed(2),
 			maxQty: parseFloat(convertedQuantityFinal).toFixed(2)
 		}
@@ -337,7 +338,7 @@ export const manipulateIngredient = (ingredientObj, fromSystem, toSystem, fuse) 
 					quantity: convertedQuantity,
 					unit: targetUnit,
 					unitPlural: targetUnit + 's',
-					symbol: targetUnit?.charAt(0),
+					symbol: getSymbol(targetUnit, lang),
 					minQty: convertedQuantity,
 					maxQty: convertedQuantity,
 					usedDefaultDensity
@@ -376,7 +377,7 @@ export const manipulateIngredient = (ingredientObj, fromSystem, toSystem, fuse) 
 						quantity: convertedQuantityMetric,
 						unit: targetMetricUnit,
 						unitPlural: targetMetricUnit + 's',
-						symbol: targetMetricUnit?.charAt(0),
+						symbol: getSymbol(targetMetricUnit, lang),
 						minQty: convertedQuantityMetric,
 						maxQty: convertedQuantityMetric,
 						usedDefaultDensity
@@ -406,7 +407,7 @@ export const manipulateIngredient = (ingredientObj, fromSystem, toSystem, fuse) 
 						quantity: convertedQuantityImperial,
 						unit: targetImperialUnit,
 						unitPlural: targetImperialUnit + 's',
-						symbol: targetImperialUnit?.charAt(0),
+						symbol: getSymbol(targetImperialUnit, lang),
 						minQty: convertedQuantityImperial,
 						maxQty: convertedQuantityImperial,
 						usedDefaultDensity
@@ -450,7 +451,7 @@ export const manipulateIngredient = (ingredientObj, fromSystem, toSystem, fuse) 
 		unit: target.unit
 	}
 
-	return normalizeIngredient(updatedIngredient)
+	return normalizeIngredient(updatedIngredient, lang)
 }
 
 /**

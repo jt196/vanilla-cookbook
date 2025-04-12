@@ -11,7 +11,8 @@ export const POST = async ({ request }) => {
 			requestBody.ingredients,
 			requestBody.fromSystem,
 			requestBody.toSystem,
-			requestBody.skipSmallUnits
+			requestBody.skipSmallUnits,
+			requestBody.language
 		)
 
 		// Return the manipulated data as a JSON response
