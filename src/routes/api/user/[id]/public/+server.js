@@ -11,7 +11,8 @@ export async function GET({ params }) {
 			select: {
 				username: true,
 				id: true,
-				publicProfile: true
+				publicProfile: true,
+				useCats: true
 			}
 		})
 

@@ -17,7 +17,6 @@
 	/** @type {{data: any}} */
 	let { data = $bindable() } = $props()
 	const { user } = data
-	console.log('🚀 ~ user:', user)
 	const { viewingUserId, publicProfile } = user
 	let viewOnly = $state()
 	// Changing user won't update the viewOnly attribute, so we need to get the id from params
