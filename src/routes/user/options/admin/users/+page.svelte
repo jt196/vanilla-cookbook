@@ -231,10 +231,12 @@
 				Admin
 			</label>
 		{/if}
-		<label>
-			<input type="checkbox" name="Seed Recipes" bind:checked={editingUser.userSeed} />
-			Seed Recipes
-		</label>
+		{#if !isEditMode}
+			<label>
+				<input type="checkbox" name="Seed Recipes" bind:checked={editingUser.userSeed} />
+				Seed Recipes
+			</label>
+		{/if}
 		<footer>
 			{#if passwordFeedback && passwordFeedback.message}
 				<p class="feedback">{passwordFeedback.message}</p>
