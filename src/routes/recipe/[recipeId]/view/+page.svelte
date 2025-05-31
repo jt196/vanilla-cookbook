@@ -237,9 +237,11 @@
 	<div aria-busy="true">Waiting for the pan to boil...</div>
 {:else}
 	<div class="recipe-details">
-		<div class="recipe-image">
-			<RecipeViewCover {mainPhoto} {recipe} />
-		</div>
+		{#if mainPhoto}
+			<div class="recipe-image">
+				<RecipeViewCover {mainPhoto} {recipe} />
+			</div>
+		{/if}
 		<div class="recipe-about">
 			<RecipeViewAbout
 				{recipe}
