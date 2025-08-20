@@ -3,7 +3,7 @@ import { auth } from '$lib/server/lucia'
 import { prisma } from '$lib/server/prisma'
 import { dbSeeded } from '$lib/utils/seed/seedHelpers'
 import { env } from '$env/dynamic/private'
-import { getClientIp, makeLimiter } from '$lib/utils/rateLimit'
+import { getClientIp, makeLimiter } from '$lib/server/rateLimit'
 
 const envTrue = (v) => typeof v === 'string' && /^(true|1|yes|on)$/i.test(v.trim())
 
