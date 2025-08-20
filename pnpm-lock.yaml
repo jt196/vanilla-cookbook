@@ -20,6 +20,9 @@ importers:
       '@lucia-auth/adapter-prisma':
         specifier: ^3.0.2
         version: 3.0.2(@prisma/client@4.16.2(prisma@4.16.2))(lucia@2.7.7)
+      '@lucia-auth/oauth':
+        specifier: ^3.5.3
+        version: 3.5.3(lucia@2.7.7)
       '@picocss/pico':
         specifier: ^2.0.6
         version: 2.1.1
@@ -1117,6 +1120,12 @@ packages:
     resolution: {integrity: sha512-EyJWZene1/zasPwPctv8wwNErZt5mwwm5JATbhg+kXr3R8pbC7lJfVzDTAeeFClVH5k/FywRcsBl3JkPaNIcow==}
     peerDependencies:
       '@prisma/client': ^4.2.0 || ^5.0.0
+      lucia: ^2.0.0
+
+  '@lucia-auth/oauth@3.5.3':
+    resolution: {integrity: sha512-3blBldenf2zXsSJTZUwzB+NxI+0KJljfMHT0WR7hyLNwi4Ijss7F2cQqk2xW1lGH3lzdmsV93ZsY9Yv8ekBRUw==}
+    deprecated: This package has been deprecated. Please see https://lucia-auth.com/lucia-v3/migrate.
+    peerDependencies:
       lucia: ^2.0.0
 
   '@nodelib/fs.scandir@2.1.5':
@@ -5078,6 +5087,10 @@ snapshots:
   '@lucia-auth/adapter-prisma@3.0.2(@prisma/client@4.16.2(prisma@4.16.2))(lucia@2.7.7)':
     dependencies:
       '@prisma/client': 4.16.2(prisma@4.16.2)
+      lucia: 2.7.7
+
+  '@lucia-auth/oauth@3.5.3(lucia@2.7.7)':
+    dependencies:
       lucia: 2.7.7
 
   '@nodelib/fs.scandir@2.1.5':

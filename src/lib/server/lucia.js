@@ -1,42 +1,38 @@
+// src/lib/server/lucia.js
 import { lucia } from 'lucia'
-// import 'lucia-auth/polyfill/node'
-import { prisma } from '@lucia-auth/adapter-prisma'
+import { prisma as prismaAdapter } from '@lucia-auth/adapter-prisma'
 import { sveltekit } from 'lucia/middleware'
 import { prisma as client } from '$lib/server/prisma'
-
-const isDev = process.env.VITE_ENV === 'development'
+import { dev } from '$app/environment'
 
 export const auth = lucia({
-	adapter: prisma(client, {
+	adapter: prismaAdapter(client, {
 		user: 'authUser',
 		key: 'authKey',
 		session: 'authSession'
 	}),
-	env: isDev ? 'DEV' : 'PROD',
+	env: dev ? 'DEV' : 'PROD',
 	middleware: sveltekit(),
-	getUserAttributes: (userData) => {
-		return {
-			// userId: userData.id,
-			username: userData.username,
-			name: userData.name,
-			isAdmin: userData.isAdmin,
-			publicProfile: userData.publicProfile,
-			publicRecipes: userData.publicRecipes,
-			units: userData.units,
-			skipSmallUnits: userData.skipSmallUnits,
-			ingMatch: userData.ingMatch,
-			ingOriginal: userData.ingOriginal,
-			ingExtra: userData.ingExtra,
-			useCats: userData.useCats,
-			ingSymbol: userData.ingSymbol,
-			language: userData.language,
-			theme: userData.theme
-		}
-	},
+	getUserAttributes: (u) => ({
+		username: u.username,
+		name: u.name,
+		isAdmin: u.isAdmin,
+		publicProfile: u.publicProfile,
+		publicRecipes: u.publicRecipes,
+		units: u.units,
+		skipSmallUnits: u.skipSmallUnits,
+		ingMatch: u.ingMatch,
+		ingOriginal: u.ingOriginal,
+		ingExtra: u.ingExtra,
+		useCats: u.useCats,
+		ingSymbol: u.ingSymbol,
+		language: u.language,
+		theme: u.theme
+	}),
 	sessionCookie: {
 		attributes: {
-			sameSite: isDev ? 'lax' : 'strict',
-			secure: isDev ? false : true,
+			sameSite: 'lax',
+			secure: !dev,
 			path: '/'
 		}
 	}

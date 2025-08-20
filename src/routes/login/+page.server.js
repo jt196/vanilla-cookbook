@@ -23,7 +23,16 @@ export const load = async ({ locals, url }) => {
 			message: url.searchParams.get('message') ?? null
 		}
 
-		return { settings, form }
+		const googleEnabled = !!(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET)
+		const githubEnabled = !!(process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET)
+		
+		return {
+			settings,
+			form,
+			oauthEnabled: googleEnabled || githubEnabled,
+			googleEnabled,
+			githubEnabled
+		}
 	} else {
 		redirect(302, '/')
 	}

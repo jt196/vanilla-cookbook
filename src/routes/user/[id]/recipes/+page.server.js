@@ -10,9 +10,11 @@ export const load = async ({ params, url, fetch, locals }) => {
 	const userPublic = await userPublicResponse.json()
 	const session = await locals.auth.validate()
 	const user = session?.user
+	console.log('🚀 ~ load ~ user:', user)
+	console.log('🚀 ~ load ~ locals.user:', locals.user)
 
-	if (!userPublic.publicProfile && !user.isAdmin && user.userId !== requestedUserId) {
-		redirect(302, '/users')
+	if (!userPublic.publicProfile && !user?.isAdmin && user?.userId !== requestedUserId) {
+		throw redirect(302, '/users')
 	}
 
 	let viewingUserId

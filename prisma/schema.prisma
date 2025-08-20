@@ -106,7 +106,7 @@ model AuthUser {
     id                 String             @id @default(uuid())
     name               String?
     username           String             @unique
-    email              String             @unique
+    email              String?            @unique
     about              String?
     units              String?            @default("metric")
     language           String             @default("eng")
@@ -126,6 +126,7 @@ model AuthUser {
     categories         Category[]
     auth_session       AuthSession[]
     auth_key           AuthKey[]
+    auth_account       AuthAccount[]
     shopping_list_item ShoppingListItem[]
 
     @@map("auth_user")
@@ -150,6 +151,18 @@ model AuthKey {
 
     @@index([user_id])
     @@map("auth_key")
+}
+
+model AuthAccount {
+    id               String   @id @unique
+    provider_id      String
+    provider_user_id String
+    user_id          String
+    auth_user        AuthUser @relation(references: [id], fields: [user_id], onDelete: Cascade)
+
+    @@unique([provider_id, provider_user_id])
+    @@index([user_id])
+    @@map("auth_account")
 }
 
 model SiteSettings {

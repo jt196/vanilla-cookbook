@@ -1,40 +1,48 @@
+// src/hooks.server.js
 import { auth } from '$lib/server/lucia'
 
-/**
- * @typedef {Object} EventObject
- * @property {any} locals - Local variables.
- */
-
-/**
- * Handle the incoming event and set up the authentication.
- *
- * @param {Object} options - The function options.
- * @param {EventObject} options.event - The incoming event object.
- * @param {Function} options.resolve - The resolve function.
- *
- * @returns {Promise<any>} The result after resolving the event.
- */
 export const handle = async ({ event, resolve }) => {
 	event.locals.auth = auth.handleRequest(event)
 
-	const response = await resolve(event)
+	// hydrate once so loaders/actions can use locals.user immediately
+	const session = await event.locals.auth.validate()
+	event.locals.session = session ?? null
+	event.locals.user = session?.user ?? null
 
-	// Only apply CORS headers during test/CI/dev environments
-	const allowedOrigins = [
+	// your CORS bits
+	const allowed = new Set([
 		'http://127.0.0.1:3000',
 		'http://0.0.0.0:3000',
 		'http://localhost:3000',
 		'http://127.0.0.1:5173',
 		'http://localhost:5173'
-	]
-	const requestOrigin = event.request.headers.get('origin')
+	])
+	const origin = event.request.headers.get('origin') || ''
 
-	if (allowedOrigins.includes(requestOrigin)) {
-		response.headers.set('Access-Control-Allow-Origin', requestOrigin)
+	if (event.request.method === 'OPTIONS' && allowed.has(origin)) {
+		return new Response(null, {
+			status: 204,
+			headers: {
+				'Access-Control-Allow-Origin': origin,
+				'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+				'Access-Control-Allow-Headers': 'authorization, content-type, x-requested-with',
+				'Access-Control-Allow-Credentials': 'true',
+				Vary: 'Origin'
+			}
+		})
+	}
+
+	const response = await resolve(event)
+
+	if (allowed.has(origin)) {
+		response.headers.set('Access-Control-Allow-Origin', origin)
 		response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
-		response.headers.set('Access-Control-Allow-Headers', '*')
-		// Allow credentials (cookies) if needed
+		response.headers.set(
+			'Access-Control-Allow-Headers',
+			'authorization, content-type, x-requested-with'
+		)
 		response.headers.set('Access-Control-Allow-Credentials', 'true')
+		response.headers.append('Vary', 'Origin')
 	}
 
 	return response
