@@ -2,6 +2,7 @@ import { error } from '@sveltejs/kit'
 
 // eslint-disable-next-line no-unused-vars
 export const load = async ({ url, fetch, locals }) => {
+	let user = locals.user
 	// Fetch the category count for the user
 	let dbCategoryCount = 0
 	try {

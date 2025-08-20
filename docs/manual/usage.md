@@ -135,6 +135,34 @@ Here's a demo, feel free to fast forward the middle bit where it's waiting for t
 
 Complete the recipe form, then click the **Add Recipe** button at the bottom. The Edit page is basically the same as this. If the images are successfully saved, they'll be in the _uploads/images_ folder. Image URLs should grab the image and save it there.
 
+## OAuth
+
+Two providers are available, GitHub and Google. You'll need to set the relevant _.env_ variables in the file:
+
+```shell
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+GITHUB_CLIENT_ID=
+GITHUB_CLIENT_SECRET=
+```
+
+### GitHub
+
+- GitHub instructions are [here](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app)
+- Basically go to your [Developer Settings](https://github.com/settings/developers) > OAuth Apps > New OAuth App
+- Essential fields:
+  - **Homepage URL**: <https://my-vanilla-site.com>
+  - **Authorisation Callback URL**: <https://my-vanilla-site.com/api/oauth/callback>
+
+### Google
+
+- As usual, anything Google console related is somewhat more difficult than it has to be.
+- Get your project set up in the [Cloud Console](https://console.cloud.google.com).
+- Go to APIs and Services > Credentials > Create Credentials > OAuth Client ID
+- Essential Fields (you can have multiple URIs):
+  - **Authorised JavaScript origins**: <https://my-vanilla-site.com>
+  - **Authorised redirect URIs**: <https://my-vanilla-site.com/api/oauth/callback>
+
 ## Options
 
 ![Settings](../images/screen-desktop-settings-dark.png)
