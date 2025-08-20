@@ -4,8 +4,21 @@ import { dev } from '$app/environment'
 import { prisma } from '$lib/server/prisma.js'
 import { auth } from '$lib/server/lucia.js'
 import { githubAuth, googleAuth } from '$lib/server/oauth.js'
+import { OAuthRequestError } from '@lucia-auth/oauth'
 
-// GitHub may not return email at /user; fetch verified emails if needed
+// --- helpers ---
+function clearOauthCookies(cookies) {
+	const opts = { path: '/', secure: !dev }
+	cookies.delete('oauth_state', opts)
+	cookies.delete('oauth_provider', opts)
+	cookies.delete('oauth_code_verifier', opts)
+}
+function bounce(cookies, msg, status = 303) {
+	clearOauthCookies(cookies)
+	throw redirect(status, `/login?message=${encodeURIComponent(msg)}`)
+}
+
+// GitHub email fetch (when not present on profile)
 async function getGithubVerifiedEmail(accessToken) {
 	const res = await fetch('https://api.github.com/user/emails', {
 		headers: { Authorization: `Bearer ${accessToken}`, 'User-Agent': 'sveltekit-app' }
@@ -16,23 +29,21 @@ async function getGithubVerifiedEmail(accessToken) {
 	return primary?.email || emails.find((e) => e.verified)?.email || null
 }
 
-// Google almost always returns email + email_verified with openid/email scope.
-// This is a fallback if you want to be extra sure.
+// Google userinfo fallback
 async function getGoogleUserInfo(accessToken) {
 	const res = await fetch('https://openidconnect.googleapis.com/v1/userinfo', {
 		headers: { Authorization: `Bearer ${accessToken}` }
 	})
 	if (!res.ok) return null
-	return await res.json() // { email, email_verified, name, picture, ... }
+	return await res.json()
 }
 
 async function ensureUniqueUsername(base) {
 	let candidate = base || 'user'
-	let i = 1
-	while (true) {
+	for (let i = 1; ; i++) {
 		const exists = await prisma.authUser.findUnique({ where: { username: candidate } })
 		if (!exists) return candidate
-		candidate = `${base}${i++}`
+		candidate = `${base}${i}`
 	}
 }
 
@@ -42,26 +53,29 @@ export async function GET({ url, cookies, locals }) {
 	const state = url.searchParams.get('state')
 	const code = url.searchParams.get('code')
 	if (!provider || !storedState || !state || storedState !== state || !code) {
-		throw svelteError(400, 'Invalid OAuth state')
+		// stay in UI
+		return bounce(cookies, 'Invalid OAuth state. Please try again.')
 	}
 
 	try {
-		let pa // provider auth object from Lucia
+		// 1) validate with provider
+		let pa
 		if (provider === 'github') {
 			pa = await githubAuth.validateCallback(code)
 		} else if (provider === 'google') {
-			const codeVerifier = cookies.get('oauth_code_verifier') || null
-			// Google uses PKCE; pass the verifier if we have it
-			pa = await googleAuth.validateCallback(code, codeVerifier)
+			const verifier = cookies.get('oauth_code_verifier') || null
+			pa = await googleAuth.validateCallback(code, verifier)
 		} else {
-			throw svelteError(400, 'Unknown provider')
+			return bounce(cookies, 'Unsupported provider.')
 		}
 
-		// Try an existing linked account first
+		const registrationAllowed = !!locals.site?.settings?.registrationAllowed
+
+		// 2) already linked?
 		let user = await pa.getExistingUser()
 
+		// 3) not linked → try email match and link
 		if (!user) {
-			// Try to obtain an email (OPTIONAL — your schema allows null)
 			let email = null
 			let usernameBase = provider === 'github' ? 'gh' : 'gg'
 
@@ -72,7 +86,6 @@ export async function GET({ url, cookies, locals }) {
 					(await getGithubVerifiedEmail(pa.githubTokens.accessToken)) ||
 					null
 			} else {
-				// Google
 				usernameBase = pa.googleUser?.name || pa.googleUser?.email?.split('@')[0] || 'gg'
 				if (pa.googleUser?.email && (pa.googleUser.email_verified ?? pa.googleUser.emailVerified)) {
 					email = pa.googleUser.email
@@ -82,39 +95,70 @@ export async function GET({ url, cookies, locals }) {
 				}
 			}
 
-			// Link to an existing local account if email matches
 			if (email) {
 				const existing = await prisma.authUser.findUnique({ where: { email } })
 				if (existing) {
 					const linked = auth.transformDatabaseUser(existing)
-					await pa.createKey(linked.userId) // link provider → user
+					await pa.createKey(linked.userId)
 					user = linked
 				}
 			}
-
-			// Create a new user via Lucia (email optional)
-			if (!user) {
-				const username = await ensureUniqueUsername(usernameBase)
-				const attrs = email ? { username, email } : { username }
-				user = await pa.createUser({ attributes: attrs })
-			}
 		}
 
-		// Session + redirect
+		// 4) still no user & sign-ups OFF → bounce to login with message
+		if (!user && !registrationAllowed) {
+			return bounce(cookies, 'Sign-ups are disabled. Use an existing account.')
+		}
+
+		// 5) still no user & sign-ups ON → create
+		if (!user) {
+			const base =
+				(provider === 'github' ? pa.githubUser?.login : pa.googleUser?.name) ||
+				(provider === 'github' ? pa.githubUser?.email : pa.googleUser?.email)?.split('@')[0] ||
+				(provider === 'github' ? 'gh' : 'gg')
+
+			const username = await ensureUniqueUsername(base)
+
+			let email = null
+			if (provider === 'github') {
+				email =
+					pa.githubUser?.email ||
+					(await getGithubVerifiedEmail(pa.githubTokens.accessToken)) ||
+					null
+			} else {
+				email =
+					pa.googleUser?.email && (pa.googleUser.email_verified ?? pa.googleUser.emailVerified)
+						? pa.googleUser.email
+						: ((await getGoogleUserInfo(pa.googleTokens.accessToken))?.email ?? null)
+			}
+
+			const attrs = email ? { username, email } : { username }
+			user = await pa.createUser({ attributes: attrs })
+		}
+
+		// 6) log in
 		const session = await auth.createSession({ userId: user.userId, attributes: {} })
 		await locals.auth.setSession(session)
 
-		cookies.delete('oauth_state', { path: '/', secure: !dev })
-		cookies.delete('oauth_provider', { path: '/', secure: !dev })
-		cookies.delete('oauth_code_verifier', { path: '/', secure: !dev })
-
+		clearOauthCookies(cookies)
 		throw redirect(303, `/user/${user.userId}/recipes`)
 	} catch (e) {
-		// Let SvelteKit redirects bubble
-		if (e && typeof e === 'object' && 'location' in e && e.status >= 300 && e.status < 400) {
-			throw e
+		// let actual redirects bubble
+		if (e && typeof e === 'object' && 'location' in e && e.status >= 300 && e.status < 400) throw e
+
+		// expected OAuth failures → bounce to login with a friendly message
+		if (e instanceof OAuthRequestError) {
+			// e.g. invalid/expired code, PKCE mismatch, user denied consent, etc.
+			return bounce(cookies, dev ? `OAuth failed: ${e.message}` : 'OAuth failed. Please try again.')
 		}
+
+		// (optionally) handle HTTP-ish errors with a message
+		if (e?.status === 400 && e?.body?.message) {
+			return bounce(cookies, e.body.message)
+		}
+
+		// unexpected → still keep the user in UI with a generic message
 		console.error('OAuth callback error:', e)
-		throw svelteError(500, 'OAuth processing failed.')
+		return bounce(cookies, 'Something went wrong during sign-in. Please try again.')
 	}
 }

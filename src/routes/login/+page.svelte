@@ -1,15 +1,29 @@
 <script>
 	import FeedbackMessage from '$lib/components/FeedbackMessage.svelte'
 	import Oauth from '$lib/components/Oauth.svelte'
+	import { onMount } from 'svelte'
 
 	/** @type {{data: any}} */
 	let { data, form } = $props()
-	const { oauth, settings } = $state(data)
 
-	let { oauthEnabled, googleEnabled, githubEnabled } = $state(oauth)
-	let { registrationAllowed } = $state(settings)
+	let settings = $derived(data.settings)
+	let oauth = $derived(data.oauth)
+	let registrationAllowed = $derived(settings.registrationAllowed)
+	let oauthEnabled = $derived(oauth.oauthEnabled)
+	let googleEnabled = $derived(oauth.googleEnabled)
+	let githubEnabled = $derived(oauth.githubEnabled)
 
-	let errorMessage = $state(form?.message)
+	// messages
+	let flashMessage = $derived(data.message) // from URL (?message=...)
+	let actionMessage = $derived(form?.message) // from action fail(...)
+	let errorMessage = $derived(actionMessage ?? flashMessage ?? null)
+
+	onMount(() => {
+		// strip the query param if we had a flash message
+		if (flashMessage) {
+			history.replaceState({}, '', '/login')
+		}
+	})
 </script>
 
 <div class="auth-form">
@@ -18,7 +32,7 @@
 			<h2>Login</h2>
 			<h3>Welcome back!</h3>
 		</hgroup>
-		<label for="username">Username</label>
+		<label for="identifier">Username or email</label>
 		<input type="text" id="username" name="username" required />
 
 		<label for="password">Password</label>
@@ -29,12 +43,18 @@
 
 	<FeedbackMessage message={errorMessage} type="error" />
 
+	<hr />
 	{#if registrationAllowed}
 		<p>Don't have an account? <a href="/register">Register</a></p>
 	{/if}
 
-	{#if oauthEnabled && registrationAllowed}
-		<hr />
+	{#if oauthEnabled}
 		<Oauth {googleEnabled} {githubEnabled} layout="column" />
+		<hr />
+		{#if !registrationAllowed}
+			<p class="muted">
+				New account sign-ups are disabled. You can still sign in with an existing account.
+			</p>
+		{/if}
 	{/if}
 </div>

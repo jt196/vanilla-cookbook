@@ -3,7 +3,7 @@ import { auth } from '$lib/server/lucia'
 import { prisma } from '$lib/server/prisma'
 import { dbSeeded } from '$lib/utils/seed/seedHelpers'
 import { env } from '$env/dynamic/private'
-import { github } from '@lucia-auth/oauth/providers'
+import { getClientIp, makeLimiter } from '$lib/utils/rateLimit'
 
 const envTrue = (v) => typeof v === 'string' && /^(true|1|yes|on)$/i.test(v.trim())
 
@@ -13,6 +13,10 @@ export const handle = async ({ event, resolve }) => {
 	const session = await event.locals.auth.validate()
 	event.locals.session = session ?? null
 	event.locals.user = session?.user ?? null
+
+	// expose limiter + ip
+	event.locals.clientIp = getClientIp(event)
+	event.locals.limiter = makeLimiter(env)
 
 	// ---- OAuth provider flags (succinct) ----
 	const { GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } = env
