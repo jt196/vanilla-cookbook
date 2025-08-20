@@ -54,18 +54,19 @@ jobs:
         env:
           PORT: 3000
           ORIGIN: http://127.0.0.1:3000
+          NODE_ENV: production
 
-      - name: Wait for Server (max 90s)
+      - name: Wait for Health (max 90s)
         run: |
-          echo "Waiting for server to be ready..."
+          echo "Waiting for /api/health..."
           for i in {1..90}; do
-            if curl -sSf -o /dev/null http://127.0.0.1:3000/; then
-              echo "Server is up"
+            if curl -sSf -o /dev/null http://127.0.0.1:3000/api/health; then
+              echo "Server is healthy"
               exit 0
             fi
             sleep 1
           done
-          echo "::error::Server did not start in time. Logs follow:"
+          echo "::error::Health check failed. Logs:"
           sed -n '1,200p' server.log || true
           exit 1
 
