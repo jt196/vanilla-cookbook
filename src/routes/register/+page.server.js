@@ -1,93 +1,73 @@
-/**
- * Authentication utility functions.
- */
 import { auth } from '$lib/server/lucia'
 import { prisma } from '$lib/server/prisma'
-
-/**
- * Helper functions for SvelteKit.
- */
 import { fail, redirect } from '@sveltejs/kit'
+import {
+	GITHUB_CLIENT_ID,
+	GITHUB_CLIENT_SECRET,
+	GOOGLE_CLIENT_ID,
+	GOOGLE_CLIENT_SECRET,
+	REGISTRATION_ALLOWED
+} from '$env/static/private'
+import Oauth from '$lib/components/Oauth.svelte'
 
-/**
- * Represents a key-value pair from the form data.
- * @typedef {Object} FormDataEntry
- * @property {string} key
- * @property {string} value
- */
+// small helper: parse truthy envs
+const envTrue = (v) => typeof v === 'string' && /^(true|1|yes|on)$/i.test(v.trim())
 
-/**
- * Represents the request object.
- * @typedef {Object} Request
- * @property {function(): Promise<Array<FormDataEntry>>} formData - A function returning form data as key-value pairs.
- */
-
-/**
- * Checks if a session is active and redirects if it is.
- * @async
- * @function
- * @param {Object} locals - The context object with authentication data.
- * @throws {redirect} Redirects to root if a session is active.
- */
 export const load = async ({ locals }) => {
-	const session = await locals.auth.validate()
-	const settings = await prisma.siteSettings.findFirst()
-	if (session) {
-		redirect(302, '/')
+	const user = locals.user
+	if (user) {
+		// use throw in SvelteKit to actually redirect
+		throw redirect(302, '/')
 	}
+
+	const { settings, oauth } = locals.site
+
 	if (!settings.registrationAllowed) {
-		redirect(302, '/login')
+		throw redirect(302, '/login')
+	}
+
+	return {
+		settings,
+		oauth
 	}
 }
 
-/**
- * Contains actions related to user registration and login.
- */
 export const actions = {
-	/**
-	 * Registers a new user.
-	 * @async
-	 * @function
-	 * @param {Object} context - The action's context.
-	 * @param {Request} context.request - The request object containing user data.
-	 * @throws {redirect} Redirects to login page after successful registration.
-	 * @returns {Object} Failure response if there's an error during registration.
-	 */
-	default: async ({ request }) => {
+	default: async ({ request, locals }) => {
 		const formData = await request.formData()
-		const data = Object.fromEntries(formData)
-		const { name, username, password, about, email } = data
+		const name = (formData.get('name') || '').toString().trim()
+		const username = (formData.get('username') || '').toString().trim()
+		const email = (formData.get('email') || '').toString().trim()
+		const about = (formData.get('about') || '').toString().trim()
+		const password = (formData.get('password') || '').toString()
+
+		if (!name || !username || !email || !password) {
+			return fail(400, { message: 'Please fill all required fields.' })
+		}
+		if (password.length < 8) {
+			return fail(400, { message: 'Password must be at least 8 characters.' })
+		}
 
 		try {
-			await auth.createUser({
-				key: {
-					providerId: 'username',
-					providerUserId: username,
-					password
-				},
-				attributes: {
-					name,
-					username,
-					about,
-					email,
-					isAdmin: false
-				}
+			const user = await auth.createUser({
+				key: { providerId: 'username', providerUserId: username, password },
+				attributes: { name, username, about, email, isAdmin: false }
 			})
+
+			const session = await auth.createSession({ userId: user.userId, attributes: {} })
+			await locals.auth.setSession(session)
+			throw redirect(303, `/user/${user.userId}/recipes`)
 		} catch (err) {
 			console.error(err)
-			// Check for Prisma's duplicate entry error code
-			if (err.code === 'P2002') {
-				console.log('Duplicate entry error:', err)
-				if (err.meta?.target?.includes('email')) {
-					console.log('Duplicate email error:')
-					return fail(400, { message: 'Email already taken!' })
-				} else if (err.meta?.target?.includes('username')) {
-					console.log('Duplicate username error:')
-					return fail(400, { message: 'Username already taken!' })
-				}
+			if (err?.message === 'AUTH_DUPLICATE_KEY_ID') {
+				return fail(400, { message: 'Username already taken!' })
 			}
-			return fail(400, { message: 'Could not register user' })
+			if (err?.code === 'P2002') {
+				const t = err.meta?.target || []
+				if (t.includes('email')) return fail(400, { message: 'Email already taken!' })
+				if (t.includes('username')) return fail(400, { message: 'Username already taken!' })
+			}
+			return fail(400, { message: 'Could not register user.' })
 		}
-		redirect(302, '/login')
 	}
 }

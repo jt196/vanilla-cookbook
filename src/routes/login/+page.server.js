@@ -1,7 +1,11 @@
 import { auth } from '$lib/server/lucia'
 import { fail, redirect } from '@sveltejs/kit'
-import { prisma } from '$lib/server/prisma'
-import { dbSeeded } from '$lib/utils/seed/seedHelpers'
+import {
+	GITHUB_CLIENT_ID,
+	GITHUB_CLIENT_SECRET,
+	GOOGLE_CLIENT_ID,
+	GOOGLE_CLIENT_SECRET
+} from '$env/static/private'
 
 /**
  * Validates if the user is logged in and redirects if necessary.
@@ -10,31 +14,20 @@ import { dbSeeded } from '$lib/utils/seed/seedHelpers'
  * @param {AppLocals} context.locals - Local variables.
  */
 export const load = async ({ locals, url }) => {
-	const session = await locals.auth.validate()
-	const user = session?.user
-	const dbSeed = await dbSeeded(prisma)
-	if (dbSeed) {
-		const settings = await prisma.siteSettings.findFirst()
-		if (session) {
-			redirect(302, '/user/' + user.userId + '/recipes')
-		}
-		// Capture form failure messages from query parameters (SSR safe)
-		const form = {
-			message: url.searchParams.get('message') ?? null
-		}
+	const user = locals.user
+	const { settings, oauth } = locals.site
+	if (user) {
+		throw redirect(302, '/')
+	}
+	// Capture form failure messages from query parameters (SSR safe)
+	const form = {
+		message: url.searchParams.get('message') ?? null
+	}
 
-		const googleEnabled = !!(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET)
-		const githubEnabled = !!(process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET)
-		
-		return {
-			settings,
-			form,
-			oauthEnabled: googleEnabled || githubEnabled,
-			googleEnabled,
-			githubEnabled
-		}
-	} else {
-		redirect(302, '/')
+	return {
+		settings,
+		oauth,
+		form
 	}
 }
 
@@ -80,6 +73,6 @@ export const actions = {
 			}
 			return fail(400, { message: 'Could not login user.' })
 		}
-		redirect(302, '/')
+		throw redirect(302, '/')
 	}
 }

@@ -7,6 +7,7 @@ import re
 load_dotenv(override=True)
 USERNAME = os.getenv("ADMIN_USER")
 PASSWORD = os.getenv("ADMIN_PASSWORD")
+ID = os.getenv("ADMIN_ID")
 ORIGIN = os.getenv("ORIGIN", "http://localhost:5173")
 
 LOGIN_URL = f"{ORIGIN}/login"
@@ -15,16 +16,16 @@ RECIPE_LIST = re.compile(fr"{re.escape(ORIGIN)}/user/.+/recipes")
 PAGES_TO_CAPTURE = [
     {"name": "login", "route": "/login"},
     {"name": "new", "route": "/recipe/new"},
-    {"name": "shopping", "route": "/user/shopping"},
-    {"name": "calendar", "route": "/user/calendar"},
-    {"name": "settings", "route": "/user/options/settings"},
-    {"name": "password", "route": "/user/options/password"},
-    {"name": "bookmark", "route": "/user/options/bookmark"},
-    {"name": "import", "route": "/user/options/import"},
-    {"name": "export", "route": "/user/options/export"},
-    {"name": "upload", "route": "/user/options/upload"},
-    {"name": "admin-users", "route": "/user/options/admin/users"},
-    {"name": "admin-site", "route": "/user/options/admin/site"},
+    {"name": "shopping", "route": "/user/{ID}/shopping"},
+    {"name": "calendar", "route": "/user/{ID}/calendar"},
+    {"name": "settings", "route": "/user/{ID}/options/settings"},
+    {"name": "password", "route": "/user/{ID}/options/password"},
+    {"name": "bookmark", "route": "/user/{ID}/options/bookmark"},
+    {"name": "import", "route": "/user/{ID}/options/import"},
+    {"name": "export", "route": "/user/{ID}/options/export"},
+    {"name": "upload", "route": "/user/{ID}/options/upload"},
+    {"name": "admin-users", "route": "/user/{ID}/options/admin/users"},
+    {"name": "admin-site", "route": "/user/{ID}/options/admin/site"},
 ]
 
 def capture_both_themes(page, url, image_name):

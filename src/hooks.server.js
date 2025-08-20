@@ -1,15 +1,59 @@
 // src/hooks.server.js
 import { auth } from '$lib/server/lucia'
+import { prisma } from '$lib/server/prisma'
+import { dbSeeded } from '$lib/utils/seed/seedHelpers'
+import { env } from '$env/dynamic/private'
+import { github } from '@lucia-auth/oauth/providers'
+
+const envTrue = (v) => typeof v === 'string' && /^(true|1|yes|on)$/i.test(v.trim())
 
 export const handle = async ({ event, resolve }) => {
+	// Lucia
 	event.locals.auth = auth.handleRequest(event)
-
-	// hydrate once so loaders/actions can use locals.user immediately
 	const session = await event.locals.auth.validate()
 	event.locals.session = session ?? null
 	event.locals.user = session?.user ?? null
 
-	// your CORS bits
+	// ---- OAuth provider flags (succinct) ----
+	const { GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } = env
+
+	const githubEnabled = !!(GITHUB_CLIENT_ID && GITHUB_CLIENT_SECRET)
+	const googleEnabled = !!(GOOGLE_CLIENT_ID && GOOGLE_CLIENT_SECRET)
+	const oauthEnabled = !!(googleEnabled && githubEnabled)
+	const oauth = {
+		githubEnabled,
+		googleEnabled,
+		oauthEnabled
+	}
+
+	const ai = {
+		aiEnabled: envTrue(env.LLM_API_ENABLED),
+		apiKeyPresent: !!env.OPENAI_API_KEY
+	}
+
+	// Site-wide bits (do once here)
+	const seeded = await dbSeeded(prisma)
+	let settings
+	if (seeded) {
+		const s = await prisma.siteSettings.findFirst()
+
+		const regAllowed =
+			env.REGISTRATION_ALLOWED !== undefined
+				? envTrue(env.REGISTRATION_ALLOWED)
+				: !!s?.registrationAllowed
+
+		// normalize onto settings so everyone just reads settings.registrationAllowed
+		settings = { ...s, registrationAllowed: regAllowed }
+	}
+
+	event.locals.site = {
+		dbSeeded: seeded,
+		settings,
+		oauth,
+		ai
+	}
+
+	// --- your CORS code unchanged ---
 	const allowed = new Set([
 		'http://127.0.0.1:3000',
 		'http://0.0.0.0:3000',

@@ -119,9 +119,6 @@
 							<Theme {theme} width="25px" />
 						</button>
 					</li>
-					<li><a href="/recipe/new"><New width="25px" /></a></li>
-					<li><a href="/user/shopping"><Shopping width="25px" /></a></li>
-					<li><a href="/user/calendar"><Calendar width="25px" /></a></li>
 					<li><a href="/users"><Users width="25px" /></a></li>
 					{#if !user}
 						<a href="/login" role="button">Login</a>
@@ -129,7 +126,10 @@
 							<li><a href="/register">Register</a></li>
 						{/if}
 					{:else}
-						<li><a href="/user/options/settings"><Settings width="25px" /></a></li>
+						<li><a href="/recipe/new"><New width="25px" /></a></li>
+						<li><a href={`/user/${user.userId}/shopping`}><Shopping width="25px" /></a></li>
+						<li><a href={`/user/${user.userId}/calendar`}><Calendar width="25px" /></a></li>
+						<li><a href={`/user/${user.userId}/options/settings`}><Settings width="25px" /></a></li>
 					{/if}
 				</form>
 			</ul>

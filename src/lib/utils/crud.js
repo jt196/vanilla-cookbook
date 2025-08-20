@@ -318,12 +318,9 @@ export async function dbRecCount(userId) {
 	// Fetch the category count for the user
 	let dbRecCount = 0
 	try {
-		console.log('dbRecCount!')
 		const response = await fetch(`/api/user/${userId}/recipes/count`)
 		const data = await response.json()
-		if (data && data.count) {
-			dbRecCount = data.count
-		}
+		if (typeof data?.count === 'number') dbRecCount = data.count
 	} catch (err) {
 		console.error('Error fetching recipe db count:', err)
 	}

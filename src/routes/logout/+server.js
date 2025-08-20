@@ -14,11 +14,11 @@ import { redirect } from '@sveltejs/kit'
 export const POST = async ({ locals }) => {
 	const session = await locals.auth.validate()
 	if (!session) {
-		redirect(302, '/');
+		throw redirect(302, '/')
 	}
 
 	await auth.invalidateSession(session.sessionId)
 	locals.auth.setSession(null)
 
-	redirect(302, '/');
+	throw redirect(302, '/')
 }
