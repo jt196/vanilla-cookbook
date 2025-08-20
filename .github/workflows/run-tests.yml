@@ -46,22 +46,33 @@ jobs:
       - name: Build Project
         run: pnpm build
 
-      - name: Start Server in Background
-        run: pnpm serve &
+      - name: Run Prisma Migrations
+        run: pnpm prisma migrate deploy
+
+      - name: Start Node Server
+        run: node build/index.js > server.log 2>&1 &
         env:
+          PORT: 3000
           ORIGIN: http://127.0.0.1:3000
 
-      - name: Wait for Server to be Ready
+      - name: Wait for Server (max 90s)
         run: |
           echo "Waiting for server to be ready..."
-          until curl --output /dev/null --silent --head --fail http://127.0.0.1:3000; do
-            printf '.'
+          for i in {1..90}; do
+            if curl -sSf -o /dev/null http://127.0.0.1:3000/; then
+              echo "Server is up"
+              exit 0
+            fi
             sleep 1
           done
+          echo "::error::Server did not start in time. Logs follow:"
+          sed -n '1,200p' server.log || true
+          exit 1
 
+      # Seed exactly once (remove if your app seeds itself at startup)
       - name: Seed the Database
         run: |
-          curl -X POST \
+          curl -sS -X POST \
             -H "Content-Type: application/json" \
             -d '{
                   "adminUser": {
