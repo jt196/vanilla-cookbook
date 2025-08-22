@@ -2,8 +2,8 @@ import sharp from 'sharp'
 import { promises as fsPromises } from 'fs'
 import { readFile } from 'fs/promises'
 import path from 'path'
-import { saveFile, validImageTypes } from '$lib/utils/import/files'
 import { fileTypeFromBuffer } from 'file-type'
+import { saveFile, validImageTypes } from '$lib/utils/import/importHelpers'
 
 /**
  * Deletes a single photo file from the filesystem.
