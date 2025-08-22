@@ -2,7 +2,7 @@ import { prisma } from '$lib/server/prisma'
 import { deleteSinglePhotoFile } from '$lib/utils/image/imageBackend.js'
 import { mapContentTypeToFileTypeAndExtension } from '$lib/utils/image/imageUtils.js'
 import { createRecipePhotoEntry, removeRecipePhotoEntry } from '$lib/utils/api'
-import { saveFile, validImageTypes } from '$lib/utils/import/files.js'
+import { saveFile, validImageTypes } from '$lib/utils/import/importHelpers'
 import { fileTypeFromBuffer } from 'file-type'
 
 // Handle delete request

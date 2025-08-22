@@ -1,37 +1,47 @@
-# Paprika Importing
+# Importing Recipes
 
-As my main app of usage was Paprika, I've designed this to primarily import and export .paprikarecipes files. It works pretty well, unfortunately, the category hierarchy isn't exported with this file. You have to grab it from the Paprika API.
+Your cookbook can now import from several apps, using a single, simple flow:
 
-If you have recipes inside Paprika, the best workflow is the following:
+1. Go to **Settings → Import**
+2. Pick a **source** from the dropdown
+3. Choose a **file** (ZIP/CSV as required)
+4. (Optional) tick **Make recipes public**
+5. Click **Import**
 
-## 1. Import Categories via API
+> Max upload size follows `BODY_SIZE_LIMIT` in your `.env`. Increase it if large archives fail.
 
-The API category file contains hierarchical information that the recipe file doesn't export. I've designed the app to take the hierarchy into account.
+## Other supported formats
 
-1. Go to Settings > Import
-2. Enter your Paprika user/pass
-3. Click on Download Paprika Categories
-4. If successful, you should see some feedback.
-5. If you refresh the page, you should see some information about your download. (I need to make this happen after import)
-6. Press the import categories button.
-7. You should see a success message, and the number of categories in DB should match up with the file categories.
-8. You can delete the file now, or leave it as a backup.
+These match the code in `src/lib/utils/import/registry.js` and follow the same “pick type → upload → import” flow.
 
-## 2. Import Recipes via File
+| Source | File(s) you upload | What the ZIP/CSV must contain | Notes |
+| --- | --- | --- | --- |
+| **Paprika** | `.paprikarecipes` or `.zip` | A `.paprikarecipes` file, or a ZIP with `*.paprikarecipe` members | Categories ignored; photos imported if present |
+| **Chowdown** | `.zip` | `_recipes/*.md` and optional `images/*` | Front-matter + body parsed; local images imported |
+| **Mealie** | `.zip` | `recipes/<dir>/*.json` and `recipes/<dir>/images/*` | Ingredients/steps normalized; images imported from archive |
+| **MyRecipeBox** | `.csv` | Columns like `title, description, ingredients, instructions, notes, …` | Maps columns directly to your schema; no images |
+| **Nextcloud** | `.zip` | `<dir>/recipe.json` and `<dir>/full.jpg` (use `full.jpg`) | JSON is schema.org-ish; image imported |
+| **PlanToEat** | `.csv` | Official PTE export CSV | Downloads `Photo Url` if present |
+| **Recipe Keeper** | `.zip` | `recipes.html` and `images/<uid>_*.jpg` | HTML parsed; photos matched by filename |
+| **Tandoor** | `.zip` | Top-level numbered zips each with `recipe.json` and `image` (with or without extension) | Uses embedded image; images without extension are handled |
 
-1. Go to Settings > Upload
-2. Browse a file to upload (if it's more than 5MB, you'll need to change the BODY_SIZE_LIMIT env variable in the main .env file)
-3. If you have access to the _Uploads/Imports_ folder, you can also copy the file in there. You'll need to rename it <user*id>*<myfile>.paprikarecipes, e.g. _aXronQVri1BCbeK_recipes.paprikarecipes_. If you go to the main recipes page, your user id should be there in the url, e.g. _user/aXronQVri1BCbeK/recipes_.
-4. Once the upload has complete, or the file has been copied and correctly named, you should see it under the **Import an uploaded Paprika file** section.
-5. Click import. Check **Recipes Public** if you want your recipes to be public.
-6. Delete the file if no longer needed.
+## What gets mapped where?
 
-## Importing Paprika Recipes via API
+All importers use the same map-driven pipeline. Fields are normalized into your `Recipe` schema:
 
-_(Not recommended)_
+- `name`, `description`, `ingredients`, `directions`, `notes`
+- `prep_time`, `cook_time`, `total_time`
+- `servings`
+- `rating`
+- `source` and `source_url`
+- `image_url`/`photo_url` (if present)
+- `created` (converted to a Date when available)
+- Flags: `on_favorites`, `on_grocery_list`, `is_pinned`, `in_trash` (defaults to false)
+- `is_public` (from the checkbox)
 
-Note this should kind of work, but it's super slow and may cause polling issues. You're downloading a small file which is a list of recipes containing only the _id_ and a few other bits, then polling the API for the full recipe, one by one. It's slow and arduous and will take several minutes. If you have a local file, it'll be much quicker and easier.
+Photos are imported when available:
 
-## Exporting Paprika Recipes Files
+- **From archives** (Paprika, Mealie, Nextcloud, Recipe Keeper, Tandoor): saved locally and attached to each recipe.
+- **From CSVs** (PlanToEat): we try to download the `Photo Url`.
 
-Head to _user/options/export_ and download your recipes there. Images won't export unfortunately.
+Categories/tags are ignored for now across all importers.

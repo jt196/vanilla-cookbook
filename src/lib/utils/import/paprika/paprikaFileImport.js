@@ -1,7 +1,7 @@
+import { addRecipesToDB } from '$lib/utils/import/importHelpers'
 import {
 	addCategoriesToDB,
 	addRecipeCategoriesToDB,
-	addRecipesToDB,
 	declareRecipes,
 	ensureCategoriesExist,
 	filterExistingRecipes,
