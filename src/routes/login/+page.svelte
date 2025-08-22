@@ -33,7 +33,7 @@
 			<h3>Welcome back!</h3>
 		</hgroup>
 		<label for="identifier">Username or email</label>
-		<input type="text" id="username" name="username" required />
+		<input type="text" id="identifier" name="identifier" required />
 
 		<label for="password">Password</label>
 		<input type="password" id="password" name="password" required />
