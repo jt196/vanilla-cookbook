@@ -26,7 +26,6 @@
 </script>
 
 <p>Click this to download all your recipes in Paprika format.</p>
-<p>Currently, we don't support exporting images.</p>
 
 <button data-tooltip="Export Filtered Recipes" onclick={handleExport}
 	><Export width="30px" height="30px" /></button>
