@@ -1,26 +1,40 @@
+# ───── OS & editor junk ────────────────────────────────────────────────────────
 .DS_Store
-node_modules
-/build
-/.svelte-kit
-/package
-.env
-.env.localproduction
-!.env.template
-vite.config.js.timestamp-*
-vite.config.ts.timestamp-*
-*/dev.sqlite
-*.sqlite-journal
-*.sqlite*
-# Test
-package-lock.json
-*.diff
-uploads/images/*
-uploads/imports/*
-*.backup
+Thumbs.db
+*.swp
+*.swo
+.idea/
+.vscode/
+
+# ───── Dependencies & build output ─────────────────────────────────────────────
+/node_modules/
+/build/
+/.svelte-kit/
+/package/
+/site/
+
+# ───── Vite / SvelteKit temp & generated files ────────────────────────────────
+vite.config.*.timestamp-*
 service-worker.js*
 workbox-*.js*
+
+# ───── Environment & secrets ───────────────────────────────────────────────────
+.env*
+
+# ───── SQLite & data artifacts ─────────────────────────────────────────────────
+*.sqlite*
+*.backup
+
+# ───── Upload buckets ──────────────────────────────────────────────────────────
+uploads/**/*
+
+# ───── Tests, patches, coverage ────────────────────────────────────────────────
+*.diff
+coverage/
+
+# ───── Docker & local infra ─────────────────────────
 docker-compose.yml
-# Whitelist
-!uploads/images/.gitkeep
-!uploads/imports/.gitkeep
-site/*
+
+# ───── Allowlist ────────────────────────────────────
+!uploads/**/.gitkeep
+!.env.template
