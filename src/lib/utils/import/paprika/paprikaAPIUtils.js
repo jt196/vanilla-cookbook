@@ -4,20 +4,22 @@
  */
 import axios from 'axios'
 import path from 'path'
-import { fileURLToPath } from 'url'
 import { config } from 'dotenv'
 import { prisma } from '$lib/server/prisma'
-import { extractRecipes } from '../recipeImport'
-import { isValidRecipeStructure, saveFile } from '$lib/utils/import/files'
+import { extractRecipes } from '$lib/utils/import/paprika/recipeImport'
+import {
+	isValidRecipeStructure,
+	saveFile,
+	appRootPath,
+	getFileType,
+	uploadDir
+} from '$lib/utils/import/importHelpers'
 import { promises as fsPromises } from 'fs'
 import { processImage } from '$lib/utils/image/imageBackend'
 
 config()
 
 const BASE_URL = 'https://www.paprikaapp.com/api/v1/sync/'
-const __filename = fileURLToPath(import.meta.url)
-export const __dirname = path.dirname(__filename)
-export const appRootPath = process.env.APP_ROOT_PATH || path.join(__dirname, '../../../../..')
 
 /**
  * Fetches data from the Paprika API for a given endpoint.
@@ -335,28 +337,6 @@ export async function addCategoriesToDB(categories, userId) {
 }
 
 /**
- * Adds recipes to the database.
- * @param {Array} declaredRecipes - An array of declared recipes (i.e. recipes
- * stripped of any fields that don't exist on the recipe table in the DB).
- * @param {string} userId - The user's ID.
- * @returns {Promise<Array>} - An array of created recipes.
- */
-export async function addRecipesToDB(declaredRecipes, userId) {
-	const createdRecipes = []
-	for (const recipe of declaredRecipes) {
-		// TODO: $transaction this
-		const createdRecipe = await prisma.recipe.create({
-			data: {
-				...recipe,
-				userId: userId
-			}
-		})
-		createdRecipes.push(createdRecipe)
-	}
-	return createdRecipes
-}
-
-/**
  * Handles all of the photo-related processing for recipes that have been added to the database.
  * This includes:
  * - Saving the main photo to the uploads directory
@@ -368,8 +348,6 @@ export async function addRecipesToDB(declaredRecipes, userId) {
  * @returns {Promise<void>}
  */
 export async function handlePhotosForRecipes(createdRecipes) {
-	const uploadDir = path.join(appRootPath, 'uploads/images')
-
 	const failedRecipes = []
 
 	for (const recipe of createdRecipes) {
@@ -536,16 +514,6 @@ export async function ensureCategoriesExist(rawRecipes, adminUserId) {
  * @param {string} filename - The name of the file to extract the extension from.
  * @returns {string} - The file extension.
  */
-
-/**
- * Extracts the file extension from a given filename.
- *
- * @param {string} filename - The name of the file to extract the extension from.
- * @returns {string} - The file extension.
- */
-export function getFileType(filename) {
-	return filename.split('.').pop()
-}
 
 /**
  * Takes an array of raw recipes and returns a new array with the recipe fields

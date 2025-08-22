@@ -25,9 +25,9 @@ import {
 	pantry,
 	status,
 	fetchDetailedRecipes,
-	fetchFirstRecipeDetails,
-	appRootPath
+	fetchFirstRecipeDetails
 } from './paprikaAPIUtils.js'
+import { appRootPath } from '$lib/utils/import/importHelpers.js'
 
 /**
  * Fetches data from the Paprika API and saves it to a JSON file.

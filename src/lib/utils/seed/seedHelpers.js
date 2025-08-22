@@ -2,8 +2,8 @@ import * as fsPromise from 'fs/promises'
 import path from 'path'
 
 import { createRecipePhotoEntry } from '$lib/utils/api.js'
-import { recipes } from '$lib/data/import/recipes.js'
 import { processImage } from '$lib/utils/image/imageBackend'
+import { recipes } from '$lib/data/import/paprikaRecipes'
 
 /**
  * Checks if the SQLite database file exists in the specified path.

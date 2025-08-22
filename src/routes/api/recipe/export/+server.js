@@ -1,25 +1,34 @@
+// src/routes/api/recipe/export/+server.js
 import { gzip } from 'zlib'
 import { promisify } from 'util'
 import archiver from 'archiver'
+import fs from 'fs'
+import path from 'path'
 import { sanitizeFilename } from '$lib/utils/filters.js'
 import { prisma } from '$lib/server/prisma'
 
-function transformData(rawData) {
+// if you already have uploadDir in a helper, reuse it. Otherwise:
+import { uploadDir } from '$lib/utils/import/importHelpers.js' // points to appRoot/uploads/images
+
+const gzipAsync = promisify(gzip)
+
+// Merge in photo fields if we have them
+function transformData(rawData, photoExtras = {}) {
 	return {
 		uid: rawData.uid,
-		created: new Date(rawData.created).toISOString().replace('T', ' ').split('.')[0] || '', // Convert to the desired datetime format
+		created: new Date(rawData.created).toISOString().replace('T', ' ').split('.')[0] || '',
 		hash: rawData.hash,
 		name: rawData.name,
-		description: rawData.description || '', // If null, use empty string
+		description: rawData.description || '',
 		ingredients:
-			typeof rawData.ingredients === 'string' ? rawData.ingredients.split('\r\n').join('\n') : '', // Convert all CRLF to LF, ensure it's a string
+			typeof rawData.ingredients === 'string' ? rawData.ingredients.split('\r\n').join('\n') : '',
 		directions:
-			typeof rawData.directions === 'string' ? rawData.directions.split('\r\n').join('\n') : '', // Convert all CRLF to LF, ensure it's a string
-		notes: rawData.notes || '', // If null, use empty string
+			typeof rawData.directions === 'string' ? rawData.directions.split('\r\n').join('\n') : '',
+		notes: rawData.notes || '',
 		nutritional_info:
 			typeof rawData.nutritional_info === 'string'
 				? rawData.nutritional_info.split('\r\n').join('\n')
-				: '', // Convert all CRLF to LF, ensure it's a string
+				: '',
 		prep_time: rawData.prep_time || '',
 		cook_time: rawData.cook_time || '',
 		total_time: rawData.total_time || '',
@@ -28,121 +37,113 @@ function transformData(rawData) {
 		rating: rawData.rating || 0,
 		source: rawData.source || '',
 		source_url: rawData.source_url || '',
-		photo: null, // As per your instruction
-		photo_large: null, // As per your instruction
-		photo_hash: null,
+		// photo fields get injected below
 		image_url: rawData.image_url || '',
 		categories:
 			rawData.categories && Array.isArray(rawData.categories)
-				? rawData.categories.map((categoryObj) => categoryObj.category.name)
-				: [], // Transform categories array, ensure it's an array
-		photos: []
+				? rawData.categories.map((c) => c.category.name)
+				: [],
+		photos: [],
+		...photoExtras // <- injects { photo, photo_data, photo_large, photo_hash }
 	}
 }
 
-const gzipAsync = promisify(gzip)
+async function embedMainPhotoFields(recipe) {
+	// Pick main first; else first photo if none marked
+	const main = (recipe.photos || []).find((p) => p.isMain) || (recipe.photos || [])[0]
+
+	if (!main) {
+		return { photo: null, photo_data: null, photo_large: null, photo_hash: null }
+	}
+
+	const ext = main.fileType || 'jpg'
+	const filename = `${main.id}.${ext}`
+	const filePath = path.join(uploadDir, filename)
+
+	try {
+		const buf = await fs.promises.readFile(filePath)
+		return {
+			photo: filename, // Paprika expects a filename
+			photo_data: buf.toString('base64'), // and base64 data
+			photo_large: null,
+			photo_hash: null
+		}
+	} catch {
+		// If the file isn't present locally, skip embedding
+		return { photo: null, photo_data: null, photo_large: null, photo_hash: null }
+	}
+}
 
 async function createZipWithGzippedRecipes(recipeData) {
 	const archive = archiver('zip')
 	const buffers = []
 
-	// This will collect data chunks of the zipped archive into the buffers array.
-	archive.on('data', (data) => buffers.push(data))
-
-	archive.on('warning', function (err) {
-		if (err.code === 'ENOENT') {
-			console.warn(err)
-		} else {
-			throw err
-		}
+	archive.on('data', (d) => buffers.push(d))
+	archive.on('warning', (err) => {
+		if (err.code !== 'ENOENT') throw err
 	})
-
-	archive.on('error', function (err) {
+	archive.on('error', (err) => {
 		throw err
 	})
 
-	archive.on('end', function () {
-		console.log('Archive wrote %d bytes', archive.pointer())
-	})
-
 	const filenameOccurrences = new Map()
-
 	function getUniqueFilename(name) {
-		// Get current count (default to 0 if name hasn't been used yet)
 		const count = filenameOccurrences.get(name) || 0
-
-		// Update map with incremented count
 		filenameOccurrences.set(name, count + 1)
-
-		// If this is the first occurrence, return the name as it is
-		if (count === 0) {
-			return name
-		}
-
-		// If not, append the count to the name
-		return `${name}-${count}`
+		return count === 0 ? name : `${name}-${count}`
 	}
 
 	for (const recipe of recipeData) {
-		const transformedData = transformData(recipe)
+		const photoExtras = await embedMainPhotoFields(recipe)
+		const transformedData = transformData(recipe, photoExtras)
+
 		const jsonData = JSON.stringify(transformedData)
 		const gzippedData = await gzipAsync(jsonData)
-		let sanitizedRecipeName = sanitizeFilename(recipe.name || 'unknown') // Fall back to 'unknown' if name isn't provided
-		sanitizedRecipeName = getUniqueFilename(sanitizedRecipeName) // Make it unique
 
-		archive.append(gzippedData, { name: `${sanitizedRecipeName}.paprikarecipe` })
+		let sanitized = sanitizeFilename(recipe.name || 'unknown')
+		sanitized = getUniqueFilename(sanitized)
+
+		// One gzipped .paprikarecipe per recipe inside the zip
+		archive.append(gzippedData, { name: `${sanitized}.paprikarecipe` })
 	}
 
-	// Finalize the archive (important!)
 	archive.finalize()
 
 	return new Promise((resolve) => {
-		archive.on('finish', function () {
-			resolve(Buffer.concat(buffers))
-		})
+		archive.on('finish', () => resolve(Buffer.concat(buffers)))
 	})
 }
 
 export async function POST({ locals }) {
-	// Validate the requesting user's session and get their userId
 	const session = await locals.auth.validate()
 	const user = session?.user
 	if (!session || !user) {
-		console.log('User Not Authenticated!')
 		return new Response('User not authenticated', {
 			status: 401,
-			headers: {
-				'Content-Type': 'application/json'
-			}
+			headers: { 'Content-Type': 'application/json' }
 		})
 	}
 
 	try {
 		const recipes = await prisma.recipe.findMany({
-			where: {
-				userId: user.userId
-			},
-			orderBy: {
-				created: 'desc'
-			},
+			where: { userId: user.userId },
+			orderBy: { created: 'desc' },
 			include: {
 				categories: {
-					select: {
-						category: {
-							select: {
-								name: true,
-								uid: true
-							}
-						}
-					}
+					select: { category: { select: { name: true, uid: true } } }
+				},
+				photos: {
+					select: { id: true, fileType: true, isMain: true, url: true }
 				}
 			}
 		})
+
 		const zipBuffer = await createZipWithGzippedRecipes(recipes)
 
 		return new Response(zipBuffer, {
 			headers: {
-				'Content-Disposition': 'attachment; filename=export.paprikarecipes.zip',
+				// Use the Paprika convention extension:
+				'Content-Disposition': 'attachment; filename=export.paprikarecipes',
 				'Content-Type': 'application/zip'
 			}
 		})
@@ -150,9 +151,7 @@ export async function POST({ locals }) {
 		console.error('Error:', err)
 		return new Response('Internal Server Error', {
 			status: 500,
-			headers: {
-				'Content-Type': 'application/json'
-			}
+			headers: { 'Content-Type': 'application/json' }
 		})
 	}
 }

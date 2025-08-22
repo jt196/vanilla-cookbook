@@ -44,13 +44,6 @@
 						Export
 					</a>
 				</li>
-				<li>
-					<a
-						href={`/user/${user.userId}/options/upload`}
-						class={data.pathname === `/user/${user.userId}/options/upload` ? 'active-link' : ''}>
-						Upload
-					</a>
-				</li>
 				{#if data.user.isAdmin}
 					<li>
 						<a
