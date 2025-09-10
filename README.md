@@ -23,7 +23,7 @@ Scale your recipe ingredients. No complicated data entry, it's all done under th
 
 ### Control Your Data
 
-Import and export your data in Paprika format. Category hierarchy is supported for imports. [Docs](https://vanilla-cookbook.readthedocs.io/en/latest/manual/import/)
+Multiple import formats supported, exports supported. [Docs](https://vanilla-cookbook.readthedocs.io/en/latest/manual/import/)
 
 ### Scraping Recipes
 
