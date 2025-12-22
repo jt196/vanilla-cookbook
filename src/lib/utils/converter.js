@@ -42,7 +42,7 @@ export const converter = (quantity, from, to = 'grams') => {
  * @param {Array} ingredientArray - An array of ingredient objects.
  * @returns {{system: string, counts: Object}} - The dominant system and the counts of each system.
  */
-export const determineSystem = (ingredientArray) => {
+export const determineSystem = (ingredientArray = []) => {
 	const systemCounts = {
 		metric: 0,
 		imperial: 0,
@@ -50,21 +50,17 @@ export const determineSystem = (ingredientArray) => {
 	}
 
 	ingredientArray.forEach((ingredient) => {
-		const { unit } = ingredient
-
-		Object.keys(measurementSystems).forEach((system) => {
-			if (measurementSystems[system].includes(unit)) {
-				systemCounts[system]++
-			}
-		})
+		const system = ingredient.unitSystem
+		if (system && systemCounts.hasOwnProperty(system)) {
+			systemCounts[system]++
+		}
 	})
 
-	// Check for the specific condition
+	// Early return if mixed imperial + americanVolumetric => prefer americanVolumetric
 	if (systemCounts.imperial > 0 && systemCounts.americanVolumetric > 0) {
 		return { system: 'americanVolumetric', counts: systemCounts }
 	}
 
-	// Determine the dominant system
 	let dominantSystem = null
 	let maxCount = 0
 	let inconclusive = false
@@ -84,35 +80,6 @@ export const determineSystem = (ingredientArray) => {
 	}
 	return { system: dominantSystem, counts: systemCounts }
 }
-
-/**
- * Mapping of measurement systems to their respective units.
- * @type {Object}
- */
-const systemToUnitsMap = {
-	metric: ['gram', 'kilogram', 'liter', 'milliliter'],
-	imperial: ['fluid ounce', 'pound', 'gallon', 'ounce'],
-	americanVolumetric: ['cup', 'quart']
-}
-
-/**
- * Manipulates an ingredient object to convert its quantity and unit from one system to another.
- *
- * @param {Object} ingredientObj - The ingredient object to be manipulated.
- * @param {string} fromSystem - The original measurement system.
- * @param {string} toSystem - The target measurement system.
- * @returns {Object} - The manipulated ingredient object with converted quantity and unit.
- */
-const measurementSystems = Object.keys(systemToUnitsMap).reduce((acc, system) => {
-	acc[system] = []
-	systemToUnitsMap[system].forEach((unit) => {
-		const unitObj = units.find((u) => u.names.includes(unit))
-		if (unitObj) {
-			acc[system] = [...acc[system], ...unitObj.names]
-		}
-	})
-	return acc
-}, {})
 
 /**
  * Attempts to find a match for an ingredient in a lookup table.
