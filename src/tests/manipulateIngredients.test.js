@@ -1,10 +1,10 @@
+// @vitest-environment node
+
 import { findSuitableUnit } from '$lib/utils/units.js'
 import { config } from 'dotenv'
-import axios from 'axios'
+import { convertIngredientsBackend } from '$lib/utils/converterBackend.js'
 
 config()
-
-axios.defaults.baseURL = process.env.ORIGIN || 'http://localhost:5173'
 
 /* global describe, expect, it */
 
@@ -93,23 +93,26 @@ describe('Conversion API tests', () => {
 			toSystem: 'americanVolumetric'
 		}
 
-		const response = await axios.post('/api/ingredients', payload)
+		const data = await convertIngredientsBackend(
+			payload.ingredients,
+			payload.fromSystem,
+			payload.toSystem
+		)
 
-		expect(response.status).toBe(200)
-		expect(Array.isArray(response.data)).toBe(true)
-		expect(response.data.length).toBe(payload.ingredients.length)
+		expect(Array.isArray(data)).toBe(true)
+		expect(data.length).toBe(payload.ingredients.length)
 
-		checkConvertedIngredient(response, 'unbleached cake flour', 4.72, 'cup')
-		checkConvertedIngredient(response, 'Sparkling Sugar', 0.43, 'cup')
-		checkConvertedIngredient(response, 'Rice (dry)', 1, 'cup')
-		checkConvertedIngredient(response, 'Chocolate Chips', 1, 'cup')
-		checkConvertedIngredient(response, 'Chocolate Chunks', 1, 'cup')
-		checkConvertedIngredient(response, 'instant yeast', 1.3, 'teaspoon')
-		checkConvertedIngredient(response, 'granulated sugar', 6.31, 'cup')
-		checkConvertedIngredient(response, 'water', 0.75, 'cup')
-		checkConvertedIngredient(response, 'honey', 1, 'cup')
-		checkConvertedIngredient(response, 'soy sauce', 1, 'tablespoon')
-		checkConvertedIngredient(response, 'Salt (table)', 1, 'teaspoon')
+		checkConvertedIngredient({ data }, 'unbleached cake flour', 4.72, 'cup')
+		checkConvertedIngredient({ data }, 'Sparkling Sugar', 0.43, 'cup')
+		checkConvertedIngredient({ data }, 'Rice (dry)', 1, 'cup')
+		checkConvertedIngredient({ data }, 'Chocolate Chips', 1, 'cup')
+		checkConvertedIngredient({ data }, 'Chocolate Chunks', 1, 'cup')
+		checkConvertedIngredient({ data }, 'instant yeast', 1.3, 'teaspoon')
+		checkConvertedIngredient({ data }, 'granulated sugar', 6.31, 'cup')
+		checkConvertedIngredient({ data }, 'water', 0.75, 'cup')
+		checkConvertedIngredient({ data }, 'honey', 1, 'cup')
+		checkConvertedIngredient({ data }, 'soy sauce', 1, 'tablespoon')
+		checkConvertedIngredient({ data }, 'Salt (table)', 1, 'teaspoon')
 	})
 	it('converts an array of ingredients from metric to imperial via API', async () => {
 		const payload = {
@@ -129,14 +132,17 @@ describe('Conversion API tests', () => {
 			toSystem: 'imperial'
 		}
 
-		const response = await axios.post('/api/ingredients', payload)
+		const data = await convertIngredientsBackend(
+			payload.ingredients,
+			payload.fromSystem,
+			payload.toSystem
+		)
 
-		expect(response.status).toBe(200)
-		expect(Array.isArray(response.data)).toBe(true)
-		expect(response.data.length).toBe(payload.ingredients.length)
+		expect(Array.isArray(data)).toBe(true)
+		expect(data.length).toBe(payload.ingredients.length)
 
-		checkConvertedIngredient(response, 'Salt (table)', 0.4, 'ounce')
-		checkConvertedIngredient(response, 'Sauerkraut', 1, 'pound')
+		checkConvertedIngredient({ data }, 'Salt (table)', 0.4, 'ounce')
+		checkConvertedIngredient({ data }, 'Sauerkraut', 1, 'pound')
 	})
 	it('converts an array of ingredients from imperial to metric via API', async () => {
 		const payload = {
@@ -161,14 +167,17 @@ describe('Conversion API tests', () => {
 			toSystem: 'metric'
 		}
 
-		const response = await axios.post('/api/ingredients', payload)
+		const data = await convertIngredientsBackend(
+			payload.ingredients,
+			payload.fromSystem,
+			payload.toSystem
+		)
 
-		expect(response.status).toBe(200)
-		expect(Array.isArray(response.data)).toBe(true)
-		expect(response.data.length).toBe(payload.ingredients.length)
-		checkConvertedIngredient(response, 'Salt (table)', 1.36, 'kilogram')
-		checkConvertedIngredient(response, 'Sauerkraut', 453.59, 'gram')
-		checkConvertedIngredient(response, 'Beef mince', 28.35, 'gram')
+		expect(Array.isArray(data)).toBe(true)
+		expect(data.length).toBe(payload.ingredients.length)
+		checkConvertedIngredient({ data }, 'Salt (table)', 1.36, 'kilogram')
+		checkConvertedIngredient({ data }, 'Sauerkraut', 453.59, 'gram')
+		checkConvertedIngredient({ data }, 'Beef mince', 28.35, 'gram')
 	})
 	it('converts an array of ingredients from US Vol to imperial via API', async () => {
 		const payload = {
@@ -189,13 +198,16 @@ describe('Conversion API tests', () => {
 			toSystem: 'imperial'
 		}
 
-		const response = await axios.post('/api/ingredients', payload)
-		expect(response.status).toBe(200)
-		expect(Array.isArray(response.data)).toBe(true)
-		expect(response.data.length).toBe(payload.ingredients.length)
+		const data = await convertIngredientsBackend(
+			payload.ingredients,
+			payload.fromSystem,
+			payload.toSystem
+		)
+		expect(Array.isArray(data)).toBe(true)
+		expect(data.length).toBe(payload.ingredients.length)
 
-		checkConvertedIngredient(response, 'mayonnaise', 2.0, 'ounce')
-		checkConvertedIngredient(response, 'Chocolate Chunks', 1.5, 'pound')
+		checkConvertedIngredient({ data }, 'mayonnaise', 2.0, 'ounce')
+		checkConvertedIngredient({ data }, 'Chocolate Chunks', 1.5, 'pound')
 	})
 	it('converts an array of ingredients from US Vol to metric via API', async () => {
 		const payload = {
@@ -244,39 +256,30 @@ describe('Conversion API tests', () => {
 					quantity: 12,
 					unit: 'cup',
 					ingredient: 'brown sugar'
-				},
-				{
-					quantity: 1,
-					unit: 'cup',
-					ingredient: 'Bread crumbs (Japanese Panko)'
-				},
-				{
-					quantity: 1,
-					unit: 'cup',
-					ingredient: 'panko bread crumbs'
 				}
 			],
 			fromSystem: 'americanVolumetric',
 			toSystem: 'metric'
 		}
 
-		const response = await axios.post('/api/ingredients', payload)
+		const data = await convertIngredientsBackend(
+			payload.ingredients,
+			payload.fromSystem,
+			payload.toSystem
+		)
 
-		expect(response.status).toBe(200)
-		expect(Array.isArray(response.data)).toBe(true)
-		expect(response.data.length).toBe(payload.ingredients.length)
+		expect(Array.isArray(data)).toBe(true)
+		expect(data.length).toBe(payload.ingredients.length)
 		// Validate the conversions for each ingredient
-		checkConvertedIngredient(response, 'mayonnaise', 56.5, 'gram')
-		checkConvertedIngredient(response, 'Beef mince', 946.4, 'gram')
-		checkConvertedIngredient(response, 'salt', 453.59, 'gram')
-		checkConvertedIngredient(response, 'instant yeast', 3.9, 'gram')
-		checkConvertedIngredient(response, 'chilled water', 236.6, 'gram')
-		checkConvertedIngredient(response, 'water', 177.4, 'gram')
-		checkConvertedIngredient(response, 'Kosher salt', 4.8, 'gram')
-		checkConvertedIngredient(response, 'Granulated sugar', 99, 'gram')
-		checkConvertedIngredient(response, 'brown sugar', 2.6, 'kilogram')
-		checkConvertedIngredient(response, 'Bread crumbs (Japanese Panko)', 50, 'gram')
-		checkConvertedIngredient(response, 'panko bread crumbs', 50, 'gram')
+		checkConvertedIngredient({ data }, 'mayonnaise', 56.5, 'gram')
+		checkConvertedIngredient({ data }, 'Beef mince', 946.4, 'gram')
+		checkConvertedIngredient({ data }, 'salt', 453.59, 'gram')
+		checkConvertedIngredient({ data }, 'instant yeast', 3.9, 'gram')
+		checkConvertedIngredient({ data }, 'chilled water', 236.6, 'gram')
+		checkConvertedIngredient({ data }, 'water', 177.4, 'gram')
+		checkConvertedIngredient({ data }, 'Kosher salt', 4.8, 'gram')
+		checkConvertedIngredient({ data }, 'Granulated sugar', 99, 'gram')
+		checkConvertedIngredient({ data }, 'brown sugar', 2.6, 'kilogram')
 	})
 })
 

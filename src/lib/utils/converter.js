@@ -1,7 +1,7 @@
 import { units, findSuitableUnit } from '$lib/utils/units'
 import Fuse from 'fuse.js'
 import { foodPreferences } from '$lib/data/ingredients/vegan/vegan'
-import { getSymbol } from '$lib/submodules/recipe-ingredient-parser/src'
+import { getSymbol } from '$lib/submodules/recipe-ingredient-parser/src/index.js'
 
 /**
  * Converts a quantity from one unit to another.
