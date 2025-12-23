@@ -132,6 +132,9 @@ importers:
       '@typescript-eslint/parser':
         specifier: ^8.26.0
         version: 8.26.1(eslint@9.22.0)(typescript@5.8.2)
+      chai:
+        specifier: ^6.2.2
+        version: 6.2.2
       eslint:
         specifier: ^9.21.0
         version: 9.22.0
@@ -1844,6 +1847,10 @@ packages:
   chai@5.2.0:
     resolution: {integrity: sha512-mCuXncKXk5iCLhfhwTc0izo0gtEmpz5CtG2y8GiOINBlMVS6v8TMRc5TaLWKS6692m9+dVVfzgeVxR5UxWHTYw==}
     engines: {node: '>=12'}
+
+  chai@6.2.2:
+    resolution: {integrity: sha512-NUPRluOfOiTKBKvWPtSD4PhFvWCqOi0BGStNWs57X9js7XGTprSmFoz5F0tWhR4WPjNeR9jXqdC7/UpSJTnlRg==}
+    engines: {node: '>=18'}
 
   chalk@3.0.0:
     resolution: {integrity: sha512-4D3B6Wf41KOYRFdszmDqMCGq5VV/uMAB273JILmO+3jAlh8X4qDtdtgCR3fxtbLEMzSx22QdhnDcJvu2u1fVwg==}
@@ -5810,6 +5817,8 @@ snapshots:
       deep-eql: 5.0.2
       loupe: 3.1.3
       pathval: 2.0.0
+
+  chai@6.2.2: {}
 
   chalk@3.0.0:
     dependencies:

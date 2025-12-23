@@ -34,6 +34,7 @@
 		"@testing-library/svelte": "^4.0.3",
 		"@typescript-eslint/eslint-plugin": "^8.26.0",
 		"@typescript-eslint/parser": "^8.26.0",
+		"chai": "^6.2.2",
 		"eslint": "^9.21.0",
 		"eslint-config-prettier": "^10.0.2",
 		"eslint-plugin-jsdoc": "^50.6.3",
