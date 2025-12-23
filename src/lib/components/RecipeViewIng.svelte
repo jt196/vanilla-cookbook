@@ -187,7 +187,7 @@
 										event.stopPropagation()
 										showAlternatives = !showAlternatives
 									}}>
-									<span class="chevron" aria-hidden="true">▾</span>
+									<span class="chevron" aria-hidden="true">▸</span>
 								</button>
 							{/if}
 						</span>
@@ -317,7 +317,7 @@
 		color: var(--pico-muted-color);
 		cursor: pointer;
 		padding: 0 0.25rem;
-		margin-left: 0.35rem;
+		margin: 0 0.35rem;
 	}
 
 	.alt-toggle .chevron {
@@ -326,18 +326,21 @@
 	}
 
 	.alt-toggle[aria-expanded='true'] .chevron {
-		transform: rotate(180deg);
+		transform: rotate(90deg);
 	}
 
 	.alts-panel {
 		margin-left: 1.5rem;
-		margin-top: 0.25rem;
+		margin-top: 0.1rem;
+		margin: 0.1rem 0;
+		border-radius: 0.2rem;
+		background: var(--pico-primary-focus);
 	}
 
 	.alts-panel ul {
 		list-style: none;
-		padding-left: 0;
-		margin: 0.25rem 0 0 0;
+		padding-left: 0.2rem;
+		margin: 0.1rem 0 0 0;
 	}
 
 	.alt-label {
