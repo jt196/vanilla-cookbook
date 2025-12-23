@@ -105,11 +105,15 @@
 					</button>
 				{/if}
 				{#if sanitizedIngredients.some((item) => item.dryIngredient) && !displayOriginal}
-					<button class:selected={displayDryMatch} onclick={() => (displayDryMatch = !displayDryMatch)}>
+					<button
+						class:selected={displayDryMatch}
+						onclick={() => (displayDryMatch = !displayDryMatch)}>
 						Cup Match
 					</button>
 				{/if}
-				<button class:selected={displayOriginal} onclick={() => (displayOriginal = !displayOriginal)}>
+				<button
+					class:selected={displayOriginal}
+					onclick={() => (displayOriginal = !displayOriginal)}>
 					Original
 				</button>
 				{#if !displayOriginal}
@@ -120,11 +124,6 @@
 			</div>
 		</div>
 	</div>
-	{#if unitSystemsPresent.length > 0}
-		<div class="legend">
-			{unitSystemsPresent.map((s) => systemLegendMap[s]).filter(Boolean).join(' · ')}
-		</div>
-	{/if}
 </div>
 
 <style lang="scss">
@@ -137,16 +136,16 @@
 		margin-bottom: 1rem;
 	}
 
-    .segmented {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 0.25rem;
-        margin-bottom: 0.75rem;
+	.segmented {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 0.25rem;
+		margin-bottom: 0.75rem;
 
-        button {
-            width: 100%;
-        }
-    }
+		button {
+			width: 100%;
+		}
+	}
 
 	.segmented button.selected,
 	.toggle-row button.selected {
@@ -173,5 +172,4 @@
 		color: var(--pico-muted-color);
 		font-size: 0.85rem;
 	}
-
 </style>

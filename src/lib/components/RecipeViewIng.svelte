@@ -133,9 +133,6 @@
 										? ingredient.unitPlural
 										: ingredient.unit}
 								{/if}
-								{#if ingredient.unitSystem && systemMarkers[ingredient.unitSystem]}
-									<sup>{systemMarkers[ingredient.unitSystem]}</sup>
-								{/if}
 							{/if}
 						</i>
 						{#if ingredient.approx}<span class="badge">~</span>{/if}
