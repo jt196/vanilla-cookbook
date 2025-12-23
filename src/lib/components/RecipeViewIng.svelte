@@ -222,6 +222,14 @@
 			{#each panelAlternatives as alt}
 				{#if alt}
 					<li>
+						<span class="alt-badges">
+							{#if alt.unit || (alt.quantity !== null && alt.quantity !== undefined)}
+								<span class="alt-badge">unit</span>
+							{/if}
+							{#if alt.ingredient}
+								<span class="alt-badge">ing</span>
+							{/if}
+						</span>
 						{#if alt.quantity}
 							<strong>
 								{formatQuantity(alt.quantity, alt.minQty, alt.maxQty)}
@@ -351,6 +359,21 @@
 		list-style: none;
 		padding-left: 0.2rem;
 		margin: 0.1rem 0 0 0;
+	}
+
+	.alt-badges {
+		display: inline-flex;
+		gap: 0.25rem;
+		margin-right: 0.35rem;
+	}
+
+	.alt-badge {
+		display: inline-block;
+		padding: 0 0.35rem;
+		border-radius: 999px;
+		background: var(--pico-muted-border-color);
+		color: var(--pico-muted-color);
+		font-size: 0.7rem;
 	}
 
 	.alt-label {
