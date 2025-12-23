@@ -78,18 +78,21 @@
 		<div class="segmented">
 			<button
 				class:selected={selectedSystem === 'metric'}
+				class:orig={originalSystem === 'metric'}
 				onclick={() => onSelectedSystemChange('metric')}>
-				Metric{#if originalSystem === 'metric'} <sup class="origin">orig</sup>{/if}
+				Metric
 			</button>
 			<button
 				class:selected={selectedSystem === 'americanVolumetric'}
+				class:orig={originalSystem === 'americanVolumetric'}
 				onclick={() => onSelectedSystemChange('americanVolumetric')}>
-				US Vol{#if originalSystem === 'americanVolumetric'} <sup class="origin">orig</sup>{/if}
+				US Vol
 			</button>
 			<button
 				class:selected={selectedSystem === 'imperial'}
+				class:orig={originalSystem === 'imperial'}
 				onclick={() => onSelectedSystemChange('imperial')}>
-				Imperial{#if originalSystem === 'imperial'} <sup class="origin">orig</sup>{/if}
+				Imperial
 			</button>
 		</div>
 	</div>
@@ -145,19 +148,23 @@
         }
     }
 
-    .segmented button.selected,
-    .toggle-row button.selected {
-        background-color: var(--pico-primary);
-        color: var(--pico-primary-inverse);
-    }
+	.segmented button.selected,
+	.toggle-row button.selected {
+		background-color: var(--pico-primary);
+		color: var(--pico-primary-inverse);
+	}
+	.segmented button.orig {
+		border: 2px solid var(--pico-primary);
+		box-shadow: 0 0 0 1px var(--pico-primary);
+	}
 
 	.toggle-row {
 		display: flex;
-		flex-wrap: wrap;
+		flex-wrap: nowrap;
 		gap: 0.25rem;
 
 		button {
-			flex: 1 1 150px;
+			flex: 1 1 0;
 		}
 	}
 
@@ -167,9 +174,4 @@
 		font-size: 0.85rem;
 	}
 
-	.origin {
-		color: var(--pico-muted-color);
-		font-weight: normal;
-		font-size: 0.7rem;
-	}
 </style>

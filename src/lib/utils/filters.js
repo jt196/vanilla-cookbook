@@ -1,4 +1,4 @@
-import { parse } from '$lib/submodules/recipe-ingredient-parser/src/index.js'
+import { ingredientParse } from '$lib/submodules/recipe-ingredient-parser/src/index.js'
 import he from 'he'
 
 /**
@@ -34,7 +34,10 @@ export function ingredientProcess(ingredientArray, language) {
 	ingredientArray.forEach((ingredientString) => {
 		const ingredientStr = sanitizeIngredient(ingredientString)
 		try {
-			const ingredientObject = parse(ingredientStr, language)
+			const ingredientObject = ingredientParse(ingredientStr, language, {
+				includeUnitSystems: true,
+				includeAlternatives: true
+			})
 			if (!ingredientObject) {
 				throw new Error('Parsed ingredient is null')
 			}

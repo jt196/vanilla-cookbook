@@ -6,7 +6,7 @@
 		markPurchasedItems,
 		updateShoppingListItem
 	} from '$lib/utils/crud.js'
-	import { parse } from '$lib/submodules/recipe-ingredient-parser/src/index.js'
+	import { ingredientParse } from '$lib/submodules/recipe-ingredient-parser/src/index.js'
 	import Link from '$lib/components/svg/Link.svelte'
 	import { browser } from '$app/environment'
 	import { fade } from 'svelte/transition'
@@ -94,7 +94,10 @@
 
 	async function handleAddIngredient() {
 		try {
-			const ingredientObject = parse(newIngredient, 'eng')
+			const ingredientObject = ingredientParse(newIngredient, 'eng', {
+				includeUnitSystems: true,
+				includeAlternatives: true
+			})
 
 			// Send the object to the API and create a new shopping list item
 			const response = await addIngredientToShoppingList(ingredientObject)

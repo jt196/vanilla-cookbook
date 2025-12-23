@@ -43,6 +43,7 @@ export const converter = (quantity, from, to = 'grams') => {
  * @returns {{system: string, counts: Object}} - The dominant system and the counts of each system.
  */
 export const determineSystem = (ingredientArray = []) => {
+	console.log('🚀 ~ determineSystem ~ ingredientArray:', ingredientArray)
 	const systemCounts = {
 		metric: 0,
 		imperial: 0,
@@ -77,6 +78,10 @@ export const determineSystem = (ingredientArray = []) => {
 
 	if (inconclusive) {
 		return { system: 'inconclusive', counts: systemCounts }
+	}
+	// If nothing was detected, default to metric as a safe baseline.
+	if (!dominantSystem) {
+		return { system: 'metric', counts: systemCounts }
 	}
 	return { system: dominantSystem, counts: systemCounts }
 }
