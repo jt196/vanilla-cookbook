@@ -19,6 +19,7 @@
 
 	let struckThrough = $state(false)
 	let isHighlighted = $state(false)
+	let showAlternatives = $state(false)
 	const systemMarkers = {
 		metric: '¹',
 		imperial: '²',
@@ -67,21 +68,6 @@
 			: decimalToFraction(qty * scaleIng)
 	}
 
-	const classifyAlternative = (primary, alt) => {
-		const clean = (v) => (typeof v === 'string' ? v.trim().toLowerCase() : (v ?? ''))
-		const sameIngredient = clean(primary.ingredient) === clean(alt.ingredient)
-		const sameUnit =
-			clean(primary.unit) === clean(alt.unit) &&
-			clean(primary.unitPlural) === clean(alt.unitPlural) &&
-			clean(primary.unitSystem) === clean(alt.unitSystem)
-		const sameQty = alt.minQty === primary.minQty && alt.maxQty === primary.maxQty
-
-		if (!alt.unit && !alt.quantity) return 'ingredient-only'
-		if (sameIngredient && !sameUnit) return 'unit'
-		if (!sameIngredient && sameUnit && sameQty) return 'ingredient'
-		return 'ingredient+qty'
-	}
-
 	const renderUnit = (entry, qtyScaled) => {
 		if (!entry?.unit || entry.unit === 'q.b.') return ''
 		if (displaySymbol && entry.symbol) return entry.symbol
@@ -102,7 +88,7 @@
 </script>
 
 <div class="ingredient-line" class:highlight={isHighlighted}>
-	<button onclick={() => handleAddToShoppingList(ingredient)}
+	<button class="add-btn" onclick={() => handleAddToShoppingList(ingredient)}
 		><Shopping width="10px" fill="white" /></button>
 	<!-- svelte-ignore a11y_click_events_have_key_events -->
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
@@ -192,43 +178,17 @@
 								</small>
 							{/if}
 							{#if ingredient.alternatives && ingredient.alternatives.length}
-								<details class="alts">
-									<summary></summary>
-									<ul>
-										{#each ingredient.alternatives as alt}
-											{#if alt}
-												<li>
-													<span class="alt-label">{classifyAlternative(ingredient, alt)}</span>
-													{#if alt.quantity}
-														<strong>
-															{formatQuantity(alt.quantity, alt.minQty, alt.maxQty)}
-														</strong>
-													{/if}
-													{#if alt.unit}
-														<i>
-															{renderUnit(
-																alt,
-																alt.quantity ? alt.quantity * scaleIng : alt.quantity
-															)}
-														</i>
-													{/if}
-													<span>{alt.ingredient}</span>
-													{#if alt.unitSystem && systemMarkers[alt.unitSystem]}
-														<sup>{systemMarkers[alt.unitSystem]}</sup>
-													{/if}
-													{#if alt.additional}
-														<small class="muted"> — {alt.additional}</small>
-													{/if}
-													{#if alt.instructions && alt.instructions.length}
-														<small class="muted">
-															— {alt.instructions.join(', ')}
-														</small>
-													{/if}
-												</li>
-											{/if}
-										{/each}
-									</ul>
-								</details>
+								<button
+									class="alt-toggle"
+									type="button"
+									aria-label="Toggle alternatives"
+									aria-expanded={showAlternatives}
+									onclick={(event) => {
+										event.stopPropagation()
+										showAlternatives = !showAlternatives
+									}}>
+									<span class="chevron" aria-hidden="true">▾</span>
+								</button>
 							{/if}
 						</span>
 					{/if}
@@ -237,10 +197,51 @@
 		{/if}
 	</div>
 </div>
+{#if ingredient.alternatives && ingredient.alternatives.length && showAlternatives}
+	<div class="alts-panel">
+		<ul>
+			{#each ingredient.alternatives as alt}
+				{#if alt}
+					<li>
+						{#if alt.quantity}
+							<strong>
+								{formatQuantity(alt.quantity, alt.minQty, alt.maxQty)}
+							</strong>
+						{/if}
+						{#if alt.unit}
+							<i>
+								{renderUnit(alt, alt.quantity ? alt.quantity * scaleIng : alt.quantity)}
+							</i>
+						{/if}
+						<span>{alt.ingredient}</span>
+						{#if alt.unitSystem && systemMarkers[alt.unitSystem]}
+							<sup>{systemMarkers[alt.unitSystem]}</sup>
+						{/if}
+						{#if alt.additional}
+							<small class="muted"> — {alt.additional}</small>
+						{/if}
+						{#if alt.instructions && alt.instructions.length}
+							<small class="muted">
+								— {alt.instructions.join(', ')}
+							</small>
+						{/if}
+					</li>
+				{/if}
+			{/each}
+		</ul>
+	</div>
+{/if}
 
 <style lang="scss">
 	li {
 		list-style-type: none;
+	}
+
+	details {
+		margin: 0 !important;
+		padding: 3px;
+		background-color: var(--pico-text-selection-color);
+		border-radius: 5px;
 	}
 
 	.struck {
@@ -258,7 +259,7 @@
 			border-radius: 5px;
 		}
 
-		button {
+		.add-btn {
 			position: absolute;
 			left: 0; // Position the button to the far left
 			transform: translateX(-100%); // Move the button to the left of the container
@@ -272,8 +273,8 @@
 				visibility 0s linear 0.3s;
 		}
 
-		&:hover button,
-		&:focus-within button {
+		&:hover .add-btn,
+		&:focus-within .add-btn {
 			opacity: 1;
 			visibility: visible;
 			transition-delay: 0s;
@@ -310,43 +311,33 @@
 		color: var(--pico-muted-color);
 	}
 
-	.alts {
-		margin-left: 0.5rem;
-		display: inline-block;
-		vertical-align: middle;
-	}
-
-	.alts summary {
+	.alt-toggle {
+		background: transparent;
+		border: none;
+		color: var(--pico-muted-color);
 		cursor: pointer;
-		display: inline-flex;
-		align-items: center;
-		gap: 0.25rem;
-		list-style: none;
+		padding: 0 0.25rem;
+		margin-left: 0.35rem;
 	}
 
-	.alts summary::marker,
-	.alts summary::-webkit-details-marker {
-		display: none;
-	}
-
-	.alts ul {
-		list-style: none;
-		padding-left: 0;
-		margin: 0.25rem 0 0 0;
-	}
-
-	.arrow {
+	.alt-toggle .chevron {
 		display: inline-block;
-		width: 0.6rem;
-		height: 0.6rem;
-		border-right: 2px solid var(--pico-muted-color);
-		border-bottom: 2px solid var(--pico-muted-color);
-		transform: rotate(45deg);
 		transition: transform 0.2s ease;
 	}
 
-	.alts[open] .arrow {
-		transform: rotate(135deg);
+	.alt-toggle[aria-expanded='true'] .chevron {
+		transform: rotate(180deg);
+	}
+
+	.alts-panel {
+		margin-left: 1.5rem;
+		margin-top: 0.25rem;
+	}
+
+	.alts-panel ul {
+		list-style: none;
+		padding-left: 0;
+		margin: 0.25rem 0 0 0;
 	}
 
 	.alt-label {
