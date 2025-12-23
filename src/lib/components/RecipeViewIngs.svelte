@@ -33,6 +33,14 @@
 		})
 		return Array.from(set)
 	})
+
+	const originalSystem = $derived(measurementSystem?.system || null)
+
+	$effect(() => {
+		if (measurementSystem) {
+			console.log('measurementSystem:', measurementSystem)
+		}
+	})
 </script>
 
 <div class="ing-header">
@@ -71,17 +79,17 @@
 			<button
 				class:selected={selectedSystem === 'metric'}
 				onclick={() => onSelectedSystemChange('metric')}>
-				Metric
+				Metric{#if originalSystem === 'metric'} <sup class="origin">orig</sup>{/if}
 			</button>
 			<button
 				class:selected={selectedSystem === 'americanVolumetric'}
 				onclick={() => onSelectedSystemChange('americanVolumetric')}>
-				US Vol
+				US Vol{#if originalSystem === 'americanVolumetric'} <sup class="origin">orig</sup>{/if}
 			</button>
 			<button
 				class:selected={selectedSystem === 'imperial'}
 				onclick={() => onSelectedSystemChange('imperial')}>
-				Imperial
+				Imperial{#if originalSystem === 'imperial'} <sup class="origin">orig</sup>{/if}
 			</button>
 		</div>
 	</div>
@@ -157,5 +165,11 @@
 		margin-top: 0.5rem;
 		color: var(--pico-muted-color);
 		font-size: 0.85rem;
+	}
+
+	.origin {
+		color: var(--pico-muted-color);
+		font-weight: normal;
+		font-size: 0.7rem;
 	}
 </style>
