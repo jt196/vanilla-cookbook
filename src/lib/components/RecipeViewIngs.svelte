@@ -1,6 +1,5 @@
 <script>
 	import Scale from '$lib/components/Scale.svelte'
-	import RecipeViewDropdown from './RecipeViewDropdown.svelte'
 	import RecipeViewIng from './RecipeViewIng.svelte'
 
 	/** @type {{ingredients: any, sanitizedIngredients: any, scale: any, scaledServings: any, selectedSystem: any, measurementSystem: any, recipeUid: any }} */
@@ -20,9 +19,20 @@
 	let displaySymbol = $state(user.ingSymbol)
 	let displayDryMatch = $state(user.ingMatch)
 	let displayOriginal = $state(user.ingOriginal)
+	const systemLegendMap = {
+		metric: '¹ metric',
+		imperial: '² imperial',
+		americanVolumetric: '³ US Vol'
+	}
 
-	// Check if any of the ingredients have a default density
 	let hasDefaultDensity = $derived(sanitizedIngredients.some((i) => i.usedDefaultDensity === true))
+	let unitSystemsPresent = $derived.by(() => {
+		const set = new Set()
+		sanitizedIngredients.forEach((i) => {
+			if (i.unitSystem) set.add(i.unitSystem)
+		})
+		return Array.from(set)
+	})
 </script>
 
 <div class="ing-header">
@@ -57,32 +67,53 @@
 		<div class="default"><i> * Converted using default water density </i></div>
 	{/if}
 	<div class="convert">
-		{#if measurementSystem && measurementSystem.system != 'inconclusive'}
-			<RecipeViewDropdown {selectedSystem} {onSelectedSystemChange} {measurementSystem} />
-		{/if}
+		<div class="segmented">
+			<button
+				class:selected={selectedSystem === 'metric'}
+				onclick={() => onSelectedSystemChange('metric')}>
+				Metric
+			</button>
+			<button
+				class:selected={selectedSystem === 'americanVolumetric'}
+				onclick={() => onSelectedSystemChange('americanVolumetric')}>
+				US Vol
+			</button>
+			<button
+				class:selected={selectedSystem === 'imperial'}
+				onclick={() => onSelectedSystemChange('imperial')}>
+				Imperial
+			</button>
+		</div>
 	</div>
 	<div class="ing-settings">
 		<div class="checks">
-			<fieldset>
+			<div class="toggle-row">
 				{#if sanitizedIngredients.some((item) => item.additional) && !displayOriginal}
-					<label data-tooltip="Display extra ingredient text">
-						<input type="checkbox" bind:checked={displayExtra} />
+					<button class:selected={displayExtra} onclick={() => (displayExtra = !displayExtra)}>
 						Extra
-					</label>
+					</button>
 				{/if}
 				{#if sanitizedIngredients.some((item) => item.dryIngredient) && !displayOriginal}
-					<label data-tooltip="When converting from/to cups, display matched ingredients">
-						<input type="checkbox" bind:checked={displayDryMatch} />
+					<button class:selected={displayDryMatch} onclick={() => (displayDryMatch = !displayDryMatch)}>
 						Cup Match
-					</label>
+					</button>
 				{/if}
-				<label data-tooltip="Display original ingredient text">
-					<input type="checkbox" bind:checked={displayOriginal} />
+				<button class:selected={displayOriginal} onclick={() => (displayOriginal = !displayOriginal)}>
 					Original
-				</label>
-			</fieldset>
+				</button>
+				{#if !displayOriginal}
+					<button class:selected={displaySymbol} onclick={() => (displaySymbol = !displaySymbol)}>
+						Symbols
+					</button>
+				{/if}
+			</div>
 		</div>
 	</div>
+	{#if unitSystemsPresent.length > 0}
+		<div class="legend">
+			{unitSystemsPresent.map((s) => systemLegendMap[s]).filter(Boolean).join(' · ')}
+		</div>
+	{/if}
 </div>
 
 <style lang="scss">
@@ -93,5 +124,38 @@
 	}
 	.default {
 		margin-bottom: 1rem;
+	}
+
+    .segmented {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.25rem;
+        margin-bottom: 0.75rem;
+
+        button {
+            width: 100%;
+        }
+    }
+
+    .segmented button.selected,
+    .toggle-row button.selected {
+        background-color: var(--pico-primary);
+        color: var(--pico-primary-inverse);
+    }
+
+	.toggle-row {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.25rem;
+
+		button {
+			flex: 1 1 150px;
+		}
+	}
+
+	.legend {
+		margin-top: 0.5rem;
+		color: var(--pico-muted-color);
+		font-size: 0.85rem;
 	}
 </style>
