@@ -2,14 +2,21 @@
 
 As the ingredient parser is an important part of the way that Vanilla works, there's a separate part of the manual dedicated to it.
 
-Each ingredient line is analysed by the system and separated into 4 different sections:
+Each ingredient line is analysed by the system and split into:
 
-- Quantity
-- Unit
-- Ingredient
-- Extra
+- Quantity (bold)
+- Unit (italic)
+- Ingredient (regular)
+- Extra (muted, optional)
 
-In practice, you won't really see much of this, except the **Quantity** shows up as bold, the _Unit_ shows up as italic, and the Ingredient in regular font.
+You’ll also see small badges for parser “flags”:
+
+- `~` approx
+- `opt` optional
+- `srv` to-serve
+- `tt` to-taste
+
+Instructions/states (e.g. “finely chopped”, “lukewarm”, “rinsed”) are kept as a muted tail after the ingredient. Inline alternatives that are ingredient-only appear on the same line separated by `|`; quantity/unit alternatives live behind a chevron.
 
 ## Quantity
 
@@ -71,6 +78,10 @@ When the quantity is over 1, the units will return as plural, e.g.
 - 1 tsp sugar => **1** _teaspoon_ sugar
 - 2 tsp sugar => **2** _teaspoons_ sugar
 
+### Unit systems and symbols
+
+The parser tags each unit with a system (`metric`, `imperial`, `americanVolumetric`) and supplies a symbol when one is available (e.g. `g`, `oz`, `c`). The UI shows a legend for the detected systems and lets you switch between Metric / US Vol / Imperial. teaspoons/tablespoons are treated as system-neutral and don’t force a system choice.
+
 ### Languages
 
 _tldr;_ change your default language in the user settings.
@@ -107,6 +118,18 @@ A common pattern of recipes is to include any instructions or specifics after th
 You'll also notice that the "of" has been removed, yep, it's doing that. All in the interest of brevity = readability.
 
 By default, the Extra is hidden, to allow for a clean ingredients list. You can change the default setting in the user [options](usage.md#settings) section.
+
+### Instructions vs Extras
+
+The parser actively pulls instruction/state words into `instructions` and removes them from `ingredient`/`additional` (e.g. “lukewarm” won’t leave stray “luke”). New tidy-up stopwords keep filler like “and/or” from cluttering extras.
+
+### Alternatives
+
+- Ingredient-only alternatives stay inline: `black pepper | white pepper`.
+- Quantity/unit alternatives appear in the dropdown panel with small badges:
+  - `ing` when an alternative ingredient is provided
+  - `unit` when an alternative quantity/unit/system is provided
+- Parenthetical or slash alternatives are captured without leaking units into the primary ingredient.
 
 ### Parsing Errors
 
@@ -161,6 +184,10 @@ What we have is a big list of ingredients, and their approximate volumetric weig
 - 1 cup honey => **336** _grams_ honey | _Honey (336 g/cup)_
 
 * Converted using default water density
+
+### Per-item quantities and multipliers
+
+If a line has a multiplier (e.g. `6 x 50 g patties`), the main quantity remains as entered, and a muted tail shows the per-item amount `(per item: 50 g)`.
 
 As you can see the longer honey ingredient failed. If you want it to work better, just move the extra bit to after a comma or in brackets:
 

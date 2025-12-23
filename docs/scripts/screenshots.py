@@ -9,6 +9,7 @@ USERNAME = os.getenv("ADMIN_USER")
 PASSWORD = os.getenv("ADMIN_PASSWORD")
 ID = os.getenv("ADMIN_ID")
 ORIGIN = os.getenv("ORIGIN", "http://localhost:5173")
+ONLY_RECIPE = os.getenv("ONLY_RECIPE") in ("1", "true", "yes", "on")
 
 LOGIN_URL = f"{ORIGIN}/login"
 RECIPE_LIST = re.compile(fr"{re.escape(ORIGIN)}/user/.+/recipes")
@@ -43,6 +44,13 @@ def capture_both_themes(page, url, image_name):
         page.wait_for_timeout(500)
 
 def run_capture(context, prefix):
+    if not USERNAME or not PASSWORD:
+        raise RuntimeError(
+            "Missing credentials: set ADMIN_USER and ADMIN_PASSWORD in your environment/.env"
+        )
+    if not ID:
+        raise RuntimeError("Missing ADMIN_ID in your environment/.env")
+
     page = context.new_page()
 
     # Login Page
@@ -63,6 +71,10 @@ def run_capture(context, prefix):
     first_href = page.get_attribute("a.recipe-container", "href")
     first_url = f"{ORIGIN}{first_href}"
     capture_both_themes(page, first_url, f"{prefix}-first-recipe")
+
+    if ONLY_RECIPE:
+        # Short-circuit if we only want the recipe view.
+        return
 
     # All other pages
     for item in PAGES_TO_CAPTURE:
