@@ -68,6 +68,11 @@ export const actions = {
 			await locals.auth.setSession(session)
 			throw redirect(302, '/')
 		} catch (err) {
+			// Let redirect bubbles pass through
+			if (err?.location) {
+				throw err
+			}
+
 			console.error(err)
 
 			// Optional: avoid user enumeration by using the same message for both cases
