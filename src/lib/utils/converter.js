@@ -43,7 +43,6 @@ export const converter = (quantity, from, to = 'grams') => {
  * @returns {{system: string, counts: Object}} - The dominant system and the counts of each system.
  */
 export const determineSystem = (ingredientArray = []) => {
-	console.log('🚀 ~ determineSystem ~ ingredientArray:', ingredientArray)
 	const systemCounts = {
 		metric: 0,
 		imperial: 0,
@@ -196,6 +195,8 @@ export function getDietLabel(prefs) {
  */
 export function normalizeIngredient(ingredientObj, options = {}, lang = 'eng') {
 	const { quantity, unit } = ingredientObj
+	const qtyNum =
+		typeof quantity === 'string' ? Number(quantity) : typeof quantity === 'number' ? quantity : null
 	const unitData = units.find((u) => u.names.includes(unit))
 
 	// If unit is unknown, return as-is with optional fallback handling
@@ -207,7 +208,9 @@ export function normalizeIngredient(ingredientObj, options = {}, lang = 'eng') {
 	const decimalPlaces = unitData.decimalPlaces ?? 2
 
 	const roundedQuantity =
-		quantity && !options.skipRounding ? parseFloat(quantity.toFixed(decimalPlaces)) : quantity
+		typeof qtyNum === 'number' && !Number.isNaN(qtyNum) && !options.skipRounding
+			? parseFloat(qtyNum.toFixed(decimalPlaces))
+			: qtyNum
 
 	return {
 		...ingredientObj,
@@ -215,8 +218,8 @@ export function normalizeIngredient(ingredientObj, options = {}, lang = 'eng') {
 		unit: normalizedUnit,
 		unitPlural: plural,
 		symbol: symbol,
-		minQty: roundedQuantity,
-		maxQty: roundedQuantity
+		minQty: roundedQuantity ?? ingredientObj.minQty,
+		maxQty: roundedQuantity ?? ingredientObj.maxQty
 	}
 }
 

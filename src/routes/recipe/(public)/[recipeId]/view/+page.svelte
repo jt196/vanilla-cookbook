@@ -206,7 +206,10 @@
 		if (!isMounted || !selectedSystem) return
 
 		if (selectedSystem === measurementSystem.system) {
-			convertedIngredients = ingredientsArray.map(normalizeIngredient)
+			console.log('from system === to system')
+			convertedIngredients = ingredientsArray.map((ing) =>
+				normalizeIngredient(ing, {}, viewUser.language)
+			)
 			loadingIngredients = false
 		} else {
 			handleIngAPIFetch(measurementSystem, selectedSystem)

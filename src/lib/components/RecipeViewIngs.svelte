@@ -19,28 +19,10 @@
 	let displaySymbol = $state(user.ingSymbol)
 	let displayDryMatch = $state(user.ingMatch)
 	let displayOriginal = $state(user.ingOriginal)
-	const systemLegendMap = {
-		metric: '¹ metric',
-		imperial: '² imperial',
-		americanVolumetric: '³ US Vol'
-	}
 
 	let hasDefaultDensity = $derived(sanitizedIngredients.some((i) => i.usedDefaultDensity === true))
-	let unitSystemsPresent = $derived.by(() => {
-		const set = new Set()
-		sanitizedIngredients.forEach((i) => {
-			if (i.unitSystem) set.add(i.unitSystem)
-		})
-		return Array.from(set)
-	})
 
 	const originalSystem = $derived(measurementSystem?.system || null)
-
-	$effect(() => {
-		if (measurementSystem) {
-			console.log('measurementSystem:', measurementSystem)
-		}
-	})
 </script>
 
 <div class="ing-header">
@@ -120,14 +102,12 @@
 						Extra
 					</button>
 				{/if}
-				{#if sanitizedIngredients.some((item) => item.dryIngredient)}
-					<button
-						class:selected={displayDryMatch}
-						disabled={displayOriginal}
-						onclick={() => (displayDryMatch = !displayDryMatch)}>
-						Match
-					</button>
-				{/if}
+				<button
+					class:selected={displayDryMatch}
+					disabled={displayOriginal || selectedSystem === 'americanVolumetric'}
+					onclick={() => (displayDryMatch = !displayDryMatch)}>
+					Match
+				</button>
 				<button
 					class:selected={displaySymbol}
 					disabled={displayOriginal}

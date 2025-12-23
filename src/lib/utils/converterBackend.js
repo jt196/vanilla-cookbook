@@ -1,4 +1,4 @@
-import { manipulateIngredient } from './converter'
+import { manipulateIngredient, normalizeIngredient } from './converter'
 import { shouldSkipConversion } from './units'
 import { prisma } from '$lib/server/prisma'
 import Fuse from 'fuse.js'
@@ -47,16 +47,24 @@ export async function convertIngredientsBackend(
 
 	// If no system selected, return the raw ingredients
 	return ingredients.map((ingredient) => {
+		// If the target system matches the source, just normalise so symbols/plurals are populated.
+		if (toSystem === fromSystem) {
+			return normalizeIngredient({ ...ingredient }, {}, lang)
+		}
+
+		// Skip conversions (but still normalise for display).
 		if (shouldSkipConversion(ingredient.unit, skipSmallUnits)) {
-			return { ...ingredient }
+			return normalizeIngredient({ ...ingredient }, {}, lang)
 		}
 
 		const converted = manipulateIngredient(ingredient, fromSystem, toSystem, fuse, lang)
-		// If the conversion failed, return the original ingredient
+
+		// If the conversion failed, return the normalised original ingredient
 		if (!converted || converted.error) {
-			return { ...ingredient }
+			return normalizeIngredient({ ...ingredient }, {}, lang)
 		}
 
-		return { ...converted }
+		// Normalise converted output to ensure symbols/unitPlural are set
+		return normalizeIngredient({ ...converted }, {}, lang)
 	})
 }
