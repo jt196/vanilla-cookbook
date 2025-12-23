@@ -211,9 +211,6 @@
 							</i>
 						{/if}
 						<span>{alt.ingredient}</span>
-						{#if alt.unitSystem && systemMarkers[alt.unitSystem]}
-							<sup>{systemMarkers[alt.unitSystem]}</sup>
-						{/if}
 						{#if alt.additional}
 							<small class="muted"> — {alt.additional}</small>
 						{/if}
