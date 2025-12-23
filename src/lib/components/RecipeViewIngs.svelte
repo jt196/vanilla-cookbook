@@ -107,28 +107,33 @@
 	<div class="ing-settings">
 		<div class="checks">
 			<div class="toggle-row">
-				{#if sanitizedIngredients.some((item) => item.additional) && !displayOriginal}
-					<button class:selected={displayExtra} onclick={() => (displayExtra = !displayExtra)}>
-						Extra
-					</button>
-				{/if}
-				{#if sanitizedIngredients.some((item) => item.dryIngredient) && !displayOriginal}
-					<button
-						class:selected={displayDryMatch}
-						onclick={() => (displayDryMatch = !displayDryMatch)}>
-						Match
-					</button>
-				{/if}
 				<button
 					class:selected={displayOriginal}
 					onclick={() => (displayOriginal = !displayOriginal)}>
 					Original
 				</button>
-				{#if !displayOriginal}
-					<button class:selected={displaySymbol} onclick={() => (displaySymbol = !displaySymbol)}>
-						Symbols
+				{#if sanitizedIngredients.some((item) => item.additional)}
+					<button
+						class:selected={displayExtra}
+						disabled={displayOriginal}
+						onclick={() => (displayExtra = !displayExtra)}>
+						Extra
 					</button>
 				{/if}
+				{#if sanitizedIngredients.some((item) => item.dryIngredient)}
+					<button
+						class:selected={displayDryMatch}
+						disabled={displayOriginal}
+						onclick={() => (displayDryMatch = !displayDryMatch)}>
+						Match
+					</button>
+				{/if}
+				<button
+					class:selected={displaySymbol}
+					disabled={displayOriginal}
+					onclick={() => (displaySymbol = !displaySymbol)}>
+					Symbols
+				</button>
 			</div>
 		</div>
 	</div>
