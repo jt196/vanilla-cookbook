@@ -4,3 +4,13 @@
 	display: flex;
 	gap: 1rem;
 }
+
+.badge {
+	display: inline-block;
+	margin-left: 0.25rem;
+	padding: 0 0.35rem;
+	border-radius: 999px;
+	background: var(--pico-muted-border-color);
+	color: var(--pico-muted-color);
+	font-size: 0.75rem;
+}

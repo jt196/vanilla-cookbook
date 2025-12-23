@@ -74,6 +74,14 @@
 	{#if hasDefaultDensity}
 		<div class="default"><i> * Converted using default water density </i></div>
 	{/if}
+	{#if sanitizedIngredients.some((i) => i.optional || i.approx || i.toServe || i.toTaste)}
+		<div class="legend">
+			<span class="badge">~</span> approx
+			<span class="badge">opt</span> optional
+			<span class="badge">srv</span>to serve
+			<span class="badge">tt</span> to taste
+		</div>
+	{/if}
 	<div class="convert">
 		<div class="segmented">
 			<button
@@ -108,7 +116,7 @@
 					<button
 						class:selected={displayDryMatch}
 						onclick={() => (displayDryMatch = !displayDryMatch)}>
-						Cup Match
+						Match
 					</button>
 				{/if}
 				<button
@@ -133,7 +141,7 @@
 		}
 	}
 	.default {
-		margin-bottom: 1rem;
+		margin: 0.5rem 0;
 	}
 
 	.segmented {
@@ -168,7 +176,7 @@
 	}
 
 	.legend {
-		margin-top: 0.5rem;
+		margin: 0.5rem 0;
 		color: var(--pico-muted-color);
 		font-size: 0.85rem;
 	}

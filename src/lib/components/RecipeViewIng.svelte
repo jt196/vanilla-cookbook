@@ -91,14 +91,16 @@
 			(alt) =>
 				(alt.quantity === null || alt.quantity === undefined) &&
 				(!alt.unit || alt.unit === null) &&
-				(alt.ingredient && alt.ingredient.trim().length > 0),
-		),
+				alt.ingredient &&
+				alt.ingredient.trim().length > 0
+		)
 	)
 
 	const panelAlternatives = $derived.by(() =>
 		(ingredient.alternatives || []).filter(
-			(alt) => !(alt.quantity === null || alt.quantity === undefined) || (alt.unit && alt.unit !== null),
-		),
+			(alt) =>
+				!(alt.quantity === null || alt.quantity === undefined) || (alt.unit && alt.unit !== null)
+		)
 	)
 </script>
 
@@ -150,10 +152,10 @@
 								{/if}
 							{/if}
 						</i>
-						{#if ingredient.approx}<span class="badge">~</span>{/if}
-						{#if ingredient.optional}<span class="badge">opt</span>{/if}
-						{#if ingredient.toServe}<span class="badge">serve</span>{/if}
-						{#if ingredient.toTaste}<span class="badge">taste</span>{/if}
+						{#if ingredient.approx}<span class="badge" title="Approximate">~</span>{/if}
+						{#if ingredient.optional}<span class="badge" title="Optional">opt</span>{/if}
+						{#if ingredient.toServe}<span class="badge" title="To serve">srv</span>{/if}
+						{#if ingredient.toTaste}<span class="badge" title="To taste">tt</span>{/if}
 						<span>
 							{@html ingredient.ingredient}
 							{#if extraText}
@@ -309,16 +311,6 @@
 
 	.highlight {
 		animation: highlight 1s; /* Adjust the duration as needed */
-	}
-
-	.badge {
-		display: inline-block;
-		margin-left: 0.25rem;
-		padding: 0 0.35rem;
-		border-radius: 999px;
-		background: var(--pico-muted-border-color);
-		color: var(--pico-muted-color);
-		font-size: 0.75rem;
 	}
 
 	.muted {
