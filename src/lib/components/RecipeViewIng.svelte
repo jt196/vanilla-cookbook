@@ -68,7 +68,7 @@
 	}
 
 	const classifyAlternative = (primary, alt) => {
-		const clean = (v) => (typeof v === 'string' ? v.trim().toLowerCase() : v ?? '')
+		const clean = (v) => (typeof v === 'string' ? v.trim().toLowerCase() : (v ?? ''))
 		const sameIngredient = clean(primary.ingredient) === clean(alt.ingredient)
 		const sameUnit =
 			clean(primary.unit) === clean(alt.unit) &&
@@ -156,9 +156,6 @@
 						{#if ingredient.optional}<span class="badge">opt</span>{/if}
 						{#if ingredient.toServe}<span class="badge">serve</span>{/if}
 						{#if ingredient.toTaste}<span class="badge">taste</span>{/if}
-						{#if ingredient.alternatives && ingredient.alternatives.length}
-							<span class="badge">alts</span>
-						{/if}
 						<span>
 							{@html ingredient.ingredient}
 							{#if extraText}
@@ -196,7 +193,7 @@
 							{/if}
 							{#if ingredient.alternatives && ingredient.alternatives.length}
 								<details class="alts">
-									<summary>Alternatives</summary>
+									<summary></summary>
 									<ul>
 										{#each ingredient.alternatives as alt}
 											{#if alt}
@@ -321,12 +318,35 @@
 
 	.alts summary {
 		cursor: pointer;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.25rem;
+		list-style: none;
+	}
+
+	.alts summary::marker,
+	.alts summary::-webkit-details-marker {
+		display: none;
 	}
 
 	.alts ul {
 		list-style: none;
 		padding-left: 0;
 		margin: 0.25rem 0 0 0;
+	}
+
+	.arrow {
+		display: inline-block;
+		width: 0.6rem;
+		height: 0.6rem;
+		border-right: 2px solid var(--pico-muted-color);
+		border-bottom: 2px solid var(--pico-muted-color);
+		transform: rotate(45deg);
+		transition: transform 0.2s ease;
+	}
+
+	.alts[open] .arrow {
+		transform: rotate(135deg);
 	}
 
 	.alt-label {
