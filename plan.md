@@ -63,6 +63,6 @@ Goal: surface the new parser fields (approx, optional, toServe, instructions, un
   5) Keep per-item fields consistent: if primary has perItemQuantity, mirror on alts when available; otherwise omit.
 
 ### Phase plan (checkboxes)
-- [ ] **Phase 1 (MVP UI)**: badges for approx/optional/toServe/toTaste; instruction tail; per-item hint in-line (e.g., “(per item: 50 g)” after the main line); unit-system superscript + legend; alternatives button with simple details dropdown; toggle row converted to compact buttons; converter dropdown replaced by a 3-button segmented control (Metric / US Vol / Imperial) on its own row above toggles, with active style = primary.
+- [x] **Phase 1 (MVP UI)**: badges for approx/optional/toServe/toTaste; instruction tail; per-item hint in-line (e.g., “(per item: 50 g)” after the main line); unit-system superscript + legend; alternatives button with simple details dropdown; toggle row converted to compact buttons; converter dropdown replaced by a 3-button segmented control (Metric / US Vol / Imperial) on its own row above toggles, with active style = primary.
 - [ ] **Phase 2 (Polish)**: improved alternatives popover styling and classification tags; optional copy/swap actions; better mobile spacing and tap targets; refine legends/icons.
 - [ ] **Phase 3 (Nice-to-have)**: persistence of toggle states per user; animation polish; accessibility audit (keyboard focus for badges/popover).
