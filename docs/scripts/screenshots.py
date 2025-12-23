@@ -57,7 +57,8 @@ def run_capture(context, prefix):
     capture_both_themes(page, f"{ORIGIN}/login", f"{prefix}-login")
 
     # Login
-    page.fill('input[name="username"]', USERNAME)
+    page.wait_for_selector('input[name="identifier"]')
+    page.fill('input[name="identifier"]', USERNAME)
     page.fill('input[name="password"]', PASSWORD)
     page.click('button[type="submit"]')
     page.wait_for_url(RECIPE_LIST)
@@ -93,8 +94,9 @@ with sync_playwright() as p:
     desktop.close()
 
     # === Mobile
-    iphone = p.devices["iPhone 12"]
-    mobile = browser.new_context(**iphone)
+    # Use a taller, higher-res mobile profile for clearer captures.
+    large_mobile = p.devices["iPhone 14 Pro Max"]
+    mobile = browser.new_context(**large_mobile)
     run_capture(mobile, "screen-mobile")
     mobile.close()
 

@@ -69,18 +69,21 @@
 			<button
 				class:selected={selectedSystem === 'metric'}
 				class:orig={originalSystem === 'metric'}
+				class="outline"
 				onclick={() => onSelectedSystemChange('metric')}>
 				Metric
 			</button>
 			<button
 				class:selected={selectedSystem === 'americanVolumetric'}
 				class:orig={originalSystem === 'americanVolumetric'}
+				class="outline"
 				onclick={() => onSelectedSystemChange('americanVolumetric')}>
 				US Vol
 			</button>
 			<button
 				class:selected={selectedSystem === 'imperial'}
 				class:orig={originalSystem === 'imperial'}
+				class="outline"
 				onclick={() => onSelectedSystemChange('imperial')}>
 				Imperial
 			</button>
@@ -91,12 +94,14 @@
 			<div class="toggle-row">
 				<button
 					class:selected={displayOriginal}
+					class="outline"
 					onclick={() => (displayOriginal = !displayOriginal)}>
 					Original
 				</button>
 				{#if sanitizedIngredients.some((item) => item.additional)}
 					<button
 						class:selected={displayExtra}
+						class="outline"
 						disabled={displayOriginal}
 						onclick={() => (displayExtra = !displayExtra)}>
 						Extra
@@ -104,12 +109,14 @@
 				{/if}
 				<button
 					class:selected={displayDryMatch}
+					class="outline"
 					disabled={displayOriginal || selectedSystem === 'americanVolumetric'}
 					onclick={() => (displayDryMatch = !displayDryMatch)}>
 					Match
 				</button>
 				<button
 					class:selected={displaySymbol}
+					class="outline"
 					disabled={displayOriginal}
 					onclick={() => (displaySymbol = !displaySymbol)}>
 					Symbols
@@ -146,7 +153,7 @@
 		color: var(--pico-primary-inverse);
 	}
 	.segmented button.orig {
-		border: 2px solid var(--pico-primary);
+		border: 1px solid var(--pico-contrast);
 		box-shadow: 0 0 0 1px var(--pico-primary);
 	}
 
