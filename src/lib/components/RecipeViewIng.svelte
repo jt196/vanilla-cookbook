@@ -85,6 +85,21 @@
 			.filter((p) => !stopExtras.includes(p.toLowerCase()) && p.length > 2)
 		return parts.length ? parts.join(', ') : null
 	})
+
+	const inlineAlternatives = $derived.by(() =>
+		(ingredient.alternatives || []).filter(
+			(alt) =>
+				(alt.quantity === null || alt.quantity === undefined) &&
+				(!alt.unit || alt.unit === null) &&
+				(alt.ingredient && alt.ingredient.trim().length > 0),
+		),
+	)
+
+	const panelAlternatives = $derived.by(() =>
+		(ingredient.alternatives || []).filter(
+			(alt) => !(alt.quantity === null || alt.quantity === undefined) || (alt.unit && alt.unit !== null),
+		),
+	)
 </script>
 
 <div class="ingredient-line" class:highlight={isHighlighted}>
@@ -144,6 +159,11 @@
 							{#if extraText}
 								<i> | {extraText}</i>
 							{/if}
+							{#if inlineAlternatives.length}
+								<span class="inline-alts">
+									| {inlineAlternatives.map((alt) => alt.ingredient).join(' | ')}
+								</span>
+							{/if}
 							{#if displayDryMatch && ingredient.dryIngredient}
 								<i>
 									| {ingredient.dryIngredient.name} ({ingredient.dryIngredient.gramsPerCup} g/cup)</i>
@@ -174,7 +194,7 @@
 									)
 								</small>
 							{/if}
-							{#if ingredient.alternatives && ingredient.alternatives.length}
+							{#if panelAlternatives.length}
 								<button
 									class="alt-toggle"
 									type="button"
@@ -194,10 +214,10 @@
 		{/if}
 	</div>
 </div>
-{#if ingredient.alternatives && ingredient.alternatives.length && showAlternatives}
+{#if panelAlternatives.length && showAlternatives}
 	<div class="alts-panel">
 		<ul>
-			{#each ingredient.alternatives as alt}
+			{#each panelAlternatives as alt}
 				{#if alt}
 					<li>
 						{#if alt.quantity}
@@ -303,6 +323,10 @@
 
 	.muted {
 		color: var(--pico-muted-color);
+	}
+
+	.inline-alts {
+		margin-left: 0.25rem;
 	}
 
 	.alt-toggle {
