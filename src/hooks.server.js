@@ -48,6 +48,9 @@ export const handle = async ({ event, resolve }) => {
 
 		// normalize onto settings so everyone just reads settings.registrationAllowed
 		settings = { ...s, registrationAllowed: regAllowed }
+	} else {
+		// Provide safe defaults when not seeded to avoid undefined access
+		settings = { registrationAllowed: false }
 	}
 
 	event.locals.site = {

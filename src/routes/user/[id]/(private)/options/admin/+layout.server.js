@@ -7,7 +7,8 @@ export const load = async ({ locals }) => {
 		error(403, 'Forbidden')
 	}
 
-	const settings = locals.settings
+	// Settings are placed on locals.site in hooks; provide a safe fallback.
+	const settings = locals.site?.settings ?? { registrationAllowed: false }
 
 	return { settings, user }
 }
