@@ -25,6 +25,12 @@
 	let hasDefaultDensity = $derived(sanitizedIngredients.some((i) => i.usedDefaultDensity === true))
 
 	const originalSystem = $derived(measurementSystem?.system || null)
+
+	// Determine which badges are actually used in the ingredients
+	const hasApprox = $derived(sanitizedIngredients.some((i) => i.approx))
+	const hasOptional = $derived(sanitizedIngredients.some((i) => i.optional))
+	const hasToServe = $derived(sanitizedIngredients.some((i) => i.toServe))
+	const hasToTaste = $derived(sanitizedIngredients.some((i) => i.toTaste))
 </script>
 
 <div class="ing-header">
@@ -58,12 +64,12 @@
 	{#if hasDefaultDensity}
 		<div class="default"><i> * Converted using default water density </i></div>
 	{/if}
-	{#if sanitizedIngredients.some((i) => i.optional || i.approx || i.toServe || i.toTaste)}
+	{#if hasApprox || hasOptional || hasToServe || hasToTaste}
 		<div class="legend">
-			<Badge>~</Badge> approx
-			<Badge>opt</Badge> optional
-			<Badge>srv</Badge>to serve
-			<Badge>tt</Badge> to taste
+			{#if hasApprox}<Badge>~</Badge> approx{/if}
+			{#if hasOptional}<Badge>opt</Badge> optional{/if}
+			{#if hasToServe}<Badge>srv</Badge> to serve{/if}
+			{#if hasToTaste}<Badge>tt</Badge> to taste{/if}
 		</div>
 	{/if}
 	<div class="convert">
@@ -136,6 +142,7 @@
 
 		:global(button) {
 			width: 100%;
+			margin: 0;
 		}
 	}
 
@@ -156,6 +163,7 @@
 
 		:global(button) {
 			flex: 1 1 0;
+			margin: 0;
 		}
 	}
 

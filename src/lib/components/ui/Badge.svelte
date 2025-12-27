@@ -21,6 +21,7 @@
 	.badge {
 		display: inline-block;
 		padding: 0.25rem 0.5rem;
+		margin: 0;
 		border-radius: 0.25rem;
 		font-size: 0.85em;
 		font-weight: 500;
