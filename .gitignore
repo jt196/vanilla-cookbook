@@ -12,6 +12,7 @@ Thumbs.db
 /.svelte-kit/
 /package/
 /site/
+/.venv/
 
 # ───── Vite / SvelteKit temp & generated files ────────────────────────────────
 vite.config.*.timestamp-*
