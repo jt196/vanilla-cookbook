@@ -1,8 +1,17 @@
 // scripts/seed.js
-import { PrismaClient } from '@prisma/client'
+import PrismaClientPkg from '@prisma/client'
+import { PrismaLibSql } from '@prisma/adapter-libsql'
 import { seedIngredients } from './seedIng.js' // adjust the path appropriately
 
-const prisma = new PrismaClient()
+const { PrismaClient } = PrismaClientPkg
+
+// Create LibSQL adapter for Prisma 7
+const libsqlAdapter = new PrismaLibSql({
+	url: process.env.DATABASE_URL || 'file:./prisma/db/dev.sqlite'
+})
+
+// Initialize Prisma with adapter
+const prisma = new PrismaClient({ adapter: libsqlAdapter })
 
 /**
  * Seeds the database with initial data by creating site settings and running

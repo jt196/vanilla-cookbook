@@ -1,5 +1,6 @@
 // adminUtils.js
 import PrismaClientPkg from '@prisma/client'
+import { PrismaLibSql } from '@prisma/adapter-libsql'
 import { lucia } from 'lucia'
 import { sveltekit } from 'lucia/middleware'
 import { prisma } from '@lucia-auth/adapter-prisma'
@@ -7,18 +8,22 @@ import 'lucia/polyfill/node'
 
 // Initialize Prisma
 const PrismaClient = PrismaClientPkg.PrismaClient
+const adapter = new PrismaLibSql({
+	url: process.env.DATABASE_URL || 'file:./prisma/db/dev.sqlite'
+})
 const prismaC = new PrismaClient({
-	errorFormat: 'pretty',
-	datasources: {
-		db: {
-			url: 'file:./db/dev.sqlite'
-		}
-	}
+	adapter,
+	errorFormat: 'pretty'
 })
 
-// Setup Lucia
+// Setup Lucia with separate client instance
+const luciaAdapter = new PrismaLibSql({
+	url: process.env.DATABASE_URL || 'file:./prisma/db/dev.sqlite'
+})
+const luciaClient = new PrismaClient({ adapter: luciaAdapter })
+
 export const auth = lucia({
-	adapter: prisma(new PrismaClient(), {
+	adapter: prisma(luciaClient, {
 		user: 'authUser',
 		key: 'authKey',
 		session: 'authSession'

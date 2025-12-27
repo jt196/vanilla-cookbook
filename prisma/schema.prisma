@@ -7,7 +7,6 @@ generator client {
 
 datasource db {
     provider = "sqlite"
-    url      = "file:./db/dev.sqlite"
 }
 
 model Recipe {

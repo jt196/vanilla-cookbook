@@ -57,6 +57,19 @@ Log when you've cooked a recipe. Calendar view, recipe view of logs. [Docs](http
 
 User authentication is supported. You can add users, turn on/off registration. [Docs](https://vanilla-cookbook.readthedocs.io/en/latest/manual/usage/#privacy)
 
+### Automated Database Backups
+
+Docker installations include automatic backups to protect your recipe data:
+
+- **Scheduled backups**: Weekly backups run every Sunday at 3am by default, keeping the 6 most recent backups (6 weeks of history). Configurable via `BACKUP_CRON_SCHEDULE` in `.env` (supports standard cron syntax for daily, monthly, or custom schedules).
+- **Pre-migration backups**: Automatic backup created before any database schema migrations to ensure safe upgrades.
+- **Retention management**: Configure how many scheduled backups to keep with `BACKUP_RETENTION_COUNT` in `.env` (default: 6).
+- **Accessible backups**: All backups are stored in your mounted `./db` folder alongside your active database:
+  - `scheduled-backup-YYYYMMDD-HHMMSS.sqlite` - Regular scheduled backups (auto-cleaned)
+  - `auto-backup-YYYYMMDD-HHMMSS.sqlite` - Pre-migration backups (preserved)
+
+After changing backup settings, restart the container: `docker-compose restart`
+
 ### Public Recipes
 
 Recipes and your personal cookbook can be made public, so you can share them with friends and family.
@@ -101,6 +114,13 @@ Currently:
 6. On first run, you'll be prompted to enter Admin user details.
 
 ### Local Dev
+
+**Prerequisites**: You'll need build tools installed for native module compilation (better-sqlite3):
+- **macOS**: Xcode Command Line Tools (`xcode-select --install`)
+- **Linux**: `build-essential` package (Ubuntu/Debian: `sudo apt-get install build-essential`)
+- **Windows**: Visual Studio Build Tools or windows-build-tools npm package
+
+**Setup**:
 
 1. Clone the repo and the recipe-ingredient-parser submodule: `git clone --recursive https://github.com/jt196/vanilla-cookbook.git`
 2. At the root of the project, create the .env file: `cp .env.template .env`
