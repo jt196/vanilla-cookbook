@@ -1,5 +1,6 @@
 <script>
 	import FeedbackMessage from '$lib/components/FeedbackMessage.svelte'
+	import Input from '$lib/components/ui/Form/Input.svelte'
 	import Oauth from '$lib/components/Oauth.svelte'
 	import { onMount } from 'svelte'
 
@@ -32,11 +33,8 @@
 			<h2>Login</h2>
 			<h3>Welcome back!</h3>
 		</hgroup>
-		<label for="identifier">Username or email</label>
-		<input type="text" id="identifier" name="identifier" required />
-
-		<label for="password">Password</label>
-		<input type="password" id="password" name="password" required />
+		<Input type="text" id="identifier" name="identifier" label="Username or email" required />
+		<Input type="password" id="password" name="password" label="Password" required />
 
 		<button type="submit">Login</button>
 	</form>

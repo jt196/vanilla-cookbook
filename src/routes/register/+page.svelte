@@ -2,6 +2,7 @@
 	import { enhance } from '$app/forms'
 	import { validatePassword } from '$lib/utils/security.js'
 	import FeedbackMessage from '$lib/components/FeedbackMessage.svelte'
+	import ValidationMessage from '$lib/components/ui/Form/ValidationMessage.svelte'
 	import Oauth from '$lib/components/Oauth.svelte'
 
 	let { data, form } = $props()
@@ -59,17 +60,15 @@
 
 		<label for="email">Email</label>
 		<input type="email" id="email" name="email" bind:value={email} required />
-		{#if email.length > 0 && !emailValid}
-			<p class="validation-message error">Please enter a valid email address.</p>
-		{/if}
+		<ValidationMessage
+			message={email.length > 0 && !emailValid ? 'Please enter a valid email address.' : null}
+			isError={true} />
 
 		<label for="password">Password</label>
 		<input type="password" id="password" name="password" bind:value={password} required />
-		{#if passwordValidation && passwordValidation.message}
-			<p class="validation-message" class:valid={passwordValidation.isValid}>
-				{passwordValidation.message}
-			</p>
-		{/if}
+		<ValidationMessage
+			message={passwordValidation?.message}
+			isValid={passwordValidation?.isValid} />
 
 		<label for="passwordConfirm">Confirm Password</label>
 		<input
@@ -78,9 +77,7 @@
 			name="passwordConfirm"
 			bind:value={passwordConfirm}
 			required />
-		{#if passwordsMismatch}
-			<p class="validation-message error">Passwords don't match!</p>
-		{/if}
+		<ValidationMessage message={passwordsMismatch ? "Passwords don't match!" : null} isError={true} />
 
 		<label>
 			<input type="checkbox" name="seedRecipes" bind:checked={seedRecipes} />
@@ -97,19 +94,3 @@
 
 	<FeedbackMessage message={errorMessage} type="error" />
 </div>
-
-<style>
-	.validation-message {
-		margin-top: -0.75rem;
-		margin-bottom: 1rem;
-		font-size: 0.875rem;
-	}
-
-	.validation-message.valid {
-		color: var(--pico-ins-color);
-	}
-
-	.validation-message:not(.valid) {
-		color: var(--pico-del-color);
-	}
-</style>

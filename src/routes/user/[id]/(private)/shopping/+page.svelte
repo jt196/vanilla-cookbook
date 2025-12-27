@@ -8,9 +8,7 @@
 	} from '$lib/utils/crud.js'
 	import { ingredientParse } from '$lib/submodules/recipe-ingredient-parser/src/index.js'
 	import Link from '$lib/components/svg/Link.svelte'
-	import { browser } from '$app/environment'
 	import { fade } from 'svelte/transition'
-	import { onMount, onDestroy } from 'svelte'
 	import { sortByTwoKeys } from '$lib/utils/sorting.js'
 	import View from '$lib/components/svg/View.svelte'
 	import ViewNo from '$lib/components/svg/ViewNo.svelte'
@@ -20,6 +18,8 @@
 	import FeedbackMessage from '$lib/components/FeedbackMessage.svelte'
 	import Edit from '$lib/components/svg/Edit.svelte'
 	import ConfirmationDialog from '$lib/components/ConfirmationDialog.svelte'
+	import Dialog from '$lib/components/ui/Dialog.svelte'
+	import Button from '$lib/components/ui/Button.svelte'
 
 	/** @type {{data: any}} */
 	let { data } = $props()
@@ -31,9 +31,8 @@
 	let shoppingFeedback = $state('')
 	let newIngredient = $state('')
 	let showHidden = $state(false)
-	let editDialog = $state() // Reference to the edit modal dialog
-	let isEditDialogOpen = $state(false) // State to track if the edit modal is open
-	let editingItem = $state({}) // The item currently being edited
+	let isEditDialogOpen = $state(false)
+	let editingItem = $state({})
 
 	async function handleCheckboxChange(item, event) {
 		const purchased = event.target.checked
@@ -54,25 +53,6 @@
 		}, 300)
 	}
 
-	// Escape to close the edit dialog
-
-	onMount(() => {
-		if (browser) {
-			document.addEventListener('keydown', handleKeydown)
-		}
-	})
-
-	onDestroy(() => {
-		if (browser) {
-			document.removeEventListener('keydown', handleKeydown)
-		}
-	})
-
-	function handleKeydown(event) {
-		if (event.key === 'Escape' && isEditDialogOpen === true) {
-			isEditDialogOpen = false
-		}
-	}
 
 	async function handleDelete() {
 		shoppingFeedback = ''
@@ -330,7 +310,7 @@
 	{/snippet}
 </ConfirmationDialog>
 
-<dialog this={editDialog} open={isEditDialogOpen}>
+<Dialog bind:isOpen={isEditDialogOpen}>
 	<form onsubmit={handleSaveEdit}>
 		<label for="edit-name">Name:</label>
 		<input id="edit-name" type="text" bind:value={editingItem.name} />
@@ -342,17 +322,17 @@
 		<input id="edit-unit" type="text" bind:value={editingItem.unit} />
 
 		<footer>
-			<button type="button" onclick={() => (isEditDialogOpen = false)}>Cancel</button>
-			<button
+			<Button type="button" onclick={() => (isEditDialogOpen = false)}>Cancel</Button>
+			<Button
 				type="button"
 				class="outline secondary"
 				id="delete-item"
 				onclick={() => handleDeleteItem(editingItem.uid)}
-				><Delete width="15px" height="15px" fill="var(--pico-del-color)" /></button>
-			<button type="submit">Save</button>
+				><Delete width="15px" height="15px" fill="var(--pico-del-color)" /></Button>
+			<Button type="submit">Save</Button>
 		</footer>
 	</form>
-</dialog>
+</Dialog>
 
 <style lang="scss">
 	.checked {

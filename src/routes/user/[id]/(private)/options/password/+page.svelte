@@ -1,9 +1,11 @@
 <script>
 	import { goto } from '$app/navigation'
 	import { validatePassword } from '$lib/utils/security.js'
+	import FeedbackMessage from '$lib/components/FeedbackMessage.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Container from '$lib/components/ui/Container.svelte'
 	import Input from '$lib/components/ui/Form/Input.svelte'
+	import ValidationMessage from '$lib/components/ui/Form/ValidationMessage.svelte'
 
 	let oldPass = $state(''),
 		newPass = $state(''),
@@ -86,34 +88,12 @@
 	<form onsubmit={updatePassword}>
 		<Input type="password" id="old" label="Old Password" bind:value={oldPass} />
 		<Input type="password" id="new" label="New Password" bind:value={newPass} />
-		{#if newPasswordValidation && newPasswordValidation.message}
-			<p class="validation-message" class:valid={newPasswordValidation.isValid}>
-				{newPasswordValidation.message}
-			</p>
-		{/if}
+		<ValidationMessage
+			message={newPasswordValidation?.message}
+			isValid={newPasswordValidation?.isValid} />
 		<Input type="password" id="confirm" label="Confirm New Password" bind:value={newPassConfirm} />
-		{#if passwordsMismatch}
-			<p class="validation-message error">Passwords don't match!</p>
-		{/if}
+		<ValidationMessage message={passwordsMismatch ? "Passwords don't match!" : null} isError={true} />
 		<Button type="submit" disabled={isSubmitDisabled}>Update Password</Button>
 	</form>
-	{#if feedbackMessage}
-		<p class="feedback">{feedbackMessage}</p>
-	{/if}
+	<FeedbackMessage message={feedbackMessage} inline />
 </Container>
-
-<style>
-	.validation-message {
-		margin-top: -0.75rem;
-		margin-bottom: 1rem;
-		font-size: 0.875rem;
-	}
-
-	.validation-message.valid {
-		color: var(--pico-ins-color);
-	}
-
-	.validation-message.error {
-		color: var(--pico-del-color);
-	}
-</style>

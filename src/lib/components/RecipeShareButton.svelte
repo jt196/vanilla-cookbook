@@ -1,5 +1,7 @@
 <script>
 	import FeedbackMessage from '$lib/components/FeedbackMessage.svelte'
+	import Dialog from '$lib/components/ui/Dialog.svelte'
+	import Button from '$lib/components/ui/Button.svelte'
 	import { changeRecipePublic } from '$lib/utils/crud'
 	import { onMount } from 'svelte'
 	import Share from './svg/Share.svelte'
@@ -74,15 +76,11 @@
 
 <FeedbackMessage message={feedback} type="info" />
 
-{#if showConfirmDialog}
-	<dialog open>
-		<article>
-			<h2>Make Recipe Public?</h2>
-			<p>This recipe is currently private. Would you like to make it public so it can be shared?</p>
-			<footer>
-				<button class="secondary" onclick={cancelShare}>Cancel</button>
-				<button onclick={confirmMakePublic}>Make Public & Share</button>
-			</footer>
-		</article>
-	</dialog>
-{/if}
+<Dialog bind:isOpen={showConfirmDialog}>
+	<h2>Make Recipe Public?</h2>
+	<p>This recipe is currently private. Would you like to make it public so it can be shared?</p>
+	<footer>
+		<Button class="secondary" onclick={cancelShare}>Cancel</Button>
+		<Button onclick={confirmMakePublic}>Make Public & Share</Button>
+	</footer>
+</Dialog>

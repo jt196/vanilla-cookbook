@@ -6,7 +6,8 @@
 		message = '',
 		timeout = 3000,
 		type = 'info',
-		background = 'var(--pico-background-color)'
+		background = 'var(--pico-background-color)',
+		inline = false
 	} = $props()
 
 	let timeoutId
@@ -18,7 +19,7 @@
 	}
 
 	$effect(() => {
-		if (message) {
+		if (message && !inline) {
 			clearTimeout(timeoutId) // Prevent overlapping timeouts
 			timeoutId = setTimeout(() => {
 				message = ''
@@ -30,8 +31,9 @@
 {#if message}
 	<div
 		transition:fade
-		class="feedback-message"
-		style="color: {colors[type]}; background-color: {background};">
+		class:feedback-message={!inline}
+		class:feedback={inline}
+		style="color: {colors[type]}; {inline ? '' : `background-color: ${background};`}">
 		{message}
 	</div>
 {/if}
@@ -51,5 +53,10 @@
 		max-width: 80%;
 		text-align: center;
 		background-clip: padding-box;
+	}
+
+	.feedback {
+		margin-top: 0.5rem;
+		font-size: 0.9em;
 	}
 </style>

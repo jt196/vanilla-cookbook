@@ -1,6 +1,7 @@
 <script>
 	import { localDateAndTime } from '$lib/utils/dateTime'
 	import { invalidateAll } from '$app/navigation'
+	import FeedbackMessage from '$lib/components/FeedbackMessage.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Badge from '$lib/components/ui/Badge.svelte'
 	import Container from '$lib/components/ui/Container.svelte'
@@ -74,9 +75,7 @@
 		<Checkbox name="Admin" bind:checked={settings.registrationAllowed} label="Allow Registrations" />
 		<footer>
 			<Button type="submit">Update</Button>
-			{#if settingsFeedback}
-				<p class="feedback">{settingsFeedback}</p>
-			{/if}
+			<FeedbackMessage message={settingsFeedback} inline />
 		</footer>
 	</form>
 </Container>
@@ -93,9 +92,7 @@
 				<Button onclick={createManualBackup} disabled={backupInProgress} loading={backupInProgress}>
 					{backupInProgress ? 'Creating Backup...' : 'Backup Now'}
 				</Button>
-				{#if backupFeedback}
-					<p class="feedback">{backupFeedback}</p>
-				{/if}
+				<FeedbackMessage message={backupFeedback} inline />
 			</div>
 		</div>
 
@@ -159,13 +156,8 @@
 			padding-top: 1rem;
 			border-top: 1px solid var(--pico-muted-border-color);
 
-			button {
+			:global(button) {
 				margin-bottom: 0.5rem;
-			}
-
-			.feedback {
-				margin-top: 0.5rem;
-				font-size: 0.9em;
 			}
 		}
 	}
@@ -174,7 +166,7 @@
 		color: var(--pico-del-color);
 	}
 
-	.filename {
+	:global(.filename) {
 		font-family: monospace;
 		font-size: 0.9em;
 		word-break: break-all;

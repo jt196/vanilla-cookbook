@@ -3,20 +3,12 @@
 	import FeedbackMessage from '$lib/components/FeedbackMessage.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Checkbox from '$lib/components/ui/Form/Checkbox.svelte'
-	import Radio from '$lib/components/ui/Form/Radio.svelte'
+	import Dropdown from '$lib/components/ui/Form/Dropdown.svelte'
 
 	/** @type {{data: any}} */
 	let { data } = $props()
 	const { user, dbRecordCount } = $state(data)
 	let settingsFeedback = $state('')
-
-	let systemLabel = $derived(
-		'Selected system: ' + systems.find((system) => system.value === user.units).label
-	)
-
-	let languageLabel = $derived(
-		'Selected language: ' + languages.find((language) => language.value === user.language).label
-	)
 
 	$effect(() => {
 		console.log(user.units)
@@ -67,38 +59,16 @@
 	<Checkbox name="Use Categories" bind:checked={user.useCats}>
 		<b>Use Categories</b> enables the user to filter by category.
 	</Checkbox>
-	<details class="dropdown">
-		<summary>{systemLabel}</summary>
-		<ul>
-			{#each systems as system}
-				<li>
-					<Radio
-						bind:group={user.units}
-						name="system"
-						value={system.value}
-						checked={system.value === user.units}
-						label={system.label}
-					/>
-				</li>
-			{/each}
-		</ul>
-	</details>
-	<details class="dropdown">
-		<summary>{languageLabel}</summary>
-		<ul>
-			{#each languages as language}
-				<li>
-					<Radio
-						bind:group={user.language}
-						name="language"
-						value={language.value}
-						checked={language.value === user.language}
-						label={language.label}
-					/>
-				</li>
-			{/each}
-		</ul>
-	</details>
+	<Dropdown
+		name="system"
+		options={systems}
+		bind:selected={user.units}
+		label="Select measurement system" />
+	<Dropdown
+		name="language"
+		options={languages}
+		bind:selected={user.language}
+		label="Select language" />
 	<h2>Privacy</h2>
 	<Checkbox name="Profile Public" bind:checked={user.publicProfile} label="Profile Public" />
 	<Checkbox name="Recipes Public" bind:checked={user.publicRecipes} label="Recipes Public" />

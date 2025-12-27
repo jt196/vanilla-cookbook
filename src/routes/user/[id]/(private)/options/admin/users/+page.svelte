@@ -3,13 +3,14 @@
 	import Delete from '$lib/components/svg/Delete.svelte'
 	import New from '$lib/components/svg/New.svelte'
 	import { validatePassword } from '$lib/utils/security.js'
-	import { onMount } from 'svelte'
 	import { goto } from '$app/navigation'
 	import TrueFalse from '$lib/components/TrueFalse.svelte'
 	import FeedbackMessage from '$lib/components/FeedbackMessage.svelte'
+	import Dialog from '$lib/components/ui/Dialog.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Input from '$lib/components/ui/Form/Input.svelte'
 	import Checkbox from '$lib/components/ui/Form/Checkbox.svelte'
+	import ValidationMessage from '$lib/components/ui/Form/ValidationMessage.svelte'
 	import Table from '$lib/components/ui/Table/Table.svelte'
 	import TableHead from '$lib/components/ui/Table/TableHead.svelte'
 	import TableBody from '$lib/components/ui/Table/TableBody.svelte'
@@ -35,25 +36,6 @@
 		isAdmin: false,
 		userSeed: true
 	})
-
-	let dialog = $state()
-
-	onMount(() => {
-		dialog.addEventListener('close', () => {
-			isDialogOpen = false
-		})
-		document.addEventListener('keydown', handleKeydown)
-		return () => {
-			// Cleanup when the component is destroyed
-			document.removeEventListener('keydown', handleKeydown)
-		}
-	})
-
-	function handleKeydown(event) {
-		if (event.key === 'Escape' && isDialogOpen) {
-			isDialogOpen = false
-		}
-	}
 
 	function openCreateDialog() {
 		isEditMode = false
@@ -222,63 +204,43 @@
 
 <FeedbackMessage message={userFeedback} type="error" />
 
-<dialog bind:this={dialog} open={isDialogOpen}>
-	<article>
-		<h2>{isEditMode ? 'Edit User' : 'Create User'}</h2>
-		<Input
-			type="text"
-			id="username"
-			name="username"
-			label="Username"
-			data-tooltip="Username is not editable"
-			disabled={isEditMode}
-			bind:value={editingUser.username} />
-		<Input type="email" id="email" name="email" label="Email" bind:value={editingUser.email} />
-		<Input type="password" id="password" name="password" label="Password" bind:value={password} />
-		{#if passwordValidation && passwordValidation.message}
-			<p class="validation-message" class:valid={passwordValidation.isValid}>
-				{passwordValidation.message}
-			</p>
-		{/if}
-		<Input
-			type="password"
-			id="passwordConfirm"
-			name="passwordConfirm"
-			label="Confirm Password"
-			bind:value={passwordConfirm} />
-		{#if passwordsMismatch}
-			<p class="validation-message error">Passwords don't match!</p>
-		{/if}
-		{#if !isEditMode || !editingUser.isAdmin || adminCount > 1}
-			<Checkbox name="Admin" bind:checked={editingUser.isAdmin} label="Admin" />
-		{/if}
-		{#if !isEditMode}
-			<Checkbox name="Seed Recipes" bind:checked={editingUser.userSeed} label="Seed Recipes" />
-		{/if}
-		<footer>
-			<Button onclick={() => (isDialogOpen = false)} class="secondary">Cancel</Button>
-			<Button onclick={handleSubmit}>{isEditMode ? 'Update' : 'Create'}</Button>
-		</footer>
-	</article>
-</dialog>
+<Dialog bind:isOpen={isDialogOpen}>
+	<h2>{isEditMode ? 'Edit User' : 'Create User'}</h2>
+	<Input
+		type="text"
+		id="username"
+		name="username"
+		label="Username"
+		data-tooltip="Username is not editable"
+		disabled={isEditMode}
+		bind:value={editingUser.username} />
+	<Input type="email" id="email" name="email" label="Email" bind:value={editingUser.email} />
+	<Input type="password" id="password" name="password" label="Password" bind:value={password} />
+	<ValidationMessage
+		message={passwordValidation?.message}
+		isValid={passwordValidation?.isValid} />
+	<Input
+		type="password"
+		id="passwordConfirm"
+		name="passwordConfirm"
+		label="Confirm Password"
+		bind:value={passwordConfirm} />
+	<ValidationMessage message={passwordsMismatch ? "Passwords don't match!" : null} isError={true} />
+	{#if !isEditMode || !editingUser.isAdmin || adminCount > 1}
+		<Checkbox name="Admin" bind:checked={editingUser.isAdmin} label="Admin" />
+	{/if}
+	{#if !isEditMode}
+		<Checkbox name="Seed Recipes" bind:checked={editingUser.userSeed} label="Seed Recipes" />
+	{/if}
+	<footer>
+		<Button onclick={() => (isDialogOpen = false)} class="secondary">Cancel</Button>
+		<Button onclick={handleSubmit}>{isEditMode ? 'Update' : 'Create'}</Button>
+	</footer>
+</Dialog>
 
 <style lang="scss">
 	.you-label {
 		color: var(--pico-primary); // Use a CSS variable for highlight color or a fixed value.
 		margin-left: 0.5em;
-	}
-
-	.validation-message {
-		margin-top: -0.75rem;
-		margin-bottom: 1rem;
-		font-size: 0.875rem;
-	}
-
-	.validation-message.valid {
-		color: var(--pico-ins-color);
-	}
-
-	.validation-message.error {
-		color: var(--pico-del-color);
 	}
 </style>
