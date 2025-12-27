@@ -22,7 +22,24 @@ export async function GET({ params, locals }) {
 			orderBy: {
 				created: 'desc'
 			},
-			include: {
+			select: {
+				uid: true,
+				name: true,
+				image_url: true,
+				ingredients: true,
+				source: true,
+				source_url: true,
+				prep_time: true,
+				cook_time: true,
+				total_time: true,
+				servings: true,
+				rating: true,
+				created: true,
+				is_public: true,
+				is_pinned: true,
+				in_trash: true,
+				on_favorites: true,
+				userId: true,
 				categories: {
 					select: {
 						category: {
@@ -62,8 +79,8 @@ export async function GET({ params, locals }) {
 			}
 		})
 	} catch (error) {
-		console.error(error)
-		return new Response(JSON.stringify({ error: 'Failed to fetch recipes.' }), {
+		console.error('Error fetching recipes:', error)
+		return new Response(JSON.stringify({ error: 'Failed to fetch recipes.', details: error.message }), {
 			status: 500,
 			headers: {
 				'Content-Type': 'application/json'

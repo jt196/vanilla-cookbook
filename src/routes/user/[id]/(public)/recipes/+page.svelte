@@ -73,8 +73,15 @@
 	$effect(() => {
 		isLoading = true // Set loading at start of effect
 
+		// Debug logging
+		console.log('data.recipes:', data.recipes)
+		console.log('Is array?', Array.isArray(data.recipes))
+
+		// Ensure recipes is an array
+		const recipes = Array.isArray(data.recipes) ? data.recipes : []
+
 		let sortedRecipes = sortRecipesByKey(
-			data.recipes,
+			recipes,
 			$sortState.key,
 			$sortState.direction
 		).sortedRecipes
