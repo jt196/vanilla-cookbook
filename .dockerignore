@@ -1,1 +1,10 @@
 docs/
+node_modules/
+.git/
+*.log
+.env.local
+.venv/
+build/
+.svelte-kit/
+# Keep prisma.config.ts - required for Prisma 7
+!prisma.config.ts

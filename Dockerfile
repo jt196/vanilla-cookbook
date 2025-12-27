@@ -1,13 +1,21 @@
 # Use the official Node.js runtime as the base image
 FROM node:20
 
+# Install build dependencies for native modules (better-sqlite3) and cron
+RUN apt-get update && apt-get install -y \
+    python3 \
+    make \
+    g++ \
+    cron \
+    && rm -rf /var/lib/apt/lists/*
+
 # Install pnpm globally
 RUN npm install -g pnpm
 
 # Set the working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json
+# Copy package.json and pnpm-lock.yaml
 COPY package.json pnpm-lock.yaml ./
 
 # Install dependencies
@@ -27,13 +35,17 @@ ENV APP_ROOT_PATH=/app
 # Copy the current directory contents into the container
 COPY . .
 
-# Make executable and define entrypoint file
-RUN chmod +x /app/entrypoint.sh
+# Make scripts executable
+RUN chmod +x /app/entrypoint.sh /app/backup-db.sh
+
 ENTRYPOINT ["/app/entrypoint.sh"]
 
 # Create DB folder
 RUN mkdir -p /app/prisma/db
 RUN mkdir -p /app/uploads/images /app/uploads/imports
+
+# Approve build scripts for better-sqlite3 and prisma
+RUN pnpm config set enable-pre-post-scripts true || true
 
 # Generate Prisma client
 # Generate the service worker
