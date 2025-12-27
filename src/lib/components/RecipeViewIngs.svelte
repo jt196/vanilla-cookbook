@@ -168,7 +168,7 @@
 	}
 
 	.legend {
-		margin: 0.5rem 0;
+		margin: 1rem 0;
 		color: var(--pico-muted-color);
 		font-size: 0.85rem;
 	}
