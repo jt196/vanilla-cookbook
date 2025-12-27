@@ -30,12 +30,10 @@
 	<article class="recipe-card">
 		<h3>{item.name}</h3>
 		<div class="star-fav">
-			<div class="stars">
-				<StarRating
-					rating={item.rating}
-					editable={true}
-					ratingChanged={(newRating) => recipeRatingChanged?.(item.uid, newRating)} />
-			</div>
+			<StarRating
+				rating={item.rating}
+				editable={true}
+				ratingChanged={(newRating) => recipeRatingChanged?.(item.uid, newRating)} />
 			{#if item.userId === data.user?.requestedUserId}
 				<IconButton
 					onclick={(event) => handleFavourite(item?.uid, event)}
