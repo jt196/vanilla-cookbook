@@ -3,6 +3,8 @@
 	import UpArrow from '$lib/components/svg/UpArrow.svelte'
 
 	import { deletePhotoById, updatePhotos } from '$lib/utils/crud'
+	import FileInput from '$lib/components/ui/Form/FileInput.svelte'
+	import Button from '$lib/components/ui/Button.svelte'
 
 	/** @type {{recipe: any, selectedFiles: any}} */
 	let { recipe, onSelectedFilesChange } = $props()
@@ -65,8 +67,7 @@
 	}
 </script>
 
-<label for="file">Upload Images</label>
-<input type="file" id="file" name="file" onchange={handleFilesChange} multiple />
+<FileInput id="file" label="Upload Images" name="file" onchange={handleFilesChange} multiple />
 
 <div class="photos">
 	{#each filteredPhotos as photo}
@@ -76,17 +77,17 @@
 				alt="{recipe.name} photo"
 				class={photo.isMain ? 'main-photo' : ''} />
 			<div class="photo-actions">
-				<button class="outline secondary" type="button" onclick={() => handleDeletePhoto(photo.id)}>
+				<Button class="outline secondary" type="button" onclick={() => handleDeletePhoto(photo.id)}>
 					<Delete width="30px" height="30px" fill="var(--pico-del-color)" />
-				</button>
+				</Button>
 				{#if !photo.isMain}
-					<button
+					<Button
 						class="outline secondary"
 						data-tooltip="Promote to Main Photo"
 						type="button"
 						onclick={() => handleSetMainPhoto(photo.id)}>
 						<UpArrow width="30px" height="30px" fill="var(--pico-primary)" />
-					</button>
+					</Button>
 				{/if}
 			</div>
 		</div>

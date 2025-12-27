@@ -5,6 +5,10 @@
 	import PhotoSectionEdit from './PhotoSectionEdit.svelte'
 	import PhotoSectionNew from './PhotoSectionNew.svelte'
 	import StarRating from '$lib/components/StarRating.svelte'
+	import Input from '$lib/components/ui/Form/Input.svelte'
+	import Textarea from '$lib/components/ui/Form/Textarea.svelte'
+	import Checkbox from '$lib/components/ui/Form/Checkbox.svelte'
+	import Button from '$lib/components/ui/Button.svelte'
 
 	// If new recipe, default set to false
 	/** @type {{recipe: any, onSubmit: any, buttonText?: string, selectedFiles?: any, baseUrl?: string, editMode?: boolean, recipeCategories?: any}} */
@@ -56,23 +60,18 @@
 		<h3>Editing: {recipe.name}</h3>
 	{/if}
 
-	<label for="name"> Name </label>
-	<input type="text" id="name" name="name" bind:value={recipe.name} />
+	<Input type="text" id="name" name="name" bind:value={recipe.name} label="Name" />
 
 	<StarRating bind:rating={recipe.rating} editable={true} on:ratingChanged={handleRatingChange} />
 	<input type="hidden" name="rating" bind:value={recipe.rating} />
 
-	<label for="source"> Source </label>
-	<input type="text" id="source" name="source" bind:value={recipe.source} />
+	<Input type="text" id="source" name="source" bind:value={recipe.source} label="Source" />
 
-	<label for="source_url"> Source URL </label>
-	<input type="text" id="source_url" name="source_url" bind:value={recipe.source_url} />
+	<Input type="text" id="source_url" name="source_url" bind:value={recipe.source_url} label="Source URL" />
 
-	<label for="cook_time"> Cook Time </label>
-	<input type="text" id="cook_time" name="cook_time" bind:value={recipe.cook_time} />
+	<Input type="text" id="cook_time" name="cook_time" bind:value={recipe.cook_time} label="Cook Time" />
 
-	<label for="image_url"> Image URL </label>
-	<input type="text" id="image_url" name="image_url" bind:value={recipe.image_url} />
+	<Input type="text" id="image_url" name="image_url" bind:value={recipe.image_url} label="Image URL" />
 
 	{#if editMode}
 		<PhotoSectionEdit {recipe} {onSelectedFilesChange} />
@@ -80,44 +79,25 @@
 		<PhotoSectionNew {recipe} {imageExists} />
 	{/if}
 
-	<label for="prep_time"> Prep Time </label>
-	<input type="text" id="prep_time" name="prep_time" bind:value={recipe.prep_time} />
+	<Input type="text" id="prep_time" name="prep_time" bind:value={recipe.prep_time} label="Prep Time" />
 
-	<label for="ingredients"> Ingredients </label>
-	<textarea id="ingredients" name="ingredients" rows="5" bind:value={recipe.ingredients}></textarea>
+	<Textarea id="ingredients" name="ingredients" bind:value={recipe.ingredients} label="Ingredients" />
 
-	<label for="description"> Description </label>
-	<textarea id="description" name="description" rows="5" bind:value={recipe.description}></textarea>
+	<Textarea id="description" name="description" bind:value={recipe.description} label="Description" />
 
-	<label for="directions"> Directions </label>
-	<textarea id="directions" name="directions" rows="5" bind:value={recipe.directions}></textarea>
+	<Textarea id="directions" name="directions" bind:value={recipe.directions} label="Directions" />
 
-	<label for="notes"> Notes </label>
-	<textarea id="notes" name="notes" rows="5" bind:value={recipe.notes}></textarea>
+	<Textarea id="notes" name="notes" bind:value={recipe.notes} label="Notes" />
 
-	<label for="total_time"> Total Time </label>
-	<input type="text" id="total_time" name="total_time" bind:value={recipe.total_time} />
+	<Input type="text" id="total_time" name="total_time" bind:value={recipe.total_time} label="Total Time" />
 
-	<label for="servings"> Servings </label>
-	<input type="text" id="servings" name="servings" bind:value={recipe.servings} />
+	<Input type="text" id="servings" name="servings" bind:value={recipe.servings} label="Servings" />
 
-	<label for="nutritional_info"> Nutritional Information </label>
-	<textarea
-		id="nutritional_info"
-		name="nutritional_info"
-		rows="5"
-		bind:value={recipe.nutritional_info}></textarea>
+	<Textarea id="nutritional_info" name="nutritional_info" bind:value={recipe.nutritional_info} label="Nutritional Information" />
 
-	<label>
-		<input
-			type="checkbox"
-			data-tooltip="Make your new recipe public"
-			name="Recipe Public"
-			bind:checked={recipe.is_public} />
-		Recipe Public
-	</label>
+	<Checkbox name="Recipe Public" bind:checked={recipe.is_public} data-tooltip="Make your new recipe public" label="Recipe Public" />
 
-	<button type="submit">{buttonText}</button>
+	<Button type="submit">{buttonText}</Button>
 	{#if recipeCategories}
 		{#each recipeCategories as categoryUid}
 			<input type="hidden" name="categories[]" value={categoryUid} />
@@ -125,9 +105,3 @@
 	{/if}
 </form>
 
-<style lang="scss">
-	button {
-		width: auto;
-		margin: 1rem 0;
-	}
-</style>

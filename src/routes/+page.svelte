@@ -2,6 +2,8 @@
 	import { goto } from '$app/navigation'
 	import Spinner from '$lib/components/Spinner.svelte'
 	import { systems, languages } from '$lib/utils/config.js'
+	import Input from '$lib/components/ui/Form/Input.svelte'
+	import Button from '$lib/components/ui/Button.svelte'
 
 	let { data } = $props()
 	const { dbSeed } = data
@@ -57,14 +59,10 @@
 			<h2>Welcome to Vanilla Cookbook</h2>
 			<h3>Let's get cooking! Create your account:</h3>
 		</hgroup>
-		<label for="name">Name</label>
-		<input type="text" id="name" bind:value={adminName} name="name" required />
-		<label for="username">Username</label>
-		<input type="text" id="username" bind:value={adminUsername} name="username" required />
-		<label for="email">Email</label>
-		<input type="email" id="email" bind:value={adminEmail} name="email" required />
-		<label for="password">Password</label>
-		<input type="password" id="password" bind:value={adminPassword} name="password" required />
+		<Input type="text" id="name" label="Name" bind:value={adminName} name="name" required />
+		<Input type="text" id="username" label="Username" bind:value={adminUsername} name="username" required />
+		<Input type="email" id="email" label="Email" bind:value={adminEmail} name="email" required />
+		<Input type="password" id="password" label="Password" bind:value={adminPassword} name="password" required />
 		<label data-tooltip="Seed database with sample recipes">
 			<input type="checkbox" bind:checked={recipeSeed} />
 			Add Sample Recipes
@@ -106,7 +104,7 @@
 			</ul>
 		</details>
 		<br />
-		<button type="submit">Create Admin</button>
+		<Button type="submit">Create Admin</Button>
 	</form>
 {:else}
 	<h1>Something went wrong!</h1>

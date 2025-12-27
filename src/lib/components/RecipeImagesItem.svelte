@@ -1,6 +1,8 @@
 <script>
 	import UpArrow from '$lib/components/svg/UpArrow.svelte'
 	import Delete from '$lib/components/svg/Delete.svelte'
+	import Button from '$lib/components/ui/Button.svelte'
+	import Input from '$lib/components/ui/Form/Input.svelte'
 
 	/** @type {{photo: any, recipeName?: string, onSetMainPhoto: any, onDeletePhoto: any, onSaveEditedNotes: any}} */
 	let {
@@ -32,26 +34,26 @@
 <img src="/api/recipe/image/{photo.id}" alt="{recipeName} photo" />
 <div class="photo-note">
 	{#if editingPhotoId === photo.id}
-		<input bind:value={editingPhotoNotes} type="text" placeholder="Enter notes..." />
-		<button onclick={saveNotes}>Save</button>
-		<button onclick={cancelEditing}>Cancel</button>
+		<Input bind:value={editingPhotoNotes} type="text" placeholder="Enter notes..." />
+		<Button onclick={saveNotes}>Save</Button>
+		<Button onclick={cancelEditing}>Cancel</Button>
 	{:else}
 		{photo.notes || 'No notes for this photo.'}
-		<button onclick={startEditing}>Edit</button>
+		<Button onclick={startEditing}>Edit</Button>
 	{/if}
 </div>
 <div class="photo-actions">
-	<button class="outline secondary" type="button" onclick={() => onDeletePhoto(photo.id)}>
+	<Button class="outline secondary" type="button" onclick={() => onDeletePhoto(photo.id)}>
 		<Delete width="30px" height="30px" fill="var(--pico-del-color)" />
-	</button>
+	</Button>
 	{#if !photo.isMain}
-		<button
+		<Button
 			class="outline secondary"
 			data-tooltip="Promote to Main Photo"
 			type="button"
 			onclick={() => onSetMainPhoto(photo.id)}>
 			<UpArrow width="30px" height="30px" fill="var(--pico-primary)" />
-		</button>
+		</Button>
 	{/if}
 </div>
 
@@ -70,10 +72,10 @@
 		margin: 10px 0;
 		display: flex;
 		align-items: center;
-		input {
+		:global(input) {
 			margin-bottom: 0;
 		}
-		button {
+		:global(button) {
 			margin-left: 10px;
 			&:first-child {
 				margin-left: auto;

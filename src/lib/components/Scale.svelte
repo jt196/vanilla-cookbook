@@ -1,4 +1,6 @@
 <script>
+	import Button from '$lib/components/ui/Button.svelte'
+
 	/**
 	 * @typedef {number} Scale
 	 */
@@ -40,9 +42,9 @@
 </script>
 
 <div class="scale">
-	<button onclick={decreaseNum}>-</button>
+	<Button onclick={decreaseNum}>-</Button>
 	<input type="number" value={scale} min="0.1" oninput={handleInput} />
-	<button onclick={increaseNum}>+</button>
+	<Button onclick={increaseNum}>+</Button>
 </div>
 
 <style lang="scss">

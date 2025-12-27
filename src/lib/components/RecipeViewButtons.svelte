@@ -13,6 +13,7 @@
 	import Check from './svg/Check.svelte'
 	import RecipeShareButton from './RecipeShareButton.svelte'
 	import Public from './svg/Public.svelte'
+	import Button from '$lib/components/ui/Button.svelte'
 
 	/** @type {{recipe: any, updateLogs: any, favRecipe: any}} */
 	let { recipe, updateLogs, favRecipe, pubRecipe, logs, viewOnly } = $props()
@@ -78,7 +79,7 @@
 			data-testid="edit-button">
 			<Images width="20px" height="20px" fill="var(--pico-ins-color)" />
 		</a>
-		<button
+		<Button
 			onclick={(event) => handlePublic(recipe?.uid)}
 			data-tooltip={recipe?.is_public ? 'Private Recipe?' : 'Public Recipe?'}
 			class="outline secondary">
@@ -87,8 +88,8 @@
 				width="20px"
 				height="20px"
 				fill={recipe?.is_public ? 'var(--pico-ins-color)' : 'var(--pico-del-color)'} />
-		</button>
-		<button
+		</Button>
+		<Button
 			onclick={(event) => handleFavourite(recipe?.uid)}
 			data-tooltip={recipe?.on_favorites ? 'Unfavourite Recipe' : 'Favourite Recipe'}
 			class="outline secondary">
@@ -97,8 +98,8 @@
 				width="20px"
 				height="20px"
 				fill={recipe?.on_favorites ? 'var(--pico-del-color)' : 'var(--pico-secondary-focus)'} />
-		</button>
-		<button
+		</Button>
+		<Button
 			onclick={() => handleLog(recipe?.uid)}
 			class="outline secondary"
 			data-tooltip="Mark Recipe Cooked Today"
@@ -108,14 +109,14 @@
 				height="20px"
 				checked={logs?.length > 0}
 				fill={logs?.length > 0 ? 'var(--pico-ins-color)' : 'var(--pico-secondary-focus)'} />
-		</button>
-		<button
+		</Button>
+		<Button
 			onclick={() => handleDelete(recipe?.uid)}
 			data-testid="delete-button"
 			data-tooltip="Delete Recipe"
 			class="outline secondary">
 			<Delete width="20px" height="20px" fill="var(--pico-del-color)" />
-		</button>
+		</Button>
 	{/if}
 </div>
 
@@ -125,8 +126,11 @@
 		flex-direction: row;
 		gap: 0.3rem;
 		flex-wrap: nowrap;
+		align-items: center;
 	}
-	.buttons a {
+	.buttons :global(a),
+	.buttons :global(button) {
 		padding: 0.5rem;
+		margin: 0;
 	}
 </style>

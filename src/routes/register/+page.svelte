@@ -3,6 +3,9 @@
 	import { validatePassword } from '$lib/utils/security.js'
 	import FeedbackMessage from '$lib/components/FeedbackMessage.svelte'
 	import ValidationMessage from '$lib/components/ui/Form/ValidationMessage.svelte'
+	import Input from '$lib/components/ui/Form/Input.svelte'
+	import Checkbox from '$lib/components/ui/Form/Checkbox.svelte'
+	import Button from '$lib/components/ui/Button.svelte'
 	import Oauth from '$lib/components/Oauth.svelte'
 
 	let { data, form } = $props()
@@ -55,36 +58,24 @@
 			<h3>To post articles, you'll need an account.</h3>
 		</hgroup>
 
-		<label for="username">Username</label>
-		<input type="text" id="username" name="username" bind:value={username} required />
+		<Input type="text" id="username" name="username" bind:value={username} label="Username" required />
 
-		<label for="email">Email</label>
-		<input type="email" id="email" name="email" bind:value={email} required />
+		<Input type="email" id="email" name="email" bind:value={email} label="Email" required />
 		<ValidationMessage
 			message={email.length > 0 && !emailValid ? 'Please enter a valid email address.' : null}
 			isError={true} />
 
-		<label for="password">Password</label>
-		<input type="password" id="password" name="password" bind:value={password} required />
+		<Input type="password" id="password" name="password" bind:value={password} label="Password" required />
 		<ValidationMessage
 			message={passwordValidation?.message}
 			isValid={passwordValidation?.isValid} />
 
-		<label for="passwordConfirm">Confirm Password</label>
-		<input
-			type="password"
-			id="passwordConfirm"
-			name="passwordConfirm"
-			bind:value={passwordConfirm}
-			required />
+		<Input type="password" id="passwordConfirm" name="passwordConfirm" bind:value={passwordConfirm} label="Confirm Password" required />
 		<ValidationMessage message={passwordsMismatch ? "Passwords don't match!" : null} isError={true} />
 
-		<label>
-			<input type="checkbox" name="seedRecipes" bind:checked={seedRecipes} />
-			Seed my account with 3 example recipes
-		</label>
+		<Checkbox name="seedRecipes" bind:checked={seedRecipes} label="Seed my account with 3 example recipes" />
 
-		<button type="submit" disabled={isSubmitDisabled}>Register</button>
+		<Button type="submit" disabled={isSubmitDisabled}>Register</Button>
 	</form>
 	<p>Already have an account? <a href="/login">Login</a></p>
 	{#if oauthEnabled}

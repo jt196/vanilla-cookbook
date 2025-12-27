@@ -5,6 +5,10 @@
 	import Chain from '$lib/components/svg/Chain.svelte'
 	import Note from '$lib/components/svg/Note.svelte'
 	import Image from '$lib/components/svg/Image.svelte'
+	import Input from '$lib/components/ui/Form/Input.svelte'
+	import Textarea from '$lib/components/ui/Form/Textarea.svelte'
+	import FileInput from '$lib/components/ui/Form/FileInput.svelte'
+	import Button from '$lib/components/ui/Button.svelte'
 
 	let {
 		url = $bindable(''),
@@ -88,9 +92,8 @@
 {#if aiEnabled && apiKeyPresent}
 	<div class="tab-toggle" role="group">
 		{#each ['url', 'text', 'image'] as mode}
-			<button
-				class:selected={selectedMode === mode}
-				class:secondary={selectedMode === mode}
+			<Button
+				class={selectedMode === mode ? 'secondary selected' : ''}
 				disabled={selectedMode === mode}
 				onclick={() => {
 					selectedMode = mode
@@ -106,7 +109,7 @@
 				{:else if mode === 'image'}
 					<Image width="18px" style="margin-right: 0.3em;" /> Upload Image
 				{/if}
-			</button>
+			</Button>
 		{/each}
 	</div>
 {/if}
@@ -114,15 +117,15 @@
 <!-- Form Inputs -->
 <form onsubmit={scrapeEventHandler}>
 	{#if selectedMode === 'url'}
-		<input type="text" placeholder="Enter recipe URL" bind:value={url} />
+		<Input type="text" placeholder="Enter recipe URL" bind:value={url} />
 	{:else if selectedMode === 'text'}
-		<textarea rows="8" placeholder="Paste recipe text..." bind:value={sharedText}></textarea>
+		<Textarea rows={8} placeholder="Paste recipe text..." bind:value={sharedText} />
 	{:else if selectedMode === 'image'}
-		<input type="file" accept="image/*" onchange={(e) => (imageFile = e.target.files[0])} />
+		<FileInput accept="image/*" onchange={(e) => (imageFile = e.target.files[0])} />
 	{/if}
-	<button type="submit">
+	<Button type="submit">
 		{selectedMode === 'url' ? 'Scrape' : selectedMode === 'text' ? 'Parse Text' : 'Analyze Image'}
-	</button>
+	</Button>
 </form>
 
 <div class="loading-overlay" aria-busy={loading} hidden={!loading}></div>

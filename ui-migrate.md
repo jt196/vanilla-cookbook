@@ -385,13 +385,15 @@ src/lib/components/ui/
 
 ## File Migration Checklist
 
-### Completed Components (15 total - ✅ Phase 1 Extended!)
+### Completed Components (18 total - ✅ Phase 1 Extended!)
 - ✅ **Button.svelte** - With id, formaction, loading states, variant support
 - ✅ **Badge.svelte** - Multiple variants (scheduled, pre-migration, manual, etc.)
 - ✅ **Container.svelte** - Page wrapper component
+- ✅ **IconButton.svelte** - Transparent button for icon-only actions
 - ✅ **Form/Checkbox.svelte** - Supports both label prop and children for rich content
 - ✅ **Form/Radio.svelte** - Radio button inputs with group binding
 - ✅ **Form/Input.svelte** - Text/password/email inputs with labels
+- ✅ **Form/Textarea.svelte** - Textarea with label support and rows prop
 - ✅ **Form/FileInput.svelte** - File upload input with accept and multiple support
 - ✅ **Form/Dropdown.svelte** - Dropdown with radio buttons (details/summary pattern)
 - ✅ **Form/ValidationMessage.svelte** - Reusable validation message component with error/valid states
@@ -401,6 +403,7 @@ src/lib/components/ui/
 - ✅ **Dialog.svelte** - Modal/dialog wrapper with escape key handling and cleanup
 - ✅ **Hint.svelte** - Helper text component
 - ✅ **FeedbackMessage.svelte** - Enhanced with inline mode for form feedback
+- ✅ **Shopping/** - 4 shopping components (Toolbar, ItemInput, ListItem, EditDialog)
 
 ### High-Priority Pages (Settings)
 - ✅ `/src/routes/user/[id]/(private)/options/admin/site/+page.svelte` - Admin settings + backup table
@@ -413,17 +416,27 @@ src/lib/components/ui/
 - ✅ `/src/routes/user/[id]/(private)/options/import/+page.svelte` - Import page
 
 ### Authentication Pages
-- ✅ `/src/routes/login/+page.svelte` - Login form
-- ✅ `/src/routes/register/+page.svelte` - Registration form with comprehensive validation
+- ✅ `/src/routes/login/+page.svelte` - Login form with Button component
+- ✅ `/src/routes/register/+page.svelte` - Registration form with Input, Checkbox, Button components
 
-### Recipe Components (Not Started)
-- [ ] `src/lib/components/RecipeCard.svelte`
-- [ ] `src/lib/components/RecipeViewButtons.svelte`
-- [ ] All remaining `src/lib/components/Recipe*.svelte` files
+### Main Layout
+- ✅ `/src/routes/+layout.svelte` - Main layout with IconButton for theme toggle
 
-### Medium-Priority Pages
-- [ ] `/src/routes/recipe/(private)/[recipeId]/edit/+page.svelte`
-- [ ] `/src/routes/user/[id]/(private)/shopping/+page.svelte` - **Needs component extraction** (see Shopping Page Components below)
+### Recipe Pages
+- ✅ `/src/routes/recipe/(private)/new/+page.svelte` - Uses RecipeForm and RecipeNewScrape
+- ✅ `/src/routes/recipe/(private)/[recipeId]/edit/+page.svelte` - Uses RecipeForm with IconButton and Button
+- ⏭️ `/src/routes/recipe/(public)/[recipeId]/view/+page.svelte` - Minimal CSS, mostly uses Recipe* components
+- ⏭️ `/src/routes/recipe/(public)/[recipeId]/images/+page.svelte` - Image gallery
+
+### Recipe Components (Partially Complete)
+- ✅ `src/lib/components/RecipeForm.svelte` - Fully migrated to Input/Textarea/Checkbox/Button components (ZERO CSS!)
+- ✅ `src/lib/components/RecipeNewScrape.svelte` - Fully migrated to Input/Textarea/FileInput/Button components
+- [ ] `src/lib/components/RecipeCard.svelte` - Recipe card display
+- [ ] `src/lib/components/RecipeViewButtons.svelte` - Action buttons for recipe view
+- [ ] All remaining `src/lib/components/Recipe*.svelte` files (view components)
+
+### Shopping Page
+- ✅ `/src/routes/user/[id]/(private)/shopping/+page.svelte` - **COMPLETED** - Extracted 4 shopping components
 
 ### Low-Priority Pages
 - [ ] Remaining recipe view components
@@ -562,5 +575,26 @@ src/lib/components/Shopping/
 ---
 
 **Last Updated**: December 2024
-**Status**: Phase 1 Extended (15 components complete)
+**Status**: Phase 1 Nearly Complete (18 components, most pages migrated)
 **Owner**: Project Maintainer
+
+## Progress Summary
+
+### ✅ Completed Areas (90%+ of the app)
+1. **All user options pages** - Settings, admin, import, export, password, users
+2. **Authentication** - Login, register (fully component-based)
+3. **Main layout** - Navigation with IconButton
+4. **Shopping page** - Extracted 4 components, zero page CSS
+5. **Recipe forms** - New and edit pages fully migrated
+6. **All forms app-wide** - Using Input/Textarea/Checkbox/Radio/Dropdown/FileInput
+
+### 🔨 Remaining Work
+1. **Recipe view components** - RecipeCard, RecipeViewButtons, and other Recipe* display components
+2. **Recipe view page** - Just has layout CSS, no form elements
+3. **Recipe images page** - Image gallery
+
+### 🎯 Migration Quality
+- **18 reusable UI components** created
+- **Zero custom CSS** on most form pages (login, register, import, shopping)
+- **Consistent API** across all form components
+- **Ready for Tailwind** - All styling abstracted into components

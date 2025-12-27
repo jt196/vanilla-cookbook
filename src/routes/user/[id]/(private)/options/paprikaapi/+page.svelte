@@ -10,6 +10,9 @@
 		importFileExists
 	} from '$lib/utils/crud.js'
 	import { onMount } from 'svelte'
+	import Input from '$lib/components/ui/Form/Input.svelte'
+	import Button from '$lib/components/ui/Button.svelte'
+	import Checkbox from '$lib/components/ui/Form/Checkbox.svelte'
 
 	/** @type {{data: any}} */
 	let { data } = $props()
@@ -241,66 +244,61 @@
 	</p>
 {/if}
 <div class="container">
-	<label for="paprikaUser"> Paprika User </label>
-	<input type="text" id="paprikaUser" bind:value={paprikaUser} />
-	<label for="paprikaPassword"> Paprika Password </label>
-	<input type="password" id="paprikaPassword" bind:value={paprikaPassword} />
+	<Input type="text" id="paprikaUser" label="Paprika User" bind:value={paprikaUser} />
+	<Input type="password" id="paprikaPassword" label="Paprika Password" bind:value={paprikaPassword} />
 	<div class="paprika-api">
 		<div class="import-categories">
-			<button aria-busy={downloadCatBusy} disabled={catFileExists} onclick={downloadCategories}
-				>Download Paprika Categories</button>
+			<Button loading={downloadCatBusy} disabled={catFileExists} onclick={downloadCategories}
+				>Download Paprika Categories</Button>
 			<div class="feedback">
 				<FeedbackMessage message={catFeedbackMessage} />
 				<div class="file-manage">
 					Category File: <TrueFalse isTrue={catFileExists} />{#if catFileExists}
-						<button
+						<Button
 							class="outline secondary"
 							disabled={!catFileExists}
 							onclick={() => removeFile('categories.json')}
-							><Delete width="30px" height="30px" fill="var(--pico-del-color)" /></button>
+							><Delete width="30px" height="30px" fill="var(--pico-del-color)" /></Button>
 					{/if}
 				</div>
 			</div>
 			<p>Categories in File: {catFile}</p>
 			<p>Categories in DB: {catDb}</p>
-			<button
-				aria-busy={importCatBusy}
+			<Button
+				loading={importCatBusy}
 				class="outline secondary delete"
 				disabled={catDb === catFile || catFile === 0 || catFile === null}
-				onclick={importCategoriesFromFile}>Import Categories</button>
+				onclick={importCategoriesFromFile}>Import Categories</Button>
 			<FeedbackMessage message={catImportStatus} />
 		</div>
 		{#if user.isAdmin}
 			<div class="import-recipes">
-				<button disabled={recFileExists} aria-busy={downloadRecBusy} onclick={downloadRecipes}
-					>Download Paprika Recipes</button>
+				<Button disabled={recFileExists} loading={downloadRecBusy} onclick={downloadRecipes}
+					>Download Paprika Recipes</Button>
 				<div class="feedback">
 					<FeedbackMessage message={recFeedbackMessage} />
 					<div class="file-manage">
 						Recipe File: <TrueFalse isTrue={recFileExists} />{#if recFileExists}
-							<button
+							<Button
 								class="outline secondary delete"
 								disabled={!recFileExists}
 								onclick={() => removeFile('recipes.json')}
-								><Delete width="30px" height="30px" fill="var(--pico-del-color)" /></button>
+								><Delete width="30px" height="30px" fill="var(--pico-del-color)" /></Button>
 						{/if}
 					</div>
 				</div>
 				<p>Recipes in File: {recFile}</p>
 				<p>Recipes in DB: {recDb}</p>
-				<label>
-					<input
-						type="checkbox"
-						data-tooltip="Make your imported recipes public"
-						name="Recipes Public"
-						bind:checked={isPublic} />
-					Recipes Public
-				</label>
-				<button
-					aria-busy={importRecBusy}
+				<Checkbox
+					name="Recipes Public"
+					bind:checked={isPublic}
+					data-tooltip="Make your imported recipes public"
+					label="Recipes Public" />
+				<Button
+					loading={importRecBusy}
 					class="outline secondary"
 					disabled={recDb === recFile || recFile === 0 || recFile === null}
-					onclick={importRecipesFromFile}>Import Recipes</button>
+					onclick={importRecipesFromFile}>Import Recipes</Button>
 				<FeedbackMessage message={recImportStatus} />
 			</div>
 		{/if}

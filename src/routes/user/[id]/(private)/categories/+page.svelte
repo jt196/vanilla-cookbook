@@ -2,6 +2,8 @@
 	import CategoryEdit from '$lib/components/CategoryEdit.svelte'
 	import { fetchAndTransformCategories } from '$lib/utils/categories.js'
 	import { browser } from '$app/environment'
+	import Input from '$lib/components/ui/Form/Input.svelte'
+	import Button from '$lib/components/ui/Button.svelte'
 
 	/** @type {{data: any}} */
 	let { data } = $props()
@@ -41,13 +43,13 @@
 	}
 </script>
 
-<button onclick={() => (showNewCategoryInput = !showNewCategoryInput)}>Add New Category</button>
+<Button onclick={() => (showNewCategoryInput = !showNewCategoryInput)}>Add New Category</Button>
 
 {#if showNewCategoryInput}
 	<div>
-		<input bind:value={newCategoryName} placeholder="New Category Name" />
-		<button onclick={() => (showNewCategoryInput = false)}>Cancel</button>
-		<button onclick={addNewCategory}>Save</button>
+		<Input bind:value={newCategoryName} placeholder="New Category Name" />
+		<Button onclick={() => (showNewCategoryInput = false)}>Cancel</Button>
+		<Button onclick={addNewCategory}>Save</Button>
 	</div>
 {/if}
 

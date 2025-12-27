@@ -1,5 +1,6 @@
 <script>
 	import Star from '$lib/components/svg/Star.svelte'
+	import IconButton from '$lib/components/ui/IconButton.svelte'
 
 	/** @type {{rating?: number, editable?: boolean, ratingChanged?: (rating: number) => void}} */
 	let { rating = 0, editable = false, ratingChanged } = $props()
@@ -20,7 +21,7 @@
 
 <div>
 	{#each [1, 2, 3, 4, 5] as star (star)}
-		<button
+		<IconButton
 			class="star {editable ? 'editable' : ''}"
 			onclick={(event) => {
 				event.preventDefault()
@@ -31,7 +32,7 @@
 			<Star
 				state={rating >= star ? 'full' : rating >= star - 0.5 ? 'half' : 'empty'}
 				fill="var(--pico-primary)" />
-		</button>
+		</IconButton>
 	{/each}
 </div>
 

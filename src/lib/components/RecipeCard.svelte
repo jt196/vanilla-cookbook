@@ -5,6 +5,7 @@
 	import { localDate } from '$lib/utils/dateTime'
 	import StarRating from '$lib/components/StarRating.svelte'
 	import { changeRecipeFavourite } from '$lib/utils/crud'
+	import IconButton from '$lib/components/ui/IconButton.svelte'
 
 	/** @type {{item: any, data: any, recipeFavourited?: (uid: string) => void, recipeRatingChanged?: (uid: string, rating: number) => void}}, */
 	let { item, data, recipeFavourited, recipeRatingChanged } = $props()
@@ -36,18 +37,17 @@
 					ratingChanged={(newRating) => recipeRatingChanged?.(item.uid, newRating)} />
 			</div>
 			{#if item.userId === data.user?.requestedUserId}
-				<button
+				<IconButton
 					onclick={(event) => handleFavourite(item?.uid, event)}
 					data-tooltip="Favourite Recipe"
-					class="card-button outline secondary">
+					class="outline secondary">
 					<Favourite
 						{favourite}
 						width="15px"
 						height="15px"
 						fill={favourite ? 'var(--pico-del-color)' : 'var(--pico-secondary-focus)'} />
-				</button>
-				<button
-					class="card-button"
+				</IconButton>
+				<IconButton
 					data-tooltip={item.log?.length > 0
 						? 'This recipe has been cooked ' + item.log.length + ' times'
 						: 'This recipe has never been cooked'}>
@@ -56,7 +56,7 @@
 						width="15px"
 						height="15px"
 						fill={logged ? 'var(--pico-ins-color)' : 'var(--pico-secondary-focus)'} />
-				</button>
+				</IconButton>
 			{/if}
 		</div>
 	</article>
@@ -122,15 +122,6 @@
 		display: flex;
 		align-items: center;
 		gap: 1rem;
-	}
-
-	.card-button {
-		background: none;
-		border: none;
-		cursor: pointer;
-		display: flex;
-		align-items: center;
-		padding: 0.5rem 0;
 	}
 
 	/* Image section (right) */

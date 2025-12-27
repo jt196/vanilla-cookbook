@@ -1,5 +1,6 @@
 <script>
 	import CategoryTree from '$lib/components/CategoryTree.svelte'
+	import Button from '$lib/components/ui/Button.svelte'
 
 	/** @type {{categories?: any, onCategoryClick?: any, selectedCategoryUids?: any}} */
 	let { categories = [], onCategoryClick = () => {}, selectedCategoryUids = [] } = $props();
@@ -9,11 +10,11 @@
 	{#each categories as category (category.uid)}
 		<!-- Keep the key for each loop -->
 		<li class="categories">
-			<button
+			<Button
 				onclick={() => onCategoryClick(category)}
-				class:selected={selectedCategoryUids.includes(category.uid)}>
+				class={selectedCategoryUids.includes(category.uid) ? 'selected' : ''}>
 				{category.name ? category.name : 'Unnamed Cat'}
-			</button>
+			</Button>
 			{#if category.children && category.children.length}
 				<CategoryTree categories={category.children} {onCategoryClick} {selectedCategoryUids} />
 			{/if}
@@ -22,7 +23,7 @@
 </ul>
 
 <style lang="scss">
-	.categories button {
+	.categories :global(button) {
 		background: none;
 		border: none;
 		padding: 0.1rem;
@@ -43,7 +44,7 @@
 		margin: 5px 0;
 	}
 
-	button.selected {
+	.categories :global(button.selected) {
 		background: var(--pico-primary);
 	}
 </style>

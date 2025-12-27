@@ -7,6 +7,8 @@
 	import Delete from '$lib/components/svg/Delete.svelte'
 	import Sidebar from '$lib/components/Sidebar.svelte'
 	import Burger from '$lib/components/svg/Burger.svelte'
+	import Button from '$lib/components/ui/Button.svelte'
+	import IconButton from '$lib/components/ui/IconButton.svelte'
 
 	/**
 	 * The page data type.
@@ -100,9 +102,9 @@
 
 <div class="recipe-container" class:sidebar-open={sidebarOpen} onclose={handleSidebarClose}>
 	{#if user.useCats}
-		<button data-tooltip="Display Category Selector" onclick={toggleSidebar}>
+		<IconButton data-tooltip="Display Category Selector" onclick={toggleSidebar}>
 			<Burger width="1.5rem" />
-		</button>
+		</IconButton>
 	{/if}
 	<RecipeForm
 		bind:recipe
@@ -122,12 +124,12 @@
 		data-testid="view-button">
 		<View width="30px" height="30px" fill="var(--pico-ins-color)" />
 	</a>
-	<button
+	<Button
 		onclick={() => handleDelete(recipe?.uid)}
 		data-testid="delete-button"
 		class="outline secondary">
 		<Delete width="30px" height="30px" fill="var(--pico-del-color)" />
-	</button>
+	</Button>
 {/if}
 
 <style lang="scss">
@@ -148,7 +150,7 @@
 				margin-left: 0;
 			}
 		}
-		button {
+		:global(button) {
 			margin-bottom: 1rem;
 		}
 	}

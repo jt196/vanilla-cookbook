@@ -10,8 +10,18 @@
 		cookedFilter,
 		favouriteFilter
 	} from '$lib/stores/recipeFilter'
+	import IconButton from '$lib/components/ui/IconButton.svelte'
+	import Button from '$lib/components/ui/Button.svelte'
+	import Select from '$lib/components/ui/Form/Select.svelte'
 
 	let { toggleSidebar, viewOnly, useCats = 'false', username } = $props()
+
+	const searchOptions = [
+		{ value: 'name', label: 'Name' },
+		{ value: 'ingredients', label: 'Ingredients' },
+		{ value: 'source', label: 'Source' },
+		{ value: 'notes', label: 'Notes' }
+	]
 
 	function updateSort(key) {
 		sortState.update((current) => {
@@ -30,9 +40,9 @@
 <div class="recipe-filters">
 	<div class="search">
 		{#if useCats}
-			<button data-tooltip="Display Category Filter" onclick={toggleSidebar}>
+			<IconButton data-tooltip="Display Category Filter" onclick={toggleSidebar}>
 				<Burger width="1.5rem" />
-			</button>
+			</IconButton>
 		{/if}
 		<div class="search-box">
 			<input
@@ -42,16 +52,16 @@
 				bind:value={$searchString} />
 		</div>
 		<div data-tooltip="Choose Search Key">
-			<select name="selections" bind:value={$searchKey} id="selections" aria-label="selections">
-				<option selected value="name">Name</option>
-				<option value="ingredients">Ingredients</option>
-				<option value="source">Source</option>
-				<option value="notes">Notes</option>
-			</select>
+			<Select
+				id="selections"
+				name="selections"
+				bind:value={$searchKey}
+				options={searchOptions}
+				aria-label="selections" />
 		</div>
 	</div>
 	<div class="sort">
-		<button
+		<IconButton
 			onclick={() => ($favouriteFilter = !$favouriteFilter)}
 			data-tooltip="Filter by Favourites"
 			class="outline secondary">
@@ -60,8 +70,8 @@
 				width="30px"
 				height="30px"
 				fill={$favouriteFilter ? 'var(--pico-del-color)' : 'var(--pico-secondary-focus)'} />
-		</button>
-		<button
+		</IconButton>
+		<IconButton
 			onclick={() => ($cookedFilter = !$cookedFilter)}
 			data-tooltip="Filter by Cooked"
 			class="outline secondary">
@@ -70,25 +80,25 @@
 				width="30px"
 				height="30px"
 				fill={$cookedFilter ? 'var(--pico-ins-color)' : 'var(--pico-secondary-focus)'} />
-		</button>
-		<button
+		</IconButton>
+		<Button
 			data-tooltip="Sort by Date"
-			class:secondary={$sortState.key === 'created'}
+			class={$sortState.key === 'created' ? 'secondary' : ''}
 			onclick={() => updateSort('created')}>
 			Date <SortAscDesc sort={$sortState.key === 'created' ? $sortState.direction : ''} />
-		</button>
-		<button
+		</Button>
+		<Button
 			data-tooltip="Sort by Name"
-			class:secondary={$sortState.key === 'name'}
+			class={$sortState.key === 'name' ? 'secondary' : ''}
 			onclick={() => updateSort('name')}>
 			Title <SortAscDesc sort={$sortState.key === 'name' ? $sortState.direction : ''} />
-		</button>
-		<button
+		</Button>
+		<Button
 			data-tooltip="Sort by Rating"
-			class:secondary={$sortState.key === 'rating'}
+			class={$sortState.key === 'rating' ? 'secondary' : ''}
 			onclick={() => updateSort('rating')}>
 			Rating <SortAscDesc sort={$sortState.key === 'rating' ? $sortState.direction : ''} />
-		</button>
+		</Button>
 	</div>
 </div>
 

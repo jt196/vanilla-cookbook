@@ -13,6 +13,7 @@
 		cookedFilter,
 		favouriteFilter
 	} from '$lib/stores/recipeFilter'
+	import Button from '$lib/components/ui/Button.svelte'
 
 	/** @type {{data: any}} */
 	let { data = $bindable() } = $props()
@@ -135,7 +136,7 @@
 	<Sidebar isOpen={sidebarOpen} onClose={handleSidebarClose} onCategoryClick={handleCategoryClick}>
 		<div class="sidebar-buttons">
 			{#if selectedCategoryUids}
-				<button onclick={clearCategory}>Clear</button>
+				<Button onclick={clearCategory}>Clear</Button>
 			{/if}
 			<a href="/user/{user.userId}/categories" role="button">Edit</a>
 		</div>

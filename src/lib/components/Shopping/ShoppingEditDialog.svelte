@@ -2,6 +2,7 @@
 	import Dialog from '$lib/components/ui/Dialog.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Delete from '$lib/components/svg/Delete.svelte'
+	import Input from '$lib/components/ui/Form/Input.svelte'
 
 	let {
 		/**
@@ -29,14 +30,9 @@
 
 <Dialog bind:isOpen {onClose}>
 	<form onsubmit={onSave}>
-		<label for="edit-name">Name:</label>
-		<input id="edit-name" type="text" bind:value={item.name} />
-
-		<label for="edit-quantity">Quantity:</label>
-		<input id="edit-quantity" type="number" bind:value={item.quantity} />
-
-		<label for="edit-unit">Unit:</label>
-		<input id="edit-unit" type="text" bind:value={item.unit} />
+		<Input id="edit-name" label="Name:" type="text" bind:value={item.name} />
+		<Input id="edit-quantity" label="Quantity:" type="number" bind:value={item.quantity} />
+		<Input id="edit-unit" label="Unit:" type="text" bind:value={item.unit} />
 
 		<footer>
 			<Button type="button" onclick={() => (isOpen = false)}>Cancel</Button>

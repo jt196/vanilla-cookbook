@@ -2,6 +2,7 @@
 	import { addIngredientToShoppingList } from '$lib/utils/crud'
 	import { decimalToFraction, roundIngredientQuantity } from '$lib/utils/filters'
 	import Shopping from './svg/Shopping.svelte'
+	import Badge from '$lib/components/ui/Badge.svelte'
 
 	/** @type {{ingredient: any, scale: any, displayExtra: any, displayDryMatch: any, displayOriginal: any, selectedSystem: any, recipeUid: any}} */
 	let {
@@ -152,10 +153,10 @@
 								{/if}
 							{/if}
 						</i>
-						{#if ingredient.approx}<span class="badge" title="Approximate">~</span>{/if}
-						{#if ingredient.optional}<span class="badge" title="Optional">opt</span>{/if}
-						{#if ingredient.toServe}<span class="badge" title="To serve">srv</span>{/if}
-						{#if ingredient.toTaste}<span class="badge" title="To taste">tt</span>{/if}
+						{#if ingredient.approx}<Badge title="Approximate">~</Badge>{/if}
+						{#if ingredient.optional}<Badge title="Optional">opt</Badge>{/if}
+						{#if ingredient.toServe}<Badge title="To serve">srv</Badge>{/if}
+						{#if ingredient.toTaste}<Badge title="To taste">tt</Badge>{/if}
 						<span>
 							{@html ingredient.ingredient}
 							{#if extraText}
@@ -285,8 +286,8 @@
 
 		.add-btn {
 			position: absolute;
-			left: 0; // Position the button to the far left
-			transform: translateX(-100%); // Move the button to the left of the container
+			left: 0;
+			transform: translateX(-100%);
 			padding: 0 0.2rem;
 			margin-bottom: 0.1rem;
 			max-height: 33px;

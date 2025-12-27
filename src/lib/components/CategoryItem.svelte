@@ -1,5 +1,6 @@
 <script>
 	import CategoryItem from '$lib/components/CategoryItem.svelte'
+	import Button from '$lib/components/ui/Button.svelte'
 
 	/** @type {{node: any, nodes: any}} */
 	let { node = $bindable(), nodes = $bindable() } = $props();
@@ -38,11 +39,11 @@
 		bind:value={editedName}
 		onblur={saveChanges}
 		onkeydown={(e) => e.key === 'Enter' && saveChanges()} />
-	<button onclick={() => (isEditing = false)}>Cancel</button>
-	<button onclick={saveChanges}>Save</button>
+	<Button onclick={() => (isEditing = false)}>Cancel</Button>
+	<Button onclick={saveChanges}>Save</Button>
 {:else}
 	<span>{node.name}</span>
-	<button onclick={() => (isEditing = true)}>Edit</button>
+	<Button onclick={() => (isEditing = true)}>Edit</Button>
 {/if}
 
 {#if node.hasOwnProperty('items')}

@@ -4,6 +4,8 @@
 	import { flip } from 'svelte/animate'
 	import { dndzone, SHADOW_PLACEHOLDER_ITEM_ID } from 'svelte-dnd-action'
 	import Ellipsis from './svg/Ellipsis.svelte'
+	import Button from '$lib/components/ui/Button.svelte'
+	import IconButton from '$lib/components/ui/IconButton.svelte'
 
 	/** @type {{nodes?: any, node: any}} */
 	let { nodes = $bindable({}), node = $bindable() } = $props();
@@ -143,15 +145,15 @@
 				bind:value={editedName}
 				onblur={() => saveChanges(node.uid)}
 				onkeydown={(e) => e.key === 'Enter' && saveChanges(node.uid)} />
-			<button onclick={() => (editingId = null)}>Cancel</button>
-			<button onclick={() => saveChanges(node.uid)}>Save</button>
-			<button onclick={() => deleteCategory(node.uid)}>Delete</button>
+			<Button onclick={() => (editingId = null)}>Cancel</Button>
+			<Button onclick={() => saveChanges(node.uid)}>Save</Button>
+			<Button onclick={() => deleteCategory(node.uid)}>Delete</Button>
 		{:else}
 			{node.name}
 		{/if}
 	</b>
-	<button onclick={() => startEditing(node.uid, node.name)}
-		><Ellipsis width="20px" fill="var(--pico-secondary)" /></button>
+	<IconButton onclick={() => startEditing(node.uid, node.name)}
+		><Ellipsis width="20px" fill="var(--pico-secondary)" /></IconButton>
 </div>
 
 <section

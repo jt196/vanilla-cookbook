@@ -71,8 +71,8 @@
 	}
 </script>
 
-<button onclick={share} data-tooltip="Share Recipe" class="outline secondary"
-	><Share width="20px" height="20px" /></button>
+<Button onclick={share} data-tooltip="Share Recipe" class="outline secondary"
+	><Share width="20px" height="20px" /></Button>
 
 <FeedbackMessage message={feedback} type="info" />
 

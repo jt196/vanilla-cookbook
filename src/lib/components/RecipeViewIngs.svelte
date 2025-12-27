@@ -1,6 +1,8 @@
 <script>
 	import Scale from '$lib/components/Scale.svelte'
 	import RecipeViewIng from './RecipeViewIng.svelte'
+	import Button from '$lib/components/ui/Button.svelte'
+	import Badge from '$lib/components/ui/Badge.svelte'
 
 	/** @type {{ingredients: any, sanitizedIngredients: any, scale: any, scaledServings: any, selectedSystem: any, measurementSystem: any, recipeUid: any }} */
 	let {
@@ -58,69 +60,59 @@
 	{/if}
 	{#if sanitizedIngredients.some((i) => i.optional || i.approx || i.toServe || i.toTaste)}
 		<div class="legend">
-			<span class="badge">~</span> approx
-			<span class="badge">opt</span> optional
-			<span class="badge">srv</span>to serve
-			<span class="badge">tt</span> to taste
+			<Badge>~</Badge> approx
+			<Badge>opt</Badge> optional
+			<Badge>srv</Badge>to serve
+			<Badge>tt</Badge> to taste
 		</div>
 	{/if}
 	<div class="convert">
 		<div class="segmented">
-			<button
-				class:selected={selectedSystem === 'metric'}
-				class:orig={originalSystem === 'metric'}
-				class="outline"
+			<Button
+				class={`outline ${selectedSystem === 'metric' ? 'selected' : ''} ${originalSystem === 'metric' ? 'orig' : ''}`}
 				onclick={() => onSelectedSystemChange('metric')}>
 				Metric
-			</button>
-			<button
-				class:selected={selectedSystem === 'americanVolumetric'}
-				class:orig={originalSystem === 'americanVolumetric'}
-				class="outline"
+			</Button>
+			<Button
+				class={`outline ${selectedSystem === 'americanVolumetric' ? 'selected' : ''} ${originalSystem === 'americanVolumetric' ? 'orig' : ''}`}
 				onclick={() => onSelectedSystemChange('americanVolumetric')}>
 				US Vol
-			</button>
-			<button
-				class:selected={selectedSystem === 'imperial'}
-				class:orig={originalSystem === 'imperial'}
-				class="outline"
+			</Button>
+			<Button
+				class={`outline ${selectedSystem === 'imperial' ? 'selected' : ''} ${originalSystem === 'imperial' ? 'orig' : ''}`}
 				onclick={() => onSelectedSystemChange('imperial')}>
 				Imperial
-			</button>
+			</Button>
 		</div>
 	</div>
 	<div class="ing-settings">
 		<div class="checks">
 			<div class="toggle-row">
-				<button
-					class:selected={displayOriginal}
-					class="outline"
+				<Button
+					class={`outline ${displayOriginal ? 'selected' : ''}`}
 					onclick={() => (displayOriginal = !displayOriginal)}>
 					Original
-				</button>
+				</Button>
 				{#if sanitizedIngredients.some((item) => item.additional)}
-					<button
-						class:selected={displayExtra}
-						class="outline"
+					<Button
+						class={`outline ${displayExtra ? 'selected' : ''}`}
 						disabled={displayOriginal}
 						onclick={() => (displayExtra = !displayExtra)}>
 						Extra
-					</button>
+					</Button>
 				{/if}
-				<button
-					class:selected={displayDryMatch}
-					class="outline"
+				<Button
+					class={`outline ${displayDryMatch ? 'selected' : ''}`}
 					disabled={displayOriginal || selectedSystem === 'americanVolumetric'}
 					onclick={() => (displayDryMatch = !displayDryMatch)}>
 					Match
-				</button>
-				<button
-					class:selected={displaySymbol}
-					class="outline"
+				</Button>
+				<Button
+					class={`outline ${displaySymbol ? 'selected' : ''}`}
 					disabled={displayOriginal}
 					onclick={() => (displaySymbol = !displaySymbol)}>
 					Symbols
-				</button>
+				</Button>
 			</div>
 		</div>
 	</div>
@@ -142,17 +134,17 @@
 		gap: 0.25rem;
 		margin-bottom: 0.75rem;
 
-		button {
+		:global(button) {
 			width: 100%;
 		}
 	}
 
-	.segmented button.selected,
-	.toggle-row button.selected {
+	.segmented :global(button.selected),
+	.toggle-row :global(button.selected) {
 		background-color: var(--pico-primary);
 		color: var(--pico-primary-inverse);
 	}
-	.segmented button.orig {
+	.segmented :global(button.orig) {
 		border: 1px solid var(--pico-contrast);
 		box-shadow: 0 0 0 1px var(--pico-primary);
 	}
@@ -162,7 +154,7 @@
 		flex-wrap: nowrap;
 		gap: 0.25rem;
 
-		button {
+		:global(button) {
 			flex: 1 1 0;
 		}
 	}
