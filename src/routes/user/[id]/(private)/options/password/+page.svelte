@@ -1,8 +1,13 @@
 <script>
 	import { goto } from '$app/navigation'
-	let oldPass = $state(),
-		newPass = $state(),
-		newPassConfirm = $state()
+	import { validatePassword } from '$lib/utils/security.js'
+	import Button from '$lib/components/ui/Button.svelte'
+	import Container from '$lib/components/ui/Container.svelte'
+	import Input from '$lib/components/ui/Form/Input.svelte'
+
+	let oldPass = $state(''),
+		newPass = $state(''),
+		newPassConfirm = $state('')
 
 	/** @type {{data: any}} */
 	let { data } = $props()
@@ -12,11 +17,28 @@
 
 	let passwordsMismatch = $derived(newPass !== newPassConfirm && newPass && newPassConfirm)
 
+	// Validate the new password
+	let newPasswordValidation = $derived(newPass.length > 0 ? validatePassword(newPass) : null)
+
+	// Disable submit button if validation fails
+	let isSubmitDisabled = $derived(
+		!oldPass ||
+		!newPass ||
+		!newPassConfirm ||
+		passwordsMismatch ||
+		(newPasswordValidation && !newPasswordValidation.isValid)
+	)
+
 	async function updatePassword(event) {
 		event.preventDefault()
 
 		if (passwordsMismatch) {
 			feedbackMessage = "Passwords don't match!"
+			return
+		}
+
+		if (newPasswordValidation && !newPasswordValidation.isValid) {
+			feedbackMessage = newPasswordValidation.message
 			return
 		}
 
@@ -33,38 +55,65 @@
 			})
 		})
 
-		const responseData = await response.json()
-
 		if (response.ok) {
 			// Handle success
-			console.log(responseData.message)
-			feedbackMessage = 'Password Updated!'
-			// Wait for 3 seconds before redirecting to the login page
-			setTimeout(() => {
-				goto('/login')
-			}, 2000)
-		} else if (response.status === 401) {
-			feedbackMessage = 'Old Password Incorrect!'
+			feedbackMessage = 'Password updated successfully!'
+			// Clear form fields
+			oldPass = ''
+			newPass = ''
+			newPassConfirm = ''
 		} else {
-			// Handle error
-			console.error(responseData.error)
-			feedbackMessage = 'There was a problem updating your password!'
+			// Parse JSON for error responses
+			try {
+				const responseData = await response.json()
+				if (response.status === 401) {
+					// Old password incorrect or password validation failed
+					feedbackMessage = responseData.error || 'Old password is incorrect!'
+				} else {
+					// Generic error for any server-side validation that was bypassed
+					feedbackMessage = 'There was a problem updating your password!'
+				}
+			} catch (e) {
+				// If JSON parsing fails, show generic error
+				feedbackMessage = 'There was a problem updating your password!'
+			}
 		}
 	}
 </script>
 
 <h3>Update Password</h3>
-<div class="container">
-	<form action="?/updatePassword" method="POST" onsubmit={updatePassword}>
-		<label for="old"> Old Password </label>
-		<input type="password" id="old" bind:value={oldPass} />
-		<label for="new"> New Password </label>
-		<input type="password" id="new" bind:value={newPass} />
-		<label for="confirm"> Confirm New Password </label>
-		<input type="password" id="confirm" bind:value={newPassConfirm} />
-		<button type="submit">Update Password</button>
+<Container>
+	<form onsubmit={updatePassword}>
+		<Input type="password" id="old" label="Old Password" bind:value={oldPass} />
+		<Input type="password" id="new" label="New Password" bind:value={newPass} />
+		{#if newPasswordValidation && newPasswordValidation.message}
+			<p class="validation-message" class:valid={newPasswordValidation.isValid}>
+				{newPasswordValidation.message}
+			</p>
+		{/if}
+		<Input type="password" id="confirm" label="Confirm New Password" bind:value={newPassConfirm} />
+		{#if passwordsMismatch}
+			<p class="validation-message error">Passwords don't match!</p>
+		{/if}
+		<Button type="submit" disabled={isSubmitDisabled}>Update Password</Button>
 	</form>
 	{#if feedbackMessage}
 		<p class="feedback">{feedbackMessage}</p>
 	{/if}
-</div>
+</Container>
+
+<style>
+	.validation-message {
+		margin-top: -0.75rem;
+		margin-bottom: 1rem;
+		font-size: 0.875rem;
+	}
+
+	.validation-message.valid {
+		color: var(--pico-ins-color);
+	}
+
+	.validation-message.error {
+		color: var(--pico-del-color);
+	}
+</style>

@@ -8,7 +8,7 @@ export const POST = async ({ request, locals, params }) => {
 	const user = session?.user
 	const userId = params.id
 
-	if (!session || !user || user.userId !== id) {
+	if (!session || !user || user.userId !== userId) {
 		return new Response(JSON.stringify({ error: 'User not authenticated or wrong user.' }), {
 			status: 403,
 			headers: {
@@ -39,7 +39,6 @@ export const POST = async ({ request, locals, params }) => {
 
 	try {
 		// Verify the old password
-		console.log('Checking the old password!')
 		await auth.useKey('username', username, oldPass)
 	} catch (err) {
 		return new Response(JSON.stringify({ error: 'Old password is incorrect!' }), {
@@ -55,21 +54,11 @@ export const POST = async ({ request, locals, params }) => {
 			// Update the user's password
 			await auth.updateKeyPassword('username', username, newPass)
 
-			// Invalidate all of the user's sessions
-			await auth.invalidateAllUserSessions(updatingUser.id)
-
-			// // Create a new session for the user
-			const newSession = await auth.createSession({
-				userId: updatingUser.id,
-				attributes: {}
-			})
-			locals.auth.setSession(newSession)
-
-			// Redirect the user to the login page
+			// Return success response - keep user logged in with current session
 			return new Response(JSON.stringify({ message: 'Password updated successfully' }), {
-				status: 302,
+				status: 200,
 				headers: {
-					Location: '/login'
+					'Content-Type': 'application/json'
 				}
 			})
 		} catch (e) {
