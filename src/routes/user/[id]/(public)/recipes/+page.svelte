@@ -170,7 +170,7 @@
 				{viewOnly}
 				useCats={publicProfile.useCats}
 				username={publicProfile.username} />
-			<Spinner visible={isLoading || !!$navigating} spinnerContent={$navigating ? 'Loading recipe...' : 'Loading recipes...'} />
+			<Spinner visible={isLoading || !!$navigating} spinnerContent="Loading" />
 			<RecipeList
 				{filteredRecipes}
 				{data}
