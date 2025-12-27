@@ -16,24 +16,25 @@ describe('Scale component', () => {
 		const mockChange = vi.fn()
 		const { component } = render(Scale, { props: { scale: 1, onScaleChange: mockChange } })
 
-		const plusButton = screen.getByText('+')
+		const smallPlusButton = screen.getByText('+0.1')
+		const bigPlusButton = screen.getByText('+1')
 
-		// Increase from 1 to 1.5
-		await fireEvent.click(plusButton)
-		expect(mockChange).toHaveBeenLastCalledWith(1.5)
+		// Increase from 1 to 1.1 (small step)
+		await fireEvent.click(smallPlusButton)
+		expect(mockChange).toHaveBeenLastCalledWith(1.1)
 
-		// Simulate parent updating scale to 1.5
+		// Simulate parent updating scale to 1.1
 		// @ts-expect-deprecated - $set is fine in tests despite deprecation notice
-		component.$set({ scale: 1.5 })
+		component.$set({ scale: 1.1 })
 
-		// Increase from 1.5 to 2
-		await fireEvent.click(plusButton)
-		expect(mockChange).toHaveBeenLastCalledWith(2)
+		// Increase from 1.1 to 2.1 (big step)
+		await fireEvent.click(bigPlusButton)
+		expect(mockChange).toHaveBeenLastCalledWith(2.1)
 
 		component.$set({ scale: 5 })
 
 		// Set to 5, increase to 6
-		await fireEvent.click(plusButton)
+		await fireEvent.click(bigPlusButton)
 		expect(mockChange).toHaveBeenLastCalledWith(6)
 	})
 
@@ -41,22 +42,23 @@ describe('Scale component', () => {
 		const mockChange = vi.fn()
 		const { component } = render(Scale, { props: { scale: 1, onScaleChange: mockChange } })
 
-		const minusButton = screen.getByText('-')
+		const smallMinusButton = screen.getByText('-0.1')
+		const bigMinusButton = screen.getByText('-1')
 
-		// Decrease from 1 to 0.5
-		await fireEvent.click(minusButton)
-		expect(mockChange).toHaveBeenLastCalledWith(0.5)
+		// Decrease from 1 to 0.9 (small step)
+		await fireEvent.click(smallMinusButton)
+		expect(mockChange).toHaveBeenLastCalledWith(0.9)
 
 		component.$set({ scale: 2 })
 
-		// Decrease from 2 to 1.5
-		await fireEvent.click(minusButton)
-		expect(mockChange).toHaveBeenLastCalledWith(1.5)
+		// Decrease from 2 to 1.9 (small step)
+		await fireEvent.click(smallMinusButton)
+		expect(mockChange).toHaveBeenLastCalledWith(1.9)
 
 		component.$set({ scale: 6 })
 
-		// Decrease from 6 to 5
-		await fireEvent.click(minusButton)
+		// Decrease from 6 to 5 (big step)
+		await fireEvent.click(bigMinusButton)
 		expect(mockChange).toHaveBeenLastCalledWith(5)
 	})
 })
