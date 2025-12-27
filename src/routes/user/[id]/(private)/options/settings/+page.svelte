@@ -1,6 +1,9 @@
 <script>
 	import { systems, languages } from '$lib/utils/config.js'
 	import FeedbackMessage from '$lib/components/FeedbackMessage.svelte'
+	import Button from '$lib/components/ui/Button.svelte'
+	import Checkbox from '$lib/components/ui/Form/Checkbox.svelte'
+	import Radio from '$lib/components/ui/Form/Radio.svelte'
 
 	/** @type {{data: any}} */
 	let { data } = $props()
@@ -43,49 +46,39 @@
 </div>
 
 <form method="POST">
-	<button id="logout" formaction="/logout" type="submit">Logout</button>
+	<Button id="logout" formaction="/logout" type="submit">Logout</Button>
 </form>
 
 <form method="POST" action="?/updateSettings" onsubmit={updateSettings}>
 	<h2>Ingredients</h2>
-	<label>
-		<input type="checkbox" name="Skip Small" bind:checked={user.skipSmallUnits} />
-		Use teaspoons and tablespoons instead of grams.
-	</label>
-	<label>
-		<input type="checkbox" name="Cup Match" bind:checked={user.ingMatch} />
+	<Checkbox name="Skip Small" bind:checked={user.skipSmallUnits} label="Use teaspoons and tablespoons instead of grams." />
+	<Checkbox name="Cup Match" bind:checked={user.ingMatch}>
 		<b>Display Cup Match</b> volumetric ingredients by default when converting to and from US Cups
-	</label>
-	<label>
-		<input type="checkbox" name="Display Original" bind:checked={user.ingOriginal} />
+	</Checkbox>
+	<Checkbox name="Display Original" bind:checked={user.ingOriginal}>
 		<b>Display Original</b> ingredient line text instead of parsed text
-	</label>
-	<label>
-		<input type="checkbox" name="Display Symbols" bind:checked={user.ingSymbol} />
+	</Checkbox>
+	<Checkbox name="Display Symbols" bind:checked={user.ingSymbol}>
 		<b>Display Symbols</b> Display short form instead of long form units. e.g. g vs grams
-	</label>
-	<label>
-		<input type="checkbox" name="Display Extra" bind:checked={user.ingExtra} />
+	</Checkbox>
+	<Checkbox name="Display Extra" bind:checked={user.ingExtra}>
 		<b>Display Extra</b> ingredient text, eg after the comma in "1 clove garlic, chopped"
-	</label>
-	<label>
-		<input type="checkbox" name="Use Categories" bind:checked={user.useCats} />
+	</Checkbox>
+	<Checkbox name="Use Categories" bind:checked={user.useCats}>
 		<b>Use Categories</b> enables the user to filter by category.
-	</label>
+	</Checkbox>
 	<details class="dropdown">
 		<summary>{systemLabel}</summary>
 		<ul>
 			{#each systems as system}
 				<li>
-					<label>
-						<input
-							type="radio"
-							bind:group={user.units}
-							name="system"
-							value={system.value}
-							checked={system.value === user.units} />
-						{system.label}
-					</label>
+					<Radio
+						bind:group={user.units}
+						name="system"
+						value={system.value}
+						checked={system.value === user.units}
+						label={system.label}
+					/>
 				</li>
 			{/each}
 		</ul>
@@ -95,30 +88,22 @@
 		<ul>
 			{#each languages as language}
 				<li>
-					<label>
-						<input
-							type="radio"
-							bind:group={user.language}
-							name="language"
-							value={language.value}
-							checked={language.value === user.language} />
-						{language.label}
-					</label>
+					<Radio
+						bind:group={user.language}
+						name="language"
+						value={language.value}
+						checked={language.value === user.language}
+						label={language.label}
+					/>
 				</li>
 			{/each}
 		</ul>
 	</details>
 	<h2>Privacy</h2>
-	<label>
-		<input type="checkbox" name="Profile Public" bind:checked={user.publicProfile} />
-		Profile Public
-	</label>
-	<label>
-		<input type="checkbox" name="Recipes Public" bind:checked={user.publicRecipes} />
-		Recipes Public
-	</label>
+	<Checkbox name="Profile Public" bind:checked={user.publicProfile} label="Profile Public" />
+	<Checkbox name="Recipes Public" bind:checked={user.publicRecipes} label="Recipes Public" />
 	<footer>
-		<button type="submit">Update</button>
+		<Button type="submit">Update</Button>
 		<FeedbackMessage message={settingsFeedback} />
 	</footer>
 </form>

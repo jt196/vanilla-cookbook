@@ -1,6 +1,15 @@
 <script>
 	import { localDateAndTime } from '$lib/utils/dateTime'
 	import { invalidateAll } from '$app/navigation'
+	import Button from '$lib/components/ui/Button.svelte'
+	import Badge from '$lib/components/ui/Badge.svelte'
+	import Container from '$lib/components/ui/Container.svelte'
+	import Checkbox from '$lib/components/ui/Form/Checkbox.svelte'
+	import Table from '$lib/components/ui/Table/Table.svelte'
+	import TableHead from '$lib/components/ui/Table/TableHead.svelte'
+	import TableBody from '$lib/components/ui/Table/TableBody.svelte'
+	import TableRow from '$lib/components/ui/Table/TableRow.svelte'
+	import TableCell from '$lib/components/ui/Table/TableCell.svelte'
 
 	/** @type {{data: any}} */
 	let { data } = $props();
@@ -60,23 +69,20 @@
 </script>
 
 <h3>Update Site Settings</h3>
-<div class="container">
+<Container>
 	<form method="POST" action="?/updateAdminSettings" onsubmit={updateAdminSettings}>
-		<label>
-			<input type="checkbox" name="Admin" bind:checked={settings.registrationAllowed} />
-			Allow Registrations
-		</label>
+		<Checkbox name="Admin" bind:checked={settings.registrationAllowed} label="Allow Registrations" />
 		<footer>
-			<button type="submit">Update</button>
+			<Button type="submit">Update</Button>
 			{#if settingsFeedback}
 				<p class="feedback">{settingsFeedback}</p>
 			{/if}
 		</footer>
 	</form>
-</div>
+</Container>
 
 <h3>Database Backups</h3>
-<div class="container">
+<Container>
 	{#if backupError}
 		<p class="error">{backupError}</p>
 	{:else if backupInfo}
@@ -84,9 +90,9 @@
 			<p><strong>Schedule:</strong> {backupInfo.cronPlainEnglish}</p>
 			<p><strong>Retention:</strong> Keep {backupInfo.retentionCount} most recent scheduled backups</p>
 			<div class="backup-actions">
-				<button onclick={createManualBackup} disabled={backupInProgress} aria-busy={backupInProgress}>
+				<Button onclick={createManualBackup} disabled={backupInProgress} loading={backupInProgress}>
 					{backupInProgress ? 'Creating Backup...' : 'Backup Now'}
-				</button>
+				</Button>
 				{#if backupFeedback}
 					<p class="feedback">{backupFeedback}</p>
 				{/if}
@@ -95,20 +101,20 @@
 
 		{#if backupInfo.backups.length > 0}
 			<h4>Available Backups ({backupInfo.backups.length})</h4>
-			<table>
-				<thead>
-					<tr>
-						<th>Type</th>
-						<th>Created</th>
-						<th>Size</th>
-						<th>Filename</th>
-					</tr>
-				</thead>
-				<tbody>
+			<Table>
+				<TableHead>
+					<TableRow>
+						<TableCell tag="th">Type</TableCell>
+						<TableCell tag="th">Created</TableCell>
+						<TableCell tag="th">Size</TableCell>
+						<TableCell tag="th">Filename</TableCell>
+					</TableRow>
+				</TableHead>
+				<TableBody>
 					{#each backupInfo.backups as backup}
-						<tr>
-							<td>
-								<span class="badge {backup.type}">
+						<TableRow>
+							<TableCell>
+								<Badge variant={backup.type}>
 									{#if backup.type === 'pre-migration'}
 										Migration
 									{:else if backup.type === 'manual'}
@@ -116,22 +122,22 @@
 									{:else}
 										Scheduled
 									{/if}
-								</span>
-							</td>
-							<td>{localDateAndTime(backup.timestamp)}</td>
-							<td>{backup.size}</td>
-							<td class="filename">{backup.name}</td>
-						</tr>
+								</Badge>
+							</TableCell>
+							<TableCell>{localDateAndTime(backup.timestamp)}</TableCell>
+							<TableCell>{backup.size}</TableCell>
+							<TableCell class="filename">{backup.name}</TableCell>
+						</TableRow>
 					{/each}
-				</tbody>
-			</table>
+				</TableBody>
+			</Table>
 		{:else}
 			<p>No backups found.</p>
 		{/if}
 	{:else}
 		<p>Loading backup information...</p>
 	{/if}
-</div>
+</Container>
 
 <style lang="scss">
 	footer {
@@ -168,37 +174,9 @@
 		color: var(--pico-del-color);
 	}
 
-	table {
-		width: 100%;
-		margin-top: 1rem;
-	}
-
 	.filename {
 		font-family: monospace;
 		font-size: 0.9em;
 		word-break: break-all;
-	}
-
-	.badge {
-		display: inline-block;
-		padding: 0.25rem 0.5rem;
-		border-radius: 0.25rem;
-		font-size: 0.85em;
-		font-weight: 500;
-
-		&.scheduled {
-			background-color: var(--pico-primary-background);
-			color: var(--pico-primary-inverse);
-		}
-
-		&.pre-migration {
-			background-color: var(--pico-secondary-background);
-			color: var(--pico-secondary-inverse);
-		}
-
-		&.manual {
-			background-color: var(--pico-contrast-background);
-			color: var(--pico-contrast-inverse);
-		}
 	}
 </style>
