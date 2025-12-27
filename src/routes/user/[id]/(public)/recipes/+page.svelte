@@ -5,7 +5,7 @@
 	import RecipeList from '$lib/components/RecipeList.svelte'
 	import Sidebar from '$lib/components/Sidebar.svelte'
 	import CategoryTree from '$lib/components/CategoryTree.svelte'
-	import { page } from '$app/stores'
+	import { page, navigating } from '$app/stores'
 	import {
 		sortState,
 		searchString,
@@ -170,7 +170,7 @@
 				{viewOnly}
 				useCats={publicProfile.useCats}
 				username={publicProfile.username} />
-			<Spinner visible={isLoading} spinnerContent="Loading recipes..." />
+			<Spinner visible={isLoading || !!$navigating} spinnerContent={$navigating ? 'Loading recipe...' : 'Loading recipes...'} />
 			<RecipeList
 				{filteredRecipes}
 				{data}

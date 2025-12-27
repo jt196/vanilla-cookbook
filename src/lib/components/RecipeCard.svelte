@@ -6,6 +6,7 @@
 	import StarRating from '$lib/components/StarRating.svelte'
 	import { changeRecipeFavourite } from '$lib/utils/crud'
 	import IconButton from '$lib/components/ui/IconButton.svelte'
+	import { navigating } from '$app/stores'
 
 	/** @type {{item: any, data: any, recipeFavourited?: (uid: string) => void, recipeRatingChanged?: (uid: string, rating: number) => void}}, */
 	let { item, data, recipeFavourited, recipeRatingChanged } = $props()
