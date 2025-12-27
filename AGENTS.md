@@ -163,9 +163,33 @@ cp .env.template .env
 # Install dependencies and generate Prisma client
 pnpm dev:install
 
-# Run dev server (migrates DB, seeds data, starts Vite)
+# Run dev server (generates client, migrates DB, seeds data, starts Vite)
 pnpm dev
 ```
+
+### Prisma 7 Specifics (Important!)
+
+**Driver Adapter Required**: Prisma 7 requires a database driver adapter. For SQLite, we use `@prisma/adapter-libsql`.
+
+**PrismaClient Instantiation Pattern**:
+```javascript
+import PrismaClientPkg from '@prisma/client'
+import { PrismaLibSql } from '@prisma/adapter-libsql'
+
+const { PrismaClient } = PrismaClientPkg
+
+// Create LibSQL adapter
+const adapter = new PrismaLibSql({
+	url: process.env.DATABASE_URL || 'file:./prisma/db/dev.sqlite'
+})
+
+// Initialize with adapter
+const prisma = new PrismaClient({ adapter })
+```
+
+**Configuration File**: `prisma.config.ts` at project root (NOT in `prisma/` folder) defines database URL, schema location, and seed script.
+
+**Manual Generation**: `prisma generate` must be called explicitly - it no longer runs automatically with `migrate` or `db push`.
 
 ### Common Commands
 ```bash
@@ -311,6 +335,8 @@ pnpm coverage          # Coverage report
 - **Transactions**: Use Prisma transactions for multi-step operations
 - **Cascades**: Set up in schema (e.g., deleting user cascades to recipes/logs)
 - **Migrations**: Never edit existing migrations, create new ones with `pnpm prisma migrate dev`
+- **Prisma Client**: Always use the adapter pattern (see Prisma 7 Specifics above)
+- **Import syntax**: Use `import PrismaClientPkg from '@prisma/client'` then destructure (CommonJS compatibility)
 
 ## Common Gotchas & Important Notes
 
@@ -331,6 +357,8 @@ pnpm coverage          # Coverage report
 
 ### Database
 - **SQLite by default**: Single file at `prisma/db/dev.sqlite`
+- **Prisma 7 driver**: Uses `@prisma/adapter-libsql` with `better-sqlite3`
+- **Configuration**: Database URL in `prisma.config.ts`, not schema
 - **Migrations in version control**: All migrations committed to repo
 - **Seed data**: Sample recipes/users created on first run, idempotent
 - **File uploads**: `uploads/` directory must persist (not gitignored)
