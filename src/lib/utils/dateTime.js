@@ -73,3 +73,64 @@ export function convertMinutesToTime(minutes) {
 		return `${hours}hr ${remainingMinutes} minutes`
 	}
 }
+
+/**
+ * Convert a cron schedule string to plain English.
+ * @param {string} cronString - The cron schedule string (e.g., "0 3 * * 0")
+ * @returns {string} - A human-readable description of the schedule
+ */
+export function cronToPlainEnglish(cronString) {
+	if (!cronString) return 'Not configured'
+
+	const parts = cronString.trim().split(/\s+/)
+	if (parts.length !== 5) return cronString // Return as-is if invalid format
+
+	const [minute, hour, dayOfMonth, month, dayOfWeek] = parts
+
+	// Helper to format time
+	const formatTime = (h, m) => {
+		const hour12 = h === '0' ? 12 : h > 12 ? h - 12 : h
+		const ampm = h < 12 ? 'AM' : 'PM'
+		const minuteStr = m === '0' ? '00' : m.padStart(2, '0')
+		return `${hour12}:${minuteStr} ${ampm}`
+	}
+
+	const time = formatTime(hour, minute)
+
+	// Check for specific patterns
+	if (dayOfMonth !== '*' && month !== '*') {
+		// Specific date
+		return `On day ${dayOfMonth} of month ${month} at ${time}`
+	}
+
+	if (dayOfMonth !== '*' && month === '*') {
+		// Monthly on specific day
+		const suffix = dayOfMonth === '1' ? 'st' : dayOfMonth === '2' ? 'nd' : dayOfMonth === '3' ? 'rd' : 'th'
+		return `Monthly on the ${dayOfMonth}${suffix} at ${time}`
+	}
+
+	if (dayOfWeek !== '*') {
+		// Weekly schedule
+		const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+		const dayName = days[parseInt(dayOfWeek)] || `day ${dayOfWeek}`
+		return `Every ${dayName} at ${time}`
+	}
+
+	// Check for interval patterns
+	if (hour.includes('/')) {
+		const interval = hour.split('/')[1]
+		return `Every ${interval} hours`
+	}
+
+	if (minute.includes('/')) {
+		const interval = minute.split('/')[1]
+		return `Every ${interval} minutes`
+	}
+
+	// Daily
+	if (dayOfMonth === '*' && month === '*' && dayOfWeek === '*') {
+		return `Daily at ${time}`
+	}
+
+	return cronString // Fallback to original string
+}

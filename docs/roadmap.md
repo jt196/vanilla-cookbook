@@ -18,16 +18,6 @@ Not totally sure about this, it might be a bit overkill, but it could be useful 
 
 See (closed) [Issue #176](https://github.com/jt196/vanilla-cookbook/issues/176)
 
-### Backup Database
-
-Options set in the user interface, or maybe the .env file?
-
-Could also be run automatically on `prisma migrate` command?
-
-Number of copies of db kept specified in .env or admin user table. I'd be tempted to keep it to the .env file.
-
-See (closed) [Issue #194](https://github.com/jt196/vanilla-cookbook/issues/194)
-
 ## Medium Priority
 
 ### Markdown Text Shortcuts
@@ -121,3 +111,13 @@ See (closed) [Issue #173](https://github.com/jt196/vanilla-cookbook/issues/173)
 The ingredient parser module already has a couple of extra languages (deu, ita), let's add in some more.
 
 See (closed) [Issue #233](https://github.com/jt196/vanilla-cookbook/issues/233)
+
+### Backup Database
+
+Options set in the user interface, or maybe the .env file?
+
+Could also be run automatically on `prisma migrate` command?
+
+Number of copies of db kept specified in .env or admin user table. I'd be tempted to keep it to the .env file.
+
+See (closed) [Issue #194](https://github.com/jt196/vanilla-cookbook/issues/194)

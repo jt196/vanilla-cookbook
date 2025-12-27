@@ -18,7 +18,7 @@ DB_PATH="/app/prisma/db/dev.sqlite"
 if [ -f "$DB_PATH" ]; then
     # Check if there are pending migrations
     if pnpm prisma migrate status 2>&1 | grep -q "following migration.*not yet been applied"; then
-        BACKUP_PATH="/app/prisma/db/dev.sqlite.auto-backup-$(date +%Y%m%d-%H%M%S)"
+        BACKUP_PATH="/app/prisma/db/migration-$(date +%Y%m%d-%H%M%S).sqlite"
         echo "⚠️  Pending migrations detected. Creating automatic backup: $BACKUP_PATH"
         cp "$DB_PATH" "$BACKUP_PATH"
         echo "✅ Backup created successfully"
