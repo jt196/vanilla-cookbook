@@ -25,6 +25,7 @@
 	let isDialogOpen = $state(false) // dialog is initially closed
 	let isEditMode = $state(false)
 	let password = $state('')
+	let passwordConfirm = $state('')
 	let userFeedback = $state('')
 
 	let editingUser = $state({
@@ -57,6 +58,7 @@
 	function openCreateDialog() {
 		isEditMode = false
 		password = ''
+		passwordConfirm = ''
 		editingUser = {
 			id: null,
 			username: '',
@@ -154,7 +156,13 @@
 	}
 	let adminCount = $derived(users.filter((user) => user.isAdmin).length)
 
-	let passwordFeedback = $derived(password.length > 0 ? validatePassword(password) : null)
+	// Password validation
+	let passwordValidation = $derived(password.length > 0 ? validatePassword(password) : null)
+
+	// Password match validation
+	let passwordsMismatch = $derived(
+		password.length > 0 && passwordConfirm.length > 0 && password !== passwordConfirm
+	)
 </script>
 
 <Button data-tooltip="New User" onclick={openCreateDialog}
@@ -227,6 +235,20 @@
 			bind:value={editingUser.username} />
 		<Input type="email" id="email" name="email" label="Email" bind:value={editingUser.email} />
 		<Input type="password" id="password" name="password" label="Password" bind:value={password} />
+		{#if passwordValidation && passwordValidation.message}
+			<p class="validation-message" class:valid={passwordValidation.isValid}>
+				{passwordValidation.message}
+			</p>
+		{/if}
+		<Input
+			type="password"
+			id="passwordConfirm"
+			name="passwordConfirm"
+			label="Confirm Password"
+			bind:value={passwordConfirm} />
+		{#if passwordsMismatch}
+			<p class="validation-message error">Passwords don't match!</p>
+		{/if}
 		{#if !isEditMode || !editingUser.isAdmin || adminCount > 1}
 			<Checkbox name="Admin" bind:checked={editingUser.isAdmin} label="Admin" />
 		{/if}
@@ -234,9 +256,6 @@
 			<Checkbox name="Seed Recipes" bind:checked={editingUser.userSeed} label="Seed Recipes" />
 		{/if}
 		<footer>
-			{#if passwordFeedback && passwordFeedback.message}
-				<p class="feedback">{passwordFeedback.message}</p>
-			{/if}
 			<Button onclick={() => (isDialogOpen = false)} class="secondary">Cancel</Button>
 			<Button onclick={handleSubmit}>{isEditMode ? 'Update' : 'Create'}</Button>
 		</footer>
@@ -247,5 +266,19 @@
 	.you-label {
 		color: var(--pico-primary); // Use a CSS variable for highlight color or a fixed value.
 		margin-left: 0.5em;
+	}
+
+	.validation-message {
+		margin-top: -0.75rem;
+		margin-bottom: 1rem;
+		font-size: 0.875rem;
+	}
+
+	.validation-message.valid {
+		color: var(--pico-ins-color);
+	}
+
+	.validation-message.error {
+		color: var(--pico-del-color);
 	}
 </style>

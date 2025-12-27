@@ -20,7 +20,9 @@
 
 	/** @type {{data: PageData, children?: import('svelte').Snippet}} */
 	let { data, children } = $props()
-	const { user, settings, dbSeed } = data
+	let user = $derived(data.user)
+	let settings = $derived(data.settings)
+	let dbSeed = $derived(data.dbSeed)
 
 	let theme = $state('dark')
 
