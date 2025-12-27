@@ -14,6 +14,7 @@
 		favouriteFilter
 	} from '$lib/stores/recipeFilter'
 	import Button from '$lib/components/ui/Button.svelte'
+	import Spinner from '$lib/components/Spinner.svelte'
 
 	/** @type {{data: any}} */
 	let { data = $bindable() } = $props()
@@ -30,6 +31,7 @@
 	let sidebarOpen = $state(false)
 
 	let filteredRecipes = $state([]) // Declare it before the reactive statement
+	let isLoading = $state(true) // Add loading state
 
 	let selectedCategoryUids = $state([])
 
@@ -69,6 +71,8 @@
 	}
 
 	$effect(() => {
+		isLoading = true // Set loading at start of effect
+
 		let sortedRecipes = sortRecipesByKey(
 			data.recipes,
 			$sortState.key,
@@ -106,6 +110,9 @@
 		}
 
 		filteredRecipes = filterSearch($searchString, categoryFilteredRecipes, $searchKey)
+
+		// Set loading to false after a small delay to prevent flash
+		setTimeout(() => { isLoading = false }, 0)
 	})
 	function handleSort(event) {
 		if ($sortState.key === event.detail.key) {
@@ -163,6 +170,7 @@
 				{viewOnly}
 				useCats={publicProfile.useCats}
 				username={publicProfile.username} />
+			<Spinner visible={isLoading} spinnerContent="Loading recipes..." />
 			<RecipeList
 				{filteredRecipes}
 				{data}
