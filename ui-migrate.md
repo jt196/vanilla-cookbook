@@ -385,17 +385,22 @@ src/lib/components/ui/
 
 ## File Migration Checklist
 
-### Completed Components (10 total - ✅ Phase 1 Complete!)
+### Completed Components (15 total - ✅ Phase 1 Extended!)
 - ✅ **Button.svelte** - With id, formaction, loading states, variant support
 - ✅ **Badge.svelte** - Multiple variants (scheduled, pre-migration, manual, etc.)
 - ✅ **Container.svelte** - Page wrapper component
 - ✅ **Form/Checkbox.svelte** - Supports both label prop and children for rich content
 - ✅ **Form/Radio.svelte** - Radio button inputs with group binding
 - ✅ **Form/Input.svelte** - Text/password/email inputs with labels
+- ✅ **Form/FileInput.svelte** - File upload input with accept and multiple support
+- ✅ **Form/Dropdown.svelte** - Dropdown with radio buttons (details/summary pattern)
 - ✅ **Form/ValidationMessage.svelte** - Reusable validation message component with error/valid states
 - ✅ **Table/Table.svelte** - Table wrapper
 - ✅ **Table/TableHead.svelte**, **Table/TableBody.svelte**, **Table/TableRow.svelte** - Table structure
 - ✅ **Table/TableCell.svelte** - With tag (td/th) and scope attribute support
+- ✅ **Dialog.svelte** - Modal/dialog wrapper with escape key handling and cleanup
+- ✅ **Hint.svelte** - Helper text component
+- ✅ **FeedbackMessage.svelte** - Enhanced with inline mode for form feedback
 
 ### High-Priority Pages (Settings)
 - ✅ `/src/routes/user/[id]/(private)/options/admin/site/+page.svelte` - Admin settings + backup table
@@ -418,7 +423,7 @@ src/lib/components/ui/
 
 ### Medium-Priority Pages
 - [ ] `/src/routes/recipe/(private)/[recipeId]/edit/+page.svelte`
-- [ ] `/src/routes/user/[id]/(private)/shopping/+page.svelte`
+- [ ] `/src/routes/user/[id]/(private)/shopping/+page.svelte` - **Needs component extraction** (see Shopping Page Components below)
 
 ### Low-Priority Pages
 - [ ] Remaining recipe view components
@@ -498,6 +503,64 @@ Git branches:
 
 ---
 
+## Shopping Page Component Extraction Plan
+
+### Current Issues in `/src/routes/user/[id]/(private)/shopping/+page.svelte`
+The shopping page is ~428 lines with inline markup that should be componentized:
+
+#### Components to Extract:
+
+**1. ShoppingToolbar** - Action buttons bar (lines 203-227)
+- Props: `showHidden`, `uncheckedItemCount`, `purchasedItemCount`, `onToggleHidden`, `onCheckAll`, `onDeletePurchased`
+- Contains: View toggle, Check all, Delete purchased buttons
+- Currently: Inline button markup with SVG icons
+
+**2. ShoppingItemInput** - Add ingredient input (lines 228-238)
+- Props: `value`, `onAdd`, `onKeyPress`
+- Contains: Input + add button
+- Currently: Inline input + button in `.add-ingredient` div
+
+**3. ShoppingListItem** - Individual list item (lines 250-284)
+- Props: `item`, `onCheckboxChange`, `onEdit`
+- Contains: Checkbox, name, quantity/unit, recipe link, edit button
+- Currently: Complex nested divs with inline styling
+- ~35 lines of repetitive markup per item
+
+**4. ShoppingEditDialog** - Edit item dialog (lines 313-335)
+- Props: `isOpen`, `item`, `onSave`, `onDelete`, `onClose`
+- Contains: Form with name/quantity/unit inputs + footer actions
+- Currently: Inline Dialog with form
+
+#### Proposed New Components Structure:
+
+```
+src/lib/components/Shopping/
+├── ShoppingToolbar.svelte        # Action buttons
+├── ShoppingItemInput.svelte      # Add ingredient input
+├── ShoppingListItem.svelte       # Individual item row
+└── ShoppingEditDialog.svelte     # Edit item modal
+```
+
+#### Benefits:
+- **Reduced page size**: ~428 lines → ~150 lines (65% reduction)
+- **Reusability**: Components can be used elsewhere (e.g., meal planning feature)
+- **Testability**: Isolated components easier to test
+- **Maintainability**: Changes to item rendering happen in one place
+- **Consistency**: Standardized item display across features
+
+#### Migration Priority:
+**Medium** - Page is complex but functional. Extract components when:
+1. Adding new shopping features
+2. Implementing meal planning (would reuse components)
+3. After all form pages are migrated
+
+#### Estimated Effort:
+- Component extraction: 2-3 hours
+- Testing: 1 hour
+- Total: 3-4 hours
+
+---
+
 **Last Updated**: December 2024
-**Status**: Planning Phase
+**Status**: Phase 1 Extended (15 components complete)
 **Owner**: Project Maintainer

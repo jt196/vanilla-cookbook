@@ -7,19 +7,13 @@
 		updateShoppingListItem
 	} from '$lib/utils/crud.js'
 	import { ingredientParse } from '$lib/submodules/recipe-ingredient-parser/src/index.js'
-	import Link from '$lib/components/svg/Link.svelte'
-	import { fade } from 'svelte/transition'
 	import { sortByTwoKeys } from '$lib/utils/sorting.js'
-	import View from '$lib/components/svg/View.svelte'
-	import ViewNo from '$lib/components/svg/ViewNo.svelte'
-	import Delete from '$lib/components/svg/Delete.svelte'
-	import New from '$lib/components/svg/New.svelte'
-	import CheckAll from '$lib/components/svg/CheckAll.svelte'
 	import FeedbackMessage from '$lib/components/FeedbackMessage.svelte'
-	import Edit from '$lib/components/svg/Edit.svelte'
 	import ConfirmationDialog from '$lib/components/ConfirmationDialog.svelte'
-	import Dialog from '$lib/components/ui/Dialog.svelte'
-	import Button from '$lib/components/ui/Button.svelte'
+	import ShoppingToolbar from '$lib/components/Shopping/ShoppingToolbar.svelte'
+	import ShoppingItemInput from '$lib/components/Shopping/ShoppingItemInput.svelte'
+	import ShoppingListItem from '$lib/components/Shopping/ShoppingListItem.svelte'
+	import ShoppingEditDialog from '$lib/components/Shopping/ShoppingEditDialog.svelte'
 
 	/** @type {{data: any}} */
 	let { data } = $props()
@@ -200,42 +194,18 @@
 
 <h4>Shopping List</h4>
 
-<div class="shopping-buttons">
-	<button
-		onclick={toggleHidden}
-		data-tooltip={showHidden ? 'Show Unpurchased Items' : 'Show Purchased Items'}>
-		{#if showHidden}
-			<View width="20px" height="20px" fill="white" />
-		{:else}
-			<ViewNo width="20px" height="20px" fill="white" />
-		{/if}
-	</button>
+<ShoppingToolbar
+	{showHidden}
+	{uncheckedItemCount}
+	{purchasedItemCount}
+	onToggleHidden={toggleHidden}
+	onCheckAll={() => (isCheckAllDialogOpen = true)}
+	onDeletePurchased={() => (isDeleteDialogOpen = true)} />
 
-	<button
-		disabled={uncheckedItemCount === 0}
-		onclick={() => (isCheckAllDialogOpen = true)}
-		data-tooltip="Mark all items as purchased">
-		<CheckAll width="20px" height="20px" fill="white" />
-	</button>
-
-	<button
-		disabled={purchasedItemCount === 0}
-		onclick={() => (isDeleteDialogOpen = true)}
-		data-tooltip="Delete all purchased items">
-		<Delete width="20px" height="20px" fill="white" />
-	</button>
-</div>
-<div class="add-ingredient">
-	<input
-		type="text"
-		placeholder="Enter ingredient..."
-		bind:value={newIngredient}
-		onkeydown={handleKeyPressIngredient} />
-	<button onclick={handleAddIngredient}>
-		<!-- You can include your New.Svelte component here for styling -->
-		<New width="20px" fill="white" />
-	</button>
-</div>
+<ShoppingItemInput
+	bind:value={newIngredient}
+	onAdd={handleAddIngredient}
+	onKeyPress={handleKeyPressIngredient} />
 <div class="list-info">
 	{#if shoppingList.length === 0}
 		<FeedbackMessage message={'List empty: add some items!'} />
@@ -247,41 +217,7 @@
 <fieldset>
 	{#each sortedList as item (item.uid)}
 		{#if !item.purchased || showHidden}
-			<div class="list-item" out:fade={{ duration: 300 }}>
-				<div class="item-qty-unit">
-					<div class="item-label">
-						<label class:checked={item.purchased}>
-							<input
-								type="checkbox"
-								name={item.name}
-								checked={item.purchased}
-								onchange={(event) => handleCheckboxChange(item, event)} />
-							<p class="item-name">
-								{item.name}
-							</p>
-							<div class="unit-quantity">
-								{#if item.quantity}
-									<span>{item.quantity}</span>
-								{/if}
-								{#if item.unit}
-									<span>{item.unit}</span>
-								{/if}
-							</div>
-							{#if item.recipeUid}
-								<a
-									href="/recipe/{item.recipeUid}/view"
-									data-tooltip={item.recipe.name ? item.recipe.name : ''}>
-									<Link width="20px" fill="var(--pico-muted-color)" />
-								</a>
-							{/if}
-						</label>
-					</div>
-				</div>
-				<div class="item-buttons">
-					<button class="outline contrast" id="edit-item" onclick={() => openEditModal(item)}
-						><Edit width="20px" height="20px" fill="var(--pico-ins-color)" /></button>
-				</div>
-			</div>
+			<ShoppingListItem {item} onCheckboxChange={handleCheckboxChange} onEdit={openEditModal} />
 		{/if}
 	{/each}
 </fieldset>
@@ -310,118 +246,9 @@
 	{/snippet}
 </ConfirmationDialog>
 
-<Dialog bind:isOpen={isEditDialogOpen}>
-	<form onsubmit={handleSaveEdit}>
-		<label for="edit-name">Name:</label>
-		<input id="edit-name" type="text" bind:value={editingItem.name} />
+<ShoppingEditDialog
+	bind:isOpen={isEditDialogOpen}
+	bind:item={editingItem}
+	onSave={handleSaveEdit}
+	onDelete={handleDeleteItem} />
 
-		<label for="edit-quantity">Quantity:</label>
-		<input id="edit-quantity" type="number" bind:value={editingItem.quantity} />
-
-		<label for="edit-unit">Unit:</label>
-		<input id="edit-unit" type="text" bind:value={editingItem.unit} />
-
-		<footer>
-			<Button type="button" onclick={() => (isEditDialogOpen = false)}>Cancel</Button>
-			<Button
-				type="button"
-				class="outline secondary"
-				id="delete-item"
-				onclick={() => handleDeleteItem(editingItem.uid)}
-				><Delete width="15px" height="15px" fill="var(--pico-del-color)" /></Button>
-			<Button type="submit">Save</Button>
-		</footer>
-	</form>
-</Dialog>
-
-<style lang="scss">
-	.checked {
-		color: var(--pico-muted-color);
-	}
-	.shopping-buttons {
-		margin-bottom: 1rem;
-	}
-
-	form > footer {
-		display: flex;
-		gap: 0.5rem;
-		justify-content: space-between; /* Ensures even spacing */
-		button {
-			flex: 1; /* Makes buttons take equal width */
-		}
-
-		#delete-item {
-			flex: 0 1 35px; /* Ensures it doesn't expand but can shrink */
-			padding: 0 0.5rem;
-			max-height: 35px;
-		}
-	}
-	.list-item {
-		display: flex;
-		border-bottom: 0.5px solid var(--pico-primary-focus);
-		align-items: center;
-		justify-content: center;
-		padding: 0.5rem 0;
-		@media (max-width: 767px) {
-			padding: 0;
-		}
-		.item-qty-unit {
-			display: flex;
-			flex-direction: column;
-		}
-		.item-label label {
-			display: flex;
-			align-items: center;
-			gap: 0.3rem;
-			margin: 0;
-			justify-content: center;
-			max-width: 100%;
-			.item-name {
-				flex: 1 1 auto;
-				min-width: 0;
-				overflow: hidden;
-				white-space: nowrap;
-				text-overflow: ellipsis;
-				margin: 0;
-				padding: 0;
-			}
-		}
-		.item-buttons {
-			margin-left: auto;
-			display: flex;
-			flex-direction: row;
-			align-items: center;
-			justify-content: center;
-			gap: 0.5rem;
-			@media (max-width: 767px) {
-				display: flex;
-				flex-direction: column;
-				gap: 0.2rem;
-				padding: 0.2rem 0;
-				.outline {
-					display: inline-flex;
-					align-items: center;
-					justify-content: center;
-					height: 40px;
-					padding: 0 10px;
-				}
-			}
-		}
-	}
-
-	.unit-quantity {
-		margin: 0;
-		padding: 0 0.5rem;
-		color: var(--pico-muted-color);
-	}
-
-	.add-ingredient {
-		display: flex;
-		gap: 0.5rem;
-		margin-bottom: 1rem;
-		input {
-			margin-bottom: 0;
-			min-height: 40px;
-		}
-	}
-</style>
