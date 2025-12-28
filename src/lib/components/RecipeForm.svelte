@@ -22,8 +22,9 @@
 		recipeCategories = null
 	} = $props()
 
+	// Ensure is_public is always defined
 	$effect(() => {
-		if (!editMode) {
+		if (recipe && recipe.is_public === undefined) {
 			recipe.is_public = false
 		}
 	})

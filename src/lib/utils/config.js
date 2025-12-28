@@ -42,9 +42,13 @@ export const languages = [
  *  prep_time: string,
  *  ingredients: string,
  *  directions: string,
+ *  description: string,
+ *  notes: string,
  *  total_time: string,
  *  servings: string,
- *  nutritional_info: string
+ *  nutritional_info: string,
+ *  rating: number,
+ *  is_public: boolean
  * }}
  */
 export const defaultRecipe = {
@@ -56,9 +60,13 @@ export const defaultRecipe = {
 	prep_time: '',
 	ingredients: '',
 	directions: '',
+	description: '',
+	notes: '',
 	total_time: '',
 	servings: '',
-	nutritional_info: ''
+	nutritional_info: '',
+	rating: 0,
+	is_public: false
 }
 
 export const ingVersion = 2.36

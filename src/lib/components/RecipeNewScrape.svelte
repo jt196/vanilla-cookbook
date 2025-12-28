@@ -30,7 +30,7 @@
 
 	async function scrapeEventHandler(event) {
 		event.preventDefault()
-		recipe = defaultRecipe
+		recipe = { ...defaultRecipe }
 		loading = true
 
 		try {
@@ -97,7 +97,7 @@
 				disabled={selectedMode === mode}
 				onclick={() => {
 					selectedMode = mode
-					recipe = defaultRecipe
+					recipe = { ...defaultRecipe }
 					sharedText = null
 					imageFile = null
 					url = ''
