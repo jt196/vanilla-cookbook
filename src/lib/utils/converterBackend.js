@@ -1,6 +1,6 @@
-import { manipulateIngredient, normalizeIngredient } from './converter'
-import { shouldSkipConversion } from './units'
-import { getFuseOptions } from './config'
+import { manipulateIngredient, normalizeIngredient } from './converter.js'
+import { shouldSkipConversion } from './units.js'
+import { getFuseOptions } from './config.js'
 import { prisma } from '$lib/server/prisma'
 import Fuse from 'fuse.js'
 
