@@ -1,8 +1,37 @@
-import { units, findSuitableUnit } from '$lib/utils/units'
+import { findSuitableUnit } from '$lib/utils/units'
 import { fuseConfig } from '$lib/utils/config'
 import Fuse from 'fuse.js'
 import { foodPreferences } from '$lib/data/ingredients/vegan/vegan'
 import { getSymbol } from '$lib/submodules/recipe-ingredient-parser/src/index.js'
+import { i18nMap } from '$lib/submodules/recipe-ingredient-parser/src/i18n'
+
+// Get English units data from parser
+const { unitsData } = i18nMap.eng
+
+/**
+ * Finds unit data by searching through unit names.
+ * @param {string} unitName - The unit name to search for
+ * @returns {Object|null} Unit data with canonical name, or null if not found
+ */
+function findUnitData(unitName) {
+	if (!unitName) return null
+
+	const lowerName = unitName.toLowerCase()
+
+	// Try direct lookup first
+	if (unitsData[lowerName]) {
+		return { canonical: lowerName, ...unitsData[lowerName] }
+	}
+
+	// Search through all unit names
+	for (const [canonical, data] of Object.entries(unitsData)) {
+		if (data.names.map(n => n.toLowerCase()).includes(lowerName)) {
+			return { canonical, ...data }
+		}
+	}
+
+	return null
+}
 
 /**
  * Converts a quantity from one unit to another.
@@ -22,11 +51,15 @@ export const converter = (quantity, from, to = 'grams') => {
 	const fromVal = from.length > 1 ? from.toLowerCase() : from
 	const toVal = to.length > 1 ? to.toLowerCase() : to
 
-	const fromUnit = units.find((unit) => unit.names.includes(fromVal)) || {}
-	const toUnit = units.find((unit) => unit.names.includes(toVal)) || {}
+	const fromUnitData = findUnitData(fromVal)
+	const toUnitData = findUnitData(toVal)
 
-	const fromUnitGrams = fromUnit.grams
-	const toUnitGrams = toUnit.grams
+	if (!fromUnitData) return { error: `Unit unknown: ${fromVal}` }
+	if (!toUnitData) return { error: `Unit unknown: ${toVal}` }
+
+	// Get conversion factors - support both weight (grams) and volume (milliliters)
+	const fromUnitGrams = fromUnitData.conversionFactor?.grams ?? fromUnitData.conversionFactor?.milliliters ?? 0
+	const toUnitGrams = toUnitData.conversionFactor?.grams ?? toUnitData.conversionFactor?.milliliters ?? 0
 
 	if (!fromUnitGrams) return { error: `Unit unknown: ${fromVal}` }
 	if (!toUnitGrams) return { error: `Unit unknown: ${toVal}` }
@@ -499,13 +532,13 @@ export function normalizeIngredient(ingredientObj, options = {}, lang = 'eng') {
 	const { quantity, unit } = ingredientObj
 	const qtyNum =
 		typeof quantity === 'string' ? Number(quantity) : typeof quantity === 'number' ? quantity : null
-	const unitData = units.find((u) => u.names.includes(unit))
+	const unitData = findUnitData(unit)
 
 	// If unit is unknown, return as-is with optional fallback handling
 	if (!unitData) return { ...ingredientObj }
 
-	const normalizedUnit = unitData.names[0]
-	const plural = normalizedUnit + 's'
+	const normalizedUnit = unitData.canonical
+	const plural = unitData.plural
 	const symbol = getSymbol(normalizedUnit, lang)
 	const decimalPlaces = unitData.decimalPlaces ?? 2
 
@@ -564,8 +597,8 @@ export const manipulateIngredient = (ingredientObj, fromSystem, toSystem, fuse, 
 	}
 
 	// Normalize unit to standard form
-	const fromUnits = units.find((unitLookup) => unitLookup.names.includes(unit)) || {}
-	const fromUnit = fromUnits.names[0]
+	const fromUnitData = findUnitData(unit)
+	const fromUnit = fromUnitData?.canonical
 
 	// Pathway 1: Metric volumetric → americanVolumetric (direct volume conversion)
 	if (toSystem === 'americanVolumetric' && (fromUnit === 'milliliter' || fromUnit === 'liter')) {
