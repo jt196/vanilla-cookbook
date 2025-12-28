@@ -13,11 +13,11 @@ describe('determineSystem function', () => {
 		expect(result.system).toBe('metric')
 	})
 
-	it('should return metric system as dominant', () => {
+	it('should return metric system as dominant with system-agnostic tablespoon', () => {
 		const ingredients = [
 			{ unit: 'gram', unitSystem: 'metric' },
 			{ unit: 'liter', unitSystem: 'metric' },
-			{ unit: 'tablespoon', unitSystem: 'americanVolumetric' }
+			{ unit: 'tablespoon', unitSystem: null }
 		]
 		const result = determineSystem(ingredients)
 		expect(result.system).toBe('metric')
@@ -77,6 +77,29 @@ describe('determineSystem function', () => {
 			metric: 1,
 			imperial: 1,
 			americanVolumetric: 1
+		})
+	})
+
+	it('should treat tsp/tbsp as system-agnostic and classify metric recipe correctly', () => {
+		// Recipe with 5 tsp/tbsp ingredients and 4 ml/L ingredients
+		// Should be classified as metric since tsp/tbsp are system-agnostic (system: null)
+		const ingredients = [
+			{ unit: 'teaspoon', unitSystem: null },
+			{ unit: 'tablespoon', unitSystem: null },
+			{ unit: 'teaspoon', unitSystem: null },
+			{ unit: 'tablespoon', unitSystem: null },
+			{ unit: 'teaspoon', unitSystem: null },
+			{ unit: 'milliliter', unitSystem: 'metric' },
+			{ unit: 'milliliter', unitSystem: 'metric' },
+			{ unit: 'liter', unitSystem: 'metric' },
+			{ unit: 'liter', unitSystem: 'metric' }
+		]
+		const result = determineSystem(ingredients)
+		expect(result.system).toBe('metric')
+		expect(result.counts).toEqual({
+			metric: 4,
+			imperial: 0,
+			americanVolumetric: 0
 		})
 	})
 })
