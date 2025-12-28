@@ -79,7 +79,7 @@
 		const result = await createRecipe(recipe)
 		if (result.success) {
 			// Handle success, maybe redirect or show a success message
-			goto(`/recipe/${result.data.uid}/view/`)
+			await goto(`/recipe/${result.data.uid}/view/`)
 		} else {
 			console.error('Error:', result.error)
 		}
