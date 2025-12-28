@@ -1,6 +1,12 @@
-import { converter, parseTemperature } from '$lib/utils/converter.js'
+import {
+	converter,
+	parseTemperature,
+	normalizeIngredient,
+	manipulateIngredient
+} from '$lib/utils/converter.js'
+import Fuse from 'fuse.js'
 
-/* global describe, expect, it */
+/* global describe, expect, it, beforeEach, vi */
 
 describe('converter function', () => {
 	it('should convert grams to ounces correctly', () => {
@@ -230,5 +236,245 @@ describe('parseTemperature function', () => {
 		expect(result).toBe(
 			'Towards the end of the rising time, preheat your oven to **349°F** (**320°F** fan) with a rack in the center.'
 		)
+	})
+})
+
+describe('normalizeIngredient function', () => {
+	it('should normalize a basic ingredient with known unit', () => {
+		const ingredient = {
+			quantity: 2.5678,
+			unit: 'gram',
+			ingredient: 'flour'
+		}
+		const result = normalizeIngredient(ingredient, {}, 'eng')
+		expect(result.quantity).toBe(2.57) // Rounded to 2 decimal places
+		expect(result.unit).toBe('gram')
+		expect(result.unitPlural).toBe('grams')
+		expect(result.symbol).toBe('g')
+		expect(result.minQty).toBe(2.57)
+		expect(result.maxQty).toBe(2.57)
+	})
+
+	it('should handle string quantity', () => {
+		const ingredient = {
+			quantity: '3.456',
+			unit: 'cup',
+			ingredient: 'sugar'
+		}
+		const result = normalizeIngredient(ingredient, {}, 'eng')
+		expect(result.quantity).toBe(3.46) // Converted and rounded
+		expect(result.unit).toBe('cup')
+	})
+
+	it('should skip rounding when skipRounding is true', () => {
+		const ingredient = {
+			quantity: 2.5678,
+			unit: 'gram',
+			ingredient: 'flour'
+		}
+		const result = normalizeIngredient(ingredient, { skipRounding: true }, 'eng')
+		expect(result.quantity).toBe(2.5678) // Not rounded
+	})
+
+	it('should return ingredient as-is for unknown unit', () => {
+		const ingredient = {
+			quantity: 2,
+			unit: 'unknownunit',
+			ingredient: 'something'
+		}
+		const result = normalizeIngredient(ingredient, {}, 'eng')
+		expect(result).toEqual(ingredient) // Should return unchanged
+	})
+
+	it('should handle ounces with 1 decimal place', () => {
+		const ingredient = {
+			quantity: 5.6789,
+			unit: 'ounce',
+			ingredient: 'butter'
+		}
+		const result = normalizeIngredient(ingredient, {}, 'eng')
+		expect(result.quantity).toBe(5.7) // Ounces use 1 decimal place
+		expect(result.unit).toBe('ounce')
+		expect(result.unitPlural).toBe('ounces')
+		expect(result.symbol).toBe('oz')
+	})
+
+	it('should handle kilograms with 2 decimal places', () => {
+		const ingredient = {
+			quantity: 1.23456,
+			unit: 'kilogram',
+			ingredient: 'rice'
+		}
+		const result = normalizeIngredient(ingredient, {}, 'eng')
+		expect(result.quantity).toBe(1.23) // Kilograms use 2 decimal places
+		expect(result.unit).toBe('kilogram')
+	})
+})
+
+describe('manipulateIngredient function', () => {
+	let mockFuse
+
+	beforeEach(() => {
+		// Create mock ingredient database
+		const mockIngredients = [
+			{ name: 'flour', gramsPerCup: 120 },
+			{ name: 'sugar', gramsPerCup: 200 },
+			{ name: 'butter', gramsPerCup: 227 },
+			{ name: 'onions', gramsPerCup: 160 },
+			{ name: 'rice', gramsPerCup: 185 },
+			{ name: 'milk', gramsPerCup: 244 }
+		]
+
+		mockFuse = new Fuse(mockIngredients, {
+			keys: ['name'],
+			threshold: 0.4,
+			includeScore: true,
+			caseSensitive: false
+		})
+	})
+
+	it('should return normalized ingredient when no unit is provided', () => {
+		const ingredient = {
+			quantity: 2,
+			ingredient: 'eggs'
+		}
+		const result = manipulateIngredient(ingredient, 'metric', 'imperial', mockFuse, 'eng')
+		expect(result.ingredient).toBe('eggs')
+		expect(result.quantity).toBe(2)
+	})
+
+	it('should convert metric volumetric (milliliters) to americanVolumetric (cups)', () => {
+		const ingredient = {
+			quantity: 500,
+			unit: 'milliliter',
+			ingredient: 'water'
+		}
+		const result = manipulateIngredient(ingredient, 'metric', 'americanVolumetric', mockFuse, 'eng')
+		expect(result.unit).toBe('cup')
+		expect(parseFloat(result.quantity)).toBeCloseTo(2.11, 1) // 500ml ≈ 2.11 cups
+	})
+
+	it('should convert americanVolumetric (cups) to metric (grams) using ingredient density', () => {
+		const ingredient = {
+			quantity: 2,
+			unit: 'cup',
+			ingredient: 'flour'
+		}
+		const result = manipulateIngredient(ingredient, 'americanVolumetric', 'metric', mockFuse, 'eng')
+		expect(result.unit).toBe('gram')
+		expect(parseFloat(result.quantity)).toBeCloseTo(240, 0) // 2 cups × 120 g/cup = 240g
+	})
+
+	it('should convert americanVolumetric to metric with exact match (score < 0.3)', () => {
+		const ingredient = {
+			quantity: 1,
+			unit: 'cup',
+			ingredient: 'sugar'
+		}
+		const result = manipulateIngredient(ingredient, 'americanVolumetric', 'metric', mockFuse, 'eng')
+		expect(result.unit).toBe('gram')
+		expect(parseFloat(result.quantity)).toBeCloseTo(200, 0) // 1 cup × 200 g/cup = 200g
+	})
+
+	it('should fall back to water density when ingredient is not found', () => {
+		const ingredient = {
+			quantity: 1,
+			unit: 'cup',
+			ingredient: 'quinoa flour' // Not in mock database
+		}
+		const result = manipulateIngredient(ingredient, 'americanVolumetric', 'metric', mockFuse, 'eng')
+		expect(result.usedDefaultDensity).toBe(true)
+		expect(parseFloat(result.quantity)).toBeCloseTo(236.6, 0) // Water density: 236.588 g/cup
+	})
+
+	it('should convert americanVolumetric cups to imperial ounces', () => {
+		const ingredient = {
+			quantity: 1,
+			unit: 'cup',
+			ingredient: 'butter'
+		}
+		const result = manipulateIngredient(ingredient, 'americanVolumetric', 'imperial', mockFuse, 'eng')
+		expect(result.unit).toBe('ounce')
+		expect(parseFloat(result.quantity)).toBeCloseTo(8.0, 0) // 1 cup butter (227g) ≈ 8 oz
+	})
+
+	it('should convert metric grams to imperial ounces', () => {
+		const ingredient = {
+			quantity: 100,
+			unit: 'gram',
+			ingredient: 'flour'
+		}
+		const result = manipulateIngredient(ingredient, 'metric', 'imperial', mockFuse, 'eng')
+		expect(result.unit).toBe('ounce')
+		expect(parseFloat(result.quantity)).toBeCloseTo(3.53, 1) // 100g ≈ 3.53 oz
+	})
+
+	it('should convert metric kilograms to imperial pounds', () => {
+		const ingredient = {
+			quantity: 2,
+			unit: 'kilogram',
+			ingredient: 'flour'
+		}
+		const result = manipulateIngredient(ingredient, 'metric', 'imperial', mockFuse, 'eng')
+		expect(result.unit).toBe('pound')
+		expect(parseFloat(result.quantity)).toBeCloseTo(4.41, 1) // 2kg ≈ 4.41 lb
+	})
+
+	it('should convert imperial ounces to metric grams', () => {
+		const ingredient = {
+			quantity: 8,
+			unit: 'ounce',
+			ingredient: 'butter'
+		}
+		const result = manipulateIngredient(ingredient, 'imperial', 'metric', mockFuse, 'eng')
+		expect(result.unit).toBe('gram')
+		expect(parseFloat(result.quantity)).toBeCloseTo(226.8, 0) // 8 oz ≈ 226.8g
+	})
+
+	it('should handle tablespoons to cups conversion in americanVolumetric', () => {
+		const ingredient = {
+			quantity: 0.5,
+			unit: 'cup',
+			ingredient: 'milk'
+		}
+		const result = manipulateIngredient(ingredient, 'americanVolumetric', 'metric', mockFuse, 'eng')
+		// 0.5 cup milk (244g/cup) = 122g
+		expect(parseFloat(result.quantity)).toBeCloseTo(122, 0)
+	})
+
+	it('should preserve ingredient object properties', () => {
+		const ingredient = {
+			quantity: 1,
+			unit: 'cup',
+			ingredient: 'flour',
+			originalText: '1 cup flour',
+			customField: 'test'
+		}
+		const result = manipulateIngredient(ingredient, 'americanVolumetric', 'metric', mockFuse, 'eng')
+		expect(result.ingredient).toBe('flour')
+		expect(result.originalText).toBe('1 cup flour')
+		expect(result.customField).toBe('test')
+	})
+
+	it('should handle same-system conversion (just normalize)', () => {
+		const ingredient = {
+			quantity: 100,
+			unit: 'gram',
+			ingredient: 'flour'
+		}
+		const result = manipulateIngredient(ingredient, 'metric', 'metric', mockFuse, 'eng')
+		expect(result.unit).toBe('gram')
+		expect(result.quantity).toBe(100)
+	})
+
+	it('should convert teaspoons for small quantities', () => {
+		const ingredient = {
+			quantity: 500,
+			unit: 'milliliter',
+			ingredient: 'vanilla extract'
+		}
+		const result = manipulateIngredient(ingredient, 'metric', 'americanVolumetric', mockFuse, 'eng')
+		// Small volumes should use teaspoons or tablespoons
+		expect(['teaspoon', 'tablespoon', 'cup']).toContain(result.unit)
 	})
 })
