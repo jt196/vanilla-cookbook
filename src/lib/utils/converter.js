@@ -1,4 +1,5 @@
 import { units, findSuitableUnit } from '$lib/utils/units'
+import { fuseConfig } from '$lib/utils/config'
 import Fuse from 'fuse.js'
 import { foodPreferences } from '$lib/data/ingredients/vegan/vegan'
 import { getSymbol } from '$lib/submodules/recipe-ingredient-parser/src/index.js'
@@ -187,6 +188,307 @@ export function getDietLabel(prefs) {
 }
 
 /**
+ * Finds ingredient density using Fuse fuzzy matching with multi-word fallback.
+ *
+ * This function attempts to match ingredients in four passes:
+ * 1. Ingredient + instructions (e.g., "sliced onions") with strict threshold - if instructions provided
+ * 2. Full ingredient name with strict threshold
+ * 3. Individual words (for multi-word ingredients like "yellow onions") with relaxed threshold
+ * 4. Water density as final fallback
+ *
+ * @param {string} ingredient - The ingredient name to search for
+ * @param {Fuse} fuse - Fuse instance configured with ingredient database
+ * @param {Array<string>} [instructions=[]] - Optional preparation instructions (sliced, chopped, etc.)
+ * @returns {{ingredient: Object, usedDefaultDensity: boolean, matchType: string, matchedWord?: string, matchScore: number}} Matched ingredient and metadata
+ */
+function findIngredientDensity(ingredient, fuse, instructions = []) {
+	// Pass 1: Try with instructions included (if provided)
+	if (instructions && instructions.length > 0) {
+		const withInstructions = `${instructions.join(' ')} ${ingredient}`.trim()
+		const instructionResult = fuse.search(withInstructions)
+		if (instructionResult.length > 0 && instructionResult[0].score < fuseConfig.strictThreshold) {
+			return {
+				ingredient: instructionResult[0].item,
+				usedDefaultDensity: false,
+				matchType: 'instruction',
+				matchScore: instructionResult[0].score
+			}
+		}
+	}
+
+	// Pass 2: Try full ingredient name with strict threshold
+	const result = fuse.search(ingredient)
+	if (result.length > 0 && result[0].score < fuseConfig.strictThreshold) {
+		return {
+			ingredient: result[0].item,
+			usedDefaultDensity: false,
+			matchType: 'exact',
+			matchScore: result[0].score
+		}
+	}
+
+	// Pass 3: Try individual words for multi-word ingredients
+	const words = ingredient.toLowerCase().split(/\s+/)
+	if (words.length > 1) {
+		for (const word of words) {
+			// Skip short words (articles, prepositions)
+			if (word.length < fuseConfig.minWordLength) continue
+
+			const wordResult = fuse.search(word)
+			if (wordResult.length > 0 && wordResult[0].score < fuseConfig.relaxedThreshold) {
+				return {
+					ingredient: wordResult[0].item,
+					usedDefaultDensity: false,
+					matchType: 'word',
+					matchedWord: word,
+					matchScore: wordResult[0].score
+				}
+			}
+		}
+	}
+
+	// Pass 4: Use water density if no match found
+	return {
+		ingredient: { name: 'Water (default)', gramsPerCup: 236.588 }, // 1g/ml → 236.588g per cup
+		usedDefaultDensity: true,
+		matchType: 'fallback',
+		matchScore: 1
+	}
+}
+
+/**
+ * Converts metric volumetric units (milliliters/liters) to americanVolumetric (cups/tbsp/tsp).
+ *
+ * This is a direct volume-to-volume conversion that doesn't require ingredient density.
+ *
+ * @param {Object} ingredientObj - The ingredient object to convert
+ * @param {string} fromUnit - Source unit (milliliter or liter)
+ * @param {number} quantity - Amount to convert
+ * @param {string} lang - Language code for symbols
+ * @returns {Object} Converted ingredient object
+ */
+function convertMetricVolumetricToAmerican(ingredientObj, fromUnit, quantity, lang) {
+	// Convert to cups
+	const { quantity: convertedQuantity, error } = converter(quantity, fromUnit, 'cups')
+	if (error) {
+		return { error }
+	}
+
+	// Use this quantity to determine the suitable unit
+	const targetUnit = findSuitableUnit('americanVolumetric', convertedQuantity * 236.588)
+
+	// Convert from cup to target unit
+	const { quantity: convertedQuantityFinal } = converter(convertedQuantity, 'cup', targetUnit)
+
+	// Return the object
+	return {
+		...ingredientObj,
+		quantity: parseFloat(convertedQuantityFinal).toFixed(2),
+		unit: targetUnit,
+		unitPlural: targetUnit + 's',
+		symbol: getSymbol(targetUnit, lang),
+		minQty: parseFloat(convertedQuantityFinal).toFixed(2),
+		maxQty: parseFloat(convertedQuantityFinal).toFixed(2)
+	}
+}
+
+/**
+ * Converts weight (grams) to americanVolumetric units using ingredient-specific density.
+ *
+ * @param {Object} ingredientObj - The ingredient object to convert
+ * @param {number} quantityInGrams - Weight in grams
+ * @param {Object} dryIngredient - Ingredient density data (with gramsPerCup)
+ * @param {boolean} usedDefaultDensity - Whether water density was used as fallback
+ * @param {string} lang - Language code for symbols
+ * @returns {Object} Converted ingredient object
+ */
+function convertToAmericanVolumetric(
+	ingredientObj,
+	quantityInGrams,
+	dryIngredient,
+	usedDefaultDensity,
+	lang
+) {
+	let convertedQuantity = quantityInGrams / dryIngredient.gramsPerCup
+	const targetUnit = findSuitableUnit('americanVolumetric', convertedQuantity * 236.588)
+
+	// Adjust the convertedQuantity based on the targetUnit
+	let decimalPlaces = 2 // Default for cups
+	if (targetUnit === 'tablespoon') {
+		convertedQuantity *= 16 // 1 cup = 16 tablespoons
+		decimalPlaces = 1
+	} else if (targetUnit === 'teaspoon') {
+		convertedQuantity *= 48 // 1 cup = 48 teaspoons
+		decimalPlaces = 1
+	}
+
+	convertedQuantity = parseFloat(convertedQuantity.toFixed(decimalPlaces))
+
+	return {
+		...ingredientObj,
+		dryIngredient,
+		quantity: convertedQuantity,
+		unit: targetUnit,
+		unitPlural: targetUnit + 's',
+		symbol: getSymbol(targetUnit, lang),
+		minQty: convertedQuantity,
+		maxQty: convertedQuantity,
+		usedDefaultDensity
+	}
+}
+
+/**
+ * Converts americanVolumetric units to metric (grams/kg) using ingredient-specific density.
+ *
+ * @param {Object} ingredientObj - The ingredient object to convert
+ * @param {number} quantityInOriginalUnit - Amount in original unit (cup, tsp, tbsp, etc.)
+ * @param {string} fromUnit - Source unit name
+ * @param {Object} dryIngredient - Ingredient density data (with gramsPerCup)
+ * @param {boolean} usedDefaultDensity - Whether water density was used as fallback
+ * @param {string} lang - Language code for symbols
+ * @returns {Object|null} Converted ingredient object, or null if unit not supported
+ */
+function convertAmericanVolumetricToMetric(
+	ingredientObj,
+	quantityInOriginalUnit,
+	fromUnit,
+	dryIngredient,
+	usedDefaultDensity,
+	lang
+) {
+	// Only run the conversion if the units match up with the AmVol units
+	if (
+		fromUnit !== 'cup' &&
+		fromUnit !== 'teaspoon' &&
+		fromUnit !== 'tablespoon' &&
+		fromUnit !== 'quarts' &&
+		fromUnit !== 'gallons' &&
+		fromUnit !== 'floz'
+	) {
+		return null // Not a valid americanVolumetric unit
+	}
+
+	const { quantity: quantityInCups } = converter(quantityInOriginalUnit, fromUnit, 'cup')
+	let convertedQuantityGrams = quantityInCups * dryIngredient.gramsPerCup
+
+	// Find the target unit according to the amount
+	const targetMetricUnit = findSuitableUnit('metric', convertedQuantityGrams)
+
+	// Convert the grams into the suitable unit - don't convert if already grams
+	let convertedQuantityMetric
+	if (targetMetricUnit === 'gram') {
+		convertedQuantityMetric = convertedQuantityGrams
+	} else {
+		// Otherwise, convert grams to kg etc
+		;({ quantity: convertedQuantityMetric } = converter(
+			convertedQuantityGrams,
+			'gram',
+			targetMetricUnit
+		))
+	}
+
+	convertedQuantityMetric = parseFloat(convertedQuantityMetric.toFixed(1))
+
+	return {
+		...ingredientObj,
+		dryIngredient,
+		quantity: convertedQuantityMetric,
+		unit: targetMetricUnit,
+		unitPlural: targetMetricUnit + 's',
+		symbol: getSymbol(targetMetricUnit, lang),
+		minQty: convertedQuantityMetric,
+		maxQty: convertedQuantityMetric,
+		usedDefaultDensity
+	}
+}
+
+/**
+ * Converts americanVolumetric cups to imperial (ounces/pounds) using ingredient-specific density.
+ *
+ * @param {Object} ingredientObj - The ingredient object to convert
+ * @param {number} quantityInOriginalUnit - Amount in original unit
+ * @param {string} fromUnit - Source unit name (must be 'cup')
+ * @param {Object} dryIngredient - Ingredient density data (with gramsPerCup)
+ * @param {boolean} usedDefaultDensity - Whether water density was used as fallback
+ * @param {string} lang - Language code for symbols
+ * @returns {Object|null} Converted ingredient object, or null if unit not 'cup'
+ */
+function convertAmericanVolumetricToImperial(
+	ingredientObj,
+	quantityInOriginalUnit,
+	fromUnit,
+	dryIngredient,
+	usedDefaultDensity,
+	lang
+) {
+	if (fromUnit !== 'cup') {
+		return null // Only handles cups for now
+	}
+
+	// Convert cups to grams
+	const { quantity: quantityInCups } = converter(quantityInOriginalUnit, fromUnit, 'cup')
+	let convertedQuantityGrams = parseFloat((quantityInCups * dryIngredient.gramsPerCup).toFixed(1))
+
+	// Find a suitable unit - if it's bigger than 28 ounces, use lb etc
+	const targetImperialUnit = findSuitableUnit('imperial', convertedQuantityGrams)
+
+	// Convert this unit to target imperial
+	let convertedQuantityImperial
+	;({ quantity: convertedQuantityImperial } = converter(
+		convertedQuantityGrams,
+		'gram',
+		targetImperialUnit
+	))
+
+	// Convert to a float
+	convertedQuantityImperial = parseFloat(convertedQuantityImperial.toFixed(1))
+
+	return {
+		...ingredientObj,
+		dryIngredient,
+		quantity: convertedQuantityImperial,
+		unit: targetImperialUnit,
+		unitPlural: targetImperialUnit + 's',
+		symbol: getSymbol(targetImperialUnit, lang),
+		minQty: convertedQuantityImperial,
+		maxQty: convertedQuantityImperial,
+		usedDefaultDensity
+	}
+}
+
+/**
+ * Converts standard weight units (grams/kg ↔ ounces/pounds) without ingredient density.
+ *
+ * This is the fallback conversion pathway for weight-to-weight conversions.
+ *
+ * @param {Object} ingredientObj - The ingredient object to convert
+ * @param {number} quantity - Amount to convert
+ * @param {string} fromUnit - Source unit name
+ * @param {string} toSystem - Target measurement system
+ * @param {string} lang - Language code for symbols
+ * @returns {Object} Converted ingredient object
+ */
+function convertStandardWeightUnits(ingredientObj, quantity, fromUnit, toSystem, lang) {
+	// Step 1: Convert to intermediate unit (grams)
+	const intermediate = converter(quantity, fromUnit, 'gram')
+	if (intermediate.error) return { error: intermediate.error }
+
+	// Step 2: Convert to target unit
+	const targetUnit = findSuitableUnit(toSystem, intermediate.quantity)
+	const target = converter(intermediate.quantity, 'gram', targetUnit)
+	if (target.error) return { error: target.error }
+
+	// Step 3: Normalize and return
+	const updatedIngredient = {
+		...ingredientObj,
+		quantity: target.quantity,
+		unit: target.unit
+	}
+
+	return normalizeIngredient(updatedIngredient, {}, lang)
+}
+
+/**
  * Normalizes an ingredient object by standardizing units, rounding quantity, and adding metadata.
  * @param {Object} ingredientObj - The original ingredient object.
  * @param {Object} options - Optional settings.
@@ -226,207 +528,133 @@ export function normalizeIngredient(ingredientObj, options = {}, lang = 'eng') {
 /**
  * Manipulates an ingredient object to convert its quantity and unit from one system to another.
  *
- * @param {Object} ingredientObj - The ingredient object to be manipulated.
- * @param {string} fromSystem - The original measurement system.
- * @param {string} toSystem - The target measurement system.
- * @returns {Object} - The manipulated ingredient object with converted quantity and unit.
+ * This is the main conversion orchestrator that routes to specialized conversion functions
+ * based on the source and target systems. It handles five main conversion pathways:
+ *
+ * 1. Metric volumetric → americanVolumetric (ml/L → cups/tbsp/tsp)
+ * 2. Weight → americanVolumetric (grams → cups, using ingredient density)
+ * 3. americanVolumetric → metric (cups → grams, using ingredient density)
+ * 4. americanVolumetric → imperial (cups → oz/lb, using ingredient density)
+ * 5. Standard weight conversions (grams ↔ ounces/pounds/kg)
+ *
+ * @param {Object} ingredientObj - The ingredient object to be manipulated
+ * @param {string} fromSystem - The original measurement system ('metric', 'imperial', 'americanVolumetric')
+ * @param {string} toSystem - The target measurement system
+ * @param {Fuse} fuse - Fuse instance for ingredient density lookups
+ * @param {string} lang - Language code for unit symbols
+ * @returns {Object} The converted ingredient object with updated quantity and unit
+ *
+ * @example
+ * // Convert 2 cups of flour to metric
+ * manipulateIngredient(
+ *   { quantity: 2, unit: 'cup', ingredient: 'flour' },
+ *   'americanVolumetric',
+ *   'metric',
+ *   fuseInstance,
+ *   'eng'
+ * )
+ * // Returns: { quantity: 240, unit: 'gram', ingredient: 'flour', ... }
  */
 export const manipulateIngredient = (ingredientObj, fromSystem, toSystem, fuse, lang) => {
-	const { quantity, unit, ingredient } = ingredientObj
-	// If no unit is provided, return the original ingredientObj
+	const { quantity, unit, ingredient, instructions } = ingredientObj
+
+	// Early return: No unit provided
 	if (!unit) {
-		return normalizeIngredient(ingredientObj, lang)
+		return normalizeIngredient(ingredientObj, {}, lang)
 	}
 
-	// Looking up the units to normalise them
+	// Normalize unit to standard form
 	const fromUnits = units.find((unitLookup) => unitLookup.names.includes(unit)) || {}
 	const fromUnit = fromUnits.names[0]
 
-	// Convert the units simply to volumetric if metric volumetric
+	// Pathway 1: Metric volumetric → americanVolumetric (direct volume conversion)
 	if (toSystem === 'americanVolumetric' && (fromUnit === 'milliliter' || fromUnit === 'liter')) {
-		// Convert to cups
-		const { quantity: convertedQuantity, error } = converter(quantity, fromUnit, 'cups')
-		if (error) {
-			return { error }
-		}
-		// Use this quantity to determine the suitable unit
-		const targetUnit = findSuitableUnit(toSystem, convertedQuantity * 236.588)
-		// convert from cup to target unit
-		const { quantity: convertedQuantityFinal } = converter(convertedQuantity, 'cup', targetUnit)
-
-		// Return the object
-		return {
-			...ingredientObj,
-			quantity: parseFloat(convertedQuantityFinal).toFixed(2),
-			unit: targetUnit,
-			unitPlural: targetUnit + 's',
-			symbol: getSymbol(targetUnit, lang),
-			minQty: parseFloat(convertedQuantityFinal).toFixed(2),
-			maxQty: parseFloat(convertedQuantityFinal).toFixed(2)
-		}
+		return convertMetricVolumetricToAmerican(ingredientObj, fromUnit, quantity, lang)
 	}
 
-	let quantityToUse = quantity
-
-	// Convert the original unit to grams only if the system is not 'americanVolumetric'
+	// Convert to grams as intermediate unit (unless already in americanVolumetric)
+	let quantityInGrams = quantity
 	if (fromSystem !== 'americanVolumetric') {
 		const { quantity: convertedQuantity, error } = converter(quantity, fromUnit, 'grams')
 		if (error) {
 			return { error }
 		}
-		quantityToUse = convertedQuantity
+		quantityInGrams = convertedQuantity
 	}
 
-	let dryIngredient = null
-	let usedDefaultDensity = false
-
+	// For conversions involving americanVolumetric, we need ingredient density
 	if (toSystem === 'americanVolumetric' || fromSystem === 'americanVolumetric') {
-		const result = fuse.search(ingredient)
-		if (result.length > 0 && result[0].score < 0.3) {
-			dryIngredient = result[0].item
-		} else {
-			// Use water density if no match found
-			dryIngredient = { name: 'Water (default)', gramsPerCup: 236.588 } // 1g/ml → 236.588g per cup
-			usedDefaultDensity = true
-		}
+		// Look up ingredient density (with water as fallback and multi-word support)
+		// Pass instructions for improved matching (e.g., "sliced onions" might match "onions, sliced")
+		const matchResult = findIngredientDensity(ingredient, fuse, instructions)
+		const dryIngredient = matchResult.ingredient
+		const usedDefaultDensity = matchResult.usedDefaultDensity
 
-		if (dryIngredient) {
-			if (toSystem === 'americanVolumetric') {
-				let convertedQuantity = quantityToUse / dryIngredient.gramsPerCup
-				const targetUnit = findSuitableUnit(toSystem, convertedQuantity * 236.588) // Convert cups to grams
-
-				// Adjust the convertedQuantity based on the targetUnit
-				let decimalPlaces = 2 // Default for cups
-				if (targetUnit === 'tablespoon') {
-					convertedQuantity *= 16 // 1 cup = 16 tablespoons
-					decimalPlaces = 1
-				} else if (targetUnit === 'teaspoon') {
-					convertedQuantity *= 48 // 1 cup = 48 teaspoons
-					decimalPlaces = 1
-				}
-
-				convertedQuantity = parseFloat(convertedQuantity.toFixed(decimalPlaces))
-
-				return {
-					...ingredientObj,
-					dryIngredient,
-					quantity: convertedQuantity,
-					unit: targetUnit,
-					unitPlural: targetUnit + 's',
-					symbol: getSymbol(targetUnit, lang),
-					minQty: convertedQuantity,
-					maxQty: convertedQuantity,
-					usedDefaultDensity
-				}
-			} else if (fromSystem === 'americanVolumetric' && toSystem === 'metric') {
-				// Only run the conversion if the units match up with the AmVol units
-				if (
-					unit === 'cup' ||
-					unit === 'teaspoon' ||
-					unit === 'tablespoon' ||
-					unit === 'quarts' ||
-					unit === 'gallons' ||
-					unit === 'floz'
-				) {
-					const { quantity: quantityInCups } = converter(quantityToUse, fromUnit, 'cup')
-					let convertedQuantityGrams = quantityInCups * dryIngredient.gramsPerCup
-					// Find the target unit according to the amount
-					const targetMetricUnit = findSuitableUnit(toSystem, convertedQuantityGrams)
-					// Convert the grams into the suitable unit - don't convert if already grams
-					let convertedQuantityMetric
-					// Don't run the conversion if already grams
-					if (targetMetricUnit === 'gram') {
-						convertedQuantityMetric = convertedQuantityGrams
-					} else {
-						// Otherwise, convert grams to kg etc
-						;({ quantity: convertedQuantityMetric } = converter(
-							convertedQuantityGrams,
-							'gram',
-							targetMetricUnit
-						))
-					}
-					convertedQuantityMetric = parseFloat(convertedQuantityMetric.toFixed(1))
-					return {
-						...ingredientObj,
-						dryIngredient,
-						quantity: convertedQuantityMetric,
-						unit: targetMetricUnit,
-						unitPlural: targetMetricUnit + 's',
-						symbol: getSymbol(targetMetricUnit, lang),
-						minQty: convertedQuantityMetric,
-						maxQty: convertedQuantityMetric,
-						usedDefaultDensity
-					}
-				}
-			} else if (fromSystem === 'americanVolumetric' && toSystem === 'imperial') {
-				if (unit === 'cup') {
-					// Convert cups to grams
-					const { quantity: quantityInCups } = converter(quantityToUse, fromUnit, 'cup')
-					let convertedQuantityGrams = parseFloat(
-						(quantityInCups * dryIngredient.gramsPerCup).toFixed(1)
-					)
-					// Find a suitable unit - if it's bigger than 28 ounces, use lb etc
-					const targetImperialUnit = findSuitableUnit(toSystem, convertedQuantityGrams)
-					let convertedQuantityImperial
-						// Convert this unit to target imperial
-					;({ quantity: convertedQuantityImperial } = converter(
-						convertedQuantityGrams,
-						'gram',
-						targetImperialUnit
-					))
-					// Convert to a float
-					convertedQuantityImperial = parseFloat(convertedQuantityImperial.toFixed(1))
-					return {
-						...ingredientObj,
-						dryIngredient,
-						quantity: convertedQuantityImperial,
-						unit: targetImperialUnit,
-						unitPlural: targetImperialUnit + 's',
-						symbol: getSymbol(targetImperialUnit, lang),
-						minQty: convertedQuantityImperial,
-						maxQty: convertedQuantityImperial,
-						usedDefaultDensity
-					}
-				}
+		// Pathway 2: Weight → americanVolumetric
+		if (toSystem === 'americanVolumetric') {
+			const converted = convertToAmericanVolumetric(
+				ingredientObj,
+				quantityInGrams,
+				dryIngredient,
+				usedDefaultDensity,
+				lang
+			)
+			// Add matching metadata to result
+			return {
+				...converted,
+				matchType: matchResult.matchType,
+				matchedWord: matchResult.matchedWord,
+				matchScore: matchResult.matchScore
 			}
 		}
+
+		// Pathway 3: americanVolumetric → metric
+		if (fromSystem === 'americanVolumetric' && toSystem === 'metric') {
+			const result = convertAmericanVolumetricToMetric(
+				ingredientObj,
+				quantity,
+				fromUnit,
+				dryIngredient,
+				usedDefaultDensity,
+				lang
+			)
+			if (result) {
+				// Add matching metadata to result
+				return {
+					...result,
+					matchType: matchResult.matchType,
+					matchedWord: matchResult.matchedWord,
+					matchScore: matchResult.matchScore
+				}
+			}
+			// If null, fall through to standard conversion
+		}
+
+		// Pathway 4: americanVolumetric → imperial
+		if (fromSystem === 'americanVolumetric' && toSystem === 'imperial') {
+			const result = convertAmericanVolumetricToImperial(
+				ingredientObj,
+				quantity,
+				fromUnit,
+				dryIngredient,
+				usedDefaultDensity,
+				lang
+			)
+			if (result) {
+				// Add matching metadata to result
+				return {
+					...result,
+					matchType: matchResult.matchType,
+					matchedWord: matchResult.matchedWord,
+					matchScore: matchResult.matchScore
+				}
+			}
+			// If null, fall through to standard conversion
+		}
 	}
 
-	// Step 3: Convert to Intermediate Unit (grams)
-	const intermediate = converter(quantity, fromUnit, 'gram')
-	if (intermediate.error) return { error: intermediate.error }
-
-	// Step 4: Convert to Target Unit
-	const targetUnit = findSuitableUnit(toSystem, intermediate.quantity)
-	const target = converter(intermediate.quantity, 'gram', targetUnit)
-	if (target.error) return { error: target.error }
-
-	// // Find the unit details from the units array
-	// const targetUnitDetails = units.find((unit) => unit.names.includes(target.unit))
-
-	// // Get the number of decimal places, or use a default value (e.g., 2)
-	// const decimalPlaces = targetUnitDetails?.decimalPlaces ?? 2
-
-	// // Round the quantity to the specified number of decimal places
-	// const roundedQuantity = parseFloat(target.quantity.toFixed(decimalPlaces))
-
-	// // Step 5: Update Object
-	// return {
-	// 	...ingredientObj,
-	// 	quantity: roundedQuantity,
-	// 	unit: target.unit ? target.unit : '',
-	// 	unitPlural: target.unit ? target.unit + 's' : '',
-	// 	symbol: target.unit?.charAt(0),
-	// 	minQty: roundedQuantity,
-	// 	maxQty: roundedQuantity
-	// }
-	const updatedIngredient = {
-		...ingredientObj,
-		quantity: target.quantity,
-		unit: target.unit
-	}
-
-	return normalizeIngredient(updatedIngredient, lang)
+	// Pathway 5: Standard weight conversions (fallback)
+	return convertStandardWeightUnits(ingredientObj, quantity, fromUnit, toSystem, lang)
 }
 
 /**

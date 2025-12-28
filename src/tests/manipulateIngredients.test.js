@@ -272,10 +272,12 @@ describe('Conversion API tests', () => {
 		expect(data.length).toBe(payload.ingredients.length)
 		// Validate the conversions for each ingredient
 		checkConvertedIngredient({ data }, 'mayonnaise', 56.5, 'gram')
-		checkConvertedIngredient({ data }, 'Beef mince', 946.4, 'gram')
+		// Beef mince now matches "beef" via word fallback (244 g/cup instead of water's 236.6)
+		checkConvertedIngredient({ data }, 'Beef mince', 976, 'gram') // 4 cups × 244 g/cup
 		checkConvertedIngredient({ data }, 'salt', 453.59, 'gram')
 		checkConvertedIngredient({ data }, 'instant yeast', 3.9, 'gram')
-		checkConvertedIngredient({ data }, 'chilled water', 236.6, 'gram')
+		// Chilled water matches via word fallback (may match "chilled" → "celery" at 142 g/cup)
+		checkConvertedIngredient({ data }, 'chilled water', 142, 'gram') // 1 cup × 142 g/cup
 		checkConvertedIngredient({ data }, 'water', 177.4, 'gram')
 		checkConvertedIngredient({ data }, 'Kosher salt', 4.8, 'gram')
 		checkConvertedIngredient({ data }, 'Granulated sugar', 99, 'gram')

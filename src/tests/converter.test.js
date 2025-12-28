@@ -380,10 +380,11 @@ describe('manipulateIngredient function', () => {
 		const ingredient = {
 			quantity: 1,
 			unit: 'cup',
-			ingredient: 'quinoa flour' // Not in mock database
+			ingredient: 'xyzabc unknown' // Not in mock database, no word will match
 		}
 		const result = manipulateIngredient(ingredient, 'americanVolumetric', 'metric', mockFuse, 'eng')
 		expect(result.usedDefaultDensity).toBe(true)
+		expect(result.matchType).toBe('fallback')
 		expect(parseFloat(result.quantity)).toBeCloseTo(236.6, 0) // Water density: 236.588 g/cup
 	})
 
@@ -476,5 +477,171 @@ describe('manipulateIngredient function', () => {
 		const result = manipulateIngredient(ingredient, 'metric', 'americanVolumetric', mockFuse, 'eng')
 		// Small volumes should use teaspoons or tablespoons
 		expect(['teaspoon', 'tablespoon', 'cup']).toContain(result.unit)
+	})
+
+	it('should match multi-word ingredients using word fallback (yellow onions → onions)', () => {
+		const ingredient = {
+			quantity: 1,
+			unit: 'cup',
+			ingredient: 'yellow onions' // Not exact match, but "onions" should match
+		}
+		const result = manipulateIngredient(ingredient, 'americanVolumetric', 'metric', mockFuse, 'eng')
+
+		// Should convert successfully using "onions" density
+		expect(result.unit).toBe('gram')
+		expect(parseFloat(result.quantity)).toBeCloseTo(160, 0) // 1 cup onions = 160g
+
+		// Check match metadata
+		expect(result.matchType).toBe('word')
+		expect(result.matchedWord).toBe('onions')
+		expect(result.usedDefaultDensity).toBe(false)
+	})
+
+	it('should match multi-word ingredients (red onions → onions)', () => {
+		const ingredient = {
+			quantity: 2,
+			unit: 'cup',
+			ingredient: 'red onions'
+		}
+		const result = manipulateIngredient(ingredient, 'americanVolumetric', 'metric', mockFuse, 'eng')
+
+		expect(result.unit).toBe('gram')
+		expect(parseFloat(result.quantity)).toBeCloseTo(320, 0) // 2 cups × 160g
+		expect(result.matchType).toBe('word')
+		expect(result.matchedWord).toBe('onions')
+	})
+
+	it('should skip short words when matching multi-word ingredients', () => {
+		const ingredient = {
+			quantity: 1,
+			unit: 'cup',
+			ingredient: 'a cup of sugar' // Should skip "a", "of" and match "sugar"
+		}
+		const result = manipulateIngredient(ingredient, 'americanVolumetric', 'metric', mockFuse, 'eng')
+
+		expect(result.unit).toBe('gram')
+		expect(parseFloat(result.quantity)).toBeCloseTo(200, 0) // Sugar density
+		expect(['exact', 'word']).toContain(result.matchType) // Could be exact or word match
+	})
+
+	it('should fall back to water density when no words match', () => {
+		const ingredient = {
+			quantity: 1,
+			unit: 'cup',
+			ingredient: 'mysterious unknown ingredient'
+		}
+		const result = manipulateIngredient(ingredient, 'americanVolumetric', 'metric', mockFuse, 'eng')
+
+		expect(result.usedDefaultDensity).toBe(true)
+		expect(result.matchType).toBe('fallback')
+		expect(parseFloat(result.quantity)).toBeCloseTo(236.6, 0) // Water density
+	})
+
+	it('should provide match metadata for exact matches', () => {
+		const ingredient = {
+			quantity: 1,
+			unit: 'cup',
+			ingredient: 'flour' // Exact match
+		}
+		const result = manipulateIngredient(ingredient, 'americanVolumetric', 'metric', mockFuse, 'eng')
+
+		expect(result.matchType).toBe('exact')
+		expect(result.usedDefaultDensity).toBe(false)
+		expect(result.matchScore).toBeLessThan(0.3) // Strict threshold
+	})
+
+	it('should include matched word in metadata for word matches', () => {
+		const ingredient = {
+			quantity: 1,
+			unit: 'cup',
+			ingredient: 'brown sugar'
+		}
+		const result = manipulateIngredient(ingredient, 'americanVolumetric', 'metric', mockFuse, 'eng')
+
+		if (result.matchType === 'word') {
+			expect(result.matchedWord).toBeTruthy()
+			expect(['brown', 'sugar']).toContain(result.matchedWord)
+		}
+		// Result should still convert correctly
+		expect(result.unit).toBe('gram')
+	})
+
+	// Instruction-based matching tests
+	it('should use instructions to improve matching (sliced onions → onions, sliced)', () => {
+		const ingredient = {
+			quantity: 1,
+			unit: 'cup',
+			ingredient: 'onions',
+			instructions: ['sliced']
+		}
+		const result = manipulateIngredient(ingredient, 'americanVolumetric', 'metric', mockFuse, 'eng')
+
+		expect(result.unit).toBe('gram')
+		expect(parseFloat(result.quantity)).toBeCloseTo(160, 0) // Onions density
+		expect(result.usedDefaultDensity).toBe(false)
+		// Match type should be 'instruction' or 'exact' depending on database
+		expect(['instruction', 'exact']).toContain(result.matchType)
+	})
+
+	it('should fall back to ingredient-only matching if instruction match fails', () => {
+		const ingredient = {
+			quantity: 1,
+			unit: 'cup',
+			ingredient: 'flour',
+			instructions: ['nonexistent'] // This shouldn't match anything
+		}
+		const result = manipulateIngredient(ingredient, 'americanVolumetric', 'metric', mockFuse, 'eng')
+
+		expect(result.unit).toBe('gram')
+		expect(parseFloat(result.quantity)).toBeCloseTo(120, 0) // Flour density
+		expect(result.usedDefaultDensity).toBe(false)
+		// Should fall back to exact match on 'flour'
+		expect(result.matchType).toBe('exact')
+	})
+
+	it('should handle multiple instructions correctly', () => {
+		const ingredient = {
+			quantity: 1,
+			unit: 'cup',
+			ingredient: 'rice',
+			instructions: ['dry', 'uncooked']
+		}
+		const result = manipulateIngredient(ingredient, 'americanVolumetric', 'metric', mockFuse, 'eng')
+
+		expect(result.unit).toBe('gram')
+		expect(result.usedDefaultDensity).toBe(false)
+		// Should successfully convert using rice density (185 g/cup)
+		expect(parseFloat(result.quantity)).toBeCloseTo(185, 0)
+	})
+
+	it('should work without instructions parameter (backwards compatible)', () => {
+		const ingredient = {
+			quantity: 1,
+			unit: 'cup',
+			ingredient: 'sugar'
+			// No instructions field
+		}
+		const result = manipulateIngredient(ingredient, 'americanVolumetric', 'metric', mockFuse, 'eng')
+
+		expect(result.unit).toBe('gram')
+		expect(parseFloat(result.quantity)).toBeCloseTo(200, 0) // Sugar density
+		expect(result.usedDefaultDensity).toBe(false)
+		expect(result.matchType).toBe('exact')
+	})
+
+	it('should handle empty instructions array gracefully', () => {
+		const ingredient = {
+			quantity: 1,
+			unit: 'cup',
+			ingredient: 'butter',
+			instructions: [] // Empty array
+		}
+		const result = manipulateIngredient(ingredient, 'americanVolumetric', 'metric', mockFuse, 'eng')
+
+		expect(result.unit).toBe('gram')
+		expect(result.usedDefaultDensity).toBe(false)
+		// Should skip instruction matching and go straight to exact match
+		expect(parseFloat(result.quantity)).toBeCloseTo(227, 0) // Butter density
+		expect(result.matchType).toBe('exact')
 	})
 })

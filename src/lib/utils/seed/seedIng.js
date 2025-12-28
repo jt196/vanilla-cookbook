@@ -1,5 +1,6 @@
 // Using relative import as this will run before app startup
 import { ingVersion } from '../config.js'
+import { clearIngredientCache } from '../converterBackend.js'
 import fs from 'fs'
 import csv from 'csv-parser'
 import path from 'path'
@@ -76,6 +77,9 @@ export async function seedIngredients(prismaClient) {
 				where: { id: siteSettings?.id || 1 },
 				data: { version: expectedVersion }
 			})
+
+			// Clear the ingredient cache to ensure fresh data is used
+			clearIngredientCache()
 
 			console.log(`Ingredient data was seeded from v${currentVersion} to v${expectedVersion}.`)
 		} else {
