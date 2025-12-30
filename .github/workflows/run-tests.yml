@@ -46,6 +46,11 @@ jobs:
       - name: Build Project
         run: pnpm build
 
+      - name: Test seed script imports
+        run: pnpm seed
+        env:
+          DATABASE_URL: file:./prisma/db/ci-test.sqlite
+
       - name: Run Prisma Migrations
         run: pnpm prisma migrate deploy
 
