@@ -33,7 +33,12 @@
 
 	<FileInput id="file" name="file" label="File" accept={accept} required />
 
-	<Checkbox name="isPublic" bind:checked={isPublic} label="I want to make these recipes public" />
+	<Checkbox
+		name="isPublic"
+		bind:checked={isPublic}
+		label="I want to make these recipes public"
+		size="sm"
+		color="primary" />
 
 	<Button aria-busy={busy} disabled={busy}>Import</Button>
 </form>

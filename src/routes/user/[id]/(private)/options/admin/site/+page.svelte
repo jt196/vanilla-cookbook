@@ -72,7 +72,12 @@
 <h3>Update Site Settings</h3>
 <Container>
 	<form method="POST" action="?/updateAdminSettings" onsubmit={updateAdminSettings}>
-		<Checkbox name="Admin" bind:checked={settings.registrationAllowed} label="Allow Registrations" />
+		<Checkbox
+			name="Admin"
+			bind:checked={settings.registrationAllowed}
+			label="Allow Registrations"
+			size="sm"
+			color="primary" />
 		<footer>
 			<Button type="submit">Update</Button>
 			<FeedbackMessage message={settingsFeedback} inline />

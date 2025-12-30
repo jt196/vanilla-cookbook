@@ -73,7 +73,12 @@
 		<Input type="password" id="passwordConfirm" name="passwordConfirm" bind:value={passwordConfirm} label="Confirm Password" required />
 		<ValidationMessage message={passwordsMismatch ? "Passwords don't match!" : null} isError={true} />
 
-		<Checkbox name="seedRecipes" bind:checked={seedRecipes} label="Seed my account with 3 example recipes" />
+		<Checkbox
+			name="seedRecipes"
+			bind:checked={seedRecipes}
+			label="Seed my account with 3 example recipes"
+			size="sm"
+			color="neutral" />
 
 		<Button type="submit" disabled={isSubmitDisabled}>Register</Button>
 	</form>

@@ -43,20 +43,25 @@
 
 <form method="POST" action="?/updateSettings" onsubmit={updateSettings}>
 	<h2>Ingredients</h2>
-	<Checkbox name="Skip Small" bind:checked={user.skipSmallUnits} label="Use teaspoons and tablespoons instead of grams." />
-	<Checkbox name="Cup Match" bind:checked={user.ingMatch}>
+	<Checkbox
+		name="Skip Small"
+		bind:checked={user.skipSmallUnits}
+		label="Use teaspoons and tablespoons instead of grams."
+		size="sm"
+		color="neutral" />
+	<Checkbox name="Cup Match" bind:checked={user.ingMatch} size="sm" color="neutral">
 		<b>Display Cup Match</b> volumetric ingredients by default when converting to and from US Cups
 	</Checkbox>
-	<Checkbox name="Display Original" bind:checked={user.ingOriginal}>
+	<Checkbox name="Display Original" bind:checked={user.ingOriginal} size="sm" color="neutral">
 		<b>Display Original</b> ingredient line text instead of parsed text
 	</Checkbox>
-	<Checkbox name="Display Symbols" bind:checked={user.ingSymbol}>
+	<Checkbox name="Display Symbols" bind:checked={user.ingSymbol} size="sm" color="neutral">
 		<b>Display Symbols</b> Display short form instead of long form units. e.g. g vs grams
 	</Checkbox>
-	<Checkbox name="Display Extra" bind:checked={user.ingExtra}>
+	<Checkbox name="Display Extra" bind:checked={user.ingExtra} size="sm" color="neutral">
 		<b>Display Extra</b> ingredient text, eg after the comma in "1 clove garlic, chopped"
 	</Checkbox>
-	<Checkbox name="Use Categories" bind:checked={user.useCats}>
+	<Checkbox name="Use Categories" bind:checked={user.useCats} size="sm" color="neutral">
 		<b>Use Categories</b> enables the user to filter by category.
 	</Checkbox>
 	<Dropdown
@@ -70,8 +75,18 @@
 		bind:selected={user.language}
 		label="Select language" />
 	<h2>Privacy</h2>
-	<Checkbox name="Profile Public" bind:checked={user.publicProfile} label="Profile Public" />
-	<Checkbox name="Recipes Public" bind:checked={user.publicRecipes} label="Recipes Public" />
+	<Checkbox
+		name="Profile Public"
+		bind:checked={user.publicProfile}
+		label="Profile Public"
+		size="sm"
+		color="primary" />
+	<Checkbox
+		name="Recipes Public"
+		bind:checked={user.publicRecipes}
+		label="Recipes Public"
+		size="sm"
+		color="primary" />
 	<footer>
 		<Button type="submit">Update</Button>
 		<FeedbackMessage message={settingsFeedback} />

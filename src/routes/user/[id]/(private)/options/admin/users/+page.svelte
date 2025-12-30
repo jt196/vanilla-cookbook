@@ -229,10 +229,20 @@
 		bind:value={passwordConfirm} />
 	<ValidationMessage message={passwordsMismatch ? "Passwords don't match!" : null} isError={true} />
 	{#if !isEditMode || !editingUser.isAdmin || adminCount > 1}
-		<Checkbox name="Admin" bind:checked={editingUser.isAdmin} label="Admin" />
+		<Checkbox
+			name="Admin"
+			bind:checked={editingUser.isAdmin}
+			label="Admin"
+			size="sm"
+			color="primary" />
 	{/if}
 	{#if !isEditMode}
-		<Checkbox name="Seed Recipes" bind:checked={editingUser.userSeed} label="Seed Recipes" />
+		<Checkbox
+			name="Seed Recipes"
+			bind:checked={editingUser.userSeed}
+			label="Seed Recipes"
+			size="sm"
+			color="neutral" />
 	{/if}
 	<div class="modal-action">
 		<Button onclick={() => (isDialogOpen = false)} style="outline">Cancel</Button>

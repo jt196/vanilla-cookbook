@@ -220,13 +220,13 @@
 	{/if}
 </div>
 <FeedbackMessage message={shoppingFeedback} />
-<fieldset>
+<ul class="list bg-base-100 rounded-box shadow-md divide-y divide-base-300">
 	{#each sortedList as item (item.uid)}
 		{#if !item.purchased || showHidden}
 			<ShoppingListItem {item} onCheckboxChange={handleCheckboxChange} onEdit={openEditModal} />
 		{/if}
 	{/each}
-</fieldset>
+</ul>
 
 <ConfirmationDialog
 	isOpen={isDeleteDialogOpen}

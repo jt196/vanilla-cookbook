@@ -293,7 +293,9 @@
 					name="Recipes Public"
 					bind:checked={isPublic}
 					data-tooltip="Make your imported recipes public"
-					label="Recipes Public" />
+					label="Recipes Public"
+					size="sm"
+					color="primary" />
 				<Button
 					loading={importRecBusy}
 					class="outline secondary"

@@ -86,7 +86,9 @@
 					name="Recipe Public"
 					bind:checked={recipe.is_public}
 					data-tooltip="Make your new recipe public"
-					label="Recipe Public" />
+					label="Recipe Public"
+					size="sm"
+					color="primary" />
 			</div>
 
 			<div class="form-col">
