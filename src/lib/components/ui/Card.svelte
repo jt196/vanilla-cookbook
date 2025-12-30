@@ -10,6 +10,7 @@
 		side = false,
 		imageFull = false,
 		figure = undefined,
+		figureClass = '',
 		title = undefined,
 		actions = undefined,
 		children = undefined
@@ -40,7 +41,7 @@
 
 <div class={cardClasses}>
 	{#if figure}
-		<figure>{@render figure()}</figure>
+		<figure class={figureClass}>{@render figure()}</figure>
 	{/if}
 	<div class="card-body">
 		{#if title}

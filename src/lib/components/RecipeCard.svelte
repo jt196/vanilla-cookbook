@@ -26,9 +26,9 @@
 <a
 	href="/recipe/{item.uid}/view/"
 	class="flex items-stretch gap-3 mb-3 rounded-lg transition no-underline text-current">
-	<Card class="flex-1 hover:bg-base-200 min-h-[9rem]" size="md" side>
+	<Card class="flex-1 hover:bg-base-200 min-h-[9rem]" size="md" side figureClass="w-32 flex-shrink-0">
 		{#snippet figure()}
-			<div class="w-32 h-[9rem] overflow-hidden">
+			<div class="h-[9rem] w-full overflow-hidden">
 				{#if item.photos && item.photos.length > 0}
 					<img
 						class="h-full w-full object-cover"
