@@ -52,85 +52,58 @@
 	}
 </script>
 
-<div class="buttons">
-	{#if !viewOnly || recipe.is_public}
-		<RecipeShareButton
-			name={recipe.name}
-			isPublic={recipe.is_public}
-			uid={recipe.uid}
-			{pubRecipe} />
-	{:else}
-		<Public isPublic={recipe.is_public} width="20px" height="20px" fill="var(--pico-del-color)" />
-	{/if}
-	{#if !viewOnly}
-		<a
-			href="/recipe/{recipe?.uid}/edit/"
-			role="button"
-			class="outline secondary"
-			data-tooltip="Edit Recipe"
-			data-testid="edit-button">
-			<Edit width="20px" height="20px" fill="var(--pico-ins-color)" />
-		</a>
-		<a
-			href="/recipe/{recipe?.uid}/images/"
-			role="button"
-			data-tooltip="Edit Recipe Images"
-			class="outline contrast"
-			data-testid="edit-button">
-			<Images width="20px" height="20px" fill="var(--pico-ins-color)" />
-		</a>
-		<Button
-			onclick={(event) => handlePublic(recipe?.uid)}
-			data-tooltip={recipe?.is_public ? 'Private Recipe?' : 'Public Recipe?'}
-			class="outline secondary">
-			<Public
-				isPublic={recipe?.is_public}
-				width="20px"
-				height="20px"
-				fill={recipe?.is_public ? 'var(--pico-ins-color)' : 'var(--pico-del-color)'} />
-		</Button>
-		<Button
-			onclick={(event) => handleFavourite(recipe?.uid)}
-			data-tooltip={recipe?.on_favorites ? 'Unfavourite Recipe' : 'Favourite Recipe'}
-			class="outline secondary">
-			<Favourite
-				favourite={recipe?.on_favorites}
-				width="20px"
-				height="20px"
-				fill={recipe?.on_favorites ? 'var(--pico-del-color)' : 'var(--pico-secondary-focus)'} />
-		</Button>
-		<Button
-			onclick={() => handleLog(recipe?.uid)}
-			class="outline secondary"
-			data-tooltip="Mark Recipe Cooked Today"
-			data-testid="check-button">
-			<Check
-				width="20px"
-				height="20px"
-				checked={logs?.length > 0}
-				fill={logs?.length > 0 ? 'var(--pico-ins-color)' : 'var(--pico-secondary-focus)'} />
-		</Button>
-		<Button
-			onclick={() => handleDelete(recipe?.uid)}
-			data-testid="delete-button"
-			data-tooltip="Delete Recipe"
-			class="outline secondary">
-			<Delete width="20px" height="20px" fill="var(--pico-del-color)" />
-		</Button>
-	{/if}
-</div>
-
-<style lang="scss">
-	.buttons {
-		display: flex;
-		flex-direction: row;
-		gap: 0.3rem;
-		flex-wrap: nowrap;
-		align-items: center;
-	}
-	.buttons :global(a),
-	.buttons :global(button) {
-		padding: 0.5rem;
-		margin: 0;
-	}
-</style>
+{#if !viewOnly || recipe.is_public}
+	<RecipeShareButton name={recipe.name} isPublic={recipe.is_public} uid={recipe.uid} {pubRecipe} />
+{:else}
+	<button class="btn btn-outline btn-sm tooltip opacity-60" data-tip="Private Recipe">
+		<Public isPublic={recipe.is_public} width="20px" height="20px" fill="currentColor" />
+	</button>
+{/if}
+{#if !viewOnly}
+	<a
+		href="/recipe/{recipe?.uid}/edit/"
+		class="btn btn-soft btn-primary btn-sm tooltip"
+		data-tip="Edit Recipe"
+		data-testid="edit-button">
+		<Edit width="20px" height="20px" fill="currentColor" />
+	</a>
+	<a
+		href="/recipe/{recipe?.uid}/images/"
+		class="btn btn-soft btn-accent btn-sm tooltip"
+		data-tip="Edit Recipe Images"
+		data-testid="edit-button">
+		<Images width="20px" height="20px" fill="currentColor" />
+	</a>
+	<button
+		onclick={(event) => handlePublic(recipe?.uid)}
+		class="btn btn-soft btn-warning btn-sm tooltip"
+		class:btn-success={recipe?.is_public}
+		class:opacity-60={!recipe?.is_public}
+		data-tip={recipe?.is_public ? 'Private Recipe?' : 'Public Recipe?'}>
+		<Public isPublic={recipe?.is_public} width="20px" height="20px" fill="currentColor" />
+	</button>
+	<button
+		onclick={(event) => handleFavourite(recipe?.uid)}
+		class="btn btn-soft btn-secondary btn-sm tooltip"
+		class:btn-error={recipe?.on_favorites}
+		class:opacity-60={!recipe?.on_favorites}
+		data-tip={recipe?.on_favorites ? 'Unfavourite Recipe' : 'Favourite Recipe'}>
+		<Favourite favourite={recipe?.on_favorites} width="20px" height="20px" fill="currentColor" />
+	</button>
+	<button
+		onclick={() => handleLog(recipe?.uid)}
+		class="btn btn-soft btn-success btn-sm tooltip"
+		class:btn-success={logs?.length > 0}
+		class:opacity-60={logs?.length === 0}
+		data-tip="Mark Recipe Cooked Today"
+		data-testid="check-button">
+		<Check width="20px" height="20px" checked={logs?.length > 0} fill="currentColor" />
+	</button>
+	<button
+		onclick={() => handleDelete(recipe?.uid)}
+		data-testid="delete-button"
+		class="btn btn-soft btn-sm tooltip btn-error"
+		data-tip="Delete Recipe">
+		<Delete width="20px" height="20px" fill="currentColor" />
+	</button>
+{/if}

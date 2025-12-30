@@ -3,20 +3,13 @@
 	let { otherPhotos = [], recipeName = '' } = $props();
 </script>
 
-<div class="other-photos">
-	{#if otherPhotos.length > 0}
+{#if otherPhotos.length > 0}
+	<div class="my-4 mb-8 flex flex-wrap gap-4">
 		{#each otherPhotos as photo (photo.id)}
-			<img src="/api/recipe/image/{photo.id}" alt="{recipeName} photo" />
+			<img
+				src="/api/recipe/image/{photo.id}"
+				alt="{recipeName} photo"
+				class="max-h-[150px] rounded-lg object-cover" />
 		{/each}
-	{/if}
-</div>
-
-<style lang="scss">
-	.other-photos {
-		margin: 1rem 0 2rem 0;
-		img {
-			max-height: 150px;
-			margin-right: 1rem;
-		}
-	}
-</style>
+	</div>
+{/if}

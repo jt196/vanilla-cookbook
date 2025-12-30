@@ -23,6 +23,31 @@
 	a {
 		text-decoration: none;
 	}
+
+	/* Customize DaisyUI themes for softer colors */
+	[data-theme='light'] {
+		/* Softer primary blue - less intense */
+		--p: 210 80% 50%;
+		--pc: 0 0% 100%;
+
+		/* Softer text colors - less stark white/black */
+		--bc: 220 15% 25%;
+		--b1: 0 0% 100%;
+		--b2: 0 0% 96%;
+		--b3: 0 0% 92%;
+	}
+
+	[data-theme='dark'] {
+		/* Softer primary blue - less intense */
+		--p: 210 70% 55%;
+		--pc: 220 15% 10%;
+
+		/* Softer text colors - less stark white/black */
+		--bc: 220 15% 85%;
+		--b1: 220 18% 16%;
+		--b2: 220 18% 20%;
+		--b3: 220 18% 24%;
+	}
 }
 
 @layer components {
@@ -54,31 +79,4 @@
 		@apply w-full max-w-md mx-auto;
 	}
 
-	/* Softer button outlines */
-	.btn-outline {
-		border-color: oklch(var(--bc) / 0.2) !important;
-		background-color: oklch(var(--b1)) !important;
-	}
-
-	.btn-outline:hover {
-		border-color: oklch(var(--bc) / 0.4) !important;
-		background-color: oklch(var(--b2)) !important;
-	}
-
-	.btn-outline.btn-error {
-		border-color: oklch(var(--er) / 0.5) !important;
-	}
-
-	.btn-outline.btn-success {
-		border-color: oklch(var(--su) / 0.5) !important;
-	}
-
-	/* Softer icon opacity for inactive states */
-	.btn-ghost {
-		color: oklch(var(--bc) / 0.6);
-	}
-
-	.btn-ghost:hover {
-		color: oklch(var(--bc) / 0.9);
-	}
 }

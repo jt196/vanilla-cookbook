@@ -227,35 +227,27 @@
 </script>
 
 {#if viewOnly}
-	<div class="user-title">
-		<h3>{recUser.username}'s Recipe</h3>
+	<div class="mb-4">
+		<h3 class="text-2xl font-semibold">{recUser.username}'s Recipe</h3>
 	</div>
 {/if}
 <FeedbackMessage message={recipeFeedback} />
-<div id="recipe-buttons">
+<div class="flex justify-end gap-2 my-4">
 	<RecipeViewButtons {recipe} {updateLogs} {favRecipe} {pubRecipe} {logs} {viewOnly} />
 </div>
 
 {#if isLoading}
-	<div aria-busy="true">Waiting for the pan to boil...</div>
-{:else}
-	<div class="recipe-details">
-		{#if mainPhoto}
-			<div class="recipe-image">
-				<RecipeViewCover {mainPhoto} {recipe} />
-			</div>
-		{/if}
-		<div class="recipe-about">
-			<RecipeViewAbout
-				{recipe}
-				{categories}
-				useCats={viewUser?.useCats}
-				{scaledServings}
-				recipeRatingChanged={handleRecipeRatingChanged} />
-		</div>
+	<div class="flex justify-center items-center p-8">
+		<span class="loading loading-spinner loading-lg text-primary"></span>
+		<span class="ml-4 text-lg">Waiting for the pan to boil...</span>
 	</div>
-	<div class="recipe-main">
-		<div class="recipe-ingredients">
+{:else}
+	<div class="flex flex-col md:flex-row gap-4 my-4">
+		<!-- Left column: Image + Ingredients -->
+		<div class="w-full md:w-1/3 flex flex-col gap-1">
+			{#if mainPhoto}
+				<RecipeViewCover {mainPhoto} {recipe} />
+			{/if}
 			{#if !loadingIngredients}
 				<RecipeViewIngs
 					{ingredients}
@@ -268,10 +260,21 @@
 					onScaleChange={handleScaleChange}
 					onSelectedSystemChange={handleSelectedSystemChange} />
 			{:else}
-				<div aria-busy="true">Getting ingredients ready...</div>
+				<div class="flex justify-center items-center p-8">
+					<span class="loading loading-spinner loading-md text-primary"></span>
+					<span class="ml-4">Getting ingredients ready...</span>
+				</div>
 			{/if}
 		</div>
-		<div class="recipe-text">
+
+		<!-- Right column: About card + Description + Directions -->
+		<div class="w-full md:w-2/3 flex flex-col">
+			<RecipeViewAbout
+				{recipe}
+				{categories}
+				useCats={viewUser?.useCats}
+				{scaledServings}
+				recipeRatingChanged={handleRecipeRatingChanged} />
 			<RecipeViewDesc {recipe} />
 			<RecipeViewDirections {directionLines} {sanitizedDirections} />
 		</div>
@@ -283,31 +286,3 @@
 {/if}
 
 <RecipeViewOtherPhotos {otherPhotos} recipeName={recipe.name} />
-
-<style lang="scss">
-	.recipe-main,
-	.recipe-details {
-		margin: 1rem 0;
-		display: flex;
-		gap: 1rem;
-		@media (max-width: 767px) {
-			flex-direction: column;
-		}
-	}
-
-	.recipe-ingredients,
-	.recipe-image {
-		flex: 1;
-	}
-	.recipe-text,
-	.recipe-about {
-		flex: 2;
-	}
-
-	#recipe-buttons {
-		display: flex;
-		justify-content: flex-end;
-		gap: 1rem;
-		margin: 1rem 0 1rem 0;
-	}
-</style>

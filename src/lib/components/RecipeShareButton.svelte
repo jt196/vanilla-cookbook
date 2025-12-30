@@ -1,7 +1,6 @@
 <script>
 	import FeedbackMessage from '$lib/components/FeedbackMessage.svelte'
 	import Dialog from '$lib/components/ui/Dialog.svelte'
-	import Button from '$lib/components/ui/Button.svelte'
 	import { changeRecipePublic } from '$lib/utils/crud'
 	import { onMount } from 'svelte'
 	import Share from './svg/Share.svelte'
@@ -71,8 +70,9 @@
 	}
 </script>
 
-<Button onclick={share} data-tooltip="Share Recipe" class="outline secondary"
-	><Share width="20px" height="20px" /></Button>
+<button onclick={share} class="btn btn-soft btn-sm tooltip" data-tip="Share Recipe">
+	<Share width="20px" height="20px" fill="currentColor" />
+</button>
 
 <FeedbackMessage message={feedback} type="info" />
 
@@ -80,7 +80,7 @@
 	<h2>Make Recipe Public?</h2>
 	<p>This recipe is currently private. Would you like to make it public so it can be shared?</p>
 	<footer>
-		<Button class="secondary" onclick={cancelShare}>Cancel</Button>
-		<Button onclick={confirmMakePublic}>Make Public & Share</Button>
+		<button class="btn btn-outline" onclick={cancelShare}>Cancel</button>
+		<button class="btn btn-primary" onclick={confirmMakePublic}>Make Public & Share</button>
 	</footer>
 </Dialog>

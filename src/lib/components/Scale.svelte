@@ -1,5 +1,6 @@
 <script>
 	import Button from '$lib/components/ui/Button.svelte'
+	import Input from '$lib/components/ui/Form/Input.svelte'
 
 	/**
 	 * @typedef {number} Scale
@@ -27,11 +28,24 @@
 </script>
 
 <div class="scale">
-	<Button onclick={() => adjust(-BIG_STEP)} aria-label="Decrease by 1">-1</Button>
-	<Button onclick={() => adjust(-SMALL_STEP)} aria-label="Decrease by 0.1">-0.1</Button>
-	<input type="number" value={scale} min="0.1" step="0.1" oninput={handleInput} />
-	<Button onclick={() => adjust(SMALL_STEP)} aria-label="Increase by 0.1">+0.1</Button>
-	<Button onclick={() => adjust(BIG_STEP)} aria-label="Increase by 1">+1</Button>
+	<Button
+		onclick={() => adjust(-BIG_STEP)}
+		style="soft"
+		color="secondary"
+		aria-label="Decrease by 1">-1</Button>
+	<Button
+		onclick={() => adjust(-SMALL_STEP)}
+		style="soft"
+		color="secondary"
+		aria-label="Decrease by 0.1">-0.1</Button>
+	<Input type="number" value={scale} min="0.1" step="0.1" oninput={handleInput} />
+	<Button
+		onclick={() => adjust(SMALL_STEP)}
+		style="soft"
+		color="secondary"
+		aria-label="Increase by 0.1">+0.1</Button>
+	<Button onclick={() => adjust(BIG_STEP)} style="soft" color="secondary" aria-label="Increase by 1"
+		>+1</Button>
 </div>
 
 <style lang="scss">

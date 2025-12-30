@@ -1,13 +1,24 @@
 <script>
 	/**
-	 * @type {'primary' | 'secondary' | 'outline' | 'ghost' | 'accent'}
+	 * DaisyUI Button Component
+	 * Matches DaisyUI button API with size, style, and color variants
 	 */
 	let {
-		variant = 'primary',
 		/**
-		 * @type {'xs' | 'sm' | 'md' | 'lg'}
+		 * Size variant
+		 * @type {'xs' | 'sm' | 'md' | 'lg' | 'xl'}
 		 */
 		size = 'md',
+		/**
+		 * Style variant
+		 * @type {'standard' | 'outline' | 'soft' | 'dash' | 'ghost' | 'link'}
+		 */
+		style = 'standard',
+		/**
+		 * Color variant
+		 * @type {'neutral' | 'primary' | 'secondary' | 'accent' | 'info' | 'success' | 'warning' | 'error'}
+		 */
+		color = 'primary',
 		disabled = false,
 		loading = false,
 		/**
@@ -22,25 +33,39 @@
 	} = $props()
 
 	// Build DaisyUI classes
-	const variantClasses = {
-		primary: 'btn-primary',
-		secondary: 'btn-secondary',
-		outline: 'btn-outline',
-		ghost: 'btn-ghost',
-		accent: 'btn-accent'
-	}
-
 	const sizeClasses = {
 		xs: 'btn-xs',
 		sm: 'btn-sm',
 		md: 'btn-md',
-		lg: 'btn-lg'
+		lg: 'btn-lg',
+		xl: 'btn-xl'
+	}
+
+	const styleClasses = {
+		standard: '',
+		outline: 'btn-outline',
+		soft: 'btn-soft',
+		dash: 'btn-dash',
+		ghost: 'btn-ghost',
+		link: 'btn-link'
+	}
+
+	const colorClasses = {
+		neutral: 'btn-neutral',
+		primary: 'btn-primary',
+		secondary: 'btn-secondary',
+		accent: 'btn-accent',
+		info: 'btn-info',
+		success: 'btn-success',
+		warning: 'btn-warning',
+		error: 'btn-error'
 	}
 
 	const classes = $derived(
 		[
 			'btn',
-			variantClasses[variant],
+			colorClasses[color],
+			styleClasses[style],
 			sizeClasses[size],
 			loading ? 'loading' : '',
 			className
