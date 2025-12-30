@@ -3,6 +3,9 @@
 	import Favourite from '$lib/components/svg/Favourite.svelte'
 	import Check from '$lib/components/svg/Check.svelte'
 	import Burger from '$lib/components/svg/Burger.svelte'
+	import Input from '$lib/components/ui/Form/Input.svelte'
+	import Select from '$lib/components/ui/Form/Select.svelte'
+	import Button from '$lib/components/ui/Button.svelte'
 	import {
 		sortState,
 		searchString,
@@ -12,6 +15,18 @@
 	} from '$lib/stores/recipeFilter'
 
 	let { toggleSidebar, viewOnly, useCats = 'false', username } = $props()
+
+	const favouriteBtnClasses = $derived(
+		['tooltip', $favouriteFilter ? 'opacity-100 text-error' : 'opacity-60', 'hover:opacity-100']
+			.filter(Boolean)
+			.join(' ')
+	)
+
+	const cookedBtnClasses = $derived(
+		['tooltip', $cookedFilter ? 'opacity-100 text-success' : 'opacity-60', 'hover:opacity-100']
+			.filter(Boolean)
+			.join(' ')
+	)
 
 	function updateSort(key) {
 		sortState.update((current) => {
@@ -30,83 +45,93 @@
 <div class="flex flex-col lg:flex-row gap-4 items-stretch lg:items-center justify-between py-4">
 	<div class="flex flex-1 items-center gap-2 min-w-0">
 		{#if useCats}
-			<button
-				class="btn btn-square btn-ghost tooltip"
+			<Button
+				style="ghost"
+				size="lg"
+				class="btn-square tooltip"
 				data-tip="Display Category Filter"
 				onclick={toggleSidebar}>
 				<Burger width="1.5rem" />
-			</button>
+			</Button>
 		{/if}
 		<div class="flex-1">
-			<input
+			<Input
 				type="text"
 				name="search"
 				placeholder="Search recipes by..."
-				class="input input-bordered w-full"
-				bind:value={$searchString} />
+				bind:value={$searchString}
+				size="lg"
+				color="accent"
+				useLabelAsPlaceholder={false} />
 		</div>
 		<div class="tooltip" data-tip="Choose Search Key">
-			<select
+			<Select
 				name="selections"
 				bind:value={$searchKey}
 				id="selections"
-				class="select select-bordered min-w-[150px]"
-				aria-label="selections">
-				<option selected value="name">Name</option>
-				<option value="ingredients">Ingredients</option>
-				<option value="source">Source</option>
-				<option value="notes">Notes</option>
-			</select>
+				options={[
+					{ value: 'name', label: 'Name' },
+					{ value: 'ingredients', label: 'Ingredients' },
+					{ value: 'source', label: 'Source' },
+					{ value: 'notes', label: 'Notes' }
+				]}
+				size="lg"
+				color="accent"
+				style="standard"
+				fullWidth={false}
+				class="min-w-37.5"
+				aria-label="selections" />
 		</div>
 	</div>
-	<div class="flex gap-2 flex-wrap">
-		<button
-			onclick={() => ($favouriteFilter = !$favouriteFilter)}
-			class="btn btn-outline tooltip opacity-60 hover:opacity-100"
-			class:opacity-100={$favouriteFilter}
-			class:text-error={$favouriteFilter}
-			data-tip="Filter by Favourites">
-			<Favourite
-				favourite={$favouriteFilter}
-				width="24px"
-				height="24px"
-				fill="currentColor" />
-		</button>
-		<button
-			onclick={() => ($cookedFilter = !$cookedFilter)}
-			class="btn btn-outline tooltip opacity-60 hover:opacity-100"
-			class:opacity-100={$cookedFilter}
-			class:text-success={$cookedFilter}
-			data-tip="Filter by Cooked">
-			<Check
-				checked={$cookedFilter}
-				width="24px"
-				height="24px"
-				fill="currentColor" />
-		</button>
-		<button
-			class="btn tooltip"
-			class:btn-primary={$sortState.key === 'created'}
-			class:btn-outline={$sortState.key !== 'created'}
-			data-tip="Sort by Date"
-			onclick={() => updateSort('created')}>
-			Date <SortAscDesc sort={$sortState.key === 'created' ? $sortState.direction : ''} />
-		</button>
-		<button
-			class="btn tooltip"
-			class:btn-primary={$sortState.key === 'name'}
-			class:btn-outline={$sortState.key !== 'name'}
-			data-tip="Sort by Name"
-			onclick={() => updateSort('name')}>
-			Title <SortAscDesc sort={$sortState.key === 'name' ? $sortState.direction : ''} />
-		</button>
-		<button
-			class="btn tooltip"
-			class:btn-primary={$sortState.key === 'rating'}
-			class:btn-outline={$sortState.key !== 'rating'}
-			data-tip="Sort by Rating"
-			onclick={() => updateSort('rating')}>
-			Rating <SortAscDesc sort={$sortState.key === 'rating' ? $sortState.direction : ''} />
-		</button>
+	<div class="w-full flex flex-col gap-2 lg:flex-row lg:flex-wrap lg:items-center">
+		<div class="grid grid-cols-2 gap-2 lg:flex lg:flex-row lg:w-auto">
+			<Button
+				style="outline"
+				size="lg"
+				color="secondary"
+				onclick={() => ($favouriteFilter = !$favouriteFilter)}
+				class={`w-full lg:w-auto ${favouriteBtnClasses}`}
+				data-tip="Filter by Favourites">
+				<Favourite favourite={$favouriteFilter} width="24px" height="24px" fill="currentColor" />
+			</Button>
+			<Button
+				style="outline"
+				size="lg"
+				color="success"
+				onclick={() => ($cookedFilter = !$cookedFilter)}
+				class={`w-full lg:w-auto ${cookedBtnClasses}`}
+				data-tip="Filter by Cooked">
+				<Check checked={$cookedFilter} width="24px" height="24px" fill="currentColor" />
+			</Button>
+		</div>
+		<div class="grid grid-cols-3 gap-2 lg:flex lg:flex-row lg:w-auto">
+			<Button
+				style={$sortState.key === 'created' ? 'standard' : 'outline'}
+				class="tooltip w-full lg:w-auto"
+				size="lg"
+				color="info"
+				data-tip="Sort by Date"
+				onclick={() => updateSort('created')}>
+				Date <SortAscDesc sort={$sortState.key === 'created' ? $sortState.direction : ''} />
+			</Button>
+			<Button
+				style={$sortState.key === 'name' ? 'standard' : 'outline'}
+				class="tooltip w-full lg:w-auto"
+				size="lg"
+				color="info"
+				data-tip="Sort by Name"
+				onclick={() => updateSort('name')}>
+				Title <SortAscDesc sort={$sortState.key === 'name' ? $sortState.direction : ''} />
+			</Button>
+			<Button
+				style={$sortState.key === 'rating' ? 'standard' : 'outline'}
+				class="tooltip w-full lg:w-auto"
+				size="lg"
+				color="info"
+				data-tip="Sort by Rating"
+				onclick={() => updateSort('rating')}>
+				Rating <SortAscDesc sort={$sortState.key === 'rating' ? $sortState.direction : ''} />
+			</Button>
+		</div>
 	</div>
 </div>

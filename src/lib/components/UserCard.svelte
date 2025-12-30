@@ -1,34 +1,19 @@
-<!-- RecipeCard.svelte -->
 <script>
+	import Card from '$lib/components/ui/Card.svelte'
+
 	/** @type {{item: any}} */
 	let { item } = $props()
 </script>
 
-<a href="/user/{item.id}/recipes/" class="user-card">
-	<article>
-		<h3>{item.username}</h3>
-		<span>
-			Public Recipes: <i>{item.publicRecipesCount}/{item.totalRecipesCount}</i>
-		</span>
-	</article>
+<a href="/user/{item.id}/recipes/" class="block no-underline text-current">
+	<Card class="hover:bg-base-200 transition-colors">
+		{#snippet title()}
+			{item.username}
+		{/snippet}
+		{#snippet children()}
+			<p class="text-sm opacity-80">
+				Public Recipes: <i>{item.publicRecipesCount}/{item.totalRecipesCount}</i>
+			</p>
+		{/snippet}
+	</Card>
 </a>
-
-<style lang="scss">
-	article {
-		transition: background-color 0.2s ease;
-		padding: 1rem;
-		margin-bottom: 1rem;
-		@media (max-width: 767px) {
-			padding: 0.5rem;
-			margin-bottom: 0.5rem;
-		}
-	}
-
-	a:hover {
-		background-color: var(--pico-secondary-focus);
-	}
-
-	a.user-card {
-		color: var(--color);
-	}
-</style>

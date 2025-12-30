@@ -18,7 +18,7 @@
 	}
 </script>
 
-<div class="flex gap-1">
+<div class="flex">
 	{#each [1, 2, 3, 4, 5] as star (star)}
 		<button
 			class="btn btn-circle btn-ghost btn-sm p-0 min-h-0 h-auto"
