@@ -17,21 +17,21 @@
 	let dropdownOptions = $derived(importTypes.map((t) => ({ value: t.id, label: t.label })))
 
 	// Reactive updates based on selected type
-	let accept = $derived(
-		importTypes.find((t) => t.id === selectedType)?.accepts?.join(',') || '*/*'
-	)
+	let accept = $derived(importTypes.find((t) => t.id === selectedType)?.accepts?.join(',') || '*/*')
 	let info = $derived(importTypes.find((t) => t.id === selectedType)?.info || '')
 </script>
 
 <h2>Import Recipes</h2>
 
 <form method="POST" action="?/importRecipes" enctype="multipart/form-data">
-	<h5>Choose Migration Type</h5>
-	<Dropdown name="type" options={dropdownOptions} bind:selected={selectedType} />
+	<Dropdown
+		name="type"
+		legend="Choose Migration Type"
+		options={dropdownOptions}
+		bind:selected={selectedType}
+		optionalLabel={info} />
 
-	<Hint text={info} />
-
-	<FileInput id="file" name="file" label="File" accept={accept} required />
+	<FileInput id="file" name="file" label="File" {accept} required />
 
 	<Checkbox
 		name="isPublic"
