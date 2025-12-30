@@ -147,8 +147,9 @@
 	)
 </script>
 
-<Button data-tooltip="New User" onclick={openCreateDialog}
-	><New width="30px" height="30px" /></Button>
+<button class="btn btn-primary tooltip" data-tip="New User" onclick={openCreateDialog}>
+	<New width="30px" height="30px" fill="currentColor" />
+</button>
 
 <Table>
 	<TableHead>
@@ -181,20 +182,21 @@
 				<TableCell><TrueFalse isTrue={user.isAdmin} /></TableCell>
 				<TableCell><TrueFalse isTrue={user.isRoot} /></TableCell>
 				<TableCell>
-					<Button
+					<button
+						class="btn btn-outline btn-sm"
 						onclick={() => openEditDialog(user)}
-						data-testid="edit-button"
-						class="outline secondary">
-						<Edit width="20px" fill="var(--pico-ins-color)" />
-					</Button></TableCell>
+						data-testid="edit-button">
+						<Edit width="20px" fill="currentColor" />
+					</button>
+				</TableCell>
 				<TableCell>
 					{#if user.id !== currentAdminUserId || !user.isRoot}
-						<Button
+						<button
+							class="btn btn-outline btn-error btn-sm"
 							onclick={() => deleteUser(user.id)}
-							data-testid="delete-button"
-							class="outline secondary">
-							<Delete width="20px" fill="var(--pico-del-color)" />
-						</Button>
+							data-testid="delete-button">
+							<Delete width="20px" fill="currentColor" />
+						</button>
 					{/if}
 				</TableCell>
 			</TableRow>
@@ -205,7 +207,7 @@
 <FeedbackMessage message={userFeedback} type="error" />
 
 <Dialog bind:isOpen={isDialogOpen}>
-	<h2>{isEditMode ? 'Edit User' : 'Create User'}</h2>
+	<h3 class="font-bold text-lg mb-4">{isEditMode ? 'Edit User' : 'Create User'}</h3>
 	<Input
 		type="text"
 		id="username"
@@ -232,10 +234,10 @@
 	{#if !isEditMode}
 		<Checkbox name="Seed Recipes" bind:checked={editingUser.userSeed} label="Seed Recipes" />
 	{/if}
-	<footer>
-		<Button onclick={() => (isDialogOpen = false)} class="secondary">Cancel</Button>
+	<div class="modal-action">
+		<Button onclick={() => (isDialogOpen = false)} style="outline">Cancel</Button>
 		<Button onclick={handleSubmit}>{isEditMode ? 'Update' : 'Create'}</Button>
-	</footer>
+	</div>
 </Dialog>
 
 <style lang="scss">

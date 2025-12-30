@@ -77,10 +77,12 @@
 <FeedbackMessage message={feedback} type="info" />
 
 <Dialog bind:isOpen={showConfirmDialog}>
-	<h2>Make Recipe Public?</h2>
-	<p>This recipe is currently private. Would you like to make it public so it can be shared?</p>
-	<footer>
+	<h3 class="font-bold text-lg">Make Recipe Public?</h3>
+	<p class="py-4">
+		This recipe is currently private. Would you like to make it public so it can be shared?
+	</p>
+	<div class="modal-action">
 		<button class="btn btn-outline" onclick={cancelShare}>Cancel</button>
 		<button class="btn btn-primary" onclick={confirmMakePublic}>Make Public & Share</button>
-	</footer>
+	</div>
 </Dialog>

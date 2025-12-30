@@ -26,7 +26,13 @@
 	let newIngredient = $state('')
 	let showHidden = $state(false)
 	let isEditDialogOpen = $state(false)
-	let editingItem = $state({})
+	const emptyEditingItem = {
+		uid: '',
+		name: '',
+		quantity: '',
+		unit: ''
+	}
+	let editingItem = $state({ ...emptyEditingItem })
 
 	async function handleCheckboxChange(item, event) {
 		const purchased = event.target.checked
@@ -167,7 +173,7 @@
 				// 🔒 Reset editing item if it's the one deleted
 				if (editingItem?.uid === uid) {
 					isEditDialogOpen = false
-					editingItem = {}
+					editingItem = { ...emptyEditingItem }
 				}
 				shoppingFeedback = 'Item deleted successfully!'
 			} else {
@@ -251,4 +257,3 @@
 	bind:item={editingItem}
 	onSave={handleSaveEdit}
 	onDelete={handleDeleteItem} />
-

@@ -1,56 +1,86 @@
 <script>
-	import { onMount, onDestroy } from 'svelte'
-	import { browser } from '$app/environment'
+	/**
+	 * DaisyUI Modal/Dialog Component
+	 * Uses native HTML dialog element with DaisyUI styling
+	 */
+	import { tick } from 'svelte'
 
 	let {
 		/**
+		 * Controls whether modal is open
 		 * @type {boolean}
 		 */
-		isOpen = $bindable(false),
+		isOpen = $bindable(),
 		/**
+		 * Modal content
 		 * @type {import('svelte').Snippet}
 		 */
 		children,
 		/**
+		 * Callback when modal closes
 		 * @type {() => void}
 		 */
 		onClose = undefined,
 		/**
+		 * Allow closing on ESC key (default: true)
 		 * @type {boolean}
 		 */
-		closeOnEscape = true
+		closeOnEscape = true,
+		/**
+		 * Allow closing by clicking backdrop (default: true)
+		 * @type {boolean}
+		 */
+		closeOnBackdrop = true,
+		/**
+		 * Additional classes for modal-box
+		 * @type {string}
+		 */
+		class: className = ''
 	} = $props()
 
 	let dialogElement = $state()
 
-	function handleKeydown(event) {
-		if (event.key === 'Escape' && isOpen && closeOnEscape) {
-			isOpen = false
-			onClose && onClose()
+	// Watch isOpen and call showModal/close accordingly
+	$effect(() => {
+		if (!dialogElement) return
+
+		if (isOpen) {
+			dialogElement.showModal()
+		} else {
+			dialogElement.close()
 		}
+	})
+
+	// Handle dialog close event
+	function handleDialogClose() {
+		isOpen = false
+		onClose?.()
 	}
 
-	onMount(() => {
-		if (browser && dialogElement) {
-			dialogElement.addEventListener('close', () => {
-				isOpen = false
-				onClose && onClose()
-			})
-			if (closeOnEscape) {
-				document.addEventListener('keydown', handleKeydown)
-			}
+	// Handle backdrop click
+	function handleBackdropClick() {
+		if (closeOnBackdrop) {
+			isOpen = false
+			onClose?.()
 		}
-	})
-
-	onDestroy(() => {
-		if (browser && closeOnEscape) {
-			document.removeEventListener('keydown', handleKeydown)
-		}
-	})
+	}
 </script>
 
-<dialog bind:this={dialogElement} open={isOpen}>
-	<article>
+<dialog
+	bind:this={dialogElement}
+	class="modal"
+	onclose={handleDialogClose}
+	oncancel={(e) => {
+		if (!closeOnEscape) {
+			e.preventDefault()
+		}
+	}}>
+	<div class="modal-box {className}">
 		{@render children()}
-	</article>
+	</div>
+	{#if closeOnBackdrop}
+		<form method="dialog" class="modal-backdrop">
+			<button onclick={handleBackdropClick}>close</button>
+		</form>
+	{/if}
 </dialog>
