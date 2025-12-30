@@ -4,11 +4,8 @@
 	 * This script is responsible for importing styles and managing page data.
 	 */
 
-	// Imports styles from PicoCSS.
-	import '@picocss/pico'
-
-	// Import Global CSS
-	import '$lib/css/global.scss'
+	// Import Tailwind CSS with DaisyUI
+	import '../app.css'
 	import SiteIcons from '$lib/components/SiteIcons.svelte'
 	import CookBook from '$lib/components/svg/CookBook.svelte'
 	import NavLinks from '$lib/components/NavLinks.svelte'
