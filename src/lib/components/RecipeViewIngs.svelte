@@ -66,10 +66,18 @@
 
 	{#if hasApprox || hasOptional || hasToServe || hasToTaste}
 		<div class="flex flex-wrap gap-3 text-sm text-base-content/60 my-4">
-			{#if hasApprox}<span><Badge>~</Badge> approx</span>{/if}
-			{#if hasOptional}<span><Badge>opt</Badge> optional</span>{/if}
-			{#if hasToServe}<span><Badge>srv</Badge> to serve</span>{/if}
-			{#if hasToTaste}<span><Badge>tt</Badge> to taste</span>{/if}
+			{#if hasApprox}<span
+					><Badge color="secondary" style="outline" title="Approximate">~</Badge> approx</span
+				>{/if}
+			{#if hasOptional}<span
+					><Badge color="secondary" style="outline" title="Optional">opt</Badge> optional</span
+				>{/if}
+			{#if hasToServe}<span
+					><Badge color="secondary" style="outline" title="To serve">srv</Badge> to serve</span
+				>{/if}
+			{#if hasToTaste}<span
+					><Badge color="secondary" style="outline" title="To taste">tt</Badge> to taste</span
+				>{/if}
 		</div>
 	{/if}
 

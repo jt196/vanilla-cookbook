@@ -1,74 +1,69 @@
 <script>
 	/**
-	 * @type {'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'scheduled' | 'pre-migration' | 'manual'}
+	 * DaisyUI Badge Component
+	 * Matches DaisyUI badge API with size, style, and color variants
 	 */
 	let {
-		variant = 'default',
 		/**
-		 * @type {'sm' | 'md'}
+		 * Size variant
+		 * @type {'xs' | 'sm' | 'md' | 'lg' | 'xl'}
 		 */
 		size = 'md',
+		/**
+		 * Style variant
+		 * @type {'standard' | 'outline' | 'soft' | 'dash' | 'ghost'}
+		 */
+		style = 'standard',
+		/**
+		 * Color variant
+		 * @type {'neutral' | 'primary' | 'secondary' | 'accent' | 'info' | 'success' | 'warning' | 'error'}
+		 */
+		color = undefined,
 		class: className = '',
 		children
 	} = $props()
+
+	// Build DaisyUI classes
+	const sizeClasses = {
+		xs: 'badge-xs',
+		sm: 'badge-sm',
+		md: 'badge-md',
+		lg: 'badge-lg',
+		xl: 'badge-xl'
+	}
+
+	const styleClasses = {
+		standard: '',
+		outline: 'badge-outline',
+		soft: 'badge-soft',
+		dash: 'badge-dash',
+		ghost: 'badge-ghost'
+	}
+
+	const colorClasses = {
+		neutral: 'badge-neutral',
+		primary: 'badge-primary',
+		secondary: 'badge-secondary',
+		accent: 'badge-accent',
+		info: 'badge-info',
+		success: 'badge-success',
+		warning: 'badge-warning',
+		error: 'badge-error'
+	}
+
+	const classes = $derived(
+		[
+			'badge',
+			color ? colorClasses[color] : '',
+			styleClasses[style],
+			sizeClasses[size],
+			className
+		]
+			.filter(Boolean)
+			.join(' ')
+	)
 </script>
 
-<span class="badge {variant} {className}">
+<span class={classes}>
 	{@render children()}
 </span>
-
-<style lang="scss">
-	.badge {
-		display: inline-block;
-		padding: 0.25rem 0.5rem;
-		margin: 0;
-		border-radius: 0.25rem;
-		font-size: 0.85em;
-		font-weight: 500;
-
-		&.scheduled {
-			background-color: var(--pico-primary-background);
-			color: var(--pico-primary-inverse);
-		}
-
-		&.pre-migration {
-			background-color: var(--pico-secondary-background);
-			color: var(--pico-secondary-inverse);
-		}
-
-		&.manual {
-			background-color: var(--pico-contrast-background);
-			color: var(--pico-contrast-inverse);
-		}
-
-		&.default {
-			background-color: var(--pico-muted-color);
-			color: var(--pico-background-color);
-		}
-
-		&.primary {
-			background-color: var(--pico-primary-background);
-			color: var(--pico-primary-inverse);
-		}
-
-		&.secondary {
-			background-color: var(--pico-secondary-background);
-			color: var(--pico-secondary-inverse);
-		}
-
-		&.success {
-			background-color: var(--pico-ins-color);
-			color: var(--pico-background-color);
-		}
-
-		&.warning {
-			background-color: var(--pico-mark-background-color);
-			color: var(--pico-mark-color);
-		}
-
-		&.error {
-			background-color: var(--pico-del-color);
-			color: var(--pico-background-color);
-		}
-	}
-</style>

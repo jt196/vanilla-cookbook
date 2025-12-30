@@ -242,12 +242,26 @@
 		<span class="ml-4 text-lg">Waiting for the pan to boil...</span>
 	</div>
 {:else}
+	<!-- Row 1: Image + About Card -->
 	<div class="flex flex-col md:flex-row gap-4 my-4">
-		<!-- Left column: Image + Ingredients -->
-		<div class="w-full md:w-1/3 flex flex-col gap-1">
-			{#if mainPhoto}
+		{#if mainPhoto}
+			<div class="w-full md:w-1/3">
 				<RecipeViewCover {mainPhoto} {recipe} />
-			{/if}
+			</div>
+		{/if}
+		<div class="w-full {mainPhoto ? 'md:w-2/3' : ''}">
+			<RecipeViewAbout
+				{recipe}
+				{categories}
+				useCats={viewUser?.useCats}
+				{scaledServings}
+				recipeRatingChanged={handleRecipeRatingChanged} />
+		</div>
+	</div>
+
+	<!-- Row 2: Ingredients + Description/Directions -->
+	<div class="flex flex-col md:flex-row gap-4 my-4">
+		<div class="w-full md:w-1/3">
 			{#if !loadingIngredients}
 				<RecipeViewIngs
 					{ingredients}
@@ -267,14 +281,7 @@
 			{/if}
 		</div>
 
-		<!-- Right column: About card + Description + Directions -->
-		<div class="w-full md:w-2/3 flex flex-col">
-			<RecipeViewAbout
-				{recipe}
-				{categories}
-				useCats={viewUser?.useCats}
-				{scaledServings}
-				recipeRatingChanged={handleRecipeRatingChanged} />
+		<div class="w-full md:w-2/3">
 			<RecipeViewDesc {recipe} />
 			<RecipeViewDirections {directionLines} {sanitizedDirections} />
 		</div>
