@@ -45,48 +45,70 @@
 	)
 </script>
 
-<div class="auth-form">
-	<form
-		method="POST"
-		use:enhance={() => {
-			return async ({ update }) => {
-				await update()
-			}
-		}}>
-		<hgroup>
-			<h2>Register</h2>
-			<h3>To post articles, you'll need an account.</h3>
-		</hgroup>
+<div class="flex justify-center items-start min-h-[80vh] pt-8">
+	<div class="card w-full max-w-md bg-base-200 shadow-xl">
+		<div class="card-body">
+			<h2 class="card-title text-3xl">Register</h2>
+			<p class="text-base-content/70 mb-4">To post articles, you'll need an account.</p>
 
-		<Input type="text" id="username" name="username" bind:value={username} label="Username" required />
+			<form
+				method="POST"
+				class="space-y-4"
+				use:enhance={() => {
+					return async ({ update }) => {
+						await update()
+					}
+				}}>
 
-		<Input type="email" id="email" name="email" bind:value={email} label="Email" required />
-		<ValidationMessage
-			message={email.length > 0 && !emailValid ? 'Please enter a valid email address.' : null}
-			isError={true} />
+				<Input type="text" id="username" name="username" bind:value={username} label="Username" required />
 
-		<Input type="password" id="password" name="password" bind:value={password} label="Password" required />
-		<ValidationMessage
-			message={passwordValidation?.message}
-			isValid={passwordValidation?.isValid} />
+				<div>
+					<Input type="email" id="email" name="email" bind:value={email} label="Email" required />
+					<ValidationMessage
+						message={email.length > 0 && !emailValid ? 'Please enter a valid email address.' : null}
+						isError={true}
+						hidden={true} />
+				</div>
 
-		<Input type="password" id="passwordConfirm" name="passwordConfirm" bind:value={passwordConfirm} label="Confirm Password" required />
-		<ValidationMessage message={passwordsMismatch ? "Passwords don't match!" : null} isError={true} />
+				<div>
+					<Input type="password" id="password" name="password" bind:value={password} label="Password" required />
+					<ValidationMessage
+						message={passwordValidation?.message}
+						isValid={passwordValidation?.isValid}
+						hidden={true} />
+				</div>
 
-		<Checkbox
-			name="seedRecipes"
-			bind:checked={seedRecipes}
-			label="Seed my account with 3 example recipes"
-			size="sm"
-			color="neutral" />
+				<div>
+					<Input type="password" id="passwordConfirm" name="passwordConfirm" bind:value={passwordConfirm} label="Confirm Password" required />
+					<ValidationMessage
+						message={passwordsMismatch ? "Passwords don't match!" : null}
+						isError={true}
+						hidden={true} />
+				</div>
 
-		<Button type="submit" disabled={isSubmitDisabled}>Register</Button>
-	</form>
-	<p>Already have an account? <a href="/login">Login</a></p>
-	{#if oauthEnabled}
-		<hr />
-		<Oauth {googleEnabled} {githubEnabled} layout="column" />
-	{/if}
+				<Checkbox
+					name="seedRecipes"
+					bind:checked={seedRecipes}
+					label="Seed my account with 3 example recipes"
+					size="sm"
+					color="primary" />
 
-	<FeedbackMessage message={errorMessage} type="error" />
+				<div class="card-actions justify-end mt-6">
+					<Button type="submit" disabled={isSubmitDisabled} class="w-full">Register</Button>
+				</div>
+			</form>
+
+			<FeedbackMessage message={errorMessage} type="error" inline={true} />
+
+			<div class="divider"></div>
+
+			<p class="text-center">
+				Already have an account? <a href="/login" class="link link-primary">Login</a>
+			</p>
+
+			{#if oauthEnabled}
+				<Oauth {googleEnabled} {githubEnabled} layout="column" />
+			{/if}
+		</div>
+	</div>
 </div>

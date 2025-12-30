@@ -11,28 +11,21 @@
 		/**
 		 * @type {boolean}
 		 */
-		isError = false
+		isError = false,
+		/**
+		 * @type {boolean}
+		 * Hide when not showing (no space taken, causes layout shift)
+		 */
+		hidden = false
 	} = $props()
+
+	const typeClass = $derived(
+		isValid ? 'text-success' : isError ? 'text-error' : 'text-info'
+	)
 </script>
 
 {#if message}
-	<p class="validation-message" class:valid={isValid} class:error={isError}>
+	<p class="validator-hint {typeClass}" class:hidden>
 		{message}
 	</p>
 {/if}
-
-<style>
-	.validation-message {
-		margin-top: -0.75rem;
-		margin-bottom: 1rem;
-		font-size: 0.875rem;
-	}
-
-	.validation-message.valid {
-		color: var(--pico-ins-color);
-	}
-
-	.validation-message.error {
-		color: var(--pico-del-color);
-	}
-</style>

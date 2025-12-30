@@ -54,61 +54,58 @@
 </script>
 
 {#if !dbSeed}
-	<form onsubmit={handleSubmit} method="POST">
-		<hgroup>
-			<h2>Welcome to Vanilla Cookbook</h2>
-			<h3>Let's get cooking! Create your account:</h3>
-		</hgroup>
-		<Input type="text" id="name" label="Name" bind:value={adminName} name="name" required />
-		<Input type="text" id="username" label="Username" bind:value={adminUsername} name="username" required />
-		<Input type="email" id="email" label="Email" bind:value={adminEmail} name="email" required />
-		<Input type="password" id="password" label="Password" bind:value={adminPassword} name="password" required />
-		<label data-tooltip="Seed database with sample recipes">
-			<input type="checkbox" bind:checked={recipeSeed} />
-			Add Sample Recipes
-		</label>
-		<details class="dropdown">
-			<summary>Units</summary>
-			<ul>
-				{#each systems as system}
-					<li>
-						<label>
-							<input
-								type="radio"
-								bind:group={adminUnits}
-								name="system"
-								value={system.value}
-								checked={system.value === adminUnits} />
-							{system.label}
+	<div class="flex justify-center items-start min-h-[80vh] pt-8">
+		<div class="card w-full max-w-lg bg-base-200 shadow-xl">
+			<div class="card-body">
+				<h2 class="card-title text-3xl">Welcome to Vanilla Cookbook</h2>
+				<p class="text-base-content/70 mb-4">Let's get cooking! Create your account:</p>
+
+				<form onsubmit={handleSubmit} method="POST" class="space-y-4">
+					<Input type="text" id="name" label="Name" bind:value={adminName} name="name" required />
+					<Input type="text" id="username" label="Username" bind:value={adminUsername} name="username" required />
+					<Input type="email" id="email" label="Email" bind:value={adminEmail} name="email" required />
+					<Input type="password" id="password" label="Password" bind:value={adminPassword} name="password" required />
+
+					<label class="flex items-center gap-2 cursor-pointer">
+						<input type="checkbox" bind:checked={recipeSeed} class="checkbox checkbox-primary" />
+						<span class="label-text">Add Sample Recipes</span>
+					</label>
+
+					<div class="form-control">
+						<label class="label">
+							<span class="label-text">Units</span>
 						</label>
-					</li>
-				{/each}
-			</ul>
-		</details>
-		<details class="dropdown">
-			<summary>Language</summary>
-			<ul>
-				{#each languages as language}
-					<li>
-						<label>
-							<input
-								type="radio"
-								bind:group={adminLanguage}
-								name="language"
-								value={language.value}
-								checked={language.value === adminLanguage} />
-							{language.label}
+						<select class="select select-bordered w-full" bind:value={adminUnits}>
+							{#each systems as system}
+								<option value={system.value}>{system.label}</option>
+							{/each}
+						</select>
+					</div>
+
+					<div class="form-control">
+						<label class="label">
+							<span class="label-text">Language</span>
 						</label>
-					</li>
-				{/each}
-			</ul>
-		</details>
-		<br />
-		<Button type="submit">Create Admin</Button>
-	</form>
+						<select class="select select-bordered w-full" bind:value={adminLanguage}>
+							{#each languages as language}
+								<option value={language.value}>{language.label}</option>
+							{/each}
+						</select>
+					</div>
+
+					<div class="card-actions justify-end mt-6">
+						<Button type="submit" class="w-full">Create Admin</Button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
 {:else}
-	<h1>Something went wrong!</h1>
+	<div class="flex justify-center items-center min-h-[60vh]">
+		<div class="alert alert-error max-w-md">
+			<h1 class="text-xl font-bold">Something went wrong!</h1>
+		</div>
+	</div>
 {/if}
 
-<!-- Pass the spinner snippet as a prop -->
 <Spinner visible={spinnerVisible} spinnerContent="Creating Admin User..." />
