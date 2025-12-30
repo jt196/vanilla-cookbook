@@ -15,13 +15,13 @@
 	<Button
 		style="ghost"
 		color="neutral"
-		class="btn-circle text-base-content shadow-none border-none hover:bg-base-300"
+		class="btn-circle text-primary shadow-none border-none hover:bg-base-300"
 		aria-label="Toggle theme"
 		onclick={onToggleTheme}>
 		<Theme {theme} width="25px" />
 	</Button>
 
-	<a href="/users" class="btn btn-ghost btn-circle text-base-content" aria-label="Users">
+	<a href="/users" class="btn btn-ghost btn-circle text-primary" aria-label="Users">
 		<Users width="25px" />
 	</a>
 
@@ -31,29 +31,26 @@
 			<a href="/register" class="btn btn-ghost">Register</a>
 		{/if}
 	{:else}
-		<a
-			href="/recipe/new"
-			class="btn btn-ghost btn-circle text-base-content"
-			aria-label="New recipe">
-			<New width="25px" />
-		</a>
-		<a
-			href={`/user/${user.userId}/shopping`}
-			class="btn btn-ghost btn-circle text-base-content"
-			aria-label="Shopping list">
-			<Shopping width="25px" />
-		</a>
-		<a
-			href={`/user/${user.userId}/calendar`}
-			class="btn btn-ghost btn-circle text-base-content"
-			aria-label="Calendar">
-			<Calendar width="25px" />
-		</a>
-		<a
-			href={`/user/${user.userId}/options/settings`}
-			class="btn btn-ghost btn-circle text-base-content"
-			aria-label="Settings">
-			<Settings width="25px" />
-		</a>
+			<a href="/recipe/new" class="btn btn-ghost btn-circle text-primary" aria-label="New recipe">
+				<New width="25px" />
+			</a>
+			<a
+				href={`/user/${user.userId}/shopping`}
+				class="btn btn-ghost btn-circle text-primary"
+				aria-label="Shopping list">
+				<Shopping width="25px" />
+			</a>
+			<a
+				href={`/user/${user.userId}/calendar`}
+				class="btn btn-ghost btn-circle text-primary"
+				aria-label="Calendar">
+				<Calendar width="25px" />
+			</a>
+			<a
+				href={`/user/${user.userId}/options/settings`}
+				class="btn btn-ghost btn-circle text-primary"
+				aria-label="Settings">
+				<Settings width="25px" />
+			</a>
 	{/if}
 </div>

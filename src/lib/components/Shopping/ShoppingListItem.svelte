@@ -28,11 +28,11 @@
 		color="accent"
 		size="xl"
 		onchange={(checked) => onCheckboxChange(item, { target: { checked } })}
-		class="mt-0.5" />
+		class="self-center" />
 
 	<div class="flex flex-col gap-1 flex-1 min-w-0">
 		<div class="flex items-center gap-2">
-			<span class={`font-medium ${item.purchased ? 'line-through opacity-60' : ''}`}>
+			<span class={`prose prose-xl ${item.purchased ? 'line-through opacity-60' : ''}`}>
 				{item.name}
 			</span>
 			{#if item.recipeUid}
@@ -56,7 +56,8 @@
 
 	<Button
 		color="primary"
-		class="btn-square"
+		style="ghost"
+		class="btn-square shadow-none border-none text-primary"
 		id="edit-item"
 		aria-label="Edit item"
 		onclick={() => onEdit(item)}>

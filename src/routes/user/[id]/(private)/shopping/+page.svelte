@@ -53,7 +53,6 @@
 		}, 300)
 	}
 
-
 	async function handleDelete() {
 		shoppingFeedback = ''
 		try {
@@ -198,7 +197,9 @@
 	let uncheckedItemCount = $derived(shoppingList.filter((item) => !item.purchased).length)
 </script>
 
-<h4>Shopping List</h4>
+<div class="prose mb-2">
+	<h2>Shopping List</h2>
+</div>
 
 <ShoppingToolbar
 	{showHidden}
