@@ -2,6 +2,8 @@
 @plugin '@tailwindcss/typography';
 @plugin 'daisyui';
 
+@source './**/*.{html,svelte}';
+
 @layer base {
 	:root {
 		font-family: Inter, system-ui, sans-serif;
@@ -50,5 +52,33 @@
 	/* Auth form centering */
 	.auth-form {
 		@apply w-full max-w-md mx-auto;
+	}
+
+	/* Softer button outlines */
+	.btn-outline {
+		border-color: oklch(var(--bc) / 0.2) !important;
+		background-color: oklch(var(--b1)) !important;
+	}
+
+	.btn-outline:hover {
+		border-color: oklch(var(--bc) / 0.4) !important;
+		background-color: oklch(var(--b2)) !important;
+	}
+
+	.btn-outline.btn-error {
+		border-color: oklch(var(--er) / 0.5) !important;
+	}
+
+	.btn-outline.btn-success {
+		border-color: oklch(var(--su) / 0.5) !important;
+	}
+
+	/* Softer icon opacity for inactive states */
+	.btn-ghost {
+		color: oklch(var(--bc) / 0.6);
+	}
+
+	.btn-ghost:hover {
+		color: oklch(var(--bc) / 0.9);
 	}
 }

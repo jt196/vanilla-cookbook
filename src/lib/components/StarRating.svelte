@@ -1,6 +1,5 @@
 <script>
 	import Star from '$lib/components/svg/Star.svelte'
-	import IconButton from '$lib/components/ui/IconButton.svelte'
 
 	/** @type {{rating?: number, editable?: boolean, ratingChanged?: (rating: number) => void}} */
 	let { rating = 0, editable = false, ratingChanged } = $props()
@@ -19,10 +18,14 @@
 	}
 </script>
 
-<div>
+<div class="flex gap-1">
 	{#each [1, 2, 3, 4, 5] as star (star)}
-		<IconButton
-			class="star {editable ? 'editable' : ''}"
+		<button
+			class="btn btn-circle btn-ghost btn-sm p-0 min-h-0 h-auto"
+			class:opacity-60={rating < star - 0.5}
+			class:hover:opacity-100={rating < star - 0.5}
+			class:opacity-100={rating >= star - 0.5}
+			class:text-warning={rating >= star - 0.5}
 			onclick={(event) => {
 				event.preventDefault()
 				setRating(star)
@@ -31,21 +34,7 @@
 			tabindex="0">
 			<Star
 				state={rating >= star ? 'full' : rating >= star - 0.5 ? 'half' : 'empty'}
-				fill="var(--pico-primary)" />
-		</IconButton>
+				fill="currentColor" />
+		</button>
 	{/each}
 </div>
-
-<style>
-	.editable {
-		cursor: pointer;
-	}
-
-	button.star {
-		background: none;
-		border: none;
-		padding: 0;
-		cursor: pointer;
-		outline: none; /* Be cautious with this; you might want to provide a custom focus style */
-	}
-</style>

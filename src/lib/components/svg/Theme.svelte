@@ -1,6 +1,6 @@
 <script>
 	/** @type {{width?: string, height?: string, fill?: string, favourite?: boolean}} */
-	let { width = '20px', height = '20px', fill = 'var(--pico-primary)', theme = 'dark' } = $props()
+	let { width = '20px', height = '20px', fill = 'currentColor', theme = 'dark' } = $props()
 </script>
 
 {#if theme === 'dark'}

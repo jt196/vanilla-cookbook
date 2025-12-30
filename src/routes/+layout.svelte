@@ -78,7 +78,7 @@
 <div class="navbar bg-base-100 border-b border-base-300">
 	<div class="navbar-start">
 		{#if user}
-			<a href={`/user/${user.userId}/recipes`} class="flex items-center gap-2">
+			<a href={`/user/${user.userId}/recipes`} class="flex items-center gap-2 text-base-content">
 				<CookBook width="45px" height="45px" />
 				<img
 					src="/icons/site-logo.svg"
@@ -87,7 +87,8 @@
 				/>
 			</a>
 		{:else}
-			<div class="flex items-center gap-2">
+			<div class="flex items-center gap-2 text-base-content">
+				<CookBook width="45px" height="45px" />
 				<img
 					src="/icons/site-logo.svg"
 					alt="Vanilla Cookbook"
@@ -104,6 +105,8 @@
 	{/if}
 </div>
 
-<div class="container mx-auto px-4 py-6">
-	{@render children?.()}
+<div class="min-h-screen bg-base-200">
+	<div class="container mx-auto px-4 py-6">
+		{@render children?.()}
+	</div>
 </div>

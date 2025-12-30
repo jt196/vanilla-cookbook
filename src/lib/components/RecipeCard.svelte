@@ -2,11 +2,8 @@
 <script>
 	import Favourite from '$lib/components/svg/Favourite.svelte'
 	import Check from '$lib/components/svg/Check.svelte'
-	import { localDate } from '$lib/utils/dateTime'
 	import StarRating from '$lib/components/StarRating.svelte'
 	import { changeRecipeFavourite } from '$lib/utils/crud'
-	import IconButton from '$lib/components/ui/IconButton.svelte'
-	import { navigating } from '$app/stores'
 
 	/** @type {{item: any, data: any, recipeFavourited?: (uid: string) => void, recipeRatingChanged?: (uid: string, rating: number) => void}}, */
 	let { item, data, recipeFavourited, recipeRatingChanged } = $props()
@@ -15,11 +12,9 @@
 	let favourite = $derived(item?.on_favorites)
 
 	async function handleFavourite(uid, event) {
-		// Preventing the click through to the item view page
 		event.preventDefault()
-		// Stop the click event from bubbling up to the parent anchor
 		event.stopPropagation()
-		console.log('Handle favourites button clicked for uid: ' + uid)
+		console.log('Handle favourite button clicked for uid: ' + uid)
 		const success = await changeRecipeFavourite(uid)
 		if (success && recipeFavourited) {
 			recipeFavourited(uid)
@@ -27,128 +22,60 @@
 	}
 </script>
 
-<a href="/recipe/{item.uid}/view/" class="recipe-container">
-	<article class="recipe-card">
-		<h3>{item.name}</h3>
-		<div class="star-fav">
+<a href="/recipe/{item.uid}/view/" class="flex items-center justify-between mb-2 rounded-lg transition-colors no-underline text-current">
+	<article class="card bg-base-100 hover:bg-base-200 shadow-md flex-1 min-h-25 py-4 px-4 mr-2">
+		<h3 class="card-title text-xl md:text-2xl truncate max-sm:whitespace-normal max-sm:overflow-visible">
+			{item.name}
+		</h3>
+		<div class="flex items-center gap-4 mt-2">
 			<StarRating
 				rating={item.rating}
 				editable={true}
 				ratingChanged={(newRating) => recipeRatingChanged?.(item.uid, newRating)} />
 			{#if item.userId === data.user?.requestedUserId}
-				<IconButton
-					onclick={(event) => handleFavourite(item?.uid, event)}
-					data-tooltip="Favourite Recipe"
-					class="outline secondary">
-					<Favourite
-						{favourite}
-						width="15px"
-						height="15px"
-						fill={favourite ? 'var(--pico-del-color)' : 'var(--pico-secondary-focus)'} />
-				</IconButton>
-				<IconButton
-					data-tooltip={item.log?.length > 0
-						? 'This recipe has been cooked ' + item.log.length + ' times'
-						: 'This recipe has never been cooked'}>
-					<Check
-						checked={logged}
-						width="15px"
-						height="15px"
-						fill={logged ? 'var(--pico-ins-color)' : 'var(--pico-secondary-focus)'} />
-				</IconButton>
+				<div class="flex gap-2">
+					<button
+						onclick={(event) => handleFavourite(item?.uid, event)}
+						class="btn btn-circle btn-ghost btn-sm tooltip opacity-60 hover:opacity-100"
+						data-tip="Favourite Recipe"
+						class:text-error={favourite}
+						class:opacity-100={favourite}>
+						<Favourite
+							{favourite}
+							width="18px"
+							height="18px"
+							fill="currentColor" />
+					</button>
+					<button
+						class="btn btn-circle btn-ghost btn-sm tooltip opacity-60 hover:opacity-100"
+						class:text-success={logged}
+						class:opacity-100={logged}
+						data-tip={item.log?.length > 0
+							? `Cooked ${item.log.length} time${item.log.length > 1 ? 's' : ''}`
+							: 'Never cooked'}>
+						<Check
+							checked={logged}
+							width="18px"
+							height="18px"
+							fill="currentColor" />
+					</button>
+				</div>
 			{/if}
 		</div>
 	</article>
-	<div class="recipe-image">
+	<div class="flex justify-center items-center shrink-0">
 		{#if item.photos && item.photos.length > 0}
 			<img
-				class="recipe-thumbnail"
+				class="w-25 h-25 object-cover rounded-lg"
 				loading="lazy"
 				src="/api/recipe/image/{item.photos[0].id}"
 				alt="{item.name} thumbnail" />
 		{:else if item.image_url}
 			<img
-				class="recipe-thumbnail"
+				class="w-25 h-25 object-cover rounded-lg"
 				loading="lazy"
 				src={item.image_url}
 				alt="{item.name} thumbnail" />
 		{/if}
 	</div>
 </a>
-
-<style lang="scss">
-	/* Recipe card container - flexbox layout */
-	.recipe-container {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		padding: 0;
-		margin-bottom: 0.5rem;
-		border-radius: 6px;
-		transition: background-color 0.2s ease;
-		text-decoration: none;
-		color: inherit;
-	}
-
-	.stars {
-		padding-bottom: 3px;
-	}
-
-	/* Recipe text section (left) */
-	.recipe-card {
-		flex-grow: 1;
-		display: flex;
-		margin-bottom: 0;
-		flex-direction: column;
-		min-height: 100px;
-		gap: 0.5rem;
-		max-width: calc(100% - 110px); /* Leave space for image */
-		&:hover {
-			background-color: var(--pico-secondary-focus);
-		}
-	}
-
-	h3 {
-		margin: 0;
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		font-size: 1.7rem;
-	}
-
-	/* Star rating and favorite button */
-	.star-fav {
-		display: flex;
-		align-items: center;
-		gap: 1rem;
-	}
-
-	/* Image section (right) */
-	.recipe-image {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		img {
-			min-height: 100px;
-			min-width: 100px;
-		}
-	}
-
-	.recipe-thumbnail {
-		object-fit: cover;
-		border-radius: 6px;
-		width: 100px;
-		height: 100px;
-	}
-
-	@media (max-width: 576px) {
-		h3 {
-			font-size: 1rem;
-			margin-bottom: 1rem;
-			white-space: normal;
-			overflow: visible;
-			text-overflow: unset;
-			word-wrap: break-word;
-		}
-	}
-</style>

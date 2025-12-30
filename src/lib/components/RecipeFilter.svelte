@@ -62,30 +62,32 @@
 	<div class="flex gap-2 flex-wrap">
 		<button
 			onclick={() => ($favouriteFilter = !$favouriteFilter)}
-			class="btn btn-outline tooltip"
-			data-tip="Filter by Favourites"
-			class:btn-error={$favouriteFilter}>
+			class="btn btn-outline tooltip opacity-60 hover:opacity-100"
+			class:opacity-100={$favouriteFilter}
+			class:text-error={$favouriteFilter}
+			data-tip="Filter by Favourites">
 			<Favourite
 				favourite={$favouriteFilter}
 				width="24px"
 				height="24px"
-				fill={$favouriteFilter ? 'currentColor' : 'currentColor'} />
+				fill="currentColor" />
 		</button>
 		<button
 			onclick={() => ($cookedFilter = !$cookedFilter)}
-			class="btn btn-outline tooltip"
-			data-tip="Filter by Cooked"
-			class:btn-success={$cookedFilter}>
+			class="btn btn-outline tooltip opacity-60 hover:opacity-100"
+			class:opacity-100={$cookedFilter}
+			class:text-success={$cookedFilter}
+			data-tip="Filter by Cooked">
 			<Check
 				checked={$cookedFilter}
 				width="24px"
 				height="24px"
-				fill={$cookedFilter ? 'currentColor' : 'currentColor'} />
+				fill="currentColor" />
 		</button>
 		<button
 			class="btn tooltip"
 			class:btn-primary={$sortState.key === 'created'}
-			class:btn-ghost={$sortState.key !== 'created'}
+			class:btn-outline={$sortState.key !== 'created'}
 			data-tip="Sort by Date"
 			onclick={() => updateSort('created')}>
 			Date <SortAscDesc sort={$sortState.key === 'created' ? $sortState.direction : ''} />
@@ -93,7 +95,7 @@
 		<button
 			class="btn tooltip"
 			class:btn-primary={$sortState.key === 'name'}
-			class:btn-ghost={$sortState.key !== 'name'}
+			class:btn-outline={$sortState.key !== 'name'}
 			data-tip="Sort by Name"
 			onclick={() => updateSort('name')}>
 			Title <SortAscDesc sort={$sortState.key === 'name' ? $sortState.direction : ''} />
@@ -101,90 +103,10 @@
 		<button
 			class="btn tooltip"
 			class:btn-primary={$sortState.key === 'rating'}
-			class:btn-ghost={$sortState.key !== 'rating'}
+			class:btn-outline={$sortState.key !== 'rating'}
 			data-tip="Sort by Rating"
 			onclick={() => updateSort('rating')}>
 			Rating <SortAscDesc sort={$sortState.key === 'rating' ? $sortState.direction : ''} />
 		</button>
 	</div>
 </div>
-
-<style lang="scss">
-	.recipe-filters {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 1rem;
-		align-items: center;
-		justify-content: space-between;
-		padding: 1rem 0 1rem 0;
-	}
-
-	.search {
-		display: flex;
-		flex-grow: 1;
-		align-items: center;
-		gap: 0.5rem;
-		min-width: 0; // Ensures it can shrink properly
-	}
-
-	.search input,
-	.search select,
-	.search button {
-		height: 45px; /* Ensures all inputs, selects, and buttons are uniform */
-		margin-bottom: 0;
-	}
-
-	.search-box {
-		flex-grow: 1;
-	}
-
-	.search-box input {
-		width: 100%;
-		min-width: 150px;
-		padding: 0.5rem;
-	}
-
-	#selections {
-		flex-shrink: 0;
-		min-width: 150px;
-		padding: 0.5rem;
-	}
-
-	.sort {
-		display: flex;
-		gap: 0.5rem;
-		flex-wrap: wrap;
-	}
-
-	.sort button {
-		padding: 0.5rem;
-		white-space: nowrap;
-	}
-
-	/* Mobile - Stack search and sort */
-	@media (max-width: 1024px) {
-		.recipe-filters {
-			flex-direction: column;
-			align-items: stretch;
-		}
-
-		.search {
-			width: 100%;
-		}
-
-		.search-box input {
-			flex-grow: 1;
-		}
-
-		.sort {
-			width: 100%;
-			display: flex;
-			flex-wrap: wrap;
-		}
-
-		.sort button {
-			flex: 1;
-			text-align: center;
-		}
-	}
-</style>

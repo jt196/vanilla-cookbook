@@ -15,35 +15,19 @@
 	let end = $state()
 </script>
 
-<div class="container">
+<div class="min-h-[200px] h-[calc(100vh-11em)] max-lg:p-0">
 	{#if useVirtualList}
 		<VirtualList items={filteredRecipes} bind:start bind:end>
 			{#snippet children({ item })}
 				<RecipeCard {item} {data} {recipeFavourited} {recipeRatingChanged} />
 			{/snippet}
 		</VirtualList>
-		<span class="list-indicator">
-			<p>Displaying Recipes {start}-{end}</p>
-		</span>
+		<div class="flex justify-center p-2">
+			<p class="text-sm text-base-content/70">Displaying Recipes {start}-{end}</p>
+		</div>
 	{:else}
 		{#each filteredRecipes as item, i (item.uid)}
 			<RecipeCard {item} {data} {recipeFavourited} {recipeRatingChanged} />
 		{/each}
 	{/if}
 </div>
-
-<style lang="scss">
-	.container {
-		min-height: 200px;
-		height: calc(100vh - 11em);
-		@media (max-width: 1023px) {
-			padding: 0;
-		}
-	}
-
-	.list-indicator {
-		display: flex;
-		justify-content: center;
-		padding: 0.5rem;
-	}
-</style>

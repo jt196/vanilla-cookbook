@@ -11,12 +11,12 @@
 	let { user, settings, theme, onToggleTheme } = $props()
 </script>
 
-<div class="flex items-center gap-2">
+<div class="flex items-center gap-2 text-base-content">
 	<IconButton onclick={onToggleTheme} aria-label="Toggle theme">
 		<Theme {theme} width="25px" />
 	</IconButton>
 
-	<a href="/users" class="btn btn-ghost btn-circle" aria-label="Users">
+	<a href="/users" class="btn btn-ghost btn-circle text-base-content" aria-label="Users">
 		<Users width="25px" />
 	</a>
 
@@ -26,16 +26,16 @@
 			<a href="/register" class="btn btn-ghost">Register</a>
 		{/if}
 	{:else}
-		<a href="/recipe/new" class="btn btn-ghost btn-circle" aria-label="New recipe">
+		<a href="/recipe/new" class="btn btn-ghost btn-circle text-base-content" aria-label="New recipe">
 			<New width="25px" />
 		</a>
-		<a href={`/user/${user.userId}/shopping`} class="btn btn-ghost btn-circle" aria-label="Shopping list">
+		<a href={`/user/${user.userId}/shopping`} class="btn btn-ghost btn-circle text-base-content" aria-label="Shopping list">
 			<Shopping width="25px" />
 		</a>
-		<a href={`/user/${user.userId}/calendar`} class="btn btn-ghost btn-circle" aria-label="Calendar">
+		<a href={`/user/${user.userId}/calendar`} class="btn btn-ghost btn-circle text-base-content" aria-label="Calendar">
 			<Calendar width="25px" />
 		</a>
-		<a href={`/user/${user.userId}/options/settings`} class="btn btn-ghost btn-circle" aria-label="Settings">
+		<a href={`/user/${user.userId}/options/settings`} class="btn btn-ghost btn-circle text-base-content" aria-label="Settings">
 			<Settings width="25px" />
 		</a>
 	{/if}
