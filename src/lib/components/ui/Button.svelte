@@ -1,11 +1,11 @@
 <script>
 	/**
-	 * @type {'primary' | 'secondary' | 'outline' | 'ghost'}
+	 * @type {'primary' | 'secondary' | 'outline' | 'ghost' | 'accent'}
 	 */
 	let {
 		variant = 'primary',
 		/**
-		 * @type {'sm' | 'md' | 'lg'}
+		 * @type {'xs' | 'sm' | 'md' | 'lg'}
 		 */
 		size = 'md',
 		disabled = false,
@@ -20,6 +20,34 @@
 		onclick = undefined,
 		children
 	} = $props()
+
+	// Build DaisyUI classes
+	const variantClasses = {
+		primary: 'btn-primary',
+		secondary: 'btn-secondary',
+		outline: 'btn-outline',
+		ghost: 'btn-ghost',
+		accent: 'btn-accent'
+	}
+
+	const sizeClasses = {
+		xs: 'btn-xs',
+		sm: 'btn-sm',
+		md: 'btn-md',
+		lg: 'btn-lg'
+	}
+
+	const classes = $derived(
+		[
+			'btn',
+			variantClasses[variant],
+			sizeClasses[size],
+			loading ? 'loading' : '',
+			className
+		]
+			.filter(Boolean)
+			.join(' ')
+	)
 </script>
 
 <button
@@ -28,13 +56,11 @@
 	{disabled}
 	formaction={formaction}
 	aria-busy={loading}
-	class={className}
+	class={classes}
 	{onclick}
 >
+	{#if loading}
+		<span class="loading loading-spinner"></span>
+	{/if}
 	{@render children()}
 </button>
-
-<style>
-	/* Button component inherits PicoCSS styles by default */
-	/* No additional styles needed - PicoCSS handles button styling */
-</style>
