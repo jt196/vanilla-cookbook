@@ -28,32 +28,39 @@
 	})
 </script>
 
-<div class="auth-form">
-	<form method="POST">
-		<hgroup>
-			<h2>Login</h2>
-			<h3>Welcome back!</h3>
-		</hgroup>
-		<Input type="text" id="identifier" name="identifier" label="Username or email" required />
-		<Input type="password" id="password" name="password" label="Password" required />
+<div class="flex justify-center items-start min-h-[80vh] pt-8">
+	<div class="card w-full max-w-md bg-base-200 shadow-xl">
+		<div class="card-body">
+			<h2 class="card-title text-3xl">Login</h2>
+			<p class="text-base-content/70 mb-4">Welcome back!</p>
 
-		<Button type="submit">Login</Button>
-	</form>
+			<form method="POST" class="space-y-4">
+				<Input type="text" id="identifier" name="identifier" label="Username or email" required />
+				<Input type="password" id="password" name="password" label="Password" required />
 
-	<FeedbackMessage message={errorMessage} type="error" />
+				<div class="card-actions justify-end mt-6">
+					<Button type="submit" class="w-full">Login</Button>
+				</div>
+			</form>
 
-	<hr />
-	{#if registrationAllowed}
-		<p>Don't have an account? <a href="/register">Register</a></p>
-	{/if}
+			<FeedbackMessage message={errorMessage} type="error" inline={true} />
 
-	{#if oauthEnabled}
-		<Oauth {googleEnabled} {githubEnabled} layout="column" />
-		<hr />
-		{#if !registrationAllowed}
-			<p class="muted">
-				New account sign-ups are disabled. You can still sign in with an existing account.
-			</p>
-		{/if}
-	{/if}
+			<div class="divider"></div>
+
+			{#if registrationAllowed}
+				<p class="text-center">
+					Don't have an account? <a href="/register" class="link link-primary">Register</a>
+				</p>
+			{/if}
+
+			{#if oauthEnabled}
+				<Oauth {googleEnabled} {githubEnabled} layout="column" />
+				{#if !registrationAllowed}
+					<p class="text-sm text-base-content/60 text-center mt-4">
+						New account sign-ups are disabled. You can still sign in with an existing account.
+					</p>
+				{/if}
+			{/if}
+		</div>
+	</div>
 </div>

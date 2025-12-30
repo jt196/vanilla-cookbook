@@ -75,46 +75,35 @@
 
 <SiteIcons />
 
-<div class="container">
-	<nav>
-		<ul>
-			<li>
-				<strong>
-					{#if user}
-						<a href={`/user/${user.userId}/recipes`}>
-							<CookBook width="45px" height="45px" />
-							<img
-								id="vanilla-logo"
-								src="/icons/site-logo.svg"
-								alt="Vanilla"
-								width="120"
-								height="120" />
-						</a>
-					{:else}
-						<img
-							id="vanilla-logo"
-							src="/icons/site-logo.svg"
-							alt="Vanilla"
-							width="120"
-							height="120" />
-					{/if}
-				</strong>
-			</li>
-		</ul>
-		{#if dbSeed}
-			<NavLinks {user} {settings} {theme} onToggleTheme={toggleTheme} />
+<div class="navbar bg-base-100 border-b border-base-300">
+	<div class="navbar-start">
+		{#if user}
+			<a href={`/user/${user.userId}/recipes`} class="flex items-center gap-2">
+				<CookBook width="45px" height="45px" />
+				<img
+					src="/icons/site-logo.svg"
+					alt="Vanilla Cookbook"
+					class="h-12"
+				/>
+			</a>
+		{:else}
+			<div class="flex items-center gap-2">
+				<img
+					src="/icons/site-logo.svg"
+					alt="Vanilla Cookbook"
+					class="h-12"
+				/>
+			</div>
 		{/if}
-	</nav>
-	{@render children?.()}
+	</div>
+
+	{#if dbSeed}
+		<div class="navbar-end">
+			<NavLinks {user} {settings} {theme} onToggleTheme={toggleTheme} />
+		</div>
+	{/if}
 </div>
 
-<style lang="scss">
-	a {
-		padding: 0.5rem;
-	}
-
-	#vanilla-logo {
-		max-width: 60px;
-		padding: none;
-	}
-</style>
+<div class="container mx-auto px-4 py-6">
+	{@render children?.()}
+</div>

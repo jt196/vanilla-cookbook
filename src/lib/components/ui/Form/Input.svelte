@@ -22,30 +22,39 @@
 			oninput(event)
 		}
 	}
+
+	const inputClasses = $derived(
+		[
+			'input input-bordered w-full',
+			error ? 'input-error' : '',
+			className
+		]
+			.filter(Boolean)
+			.join(' ')
+	)
 </script>
 
-{#if label}
-	<label for={id}>{label}</label>
-{/if}
-<input
-	{type}
-	{id}
-	{name}
-	{placeholder}
-	{required}
-	{disabled}
-	bind:value
-	oninput={handleInput}
-	class={className}
-	aria-invalid={error ? 'true' : undefined}
-/>
-{#if error}
-	<small class="error">{error}</small>
-{/if}
-
-<style>
-	/* Input inherits PicoCSS styles */
-	.error {
-		color: var(--pico-del-color);
-	}
-</style>
+<div class="form-control w-full">
+	{#if label}
+		<label for={id} class="label">
+			<span class="label-text">{label}</span>
+		</label>
+	{/if}
+	<input
+		{type}
+		{id}
+		{name}
+		{placeholder}
+		{required}
+		{disabled}
+		bind:value
+		oninput={handleInput}
+		class={inputClasses}
+		aria-invalid={error ? 'true' : undefined}
+	/>
+	{#if error}
+		<label class="label">
+			<span class="label-text-alt text-error">{error}</span>
+		</label>
+	{/if}
+</div>

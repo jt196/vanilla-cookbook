@@ -1,21 +1,21 @@
 <script>
 	import { fade } from 'svelte/transition'
 
-	/** @type {{message?: string}} */
+	/** @type {{message?: string, type?: 'success' | 'error' | 'info' | 'warning', timeout?: number, inline?: boolean}} */
 	let {
 		message = '',
 		timeout = 3000,
 		type = 'info',
-		background = 'var(--pico-background-color)',
 		inline = false
 	} = $props()
 
 	let timeoutId
 
-	const colors = {
-		success: 'var(--pico-ins-color)',
-		error: 'var(--pico-del-color)',
-		info: 'var(--pico-primary)'
+	const alertClasses = {
+		success: 'alert-success',
+		error: 'alert-error',
+		info: 'alert-info',
+		warning: 'alert-warning'
 	}
 
 	$effect(() => {
@@ -31,32 +31,7 @@
 {#if message}
 	<div
 		transition:fade
-		class:feedback-message={!inline}
-		class:feedback={inline}
-		style="color: {colors[type]}; {inline ? '' : `background-color: ${background};`}">
-		{message}
+		class="alert {alertClasses[type]} {inline ? 'mt-2' : 'fixed top-20 left-1/2 -translate-x-1/2 z-50 max-w-md'}">
+		<span>{message}</span>
 	</div>
 {/if}
-
-<style>
-	.feedback-message {
-		position: fixed;
-		top: calc(env(safe-area-inset-top, 0px) + 20px);
-		left: 50%;
-		transform: translateX(-50%);
-		z-index: 1000;
-		padding: 10px 20px;
-		border: 1px solid var(--pico-muted-border-color);
-		border-radius: 5px;
-		font-weight: bold;
-		box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-		max-width: 80%;
-		text-align: center;
-		background-clip: padding-box;
-	}
-
-	.feedback {
-		margin-top: 0.5rem;
-		font-size: 0.9em;
-	}
-</style>

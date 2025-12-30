@@ -11,24 +11,32 @@
 	let { user, settings, theme, onToggleTheme } = $props()
 </script>
 
-<ul>
-	<form method="POST">
-		<li>
-			<IconButton onclick={onToggleTheme} aria-label="Toggle theme">
-				<Theme {theme} width="25px" />
-			</IconButton>
-		</li>
-		<li><a href="/users"><Users width="25px" /></a></li>
-		{#if !user}
-			<a href="/login" role="button">Login</a>
-			{#if settings?.registrationAllowed}
-				<li><a href="/register">Register</a></li>
-			{/if}
-		{:else}
-			<li><a href="/recipe/new"><New width="25px" /></a></li>
-			<li><a href={`/user/${user.userId}/shopping`}><Shopping width="25px" /></a></li>
-			<li><a href={`/user/${user.userId}/calendar`}><Calendar width="25px" /></a></li>
-			<li><a href={`/user/${user.userId}/options/settings`}><Settings width="25px" /></a></li>
+<div class="flex items-center gap-2">
+	<IconButton onclick={onToggleTheme} aria-label="Toggle theme">
+		<Theme {theme} width="25px" />
+	</IconButton>
+
+	<a href="/users" class="btn btn-ghost btn-circle" aria-label="Users">
+		<Users width="25px" />
+	</a>
+
+	{#if !user}
+		<a href="/login" class="btn btn-primary">Login</a>
+		{#if settings?.registrationAllowed}
+			<a href="/register" class="btn btn-ghost">Register</a>
 		{/if}
-	</form>
-</ul>
+	{:else}
+		<a href="/recipe/new" class="btn btn-ghost btn-circle" aria-label="New recipe">
+			<New width="25px" />
+		</a>
+		<a href={`/user/${user.userId}/shopping`} class="btn btn-ghost btn-circle" aria-label="Shopping list">
+			<Shopping width="25px" />
+		</a>
+		<a href={`/user/${user.userId}/calendar`} class="btn btn-ghost btn-circle" aria-label="Calendar">
+			<Calendar width="25px" />
+		</a>
+		<a href={`/user/${user.userId}/options/settings`} class="btn btn-ghost btn-circle" aria-label="Settings">
+			<Settings width="25px" />
+		</a>
+	{/if}
+</div>
