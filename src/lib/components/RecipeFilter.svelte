@@ -42,8 +42,8 @@
 		<h3 class="text-2xl font-semibold">{username}'s Cookbook</h3>
 	</div>
 {/if}
-<div class="flex flex-col lg:flex-row gap-4 items-stretch lg:items-center justify-between py-4">
-	<div class="flex flex-1 items-center gap-2 min-w-0">
+<div class="flex flex-col gap-3 md:flex-row md:items-start md:justify-between py-4">
+	<div class="flex flex-1 items-center gap-2 min-w-0 md:min-w-[400px]">
 		{#if useCats}
 			<Button
 				style="ghost"
@@ -61,7 +61,7 @@
 				placeholder="Search recipes by..."
 				bind:value={$searchString}
 				size="lg"
-				color="accent"
+				color="info"
 				useLabelAsPlaceholder={false} />
 		</div>
 		<div class="tooltip" data-tip="Choose Search Key">
@@ -76,21 +76,21 @@
 					{ value: 'notes', label: 'Notes' }
 				]}
 				size="lg"
-				color="accent"
+				color="info"
 				style="standard"
 				fullWidth={false}
-				class="min-w-37.5"
+				class="min-w-[150px]"
 				aria-label="selections" />
 		</div>
 	</div>
-	<div class="w-full flex flex-col gap-2 lg:flex-row lg:flex-wrap lg:items-center">
-		<div class="grid grid-cols-2 gap-2 lg:flex lg:flex-row lg:w-auto">
+	<div class="flex flex-col gap-2 w-full md:flex-row md:items-center md:justify-end">
+		<div class="flex justify-center gap-2 md:justify-start">
 			<Button
 				style="outline"
 				size="lg"
 				color="secondary"
 				onclick={() => ($favouriteFilter = !$favouriteFilter)}
-				class={`w-full lg:w-auto ${favouriteBtnClasses}`}
+				class={`w-auto px-2 ${favouriteBtnClasses}`}
 				data-tip="Filter by Favourites">
 				<Favourite favourite={$favouriteFilter} width="24px" height="24px" fill="currentColor" />
 			</Button>
@@ -99,15 +99,15 @@
 				size="lg"
 				color="success"
 				onclick={() => ($cookedFilter = !$cookedFilter)}
-				class={`w-full lg:w-auto ${cookedBtnClasses}`}
+				class={`w-auto px-2 ${cookedBtnClasses}`}
 				data-tip="Filter by Cooked">
 				<Check checked={$cookedFilter} width="24px" height="24px" fill="currentColor" />
 			</Button>
 		</div>
-		<div class="grid grid-cols-3 gap-2 lg:flex lg:flex-row lg:w-auto">
+		<div class="flex gap-2 flex-wrap justify-between md:justify-start">
 			<Button
 				style={$sortState.key === 'created' ? 'standard' : 'outline'}
-				class="tooltip w-full lg:w-auto"
+				class="tooltip flex-1 min-w-[90px] px-2 text-sm md:flex-none"
 				size="lg"
 				color="info"
 				data-tip="Sort by Date"
@@ -116,7 +116,7 @@
 			</Button>
 			<Button
 				style={$sortState.key === 'name' ? 'standard' : 'outline'}
-				class="tooltip w-full lg:w-auto"
+				class="tooltip flex-1 min-w-[90px] px-2 text-sm md:flex-none"
 				size="lg"
 				color="info"
 				data-tip="Sort by Name"
@@ -125,7 +125,7 @@
 			</Button>
 			<Button
 				style={$sortState.key === 'rating' ? 'standard' : 'outline'}
-				class="tooltip w-full lg:w-auto"
+				class="tooltip flex-1 min-w-[90px] px-2 text-sm md:flex-none"
 				size="lg"
 				color="info"
 				data-tip="Sort by Rating"
