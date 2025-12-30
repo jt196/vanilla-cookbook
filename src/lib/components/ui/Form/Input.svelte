@@ -85,7 +85,7 @@
 	const placeholderValue = $derived(placeholder || (useLabelAsPlaceholder && label ? label : ''))
 </script>
 
-<div class={`form-control mb-2 ${fullWidth ? 'w-full' : ''}`}>
+<div class={`form-control ${fullWidth ? 'w-full' : ''}`}>
 	{#if label}
 		<label class={wrapperClasses}>
 			{label}

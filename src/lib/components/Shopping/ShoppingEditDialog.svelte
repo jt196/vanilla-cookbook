@@ -37,9 +37,14 @@
 	<form onsubmit={onSave}>
 		<h3 class="font-bold text-lg mb-4">Edit Shopping Item</h3>
 
-		<Input id="edit-name" label="Name:" type="text" bind:value={item.name} />
-		<Input id="edit-quantity" label="Quantity:" type="number" bind:value={item.quantity} />
-		<Input id="edit-unit" label="Unit:" type="text" bind:value={item.unit} />
+		<Input class="mb-2" id="edit-name" label="Name:" type="text" bind:value={item.name} />
+		<Input
+			class="mb-2"
+			id="edit-quantity"
+			label="Quantity:"
+			type="number"
+			bind:value={item.quantity} />
+		<Input class="mb-2" id="edit-unit" label="Unit:" type="text" bind:value={item.unit} />
 
 		<div class="modal-action justify-between">
 			<Button type="button" color="error" onclick={() => (isOpen = false)}>Cancel</Button>

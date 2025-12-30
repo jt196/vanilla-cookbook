@@ -17,6 +17,15 @@
 	let dbSeed = $derived(data.dbSeed)
 
 	const siteName = import.meta.env.VITE_SITE_NAME || 'Vanilla Cookbook'
+	const LIGHT_THEME = 'light'
+	const DARK_THEME = 'dracula'
+	const LEGACY_DARK = 'dark'
+
+	function normalizeTheme(value) {
+		if (value === LIGHT_THEME) return LIGHT_THEME
+		if (value === DARK_THEME || value === LEGACY_DARK) return DARK_THEME
+		return LIGHT_THEME
+	}
 
 	// Get initial theme value
 	function getInitialTheme() {
@@ -26,10 +35,10 @@
 
 		// 1. If no user, use browser preference
 		if (!user) {
-			return prefersDark ? 'dark' : 'light'
+			return prefersDark ? DARK_THEME : LIGHT_THEME
 		}
 		// 2. If user is logged in, use their saved theme or fall back to browser
-		return user.theme ?? (prefersDark ? 'dark' : 'light')
+		return normalizeTheme(user.theme ?? (prefersDark ? DARK_THEME : LIGHT_THEME))
 	}
 
 	let theme = $state(getInitialTheme())
@@ -43,7 +52,7 @@
 
 	// Toggle theme and save to user
 	function toggleTheme() {
-		theme = theme === 'dark' ? 'light' : 'dark'
+		theme = theme === LIGHT_THEME ? DARK_THEME : LIGHT_THEME
 		document.documentElement.setAttribute('data-theme', theme)
 		localStorage.setItem('theme', theme)
 

@@ -8,12 +8,22 @@
 	<!-- Apply user's preferred theme before Svelte hydrates -->
 	<script>
 		try {
-			const stored = localStorage.getItem('theme');
-			const prefersDark = window.matchMedia?.('(prefers-color-scheme: dark)').matches;
-			const theme = stored || (prefersDark ? 'dark' : 'light');
-			document.documentElement.setAttribute('data-theme', theme);
+			const stored = localStorage.getItem('theme')
+			const prefersDark = window.matchMedia?.('(prefers-color-scheme: dark)').matches
+
+			const LIGHT = 'light'
+			const DARK = 'dracula'
+
+			const normalize = (value) => {
+				if (value === LIGHT) return LIGHT
+				if (value === DARK || value === 'dark') return DARK
+				return LIGHT
+			}
+
+			const theme = normalize(stored || (prefersDark ? DARK : LIGHT))
+			document.documentElement.setAttribute('data-theme', theme)
 		} catch (e) {
-			document.documentElement.setAttribute('data-theme', 'dark');
+			document.documentElement.setAttribute('data-theme', 'dracula')
 		}
 	</script>
 
