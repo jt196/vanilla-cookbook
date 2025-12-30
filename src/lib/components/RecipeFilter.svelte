@@ -38,8 +38,8 @@
 </script>
 
 {#if viewOnly}
-	<div class="mb-4">
-		<h3 class="text-2xl font-semibold">{username}'s Cookbook</h3>
+	<div class="mb-4 prose max-w-none flex justify-center">
+		<h2>{username}'s Cookbook</h2>
 	</div>
 {/if}
 <div class="flex flex-col gap-3 md:flex-row md:items-start md:justify-between py-4">

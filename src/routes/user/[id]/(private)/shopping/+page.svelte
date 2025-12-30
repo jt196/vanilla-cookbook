@@ -197,17 +197,18 @@
 	let uncheckedItemCount = $derived(shoppingList.filter((item) => !item.purchased).length)
 </script>
 
-<div class="prose mb-2">
-	<h2>Shopping List</h2>
+<div class="prose mb-2 max-w-none flex gap-2 justify-center">
+	<h2>Shopping</h2>
 </div>
-
-<ShoppingToolbar
-	{showHidden}
-	{uncheckedItemCount}
-	{purchasedItemCount}
-	onToggleHidden={toggleHidden}
-	onCheckAll={() => (isCheckAllDialogOpen = true)}
-	onDeletePurchased={() => (isDeleteDialogOpen = true)} />
+<div class="mb-2 max-w-none flex gap-2 justify-center">
+	<ShoppingToolbar
+		{showHidden}
+		{uncheckedItemCount}
+		{purchasedItemCount}
+		onToggleHidden={toggleHidden}
+		onCheckAll={() => (isCheckAllDialogOpen = true)}
+		onDeletePurchased={() => (isDeleteDialogOpen = true)} />
+</div>
 
 <ShoppingItemInput
 	bind:value={newIngredient}
@@ -221,6 +222,9 @@
 	{/if}
 </div>
 <FeedbackMessage message={shoppingFeedback} />
+{#if showHidden}
+	<p class="prose text-xs mb-2 flex justify-center max-w-none">Uncheck to add to shopping list</p>
+{/if}
 <ul class="list bg-base-100 rounded-box shadow-md divide-y divide-base-300">
 	{#each sortedList as item (item.uid)}
 		{#if !item.purchased || showHidden}
