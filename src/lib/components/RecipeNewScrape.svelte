@@ -89,20 +89,41 @@
 <!-- Form Inputs -->
 <form onsubmit={scrapeEventHandler} class="flex flex-col gap-4 max-w-none w-full">
 	<div class="tabs tabs-box">
-		<input type="radio" name="my_tabs_6" class="tab" aria-label="Scrape URL" />
+		<input
+			type="radio"
+			name="scrape_tabs"
+			class="tab"
+			aria-label="Scrape URL"
+			value="url"
+			bind:group={selectedMode}
+			checked={selectedMode === 'url'} />
 		<div class="tab-content bg-base-100 border-base-300 p-2">
 			<Input type="text" placeholder="Enter recipe URL" bind:value={url} />
 			<Button type="submit" class="w-auto self-start mt-2">Scrape</Button>
 		</div>
 
 		{#if aiEnabled && apiKeyPresent}
-			<input type="radio" name="my_tabs_6" class="tab" aria-label="Paste Text" checked="checked" />
+			<input
+				type="radio"
+				name="scrape_tabs"
+				class="tab"
+				aria-label="Paste Text"
+				value="text"
+				bind:group={selectedMode}
+				checked={selectedMode === 'text'} />
 			<div class="tab-content bg-base-100 border-base-300 p-2">
 				<Textarea rows={8} placeholder="Paste recipe text..." bind:value={sharedText} />
 				<Button type="submit" class="w-auto self-start  mt-2">Parse Text</Button>
 			</div>
 
-			<input type="radio" name="my_tabs_6" class="tab" aria-label="Upload Image" />
+			<input
+				type="radio"
+				name="scrape_tabs"
+				class="tab"
+				aria-label="Upload Image"
+				value="image"
+				bind:group={selectedMode}
+				checked={selectedMode === 'image'} />
 			<div class="tab-content bg-base-100 border-base-300 p-2">
 				<FileInput accept="image/*" onchange={(e) => (imageFile = e.target.files[0])} />
 				<Button type="submit" class="w-auto self-start mt-2">Analyze Image</Button>
