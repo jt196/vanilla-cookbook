@@ -5,12 +5,22 @@
 	import StarRating from '$lib/components/StarRating.svelte'
 	import { changeRecipeFavourite } from '$lib/utils/crud'
 	import Card from '$lib/components/ui/Card.svelte'
+	let showPrimaryPhoto = $state(true)
+	let showImageUrl = $state(true)
 
 	/** @type {{item: any, data: any, recipeFavourited?: (uid: string) => void, recipeRatingChanged?: (uid: string, rating: number) => void}}, */
 	let { item, data, recipeFavourited, recipeRatingChanged } = $props()
 
 	let logged = $derived(item.log?.length > 0)
 	let favourite = $derived(item?.on_favorites)
+
+	// Reset image visibility when the recipe changes
+	$effect(() => {
+		const _primaryId = item.photos?.[0]?.id
+		const _imageUrl = item.image_url
+		showPrimaryPhoto = true
+		showImageUrl = true
+	})
 
 	async function handleFavourite(uid, event) {
 		event.preventDefault()
@@ -29,18 +39,20 @@
 	<Card class="flex-1 hover:bg-base-200 min-h-[9rem]" size="md" side figureClass="w-32 flex-shrink-0">
 		{#snippet figure()}
 			<div class="h-[9rem] w-full overflow-hidden">
-				{#if item.photos && item.photos.length > 0}
+				{#if item.photos && item.photos.length > 0 && showPrimaryPhoto}
 					<img
 						class="h-full w-full object-cover"
 						loading="lazy"
 						src="/api/recipe/image/{item.photos[0].id}"
-						alt="{item.name} thumbnail" />
-				{:else if item.image_url}
+						alt="{item.name} thumbnail"
+						onerror={() => (showPrimaryPhoto = false)} />
+				{:else if item.image_url && showImageUrl}
 					<img
 						class="h-full w-full object-cover"
 						loading="lazy"
 						src={item.image_url}
-						alt="{item.name} thumbnail" />
+						alt="{item.name} thumbnail"
+						onerror={() => (showImageUrl = false)} />
 				{:else}
 					<div class="h-full w-full bg-base-300" aria-hidden="true"></div>
 				{/if}

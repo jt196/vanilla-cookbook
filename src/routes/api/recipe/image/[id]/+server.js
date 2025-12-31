@@ -7,19 +7,15 @@ import axios from 'axios'
 // Handle GET request to retrieve the image
 export async function GET({ params }) {
 	const { id } = params
-	const photo = await prisma.recipePhoto.findUniqueOrThrow({
+	const photo = await prisma.recipePhoto.findUnique({
 		where: {
 			id
 		}
 	})
 
 	if (!photo) {
-		return new Response(JSON.stringify({ message: 'Image not found' }), {
-			status: 404,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
+		// No photo found: return empty so the client can skip rendering an image
+		return new Response(null, { status: 204 })
 	}
 
 	const filePath = path.join(process.cwd(), 'uploads/images', `${photo.id}.${photo.fileType}`)
@@ -47,20 +43,11 @@ export async function GET({ params }) {
 			})
 		} catch (error) {
 			console.error('Error fetching the image:', error)
-			return new Response(JSON.stringify({ message: 'Failed to fetch the image' }), {
-				status: 500,
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			})
+			// Remote fetch failed: treat as missing so UI can hide the image gracefully
+			return new Response(null, { status: 204 })
 		}
 	} else {
-		return new Response(JSON.stringify({ message: 'File not found' }), {
-			status: 404,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
+		return new Response(null, { status: 204 })
 	}
 }
 
