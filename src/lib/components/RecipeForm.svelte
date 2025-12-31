@@ -68,13 +68,26 @@
 		<!-- Two-column layout for compact fields -->
 		<div class="form-grid">
 			<div class="form-col">
-				<Input type="text" id="name" name="name" bind:value={recipe.name} label="Name" />
+				<Input
+					type="text"
+					id="name"
+					name="name"
+					bind:value={recipe.name}
+					label="Name"
+					placeholder="Pasta alla Norma" />
 
-				<Input type="text" id="source" name="source" bind:value={recipe.source} label="Source" />
+				<Input
+					type="text"
+					id="source"
+					name="source"
+					bind:value={recipe.source}
+					label="Source"
+					placeholder="Mia nonna" />
 				<Input
 					type="text"
 					id="source_url"
 					name="source_url"
+					placeholder="https://grannysrecipes.com"
 					bind:value={recipe.source_url}
 					label="Source URL" />
 				<StarRating
@@ -82,38 +95,42 @@
 					editable={true}
 					on:ratingChanged={handleRatingChange} />
 				<input type="hidden" name="rating" bind:value={recipe.rating} />
-					<div class="tooltip" data-tip="Make your new recipe public">
-						<Checkbox
-							name="Recipe Public"
-							bind:checked={recipe.is_public}
-							legend="Recipe Public"
-							size="sm"
-							color="primary" />
-					</div>
+				<div class="tooltip" data-tip="Make your new recipe public">
+					<Checkbox
+						name="Recipe Public"
+						bind:checked={recipe.is_public}
+						legend="Recipe Public"
+						size="sm"
+						color="primary" />
 				</div>
+			</div>
 
 			<div class="form-col">
 				<Input
 					type="text"
 					id="prep_time"
 					name="prep_time"
+					placeholder="1 hour"
 					bind:value={recipe.prep_time}
 					label="Prep Time" />
 				<Input
 					type="text"
 					id="cook_time"
 					name="cook_time"
+					placeholder="30 minutes"
 					bind:value={recipe.cook_time}
 					label="Cook Time" />
 				<Input
 					type="text"
 					id="total_time"
 					name="total_time"
+					placeholder="1.5 hours"
 					bind:value={recipe.total_time}
 					label="Total Time" />
 				<Input
 					type="text"
 					id="servings"
+					placeholder="4 main course"
 					name="servings"
 					bind:value={recipe.servings}
 					label="Servings" />
@@ -124,6 +141,7 @@
 		<Input
 			type="text"
 			id="image_url"
+			placeholder="https://grannysrecipes.com/norma.jpg"
 			name="image_url"
 			bind:value={recipe.image_url}
 			label="Image URL" />
@@ -138,15 +156,27 @@
 		<Textarea
 			id="ingredients"
 			name="ingredients"
+			placeholder="500g of pasta..."
 			bind:value={recipe.ingredients}
 			label="Ingredients" />
 		<Textarea
 			id="description"
 			name="description"
+			placeholder="This pasta was a favourite of my Nonna's"
 			bind:value={recipe.description}
 			label="Description" />
-		<Textarea id="directions" name="directions" bind:value={recipe.directions} label="Directions" />
-		<Textarea id="notes" name="notes" bind:value={recipe.notes} label="Notes" />
+		<Textarea
+			id="directions"
+			placeholder="Boil the pasta according to instructions..."
+			name="directions"
+			bind:value={recipe.directions}
+			label="Directions" />
+		<Textarea
+			id="notes"
+			name="notes"
+			placeholder="Don't overcook the pasta or she'll come back to haunt you"
+			bind:value={recipe.notes}
+			label="Notes" />
 		<Textarea
 			id="nutritional_info"
 			name="nutritional_info"

@@ -79,18 +79,17 @@
 			.join(' ')
 	)
 
-	const wrapperClasses = $derived(['input', baseClasses].filter(Boolean).join(' '))
-	const standaloneClasses = $derived(['input', baseClasses].filter(Boolean).join(' '))
+	const inputClasses = $derived(['input', baseClasses].filter(Boolean).join(' '))
 
 	const placeholderValue = $derived(placeholder || (useLabelAsPlaceholder && label ? label : ''))
 </script>
 
 <div class={`form-control ${fullWidth ? 'w-full' : ''}`}>
 	{#if label}
-		<label class={wrapperClasses}>
-			{label}
+		<label class={`floating-label ${fullWidth ? 'w-full' : ''}`}>
+			<span>{label}</span>
 			<input
-				class="grow"
+				class={inputClasses}
 				{type}
 				{id}
 				{name}
@@ -111,7 +110,7 @@
 			{disabled}
 			bind:value
 			oninput={handleInput}
-			class={standaloneClasses}
+			class={inputClasses}
 			aria-invalid={error ? 'true' : undefined} />
 	{/if}
 	{#if error}

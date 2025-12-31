@@ -36,12 +36,12 @@
 	// Disable submit if any validation fails
 	let isSubmitDisabled = $derived(
 		!username ||
-		!email ||
-		!emailValid ||
-		!password ||
-		!passwordConfirm ||
-		passwordsMismatch ||
-		(passwordValidation && !passwordValidation.isValid)
+			!email ||
+			!emailValid ||
+			!password ||
+			!passwordConfirm ||
+			passwordsMismatch ||
+			(passwordValidation && !passwordValidation.isValid)
 	)
 </script>
 
@@ -59,11 +59,24 @@
 						await update()
 					}
 				}}>
-
-				<Input type="text" id="username" name="username" bind:value={username} label="Username" required />
+				<Input
+					type="text"
+					id="username"
+					placeholder="jgcooks"
+					name="username"
+					bind:value={username}
+					label="Username"
+					required />
 
 				<div>
-					<Input type="email" id="email" name="email" bind:value={email} label="Email" required />
+					<Input
+						type="email"
+						id="email"
+						placeholder="griggers@cooksmail.com"
+						name="email"
+						bind:value={email}
+						label="Email"
+						required />
 					<ValidationMessage
 						message={email.length > 0 && !emailValid ? 'Please enter a valid email address.' : null}
 						isError={true}
@@ -71,7 +84,14 @@
 				</div>
 
 				<div>
-					<Input type="password" id="password" name="password" bind:value={password} label="Password" required />
+					<Input
+						type="password"
+						id="password"
+						placeholder=""
+						name="password"
+						bind:value={password}
+						label="Password"
+						required />
 					<ValidationMessage
 						message={passwordValidation?.message}
 						isValid={passwordValidation?.isValid}
@@ -79,7 +99,13 @@
 				</div>
 
 				<div>
-					<Input type="password" id="passwordConfirm" name="passwordConfirm" bind:value={passwordConfirm} label="Confirm Password" required />
+					<Input
+						type="password"
+						id="passwordConfirm"
+						name="passwordConfirm"
+						bind:value={passwordConfirm}
+						label="Confirm Password"
+						required />
 					<ValidationMessage
 						message={passwordsMismatch ? "Passwords don't match!" : null}
 						isError={true}

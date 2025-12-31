@@ -61,10 +61,38 @@
 				<p class="text-base-content/70 mb-4">Let's get cooking! Create your account:</p>
 
 				<form onsubmit={handleSubmit} method="POST" class="space-y-4">
-					<Input type="text" id="name" label="Name" bind:value={adminName} name="name" required />
-					<Input type="text" id="username" label="Username" bind:value={adminUsername} name="username" required />
-					<Input type="email" id="email" label="Email" bind:value={adminEmail} name="email" required />
-					<Input type="password" id="password" label="Password" bind:value={adminPassword} name="password" required />
+					<Input
+						type="text"
+						id="name"
+						placeholder="Jane Grigson"
+						label="Name"
+						bind:value={adminName}
+						name="name"
+						required />
+					<Input
+						type="text"
+						id="username"
+						placeholder="jgcooks"
+						label="Username"
+						bind:value={adminUsername}
+						name="username"
+						required />
+					<Input
+						type="email"
+						id="email"
+						placeholder="griggers@cooksmail.com"
+						label="Email"
+						bind:value={adminEmail}
+						name="email"
+						required />
+					<Input
+						type="password"
+						id="password"
+						placeholder="123grigsyruleZ"
+						label="Password"
+						bind:value={adminPassword}
+						name="password"
+						required />
 
 					<label class="flex items-center gap-2 cursor-pointer">
 						<input type="checkbox" bind:checked={recipeSeed} class="checkbox checkbox-primary" />

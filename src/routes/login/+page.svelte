@@ -35,8 +35,20 @@
 			<p class="text-base-content/70 mb-4">Welcome back!</p>
 
 			<form method="POST" class="space-y-4">
-				<Input type="text" id="identifier" name="identifier" label="Username or email" required />
-				<Input type="password" id="password" name="password" label="Password" required />
+				<Input
+					type="text"
+					id="identifier"
+					placeholder="jgcooks or griggers@cooksmail.com"
+					name="identifier"
+					label="Username or email"
+					required />
+				<Input
+					type="password"
+					id="password"
+					placeholder="123grigsyruleZ"
+					name="password"
+					label="Password"
+					required />
 
 				<div class="card-actions justify-end mt-6">
 					<Button type="submit" class="w-full">Login</Button>
