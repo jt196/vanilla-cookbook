@@ -217,8 +217,6 @@
 <div class="list-info">
 	{#if shoppingList.length === 0}
 		<FeedbackMessage message={'List empty: add some items!'} />
-	{:else if shoppingList.every((item) => item.purchased) && !showHidden}
-		<FeedbackMessage message={'List empty: all items are marked as purchased!'} />
 	{/if}
 </div>
 <FeedbackMessage message={shoppingFeedback} />
