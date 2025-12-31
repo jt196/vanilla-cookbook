@@ -42,8 +42,8 @@
 		<h2>{username}'s Cookbook</h2>
 	</div>
 {/if}
-<div class="flex flex-col gap-3 md:flex-row md:items-start md:justify-between py-4">
-	<div class="flex flex-1 items-center gap-2 min-w-0 md:min-w-[400px]">
+<div class="flex flex-col gap-3 py-4">
+	<div class="flex flex-wrap items-center gap-2">
 		{#if useCats}
 			<Button
 				style="ghost"
@@ -54,37 +54,37 @@
 				<Burger width="1.5rem" />
 			</Button>
 		{/if}
-		<div class="flex-1">
-			<Input
-				type="text"
-				name="search"
-				placeholder="Search recipes by..."
-				bind:value={$searchString}
-				size="lg"
-				color="info"
-				useLabelAsPlaceholder={false} />
+		<div class="flex flex-wrap items-center gap-2 flex-1 min-w-[260px]">
+			<div class="flex-1 min-w-[200px]">
+				<Input
+					type="text"
+					name="search"
+					placeholder="Search recipes by..."
+					bind:value={$searchString}
+					size="lg"
+					color="info"
+					useLabelAsPlaceholder={false} />
+			</div>
+			<div class="tooltip" data-tip="Choose Search Key">
+				<Select
+					name="selections"
+					bind:value={$searchKey}
+					id="selections"
+					options={[
+						{ value: 'name', label: 'Name' },
+						{ value: 'ingredients', label: 'Ingredients' },
+						{ value: 'source', label: 'Source' },
+						{ value: 'notes', label: 'Notes' }
+					]}
+					size="lg"
+					color="info"
+					style="standard"
+					fullWidth={false}
+					class="min-w-[150px]"
+					aria-label="selections" />
+			</div>
 		</div>
-		<div class="tooltip" data-tip="Choose Search Key">
-			<Select
-				name="selections"
-				bind:value={$searchKey}
-				id="selections"
-				options={[
-					{ value: 'name', label: 'Name' },
-					{ value: 'ingredients', label: 'Ingredients' },
-					{ value: 'source', label: 'Source' },
-					{ value: 'notes', label: 'Notes' }
-				]}
-				size="lg"
-				color="info"
-				style="standard"
-				fullWidth={false}
-				class="min-w-[150px]"
-				aria-label="selections" />
-		</div>
-	</div>
-	<div class="flex flex-col gap-2 w-full md:flex-row md:items-center md:justify-end">
-		<div class="flex justify-center gap-2 md:justify-start">
+		<div class="flex items-center gap-2">
 			<Button
 				style="outline"
 				size="lg"
@@ -104,7 +104,7 @@
 				<Check checked={$cookedFilter} width="24px" height="24px" fill="currentColor" />
 			</Button>
 		</div>
-		<div class="flex gap-2 flex-wrap justify-between md:justify-start">
+		<div class="flex flex-wrap gap-2">
 			<Button
 				style={$sortState.key === 'created' ? 'standard' : 'outline'}
 				class="tooltip flex-1 min-w-[90px] px-2 text-sm md:flex-none"
