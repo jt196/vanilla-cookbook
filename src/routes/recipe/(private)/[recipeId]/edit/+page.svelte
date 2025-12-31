@@ -102,7 +102,7 @@
 
 <div class="recipe-container" class:sidebar-open={sidebarOpen} onclose={handleSidebarClose}>
 	{#if user.useCats}
-		<IconButton data-tooltip="Display Category Selector" onclick={toggleSidebar}>
+		<IconButton class="tooltip" data-tip="Display Category Selector" onclick={toggleSidebar}>
 			<Burger width="1.5rem" />
 		</IconButton>
 	{/if}

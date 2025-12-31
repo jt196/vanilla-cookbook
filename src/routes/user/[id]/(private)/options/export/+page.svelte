@@ -28,6 +28,6 @@
 
 <p>Click this to download all your recipes in Paprika format.</p>
 
-<Button data-tooltip="Export Filtered Recipes" onclick={handleExport}>
+<Button class="tooltip" data-tip="Export Filtered Recipes" onclick={handleExport}>
 	<Export width="30px" height="30px" />
 </Button>

@@ -81,13 +81,11 @@
 					<Delete width="30px" height="30px" fill="var(--pico-del-color)" />
 				</Button>
 				{#if !photo.isMain}
-					<Button
-						class="outline secondary"
-						data-tooltip="Promote to Main Photo"
-						type="button"
-						onclick={() => handleSetMainPhoto(photo.id)}>
-						<UpArrow width="30px" height="30px" fill="var(--pico-primary)" />
-					</Button>
+					<div class="tooltip" data-tip="Promote to Main Photo">
+						<Button class="outline secondary" type="button" onclick={() => handleSetMainPhoto(photo.id)}>
+							<UpArrow width="30px" height="30px" fill="var(--pico-primary)" />
+						</Button>
+					</div>
 				{/if}
 			</div>
 		</div>

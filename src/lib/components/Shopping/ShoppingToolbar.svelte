@@ -36,7 +36,8 @@
 <div class="shopping-buttons">
 	<Button
 		onclick={onToggleHidden}
-		data-tooltip={showHidden ? 'Show Unpurchased Items' : 'Show Purchased Items'}>
+		class="tooltip"
+		data-tip={showHidden ? 'Show Unpurchased Items' : 'Show Purchased Items'}>
 		{#if showHidden}
 			<View width="20px" height="20px" fill="white" />
 		{:else}
@@ -47,14 +48,16 @@
 	<Button
 		disabled={uncheckedItemCount === 0}
 		onclick={onCheckAll}
-		data-tooltip="Mark all items as purchased">
+		class="tooltip"
+		data-tip="Mark all items as purchased">
 		<CheckAll width="20px" height="20px" fill="white" />
 	</Button>
 
 	<Button
 		disabled={purchasedItemCount === 0}
 		onclick={onDeletePurchased}
-		data-tooltip="Delete all purchased items">
+		class="tooltip"
+		data-tip="Delete all purchased items">
 		<Delete width="20px" height="20px" fill="white" />
 	</Button>
 </div>

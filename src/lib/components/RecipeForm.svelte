@@ -82,14 +82,15 @@
 					editable={true}
 					on:ratingChanged={handleRatingChange} />
 				<input type="hidden" name="rating" bind:value={recipe.rating} />
-				<Checkbox
-					name="Recipe Public"
-					bind:checked={recipe.is_public}
-					data-tooltip="Make your new recipe public"
-					label="Recipe Public"
-					size="sm"
-					color="primary" />
-			</div>
+					<div class="tooltip" data-tip="Make your new recipe public">
+						<Checkbox
+							name="Recipe Public"
+							bind:checked={recipe.is_public}
+							legend="Recipe Public"
+							size="sm"
+							color="primary" />
+					</div>
+				</div>
 
 			<div class="form-col">
 				<Input

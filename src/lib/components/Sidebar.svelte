@@ -1,7 +1,5 @@
 <!-- Sidebar.svelte -->
 <script>
-	import IconButton from '$lib/components/ui/IconButton.svelte'
-
 	/** @type {{isOpen?: boolean, onClose?: () => void, children?: import('svelte').Snippet}} */
 	let { isOpen = false, onClose, children } = $props()
 
