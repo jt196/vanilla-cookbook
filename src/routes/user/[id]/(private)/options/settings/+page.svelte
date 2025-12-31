@@ -31,19 +31,22 @@
 	}
 </script>
 
-<div class="rec-count prose">
+<form method="POST" class="w-full md:w-1/3 lg:w-1/4">
+	<Button id="logout" formaction="/logout" type="submit" class="w-auto">Logout</Button>
+</form>
+<div class="rec-count prose max-w-none mt-3 mb-3">
 	You have {dbRecordCount} recipes in your account.
 	<br />
 	Version: <i>{data.version}</i>
 </div>
 
-<form method="POST">
-	<Button id="logout" formaction="/logout" type="submit">Logout</Button>
-</form>
-
-<form method="POST" action="?/updateSettings" onsubmit={updateSettings}>
-	<h2 class="prose mb-2">Ingredients</h2>
-	<div class="flex flex-col gap-2 prose">
+<form
+	method="POST"
+	action="?/updateSettings"
+	onsubmit={updateSettings}
+	class="flex flex-col gap-4 w-full md:w-2/3 lg:w-1/2">
+	<h2 class="prose max-w-none mb-2">Ingredients</h2>
+	<div class="flex flex-col gap-2 prose max-w-none">
 		<Checkbox
 			name="Skip Small"
 			bind:checked={user.skipSmallUnits}
@@ -103,7 +106,7 @@
 		options={languages}
 		bind:selected={user.language}
 		legend="Select language" />
-	<h2 class="prose mb-2">Privacy</h2>
+	<h2 class="prose mb-3 mt-3">Privacy</h2>
 	<div class="flex flex-col gap-2">
 		<Checkbox
 			name="Profile Public"

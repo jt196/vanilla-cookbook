@@ -25,10 +25,10 @@
 	// Disable submit button if validation fails
 	let isSubmitDisabled = $derived(
 		!oldPass ||
-		!newPass ||
-		!newPassConfirm ||
-		passwordsMismatch ||
-		(newPasswordValidation && !newPasswordValidation.isValid)
+			!newPass ||
+			!newPassConfirm ||
+			passwordsMismatch ||
+			(newPasswordValidation && !newPasswordValidation.isValid)
 	)
 
 	async function updatePassword(event) {
@@ -83,17 +83,20 @@
 	}
 </script>
 
-<h3>Update Password</h3>
 <Container>
-	<form onsubmit={updatePassword}>
+	<form onsubmit={updatePassword} class="flex flex-col gap-4 w-full md:w-1/2">
+		<h3>Update Password</h3>
 		<Input type="password" id="old" label="Old Password" bind:value={oldPass} />
 		<Input type="password" id="new" label="New Password" bind:value={newPass} />
 		<ValidationMessage
 			message={newPasswordValidation?.message}
 			isValid={newPasswordValidation?.isValid} />
 		<Input type="password" id="confirm" label="Confirm New Password" bind:value={newPassConfirm} />
-		<ValidationMessage message={passwordsMismatch ? "Passwords don't match!" : null} isError={true} />
-		<Button type="submit" disabled={isSubmitDisabled}>Update Password</Button>
+		<ValidationMessage
+			message={passwordsMismatch ? "Passwords don't match!" : null}
+			isError={true} />
+		<Button type="submit" class="w-auto self-start" disabled={isSubmitDisabled}
+			>Update Password</Button>
 	</form>
 	<FeedbackMessage message={feedbackMessage} inline />
 </Container>

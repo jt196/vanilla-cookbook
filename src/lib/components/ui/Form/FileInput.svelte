@@ -1,49 +1,82 @@
 <script>
 	let {
-		/**
-		 * @type {string}
-		 */
 		id = '',
-		/**
-		 * @type {string}
-		 */
 		name = '',
-		/**
-		 * @type {string}
-		 */
 		label = '',
-		/**
-		 * @type {string}
-		 */
 		accept = '*/*',
-		/**
-		 * @type {boolean}
-		 */
 		multiple = false,
-		/**
-		 * @type {boolean}
-		 */
 		required = false,
 		/**
-		 * @type {(event: Event) => void}
+		 * @type {'xs' | 'sm' | 'md' | 'lg' | 'xl'}
 		 */
-		onchange = undefined,
+		size = 'md',
 		/**
-		 * @type {string}
+		 * @type {'neutral' | 'primary' | 'secondary' | 'accent' | 'info' | 'success' | 'warning' | 'error'}
 		 */
+		color = 'primary',
+		/**
+		 * @type {'standard' | 'ghost'}
+		 */
+		style: styleVariant = 'standard',
+		fullWidth = true,
+		legend = '',
+		optionalLabel = '',
 		class: className = ''
 	} = $props()
+
+	const sizeClasses = {
+		xs: 'file-input-xs',
+		sm: 'file-input-sm',
+		md: 'file-input-md',
+		lg: 'file-input-lg',
+		xl: 'file-input-xl'
+	}
+
+	const colorClasses = {
+		neutral: 'file-input-neutral',
+		primary: 'file-input-primary',
+		secondary: 'file-input-secondary',
+		accent: 'file-input-accent',
+		info: 'file-input-info',
+		success: 'file-input-success',
+		warning: 'file-input-warning',
+		error: 'file-input-error'
+	}
+
+	const styleClasses = {
+		standard: '',
+		ghost: 'file-input-ghost'
+	}
+
+	const classes = $derived(
+		[
+			'file-input',
+			styleClasses[styleVariant],
+			colorClasses[color],
+			sizeClasses[size],
+			fullWidth ? 'w-full' : '',
+			className
+		]
+			.filter(Boolean)
+			.join(' ')
+	)
 </script>
 
-{#if label}
-	<label for={id}>{label}</label>
+{#if legend}
+	<fieldset class={`fieldset ${fullWidth ? 'w-full' : ''}`}>
+		<legend class="fieldset-legend">{legend}</legend>
+		<input type="file" {id} {name} {accept} {multiple} {required} class={classes} />
+		{#if optionalLabel}
+			<label class="label">{optionalLabel}</label>
+		{/if}
+	</fieldset>
+{:else}
+	<div class={`form-control ${fullWidth ? 'w-full' : ''}`}>
+		{#if label}
+			<label class="label">
+				<span class="label-text">{label}</span>
+			</label>
+		{/if}
+		<input type="file" {id} {name} {accept} {multiple} {required} class={classes} />
+	</div>
 {/if}
-<input
-	type="file"
-	{id}
-	{name}
-	{accept}
-	{multiple}
-	{required}
-	{onchange}
-	class={className} />

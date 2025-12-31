@@ -4,7 +4,6 @@
 	import Checkbox from '$lib/components/ui/Form/Checkbox.svelte'
 	import Dropdown from '$lib/components/ui/Form/Dropdown.svelte'
 	import FileInput from '$lib/components/ui/Form/FileInput.svelte'
-	import Hint from '$lib/components/ui/Hint.svelte'
 
 	let { data, form } = $props()
 
@@ -21,9 +20,14 @@
 	let info = $derived(importTypes.find((t) => t.id === selectedType)?.info || '')
 </script>
 
-<h2>Import Recipes</h2>
-
-<form method="POST" action="?/importRecipes" enctype="multipart/form-data">
+<div class="prose max-w-none w-full">
+	<h2>Import Recipes</h2>
+</div>
+<form
+	method="POST"
+	action="?/importRecipes"
+	class="flex flex-col gap-4 w-full md:w-2/3 lg:w-1/2"
+	enctype="multipart/form-data">
 	<Dropdown
 		name="type"
 		legend="Choose Migration Type"
@@ -36,11 +40,13 @@
 	<Checkbox
 		name="isPublic"
 		bind:checked={isPublic}
-		label="I want to make these recipes public"
+		legend="Set as Public"
 		size="sm"
-		color="primary" />
+		color="primary">
+		I want to make these recipes public
+	</Checkbox>
 
-	<Button aria-busy={busy} disabled={busy}>Import</Button>
+	<Button class="self-start w-auto" aria-busy={busy} disabled={busy}>Import</Button>
 </form>
 
 <FeedbackMessage message={form?.message || form?.error || ''} inline />

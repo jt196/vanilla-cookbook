@@ -26,7 +26,10 @@
 	}
 </script>
 
-<p>Click this to download all your recipes in Paprika format.</p>
+<div class="prose mb-3">
+	<h2>Export Recipes</h2>
+	<p>Click this to download all your recipes in Paprika format.</p>
+</div>
 
 <Button class="tooltip" data-tip="Export Filtered Recipes" onclick={handleExport}>
 	<Export width="30px" height="30px" />

@@ -23,7 +23,7 @@
 		/**
 		 * @type {'neutral' | 'primary' | 'secondary' | 'accent' | 'info' | 'success' | 'warning' | 'error'}
 		 */
-		color = 'neutral',
+		color = 'primary',
 		/**
 		 * @type {'standard' | 'ghost'}
 		 */
@@ -84,7 +84,9 @@
 			{/each}
 		</select>
 		{#if optionalLabel}
-			<span class="label">{optionalLabel}</span>
+			<span class="label block whitespace-normal wrap-break-word text-xs leading-snug max-w-full">
+				{optionalLabel}
+			</span>
 		{/if}
 	</fieldset>
 {:else}

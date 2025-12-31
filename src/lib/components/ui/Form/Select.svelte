@@ -13,7 +13,7 @@
 		/**
 		 * @type {'neutral' | 'primary' | 'secondary' | 'accent' | 'info' | 'success' | 'warning' | 'error'}
 		 */
-		color = 'neutral',
+		color = 'primary',
 		/**
 		 * @type {'standard' | 'ghost'}
 		 */
