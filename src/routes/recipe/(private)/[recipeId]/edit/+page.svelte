@@ -8,7 +8,6 @@
 	import Sidebar from '$lib/components/Sidebar.svelte'
 	import Burger from '$lib/components/svg/Burger.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
-	import IconButton from '$lib/components/ui/IconButton.svelte'
 
 	/**
 	 * The page data type.
@@ -100,11 +99,29 @@
 		selectedCategoryUids={recipeCategories} />
 </Sidebar>
 
+<div class="flex gap-2">
+	{#if recipe?.userId === user?.userId}
+		<a
+			href="/recipe/{recipe?.uid}/view/"
+			class="btn btn-soft btn-primary btn-sm tooltip"
+			data-tip="View Recipe"
+			data-testid="view-button">
+			<View />
+		</a>
+		<Button
+			onclick={() => handleDelete(recipe?.uid)}
+			data-testid="delete-button"
+			class="btn btn-soft btn-sm tooltip btn-secondary">
+			<Delete />
+		</Button>
+	{/if}
+</div>
+
 <div class="recipe-container" class:sidebar-open={sidebarOpen} onclose={handleSidebarClose}>
 	{#if user.useCats}
-		<IconButton class="tooltip" data-tip="Display Category Selector" onclick={toggleSidebar}>
+		<Button class="tooltip" data-tip="Display Category Selector" onclick={toggleSidebar}>
 			<Burger width="1.5rem" />
-		</IconButton>
+		</Button>
 	{/if}
 	<RecipeForm
 		bind:recipe
@@ -115,22 +132,6 @@
 		onSelectedFilesChange={handleSelectedFilesChange}
 		onSubmit={handleSubmit} />
 </div>
-
-{#if recipe?.userId === user?.userId}
-	<a
-		href="/recipe/{recipe?.uid}/view/"
-		role="button"
-		class="outline contrast"
-		data-testid="view-button">
-		<View width="30px" height="30px" fill="var(--pico-ins-color)" />
-	</a>
-	<Button
-		onclick={() => handleDelete(recipe?.uid)}
-		data-testid="delete-button"
-		class="outline secondary">
-		<Delete width="30px" height="30px" fill="var(--pico-del-color)" />
-	</Button>
-{/if}
 
 <style lang="scss">
 	.recipe-container {

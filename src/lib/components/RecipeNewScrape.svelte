@@ -2,13 +2,11 @@
 	import { handleParse, handleScrape, handleImage } from '$lib/utils/parse/parseHelpersClient'
 	import FeedbackMessage from '$lib/components/FeedbackMessage.svelte'
 	import { defaultRecipe } from '$lib/utils/config'
-	import Chain from '$lib/components/svg/Chain.svelte'
-	import Note from '$lib/components/svg/Note.svelte'
-	import Image from '$lib/components/svg/Image.svelte'
 	import Input from '$lib/components/ui/Form/Input.svelte'
 	import Textarea from '$lib/components/ui/Form/Textarea.svelte'
 	import FileInput from '$lib/components/ui/Form/FileInput.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
+	import Spinner from '$lib/components/Spinner.svelte'
 
 	let {
 		url = $bindable(''),
@@ -88,68 +86,38 @@
 	}
 </script>
 
-<!-- Tab Navigation -->
-{#if aiEnabled && apiKeyPresent}
-	<div class="tab-toggle" role="group">
-		{#each ['url', 'text', 'image'] as mode}
-			<Button
-				class={selectedMode === mode ? 'secondary selected' : ''}
-				disabled={selectedMode === mode}
-				onclick={() => {
-					selectedMode = mode
-					recipe = { ...defaultRecipe }
-					sharedText = null
-					imageFile = null
-					url = ''
-				}}>
-				{#if mode === 'url'}
-					<Chain width="18px" style="margin-right: 0.3em;" /> Scrape URL
-				{:else if mode === 'text'}
-					<Note width="18px" style="margin-right: 0.3em;" /> Paste Text
-				{:else if mode === 'image'}
-					<Image width="18px" style="margin-right: 0.3em;" /> Upload Image
-				{/if}
-			</Button>
-		{/each}
-	</div>
-{/if}
-
 <!-- Form Inputs -->
-<form onsubmit={scrapeEventHandler}>
-	{#if selectedMode === 'url'}
-		<Input type="text" placeholder="Enter recipe URL" bind:value={url} />
-	{:else if selectedMode === 'text'}
-		<Textarea rows={8} placeholder="Paste recipe text..." bind:value={sharedText} />
-	{:else if selectedMode === 'image'}
-		<FileInput accept="image/*" onchange={(e) => (imageFile = e.target.files[0])} />
-	{/if}
-	<Button type="submit">
-		{selectedMode === 'url' ? 'Scrape' : selectedMode === 'text' ? 'Parse Text' : 'Analyze Image'}
-	</Button>
+<form onsubmit={scrapeEventHandler} class="flex flex-col gap-4 max-w-none w-full">
+	<div class="tabs tabs-box">
+		<input type="radio" name="my_tabs_6" class="tab" aria-label="Scrape URL" />
+		<div class="tab-content bg-base-100 border-base-300 p-2">
+			<Input type="text" placeholder="Enter recipe URL" bind:value={url} />
+			<Button type="submit" class="w-auto self-start mt-2">Scrape</Button>
+		</div>
+
+		{#if aiEnabled && apiKeyPresent}
+			<input type="radio" name="my_tabs_6" class="tab" aria-label="Paste Text" checked="checked" />
+			<div class="tab-content bg-base-100 border-base-300 p-2">
+				<Textarea rows={8} placeholder="Paste recipe text..." bind:value={sharedText} />
+				<Button type="submit" class="w-auto self-start  mt-2">Parse Text</Button>
+			</div>
+
+			<input type="radio" name="my_tabs_6" class="tab" aria-label="Upload Image" />
+			<div class="tab-content bg-base-100 border-base-300 p-2">
+				<FileInput accept="image/*" onchange={(e) => (imageFile = e.target.files[0])} />
+				<Button type="submit" class="w-auto self-start mt-2">Analyze Image</Button>
+			</div>
+		{/if}
+	</div>
 </form>
 
-<div class="loading-overlay" aria-busy={loading} hidden={!loading}></div>
-<!-- Styling/Debugging Always on div for the loading spinner -->
-<!-- <div class="loading-overlay" aria-busy="true"></div> -->
+<Spinner visible={loading} spinnerContent="Working..." type="bars" size="md" />
 
 {#if feedbackMessage}
 	<FeedbackMessage message={feedbackMessage} type={feedbackType} timeout={4000} />
 {/if}
 
 <style lang="scss">
-	.tab-toggle {
-		margin-bottom: 1rem;
-		button {
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			gap: 0.3em; // space between icon and text
-
-			width: 140px;
-			height: 40px; // or whatever looks right
-			padding: 0.5em 1em;
-		}
-	}
 	.loading-overlay {
 		position: absolute;
 		top: 20vh;
