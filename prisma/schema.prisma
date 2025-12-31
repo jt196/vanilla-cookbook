@@ -109,7 +109,7 @@ model AuthUser {
     about              String?
     units              String?            @default("metric")
     language           String             @default("eng")
-    theme              String             @default("dark")
+    theme              String             @default("dracula")
     publicProfile      Boolean            @default(false)
     publicRecipes      Boolean            @default(false)
     skipSmallUnits     Boolean            @default(true)

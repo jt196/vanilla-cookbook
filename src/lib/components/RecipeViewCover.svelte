@@ -5,29 +5,16 @@
 	let { mainPhoto, recipe } = $props()
 </script>
 
-<div class="recipe-cover">
+<div>
 	{#if mainPhoto}
-		<img src="/api/recipe/image/{mainPhoto.id}" alt="{recipe.name} photo" />
+		<img
+			src="/api/recipe/image/{mainPhoto.id}"
+			alt="{recipe.name} photo"
+			class="w-full h-auto max-h-[400px] md:max-h-[400px] max-md:max-h-[250px] object-cover block rounded-2xl" />
 	{:else if recipe.image_url}
-		<img src={recipe.image_url} alt="{recipe.name} photo" />
+		<img
+			src={recipe.image_url}
+			alt="{recipe.name} photo"
+			class="w-full h-auto max-h-[400px] md:max-h-[400px] max-md:max-h-[250px] object-cover block rounded-2xl" />
 	{/if}
 </div>
-
-<style lang="scss">
-	.recipe-cover {
-		img {
-			width: 100%; // Maintain height
-			max-height: 400px; // Limit max height
-			height: auto; // Maintain aspect ratio
-			object-fit: cover;
-			display: block;
-			border-radius: 1rem;
-		}
-
-		@media (max-width: 768px) {
-			img {
-				max-height: 250px;
-			}
-		}
-	}
-</style>

@@ -2,11 +2,11 @@
 <script>
 	import Favourite from '$lib/components/svg/Favourite.svelte'
 	import Check from '$lib/components/svg/Check.svelte'
-	import { localDate } from '$lib/utils/dateTime'
 	import StarRating from '$lib/components/StarRating.svelte'
 	import { changeRecipeFavourite } from '$lib/utils/crud'
-	import IconButton from '$lib/components/ui/IconButton.svelte'
-	import { navigating } from '$app/stores'
+	import Card from '$lib/components/ui/Card.svelte'
+	let showPrimaryPhoto = $state(true)
+	let showImageUrl = $state(true)
 
 	/** @type {{item: any, data: any, recipeFavourited?: (uid: string) => void, recipeRatingChanged?: (uid: string, rating: number) => void}}, */
 	let { item, data, recipeFavourited, recipeRatingChanged } = $props()
@@ -14,12 +14,18 @@
 	let logged = $derived(item.log?.length > 0)
 	let favourite = $derived(item?.on_favorites)
 
+	// Reset image visibility when the recipe changes
+	$effect(() => {
+		const _primaryId = item.photos?.[0]?.id
+		const _imageUrl = item.image_url
+		showPrimaryPhoto = true
+		showImageUrl = true
+	})
+
 	async function handleFavourite(uid, event) {
-		// Preventing the click through to the item view page
 		event.preventDefault()
-		// Stop the click event from bubbling up to the parent anchor
 		event.stopPropagation()
-		console.log('Handle favourites button clicked for uid: ' + uid)
+		console.log('Handle favourite button clicked for uid: ' + uid)
 		const success = await changeRecipeFavourite(uid)
 		if (success && recipeFavourited) {
 			recipeFavourited(uid)
@@ -27,128 +33,64 @@
 	}
 </script>
 
-<a href="/recipe/{item.uid}/view/" class="recipe-container">
-	<article class="recipe-card">
-		<h3>{item.name}</h3>
-		<div class="star-fav">
+<a
+	href="/recipe/{item.uid}/view/"
+	class="flex items-stretch gap-3 mb-3 rounded-lg transition no-underline text-current">
+	<Card class="flex-1 hover:bg-base-200 min-h-[9rem]" size="md" side figureClass="w-32 flex-shrink-0">
+		{#snippet figure()}
+			<div class="h-[9rem] w-full overflow-hidden">
+				{#if item.photos && item.photos.length > 0 && showPrimaryPhoto}
+					<img
+						class="h-full w-full object-cover"
+						loading="lazy"
+						src="/api/recipe/image/{item.photos[0].id}"
+						alt="{item.name} thumbnail"
+						onerror={() => (showPrimaryPhoto = false)} />
+				{:else if item.image_url && showImageUrl}
+					<img
+						class="h-full w-full object-cover"
+						loading="lazy"
+						src={item.image_url}
+						alt="{item.name} thumbnail"
+						onerror={() => (showImageUrl = false)} />
+				{:else}
+					<div class="h-full w-full bg-base-300" aria-hidden="true"></div>
+				{/if}
+			</div>
+		{/snippet}
+
+		{#snippet title()}
+			<div class="flex items-start justify-between gap-2 w-full">
+				<span class="text-base md:text-2xl leading-snug line-clamp-2">{item.name}</span>
+				{#if item.userId === data.user?.requestedUserId}
+					<div class="flex gap-1 shrink-0">
+						<button
+							onclick={(event) => handleFavourite(item?.uid, event)}
+							class="btn btn-circle btn-ghost btn-xs tooltip opacity-60 hover:opacity-100"
+							data-tip="Favourite Recipe"
+							class:text-error={favourite}
+							class:opacity-100={favourite}>
+							<Favourite {favourite} width="16px" height="16px" />
+						</button>
+						<button
+							class="btn btn-circle btn-ghost btn-xs tooltip opacity-60 hover:opacity-100"
+							class:text-success={logged}
+							class:opacity-100={logged}
+							data-tip={item.log?.length > 0
+								? `Cooked ${item.log.length} time${item.log.length > 1 ? 's' : ''}`
+								: 'Never cooked'}>
+							<Check checked={logged} width="16px" height="16px" />
+						</button>
+					</div>
+				{/if}
+			</div>
+		{/snippet}
+
+		{#snippet children()}
 			<StarRating
 				rating={item.rating}
 				editable={true}
 				ratingChanged={(newRating) => recipeRatingChanged?.(item.uid, newRating)} />
-			{#if item.userId === data.user?.requestedUserId}
-				<IconButton
-					onclick={(event) => handleFavourite(item?.uid, event)}
-					data-tooltip="Favourite Recipe"
-					class="outline secondary">
-					<Favourite
-						{favourite}
-						width="15px"
-						height="15px"
-						fill={favourite ? 'var(--pico-del-color)' : 'var(--pico-secondary-focus)'} />
-				</IconButton>
-				<IconButton
-					data-tooltip={item.log?.length > 0
-						? 'This recipe has been cooked ' + item.log.length + ' times'
-						: 'This recipe has never been cooked'}>
-					<Check
-						checked={logged}
-						width="15px"
-						height="15px"
-						fill={logged ? 'var(--pico-ins-color)' : 'var(--pico-secondary-focus)'} />
-				</IconButton>
-			{/if}
-		</div>
-	</article>
-	<div class="recipe-image">
-		{#if item.photos && item.photos.length > 0}
-			<img
-				class="recipe-thumbnail"
-				loading="lazy"
-				src="/api/recipe/image/{item.photos[0].id}"
-				alt="{item.name} thumbnail" />
-		{:else if item.image_url}
-			<img
-				class="recipe-thumbnail"
-				loading="lazy"
-				src={item.image_url}
-				alt="{item.name} thumbnail" />
-		{/if}
-	</div>
+		{/snippet}
+	</Card>
 </a>
-
-<style lang="scss">
-	/* Recipe card container - flexbox layout */
-	.recipe-container {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		padding: 0;
-		margin-bottom: 0.5rem;
-		border-radius: 6px;
-		transition: background-color 0.2s ease;
-		text-decoration: none;
-		color: inherit;
-	}
-
-	.stars {
-		padding-bottom: 3px;
-	}
-
-	/* Recipe text section (left) */
-	.recipe-card {
-		flex-grow: 1;
-		display: flex;
-		margin-bottom: 0;
-		flex-direction: column;
-		min-height: 100px;
-		gap: 0.5rem;
-		max-width: calc(100% - 110px); /* Leave space for image */
-		&:hover {
-			background-color: var(--pico-secondary-focus);
-		}
-	}
-
-	h3 {
-		margin: 0;
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		font-size: 1.7rem;
-	}
-
-	/* Star rating and favorite button */
-	.star-fav {
-		display: flex;
-		align-items: center;
-		gap: 1rem;
-	}
-
-	/* Image section (right) */
-	.recipe-image {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		img {
-			min-height: 100px;
-			min-width: 100px;
-		}
-	}
-
-	.recipe-thumbnail {
-		object-fit: cover;
-		border-radius: 6px;
-		width: 100px;
-		height: 100px;
-	}
-
-	@media (max-width: 576px) {
-		h3 {
-			font-size: 1rem;
-			margin-bottom: 1rem;
-			white-space: normal;
-			overflow: visible;
-			text-overflow: unset;
-			word-wrap: break-word;
-		}
-	}
-</style>

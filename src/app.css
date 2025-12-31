@@ -1,0 +1,74 @@
+@import 'tailwindcss';
+@plugin '@tailwindcss/typography';
+@plugin 'daisyui' {
+	themes: light --default, dracula --prefersdark;
+}
+
+@source './**/*.{html,svelte}';
+
+@layer base {
+	:root {
+		font-family: Inter, system-ui, sans-serif;
+		font-size: 87.5%;
+		line-height: 1.25;
+	}
+
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
+		font-weight: 600;
+	}
+
+	a {
+		text-decoration: none;
+	}
+
+	/* Customize DaisyUI themes for softer colors */
+	[data-theme='light'] {
+		/* Softer primary blue - less intense */
+		--p: 210 80% 50%;
+		--pc: 0 0% 100%;
+
+		/* Softer text colors - less stark white/black */
+		--bc: 220 15% 25%;
+		--b1: 0 0% 100%;
+		--b2: 0 0% 96%;
+		--b3: 0 0% 92%;
+	}
+
+	/* Use built-in Dracula theme for dark mode; no overrides needed */
+}
+
+@layer components {
+	/* Container component styles */
+	.container {
+		@apply mx-auto px-4;
+	}
+
+	@media (min-width: 576px) {
+		.container {
+			@apply min-w-[576px];
+		}
+	}
+
+	@media (min-width: 768px) {
+		.container {
+			@apply max-w-[748px];
+		}
+	}
+
+	@media (min-width: 1024px) {
+		.container {
+			@apply max-w-[1004px];
+		}
+	}
+
+	/* Auth form centering */
+	.auth-form {
+		@apply w-full max-w-md mx-auto;
+	}
+
+}

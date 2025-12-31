@@ -147,17 +147,18 @@
 	)
 </script>
 
-<Button data-tooltip="New User" onclick={openCreateDialog}
-	><New width="30px" height="30px" /></Button>
+<button class="btn btn-primary tooltip mb-3" data-tip="New User" onclick={openCreateDialog}>
+	<New width="30px" height="30px" fill="currentColor" />
+</button>
 
-<Table>
+<Table zebra size="sm" bordered>
 	<TableHead>
 		<TableRow>
 			<TableCell tag="th" scope="col">Username</TableCell>
-			<TableCell tag="th" scope="col">Email</TableCell>
-			<TableCell tag="th" scope="col">Recipes</TableCell>
-			<TableCell tag="th" scope="col">Admin</TableCell>
-			<TableCell tag="th" scope="col">Root</TableCell>
+			<TableCell tag="th" scope="col" class="hidden sm:table-cell">Email</TableCell>
+			<TableCell tag="th" scope="col" class="hidden sm:table-cell">Recipes</TableCell>
+			<TableCell tag="th" scope="col" class="hidden sm:table-cell">Admin</TableCell>
+			<TableCell tag="th" scope="col" class="hidden sm:table-cell">Root</TableCell>
 			<TableCell tag="th" scope="col">Edit</TableCell>
 			<TableCell tag="th" scope="col">Del</TableCell>
 		</TableRow>
@@ -170,31 +171,32 @@
 					{#if user.id === currentAdminUserId}
 						<span class="you-label">(You)</span>
 					{/if}</TableCell>
-				<TableCell>{user.email}</TableCell>
-				<TableCell>
+				<TableCell class="hidden sm:table-cell">{user.email}</TableCell>
+				<TableCell class="hidden sm:table-cell">
 					{#if user.recipesCount > 0}
 						<a href="/user/{user.id}/recipes">{user.recipesCount}</a>
 					{:else}
 						0
 					{/if}
 				</TableCell>
-				<TableCell><TrueFalse isTrue={user.isAdmin} /></TableCell>
-				<TableCell><TrueFalse isTrue={user.isRoot} /></TableCell>
+				<TableCell class="hidden sm:table-cell"><TrueFalse isTrue={user.isAdmin} /></TableCell>
+				<TableCell class="hidden sm:table-cell"><TrueFalse isTrue={user.isRoot} /></TableCell>
 				<TableCell>
-					<Button
+					<button
+						class="btn btn-outline btn-sm"
 						onclick={() => openEditDialog(user)}
-						data-testid="edit-button"
-						class="outline secondary">
-						<Edit width="20px" fill="var(--pico-ins-color)" />
-					</Button></TableCell>
+						data-testid="edit-button">
+						<Edit width="20px" fill="currentColor" />
+					</button>
+				</TableCell>
 				<TableCell>
 					{#if user.id !== currentAdminUserId || !user.isRoot}
-						<Button
+						<button
+							class="btn btn-outline btn-error btn-sm"
 							onclick={() => deleteUser(user.id)}
-							data-testid="delete-button"
-							class="outline secondary">
-							<Delete width="20px" fill="var(--pico-del-color)" />
-						</Button>
+							data-testid="delete-button">
+							<Delete width="20px" fill="currentColor" />
+						</button>
 					{/if}
 				</TableCell>
 			</TableRow>
@@ -205,37 +207,52 @@
 <FeedbackMessage message={userFeedback} type="error" />
 
 <Dialog bind:isOpen={isDialogOpen}>
-	<h2>{isEditMode ? 'Edit User' : 'Create User'}</h2>
-	<Input
-		type="text"
-		id="username"
-		name="username"
-		label="Username"
-		data-tooltip="Username is not editable"
-		disabled={isEditMode}
-		bind:value={editingUser.username} />
-	<Input type="email" id="email" name="email" label="Email" bind:value={editingUser.email} />
-	<Input type="password" id="password" name="password" label="Password" bind:value={password} />
-	<ValidationMessage
-		message={passwordValidation?.message}
-		isValid={passwordValidation?.isValid} />
-	<Input
-		type="password"
-		id="passwordConfirm"
-		name="passwordConfirm"
-		label="Confirm Password"
-		bind:value={passwordConfirm} />
-	<ValidationMessage message={passwordsMismatch ? "Passwords don't match!" : null} isError={true} />
-	{#if !isEditMode || !editingUser.isAdmin || adminCount > 1}
-		<Checkbox name="Admin" bind:checked={editingUser.isAdmin} label="Admin" />
-	{/if}
-	{#if !isEditMode}
-		<Checkbox name="Seed Recipes" bind:checked={editingUser.userSeed} label="Seed Recipes" />
-	{/if}
-	<footer>
-		<Button onclick={() => (isDialogOpen = false)} class="secondary">Cancel</Button>
-		<Button onclick={handleSubmit}>{isEditMode ? 'Update' : 'Create'}</Button>
-	</footer>
+	<div class="flex flex-col gap-4 w-full">
+		<h3 class="font-bold text-lg mb-4">{isEditMode ? 'Edit User' : 'Create User'}</h3>
+		<Input
+			type="text"
+			id="username"
+			name="username"
+			label="Username"
+			class="tooltip"
+			data-tip="Username is not editable"
+			disabled={isEditMode}
+			bind:value={editingUser.username} />
+		<Input type="email" id="email" name="email" label="Email" bind:value={editingUser.email} />
+		<Input type="password" id="password" name="password" label="Password" bind:value={password} />
+		<ValidationMessage
+			message={passwordValidation?.message}
+			isValid={passwordValidation?.isValid} />
+		<Input
+			type="password"
+			id="passwordConfirm"
+			name="passwordConfirm"
+			label="Confirm Password"
+			bind:value={passwordConfirm} />
+		<ValidationMessage
+			message={passwordsMismatch ? "Passwords don't match!" : null}
+			isError={true} />
+		{#if !isEditMode || !editingUser.isAdmin || adminCount > 1}
+			<Checkbox
+				name="Admin"
+				bind:checked={editingUser.isAdmin}
+				label="Admin"
+				size="sm"
+				color="primary" />
+		{/if}
+		{#if !isEditMode}
+			<Checkbox
+				name="Seed Recipes"
+				bind:checked={editingUser.userSeed}
+				label="Seed Recipes"
+				size="sm"
+				color="neutral" />
+		{/if}
+		<div class="modal-action">
+			<Button onclick={() => (isDialogOpen = false)} style="outline">Cancel</Button>
+			<Button onclick={handleSubmit}>{isEditMode ? 'Update' : 'Create'}</Button>
+		</div>
+	</div>
 </Dialog>
 
 <style lang="scss">

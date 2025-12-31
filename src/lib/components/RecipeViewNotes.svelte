@@ -4,8 +4,10 @@
 </script>
 
 {#if notesLines.length > 0}
-	<h3>Notes</h3>
-	{#each sanitizedNotes as parsedNote}
-		<p>{@html parsedNote}</p>
-	{/each}
+	<div class="prose max-w-none mt-6">
+		<h3>Notes</h3>
+		{#each sanitizedNotes as parsedNote}
+			<p>{@html parsedNote}</p>
+		{/each}
+	</div>
 {/if}

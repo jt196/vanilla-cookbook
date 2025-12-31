@@ -8,11 +8,16 @@
 		/**
 		 * @type {boolean}
 		 */
-		isOpen = $bindable(false),
+		isOpen = $bindable(),
 		/**
 		 * @type {any}
 		 */
-		item = $bindable({}),
+		item = $bindable({
+			name: '',
+			quantity: '',
+			unit: '',
+			uid: ''
+		}),
 		/**
 		 * @type {(event: Event) => void}
 		 */
@@ -30,37 +35,30 @@
 
 <Dialog bind:isOpen {onClose}>
 	<form onsubmit={onSave}>
-		<Input id="edit-name" label="Name:" type="text" bind:value={item.name} />
-		<Input id="edit-quantity" label="Quantity:" type="number" bind:value={item.quantity} />
-		<Input id="edit-unit" label="Unit:" type="text" bind:value={item.unit} />
+		<h3 class="font-bold text-lg mb-4">Edit Shopping Item</h3>
 
-		<footer>
-			<Button type="button" onclick={() => (isOpen = false)}>Cancel</Button>
-			<Button
-				type="button"
-				class="outline secondary"
-				id="delete-item"
-				onclick={() => onDelete(item.uid)}
-				><Delete width="15px" height="15px" fill="var(--pico-del-color)" /></Button>
-			<Button type="submit">Save</Button>
-		</footer>
+		<Input class="mb-2" id="edit-name" label="Name:" type="text" bind:value={item.name} />
+		<Input
+			class="mb-2"
+			id="edit-quantity"
+			label="Quantity:"
+			type="number"
+			bind:value={item.quantity} />
+		<Input class="mb-2" id="edit-unit" label="Unit:" type="text" bind:value={item.unit} />
+
+		<div class="modal-action justify-between">
+			<Button type="button" color="error" onclick={() => (isOpen = false)}>Cancel</Button>
+			<div class="flex gap-2">
+				<Button
+					type="button"
+					style="outline"
+					color="error"
+					id="delete-item"
+					onclick={() => onDelete(item.uid)}>
+					<Delete width="15px" height="15px" fill="currentColor" />
+				</Button>
+				<Button type="submit">Save</Button>
+			</div>
+		</div>
 	</form>
 </Dialog>
-
-<style lang="scss">
-	form > footer {
-		display: flex;
-		gap: 0.5rem;
-		justify-content: space-between;
-
-		:global(button) {
-			flex: 1;
-		}
-
-		#delete-item {
-			flex: 0 1 35px;
-			padding: 0 0.5rem;
-			max-height: 35px;
-		}
-	}
-</style>

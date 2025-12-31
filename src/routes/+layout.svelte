@@ -4,11 +4,8 @@
 	 * This script is responsible for importing styles and managing page data.
 	 */
 
-	// Imports styles from PicoCSS.
-	import '@picocss/pico'
-
-	// Import Global CSS
-	import '$lib/css/global.scss'
+	// Import Tailwind CSS with DaisyUI
+	import '../app.css'
 	import SiteIcons from '$lib/components/SiteIcons.svelte'
 	import CookBook from '$lib/components/svg/CookBook.svelte'
 	import NavLinks from '$lib/components/NavLinks.svelte'
@@ -20,6 +17,15 @@
 	let dbSeed = $derived(data.dbSeed)
 
 	const siteName = import.meta.env.VITE_SITE_NAME || 'Vanilla Cookbook'
+	const LIGHT_THEME = 'light'
+	const DARK_THEME = 'dracula'
+	const LEGACY_DARK = 'dark'
+
+	function normalizeTheme(value) {
+		if (value === LIGHT_THEME) return LIGHT_THEME
+		if (value === DARK_THEME || value === LEGACY_DARK) return DARK_THEME
+		return LIGHT_THEME
+	}
 
 	// Get initial theme value
 	function getInitialTheme() {
@@ -29,10 +35,10 @@
 
 		// 1. If no user, use browser preference
 		if (!user) {
-			return prefersDark ? 'dark' : 'light'
+			return prefersDark ? DARK_THEME : LIGHT_THEME
 		}
 		// 2. If user is logged in, use their saved theme or fall back to browser
-		return user.theme ?? (prefersDark ? 'dark' : 'light')
+		return normalizeTheme(user.theme ?? (prefersDark ? DARK_THEME : LIGHT_THEME))
 	}
 
 	let theme = $state(getInitialTheme())
@@ -46,7 +52,7 @@
 
 	// Toggle theme and save to user
 	function toggleTheme() {
-		theme = theme === 'dark' ? 'light' : 'dark'
+		theme = theme === LIGHT_THEME ? DARK_THEME : LIGHT_THEME
 		document.documentElement.setAttribute('data-theme', theme)
 		localStorage.setItem('theme', theme)
 
@@ -78,46 +84,45 @@
 
 <SiteIcons />
 
-<div class="container">
-	<nav>
-		<ul>
-			<li>
-				<strong>
-					{#if user}
-						<a href={`/user/${user.userId}/recipes`}>
-							<CookBook width="45px" height="45px" />
-							<img
-								id="vanilla-logo"
-								src="/icons/site-logo.svg"
-								alt="Vanilla"
-								width="120"
-								height="120" />
-						</a>
-					{:else}
-						<img
-							id="vanilla-logo"
-							src="/icons/site-logo.svg"
-							alt="Vanilla"
-							width="120"
-							height="120" />
-					{/if}
-				</strong>
-			</li>
-		</ul>
-		{#if dbSeed}
-			<NavLinks {user} {settings} {theme} onToggleTheme={toggleTheme} />
+<div class="navbar bg-base-100 border-b border-base-300">
+	<div class="navbar-start">
+		{#if user}
+			<a href={`/user/${user.userId}/recipes`} class="flex items-center gap-2 text-primary">
+				<CookBook width="45px" height="45px" />
+				<img src="/icons/site-logo.svg" alt="Vanilla Cookbook" class="h-12" />
+			</a>
+		{:else}
+			<div class="flex items-center gap-2 text-primary">
+				<CookBook width="45px" height="45px" />
+				<img src="/icons/site-logo.svg" alt="Vanilla Cookbook" class="h-12" />
+			</div>
 		{/if}
-	</nav>
-	{@render children?.()}
+	</div>
+
+	{#if dbSeed}
+		<div class="navbar-end">
+			<!-- Desktop Navigation - hidden on mobile -->
+			<div class="hidden lg:flex">
+				<NavLinks {user} {settings} {theme} onToggleTheme={toggleTheme} />
+			</div>
+
+			<!-- Mobile Hamburger Menu -->
+			<div class="dropdown dropdown-end lg:hidden">
+				<div tabindex="0" role="button" class="btn btn-ghost btn-circle" aria-label="Menu">
+					<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+					</svg>
+				</div>
+				<ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-50 mt-3 w-52 p-2 shadow-lg border border-base-300">
+					<NavLinks {user} {settings} {theme} onToggleTheme={toggleTheme} mobile={true} />
+				</ul>
+			</div>
+		</div>
+	{/if}
 </div>
 
-<style lang="scss">
-	a {
-		padding: 0.5rem;
-	}
-
-	#vanilla-logo {
-		max-width: 60px;
-		padding: none;
-	}
-</style>
+<div class="min-h-screen bg-base-200">
+	<div class="container mx-auto px-4 py-6">
+		{@render children?.()}
+	</div>
+</div>

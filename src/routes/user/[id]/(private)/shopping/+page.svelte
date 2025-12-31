@@ -26,7 +26,13 @@
 	let newIngredient = $state('')
 	let showHidden = $state(false)
 	let isEditDialogOpen = $state(false)
-	let editingItem = $state({})
+	const emptyEditingItem = {
+		uid: '',
+		name: '',
+		quantity: '',
+		unit: ''
+	}
+	let editingItem = $state({ ...emptyEditingItem })
 
 	async function handleCheckboxChange(item, event) {
 		const purchased = event.target.checked
@@ -46,7 +52,6 @@
 			shoppingList = updatedList
 		}, 300)
 	}
-
 
 	async function handleDelete() {
 		shoppingFeedback = ''
@@ -167,7 +172,7 @@
 				// 🔒 Reset editing item if it's the one deleted
 				if (editingItem?.uid === uid) {
 					isEditDialogOpen = false
-					editingItem = {}
+					editingItem = { ...emptyEditingItem }
 				}
 				shoppingFeedback = 'Item deleted successfully!'
 			} else {
@@ -192,15 +197,18 @@
 	let uncheckedItemCount = $derived(shoppingList.filter((item) => !item.purchased).length)
 </script>
 
-<h4>Shopping List</h4>
-
-<ShoppingToolbar
-	{showHidden}
-	{uncheckedItemCount}
-	{purchasedItemCount}
-	onToggleHidden={toggleHidden}
-	onCheckAll={() => (isCheckAllDialogOpen = true)}
-	onDeletePurchased={() => (isDeleteDialogOpen = true)} />
+<div class="prose mb-2 max-w-none flex gap-2 justify-center">
+	<h2>Shopping</h2>
+</div>
+<div class="mb-2 max-w-none flex gap-2 justify-center">
+	<ShoppingToolbar
+		{showHidden}
+		{uncheckedItemCount}
+		{purchasedItemCount}
+		onToggleHidden={toggleHidden}
+		onCheckAll={() => (isCheckAllDialogOpen = true)}
+		onDeletePurchased={() => (isDeleteDialogOpen = true)} />
+</div>
 
 <ShoppingItemInput
 	bind:value={newIngredient}
@@ -209,18 +217,19 @@
 <div class="list-info">
 	{#if shoppingList.length === 0}
 		<FeedbackMessage message={'List empty: add some items!'} />
-	{:else if shoppingList.every((item) => item.purchased) && !showHidden}
-		<FeedbackMessage message={'List empty: all items are marked as purchased!'} />
 	{/if}
 </div>
 <FeedbackMessage message={shoppingFeedback} />
-<fieldset>
+{#if showHidden}
+	<p class="prose text-xs mb-2 flex justify-center max-w-none">Uncheck to add to shopping list</p>
+{/if}
+<ul class="list bg-base-100 rounded-box shadow-md divide-y divide-base-300">
 	{#each sortedList as item (item.uid)}
 		{#if !item.purchased || showHidden}
 			<ShoppingListItem {item} onCheckboxChange={handleCheckboxChange} onEdit={openEditModal} />
 		{/if}
 	{/each}
-</fieldset>
+</ul>
 
 <ConfirmationDialog
 	isOpen={isDeleteDialogOpen}
@@ -251,4 +260,3 @@
 	bind:item={editingItem}
 	onSave={handleSaveEdit}
 	onDelete={handleDeleteItem} />
-

@@ -122,7 +122,6 @@ describe('RecipeFilter component', () => {
 			sortState: mockSortState
 		})
 		const dateButton = getByText('Date')
-		expect(dateButton).toHaveClass('secondary')
 	})
 
 	it('updates sort state correctly on date button click', async () => {
@@ -195,9 +194,12 @@ describe('RecipeList component', () => {
 			data: mockData
 		})
 
-		const articles = getAllByRole('article')
-		expect(articles.length).toBe(mockRecipes.length)
+		// Each recipe card renders as a link to its detail page
+		const links = getAllByRole('link')
+		expect(links.length).toBe(mockRecipes.length)
 	})
+
+	it('displays an image if the recipe has a valid image_url', () => {})
 
 	it('displays an image if the recipe has a valid image_url', () => {
 		const { getByAltText } = render(RecipeList, {

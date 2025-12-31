@@ -25,10 +25,10 @@
 </script>
 
 {#if sanitisedDescription.length > 0}
-	<h3>Description:</h3>
-	{#each sanitisedDescription as parsedDescription}
-		<p>
-			{@html parsedDescription}
-		</p>
-	{/each}
+	<div class="prose max-w-none">
+		<h3>Description</h3>
+		{#each sanitisedDescription as parsedDescription}
+			<p>{@html parsedDescription}</p>
+		{/each}
+	</div>
 {/if}

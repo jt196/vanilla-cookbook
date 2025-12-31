@@ -153,10 +153,18 @@
 								{/if}
 							{/if}
 						</i>
-						{#if ingredient.approx}<Badge title="Approximate">~</Badge>{/if}
-						{#if ingredient.optional}<Badge title="Optional">opt</Badge>{/if}
-						{#if ingredient.toServe}<Badge title="To serve">srv</Badge>{/if}
-						{#if ingredient.toTaste}<Badge title="To taste">tt</Badge>{/if}
+						{#if ingredient.approx}<Badge color="secondary" style="outline" title="Approximate"
+								>~</Badge
+							>{/if}
+						{#if ingredient.optional}<Badge color="secondary" style="outline" title="Optional"
+								>opt</Badge
+							>{/if}
+						{#if ingredient.toServe}<Badge color="secondary" style="outline" title="To serve"
+								>srv</Badge
+							>{/if}
+						{#if ingredient.toTaste}<Badge color="secondary" style="outline" title="To taste"
+								>tt</Badge
+							>{/if}
 						<span>
 							{@html ingredient.ingredient}
 							{#if extraText}

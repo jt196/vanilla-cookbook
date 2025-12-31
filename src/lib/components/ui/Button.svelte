@@ -1,13 +1,24 @@
 <script>
 	/**
-	 * @type {'primary' | 'secondary' | 'outline' | 'ghost'}
+	 * DaisyUI Button Component
+	 * Matches DaisyUI button API with size, style, and color variants
 	 */
 	let {
-		variant = 'primary',
 		/**
-		 * @type {'sm' | 'md' | 'lg'}
+		 * Size variant
+		 * @type {'xs' | 'sm' | 'md' | 'lg' | 'xl'}
 		 */
 		size = 'md',
+		/**
+		 * Style variant
+		 * @type {'standard' | 'outline' | 'soft' | 'dash' | 'ghost' | 'link'}
+		 */
+		style = 'standard',
+		/**
+		 * Color variant
+		 * @type {'neutral' | 'primary' | 'secondary' | 'accent' | 'info' | 'success' | 'warning' | 'error'}
+		 */
+		color = 'primary',
 		disabled = false,
 		loading = false,
 		/**
@@ -20,6 +31,48 @@
 		onclick = undefined,
 		children
 	} = $props()
+
+	// Build DaisyUI classes
+	const sizeClasses = {
+		xs: 'btn-xs',
+		sm: 'btn-sm',
+		md: 'btn-md',
+		lg: 'btn-lg',
+		xl: 'btn-xl'
+	}
+
+	const styleClasses = {
+		standard: '',
+		outline: 'btn-outline',
+		soft: 'btn-soft',
+		dash: 'btn-dash',
+		ghost: 'btn-ghost',
+		link: 'btn-link'
+	}
+
+	const colorClasses = {
+		neutral: 'btn-neutral',
+		primary: 'btn-primary',
+		secondary: 'btn-secondary',
+		accent: 'btn-accent',
+		info: 'btn-info',
+		success: 'btn-success',
+		warning: 'btn-warning',
+		error: 'btn-error'
+	}
+
+	const classes = $derived(
+		[
+			'btn',
+			colorClasses[color],
+			styleClasses[style],
+			sizeClasses[size],
+			loading ? 'loading' : '',
+			className
+		]
+			.filter(Boolean)
+			.join(' ')
+	)
 </script>
 
 <button
@@ -28,13 +81,11 @@
 	{disabled}
 	formaction={formaction}
 	aria-busy={loading}
-	class={className}
+	class={classes}
 	{onclick}
 >
+	{#if loading}
+		<span class="loading loading-spinner"></span>
+	{/if}
 	{@render children()}
 </button>
-
-<style>
-	/* Button component inherits PicoCSS styles by default */
-	/* No additional styles needed - PicoCSS handles button styling */
-</style>

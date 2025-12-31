@@ -33,22 +33,20 @@
 	const hasToTaste = $derived(sanitizedIngredients.some((i) => i.toTaste))
 </script>
 
-<div class="ing-header">
-	<h3>Ingredients</h3>
-</div>
+<div>
+	<h3 class="text-2xl font-bold mb-4">Ingredients</h3>
 
-{#if ingredients.length > 0}
-	{#if sanitizedIngredients.some((item) => item.ingredient)}
-		<p>
-			<Scale {scale} {onScaleChange} />
-		</p>
+	{#if ingredients.length > 0}
+		{#if sanitizedIngredients.some((item) => item.ingredient)}
+			<div class="mb-4">
+				<Scale {scale} {onScaleChange} />
+			</div>
+		{/if}
+	{:else}
+		<p class="text-base-content/70">Loading...</p>
 	{/if}
-{:else}
-	<p>Loading...</p>
-{/if}
 
-<div class="ingredients">
-	<ul>
+	<ul class="pl-0 mb-4 space-y-1">
 		{#each sanitizedIngredients as ingredient}
 			<RecipeViewIng
 				{ingredient}
@@ -61,115 +59,93 @@
 				{selectedSystem} />
 		{/each}
 	</ul>
+
 	{#if hasDefaultDensity}
-		<div class="default"><i> * Converted using default water density </i></div>
+		<p class="text-sm italic text-base-content/60 my-2">* Converted using default water density</p>
 	{/if}
+
 	{#if hasApprox || hasOptional || hasToServe || hasToTaste}
-		<div class="legend">
-			{#if hasApprox}<Badge>~</Badge> approx{/if}
-			{#if hasOptional}<Badge>opt</Badge> optional{/if}
-			{#if hasToServe}<Badge>srv</Badge> to serve{/if}
-			{#if hasToTaste}<Badge>tt</Badge> to taste{/if}
+		<div class="flex flex-wrap gap-3 text-sm text-base-content/60 my-4">
+			{#if hasApprox}<span
+					><Badge color="secondary" style="outline" title="Approximate">~</Badge> approx</span
+				>{/if}
+			{#if hasOptional}<span
+					><Badge color="secondary" style="outline" title="Optional">opt</Badge> optional</span
+				>{/if}
+			{#if hasToServe}<span
+					><Badge color="secondary" style="outline" title="To serve">srv</Badge> to serve</span
+				>{/if}
+			{#if hasToTaste}<span
+					><Badge color="secondary" style="outline" title="To taste">tt</Badge> to taste</span
+				>{/if}
 		</div>
 	{/if}
-	<div class="convert">
-		<div class="segmented">
-			<Button
-				class={`outline ${selectedSystem === 'metric' ? 'selected' : ''} ${originalSystem === 'metric' ? 'orig' : ''}`}
+
+	<div class="mb-4">
+		<div class="grid grid-cols-3 gap-1 mb-3">
+			<button
+				class="btn btn-sm"
+				class:btn-primary={selectedSystem === 'metric'}
+				class:btn-soft={selectedSystem !== 'metric'}
+				class:ring-2={originalSystem === 'metric'}
+				class:ring-primary={originalSystem === 'metric'}
 				onclick={() => onSelectedSystemChange('metric')}>
 				Metric
-			</Button>
-			<Button
-				class={`outline ${selectedSystem === 'americanVolumetric' ? 'selected' : ''} ${originalSystem === 'americanVolumetric' ? 'orig' : ''}`}
+			</button>
+			<button
+				class="btn btn-sm"
+				class:btn-primary={selectedSystem === 'americanVolumetric'}
+				class:btn-soft={selectedSystem !== 'americanVolumetric'}
+				class:ring-2={originalSystem === 'americanVolumetric'}
+				class:ring-primary={originalSystem === 'americanVolumetric'}
 				onclick={() => onSelectedSystemChange('americanVolumetric')}>
 				US Vol
-			</Button>
-			<Button
-				class={`outline ${selectedSystem === 'imperial' ? 'selected' : ''} ${originalSystem === 'imperial' ? 'orig' : ''}`}
+			</button>
+			<button
+				class="btn btn-sm"
+				class:btn-primary={selectedSystem === 'imperial'}
+				class:btn-soft={selectedSystem !== 'imperial'}
+				class:ring-2={originalSystem === 'imperial'}
+				class:ring-primary={originalSystem === 'imperial'}
 				onclick={() => onSelectedSystemChange('imperial')}>
 				Imperial
-			</Button>
+			</button>
 		</div>
 	</div>
-	<div class="ing-settings">
-		<div class="checks">
-			<div class="toggle-row">
-				<Button
-					class={`outline ${displayOriginal ? 'selected' : ''}`}
-					onclick={() => (displayOriginal = !displayOriginal)}>
-					Original
-				</Button>
-				{#if sanitizedIngredients.some((item) => item.additional)}
-					<Button
-						class={`outline ${displayExtra ? 'selected' : ''}`}
-						disabled={displayOriginal}
-						onclick={() => (displayExtra = !displayExtra)}>
-						Extra
-					</Button>
-				{/if}
-				<Button
-					class={`outline ${displayDryMatch ? 'selected' : ''}`}
-					disabled={displayOriginal || selectedSystem === 'americanVolumetric'}
-					onclick={() => (displayDryMatch = !displayDryMatch)}>
-					Match
-				</Button>
-				<Button
-					class={`outline ${displaySymbol ? 'selected' : ''}`}
-					disabled={displayOriginal}
-					onclick={() => (displaySymbol = !displaySymbol)}>
-					Symbols
-				</Button>
-			</div>
-		</div>
+
+	<div class="flex flex-wrap gap-1">
+		<button
+			class="btn btn-sm flex-1"
+			class:btn-primary={displayOriginal}
+			class:btn-soft={!displayOriginal}
+			onclick={() => (displayOriginal = !displayOriginal)}>
+			Original
+		</button>
+		{#if sanitizedIngredients.some((item) => item.additional)}
+			<button
+				class="btn btn-sm flex-1"
+				class:btn-primary={displayExtra}
+				class:btn-soft={!displayExtra}
+				disabled={displayOriginal}
+				onclick={() => (displayExtra = !displayExtra)}>
+				Extra
+			</button>
+		{/if}
+		<button
+			class="btn btn-sm flex-1"
+			class:btn-primary={displayDryMatch}
+			class:btn-soft={!displayDryMatch}
+			disabled={displayOriginal || selectedSystem === 'americanVolumetric'}
+			onclick={() => (displayDryMatch = !displayDryMatch)}>
+			Match
+		</button>
+		<button
+			class="btn btn-sm flex-1"
+			class:btn-primary={displaySymbol}
+			class:btn-soft={!displaySymbol}
+			disabled={displayOriginal}
+			onclick={() => (displaySymbol = !displaySymbol)}>
+			Symbols
+		</button>
 	</div>
 </div>
-
-<style lang="scss">
-	.ingredients {
-		ul {
-			padding-left: 0;
-		}
-	}
-	.default {
-		margin: 0.5rem 0;
-	}
-
-	.segmented {
-		display: grid;
-		grid-template-columns: repeat(3, 1fr);
-		gap: 0.25rem;
-		margin-bottom: 0.75rem;
-
-		:global(button) {
-			width: 100%;
-			margin: 0;
-		}
-	}
-
-	.segmented :global(button.selected),
-	.toggle-row :global(button.selected) {
-		background-color: var(--pico-primary);
-		color: var(--pico-primary-inverse);
-	}
-	.segmented :global(button.orig) {
-		border: 1px solid var(--pico-contrast);
-		box-shadow: 0 0 0 1px var(--pico-primary);
-	}
-
-	.toggle-row {
-		display: flex;
-		flex-wrap: nowrap;
-		gap: 0.25rem;
-
-		:global(button) {
-			flex: 1 1 0;
-			margin: 0;
-		}
-	}
-
-	.legend {
-		margin: 1rem 0;
-		color: var(--pico-muted-color);
-		font-size: 0.85rem;
-	}
-</style>

@@ -10,7 +10,7 @@ import { importTandoorFromBuffer } from '$lib/utils/import/sources/tandoor.js'
 
 export const importers = {
 	paprika: {
-		label: 'Paprika Recipe Manager (.zip or .paprikarecipes)',
+		label: 'Paprika (.paprikarecipes)',
 		accepts: ['.paprikarecipes', '.zip'],
 		magicOk: async (kind) => !kind || kind.ext === 'zip',
 		run: importPaprikaFromBuffer,

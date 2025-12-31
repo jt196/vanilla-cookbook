@@ -13,7 +13,7 @@
 	import TableCell from '$lib/components/ui/Table/TableCell.svelte'
 
 	/** @type {{data: any}} */
-	let { data } = $props();
+	let { data } = $props()
 
 	const { settings } = $state(data)
 
@@ -70,41 +70,58 @@
 </script>
 
 <h3>Update Site Settings</h3>
-<Container>
-	<form method="POST" action="?/updateAdminSettings" onsubmit={updateAdminSettings}>
-		<Checkbox name="Admin" bind:checked={settings.registrationAllowed} label="Allow Registrations" />
-		<footer>
-			<Button type="submit">Update</Button>
+<div class="w-full md:w-3/4 lg:w-2/3 space-y-4 mb-3">
+	<form
+		method="POST"
+		action="?/updateAdminSettings"
+		onsubmit={updateAdminSettings}
+		class="flex flex-col gap-3">
+		<Checkbox
+			name="Admin"
+			bind:checked={settings.registrationAllowed}
+			legend="Allow Registrations"
+			size="sm"
+			color="primary">
+			Turn on site registration</Checkbox>
+		<footer class="flex flex-col gap-2">
+			<Button type="submit" class="self-start w-auto">Update</Button>
 			<FeedbackMessage message={settingsFeedback} inline />
 		</footer>
 	</form>
-</Container>
+</div>
 
-<h3>Database Backups</h3>
-<Container>
+<div class="w-full md:w-3/4 lg:w-2/3 space-y-4 mb-3">
+	<h3>Database Backups</h3>
 	{#if backupError}
 		<p class="error">{backupError}</p>
 	{:else if backupInfo}
-		<div class="backup-config">
+		<div class="backup-config rounded-box border border-base-300 bg-base-200 p-4 space-y-2">
 			<p><strong>Schedule:</strong> {backupInfo.cronPlainEnglish}</p>
-			<p><strong>Retention:</strong> Keep {backupInfo.retentionCount} most recent scheduled backups</p>
-			<div class="backup-actions">
-				<Button onclick={createManualBackup} disabled={backupInProgress} loading={backupInProgress}>
-					{backupInProgress ? 'Creating Backup...' : 'Backup Now'}
-				</Button>
-				<FeedbackMessage message={backupFeedback} inline />
-			</div>
+			<p>
+				<strong>Retention:</strong> Keep {backupInfo.retentionCount} most recent scheduled backups
+			</p>
+			<p class="text-xs">Please edit your .env file to change these</p>
+		</div>
+		<div class="backup-actions">
+			<Button
+				onclick={createManualBackup}
+				disabled={backupInProgress}
+				class="self-start w-auto"
+				loading={backupInProgress}>
+				{backupInProgress ? 'Creating Backup...' : 'Backup Now'}
+			</Button>
+			<FeedbackMessage message={backupFeedback} inline />
 		</div>
 
 		{#if backupInfo.backups.length > 0}
 			<h4>Available Backups ({backupInfo.backups.length})</h4>
-			<Table>
+			<Table zebra size="sm" bordered>
 				<TableHead>
 					<TableRow>
 						<TableCell tag="th">Type</TableCell>
 						<TableCell tag="th">Created</TableCell>
-						<TableCell tag="th">Size</TableCell>
-						<TableCell tag="th">Filename</TableCell>
+						<TableCell tag="th" class="hidden sm:table-cell">Size</TableCell>
+						<TableCell tag="th" class="hidden sm:table-cell">Filename</TableCell>
 					</TableRow>
 				</TableHead>
 				<TableBody>
@@ -122,8 +139,8 @@
 								</Badge>
 							</TableCell>
 							<TableCell>{localDateAndTime(backup.timestamp)}</TableCell>
-							<TableCell>{backup.size}</TableCell>
-							<TableCell class="filename">{backup.name}</TableCell>
+							<TableCell class="hidden sm:table-cell">{backup.size}</TableCell>
+							<TableCell class="filename hidden sm:table-cell">{backup.name}</TableCell>
 						</TableRow>
 					{/each}
 				</TableBody>
@@ -134,32 +151,20 @@
 	{:else}
 		<p>Loading backup information...</p>
 	{/if}
-</Container>
+</div>
 
 <style lang="scss">
 	footer {
 		margin-top: 1rem;
 	}
 
-	.backup-config {
-		margin-bottom: 1.5rem;
-		padding: 1rem;
-		background-color: var(--pico-background-color);
-		border-radius: var(--pico-border-radius);
-
-		p {
-			margin: 0.5rem 0;
-		}
-
-		.backup-actions {
-			margin-top: 1rem;
-			padding-top: 1rem;
-			border-top: 1px solid var(--pico-muted-border-color);
-
-			:global(button) {
-				margin-bottom: 0.5rem;
-			}
-		}
+	.backup-actions {
+		margin-top: 0.75rem;
+		padding-top: 0.5rem;
+		border-top: 1px solid var(--pico-muted-border-color);
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
 	}
 
 	.error {

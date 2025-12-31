@@ -1,6 +1,6 @@
 <script>
 	/** @type {{width?: string, height?: string, fill?: string}} */
-	let { width = '20px', height = '20px', fill = 'var(--pico-color)' } = $props()
+	let { width = '20px', height = '20px', fill = 'currentColor' } = $props()
 </script>
 
 <svg {width} {height} {fill} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"

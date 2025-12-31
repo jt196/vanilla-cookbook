@@ -3,6 +3,7 @@
 	import Link from '$lib/components/svg/Link.svelte'
 	import Edit from '$lib/components/svg/Edit.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
+	import Checkbox from '$lib/components/ui/Form/Checkbox.svelte'
 
 	let {
 		/**
@@ -20,110 +21,46 @@
 	} = $props()
 </script>
 
-<div class="list-item" out:fade={{ duration: 300 }}>
-	<div class="item-qty-unit">
-		<div class="item-label">
-			<label class:checked={item.purchased}>
-				<input
-					type="checkbox"
-					name={item.name}
-					checked={item.purchased}
-					onchange={(event) => onCheckboxChange(item, event)} />
-				<p class="item-name">
-					{item.name}
-				</p>
-				<div class="unit-quantity">
-					{#if item.quantity}
-						<span>{item.quantity}</span>
-					{/if}
-					{#if item.unit}
-						<span>{item.unit}</span>
-					{/if}
-				</div>
-				{#if item.recipeUid}
-					<a
-						href="/recipe/{item.recipeUid}/view"
-						data-tooltip={item.recipe.name ? item.recipe.name : ''}>
-						<Link width="20px" fill="var(--pico-muted-color)" />
-					</a>
-				{/if}
-			</label>
+<li class="list-row items-center gap-3" out:fade={{ duration: 300 }}>
+	<Checkbox
+		name={item.name}
+		checked={item.purchased}
+		color="accent"
+		size="xl"
+		onchange={(checked) => onCheckboxChange(item, { target: { checked } })}
+		class="self-center" />
+
+	<div class="flex flex-col gap-1 flex-1 min-w-0">
+		<div class="flex items-center gap-2">
+			<span class={`prose prose-xl ${item.purchased ? 'line-through opacity-60' : ''}`}>
+				{item.name}
+			</span>
+			{#if item.recipeUid}
+				<a
+					href="/recipe/{item.recipeUid}/view"
+					class="btn btn-ghost btn-circle btn-xs text-base-content"
+					title={item.recipe?.name ?? 'View recipe'}>
+					<Link width="18px" />
+				</a>
+			{/if}
+		</div>
+		<div class="text-sm opacity-70 flex items-center gap-2">
+			{#if item.quantity}
+				<span>{item.quantity}</span>
+			{/if}
+			{#if item.unit}
+				<span>{item.unit}</span>
+			{/if}
 		</div>
 	</div>
-	<div class="item-buttons">
-		<Button class="outline contrast" id="edit-item" onclick={() => onEdit(item)}
-			><Edit width="20px" height="20px" fill="var(--pico-ins-color)" /></Button>
-	</div>
-</div>
 
-<style lang="scss">
-	.checked {
-		color: var(--pico-muted-color);
-	}
-
-	.list-item {
-		display: flex;
-		border-bottom: 0.5px solid var(--pico-primary-focus);
-		align-items: center;
-		justify-content: center;
-		padding: 0.5rem 0;
-
-		@media (max-width: 767px) {
-			padding: 0;
-		}
-
-		.item-qty-unit {
-			display: flex;
-			flex-direction: column;
-		}
-
-		.item-label label {
-			display: flex;
-			align-items: center;
-			gap: 0.3rem;
-			margin: 0;
-			justify-content: center;
-			max-width: 100%;
-
-			.item-name {
-				flex: 1 1 auto;
-				min-width: 0;
-				overflow: hidden;
-				white-space: nowrap;
-				text-overflow: ellipsis;
-				margin: 0;
-				padding: 0;
-			}
-		}
-
-		.item-buttons {
-			margin-left: auto;
-			display: flex;
-			flex-direction: row;
-			align-items: center;
-			justify-content: center;
-			gap: 0.5rem;
-
-			@media (max-width: 767px) {
-				display: flex;
-				flex-direction: column;
-				gap: 0.2rem;
-				padding: 0.2rem 0;
-
-				:global(.outline) {
-					display: inline-flex;
-					align-items: center;
-					justify-content: center;
-					height: 40px;
-					padding: 0 10px;
-				}
-			}
-		}
-	}
-
-	.unit-quantity {
-		margin: 0;
-		padding: 0 0.5rem;
-		color: var(--pico-muted-color);
-	}
-</style>
+	<Button
+		color="primary"
+		style="ghost"
+		class="btn-square shadow-none border-none text-primary"
+		id="edit-item"
+		aria-label="Edit item"
+		onclick={() => onEdit(item)}>
+		<Edit width="18px" height="18px" />
+	</Button>
+</li>

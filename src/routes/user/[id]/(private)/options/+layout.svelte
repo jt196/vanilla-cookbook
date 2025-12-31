@@ -5,79 +5,60 @@
 	const { user } = $state(data)
 </script>
 
-<div class="container">
-	<nav>
-		<ul>
-			<form method="POST">
-				<li>
-					<a
-						href={`/user/${user.userId}/options/settings`}
-						class={data.pathname === `/user/${user.userId}/options/settings` ? 'active-link' : ''}>
-						Settings
-					</a>
-				</li>
-				<li>
-					<a
-						href={`/user/${user.userId}/options/password`}
-						class={data.pathname === `/user/${user.userId}/options/password` ? 'active-link' : ''}>
-						Password
-					</a>
-				</li>
-				<li>
-					<a
-						href={`/user/${user.userId}/options/bookmark`}
-						class={data.pathname === `/user/${user.userId}/options/bookmark` ? 'active-link' : ''}>
-						Bookmark
-					</a>
-				</li>
-				<li>
-					<a
-						href={`/user/${user.userId}/options/import`}
-						class={data.pathname === `/user/${user.userId}/options/import` ? 'active-link' : ''}>
-						Import
-					</a>
-				</li>
-				<li>
-					<a
-						href={`/user/${user.userId}/options/export`}
-						class={data.pathname === `/user/${user.userId}/options/export` ? 'active-link' : ''}>
-						Export
-					</a>
-				</li>
-				{#if data.user.isAdmin}
-					<li>
-						<a
-							href={`/user/${user.userId}/options/admin/users`}
-							class={data.pathname === `/user/${user.userId}/options/admin/users`
-								? 'active-link'
-								: ''}>
-							Users
-						</a>
-					</li>
-					<li>
-						<a
-							href={`/user/${user.userId}/options/admin/site`}
-							class={data.pathname === `/user/${user.userId}/options/admin/site`
-								? 'active-link'
-								: ''}>
-							Site
-						</a>
-					</li>
-				{/if}
-			</form>
-		</ul>
-	</nav>
-	{@render children?.()}
+<div role="tablist" class="tabs tabs-lift">
+	<a
+		role="tab"
+		class="tab"
+		class:tab-active={data.pathname === `/user/${user.userId}/options/settings`}
+		href={`/user/${user.userId}/options/settings`}>
+		Settings
+	</a>
+	<a
+		role="tab"
+		class="tab"
+		class:tab-active={data.pathname === `/user/${user.userId}/options/password`}
+		href={`/user/${user.userId}/options/password`}>
+		Password
+	</a>
+	<a
+		role="tab"
+		class="tab"
+		class:tab-active={data.pathname === `/user/${user.userId}/options/bookmark`}
+		href={`/user/${user.userId}/options/bookmark`}>
+		Bookmark
+	</a>
+	<a
+		role="tab"
+		class="tab"
+		class:tab-active={data.pathname === `/user/${user.userId}/options/import`}
+		href={`/user/${user.userId}/options/import`}>
+		Import
+	</a>
+	<a
+		role="tab"
+		class="tab"
+		class:tab-active={data.pathname === `/user/${user.userId}/options/export`}
+		href={`/user/${user.userId}/options/export`}>
+		Export
+	</a>
+	{#if data.user.isAdmin}
+		<a
+			role="tab"
+			class="tab"
+			class:tab-active={data.pathname === `/user/${user.userId}/options/admin/users`}
+			href={`/user/${user.userId}/options/admin/users`}>
+			Users
+		</a>
+		<a
+			role="tab"
+			class="tab"
+			class:tab-active={data.pathname === `/user/${user.userId}/options/admin/site`}
+			href={`/user/${user.userId}/options/admin/site`}>
+			Site
+		</a>
+	{/if}
 </div>
 
-<style>
-	.active-link {
-		font-weight: bold;
-	}
-	form li {
-		padding: 0.4rem;
-	}
-	nav {
-		margin-bottom: 1rem;
-	}
-</style>
+<div class="bg-base-100 border border-base-300 rounded-b-lg p-6">
+	{@render children?.()}
+</div>

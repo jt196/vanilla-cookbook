@@ -16,9 +16,10 @@
 	})
 </script>
 
-<div class="bookmarklet-button">
+<div class="bookmarklet-button prose max-w-none w-full md:w-2/3 lg:w-1/2">
 	<p>1. Drag This Bookmark to Your Browser Toolbar</p>
-	<a href={bookmarkletCode} role="button"><Bookmark width="25px" /></a><br />
+	<a href={bookmarkletCode} class="btn btn-primary" role="button"><Bookmark width="25px" /></a
+	><br />
 	<p>
 		2. Rename to something convenient and easy to remember, like <strong>Vanilla Import</strong>.
 		Usually, right click on it and <italic>Edit Bookmark</italic>.

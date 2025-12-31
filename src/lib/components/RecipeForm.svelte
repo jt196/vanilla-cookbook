@@ -4,10 +4,8 @@
 
 	import PhotoSectionEdit from './PhotoSectionEdit.svelte'
 	import PhotoSectionNew from './PhotoSectionNew.svelte'
-	import StarRating from '$lib/components/StarRating.svelte'
 	import Input from '$lib/components/ui/Form/Input.svelte'
 	import Textarea from '$lib/components/ui/Form/Textarea.svelte'
-	import Checkbox from '$lib/components/ui/Form/Checkbox.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 
 	// If new recipe, default set to false
@@ -49,12 +47,12 @@
 	})
 </script>
 
-<p>
+<p class="text-xs mb-2 mt-2">
 	<a target="_blank" href="https://www.markdownguide.org/basic-syntax/">Markdown</a> is supported for
 	ingredients, directions and notes.
 </p>
 
-<form onsubmit={onSubmit}>
+<form onsubmit={onSubmit} class="flex flex-col gap-5">
 	<div class="form-grid">
 		<div class="form-col">
 			{#if !editMode}
@@ -68,25 +66,35 @@
 		<!-- Two-column layout for compact fields -->
 		<div class="form-grid">
 			<div class="form-col">
-				<Input type="text" id="name" name="name" bind:value={recipe.name} label="Name" />
+				<Input
+					type="text"
+					id="name"
+					name="name"
+					bind:value={recipe.name}
+					label="Name"
+					placeholder="Pasta alla Norma" />
 
-				<Input type="text" id="source" name="source" bind:value={recipe.source} label="Source" />
+				<Input
+					type="text"
+					id="source"
+					name="source"
+					bind:value={recipe.source}
+					label="Source"
+					placeholder="Mia nonna" />
 				<Input
 					type="text"
 					id="source_url"
 					name="source_url"
+					placeholder="https://grannysrecipes.com"
 					bind:value={recipe.source_url}
 					label="Source URL" />
-				<StarRating
-					bind:rating={recipe.rating}
-					editable={true}
-					on:ratingChanged={handleRatingChange} />
-				<input type="hidden" name="rating" bind:value={recipe.rating} />
-				<Checkbox
-					name="Recipe Public"
-					bind:checked={recipe.is_public}
-					data-tooltip="Make your new recipe public"
-					label="Recipe Public" />
+				<Input
+					type="text"
+					id="image_url"
+					placeholder="https://grannysrecipes.com/norma.jpg"
+					name="image_url"
+					bind:value={recipe.image_url}
+					label="Image URL" />
 			</div>
 
 			<div class="form-col">
@@ -94,23 +102,27 @@
 					type="text"
 					id="prep_time"
 					name="prep_time"
+					placeholder="1 hour"
 					bind:value={recipe.prep_time}
 					label="Prep Time" />
 				<Input
 					type="text"
 					id="cook_time"
 					name="cook_time"
+					placeholder="30 minutes"
 					bind:value={recipe.cook_time}
 					label="Cook Time" />
 				<Input
 					type="text"
 					id="total_time"
 					name="total_time"
+					placeholder="1.5 hours"
 					bind:value={recipe.total_time}
 					label="Total Time" />
 				<Input
 					type="text"
 					id="servings"
+					placeholder="4 main course"
 					name="servings"
 					bind:value={recipe.servings}
 					label="Servings" />
@@ -118,13 +130,6 @@
 		</div>
 
 		<!-- Full-width photo section -->
-		<Input
-			type="text"
-			id="image_url"
-			name="image_url"
-			bind:value={recipe.image_url}
-			label="Image URL" />
-
 		{#if editMode}
 			<PhotoSectionEdit {recipe} {onSelectedFilesChange} />
 		{:else}
@@ -135,18 +140,35 @@
 		<Textarea
 			id="ingredients"
 			name="ingredients"
+			rows="7"
+			placeholder="500g of pasta..."
 			bind:value={recipe.ingredients}
 			label="Ingredients" />
 		<Textarea
 			id="description"
 			name="description"
+			rows="3"
+			placeholder="This pasta was a favourite of my Nonna's"
 			bind:value={recipe.description}
 			label="Description" />
-		<Textarea id="directions" name="directions" bind:value={recipe.directions} label="Directions" />
-		<Textarea id="notes" name="notes" bind:value={recipe.notes} label="Notes" />
+		<Textarea
+			id="directions"
+			placeholder="Boil the pasta according to instructions..."
+			rows="7"
+			name="directions"
+			bind:value={recipe.directions}
+			label="Directions" />
+		<Textarea
+			id="notes"
+			name="notes"
+			rows="3"
+			placeholder="Don't overcook the pasta or she'll come back to haunt you"
+			bind:value={recipe.notes}
+			label="Notes" />
 		<Textarea
 			id="nutritional_info"
 			name="nutritional_info"
+			rows="3"
 			bind:value={recipe.nutritional_info}
 			label="Nutritional Information" />
 		<Button type="submit">{buttonText}</Button>
@@ -162,17 +184,18 @@
 	.form-grid {
 		display: grid;
 		grid-template-columns: 1fr;
-		gap: 0;
+		gap: 1rem;
 		margin-bottom: 1rem;
 
 		@media (min-width: 768px) {
 			grid-template-columns: 1fr 1fr;
-			gap: 1rem;
+			gap: 1.25rem;
 		}
 	}
 
 	.form-col {
 		display: flex;
 		flex-direction: column;
+		gap: 0.75rem;
 	}
 </style>

@@ -4,7 +4,7 @@
 	import Button from '$lib/components/ui/Button.svelte'
 
 	/** @type {{isOpen?: boolean, content?: import('svelte').Snippet}} */
-	let { isOpen = $bindable(false), content, onClose, onConfirm } = $props()
+	let { isOpen = $bindable(), content, onClose, onConfirm } = $props()
 </script>
 
 <Dialog bind:isOpen {onClose}>
@@ -12,11 +12,11 @@
 		{@render content()}
 	{:else}
 		<!-- Default content if no slot is provided -->
-		<h2>Confirm Action</h2>
-		<p>Are you sure you want to proceed?</p>
+		<h3 class="font-bold text-lg">Confirm Action</h3>
+		<p class="py-4">Are you sure you want to proceed?</p>
 	{/if}
-	<footer>
-		<Button class="secondary" onclick={() => onClose && onClose()}>Cancel</Button>
+	<div class="modal-action">
+		<Button style="outline" onclick={() => onClose && onClose()}>Cancel</Button>
 		<Button onclick={() => onConfirm && onConfirm()}>Confirm</Button>
-	</footer>
+	</div>
 </Dialog>

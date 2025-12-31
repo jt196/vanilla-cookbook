@@ -148,16 +148,16 @@
 
 {#if !viewOnly}
 	<Sidebar isOpen={sidebarOpen} onClose={handleSidebarClose} onCategoryClick={handleCategoryClick}>
-		<div class="sidebar-buttons">
+		<div class="flex justify-center items-center h-24 gap-4 px-4">
 			{#if selectedCategoryUids}
 				<Button onclick={clearCategory}>Clear</Button>
 			{/if}
-			<a href="/user/{user.userId}/categories" role="button">Edit</a>
+			<a href="/user/{user.userId}/categories" class="btn btn-ghost">Edit</a>
 		</div>
-		<div class="sidebar-check">
-			<label>
-				<input type="checkbox" bind:checked={useAndLogic} />
-				{useAndLogic ? 'Using AND logic' : 'Using OR logic'}
+		<div class="px-4 mb-4">
+			<label class="label cursor-pointer justify-start gap-2">
+				<input type="checkbox" bind:checked={useAndLogic} class="checkbox checkbox-primary" />
+				<span class="label-text">{useAndLogic ? 'Using AND logic' : 'Using OR logic'}</span>
 			</label>
 		</div>
 		<CategoryTree
@@ -168,56 +168,20 @@
 	</Sidebar>
 {/if}
 
-<div class="content" class:sidebar-open={sidebarOpen} onclose={handleSidebarClose}>
-	<div class="grid">
-		<div>
-			<RecipeFilter
-				on:sort={handleSort}
-				{toggleSidebar}
-				{viewOnly}
-				useCats={publicProfile.useCats}
-				username={publicProfile.username} />
-			<Spinner visible={isLoading || !!$navigating} spinnerContent="Loading" />
-			<RecipeList
-				{filteredRecipes}
-				{data}
-				recipeFavourited={handleRecipeFavourited}
-				recipeRatingChanged={handleRecipeRatingChanged} />
-		</div>
-	</div>
+<div
+	class="transition-all duration-300"
+	class:md:ml-64={sidebarOpen && !viewOnly}
+	class:max-md:ml-0={sidebarOpen}>
+	<RecipeFilter
+		on:sort={handleSort}
+		{toggleSidebar}
+		{viewOnly}
+		useCats={publicProfile.useCats}
+		username={publicProfile.username} />
+	<Spinner visible={isLoading || !!$navigating} spinnerContent="Loading" />
+	<RecipeList
+		{filteredRecipes}
+		{data}
+		recipeFavourited={handleRecipeFavourited}
+		recipeRatingChanged={handleRecipeRatingChanged} />
 </div>
-
-<style lang="scss">
-	.content {
-		transition: margin-left 0.3s ease;
-		padding: 0; // This is just an example, adjust as needed
-
-		&.sidebar-open {
-			margin-left: 250px;
-
-			@media (max-width: 1279px) {
-				padding-left: 0; // Remove left padding when the sidebar is open
-				margin-left: 220px;
-			}
-
-			@media (max-width: 768px) {
-				margin-left: 0;
-			}
-		}
-	}
-
-	.sidebar-buttons {
-		display: flex; // Use flexbox
-		justify-content: center; // Center horizontally
-		align-items: center; // Center vertically
-		height: 95px; // Set a fixed height, adjust as needed
-		gap: 1rem;
-	}
-
-	.sidebar-check {
-		margin-left: 1rem;
-		label {
-			color: var(--pico-background-color);
-		}
-	}
-</style>
