@@ -25,6 +25,12 @@
 	let hasDefaultDensity = $derived(sanitizedIngredients.some((i) => i.usedDefaultDensity === true))
 
 	const originalSystem = $derived(measurementSystem?.system || null)
+	const isVolumetricConversion = $derived(
+		(originalSystem === 'americanVolumetric' &&
+			(selectedSystem === 'metric' || selectedSystem === 'imperial')) ||
+			(selectedSystem === 'americanVolumetric' &&
+				(originalSystem === 'metric' || originalSystem === 'imperial'))
+	)
 
 	// Determine which badges are actually used in the ingredients
 	const hasApprox = $derived(sanitizedIngredients.some((i) => i.approx))
@@ -135,7 +141,7 @@
 			class="btn btn-sm flex-1"
 			class:btn-primary={displayDryMatch}
 			class:btn-soft={!displayDryMatch}
-			disabled={displayOriginal || selectedSystem === 'americanVolumetric'}
+			disabled={displayOriginal || !isVolumetricConversion}
 			onclick={() => (displayDryMatch = !displayDryMatch)}>
 			Match
 		</button>
