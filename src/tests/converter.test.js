@@ -320,6 +320,8 @@ describe('manipulateIngredient function', () => {
 			{ name: 'flour', gramsPerCup: 120 },
 			{ name: 'sugar', gramsPerCup: 200 },
 			{ name: 'butter', gramsPerCup: 227 },
+			{ name: 'Cheese, goat', gramsPerCup: 140 },
+			{ name: 'goat', gramsPerCup: 300 },
 			{ name: 'onions', gramsPerCup: 160 },
 			{ name: 'rice', gramsPerCup: 185 },
 			{ name: 'milk', gramsPerCup: 244 }
@@ -494,6 +496,22 @@ describe('manipulateIngredient function', () => {
 		// Check match metadata
 		expect(result.matchType).toBe('word')
 		expect(result.matchedWord).toBe('onions')
+		expect(result.usedDefaultDensity).toBe(false)
+	})
+
+	it('should prefer full match over word match (goat cheese → Cheese, goat)', () => {
+		const ingredient = {
+			quantity: 1,
+			unit: 'cup',
+			ingredient: 'goat cheese'
+		}
+		const result = manipulateIngredient(ingredient, 'americanVolumetric', 'metric', mockFuse, 'eng')
+
+		expect(result.unit).toBe('gram')
+		// 1 cup goat cheese -> 140g; density should come from full "Cheese, goat"
+		expect(parseFloat(result.quantity)).toBeCloseTo(140, 0)
+		expect(result.matchType).not.toBe('word')
+		expect(result.matchedWord).toBeUndefined()
 		expect(result.usedDefaultDensity).toBe(false)
 	})
 

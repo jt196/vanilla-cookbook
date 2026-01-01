@@ -276,8 +276,8 @@ describe('Conversion API tests', () => {
 		checkConvertedIngredient({ data }, 'Beef mince', 976, 'gram') // 4 cups × 244 g/cup
 		checkConvertedIngredient({ data }, 'salt', 453.59, 'gram')
 		checkConvertedIngredient({ data }, 'instant yeast', 3.9, 'gram')
-		// Chilled water matches via word fallback (may match "chilled" → "celery" at 142 g/cup)
-		checkConvertedIngredient({ data }, 'chilled water', 142, 'gram') // 1 cup × 142 g/cup
+		// Chilled water falls back to water density
+		checkConvertedIngredient({ data }, 'chilled water', 236.6, 'gram') // 1 cup × 236.6 g/cup
 		checkConvertedIngredient({ data }, 'water', 177.4, 'gram')
 		checkConvertedIngredient({ data }, 'Kosher salt', 4.8, 'gram')
 		checkConvertedIngredient({ data }, 'Granulated sugar', 99, 'gram')

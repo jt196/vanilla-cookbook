@@ -5,17 +5,21 @@ import { foodPreferences } from '$lib/data/ingredients/vegan/vegan'
 import { getSymbol } from '$lib/submodules/recipe-ingredient-parser/src/index.js'
 import { i18nMap } from '$lib/submodules/recipe-ingredient-parser/src/i18n'
 
-// Get English units data from parser
-const { unitsData } = i18nMap.eng
+// Get units data for a given language (defaults to English)
+function getUnitsDataForLang(lang = 'eng') {
+	return i18nMap[lang]?.unitsData ?? i18nMap.eng.unitsData
+}
 
 /**
  * Finds unit data by searching through unit names.
  * @param {string} unitName - The unit name to search for
+ * @param {string} [lang='eng'] - Language key for units data
  * @returns {Object|null} Unit data with canonical name, or null if not found
  */
-function findUnitData(unitName) {
+function findUnitData(unitName, lang = 'eng') {
 	if (!unitName) return null
 
+	const unitsData = getUnitsDataForLang(lang)
 	const lowerName = unitName.toLowerCase()
 
 	// Try direct lookup first
@@ -25,7 +29,7 @@ function findUnitData(unitName) {
 
 	// Search through all unit names
 	for (const [canonical, data] of Object.entries(unitsData)) {
-		if (data.names.map(n => n.toLowerCase()).includes(lowerName)) {
+		if (data.names.map((n) => n.toLowerCase()).includes(lowerName)) {
 			return { canonical, ...data }
 		}
 	}
@@ -58,8 +62,10 @@ export const converter = (quantity, from, to = 'grams') => {
 	if (!toUnitData) return { error: `Unit unknown: ${toVal}` }
 
 	// Get conversion factors - support both weight (grams) and volume (milliliters)
-	const fromUnitGrams = fromUnitData.conversionFactor?.grams ?? fromUnitData.conversionFactor?.milliliters ?? 0
-	const toUnitGrams = toUnitData.conversionFactor?.grams ?? toUnitData.conversionFactor?.milliliters ?? 0
+	const fromUnitGrams =
+		fromUnitData.conversionFactor?.grams ?? fromUnitData.conversionFactor?.milliliters ?? 0
+	const toUnitGrams =
+		toUnitData.conversionFactor?.grams ?? toUnitData.conversionFactor?.milliliters ?? 0
 
 	if (!fromUnitGrams) return { error: `Unit unknown: ${fromVal}` }
 	if (!toUnitGrams) return { error: `Unit unknown: ${toVal}` }
@@ -260,27 +266,78 @@ function findIngredientDensity(ingredient, fuse, instructions = []) {
 		}
 	}
 
-	// Pass 3: Try individual words for multi-word ingredients
-	const words = ingredient.toLowerCase().split(/\s+/)
+	// Pass 3: Try relaxed full-name match (captures word order differences)
+	const relaxedResult = fuse.search(ingredient)
+	const relaxedMatch =
+		relaxedResult.length > 0 && relaxedResult[0].score < fuseConfig.relaxedThreshold
+			? {
+					ingredient: relaxedResult[0].item,
+					usedDefaultDensity: false,
+					matchType: 'fuzzy',
+					matchScore: relaxedResult[0].score
+				}
+			: null
+
+	// Pass 4: Try individual words for multi-word ingredients (skip short words)
+	let bestWordMatch = null
+	const words = ingredient
+		.toLowerCase()
+		.split(/\s+/)
+		.filter((word) => word.length >= fuseConfig.minWordLength)
+
+	// If relaxed match covers all significant words, prefer it immediately
+	if (
+		relaxedMatch &&
+		words.length > 1 &&
+		words.every((word) => relaxedMatch.ingredient.name.toLowerCase().includes(word))
+	) {
+		return relaxedMatch
+	}
+
+	// Pass 4b If no relaxed match, try manual unordered match against dataset (handles comma-separated names)
+	if (!relaxedMatch && words.length > 1 && Array.isArray(fuse._docs)) {
+		const unorderedMatch = fuse._docs.find(
+			(doc) =>
+				typeof doc?.name === 'string' &&
+				words.every((word) => doc.name.toLowerCase().includes(word))
+		)
+		if (unorderedMatch) {
+			return {
+				ingredient: unorderedMatch,
+				usedDefaultDensity: false,
+				matchType: 'fuzzy',
+				matchScore: fuseConfig.relaxedThreshold // approximate
+			}
+		}
+	}
+
 	if (words.length > 1) {
 		for (const word of words) {
-			// Skip short words (articles, prepositions)
-			if (word.length < fuseConfig.minWordLength) continue
-
 			const wordResult = fuse.search(word)
 			if (wordResult.length > 0 && wordResult[0].score < fuseConfig.relaxedThreshold) {
-				return {
+				const candidate = {
 					ingredient: wordResult[0].item,
 					usedDefaultDensity: false,
 					matchType: 'word',
 					matchedWord: word,
 					matchScore: wordResult[0].score
 				}
+				if (!bestWordMatch || candidate.matchScore < bestWordMatch.matchScore) {
+					bestWordMatch = candidate
+				}
 			}
 		}
 	}
 
-	// Pass 4: Use water density if no match found
+	// Choose the better of relaxed full-name vs best word match (prefer better score)
+	if (relaxedMatch && (!bestWordMatch || relaxedMatch.matchScore < bestWordMatch.matchScore)) {
+		return relaxedMatch
+	}
+	if (bestWordMatch) {
+		return bestWordMatch
+	}
+
+	// Pass 5: Fallback - Use water density if no match found
 	return {
 		ingredient: { name: 'Water (default)', gramsPerCup: 236.588 }, // 1g/ml → 236.588g per cup
 		usedDefaultDensity: true,
@@ -532,7 +589,7 @@ export function normalizeIngredient(ingredientObj, options = {}, lang = 'eng') {
 	const { quantity, unit } = ingredientObj
 	const qtyNum =
 		typeof quantity === 'string' ? Number(quantity) : typeof quantity === 'number' ? quantity : null
-	const unitData = findUnitData(unit)
+	const unitData = findUnitData(unit, lang)
 
 	// If unit is unknown, return as-is with optional fallback handling
 	if (!unitData) return { ...ingredientObj }
@@ -590,6 +647,7 @@ export function normalizeIngredient(ingredientObj, options = {}, lang = 'eng') {
  */
 export const manipulateIngredient = (ingredientObj, fromSystem, toSystem, fuse, lang) => {
 	const { quantity, unit, ingredient, instructions } = ingredientObj
+	let matchResult = null
 
 	// Early return: No unit provided
 	if (!unit) {
@@ -597,8 +655,27 @@ export const manipulateIngredient = (ingredientObj, fromSystem, toSystem, fuse, 
 	}
 
 	// Normalize unit to standard form
-	const fromUnitData = findUnitData(unit)
+	const fromUnitData = findUnitData(unit, lang)
 	const fromUnit = fromUnitData?.canonical
+	const unitsData = getUnitsDataForLang(lang)
+	const americanVolumetricUnits = new Set(
+		Object.entries(unitsData)
+			.filter(
+				([, data]) =>
+					data.unitType === 'volume' &&
+					data.skipConversion === false &&
+					['americanVolumetric', 'imperial', null].includes(data.system)
+			)
+			.map(([canonical]) => canonical)
+	)
+	const requiresDensityLookup =
+		toSystem === 'americanVolumetric' ||
+		(fromSystem === 'americanVolumetric' && americanVolumetricUnits.has(fromUnit))
+
+	// If coming from americanVolumetric but using weight units (e.g., ounce), mark density as unused
+	if (!requiresDensityLookup && fromSystem === 'americanVolumetric') {
+		matchResult = { usedDefaultDensity: false }
+	}
 
 	// Pathway 1: Metric volumetric → americanVolumetric (direct volume conversion)
 	if (toSystem === 'americanVolumetric' && (fromUnit === 'milliliter' || fromUnit === 'liter')) {
@@ -616,10 +693,10 @@ export const manipulateIngredient = (ingredientObj, fromSystem, toSystem, fuse, 
 	}
 
 	// For conversions involving americanVolumetric, we need ingredient density
-	if (toSystem === 'americanVolumetric' || fromSystem === 'americanVolumetric') {
+	if (requiresDensityLookup) {
 		// Look up ingredient density (with water as fallback and multi-word support)
 		// Pass instructions for improved matching (e.g., "sliced onions" might match "onions, sliced")
-		const matchResult = findIngredientDensity(ingredient, fuse, instructions)
+		matchResult = findIngredientDensity(ingredient, fuse, instructions)
 		const dryIngredient = matchResult.ingredient
 		const usedDefaultDensity = matchResult.usedDefaultDensity
 
@@ -687,8 +764,31 @@ export const manipulateIngredient = (ingredientObj, fromSystem, toSystem, fuse, 
 	}
 
 	// Pathway 5: Standard weight conversions (fallback)
-	return convertStandardWeightUnits(ingredientObj, quantity, fromUnit, toSystem, lang)
+	const standardResult = convertStandardWeightUnits(
+		ingredientObj,
+		quantity,
+		fromUnit,
+		toSystem,
+		lang
+	)
+	if (standardResult?.error) return standardResult
+
+	// Preserve match metadata if we already looked it up (e.g., ounce → gram path)
+	if (matchResult) {
+		return {
+			...standardResult,
+			matchType: standardResult.matchType ?? matchResult.matchType,
+			matchedWord: standardResult.matchedWord ?? matchResult.matchedWord,
+			matchScore: standardResult.matchScore ?? matchResult.matchScore,
+			usedDefaultDensity: standardResult.usedDefaultDensity ?? matchResult.usedDefaultDensity
+		}
+	}
+
+	return standardResult
 }
+
+// Exported for testing
+export { findIngredientDensity }
 
 /**
  * Converts temperatures in an array of direction strings from one system to another.
