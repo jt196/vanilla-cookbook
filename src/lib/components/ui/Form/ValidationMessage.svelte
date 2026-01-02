@@ -14,18 +14,21 @@
 		isError = false,
 		/**
 		 * @type {boolean}
-		 * Hide when not showing (no space taken, causes layout shift)
+		 * Force hide even when a message exists
 		 */
 		hidden = false
 	} = $props()
 
-	const typeClass = $derived(
-		isValid ? 'text-success' : isError ? 'text-error' : 'text-info'
-	)
+	const typeClass = $derived(isValid ? 'text-success' : isError ? 'text-error' : 'text-info')
+	const shouldHide = $derived(hidden || !message)
 </script>
 
 {#if message}
-	<p class="validator-hint {typeClass}" class:hidden>
+	<div
+		class="validator-hint {typeClass}"
+		class:hidden={shouldHide}
+		style:visibility={shouldHide ? 'hidden' : 'visible'}
+		role="alert">
 		{message}
-	</p>
+	</div>
 {/if}

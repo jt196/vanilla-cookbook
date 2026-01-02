@@ -2,8 +2,10 @@
 	import { goto } from '$app/navigation'
 	import Spinner from '$lib/components/Spinner.svelte'
 	import { systems, languages } from '$lib/utils/config.js'
+	import { validatePasswords, validateEmail } from '$lib/utils/security.js'
 	import Input from '$lib/components/ui/Form/Input.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
+	import ValidationMessage from '$lib/components/ui/Form/ValidationMessage.svelte'
 
 	let { data } = $props()
 	const { dbSeed } = data
@@ -14,9 +16,26 @@
 	let adminLanguage = $state('eng')
 	let adminEmail = $state('')
 	let adminPassword = $state('')
+	let adminPasswordConfirm = $state('')
 	let recipeSeed = $state('true')
 
 	let spinnerVisible = $state(false)
+
+	let emailValidation = $derived(adminEmail ? validateEmail(adminEmail) : null)
+	let passwordValidation = $derived(
+		adminPassword || adminPasswordConfirm
+			? validatePasswords(adminPassword, adminPasswordConfirm || adminPassword)
+			: null
+	)
+
+	let isSubmitDisabled = $derived(
+		!adminName ||
+			!adminUsername ||
+			!adminEmail ||
+			(emailValidation && !emailValidation.isValid) ||
+			!adminPassword ||
+			(passwordValidation && !passwordValidation.isValid)
+	)
 
 	async function handleSubmit(event) {
 		event.preventDefault()
@@ -85,14 +104,32 @@
 						bind:value={adminEmail}
 						name="email"
 						required />
-					<Input
-						type="password"
-						id="password"
-						placeholder="123grigsyruleZ"
-						label="Password"
-						bind:value={adminPassword}
-						name="password"
-						required />
+					<ValidationMessage
+						message={emailValidation?.message}
+						isValid={emailValidation?.isValid}
+						isError={!emailValidation?.isValid}
+						hidden={!emailValidation?.message} />
+				<Input
+					type="password"
+					id="password"
+					placeholder="123grigsyruleZ"
+					label="Password"
+					bind:value={adminPassword}
+					name="password"
+					required />
+				<Input
+					type="password"
+					id="passwordConfirm"
+					placeholder="123grigsyruleZ"
+					label="Confirm Password"
+					bind:value={adminPasswordConfirm}
+					name="passwordConfirm"
+					required />
+				<ValidationMessage
+					message={passwordValidation?.message}
+					isValid={passwordValidation?.isValid}
+					isError={!passwordValidation?.isValid}
+					hidden={!passwordValidation?.message} />
 
 					<label class="flex items-center gap-2 cursor-pointer">
 						<input type="checkbox" bind:checked={recipeSeed} class="checkbox checkbox-primary" />
@@ -122,7 +159,9 @@
 					</div>
 
 					<div class="card-actions justify-end mt-6">
-						<Button type="submit" class="w-full">Create Admin</Button>
+						<Button type="submit" class="w-full" disabled={isSubmitDisabled}>
+							Create Admin
+						</Button>
 					</div>
 				</form>
 			</div>

@@ -1,6 +1,6 @@
 <script>
 	import { enhance } from '$app/forms'
-	import { validatePassword } from '$lib/utils/security.js'
+	import { validatePasswords, validateEmail } from '$lib/utils/security.js'
 	import FeedbackMessage from '$lib/components/FeedbackMessage.svelte'
 	import ValidationMessage from '$lib/components/ui/Form/ValidationMessage.svelte'
 	import Input from '$lib/components/ui/Form/Input.svelte'
@@ -22,25 +22,21 @@
 	let passwordConfirm = $state('')
 	let seedRecipes = $state(true)
 
-	// Email validation - simple but effective regex
-	let emailValid = $derived(email.length === 0 || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+	// Email validation
+	let emailValidation = $derived(email ? validateEmail(email) : null)
 
 	// Password validation
-	let passwordValidation = $derived(password.length > 0 ? validatePassword(password) : null)
-
-	// Password match validation
-	let passwordsMismatch = $derived(
-		password.length > 0 && passwordConfirm.length > 0 && password !== passwordConfirm
+	let passwordValidation = $derived(
+		password || passwordConfirm ? validatePasswords(password, passwordConfirm) : null
 	)
 
 	// Disable submit if any validation fails
 	let isSubmitDisabled = $derived(
 		!username ||
 			!email ||
-			!emailValid ||
+			(emailValidation && !emailValidation.isValid) ||
 			!password ||
 			!passwordConfirm ||
-			passwordsMismatch ||
 			(passwordValidation && !passwordValidation.isValid)
 	)
 </script>
@@ -78,9 +74,10 @@
 						label="Email"
 						required />
 					<ValidationMessage
-						message={email.length > 0 && !emailValid ? 'Please enter a valid email address.' : null}
-						isError={true}
-						hidden={true} />
+						message={emailValidation?.message}
+						isValid={emailValidation?.isValid}
+						isError={!emailValidation?.isValid}
+						hidden={!emailValidation?.message} />
 				</div>
 
 				<div>
@@ -95,7 +92,7 @@
 					<ValidationMessage
 						message={passwordValidation?.message}
 						isValid={passwordValidation?.isValid}
-						hidden={true} />
+						hidden={!passwordValidation?.message} />
 				</div>
 
 				<div>
@@ -107,17 +104,19 @@
 						label="Confirm Password"
 						required />
 					<ValidationMessage
-						message={passwordsMismatch ? "Passwords don't match!" : null}
-						isError={true}
-						hidden={true} />
+						message={passwordValidation?.message}
+						isError={!passwordValidation?.isValid}
+						isValid={passwordValidation?.isValid}
+						hidden={!passwordValidation?.message} />
 				</div>
 
 				<Checkbox
 					name="seedRecipes"
 					bind:checked={seedRecipes}
-					label="Seed my account with 3 example recipes"
+					legend="Seed Recipes"
 					size="sm"
-					color="primary" />
+					color="primary">
+					Seed my account with 3 example recipes</Checkbox>
 
 				<div class="card-actions justify-end mt-6">
 					<Button type="submit" disabled={isSubmitDisabled} class="w-full">Register</Button>

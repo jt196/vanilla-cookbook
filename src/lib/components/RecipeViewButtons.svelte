@@ -69,14 +69,14 @@
 	</a>
 	<a
 		href="/recipe/{recipe?.uid}/images/"
-		class="btn btn-soft btn-accent btn-sm tooltip"
+		class="btn btn-soft btn-primary btn-sm tooltip"
 		data-tip="Edit Recipe Images"
 		data-testid="edit-button">
 		<Images width="20px" height="20px" fill="currentColor" />
 	</a>
 	<button
 		onclick={(event) => handlePublic(recipe?.uid)}
-		class="btn btn-soft btn-warning btn-sm tooltip"
+		class="btn btn-soft btn-primary btn-sm tooltip"
 		class:btn-success={recipe?.is_public}
 		class:opacity-60={!recipe?.is_public}
 		data-tip={recipe?.is_public ? 'Private Recipe?' : 'Public Recipe?'}>
@@ -84,16 +84,16 @@
 	</button>
 	<button
 		onclick={(event) => handleFavourite(recipe?.uid)}
-		class="btn btn-soft btn-secondary btn-sm tooltip"
-		class:btn-error={recipe?.on_favorites}
+		class="btn btn-soft btn-primary btn-sm tooltip"
+		class:text-error={recipe?.on_favorites}
 		class:opacity-60={!recipe?.on_favorites}
 		data-tip={recipe?.on_favorites ? 'Unfavourite Recipe' : 'Favourite Recipe'}>
 		<Favourite favourite={recipe?.on_favorites} width="20px" height="20px" fill="currentColor" />
 	</button>
 	<button
 		onclick={() => handleLog(recipe?.uid)}
-		class="btn btn-soft btn-success btn-sm tooltip"
-		class:btn-success={logs?.length > 0}
+		class="btn btn-soft btn-primary btn-sm tooltip"
+		class:text-success={logs?.length > 0}
 		class:opacity-60={logs?.length === 0}
 		data-tip="Mark Recipe Cooked Today"
 		data-testid="check-button">
@@ -102,7 +102,7 @@
 	<button
 		onclick={() => handleDelete(recipe?.uid)}
 		data-testid="delete-button"
-		class="btn btn-soft btn-sm tooltip btn-error"
+		class="btn btn-soft btn-primary btn-sm tooltip"
 		data-tip="Delete Recipe">
 		<Delete width="20px" height="20px" fill="currentColor" />
 	</button>

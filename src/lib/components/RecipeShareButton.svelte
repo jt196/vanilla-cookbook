@@ -70,7 +70,7 @@
 	}
 </script>
 
-<button onclick={share} class="btn btn-soft btn-sm tooltip" data-tip="Share Recipe">
+<button onclick={share} class="btn btn-soft btn-sm tooltip btn-primary" data-tip="Share Recipe">
 	<Share width="20px" height="20px" fill="currentColor" />
 </button>
 

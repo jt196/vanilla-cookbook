@@ -2,7 +2,7 @@
 	import Edit from '$lib/components/svg/Edit.svelte'
 	import Delete from '$lib/components/svg/Delete.svelte'
 	import New from '$lib/components/svg/New.svelte'
-	import { validatePassword } from '$lib/utils/security.js'
+	import { validatePasswords, validateEmail } from '$lib/utils/security.js'
 	import { goto } from '$app/navigation'
 	import TrueFalse from '$lib/components/TrueFalse.svelte'
 	import FeedbackMessage from '$lib/components/FeedbackMessage.svelte'
@@ -23,19 +23,21 @@
 	// If the logged in user is an admin, this will return the id
 	// If the page is attempted access by a non-admin, it'll redirect
 	let currentAdminUserId = user.adminId
-	let isDialogOpen = $state(false) // dialog is initially closed
-	let isEditMode = $state(false)
-	let password = $state('')
-	let passwordConfirm = $state('')
-	let userFeedback = $state('')
+let isDialogOpen = $state(false) // dialog is initially closed
+let isEditMode = $state(false)
+let password = $state('')
+let passwordConfirm = $state('')
+let userFeedback = $state('')
 
-	let editingUser = $state({
-		id: null,
-		username: '',
-		email: '',
-		isAdmin: false,
-		userSeed: true
-	})
+let editingUser = $state({
+	id: null,
+	username: '',
+	email: '',
+	isAdmin: false,
+	userSeed: true
+})
+
+let emailValidation = $derived(editingUser.email ? validateEmail(editingUser.email) : null)
 
 	function openCreateDialog() {
 		isEditMode = false
@@ -70,11 +72,19 @@
 	async function handleSubmit() {
 		const endpoint = isEditMode ? `/api/user/${editingUser.id}/admin` : '/api/user/'
 		const method = isEditMode ? 'PUT' : 'POST'
-		if (passwordFeedback) {
-			if (!passwordFeedback.isValid) {
-				return // exit if password is not valid
+		// Require password on create; optional on edit
+		if (!isEditMode && !password) {
+			userFeedback = 'Password is required.'
+			return
+		}
+
+		// Validate password if provided
+		if (password) {
+			if (!passwordValidation?.isValid) {
+				userFeedback = passwordValidation?.message ?? 'Invalid password.'
+				return
 			}
-			editingUser = { password, ...editingUser }
+			editingUser = { ...editingUser, password }
 		}
 
 		const response = await fetch(endpoint, {
@@ -138,13 +148,22 @@
 	}
 	let adminCount = $derived(users.filter((user) => user.isAdmin).length)
 
-	// Password validation
-	let passwordValidation = $derived(password.length > 0 ? validatePassword(password) : null)
-
-	// Password match validation
-	let passwordsMismatch = $derived(
-		password.length > 0 && passwordConfirm.length > 0 && password !== passwordConfirm
+	// Password validation (single message)
+	let passwordValidation = $derived(
+		password || passwordConfirm ? validatePasswords(password, passwordConfirm) : null
 	)
+
+	// Disable submit if any validation fails
+let isSubmitDisabled = $derived(() => {
+	const baseInvalid =
+		!editingUser.username ||
+		!editingUser.email ||
+		(emailValidation && !emailValidation.isValid)
+	const hasPasswordInput = password || passwordConfirm
+	const passwordInvalid = hasPasswordInput && passwordValidation && !passwordValidation.isValid
+		const createMissingPassword = !isEditMode && !hasPasswordInput
+		return baseInvalid || passwordInvalid || createMissingPassword
+	})
 </script>
 
 <button class="btn btn-primary tooltip mb-3" data-tip="New User" onclick={openCreateDialog}>
@@ -209,20 +228,22 @@
 <Dialog bind:isOpen={isDialogOpen}>
 	<div class="flex flex-col gap-4 w-full">
 		<h3 class="font-bold text-lg mb-4">{isEditMode ? 'Edit User' : 'Create User'}</h3>
-		<Input
-			type="text"
-			id="username"
-			name="username"
-			label="Username"
+	<Input
+		type="text"
+		id="username"
+		name="username"
+		label="Username"
 			class="tooltip"
 			data-tip="Username is not editable"
 			disabled={isEditMode}
 			bind:value={editingUser.username} />
 		<Input type="email" id="email" name="email" label="Email" bind:value={editingUser.email} />
-		<Input type="password" id="password" name="password" label="Password" bind:value={password} />
 		<ValidationMessage
-			message={passwordValidation?.message}
-			isValid={passwordValidation?.isValid} />
+			message={emailValidation?.message}
+			isValid={emailValidation?.isValid}
+			isError={!emailValidation?.isValid}
+			hidden={!emailValidation?.message} />
+		<Input type="password" id="password" name="password" label="Password" bind:value={password} />
 		<Input
 			type="password"
 			id="passwordConfirm"
@@ -230,27 +251,33 @@
 			label="Confirm Password"
 			bind:value={passwordConfirm} />
 		<ValidationMessage
-			message={passwordsMismatch ? "Passwords don't match!" : null}
-			isError={true} />
+			message={passwordValidation?.message}
+			isValid={passwordValidation?.isValid}
+			isError={!passwordValidation?.isValid}
+			hidden={!passwordValidation?.message} />
 		{#if !isEditMode || !editingUser.isAdmin || adminCount > 1}
 			<Checkbox
 				name="Admin"
 				bind:checked={editingUser.isAdmin}
-				label="Admin"
+				legend="Admin"
 				size="sm"
-				color="primary" />
+				color="primary">
+				Give user admin rights
+			</Checkbox>
 		{/if}
 		{#if !isEditMode}
 			<Checkbox
 				name="Seed Recipes"
 				bind:checked={editingUser.userSeed}
-				label="Seed Recipes"
+				legend="Seed Recipes"
 				size="sm"
-				color="neutral" />
+				color="neutral">Add three sample recipes to account</Checkbox>
 		{/if}
 		<div class="modal-action">
 			<Button onclick={() => (isDialogOpen = false)} style="outline">Cancel</Button>
-			<Button onclick={handleSubmit}>{isEditMode ? 'Update' : 'Create'}</Button>
+			<Button onclick={handleSubmit} disabled={isSubmitDisabled}>
+				{isEditMode ? 'Update' : 'Create'}
+			</Button>
 		</div>
 	</div>
 </Dialog>

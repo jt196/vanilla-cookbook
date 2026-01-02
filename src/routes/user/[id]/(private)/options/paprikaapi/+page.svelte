@@ -289,13 +289,12 @@
 				</div>
 				<p>Recipes in File: {recFile}</p>
 				<p>Recipes in DB: {recDb}</p>
-				<div class="tooltip" data-tip="Make your imported recipes public">
 					<Checkbox
 						name="Recipes Public"
 						bind:checked={isPublic}
 						legend="Recipes Public"
 						size="sm"
-						color="primary" />
+						color="primary">Make your imported recipes public</Checkbox>
 				</div>
 				<Button
 					loading={importRecBusy}
