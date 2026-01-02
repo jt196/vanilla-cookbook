@@ -3,27 +3,28 @@
 	import Delete from '$lib/components/svg/Delete.svelte'
 	import Edit from '$lib/components/svg/Edit.svelte'
 	import { goto } from '$app/navigation'
-	import {
-		addRecipeLog,
-		changeRecipeFavourite,
-		changeRecipePublic,
-		deleteRecipeById
-	} from '$lib/utils/crud'
-	import Favourite from './svg/Favourite.svelte'
-	import Check from './svg/Check.svelte'
-	import RecipeShareButton from './RecipeShareButton.svelte'
-	import Public from './svg/Public.svelte'
-	import Button from '$lib/components/ui/Button.svelte'
+import {
+	addRecipeLog,
+	changeRecipeFavourite,
+	changeRecipePublic,
+	deleteRecipeById
+} from '$lib/utils/crud'
+import Favourite from './svg/Favourite.svelte'
+import Check from './svg/Check.svelte'
+import RecipeShareButton from './RecipeShareButton.svelte'
+import Public from './svg/Public.svelte'
+import Button from '$lib/components/ui/Button.svelte'
+import ConfirmationDialog from '$lib/components/ConfirmationDialog.svelte'
 
 	/** @type {{recipe: any, updateLogs: any, favRecipe: any}} */
-	let { recipe, updateLogs, favRecipe, pubRecipe, logs, viewOnly } = $props()
+let { recipe, updateLogs, favRecipe, pubRecipe, logs, viewOnly } = $props()
+let showDeleteConfirm = $state(false)
+let pendingDeleteUid = $state(null)
 
-	async function handleDelete(uid) {
-		const success = await deleteRecipeById(uid)
-		if (success) {
-			goto('/')
-		}
-	}
+async function handleDelete(uid) {
+	pendingDeleteUid = uid
+	showDeleteConfirm = true
+}
 
 	async function handleFavourite(uid) {
 		console.log('Handle favourites button clicked for uid: ' + uid)
@@ -107,3 +108,20 @@
 		<Delete width="20px" height="20px" fill="currentColor" />
 	</button>
 {/if}
+
+<ConfirmationDialog
+	bind:isOpen={showDeleteConfirm}
+	onClose={() => (showDeleteConfirm = false)}
+	onConfirm={async () => {
+		if (!pendingDeleteUid) return
+		const success = await deleteRecipeById(pendingDeleteUid)
+		showDeleteConfirm = false
+		if (success) {
+			goto('/')
+		}
+	}}>
+	{#snippet content()}
+		<h3 class="font-bold text-lg">Delete Recipe</h3>
+		<p class="py-4">Are you sure you want to delete this recipe?</p>
+	{/snippet}
+</ConfirmationDialog>

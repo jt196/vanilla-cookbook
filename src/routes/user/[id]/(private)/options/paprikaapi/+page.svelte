@@ -13,6 +13,7 @@
 	import Input from '$lib/components/ui/Form/Input.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Checkbox from '$lib/components/ui/Form/Checkbox.svelte'
+	import ConfirmationDialog from '$lib/components/ConfirmationDialog.svelte'
 
 	/** @type {{data: any}} */
 	let { data } = $props()
@@ -35,6 +36,8 @@
 	let importRecBusy = $state(false)
 	let downloadCatBusy = $state(false)
 	let downloadRecBusy = $state(false)
+	let showDeleteConfirm = $state(false)
+	let pendingFilename = $state(null)
 
 	let isPublic = $state(false)
 
@@ -128,9 +131,14 @@
 	}
 
 	async function removeFile(filename) {
-		if (!confirm('Are you sure you want to remove this file?')) {
-			return
-		}
+		pendingFilename = filename
+		showDeleteConfirm = true
+	}
+
+	async function confirmRemoveFile() {
+		const filename = pendingFilename
+		showDeleteConfirm = false
+		if (!filename) return
 		const response = await fetch('/api/import/paprika/file', {
 			method: 'DELETE',
 			body: JSON.stringify({ filename: filename }) // or whatever filename you want to delete
@@ -306,6 +314,16 @@
 		{/if}
 	</div>
 </div>
+
+<ConfirmationDialog
+	bind:isOpen={showDeleteConfirm}
+	onClose={() => (showDeleteConfirm = false)}
+	onConfirm={confirmRemoveFile}>
+	{#snippet content()}
+		<h3 class="font-bold text-lg">Remove File</h3>
+		<p class="py-4">Are you sure you want to remove this file?</p>
+	{/snippet}
+</ConfirmationDialog>
 
 <style lang="scss">
 	.feedback {

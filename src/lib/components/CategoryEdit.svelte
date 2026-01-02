@@ -5,6 +5,7 @@
 	import { dndzone, SHADOW_PLACEHOLDER_ITEM_ID } from 'svelte-dnd-action'
 	import Ellipsis from './svg/Ellipsis.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
+	import ConfirmationDialog from '$lib/components/ConfirmationDialog.svelte'
 
 	/** @type {{nodes?: any, node: any}} */
 	let { nodes = $bindable({}), node = $bindable() } = $props();
@@ -35,6 +36,8 @@
 
 	let editingId = $state(null)
 	let editedName = $state('')
+	let showDeleteConfirm = $state(false)
+	let pendingDeleteId = $state(null)
 
 	function startEditing(uid, name) {
 		editingId = uid
@@ -67,28 +70,8 @@
 	}
 
 	async function deleteCategory(uid) {
-		if (!confirm('Are you sure you want to delete this category?')) {
-			return
-		}
-		try {
-			const response = await fetch(`/api/recipe/categories/${uid}`, {
-				method: 'DELETE',
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			})
-
-			if (!response.ok) {
-				const errorData = await response.json()
-				throw new Error(errorData.message || 'Error deleting category')
-			}
-
-			// Remove the category from the local state or refresh the list
-			delete nodes[uid]
-			nodes = { ...nodes } // Trigger reactivity
-		} catch (error) {
-			console.error('Error deleting category:', error.message)
-		}
+		pendingDeleteId = uid
+		showDeleteConfirm = true
 	}
 
 	function handleDndFinalize(e) {
@@ -155,6 +138,38 @@
 		<Ellipsis width="20px" fill="var(--pico-secondary)" />
 	</Button>
 </div>
+
+<ConfirmationDialog
+	bind:isOpen={showDeleteConfirm}
+	onClose={() => (showDeleteConfirm = false)}
+	onConfirm={async () => {
+		const uid = pendingDeleteId
+		showDeleteConfirm = false
+		if (!uid) return
+		try {
+			const response = await fetch(`/api/recipe/categories/${uid}`, {
+				method: 'DELETE',
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			})
+
+			if (!response.ok) {
+				const errorData = await response.json()
+				throw new Error(errorData.message || 'Error deleting category')
+			}
+
+			delete nodes[uid]
+			nodes = { ...nodes }
+		} catch (error) {
+			console.error('Error deleting category:', error.message)
+		}
+	}}>
+	{#snippet content()}
+		<h3 class="font-bold text-lg">Delete Category</h3>
+		<p class="py-4">Are you sure you want to delete this category?</p>
+	{/snippet}
+</ConfirmationDialog>
 
 <section
 	use:dndzone={{ items: node.items || [], flipDurationMs, centreDraggedOnCursor: true }}

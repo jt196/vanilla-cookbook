@@ -8,6 +8,7 @@
 	import Sidebar from '$lib/components/Sidebar.svelte'
 	import Burger from '$lib/components/svg/Burger.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
+	import ConfirmationDialog from '$lib/components/ConfirmationDialog.svelte'
 
 	/**
 	 * The page data type.
@@ -26,6 +27,7 @@
 	let recipe = $state(data?.recipe ?? {})
 	let allCategories = $state(data?.allCategories ?? [])
 	let user = $state(data?.user ?? {})
+	let showDeleteConfirm = $state(false)
 
 	$effect(() => {
 		recipeCategories =
@@ -41,10 +43,8 @@
 	}
 
 	async function handleDelete(uid) {
-		const success = await deleteRecipeById(uid)
-		if (success) {
-			goto('/')
-		}
+		if (!uid) return
+		showDeleteConfirm = true
 	}
 
 	async function handleSubmit(event) {
@@ -132,6 +132,22 @@
 		onSelectedFilesChange={handleSelectedFilesChange}
 		onSubmit={handleSubmit} />
 </div>
+
+<ConfirmationDialog
+	bind:isOpen={showDeleteConfirm}
+	onClose={() => (showDeleteConfirm = false)}
+	onConfirm={async () => {
+		const success = await deleteRecipeById(recipe?.uid)
+		showDeleteConfirm = false
+		if (success) {
+			goto('/')
+		}
+	}}>
+	{#snippet content()}
+		<h3 class="font-bold text-lg">Delete Recipe</h3>
+		<p class="py-4">Are you sure you want to delete this recipe?</p>
+	{/snippet}
+</ConfirmationDialog>
 
 <style lang="scss">
 	.recipe-container {

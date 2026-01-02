@@ -21,11 +21,6 @@
 	let struckThrough = $state(false)
 	let isHighlighted = $state(false)
 	let showAlternatives = $state(false)
-	const systemMarkers = {
-		metric: '¹',
-		imperial: '²',
-		americanVolumetric: '³'
-	}
 
 	// Step 2: Modify handleClick to toggle the struckThrough state
 	function handleClick() {

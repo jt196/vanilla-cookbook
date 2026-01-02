@@ -7,25 +7,23 @@
  * @returns {Promise<boolean>} A promise that resolves to true if the recipe was deleted successfully, or false if not.
  */
 export async function deleteRecipeById(uid) {
-	if (confirm('Are you sure you want to delete this recipe?')) {
-		try {
-			const response = await fetch(`/api/recipe/${uid}`, {
-				method: 'DELETE',
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			})
-
-			if (!response.ok) {
-				const errorData = await response.json()
-				throw new Error(errorData.message || 'Error deleting recipe')
+	try {
+		const response = await fetch(`/api/recipe/${uid}`, {
+			method: 'DELETE',
+			headers: {
+				'Content-Type': 'application/json'
 			}
+		})
 
-			return true
-		} catch (error) {
-			console.error('Error deleting recipe:', error.message)
-			return false
+		if (!response.ok) {
+			const errorData = await response.json()
+			throw new Error(errorData.message || 'Error deleting recipe')
 		}
+
+		return true
+	} catch (error) {
+		console.error('Error deleting recipe:', error.message)
+		return false
 	}
 }
 
@@ -183,25 +181,23 @@ export async function createRecipe(recipe) {
  * @returns {Promise<boolean>} A promise that resolves to true if the photo was deleted successfully, or false if not.
  */
 export async function deletePhotoById(id) {
-	if (confirm('Are you sure you want to delete this photo?')) {
-		try {
-			const response = await fetch(`/api/recipe/image/${id}`, {
-				method: 'DELETE',
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			})
-
-			if (!response.ok) {
-				const errorData = await response.json()
-				throw new Error(errorData.message || 'Error deleting photo')
+	try {
+		const response = await fetch(`/api/recipe/image/${id}`, {
+			method: 'DELETE',
+			headers: {
+				'Content-Type': 'application/json'
 			}
+		})
 
-			return true
-		} catch (error) {
-			console.error('Error deleting photo:', error.message)
-			return false
+		if (!response.ok) {
+			const errorData = await response.json()
+			throw new Error(errorData.message || 'Error deleting photo')
 		}
+
+		return true
+	} catch (error) {
+		console.error('Error deleting photo:', error.message)
+		return false
 	}
 }
 

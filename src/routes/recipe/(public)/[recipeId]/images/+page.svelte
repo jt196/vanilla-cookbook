@@ -4,6 +4,7 @@
 
 	import { deletePhotoById, updatePhotos } from '$lib/utils/crud'
 	import RecipeImagesItem from '$lib/components/RecipeImagesItem.svelte'
+	import ConfirmationDialog from '$lib/components/ConfirmationDialog.svelte'
 
 	
 	/** @type {{data: PageData}} */
@@ -14,6 +15,8 @@
 	let photos = $state(data?.recipe?.photos ?? []);
 
 	let filteredPhotos = $state([]);
+	let showDeleteConfirm = $state(false)
+	let pendingPhotoId = $state(null)
 
 	$effect(() => {
 		filteredPhotos = photos
@@ -37,29 +40,8 @@
 	}
 
 	async function handleDeletePhoto(photoId) {
-		try {
-			// Determine if the photo being deleted is the main photo.
-			const isMainPhotoBeingDeleted = filteredPhotos.some(
-				(photo) => photo.id === photoId && photo.isMain
-			)
-			// Delete photo
-			await deletePhotoById(photoId)
-			// Optionally, remove the photo from the local state
-			filteredPhotos = filteredPhotos.filter((p) => p.id !== photoId)
-
-			// If the main photo was deleted, choose a new main photo.
-			if (isMainPhotoBeingDeleted) {
-				// Find the next photo where url is null to be the main photo.
-				const newMainPhoto = filteredPhotos[0]
-
-				// If a new main photo was found, set it.
-				if (newMainPhoto) {
-					handleSetMainPhoto(newMainPhoto.id)
-				}
-			}
-		} catch (error) {
-			console.error('Error deleting photo:', error.message)
-		}
+		pendingPhotoId = photoId
+		showDeleteConfirm = true
 	}
 
 	async function saveEditedNotes(photoId, notes) {
@@ -74,6 +56,28 @@
 			if (!success) {
 				console.error('Failed to update photo notes.')
 			}
+		}
+	}
+
+	async function confirmDelete() {
+		const photoId = pendingPhotoId
+		showDeleteConfirm = false
+		if (!photoId) return
+		try {
+			const isMainPhotoBeingDeleted = filteredPhotos.some(
+				(photo) => photo.id === photoId && photo.isMain
+			)
+			const success = await deletePhotoById(photoId)
+			if (!success) return
+			filteredPhotos = filteredPhotos.filter((p) => p.id !== photoId)
+			if (isMainPhotoBeingDeleted) {
+				const newMainPhoto = filteredPhotos[0]
+				if (newMainPhoto) {
+					handleSetMainPhoto(newMainPhoto.id)
+				}
+			}
+		} catch (error) {
+			console.error('Error deleting photo:', error.message)
 		}
 	}
 </script>
@@ -106,3 +110,13 @@
 		{/if}
 	</div>
 </div>
+
+<ConfirmationDialog
+	bind:isOpen={showDeleteConfirm}
+	onClose={() => (showDeleteConfirm = false)}
+	onConfirm={confirmDelete}>
+	{#snippet content()}
+		<h3 class="font-bold text-lg">Delete Photo</h3>
+		<p class="py-4">Are you sure you want to delete this photo?</p>
+	{/snippet}
+</ConfirmationDialog>

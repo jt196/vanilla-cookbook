@@ -16,6 +16,7 @@
 	import TableBody from '$lib/components/ui/Table/TableBody.svelte'
 	import TableRow from '$lib/components/ui/Table/TableRow.svelte'
 	import TableCell from '$lib/components/ui/Table/TableCell.svelte'
+	import ConfirmationDialog from '$lib/components/ConfirmationDialog.svelte'
 
 	/** @type {{data: any}} */
 	let { data } = $props()
@@ -23,11 +24,11 @@
 	// If the logged in user is an admin, this will return the id
 	// If the page is attempted access by a non-admin, it'll redirect
 	let currentAdminUserId = user.adminId
-let isDialogOpen = $state(false) // dialog is initially closed
-let isEditMode = $state(false)
-let password = $state('')
-let passwordConfirm = $state('')
-let userFeedback = $state('')
+	let isDialogOpen = $state(false) // dialog is initially closed
+	let isEditMode = $state(false)
+	let password = $state('')
+	let passwordConfirm = $state('')
+	let userFeedback = $state('')
 
 let editingUser = $state({
 	id: null,
@@ -38,6 +39,8 @@ let editingUser = $state({
 })
 
 let emailValidation = $derived(editingUser.email ? validateEmail(editingUser.email) : null)
+	let showDeleteConfirm = $state(false)
+	let pendingDeleteId = $state(null)
 
 	function openCreateDialog() {
 		isEditMode = false
@@ -122,12 +125,16 @@ let emailValidation = $derived(editingUser.email ? validateEmail(editingUser.ema
 				console.log('An unknown error occurred:', data.error)
 				userFeedback = 'There was an error updating the user!'
 			}
-		}
 	}
-	async function deleteUser(id) {
-		if (!confirm('Are you sure you want to delete this user?')) {
-			return
-		}
+}
+async function deleteUser(id) {
+		pendingDeleteId = id
+		showDeleteConfirm = true
+	}
+	async function confirmDeleteUser() {
+		const id = pendingDeleteId
+		showDeleteConfirm = false
+		if (!id) return
 		try {
 			console.log('Deleting User!')
 			const response = await fetch(`/api/user/${id}/admin`, {
@@ -281,6 +288,16 @@ let isSubmitDisabled = $derived(() => {
 		</div>
 	</div>
 </Dialog>
+
+<ConfirmationDialog
+	bind:isOpen={showDeleteConfirm}
+	onClose={() => (showDeleteConfirm = false)}
+	onConfirm={confirmDeleteUser}>
+	{#snippet content()}
+		<h3 class="font-bold text-lg">Delete User</h3>
+		<p class="py-4">Are you sure you want to delete this user?</p>
+	{/snippet}
+</ConfirmationDialog>
 
 <style lang="scss">
 	.you-label {

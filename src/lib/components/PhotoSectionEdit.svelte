@@ -5,43 +5,22 @@
 	import { deletePhotoById, updatePhotos } from '$lib/utils/crud'
 	import FileInput from '$lib/components/ui/Form/FileInput.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
+	import ConfirmationDialog from '$lib/components/ConfirmationDialog.svelte'
 
 	/** @type {{recipe: any, selectedFiles: any}} */
 	let { recipe, onSelectedFilesChange } = $props()
 
 	let filteredPhotos = $state()
+	let showDeleteConfirm = $state(false)
+	let pendingPhotoId = $state(null)
 
 	$effect(() => {
 		filteredPhotos = recipe && recipe.photos ? recipe.photos.filter((photo) => photo.fileType) : []
 	})
 
 	async function handleDeletePhoto(photoId) {
-		try {
-			// Determine if the photo being deleted is the main photo.
-			const isMainPhotoBeingDeleted = filteredPhotos.some(
-				(photo) => photo.id === photoId && photo.isMain
-			)
-			// Delete photo
-			const photoDeleted = await deletePhotoById(photoId)
-			// If the photo was not deleted, exit the function
-			if (!photoDeleted) return
-
-			// Optionally, remove the photo from the local state
-			filteredPhotos = filteredPhotos.filter((p) => p.id !== photoId)
-
-			// If the main photo was deleted, choose a new main photo.
-			if (isMainPhotoBeingDeleted) {
-				// Find the next photo where url is null to be the main photo.
-				const newMainPhoto = filteredPhotos[0]
-
-				// If a new main photo was found, set it.
-				if (newMainPhoto) {
-					handleSetMainPhoto(newMainPhoto.id)
-				}
-			}
-		} catch (error) {
-			console.error('Error deleting photo:', error.message)
-		}
+		pendingPhotoId = photoId
+		showDeleteConfirm = true
 	}
 
 	async function handleSetMainPhoto(mainPhotoId) {
@@ -65,6 +44,31 @@
 		// Use the callback to notify the parent of the change
 		onSelectedFilesChange && onSelectedFilesChange(files)
 	}
+
+	async function confirmDelete() {
+		const photoId = pendingPhotoId
+		showDeleteConfirm = false
+		if (!photoId) return
+		try {
+			// Determine if the photo being deleted is the main photo.
+			const isMainPhotoBeingDeleted = filteredPhotos.some(
+				(photo) => photo.id === photoId && photo.isMain
+			)
+			const photoDeleted = await deletePhotoById(photoId)
+			if (!photoDeleted) return
+
+			filteredPhotos = filteredPhotos.filter((p) => p.id !== photoId)
+
+			if (isMainPhotoBeingDeleted) {
+				const newMainPhoto = filteredPhotos[0]
+				if (newMainPhoto) {
+					handleSetMainPhoto(newMainPhoto.id)
+				}
+			}
+		} catch (error) {
+			console.error('Error deleting photo:', error.message)
+		}
+	}
 </script>
 
 <FileInput id="file" label="Upload Images" name="file" onchange={handleFilesChange} multiple />
@@ -85,7 +89,17 @@
 						<Button class="outline secondary" type="button" onclick={() => handleSetMainPhoto(photo.id)}>
 							<UpArrow width="30px" height="30px" fill="var(--pico-primary)" />
 						</Button>
-					</div>
+	</div>
+
+<ConfirmationDialog
+	bind:isOpen={showDeleteConfirm}
+	onClose={() => (showDeleteConfirm = false)}
+	onConfirm={confirmDelete}>
+	{#snippet content()}
+		<h3 class="font-bold text-lg">Delete Photo</h3>
+		<p class="py-4">Are you sure you want to delete this photo?</p>
+	{/snippet}
+</ConfirmationDialog>
 				{/if}
 			</div>
 		</div>
