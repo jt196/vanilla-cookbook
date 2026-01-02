@@ -166,13 +166,19 @@
 		isLatest = currentInvocation
 
 		const directionsResult = await Promise.all(
-			parseRecipeText(directionLines, selectedSystem, measurementSystem.system).map((direction) =>
+			parseRecipeText(
+			directionLines,
+			selectedSystem,
+			measurementSystem.system,
+			null,
+			viewUser.language
+		).map((direction) =>
 				getSanitizedHTML(direction)
 			)
 		)
 
 		const notesResult = await Promise.all(
-			parseRecipeText(notesLines, selectedSystem, measurementSystem.system).map((note) =>
+			parseRecipeText(notesLines, selectedSystem, measurementSystem.system, null, viewUser.language).map((note) =>
 				getSanitizedHTML(note)
 			)
 		)

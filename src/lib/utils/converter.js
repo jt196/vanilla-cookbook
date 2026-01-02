@@ -4,6 +4,8 @@ import Fuse from 'fuse.js'
 import { foodPreferences } from '$lib/data/ingredients/vegan/vegan'
 import { getSymbol } from '$lib/submodules/recipe-ingredient-parser/src/index.js'
 import { i18nMap } from '$lib/submodules/recipe-ingredient-parser/src/i18n'
+import { parseTimings } from './timingParser.js'
+import { matchIngredients } from './ingredientMatcher.js'
 
 // Get units data for a given language (defaults to English)
 function getUnitsDataForLang(lang = 'eng') {
@@ -791,27 +793,36 @@ export const manipulateIngredient = (ingredientObj, fromSystem, toSystem, fuse, 
 export { findIngredientDensity }
 
 /**
- * Converts temperatures in an array of direction strings from one system to another.
+ * Converts temperatures, highlights timings, and links ingredients in an array of direction strings.
  *
- * This function iterates over each direction in the array and converts any temperatures
- * found within each direction from the original system to the target system using the
- * `parseTemperature` function.
+ * This function enhances recipe directions by:
+ * 1. Converting temperatures from one system to another
+ * 2. Highlighting timing expressions (e.g., "30 minutes", "1 hour")
+ * 3. Linking ingredient references to interactive badges (if ingredients provided)
  *
- * @param {string[]} directions - An array of direction strings containing temperature values to be converted.
+ * @param {string[]} directions - An array of direction strings.
  * @param {string} toSystem - The target temperature system for conversion.
  *                            Accepted values: 'metric', 'imperial', 'americanVolumetric'.
  * @param {string} fromSystem - The original temperature system of the values in the direction strings.
  *                              Accepted values: 'metric', 'imperial'.
+ * @param {Array<Object>} ingredients - Optional array of parsed ingredient objects for matching.
+ * @param {string} lang - Language code for i18n (eng, deu, ita, etc.). Defaults to 'eng'.
  *
- * @returns {string[]} - An array of direction strings with temperatures converted to the target system.
+ * @returns {string[]} - An array of enhanced direction strings with temperatures, timings, and ingredients highlighted.
  *
  * @example
- * parseRecipeText(["Preheat oven to 350°F", "Bake at 180C"], "metric", "imperial");
- * // Returns: ["Preheat oven to 176°C", "Bake at 356°F"]
+ * parseRecipeText(["Preheat oven to 350°F", "Bake for 30 minutes"], "metric", "imperial", null, "eng");
+ * // Returns: ["Preheat oven to <span class=\"text-primary\">176°C</span>",
+ * //           "Bake for <span class=\"text-primary\">30 minutes</span>"]
  *
  */
-export function parseRecipeText(directions, toSystem, fromSystem) {
-	return directions.map((direction) => parseTemperature(direction, toSystem, fromSystem))
+export function parseRecipeText(directions, toSystem, fromSystem, ingredients = null, lang = 'eng') {
+	return directions.map((direction) => {
+		let result = parseTemperature(direction, toSystem, fromSystem, lang)
+		result = parseTimings(result, lang)
+		if (ingredients) result = matchIngredients(result, ingredients)
+		return result
+	})
 }
 
 /**
@@ -867,17 +878,50 @@ export function parseTemperature(direction, toSystem, fromSystem) {
 	const genericDegreesMatches = direction.match(genericDegreesRegex) || []
 
 	// ─────────────────────────────────────────────
-	// Rule 1: Skip if both Celsius and Fahrenheit exist (likely already dual-labeled)
+	// Rule 1: If both Celsius and Fahrenheit exist, filter to show only user's preferred system
 	if (celsiusMatches.length && fahrenheitMatches.length) {
-		return direction
+		// Remove the non-preferred unit based on target system
+		if (isTargetImperial) {
+			// User wants Fahrenheit, remove Celsius
+			// Match patterns like "180°C (350°F)", "180C / 350F", or "180C or 350F" and keep only Fahrenheit
+			let result = direction
+			// Remove Celsius with surrounding delimiters (parentheses, slashes, "or", etc.)
+			result = result.replace(/\s*\(?\s*\d+(?:\.\d+)?\s*(?:°C|ºC|C|degrees C)\s*\)?\s*/gi, ' ')
+			result = result.replace(/\s*\d+(?:\.\d+)?\s*(?:°C|ºC|C|degrees C)\s*(?:[\/\\|]|or)\s*/gi, '')
+			// Clean up extra spaces
+			result = result.replace(/\s+/g, ' ').trim()
+			// Style the remaining Fahrenheit values
+			result = result.replace(fahrenheitRegex, (match) => {
+				return `<span class="text-primary">${match}</span>`
+			})
+			return result
+		} else {
+			// User wants Celsius, remove Fahrenheit
+			// Match patterns like "180°C (350°F)", "350F / 180C", or "350F or 180C" and keep only Celsius
+			let result = direction
+			// Remove Fahrenheit with surrounding delimiters (parentheses, slashes, "or", etc.)
+			result = result.replace(/\s*\(?\s*\d+(?:\.\d+)?\s*(?:°F|ºF|F|degrees F)\s*\)?\s*/gi, ' ')
+			result = result.replace(/\s*\d+(?:\.\d+)?\s*(?:°F|ºF|F|degrees F)\s*(?:[\/\\|]|or)\s*/gi, '')
+			// Clean up extra spaces
+			result = result.replace(/\s+/g, ' ').trim()
+			// Style the remaining Celsius values
+			result = result.replace(celsiusRegex, (match) => {
+				return `<span class="text-primary">${match}</span>`
+			})
+			return result
+		}
 	}
-	// Rule 2: Skip if Celsius only and target is metric (no change needed)
+	// Rule 2: Skip if Celsius only and target is metric (no change needed, just style)
 	if (celsiusMatches.length && toSystem === 'metric') {
-		return direction
+		return direction.replace(celsiusRegex, (match) => {
+			return `<span class="text-primary">${match}</span>`
+		})
 	}
-	// Rule 3: Skip if Fahrenheit only and target is imperial (no change needed)
+	// Rule 3: Skip if Fahrenheit only and target is imperial (no change needed, just style)
 	if (fahrenheitMatches.length && toSystem === 'imperial') {
-		return direction
+		return direction.replace(fahrenheitRegex, (match) => {
+			return `<span class="text-primary">${match}</span>`
+		})
 	}
 
 	// ─────────────────────────────────────────────
@@ -901,11 +945,11 @@ export function parseTemperature(direction, toSystem, fromSystem) {
 			// Convert both numbers in a range
 			const converted1 = convertValue(val1, from, to).toFixed(0)
 			const converted2 = convertValue(val2, from, to).toFixed(0)
-			return `**${converted1}-${converted2}${toUnit}**`
+			return `<span class="text-primary">${converted1}-${converted2}${toUnit}</span>`
 		} else {
 			// Single value conversion
 			const converted = convertValue(val1, from, to).toFixed(0)
-			return `**${converted}${toUnit}**`
+			return `<span class="text-primary">${converted}${toUnit}</span>`
 		}
 	}
 
@@ -935,7 +979,7 @@ export function parseTemperature(direction, toSystem, fromSystem) {
 			return direction.replace(genericDegreesRegex, (match, value, _, unit) => {
 				const converted = convertValue(parseFloat(value), fromSystem, toSystem).toFixed(0)
 				const targetUnit = isTargetImperial ? '°F' : '°C'
-				return `**${converted}${targetUnit}**`
+				return `<span class="text-primary">${converted}${targetUnit}</span>`
 			})
 		}
 	}
