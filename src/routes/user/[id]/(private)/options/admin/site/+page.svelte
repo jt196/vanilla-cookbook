@@ -15,13 +15,14 @@
 	/** @type {{data: any}} */
 	let { data } = $props()
 
-	const { settings } = $state(data)
+	const { settings, llmConfig } = $state(data)
 
 	let settingsFeedback = $state('')
 	let backupInfo = $state(data.backupInfo)
 	let backupError = $state(data.backupError || '')
 	let backupInProgress = $state(false)
 	let backupFeedback = $state('')
+	let llm = $state(llmConfig)
 
 	async function updateAdminSettings(event) {
 		event.preventDefault()
@@ -66,6 +67,7 @@
 	$effect(() => {
 		backupInfo = data.backupInfo
 		backupError = data.backupError || ''
+		llm = data.llmConfig
 	})
 </script>
 
@@ -88,6 +90,25 @@
 			<FeedbackMessage message={settingsFeedback} inline />
 		</footer>
 	</form>
+</div>
+
+<div class="w-full md:w-3/4 lg:w-2/3 space-y-2 mb-3">
+	<h3>LLM Configuration</h3>
+	<div class="rounded-box border border-base-300 bg-base-200 p-4 space-y-1">
+		<p>
+			<strong>LLM API Enabled:</strong>
+			{llm?.enabled ? 'Yes' : 'No'}
+		</p>
+		<p>
+			<strong>Text Model:</strong>
+			{llm?.textProvider} / {llm?.textModel}
+		</p>
+		<p>
+			<strong>Image Model:</strong>
+			{llm?.imageProvider} / {llm?.imageModel}
+		</p>
+		<p class="text-xs">Update values in your .env file to change providers or models.</p>
+	</div>
 </div>
 
 <div class="w-full md:w-3/4 lg:w-2/3 space-y-4 mb-3">

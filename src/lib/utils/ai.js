@@ -1,4 +1,3 @@
-import { ChatOpenAI } from '@langchain/openai'
 import { HumanMessage, SystemMessage } from '@langchain/core/messages'
 import { env } from '$env/dynamic/private'
 
@@ -73,6 +72,58 @@ ${blockType}:
 }
 
 /**
+ * Dynamically load a chat model client based on provider.
+ * Keeps bundling light and lets deployments install only the needed provider package.
+ *
+ * Supported providers (install the matching LangChain pkg):
+ * - openai (@langchain/openai)
+ * - anthropic (@langchain/anthropic)
+ *
+ * @param {string} provider
+ * @param {string} model
+ * @returns {Promise<import('@langchain/core/language_models/chat_models').BaseChatModel>}
+ */
+function resolveApiKey(provider) {
+	const generic = env.LLM_API_KEY
+	if (provider === 'openai') return env.OPENAI_API_KEY || generic
+	if (provider === 'anthropic') return env.ANTHROPIC_API_KEY || generic
+	return generic
+}
+
+const providerLoaders = {
+	openai: async (model) => {
+		const apiKey = resolveApiKey('openai')
+		if (!apiKey) throw new Error('Missing OpenAI API key')
+		const { ChatOpenAI } = await import('@langchain/openai')
+		return new ChatOpenAI({
+			modelName: model,
+			openAIApiKey: apiKey,
+			temperature: 0.3
+		})
+	},
+	anthropic: async (model) => {
+		const apiKey = resolveApiKey('anthropic')
+		if (!apiKey) throw new Error('Missing Anthropic API key')
+		const { ChatAnthropic } = await import('@langchain/anthropic')
+		return new ChatAnthropic({
+			model,
+			apiKey,
+			temperature: 0.3
+		})
+	}
+}
+
+async function loadChatClient(provider, model) {
+	const loader = providerLoaders[provider]
+	if (!loader) {
+		throw new Error(
+			`Unsupported provider: ${provider}. Install the appropriate LangChain provider package and add a loader in providerLoaders.`
+		)
+	}
+	return loader(model)
+}
+
+/**
  * Extract a recipe from the given content using a Large Language Model (LLM).
  *
  * @param {Object} options - Options to control the extraction.
@@ -90,7 +141,7 @@ ${blockType}:
  * @returns {Promise<Object>} A promise that resolves to the extracted recipe as a JSON object.
  */
 export async function extractRecipeWithLLM({
-	provider = 'openai',
+	provider,
 	content = '',
 	type = 'html',
 	url = '',
@@ -98,20 +149,18 @@ export async function extractRecipeWithLLM({
 	imageMimeType
 }) {
 	if (env.LLM_API_ENABLED !== 'true') throw new Error('LLM API is disabled')
-	if (!env.OPENAI_API_KEY) throw new Error('Missing OpenAI API key')
 
-	const model =
-		type === 'image'
-			? env.LLM_API_ENGINE_IMAGE || 'gpt-4o'
-			: env.LLM_API_ENGINE_TEXT || 'gpt-3.5-turbo'
+	const defaultProvider = env.LLM_PROVIDER || 'openai'
+	const textProvider = provider || env.LLM_TEXT_PROVIDER || defaultProvider
+	const imageProvider =
+		provider || env.LLM_IMAGE_PROVIDER || env.LLM_TEXT_PROVIDER || defaultProvider
+	const textModel = env.LLM_TEXT_MODEL || env.LLM_API_ENGINE_TEXT || 'gpt-3.5-turbo'
+	const imageModel = env.LLM_IMAGE_MODEL || env.LLM_API_ENGINE_IMAGE || 'gpt-4o'
 
-	if (provider !== 'openai') throw new Error(`Unsupported provider: ${provider}`)
+	const effectiveProvider = type === 'image' ? imageProvider : textProvider
+	const model = type === 'image' ? imageModel : textModel
 
-	const chat = new ChatOpenAI({
-		modelName: model,
-		openAIApiKey: env.OPENAI_API_KEY,
-		temperature: 0.3
-	})
+	const chat = await loadChatClient(effectiveProvider, model)
 
 	const messages = []
 
