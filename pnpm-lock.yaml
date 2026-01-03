@@ -17,6 +17,9 @@ importers:
       '@langchain/core':
         specifier: ^0.3.43
         version: 0.3.43(openai@4.88.0(ws@8.18.1)(zod@3.24.2))
+      '@langchain/ollama':
+        specifier: ^0.1.4
+        version: 0.1.6(@langchain/core@0.3.43(openai@4.88.0(ws@8.18.1)(zod@3.24.2)))
       '@langchain/openai':
         specifier: ^0.5.2
         version: 0.5.2(@langchain/core@0.3.43(openai@4.88.0(ws@8.18.1)(zod@3.24.2)))(ws@8.18.1)
@@ -67,7 +70,7 @@ importers:
         version: 3.32.1
       langchain:
         specifier: ^0.3.19
-        version: 0.3.19(@langchain/anthropic@0.3.15(@langchain/core@0.3.43(openai@4.88.0(ws@8.18.1)(zod@3.24.2))))(@langchain/core@0.3.43(openai@4.88.0(ws@8.18.1)(zod@3.24.2)))(axios@1.8.3)(openai@4.88.0(ws@8.18.1)(zod@3.24.2))(ws@8.18.1)
+        version: 0.3.19(@langchain/anthropic@0.3.15(@langchain/core@0.3.43(openai@4.88.0(ws@8.18.1)(zod@3.24.2))))(@langchain/core@0.3.43(openai@4.88.0(ws@8.18.1)(zod@3.24.2)))(@langchain/ollama@0.1.6(@langchain/core@0.3.43(openai@4.88.0(ws@8.18.1)(zod@3.24.2))))(axios@1.8.3)(openai@4.88.0(ws@8.18.1)(zod@3.24.2))(ws@8.18.1)
       lucia:
         specifier: ^2.7.6
         version: 2.7.7
@@ -1323,6 +1326,12 @@ packages:
     resolution: {integrity: sha512-DwiSUwmZqcuOn7j8SFdeOH1nvaUqG7q8qn3LhobdQYEg5PmjLgd2yLr2KzuT/YWMBfjkOR+Di5K6HEdFmouTxg==}
     engines: {node: '>=18'}
 
+  '@langchain/ollama@0.1.6':
+    resolution: {integrity: sha512-hS+xHiRqKpq37eGyZQ0JoTghfNA7hWXK54XbILQ0KVm3v2MMWLKqBAep4LwMLrAr4NE7SIp+SJnQRdsjabR0jw==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      '@langchain/core': '>=0.2.21 <0.4.0'
+
   '@langchain/openai@0.4.9':
     resolution: {integrity: sha512-NAsaionRHNdqaMjVLPkFCyjUDze+OqRHghA1Cn4fPoAafz+FXcl9c7LlEl9Xo0FH6/8yiCl7Rw2t780C/SBVxQ==}
     engines: {node: '>=18'}
@@ -1452,6 +1461,7 @@ packages:
 
   '@lucia-auth/adapter-prisma@3.0.2':
     resolution: {integrity: sha512-EyJWZene1/zasPwPctv8wwNErZt5mwwm5JATbhg+kXr3R8pbC7lJfVzDTAeeFClVH5k/FywRcsBl3JkPaNIcow==}
+    deprecated: This package has been deprecated. Please see https://lucia-auth.com/lucia-v3/migrate.
     peerDependencies:
       '@prisma/client': ^4.2.0 || ^5.0.0
       lucia: ^2.0.0
@@ -3844,6 +3854,7 @@ packages:
 
   lucia@2.7.7:
     resolution: {integrity: sha512-Hy1nMcLquLl3yDvV9zYA9fSBGUDy/Fw2zEUw2Ia4iGdk/O+hI/TvQ1tAfED/U1WE/c5DT1hEger3m7qIx1qbUg==}
+    deprecated: This package has been deprecated. Please see https://lucia-auth.com/lucia-v3/migrate.
 
   lz-string@1.5.0:
     resolution: {integrity: sha512-h5bgJWpxJNswbU7qCrV0tIKQCaS3blPDrqKWx+QxzuzL1zGUzij9XCWLrSLsJPu5t+eWA/ycetzYAO5IOMcWAQ==}
@@ -3966,6 +3977,7 @@ packages:
   node-domexception@1.0.0:
     resolution: {integrity: sha512-/jKZoMpw0F8GRwl4/eLROPA3cfcXtLApP0QzLmUT/HuPCZWyB7IY9ZrMeKw2O/nFIqPQB3PVM9aYm0F312AXDQ==}
     engines: {node: '>=10.5.0'}
+    deprecated: Use your platform's native DOMException instead
 
   node-fetch-native@1.6.7:
     resolution: {integrity: sha512-g9yhqoedzIUm0nTnTqAQvueMPVOuIY16bqgAJJC8XOOubYFNwz6IER9qs0Gq2Xd0+CecCKFjtdDTMA4u4xG06Q==}
@@ -4030,6 +4042,9 @@ packages:
 
   ohash@2.0.11:
     resolution: {integrity: sha512-RdR9FQrFwNBNXAr4GixM8YaRZRJ5PUWbKYbE5eOsrwAjJW0q2REGcf79oYPsLyskQCZG1PLN+S/K1V00joZAoQ==}
+
+  ollama@0.5.18:
+    resolution: {integrity: sha512-lTFqTf9bo7Cd3hpF6CviBe/DEhewjoZYd9N/uCe7O20qYTvGqrNOFOBDj3lbZgFWHUgDv5EeyusYxsZSLS8nvg==}
 
   once@1.4.0:
     resolution: {integrity: sha512-lNaJgI+2Q5URQBkccEKHTQOPaXdUxnZZElQTZY0MFUAuaEqe1E+Nyvgdz/aIyNi6Z9MzO5dv1H8n58/GELp3+w==}
@@ -4553,6 +4568,7 @@ packages:
   source-map@0.8.0-beta.0:
     resolution: {integrity: sha512-2ymg6oRBpebeZi9UUNsgQ89bhx01TcTkmNTGnNO88imTmbSgy4nfujrgVEFKWpMTEGA11EDkTt7mqObTPdigIA==}
     engines: {node: '>= 8'}
+    deprecated: The work that was done in this beta branch won't be included in future versions
 
   sourcemap-codec@1.4.8:
     resolution: {integrity: sha512-9NykojV5Uih4lgo5So5dtw+f0JgJX30KCNI8gwhz2J9A15wD0Ml6tjHKwf6fTSa6fAdVBdZeNOs9eJ71qCk8vA==}
@@ -5053,6 +5069,9 @@ packages:
   whatwg-encoding@3.1.1:
     resolution: {integrity: sha512-6qN4hJdMwfYBtE3YBTTHhoeuUrDBPZmbQaxWAqSALV/MeEnR5z1xd8UKud2RAkFoPkmB+hli1TZSnyi84xz1vQ==}
     engines: {node: '>=18'}
+
+  whatwg-fetch@3.6.20:
+    resolution: {integrity: sha512-EqhiFU6daOA8kpjOWTL0olhVOF3i7OrFzSYiGsEMB8GcXS+RrzauAERX65xMeNWVqxA6HXH2m69Z9LaKKdisfg==}
 
   whatwg-mimetype@4.0.0:
     resolution: {integrity: sha512-QaKxh0eNIi2mE9p2vEdzfagOKHCcj1pJ56EEHGQOVxp8r9/iszLUUV7v89x9O1p/T+NlTM5W7jW6+cz4Fq1YVg==}
@@ -6735,6 +6754,14 @@ snapshots:
       zod-to-json-schema: 3.24.5(zod@3.24.2)
     transitivePeerDependencies:
       - openai
+
+  '@langchain/ollama@0.1.6(@langchain/core@0.3.43(openai@4.88.0(ws@8.18.1)(zod@3.24.2)))':
+    dependencies:
+      '@langchain/core': 0.3.43(openai@4.88.0(ws@8.18.1)(zod@3.24.2))
+      ollama: 0.5.18
+      uuid: 10.0.0
+      zod: 3.24.2
+      zod-to-json-schema: 3.24.5(zod@3.24.2)
 
   '@langchain/openai@0.4.9(@langchain/core@0.3.43(openai@4.88.0(ws@8.18.1)(zod@3.24.2)))(ws@8.18.1)':
     dependencies:
@@ -9317,7 +9344,7 @@ snapshots:
 
   known-css-properties@0.35.0: {}
 
-  langchain@0.3.19(@langchain/anthropic@0.3.15(@langchain/core@0.3.43(openai@4.88.0(ws@8.18.1)(zod@3.24.2))))(@langchain/core@0.3.43(openai@4.88.0(ws@8.18.1)(zod@3.24.2)))(axios@1.8.3)(openai@4.88.0(ws@8.18.1)(zod@3.24.2))(ws@8.18.1):
+  langchain@0.3.19(@langchain/anthropic@0.3.15(@langchain/core@0.3.43(openai@4.88.0(ws@8.18.1)(zod@3.24.2))))(@langchain/core@0.3.43(openai@4.88.0(ws@8.18.1)(zod@3.24.2)))(@langchain/ollama@0.1.6(@langchain/core@0.3.43(openai@4.88.0(ws@8.18.1)(zod@3.24.2))))(axios@1.8.3)(openai@4.88.0(ws@8.18.1)(zod@3.24.2))(ws@8.18.1):
     dependencies:
       '@langchain/core': 0.3.43(openai@4.88.0(ws@8.18.1)(zod@3.24.2))
       '@langchain/openai': 0.4.9(@langchain/core@0.3.43(openai@4.88.0(ws@8.18.1)(zod@3.24.2)))(ws@8.18.1)
@@ -9334,6 +9361,7 @@ snapshots:
       zod-to-json-schema: 3.24.5(zod@3.24.2)
     optionalDependencies:
       '@langchain/anthropic': 0.3.15(@langchain/core@0.3.43(openai@4.88.0(ws@8.18.1)(zod@3.24.2)))
+      '@langchain/ollama': 0.1.6(@langchain/core@0.3.43(openai@4.88.0(ws@8.18.1)(zod@3.24.2)))
       axios: 1.8.3
     transitivePeerDependencies:
       - encoding
@@ -9633,6 +9661,10 @@ snapshots:
       object-keys: 1.1.1
 
   ohash@2.0.11: {}
+
+  ollama@0.5.18:
+    dependencies:
+      whatwg-fetch: 3.6.20
 
   once@1.4.0:
     dependencies:
@@ -10742,6 +10774,8 @@ snapshots:
   whatwg-encoding@3.1.1:
     dependencies:
       iconv-lite: 0.6.3
+
+  whatwg-fetch@3.6.20: {}
 
   whatwg-mimetype@4.0.0: {}
 

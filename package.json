@@ -70,6 +70,7 @@
 		"@langchain/anthropic": "^0.3.15",
 		"@langchain/core": "^0.3.43",
 		"@langchain/openai": "^0.5.2",
+		"@langchain/ollama": "^0.1.4",
 		"@libsql/client": "^0.15.15",
 		"@lucia-auth/adapter-prisma": "^3.0.2",
 		"@lucia-auth/oauth": "^3.5.3",
