@@ -14,6 +14,7 @@
 		recipe = $bindable(),
 		apiKeyPresent = false,
 		aiEnabled = false,
+		imageAllowed = true,
 		initialMode = 'url'
 	} = $props()
 
@@ -23,6 +24,12 @@
 
 	// Tab state
 	let selectedMode = $state(initialMode)
+
+	$effect(() => {
+		if (!imageAllowed && selectedMode === 'image') {
+			selectedMode = 'url'
+		}
+	})
 
 	let imageFile = $state(null)
 
@@ -116,18 +123,20 @@
 				<Button type="submit" class="w-auto self-start  mt-2">Parse Text</Button>
 			</div>
 
-			<input
-				type="radio"
-				name="scrape_tabs"
-				class="tab"
-				aria-label="Upload Image"
-				value="image"
-				bind:group={selectedMode}
-				checked={selectedMode === 'image'} />
-			<div class="tab-content bg-base-100 border-base-300 p-2">
-				<FileInput accept="image/*" onchange={(e) => (imageFile = e.target.files[0])} />
-				<Button type="submit" class="w-auto self-start mt-2">Analyze Image</Button>
-			</div>
+			{#if imageAllowed}
+				<input
+					type="radio"
+					name="scrape_tabs"
+					class="tab"
+					aria-label="Upload Image"
+					value="image"
+					bind:group={selectedMode}
+					checked={selectedMode === 'image'} />
+				<div class="tab-content bg-base-100 border-base-300 p-2">
+					<FileInput accept="image/*" onchange={(e) => (imageFile = e.target.files[0])} />
+					<Button type="submit" class="w-auto self-start mt-2">Analyze Image</Button>
+				</div>
+			{/if}
 		{/if}
 	</div>
 </form>

@@ -30,9 +30,18 @@ export const handle = async ({ event, resolve }) => {
 		oauthEnabled
 	}
 
+	const providerDefault = env.LLM_PROVIDER || 'openai'
+	const textProvider = env.LLM_TEXT_PROVIDER || providerDefault
+	const imageProvider = env.LLM_IMAGE_PROVIDER || env.LLM_TEXT_PROVIDER || providerDefault
+	const apiKeyPresent = Boolean(
+		env.LLM_API_KEY || env.OPENAI_API_KEY || env.ANTHROPIC_API_KEY || env.GEMINI_API_KEY
+	)
 	const ai = {
 		aiEnabled: envTrue(env.LLM_API_ENABLED),
-		apiKeyPresent: !!env.OPENAI_API_KEY
+		apiKeyPresent,
+		textProvider,
+		imageProvider,
+		imageAllowed: imageProvider !== 'ollama'
 	}
 
 	// Site-wide bits (do once here)

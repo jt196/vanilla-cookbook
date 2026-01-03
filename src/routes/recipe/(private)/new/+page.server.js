@@ -3,6 +3,7 @@ export const load = async ({ locals }) => {
 
 	return {
 		apiKeyPresent: ai.apiKeyPresent,
-		aiEnabled: ai.aiEnabled
+		aiEnabled: ai.aiEnabled,
+		imageAllowed: ai.imageAllowed
 	}
 }
