@@ -40,8 +40,29 @@ def capture_both_themes(page, url, image_name):
         print(f"🖼️ Capturing {themed_image}")
         page.screenshot(path=f"docs/images/{themed_image}")
 
-        page.click('button[aria-label="Toggle theme"]')
-        page.wait_for_timeout(500)
+        try:
+            toggle = page.query_selector('button[aria-label="Toggle theme"]')
+            if toggle and toggle.is_visible():
+                toggle.click(timeout=1000)
+            else:
+                # Fallback: flip theme via DOM if toggle not present/visible
+                page.evaluate(
+                    """() => {
+                        const html = document.documentElement;
+                        const current = html.getAttribute('data-theme') || 'light';
+                        html.setAttribute('data-theme', current === 'light' ? 'dracula' : 'light');
+                    }"""
+                )
+        except Exception:
+            # If clicking fails, still flip via DOM to keep flow moving
+            page.evaluate(
+                """() => {
+                    const html = document.documentElement;
+                    const current = html.getAttribute('data-theme') || 'light';
+                    html.setAttribute('data-theme', current === 'light' ? 'dracula' : 'light');
+                }"""
+            )
+        page.wait_for_timeout(200)
 
 def run_capture(context, prefix):
     if not USERNAME or not PASSWORD:
@@ -68,10 +89,16 @@ def run_capture(context, prefix):
     capture_both_themes(page, page.url, f"{prefix}-list")
 
     # First recipe
-    page.wait_for_selector("a.recipe-container")
-    first_href = page.get_attribute("a.recipe-container", "href")
-    first_url = f"{ORIGIN}{first_href}"
-    capture_both_themes(page, first_url, f"{prefix}-first-recipe")
+    first_link = page.query_selector('a[href*="/recipe/"][href*="/view/"]')
+    if first_link:
+        first_href = first_link.get_attribute("href")
+        if first_href:
+            first_url = first_href if first_href.startswith("http") else f"{ORIGIN}{first_href}"
+            capture_both_themes(page, first_url, f"{prefix}-first-recipe")
+        else:
+            print("⚠️  No href found for first recipe link; skipping first-recipe capture.")
+    else:
+        print("⚠️  No recipe links found; skipping first-recipe capture.")
 
     if ONLY_RECIPE:
         # Short-circuit if we only want the recipe view.
@@ -81,7 +108,8 @@ def run_capture(context, prefix):
     for item in PAGES_TO_CAPTURE:
         if item["name"] == "login":
             continue
-        full_url = f"{ORIGIN}{item['route']}"
+        route = item["route"].replace("{ID}", ID)
+        full_url = f"{ORIGIN}{route}"
         image_name = f"{prefix}-{item['name']}"
         capture_both_themes(page, full_url, image_name)
 

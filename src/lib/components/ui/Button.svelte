@@ -29,6 +29,7 @@
 		formaction = undefined,
 		class: className = '',
 		onclick = undefined,
+		'aria-label': ariaLabel = undefined,
 		children
 	} = $props()
 
@@ -79,11 +80,11 @@
 	{type}
 	{id}
 	{disabled}
-	formaction={formaction}
+	{formaction}
 	aria-busy={loading}
+	aria-label={ariaLabel}
 	class={classes}
-	{onclick}
->
+	{onclick}>
 	{#if loading}
 		<span class="loading loading-spinner"></span>
 	{/if}
