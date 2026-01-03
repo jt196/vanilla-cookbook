@@ -303,7 +303,6 @@
 						legend="Recipes Public"
 						size="sm"
 						color="primary">Make your imported recipes public</Checkbox>
-				</div>
 				<Button
 					loading={importRecBusy}
 					class="outline secondary"
@@ -341,12 +340,6 @@
 		.import-categories,
 		.import-recipes {
 			width: 50%;
-		}
-	}
-
-	.file-manage {
-		button {
-			margin-left: 1rem;
 		}
 	}
 </style>

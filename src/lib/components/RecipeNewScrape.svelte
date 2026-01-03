@@ -191,24 +191,4 @@
 	<FeedbackMessage message={feedbackMessage} type={feedbackType} inline timeout={4000} />
 {/if}
 
-<style lang="scss">
-	.loading-overlay {
-		position: absolute;
-		top: 20vh;
-		left: 50%;
-		transform: translateX(-50%);
-		width: auto;
-		padding: 0.5rem 1rem;
-
-		background: var(--pico-background-color);
-		border: 1px solid var(--pico-muted-border-color);
-		border-radius: 4px;
-		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-		opacity: 1;
-		transition: opacity 0.2s ease;
-
-		&[hidden] {
-			opacity: 0;
-		}
-	}
-</style>
+<style lang="scss"></style>

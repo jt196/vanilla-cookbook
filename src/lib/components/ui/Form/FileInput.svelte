@@ -64,34 +64,35 @@
 	)
 
 	const dispatch = createEventDispatcher()
+	const inputId = $derived(id || name || 'file-input')
 </script>
 
 {#if legend}
 	<fieldset class={`fieldset ${fullWidth ? 'w-full' : ''}`}>
 		<legend class="fieldset-legend">{legend}</legend>
-		<input type="file" {id} {name} {accept} {multiple} {required} class={classes} />
+		<input type="file" id={inputId} name={name} {accept} {multiple} {required} class={classes} />
 		{#if optionalLabel}
-			<label class="label">{optionalLabel}</label>
+			<label class="label" for={inputId}>{optionalLabel}</label>
 		{/if}
 	</fieldset>
 {:else}
 	<div class={`form-control ${fullWidth ? 'w-full' : ''}`}>
 		{#if label}
-			<label class="label">
+			<label class="label" for={inputId}>
 				<span class="label-text">{label}</span>
 			</label>
 		{/if}
 		<input
 			type="file"
-			{id}
-			{name}
+			id={inputId}
+			name={name}
 			{accept}
 			{multiple}
 			{required}
 			class={classes}
-			on:change={(event) => dispatch('change', event)} />
+			onchange={(event) => dispatch('change', event)} />
 		{#if optionalLabel}
-			<label class="label">
+			<label class="label" for={inputId}>
 				<span class="label-text-alt text-xs">{optionalLabel}</span>
 			</label>
 		{/if}
