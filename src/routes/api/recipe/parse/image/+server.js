@@ -6,6 +6,7 @@ import { resizeImageBuffer, stitchImages } from '$lib/utils/image/imageBackend'
 export async function POST({ request }) {
 	const formData = await request.formData()
 	const files = formData.getAll('image')
+	const language = formData.get('language') || 'eng'
 
 	if (!files || files.length === 0) return json({ error: 'No image provided' }, { status: 400 })
 
@@ -39,7 +40,8 @@ export async function POST({ request }) {
 			provider: 'openai',
 			type: 'image',
 			imageBuffer: stitchedBuffer,
-			imageMimeType: 'image/png'
+			imageMimeType: 'image/png',
+			language
 		})
 
 		if (!recipe || !recipe.name || !recipe.ingredients?.length) {

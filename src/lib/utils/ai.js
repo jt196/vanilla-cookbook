@@ -2,6 +2,32 @@ import { HumanMessage, SystemMessage } from '@langchain/core/messages'
 import { env } from '$env/dynamic/private'
 
 /**
+ * Map of measurement system codes to human-readable descriptions for AI prompts
+ */
+const unitsMap = {
+	metric: 'metric (grams, milliliters, celsius)',
+	americanVolumetric: 'US volumetric (cups, teaspoons, tablespoons, fahrenheit)',
+	imperial: 'imperial (ounces, pounds, pints, fahrenheit)'
+}
+
+/**
+ * Map of language codes to full language names for AI prompts
+ * Matches the i18n language codes from recipe-ingredient-parser
+ */
+const languageMap = {
+	eng: 'English',
+	deu: 'German',
+	ita: 'Italian',
+	esp: 'Spanish',
+	fra: 'French',
+	por: 'Portuguese',
+	rus: 'Russian',
+	hin: 'Hindi',
+	ind: 'Indonesian',
+	ara: 'Arabic'
+}
+
+/**
  * Converts a Buffer to a base64 encoded image data URI.
  * @param {Buffer} buffer - Input buffer
  * @param {string} mimeType - MIME type of the image
@@ -27,16 +53,19 @@ function bufferToBase64ImageDataURI(buffer, mimeType) {
  * 6. Return ingredients and instructions/directions as arrays of strings.
  * 7. Each ingredient to be a separate array element.
  * 8. Each instruction paragraph to be a separate array element.
+ * 9. Format ingredients with specific rules for consistency.
  *
  * @param {string} [inputLabel='Text'] - The label for the content.
  * @param {string} [content=''] - The content to extract from.
  * @param {string} [url=''] - A URL to include in the prompt.
+ * @param {string} [language='eng'] - Language code for output (eng, deu, ita, etc.)
  * @returns {string} The generated prompt.
  */
-function buildRecipePrompt(inputLabel = 'Text', content = '', url = '') {
+function buildRecipePrompt(inputLabel = 'Text', content = '', url = '', language = 'eng') {
 	const blockType = inputLabel
 	const urlLine = inputLabel.toLowerCase() === 'html' && url ? `\nURL: ${url}` : ''
 	const trimmedContent = content?.substring(0, 40000) || ''
+	const languageName = languageMap[language] || 'English'
 
 	return `
 You are a recipe extraction AI. Extract recipe data from the ${blockType} below and return it as a JSON object.
@@ -50,6 +79,12 @@ Instructions:
 6. Return ingredients and instructions/directions as arrays of strings.
 7. Each ingredient to be a separate array element.
 8. Each instruction paragraph to be a separate array element.
+9. Format ingredients following these rules:
+   - Use decimal numbers (1.5 kg) instead of fractions (1 1/2 kg)
+   - Avoid prepositions like "of" (write "1.5 kg flour" not "1.5 kg of flour")
+   - Place extra preparation information after a comma (e.g., "1.5 kg flour, sifted")
+   - Avoid using "or" for alternative ingredients (pick one ingredient instead of "1.5 kg strong flour or all-purpose flour")
+10. If the content language is ${languageName}, preserve ingredient and instruction text in that language.
 
 Expected format:
 {
@@ -71,11 +106,19 @@ ${blockType}:
 """${trimmedContent}"""${urlLine}`
 }
 
-function buildRecipeFromPrompt(userPrompt = '', preferredUnits) {
+/**
+ * Builds a prompt for recipe generation from user description.
+ *
+ * @param {string} [userPrompt=''] - User's recipe request/description
+ * @param {string} [preferredUnits='metric'] - Preferred measurement system
+ * @param {string} [language='eng'] - Language code for output (eng, deu, ita, etc.)
+ * @returns {string} The generated prompt
+ */
+function buildRecipeFromPrompt(userPrompt = '', preferredUnits = 'metric', language = 'eng') {
 	const trimmedPrompt = userPrompt?.substring(0, 4000) || ''
-	const unitsLine = preferredUnits
-		? `- Use ${preferredUnits} units for quantities where possible.`
-		: ''
+	const unitsDescription = unitsMap[preferredUnits] || unitsMap.metric
+	const languageName = languageMap[language] || 'English'
+
 	return `
 You are a recipe creation AI. Using the user prompt below, create a complete, plausible recipe and return it as JSON.
 
@@ -84,8 +127,17 @@ Rules:
 - Populate all standard recipe fields. If something is unspecified, leave it empty or use reasonable defaults.
 - Ingredients: array of strings, one ingredient per entry.
 - Instructions: array of strings, one step per entry.
+- Provide reasonable estimates for prepTime, cookTime, totalTime (in ISO 8601 duration format, e.g., "PT30M" for 30 minutes, "PT1H30M" for 1.5 hours).
+- Provide a reasonable servings count (e.g., "4", "6-8", "12 cookies").
 - Do not fabricate nutrition unless explicitly provided; leave blank if unknown.
-${unitsLine}
+- Use ${unitsDescription} for all quantities.
+- Generate the recipe in ${languageName}.
+
+Ingredient formatting rules (IMPORTANT):
+- Use decimal numbers (1.5 kg) instead of fractions (1 1/2 kg)
+- Avoid prepositions like "of" (write "1.5 kg flour" not "1.5 kg of flour")
+- Place extra preparation information after a comma (e.g., "1.5 kg flour, sifted")
+- Avoid using "or" for alternative ingredients (pick one ingredient instead of "1.5 kg strong flour or all-purpose flour")
 
 JSON shape:
 {
@@ -96,10 +148,10 @@ JSON shape:
   "description": "",
   "ingredients": ["ingredient 1", "ingredient 2"],
   "instructions": ["Step 1", "Step 2"],
-  "cookTime": "",
-  "prepTime": "",
-  "totalTime": "",
-  "servings": "",
+  "cookTime": "PT30M",
+  "prepTime": "PT15M",
+  "totalTime": "PT45M",
+  "servings": "4",
   "nutrition": {}
 }
 
@@ -200,53 +252,70 @@ async function loadChatClient(provider, model, type) {
 }
 
 /**
- * Extract a recipe from the given content using a Large Language Model (LLM).
- *
- * @param {Object} options - Options to control the extraction.
- * @param {string} [options.provider=openai] - The provider of the LLM.
- * @param {string} [options.content=''] - The content to extract the recipe from.
- * @param {string} [options.type=html] - The type of the content, either 'html' or 'text'.
- * @param {string} [options.url=''] - The URL of the content, used for HTML content.
- * @param {Buffer} [options.imageBuffer] - The image data to extract the recipe from.
- * @param {string} [options.imageMimeType] - The MIME type of the image data.
- *
- * @throws {Error} If the LLM API is disabled or the OpenAI API key is missing.
- * @throws {Error} If the provider is not supported.
- * @throws {Error} If the image data is missing.
- *
- * @returns {Promise<Object>} A promise that resolves to the extracted recipe as a JSON object.
+ * Core LLM invocation function - builds messages and calls the model
+ * @private
  */
-export async function extractRecipeWithLLM({
-	provider,
-	content = '',
-	type = 'html',
-	url = '',
-	imageBuffer,
-	imageMimeType,
-	mode = 'parse', // parse | prompt
-	unitsPreference
-}) {
+async function invokeLLM({ provider, model, type, messages }) {
 	if (env.LLM_API_ENABLED !== 'true') throw new Error('LLM API is disabled')
 
 	const defaultProvider = env.LLM_PROVIDER || 'openai'
-	const textProvider = provider || env.LLM_TEXT_PROVIDER || defaultProvider
-	const imageProvider =
-		provider || env.LLM_IMAGE_PROVIDER || env.LLM_TEXT_PROVIDER || defaultProvider
-	const textModel = env.LLM_TEXT_MODEL || env.LLM_API_ENGINE_TEXT || 'gpt-3.5-turbo'
-	const imageModel = env.LLM_IMAGE_MODEL || env.LLM_API_ENGINE_IMAGE || 'gpt-4o'
+	const effectiveProvider = provider || (type === 'image' ?
+		(env.LLM_IMAGE_PROVIDER || env.LLM_TEXT_PROVIDER || defaultProvider) :
+		(env.LLM_TEXT_PROVIDER || defaultProvider))
 
-	const effectiveProvider = type === 'image' ? imageProvider : textProvider
-	const model = type === 'image' ? imageModel : textModel
+	const defaultTextModel = env.LLM_TEXT_MODEL || env.LLM_API_ENGINE_TEXT || 'gpt-3.5-turbo'
+	const defaultImageModel = env.LLM_IMAGE_MODEL || env.LLM_API_ENGINE_IMAGE || 'gpt-4o'
+	const effectiveModel = model || (type === 'image' ? defaultImageModel : defaultTextModel)
 
 	if (type === 'image' && effectiveProvider === 'ollama') {
 		throw new Error('Ollama provider does not support image prompts')
 	}
 
-	const chat = await loadChatClient(effectiveProvider, model, type)
+	const chat = await loadChatClient(effectiveProvider, effectiveModel, type)
 
-	const messages = []
+	try {
+		const result = await chat.invoke(messages)
+		let output = result.content.trim()
 
-	messages.push(new SystemMessage('You are an expert recipe extraction AI.'))
+		// Clean up markdown code fences
+		if (output.startsWith('```')) {
+			output = output.replace(/```json\s*|\s*```/g, '')
+		}
+		// Remove trailing commas
+		output = output.replace(/,\s*([\]}])/g, '$1')
+
+		return JSON.parse(output)
+	} catch (err) {
+		console.error('LLM invocation failed:', err)
+		throw new Error('LLM parsing error')
+	}
+}
+
+/**
+ * Extract a recipe from HTML, text, or image content using an LLM
+ *
+ * @param {Object} options
+ * @param {string} [options.provider] - LLM provider (openai, anthropic, etc.)
+ * @param {string} [options.model] - Specific model to use
+ * @param {string} [options.content=''] - Text/HTML content to extract from
+ * @param {string} [options.type='html'] - Content type: 'html', 'text', or 'image'
+ * @param {string} [options.url=''] - Source URL (for HTML extraction)
+ * @param {Buffer} [options.imageBuffer] - Image data (for image extraction)
+ * @param {string} [options.imageMimeType] - Image MIME type
+ * @param {string} [options.language='eng'] - Language code for output
+ * @returns {Promise<Object>} Parsed recipe object
+ */
+export async function extractRecipeWithLLM({
+	provider,
+	model,
+	content = '',
+	type = 'html',
+	url = '',
+	imageBuffer,
+	imageMimeType,
+	language = 'eng'
+}) {
+	const messages = [new SystemMessage('You are an expert recipe extraction AI.')]
 
 	if (type === 'image') {
 		if (!imageBuffer || !imageMimeType) {
@@ -254,12 +323,12 @@ export async function extractRecipeWithLLM({
 		}
 
 		const imageDataURI = bufferToBase64ImageDataURI(imageBuffer, imageMimeType)
-		const fullPrompt = buildRecipePrompt('Image')
+		const prompt = buildRecipePrompt('Image', '', '', language)
 
 		messages.push(
 			new HumanMessage({
 				content: [
-					{ type: 'text', text: fullPrompt },
+					{ type: 'text', text: prompt },
 					{ type: 'image_url', image_url: { url: imageDataURI } }
 				]
 			})
@@ -267,26 +336,36 @@ export async function extractRecipeWithLLM({
 	} else {
 		const trimmedContent = content.substring(0, 40000)
 		const blockType = type === 'html' ? 'HTML' : 'Text'
-		const prompt =
-			mode === 'prompt'
-				? buildRecipeFromPrompt(trimmedContent, unitsPreference)
-				: buildRecipePrompt(blockType, trimmedContent, url)
+		const prompt = buildRecipePrompt(blockType, trimmedContent, url, language)
 
 		messages.push(new HumanMessage(prompt))
 	}
 
-	try {
-		const result = await chat.invoke(messages)
-		let output = result.content.trim()
+	return invokeLLM({ provider, model, type, messages })
+}
 
-		if (output.startsWith('```')) {
-			output = output.replace(/```json\s*|\s*```/g, '')
-		}
-		output = output.replace(/,\s*([\]}])/g, '$1')
+/**
+ * Generate a recipe from a user prompt/description using an LLM
+ *
+ * @param {Object} options
+ * @param {string} options.prompt - User's recipe description/request
+ * @param {string} [options.provider] - LLM provider (openai, anthropic, etc.)
+ * @param {string} [options.model] - Specific model to use
+ * @param {string} [options.unitsPreference='metric'] - Preferred measurement system
+ * @param {string} [options.language='eng'] - Language code for output
+ * @returns {Promise<Object>} Generated recipe object
+ */
+export async function generateRecipeWithLLM({
+	prompt: userPrompt,
+	provider,
+	model,
+	unitsPreference = 'metric',
+	language = 'eng'
+}) {
+	const messages = [
+		new SystemMessage('You are an expert recipe creation AI.'),
+		new HumanMessage(buildRecipeFromPrompt(userPrompt, unitsPreference, language))
+	]
 
-		return JSON.parse(output)
-	} catch (err) {
-		console.error('LLM recipe parse failed:', err)
-		throw new Error('LLM parsing error')
-	}
+	return invokeLLM({ provider, model, type: 'text', messages })
 }

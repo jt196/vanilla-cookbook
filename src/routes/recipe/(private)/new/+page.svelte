@@ -34,7 +34,7 @@
 
 let { data } = $props()
 
-let { apiKeyPresent, aiEnabled, imageAllowed, userUnits } = $state(data)
+let { apiKeyPresent, aiEnabled, imageAllowed, userUnits, userLanguage } = $state(data)
 
 	/**
 	 * Handles the scraping event.
@@ -94,7 +94,8 @@ let { apiKeyPresent, aiEnabled, imageAllowed, userUnits } = $state(data)
 	{aiEnabled}
 	{initialMode}
 	{imageAllowed}
-	{userUnits} />
+	{userUnits}
+	{userLanguage} />
 
 <RecipeForm bind:recipe onSubmit={handleCreateRecipe} />
 

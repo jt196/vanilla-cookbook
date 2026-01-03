@@ -1,21 +1,26 @@
-import { extractRecipeWithLLM } from '$lib/utils/ai'
+import { extractRecipeWithLLM, generateRecipeWithLLM } from '$lib/utils/ai'
 import { json } from '@sveltejs/kit'
 
 export async function POST({ request }) {
 	try {
-		const { text, mode = 'parse', unitsPreference } = await request.json()
+		const { text, mode = 'parse', unitsPreference, language = 'eng' } = await request.json()
 
 		if (!text || typeof text !== 'string') {
 			return json({ error: 'Invalid or missing text field.' }, { status: 400 })
 		}
 
-		const recipe = await extractRecipeWithLLM({
-			type: 'text',
-			content: text,
-			mode,
-			unitsPreference
-			// model will be selected automatically from env.LLM_API_ENGINE_TEXT
-		})
+		const recipe =
+			mode === 'prompt'
+				? await generateRecipeWithLLM({
+						prompt: text,
+						unitsPreference,
+						language
+					})
+				: await extractRecipeWithLLM({
+						type: 'text',
+						content: text,
+						language
+					})
 
 		if (!recipe || !recipe.name || !recipe.ingredients?.length) {
 			return json({ error: 'Recipe parsing incomplete.' }, { status: 422 })

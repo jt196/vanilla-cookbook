@@ -17,7 +17,8 @@
 		aiEnabled = false,
 		imageAllowed = true,
 		initialMode = 'url',
-		userUnits = 'metric'
+		userUnits = 'metric',
+		userLanguage = 'eng'
 	} = $props()
 
 	let feedbackMessage = $state('')
@@ -28,17 +29,21 @@
 	// Tab state
 	let selectedMode = $state(initialMode)
 	let isPromptMode = $state(false)
+	let imageFiles = $state([])
 
 	// Derive textMode from isPromptMode for cleaner reactivity
 	let textMode = $derived(isPromptMode ? 'prompt' : 'parse')
+
+	// Derive disabled states for submit buttons
+	let isUrlEmpty = $derived(!url || url.trim() === '')
+	let isTextEmpty = $derived(!sharedText || sharedText.trim() === '')
+	let isImageEmpty = $derived(!imageFiles || imageFiles.length === 0)
 
 	$effect(() => {
 		if (!imageAllowed && selectedMode === 'image') {
 			selectedMode = 'url'
 		}
 	})
-
-	let imageFiles = $state([])
 
 	async function scrapeEventHandler(event) {
 		event.preventDefault()
@@ -65,7 +70,8 @@
 				feedbackMessage = textMode === 'prompt' ? 'Generating recipe...' : 'Parsing text...'
 				const parsedData = await handleParse(event, sharedText, {
 					mode: textMode,
-					unitsPreference: userUnits
+					unitsPreference: userUnits,
+					language: userLanguage
 				})
 				recipe = { ...recipe, ...parsedData }
 				feedbackMessage =
@@ -79,7 +85,7 @@
 				}
 
 				feedbackMessage = 'Analyzing image...'
-				const parsedData = await handleImage(event, imageFiles)
+				const parsedData = await handleImage(event, imageFiles, userLanguage)
 				recipe = { ...recipe, ...parsedData }
 
 				if (parsedData._status === 'complete') {
@@ -117,7 +123,7 @@
 			checked={selectedMode === 'url'} />
 		<div class="tab-content bg-base-100 border-base-300 p-2">
 			<Input type="text" placeholder="Enter recipe URL" bind:value={url} />
-			<Button type="submit" class="w-auto self-start mt-2">Scrape URL</Button>
+			<Button type="submit" class="w-auto self-start mt-2" disabled={isUrlEmpty}>Scrape URL</Button>
 		</div>
 
 		{#if aiEnabled && apiKeyPresent}
@@ -141,7 +147,7 @@
 						? 'Describe the recipe you want...'
 						: 'Paste recipe text...'}
 					bind:value={sharedText} />
-				<Button type="submit" class="w-auto self-start  mt-2">
+				<Button type="submit" class="w-auto self-start  mt-2" disabled={isTextEmpty}>
 					{textMode === 'prompt' ? 'Generate Recipe' : 'Parse Text'}
 				</Button>
 			</div>
@@ -170,7 +176,7 @@
 							}
 						}}
 						optionalLabel={`You can upload up to ${maxImages} images.`} />
-					<Button type="submit" class="w-auto self-start mt-2">
+					<Button type="submit" class="w-auto self-start mt-2" disabled={isImageEmpty}>
 						Analyze Image{imageFiles?.length > 1 ? 's' : ''}
 					</Button>
 				</div>
