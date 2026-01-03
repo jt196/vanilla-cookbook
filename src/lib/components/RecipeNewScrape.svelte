@@ -21,6 +21,7 @@
 	let feedbackMessage = $state('')
 	let feedbackType = $state('info')
 	let loading = $state(false)
+	let maxImages = 3
 
 	// Tab state
 	let selectedMode = $state(initialMode)
@@ -31,7 +32,7 @@
 		}
 	})
 
-	let imageFile = $state(null)
+	let imageFiles = $state([])
 
 	async function scrapeEventHandler(event) {
 		event.preventDefault()
@@ -61,14 +62,14 @@
 				feedbackMessage = 'Text parsed successfully.'
 				feedbackType = 'success'
 			} else if (selectedMode === 'image') {
-				if (!imageFile) {
+				if (!imageFiles?.length) {
 					feedbackMessage = 'No image selected.'
 					feedbackType = 'error'
 					return
 				}
 
 				feedbackMessage = 'Analyzing image...'
-				const parsedData = await handleImage(event, imageFile)
+				const parsedData = await handleImage(event, imageFiles)
 				recipe = { ...recipe, ...parsedData }
 
 				if (parsedData._status === 'complete') {
@@ -133,8 +134,23 @@
 					bind:group={selectedMode}
 					checked={selectedMode === 'image'} />
 				<div class="tab-content bg-base-100 border-base-300 p-2">
-					<FileInput accept="image/*" onchange={(e) => (imageFile = e.target.files[0])} />
-					<Button type="submit" class="w-auto self-start mt-2">Analyze Image</Button>
+					<FileInput
+						accept="image/*"
+						multiple={true}
+						on:change={(e) => {
+							const files = Array.from(e.detail.target.files)
+							imageFiles = files.slice(0, maxImages)
+							if (files.length > maxImages) {
+								feedbackMessage = `Only the first ${maxImages} images will be used.`
+								feedbackType = 'warning'
+							} else {
+								feedbackMessage = ''
+							}
+						}}
+						optionalLabel={`You can upload up to ${maxImages} images.`} />
+					<Button type="submit" class="w-auto self-start mt-2">
+						Analyze Image{imageFiles?.length > 1 ? 's' : ''}
+					</Button>
 				</div>
 			{/if}
 		{/if}
@@ -144,7 +160,7 @@
 <Spinner visible={loading} spinnerContent="Working..." type="bars" size="md" />
 
 {#if feedbackMessage}
-	<FeedbackMessage message={feedbackMessage} type={feedbackType} timeout={4000} />
+	<FeedbackMessage message={feedbackMessage} type={feedbackType} inline timeout={4000} />
 {/if}
 
 <style lang="scss">

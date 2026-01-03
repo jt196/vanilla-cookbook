@@ -102,15 +102,21 @@ export async function handleParse(event = null, text) {
  * Sends image to the backend and formats the result.
  *
  * @param {Event|null} event - Optional event to prevent default form behavior
- * @param {File} imageFile - The image file selected from an <input type="file">
+ * @param {File|File[]} imageInput - The image file(s) selected from an <input type="file">
  * @returns {Promise<Object>} The parsed and formatted recipe object
  */
-export async function handleImage(event = null, imageFile) {
+export async function handleImage(event = null, imageInput) {
 	if (event) event.preventDefault()
 
 	try {
+		const files = Array.isArray(imageInput) ? imageInput : imageInput ? [imageInput] : []
+
+		if (!files.length) {
+			throw new Error('No image provided')
+		}
+
 		const formData = new FormData()
-		formData.append('image', imageFile)
+		files.slice(0, 5).forEach((file) => formData.append('image', file))
 
 		const response = await fetch('/api/recipe/parse/image', {
 			method: 'POST',

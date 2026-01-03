@@ -151,3 +151,58 @@ export async function resizeImageBuffer(buffer, maxSize = 1024) {
 	// No resize needed
 	return buffer
 }
+
+/**
+ * Stitches multiple image buffers vertically into a single image.
+ *
+ * @param {Buffer[]} buffers - Array of image buffers
+ * @param {Object} [options]
+ * @param {number} [options.padding=12] - Padding between images
+ * @param {string} [options.background='#ffffff'] - Background color
+ * @param {number} [options.maxWidth=1200] - Max width to normalize images to
+ * @returns {Promise<Buffer>} Combined image buffer (PNG)
+ */
+export async function stitchImages(buffers, { padding = 12, background = '#ffffff', maxWidth = 1200 } = {}) {
+	if (!Array.isArray(buffers) || buffers.length === 0) {
+		throw new Error('No images provided to stitch')
+	}
+
+	// Normalize widths
+	const normalized = []
+	for (const buf of buffers) {
+		const img = sharp(buf)
+		const meta = await img.metadata()
+		const targetWidth = Math.min(maxWidth, meta.width || maxWidth)
+		const resized = await img.resize({ width: targetWidth, fit: 'inside', withoutEnlargement: true }).toBuffer()
+		const resizedMeta = await sharp(resized).metadata()
+		normalized.push({ buffer: resized, width: resizedMeta.width || targetWidth, height: resizedMeta.height || 0 })
+	}
+
+	const width = Math.max(...normalized.map((n) => n.width))
+	const height =
+		normalized.reduce((acc, n) => acc + n.height, 0) + padding * Math.max(0, normalized.length - 1)
+
+	const composite = []
+	let currentTop = 0
+	for (const n of normalized) {
+		composite.push({
+			input: n.buffer,
+			top: currentTop,
+			left: Math.floor((width - n.width) / 2)
+		})
+		currentTop += n.height + padding
+	}
+
+	const stitched = sharp({
+		create: {
+			width,
+			height,
+			channels: 4,
+			background
+		}
+	})
+		.composite(composite)
+		.png()
+
+	return await stitched.toBuffer()
+}

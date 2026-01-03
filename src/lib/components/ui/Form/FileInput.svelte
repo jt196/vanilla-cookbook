@@ -1,4 +1,6 @@
 <script>
+	import { createEventDispatcher } from 'svelte'
+
 	let {
 		id = '',
 		name = '',
@@ -60,6 +62,8 @@
 			.filter(Boolean)
 			.join(' ')
 	)
+
+	const dispatch = createEventDispatcher()
 </script>
 
 {#if legend}
@@ -77,6 +81,19 @@
 				<span class="label-text">{label}</span>
 			</label>
 		{/if}
-		<input type="file" {id} {name} {accept} {multiple} {required} class={classes} />
+		<input
+			type="file"
+			{id}
+			{name}
+			{accept}
+			{multiple}
+			{required}
+			class={classes}
+			on:change={(event) => dispatch('change', event)} />
+		{#if optionalLabel}
+			<label class="label">
+				<span class="label-text-alt text-xs">{optionalLabel}</span>
+			</label>
+		{/if}
 	</div>
 {/if}

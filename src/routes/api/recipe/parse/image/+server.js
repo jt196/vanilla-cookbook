@@ -1,28 +1,45 @@
 import { extractRecipeWithLLM } from '$lib/utils/ai'
 import { fileTypeFromBuffer } from 'file-type'
 import { json } from '@sveltejs/kit'
-import { resizeImageBuffer } from '$lib/utils/image/imageBackend'
+import { resizeImageBuffer, stitchImages } from '$lib/utils/image/imageBackend'
 
 export async function POST({ request }) {
 	const formData = await request.formData()
-	const file = formData.get('image')
+	const files = formData.getAll('image')
 
-	if (!file) return json({ error: 'No image provided' }, { status: 400 })
+	if (!files || files.length === 0) return json({ error: 'No image provided' }, { status: 400 })
 
-	const buffer = Buffer.from(await file.arrayBuffer())
-	const resizedBuffer = await resizeImageBuffer(buffer, 1024)
-
-	const fileType = await fileTypeFromBuffer(resizedBuffer)
-	if (!fileType || !fileType.mime.startsWith('image/')) {
-		return json({ error: 'Invalid image type' }, { status: 400 })
-	}
+	const limitedFiles = files.slice(0, 3)
 
 	try {
+		const processedBuffers = []
+
+		for (const file of limitedFiles) {
+			const buffer = Buffer.from(await file.arrayBuffer())
+			const resizedBuffer = await resizeImageBuffer(buffer, 1024)
+
+			const fileType = await fileTypeFromBuffer(resizedBuffer)
+			if (!fileType || !fileType.mime.startsWith('image/')) {
+				continue
+			}
+
+			processedBuffers.push(resizedBuffer)
+		}
+
+		if (processedBuffers.length === 0) {
+			return json({ error: 'Invalid image type' }, { status: 400 })
+		}
+
+		const stitchedBuffer =
+			processedBuffers.length === 1
+				? processedBuffers[0]
+				: await stitchImages(processedBuffers, { padding: 12, maxWidth: 1400 })
+
 		const recipe = await extractRecipeWithLLM({
 			provider: 'openai',
 			type: 'image',
-			imageBuffer: resizedBuffer,
-			imageMimeType: fileType.mime
+			imageBuffer: stitchedBuffer,
+			imageMimeType: 'image/png'
 		})
 
 		if (!recipe || !recipe.name || !recipe.ingredients?.length) {
