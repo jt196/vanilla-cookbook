@@ -170,7 +170,7 @@
 			directionLines,
 			selectedSystem,
 			measurementSystem.system,
-			null,
+			convertedIngredients,
 			viewUser.language
 		).map((direction) =>
 				getSanitizedHTML(direction)
@@ -289,7 +289,7 @@
 
 		<div class="w-full md:w-2/3">
 			<RecipeViewDesc {recipe} />
-			<RecipeViewDirections {directionLines} {sanitizedDirections} />
+			<RecipeViewDirections {directionLines} {sanitizedDirections} {loadingIngredients} />
 		</div>
 	</div>
 	<RecipeViewNotes {notesLines} {sanitizedNotes} />

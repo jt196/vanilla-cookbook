@@ -22,7 +22,7 @@
 	{#each [1, 2, 3, 4, 5] as star (star)}
 		<button
 			class="btn btn-circle btn-ghost btn-sm p-0 min-h-0 h-auto"
-			class:opacity-60={rating < star - 0.5}
+			class:opacity-40={rating < star - 0.5}
 			class:hover:opacity-100={rating < star - 0.5}
 			class:opacity-100={rating >= star - 0.5}
 			class:text-warning={rating >= star - 0.5}

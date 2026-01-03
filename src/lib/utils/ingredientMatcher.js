@@ -2,7 +2,7 @@
  * Ingredient Matcher - Find ingredient names in direction text
  *
  * Matches ingredient names from the recipe's ingredient list and wraps them
- * in custom web component tags for interactive display.
+ * in styled spans for visual highlighting.
  *
  * @module ingredientMatcher
  */
@@ -69,7 +69,7 @@ function escapeRegex(str) {
 }
 
 /**
- * Match ingredient names in direction text and wrap with custom elements
+ * Match ingredient names in direction text and wrap with styled spans
  *
  * Matching strategy:
  * 1. Exact match on ingredient.ingredient property (case-insensitive)
@@ -79,11 +79,11 @@ function escapeRegex(str) {
  * 5. Non-overlapping replacements
  *
  * Output format:
- * "Add the butter" → "Add the <vc-ingredient data-idx=\"0\" data-name=\"butter\">butter</vc-ingredient>"
+ * "Add the butter" → "Add the <span class=\"text-primary font-medium\">butter</span>"
  *
  * @param {string} text - Direction text
  * @param {Array<object>} ingredients - Array of ingredient objects with at least { ingredient: string }
- * @returns {string} - Text with ingredient names wrapped in custom elements
+ * @returns {string} - Text with ingredient names wrapped in styled spans
  */
 export function matchIngredients(text, ingredients) {
 	if (!text || typeof text !== 'string') return text
@@ -128,6 +128,31 @@ export function matchIngredients(text, ingredients) {
 		})
 	}
 
+	/**
+	 * Check if a position is inside an HTML tag
+	 * @param {string} str - The string to check
+	 * @param {number} pos - Position to check
+	 * @returns {boolean} - True if inside HTML tag
+	 */
+	function isInsideHtmlTag(str, pos) {
+		// Look backwards for the nearest < or >
+		let lastTag = -1
+		let lastClose = -1
+
+		for (let i = pos - 1; i >= 0; i--) {
+			if (str[i] === '<' && lastTag === -1) {
+				lastTag = i
+			}
+			if (str[i] === '>' && lastClose === -1) {
+				lastClose = i
+				break
+			}
+		}
+
+		// If we found a < before a >, we're inside a tag
+		return lastTag > lastClose
+	}
+
 	let result = text
 
 	// Process each ingredient (longest first)
@@ -137,10 +162,10 @@ export function matchIngredients(text, ingredients) {
 			// Build regex with word boundaries
 			const pattern = new RegExp(`\\b${escapeRegex(variant)}\\b`, 'gi')
 
-			// Find all matches
+			// Find all matches in the CURRENT result string (not original text)
 			const matches = []
 			let match
-			while ((match = pattern.exec(text)) !== null) {
+			while ((match = pattern.exec(result)) !== null) {
 				matches.push({
 					start: match.index,
 					end: match.index + match[0].length,
@@ -155,11 +180,21 @@ export function matchIngredients(text, ingredients) {
 					continue // Skip overlapping match
 				}
 
-				// HTML-escape the ingredient name to prevent XSS
-				const escapedName = name.replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+				// Skip if match is inside an HTML tag (from temperature/timing parsing)
+				if (isInsideHtmlTag(result, start)) {
+					continue
+				}
 
-				// Wrap in custom element
-				const replacement = `<vc-ingredient data-idx="${idx}" data-name="${escapedName}">${matched}</vc-ingredient>`
+				// HTML-escape the matched text to prevent XSS
+				const escapedText = matched
+					.replace(/&/g, '&amp;')
+					.replace(/</g, '&lt;')
+					.replace(/>/g, '&gt;')
+					.replace(/"/g, '&quot;')
+					.replace(/'/g, '&#039;')
+
+				// Wrap in styled span
+				const replacement = `<span class="text-primary"><b>${escapedText}</b></span>`
 
 				// Replace in result string
 				result = result.slice(0, start) + replacement + result.slice(end)

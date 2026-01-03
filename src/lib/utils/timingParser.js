@@ -12,7 +12,7 @@ import { i18nMap } from '$lib/submodules/recipe-ingredient-parser/src/i18n'
  *
  * @param {string} text - Direction text
  * @param {string} lang - Language code (eng, deu, ita, etc.)
- * @returns {string} - Text with timings wrapped in <span class="text-primary">
+ * @returns {string} - Text with timings wrapped in <span class="text-accent">
  */
 export function parseTimings(text, lang = 'eng') {
 	if (!text || typeof text !== 'string') return text
@@ -65,6 +65,6 @@ export function parseTimings(text, lang = 'eng') {
 
 	// Replace matches with styled spans
 	return text.replace(regex, (match) => {
-		return `<span class="text-primary">${match}</span>`
+		return `<span class="text-accent"><b>${match}</b></span>`
 	})
 }

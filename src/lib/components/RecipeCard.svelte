@@ -36,9 +36,9 @@
 <a
 	href="/recipe/{item.uid}/view/"
 	class="flex items-stretch gap-3 mb-3 rounded-lg transition no-underline text-current">
-	<Card class="flex-1 hover:bg-base-200 min-h-[9rem]" size="md" side figureClass="w-32 flex-shrink-0">
+	<Card class="flex-1 hover:bg-base-200 min-h-36" size="md" side figureClass="w-32 flex-shrink-0">
 		{#snippet figure()}
-			<div class="h-[9rem] w-full overflow-hidden">
+			<div class="h-36 w-full overflow-hidden">
 				{#if item.photos && item.photos.length > 0 && showPrimaryPhoto}
 					<img
 						class="h-full w-full object-cover"
@@ -66,14 +66,14 @@
 					<div class="flex gap-1 shrink-0">
 						<button
 							onclick={(event) => handleFavourite(item?.uid, event)}
-							class="btn btn-circle btn-ghost btn-xs tooltip opacity-60 hover:opacity-100"
+							class="btn btn-circle btn-ghost btn-xs tooltip hover:opacity-100"
 							data-tip="Favourite Recipe"
 							class:text-error={favourite}
 							class:opacity-100={favourite}>
 							<Favourite {favourite} width="16px" height="16px" />
 						</button>
 						<button
-							class="btn btn-circle btn-ghost btn-xs tooltip opacity-60 hover:opacity-100"
+							class="btn btn-circle btn-ghost btn-xs tooltip hover:opacity-100"
 							class:text-success={logged}
 							class:opacity-100={logged}
 							data-tip={item.log?.length > 0

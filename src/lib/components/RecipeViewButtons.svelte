@@ -3,28 +3,28 @@
 	import Delete from '$lib/components/svg/Delete.svelte'
 	import Edit from '$lib/components/svg/Edit.svelte'
 	import { goto } from '$app/navigation'
-import {
-	addRecipeLog,
-	changeRecipeFavourite,
-	changeRecipePublic,
-	deleteRecipeById
-} from '$lib/utils/crud'
-import Favourite from './svg/Favourite.svelte'
-import Check from './svg/Check.svelte'
-import RecipeShareButton from './RecipeShareButton.svelte'
-import Public from './svg/Public.svelte'
-import Button from '$lib/components/ui/Button.svelte'
-import ConfirmationDialog from '$lib/components/ConfirmationDialog.svelte'
+	import {
+		addRecipeLog,
+		changeRecipeFavourite,
+		changeRecipePublic,
+		deleteRecipeById
+	} from '$lib/utils/crud'
+	import Favourite from './svg/Favourite.svelte'
+	import Check from './svg/Check.svelte'
+	import RecipeShareButton from './RecipeShareButton.svelte'
+	import Public from './svg/Public.svelte'
+	import Button from '$lib/components/ui/Button.svelte'
+	import ConfirmationDialog from '$lib/components/ConfirmationDialog.svelte'
 
 	/** @type {{recipe: any, updateLogs: any, favRecipe: any}} */
-let { recipe, updateLogs, favRecipe, pubRecipe, logs, viewOnly } = $props()
-let showDeleteConfirm = $state(false)
-let pendingDeleteUid = $state(null)
+	let { recipe, updateLogs, favRecipe, pubRecipe, logs, viewOnly } = $props()
+	let showDeleteConfirm = $state(false)
+	let pendingDeleteUid = $state(null)
 
-async function handleDelete(uid) {
-	pendingDeleteUid = uid
-	showDeleteConfirm = true
-}
+	async function handleDelete(uid) {
+		pendingDeleteUid = uid
+		showDeleteConfirm = true
+	}
 
 	async function handleFavourite(uid) {
 		console.log('Handle favourites button clicked for uid: ' + uid)
@@ -56,7 +56,7 @@ async function handleDelete(uid) {
 {#if !viewOnly || recipe.is_public}
 	<RecipeShareButton name={recipe.name} isPublic={recipe.is_public} uid={recipe.uid} {pubRecipe} />
 {:else}
-	<button class="btn btn-outline btn-sm tooltip opacity-60" data-tip="Private Recipe">
+	<button class="btn btn-outline btn-sm tooltip" data-tip="Private Recipe">
 		<Public isPublic={recipe.is_public} width="20px" height="20px" fill="currentColor" />
 	</button>
 {/if}
@@ -79,7 +79,6 @@ async function handleDelete(uid) {
 		onclick={(event) => handlePublic(recipe?.uid)}
 		class="btn btn-soft btn-primary btn-sm tooltip"
 		class:btn-success={recipe?.is_public}
-		class:opacity-60={!recipe?.is_public}
 		data-tip={recipe?.is_public ? 'Private Recipe?' : 'Public Recipe?'}>
 		<Public isPublic={recipe?.is_public} width="20px" height="20px" fill="currentColor" />
 	</button>
@@ -87,7 +86,6 @@ async function handleDelete(uid) {
 		onclick={(event) => handleFavourite(recipe?.uid)}
 		class="btn btn-soft btn-primary btn-sm tooltip"
 		class:text-error={recipe?.on_favorites}
-		class:opacity-60={!recipe?.on_favorites}
 		data-tip={recipe?.on_favorites ? 'Unfavourite Recipe' : 'Favourite Recipe'}>
 		<Favourite favourite={recipe?.on_favorites} width="20px" height="20px" fill="currentColor" />
 	</button>
@@ -95,7 +93,6 @@ async function handleDelete(uid) {
 		onclick={() => handleLog(recipe?.uid)}
 		class="btn btn-soft btn-primary btn-sm tooltip"
 		class:text-success={logs?.length > 0}
-		class:opacity-60={logs?.length === 0}
 		data-tip="Mark Recipe Cooked Today"
 		data-testid="check-button">
 		<Check width="20px" height="20px" checked={logs?.length > 0} fill="currentColor" />
