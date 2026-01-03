@@ -14,7 +14,10 @@
 {#if mobile}
 	<!-- Mobile menu layout - list items only (parent provides <ul>) -->
 	<li>
-		<button onclick={onToggleTheme} class="flex items-center gap-2 text-primary">
+		<button
+			aria-label="Toggle theme"
+			onclick={onToggleTheme}
+			class="flex items-center gap-2 text-primary">
 			<Theme {theme} width="20px" />
 			<span>Toggle Theme</span>
 		</button>

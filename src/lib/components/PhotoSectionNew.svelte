@@ -5,17 +5,8 @@
 
 {#if recipe.image_url && imageExists}
 	<img
-		class="recipe-thumbnail"
+		class="w-32 h-auto object-cover rounded-lg shadow-md mb-4"
 		loading="lazy"
 		src={recipe.image_url}
 		alt="{recipe.image_url} thumbnail" />
 {/if}
-
-<style lang="scss">
-	.recipe-thumbnail {
-		width: 100px;
-		height: auto;
-		object-fit: cover;
-		display: block;
-	}
-</style>

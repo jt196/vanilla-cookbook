@@ -73,23 +73,38 @@
 
 <FileInput id="file" label="Upload Images" name="file" onchange={handleFilesChange} multiple />
 
-<div class="photos">
+<div class="flex flex-wrap gap-3 mb-4 mt-4">
 	{#each filteredPhotos as photo}
-		<div class="photo-container">
+		<div class="flex flex-col items-center gap-2">
 			<img
 				src="/api/recipe/image/{photo.id}"
 				alt="{recipe.name} photo"
-				class={photo.isMain ? 'main-photo' : ''} />
-			<div class="photo-actions">
-				<Button class="outline secondary" type="button" onclick={() => handleDeletePhoto(photo.id)}>
-					<Delete width="30px" height="30px" fill="var(--pico-del-color)" />
+				class="max-h-40 rounded-lg shadow-md {photo.isMain ? 'ring-4 ring-primary' : ''}" />
+			<div class="flex gap-2">
+				<Button
+					size="sm"
+					style="soft"
+					color="secondary"
+					type="button"
+					onclick={() => handleDeletePhoto(photo.id)}>
+					<Delete width="24px" height="24px" />
 				</Button>
 				{#if !photo.isMain}
 					<div class="tooltip" data-tip="Promote to Main Photo">
-						<Button class="outline secondary" type="button" onclick={() => handleSetMainPhoto(photo.id)}>
-							<UpArrow width="30px" height="30px" fill="var(--pico-primary)" />
+						<Button
+							size="sm"
+							style="soft"
+							color="secondary"
+							type="button"
+							onclick={() => handleSetMainPhoto(photo.id)}>
+							<UpArrow width="24px" height="24px" />
 						</Button>
-	</div>
+					</div>
+				{/if}
+			</div>
+		</div>
+	{/each}
+</div>
 
 <ConfirmationDialog
 	bind:isOpen={showDeleteConfirm}
@@ -100,35 +115,3 @@
 		<p class="py-4">Are you sure you want to delete this photo?</p>
 	{/snippet}
 </ConfirmationDialog>
-				{/if}
-			</div>
-		</div>
-	{/each}
-</div>
-
-<style lang="scss">
-	.photos {
-		margin-bottom: 1rem;
-		display: flex;
-		gap: 10px; /* adjust as needed */
-		flex-wrap: wrap;
-		img {
-			max-height: 150px;
-			border-radius: 5px;
-		}
-		.photo-container {
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			gap: 5px; /* adjust as needed */
-			.photo-actions {
-				display: flex;
-				gap: 5px; /* adjust as needed */
-			}
-		}
-	}
-
-	.main-photo {
-		border: 3px solid var(--pico-muted-color);
-	}
-</style>

@@ -1,6 +1,6 @@
 // NOTE: jest-dom adds handy assertions to Jest and it is recommended, but not required.
 import '@testing-library/jest-dom'
-import { sortState } from '$lib/stores/recipeFilter'
+import { sortState, searchKey } from '$lib/stores/recipeFilter'
 import { get } from 'svelte/store'
 
 import { render, fireEvent, screen } from '@testing-library/svelte/svelte5'
@@ -67,8 +67,9 @@ describe('RecipeFilter component', () => {
 	const mockSortState = { key: 'created', direction: 'desc' }
 
 	beforeEach(() => {
-		// Reset sortState to a default value before each test
+		// Reset stores to default values before each test
 		sortState.set({ key: 'created', direction: 'desc' })
+		searchKey.set('name')
 	})
 
 	it('renders without crashing', () => {
@@ -85,22 +86,22 @@ describe('RecipeFilter component', () => {
 	})
 
 	it('binds search dropdown correctly', async () => {
-		const { getByLabelText } = render(RecipeFilter, { sortState: mockSortState })
-		const dropdown = getByLabelText('selections')
+		const { container } = render(RecipeFilter, { sortState: mockSortState })
+		const dropdown = container.querySelector('select[name="selections"]')
 
-		await fireEvent.select(dropdown, { target: { value: 'ingredients' } })
+		await fireEvent.change(dropdown, { target: { value: 'ingredients' } })
 		expect(dropdown.value).toBe('ingredients')
 	})
 
 	it('defaults to "name" in the search dropdown', () => {
-		const { getByLabelText } = render(RecipeFilter, { sortState: mockSortState })
-		const dropdown = getByLabelText('selections')
+		const { container } = render(RecipeFilter, { sortState: mockSortState })
+		const dropdown = container.querySelector('select[name="selections"]')
 		expect(dropdown.value).toBe('name')
 	})
 
 	it('updates dropdown value correctly on name selection', async () => {
-		const { getByLabelText } = render(RecipeFilter, { sortState: mockSortState })
-		const dropdown = getByLabelText('selections')
+		const { container } = render(RecipeFilter, { sortState: mockSortState })
+		const dropdown = container.querySelector('select[name="selections"]')
 
 		await fireEvent.select(dropdown, { target: { value: 'name' } })
 
@@ -108,10 +109,10 @@ describe('RecipeFilter component', () => {
 	})
 
 	it('updates dropdown value correctly on ingredients selection', async () => {
-		const { getByLabelText } = render(RecipeFilter, { sortState: mockSortState })
-		const dropdown = getByLabelText('selections')
+		const { container } = render(RecipeFilter, { sortState: mockSortState })
+		const dropdown = container.querySelector('select[name="selections"]')
 
-		await fireEvent.select(dropdown, { target: { value: 'ingredients' } })
+		await fireEvent.change(dropdown, { target: { value: 'ingredients' } })
 
 		expect(dropdown.value).toBe('ingredients')
 	})

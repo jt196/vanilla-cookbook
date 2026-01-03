@@ -148,6 +148,40 @@ Here's a demo, feel free to fast forward the middle bit where it's waiting for t
   Your browser does not support the video tag.
 </video>
 
+#### Clean Ingredients
+
+When adding or editing a recipe, you'll find a "Clean Ingredients" button below the ingredients field (available when AI is enabled). This feature uses AI to tidy up your ingredient list according to these rules:
+
+1. **Remove dual units** - If ingredients have both metric and imperial measurements (e.g., "28g (1oz) flour"), it keeps only your preferred unit system
+2. **Standardize alternatives** - Moves alternative ingredients after a comma with "or" (e.g., "1 tomato or 0.5 tin tomatoes" → "1 tomato, or 0.5 tin tomatoes")
+3. **Remove brackets** - Removes parentheses while keeping important info after a comma
+4. **Move preparation instructions** - Places prep details after a comma (e.g., "1 onion (chopped)" → "1 onion, chopped")
+5. **Remove conversational text** - Strips out non-essential text while keeping ingredient data
+6. **Use decimal numbers** - Converts fractions to decimals (e.g., "1 1/2 kg" → "1.5 kg")
+7. **Remove prepositions** - Eliminates words like "of" (e.g., "1.5 kg of flour" → "1.5 kg flour")
+
+This feature respects your language settings and preferred unit system (metric/US/imperial).
+
+<video width="640" height="360" controls>
+  <source src="../../videos/ingredients_tidy_demo.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
+#### Summarize Directions
+
+Similar to the ingredient cleanup, the "Summarize Directions" button appears below the directions field. This feature condenses verbose recipe instructions to their essential steps, removing:
+
+- Conversational tone and extra explanations
+- Unnecessary tips and commentary
+- Redundant information
+
+The AI assumes an intermediate level of culinary experience, keeping all necessary steps but making each one more concise. This is particularly useful for recipes scraped from blogs that include lengthy personal anecdotes or overly detailed explanations.
+
+<video width="640" height="360" controls>
+  <source src="../../videos/directions_summarize_demo.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 ### Add it
 
 Complete the recipe form, then click the **Add Recipe** button at the bottom. The Edit page is basically the same as this. If the images are successfully saved, they'll be in the _uploads/images_ folder. Image URLs should grab the image and save it there.
