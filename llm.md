@@ -1,8 +1,8 @@
 ## LLM Feature Plan
 
 1) **Provider Flexibility**
-   - Env shape (generic-first): `LLM_PROVIDER`, `LLM_API_KEY`, `LLM_TEXT_MODEL`, `LLM_IMAGE_MODEL`; optional overrides `LLM_TEXT_PROVIDER`, `LLM_IMAGE_PROVIDER`, plus provider-specific keys (e.g., `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`).
-   - Dynamically import provider client so only installed providers are loaded; installation can be done per-deployment (Docker/entrypoint) instead of bundling all.
+   - Env shape (generic-first): `LLM_PROVIDER`, `LLM_API_KEY`, `LLM_TEXT_MODEL`, `LLM_IMAGE_MODEL`; optional overrides `LLM_TEXT_PROVIDER`, `LLM_IMAGE_PROVIDER`, plus provider-specific keys (e.g., `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GEMINI_API_KEY`, `OLLAMA_BASE_URL`).
+   - Dynamically import provider client so only installed providers are loaded (OpenAI, Anthropic, Gemini, Ollama out of the box); installation can be done per-deployment (Docker/entrypoint) instead of bundling all.
    - Surface current provider/model in UI (admin site settings) and pass selection through to server calls.
 
 2) **Prompt-to-Recipe Creation**

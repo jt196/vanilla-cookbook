@@ -78,49 +78,88 @@ ${blockType}:
  * Supported providers (install the matching LangChain pkg):
  * - openai (@langchain/openai)
  * - anthropic (@langchain/anthropic)
+ * - gemini (@langchain/google-genai)
+ * - ollama (@langchain/ollama)
  *
  * @param {string} provider
  * @param {string} model
+ * @param {string} type
  * @returns {Promise<import('@langchain/core/language_models/chat_models').BaseChatModel>}
  */
 function resolveApiKey(provider) {
 	const generic = env.LLM_API_KEY
 	if (provider === 'openai') return env.OPENAI_API_KEY || generic
 	if (provider === 'anthropic') return env.ANTHROPIC_API_KEY || generic
+	if (provider === 'gemini') return env.GEMINI_API_KEY || generic
 	return generic
 }
 
+function makeProviderLoader({ provider, importPath, clientName, buildConfig }) {
+	return async (model, type) => {
+		const apiKey = resolveApiKey(provider)
+		if (apiKey === undefined || apiKey === null || apiKey === '') {
+			throw new Error(`Missing ${provider} API key`)
+		}
+		const mod = await import(importPath)
+		const Client = mod[clientName]
+		if (!Client) throw new Error(`Client ${clientName} not found in ${importPath}`)
+		return new Client(buildConfig(model, apiKey, type))
+	}
+}
+
 const providerLoaders = {
-	openai: async (model) => {
-		const apiKey = resolveApiKey('openai')
-		if (!apiKey) throw new Error('Missing OpenAI API key')
-		const { ChatOpenAI } = await import('@langchain/openai')
-		return new ChatOpenAI({
+	openai: makeProviderLoader({
+		provider: 'openai',
+		importPath: '@langchain/openai',
+		clientName: 'ChatOpenAI',
+		buildConfig: (model, apiKey) => ({
 			modelName: model,
 			openAIApiKey: apiKey,
 			temperature: 0.3
 		})
-	},
-	anthropic: async (model) => {
-		const apiKey = resolveApiKey('anthropic')
-		if (!apiKey) throw new Error('Missing Anthropic API key')
-		const { ChatAnthropic } = await import('@langchain/anthropic')
-		return new ChatAnthropic({
+	}),
+	anthropic: makeProviderLoader({
+		provider: 'anthropic',
+		importPath: '@langchain/anthropic',
+		clientName: 'ChatAnthropic',
+		buildConfig: (model, apiKey) => ({
 			model,
 			apiKey,
+			temperature: 0.3
+		})
+	}),
+	gemini: makeProviderLoader({
+		provider: 'gemini',
+		importPath: '@langchain/google-genai',
+		clientName: 'ChatGoogleGenerativeAI',
+		buildConfig: (model, apiKey) => ({
+			modelName: model,
+			apiKey,
+			temperature: 0.3
+		})
+	}),
+	ollama: async (model, type) => {
+		if (type === 'image') {
+			throw new Error('Ollama provider does not support image prompts in this flow')
+		}
+		const baseUrl = env.OLLAMA_BASE_URL || 'http://localhost:11434'
+		const { ChatOllama } = await import('@langchain/ollama')
+		return new ChatOllama({
+			model,
+			baseUrl,
 			temperature: 0.3
 		})
 	}
 }
 
-async function loadChatClient(provider, model) {
+async function loadChatClient(provider, model, type) {
 	const loader = providerLoaders[provider]
 	if (!loader) {
 		throw new Error(
 			`Unsupported provider: ${provider}. Install the appropriate LangChain provider package and add a loader in providerLoaders.`
 		)
 	}
-	return loader(model)
+	return loader(model, type)
 }
 
 /**
@@ -160,7 +199,11 @@ export async function extractRecipeWithLLM({
 	const effectiveProvider = type === 'image' ? imageProvider : textProvider
 	const model = type === 'image' ? imageModel : textModel
 
-	const chat = await loadChatClient(effectiveProvider, model)
+	if (type === 'image' && effectiveProvider === 'ollama') {
+		throw new Error('Ollama provider does not support image prompts')
+	}
+
+	const chat = await loadChatClient(effectiveProvider, model, type)
 
 	const messages = []
 

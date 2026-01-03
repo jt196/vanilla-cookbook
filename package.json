@@ -66,6 +66,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@aws-sdk/client-s3": "^3.962.0",
 		"@langchain/anthropic": "^0.3.15",
 		"@langchain/core": "^0.3.43",
 		"@langchain/openai": "^0.5.2",
