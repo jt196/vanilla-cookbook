@@ -3,7 +3,6 @@
 	 * DaisyUI Modal/Dialog Component
 	 * Uses native HTML dialog element with DaisyUI styling
 	 */
-	import { tick } from 'svelte'
 
 	let {
 		/**

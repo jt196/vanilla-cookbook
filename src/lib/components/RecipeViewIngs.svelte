@@ -89,69 +89,70 @@
 
 	<div class="mb-4">
 		<div class="grid grid-cols-3 gap-1 mb-3">
-			<button
-				class="btn btn-sm"
-				class:btn-primary={selectedSystem === 'metric'}
-				class:btn-soft={selectedSystem !== 'metric'}
-				class:ring-2={originalSystem === 'metric'}
-				class:ring-primary={originalSystem === 'metric'}
+			<Button
+				style={selectedSystem === 'metric' ? 'standard' : 'soft'}
+				color="primary"
+				size="sm"
+				class={originalSystem === 'metric' ? 'ring-2 ring-primary' : ''}
 				onclick={() => onSelectedSystemChange('metric')}>
 				Metric
-			</button>
-			<button
-				class="btn btn-sm"
-				class:btn-primary={selectedSystem === 'americanVolumetric'}
-				class:btn-soft={selectedSystem !== 'americanVolumetric'}
-				class:ring-2={originalSystem === 'americanVolumetric'}
-				class:ring-primary={originalSystem === 'americanVolumetric'}
+			</Button>
+			<Button
+				style={selectedSystem === 'americanVolumetric' ? 'standard' : 'soft'}
+				color="primary"
+				size="sm"
+				class={originalSystem === 'americanVolumetric' ? 'ring-2 ring-primary' : ''}
 				onclick={() => onSelectedSystemChange('americanVolumetric')}>
 				US Vol
-			</button>
-			<button
-				class="btn btn-sm"
-				class:btn-primary={selectedSystem === 'imperial'}
-				class:btn-soft={selectedSystem !== 'imperial'}
-				class:ring-2={originalSystem === 'imperial'}
-				class:ring-primary={originalSystem === 'imperial'}
+			</Button>
+			<Button
+				style={selectedSystem === 'imperial' ? 'standard' : 'soft'}
+				color="primary"
+				size="sm"
+				class={originalSystem === 'imperial' ? 'ring-2 ring-primary' : ''}
 				onclick={() => onSelectedSystemChange('imperial')}>
 				Imperial
-			</button>
+			</Button>
 		</div>
 	</div>
 
 	<div class="flex flex-wrap gap-1">
-		<button
-			class="btn btn-sm flex-1"
-			class:btn-primary={displayOriginal}
-			class:btn-soft={!displayOriginal}
+		<Button
+			style={displayOriginal ? 'standard' : 'soft'}
+			color="primary"
+			size="sm"
+			class="flex-1"
 			onclick={() => (displayOriginal = !displayOriginal)}>
 			Original
-		</button>
+		</Button>
 		{#if sanitizedIngredients.some((item) => item.additional)}
-			<button
-				class="btn btn-sm flex-1"
-				class:btn-primary={displayExtra}
-				class:btn-soft={!displayExtra}
+			<Button
+				style={displayExtra ? 'standard' : 'soft'}
+				color="primary"
+				size="sm"
+				class="flex-1"
 				disabled={displayOriginal}
 				onclick={() => (displayExtra = !displayExtra)}>
 				Extra
-			</button>
+			</Button>
 		{/if}
-		<button
-			class="btn btn-sm flex-1"
-			class:btn-primary={displayDryMatch}
-			class:btn-soft={!displayDryMatch}
+		<Button
+			style={displayDryMatch ? 'standard' : 'soft'}
+			color="primary"
+			size="sm"
+			class="flex-1"
 			disabled={displayOriginal || !isVolumetricConversion}
 			onclick={() => (displayDryMatch = !displayDryMatch)}>
 			Match
-		</button>
-		<button
-			class="btn btn-sm flex-1"
-			class:btn-primary={displaySymbol}
-			class:btn-soft={!displaySymbol}
+		</Button>
+		<Button
+			style={displaySymbol ? 'standard' : 'soft'}
+			color="primary"
+			size="sm"
+			class="flex-1"
 			disabled={displayOriginal}
 			onclick={() => (displaySymbol = !displaySymbol)}>
 			Symbols
-		</button>
+		</Button>
 	</div>
 </div>

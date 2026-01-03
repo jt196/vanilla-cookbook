@@ -173,9 +173,9 @@ let isSubmitDisabled = $derived(() => {
 	})
 </script>
 
-<button class="btn btn-primary tooltip mb-3" data-tip="New User" onclick={openCreateDialog}>
+<Button class="tooltip mb-3" data-tip="New User" onclick={openCreateDialog}>
 	<New width="30px" height="30px" fill="currentColor" />
-</button>
+</Button>
 
 <Table zebra size="sm" bordered>
 	<TableHead>
@@ -208,21 +208,24 @@ let isSubmitDisabled = $derived(() => {
 				<TableCell class="hidden sm:table-cell"><TrueFalse isTrue={user.isAdmin} /></TableCell>
 				<TableCell class="hidden sm:table-cell"><TrueFalse isTrue={user.isRoot} /></TableCell>
 				<TableCell>
-					<button
-						class="btn btn-outline btn-sm"
+					<Button
+						style="outline"
+						size="sm"
 						onclick={() => openEditDialog(user)}
 						data-testid="edit-button">
 						<Edit width="20px" fill="currentColor" />
-					</button>
+					</Button>
 				</TableCell>
 				<TableCell>
 					{#if user.id !== currentAdminUserId || !user.isRoot}
-						<button
-							class="btn btn-outline btn-error btn-sm"
+						<Button
+							style="outline"
+							color="error"
+							size="sm"
 							onclick={() => deleteUser(user.id)}
 							data-testid="delete-button">
 							<Delete width="20px" fill="currentColor" />
-						</button>
+						</Button>
 					{/if}
 				</TableCell>
 			</TableRow>

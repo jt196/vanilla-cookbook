@@ -5,6 +5,7 @@
 	import StarRating from '$lib/components/StarRating.svelte'
 	import { changeRecipeFavourite } from '$lib/utils/crud'
 	import Card from '$lib/components/ui/Card.svelte'
+	import Button from '$lib/components/ui/Button.svelte'
 	let showPrimaryPhoto = $state(true)
 	let showImageUrl = $state(true)
 
@@ -64,23 +65,23 @@
 				<span class="text-base md:text-2xl leading-snug line-clamp-2">{item.name}</span>
 				{#if item.userId === data.user?.requestedUserId}
 					<div class="flex gap-1 shrink-0">
-						<button
+						<Button
 							onclick={(event) => handleFavourite(item?.uid, event)}
-							class="btn btn-circle btn-ghost btn-xs tooltip hover:opacity-100"
-							data-tip="Favourite Recipe"
-							class:text-error={favourite}
-							class:opacity-100={favourite}>
+							style="ghost"
+							size="xs"
+							class="btn-circle tooltip hover:opacity-100 {favourite ? 'text-error opacity-100' : ''}"
+							data-tip="Favourite Recipe">
 							<Favourite {favourite} width="16px" height="16px" />
-						</button>
-						<button
-							class="btn btn-circle btn-ghost btn-xs tooltip hover:opacity-100"
-							class:text-success={logged}
-							class:opacity-100={logged}
+						</Button>
+						<Button
+							style="ghost"
+							size="xs"
+							class="btn-circle tooltip hover:opacity-100 {logged ? 'text-success opacity-100' : ''}"
 							data-tip={item.log?.length > 0
 								? `Cooked ${item.log.length} time${item.log.length > 1 ? 's' : ''}`
 								: 'Never cooked'}>
 							<Check checked={logged} width="16px" height="16px" />
-						</button>
+						</Button>
 					</div>
 				{/if}
 			</div>
