@@ -71,6 +71,43 @@ ${blockType}:
 """${trimmedContent}"""${urlLine}`
 }
 
+function buildRecipeFromPrompt(userPrompt = '', preferredUnits) {
+	const trimmedPrompt = userPrompt?.substring(0, 4000) || ''
+	const unitsLine = preferredUnits
+		? `- Use ${preferredUnits} units for quantities where possible.`
+		: ''
+	return `
+You are a recipe creation AI. Using the user prompt below, create a complete, plausible recipe and return it as JSON.
+
+Rules:
+- Respond with JSON only, no Markdown fences or commentary.
+- Populate all standard recipe fields. If something is unspecified, leave it empty or use reasonable defaults.
+- Ingredients: array of strings, one ingredient per entry.
+- Instructions: array of strings, one step per entry.
+- Do not fabricate nutrition unless explicitly provided; leave blank if unknown.
+${unitsLine}
+
+JSON shape:
+{
+  "name": "",
+  "author": "",
+  "sourceUrl": "",
+  "imageUrl": "",
+  "description": "",
+  "ingredients": ["ingredient 1", "ingredient 2"],
+  "instructions": ["Step 1", "Step 2"],
+  "cookTime": "",
+  "prepTime": "",
+  "totalTime": "",
+  "servings": "",
+  "nutrition": {}
+}
+
+User prompt:
+"""${trimmedPrompt}"""
+`
+}
+
 /**
  * Dynamically load a chat model client based on provider.
  * Keeps bundling light and lets deployments install only the needed provider package.
@@ -100,7 +137,7 @@ function makeProviderLoader({ provider, importPath, clientName, buildConfig }) {
 		if (apiKey === undefined || apiKey === null || apiKey === '') {
 			throw new Error(`Missing ${provider} API key`)
 		}
-		const mod = await import(importPath)
+		const mod = await import(/* @vite-ignore */ importPath)
 		const Client = mod[clientName]
 		if (!Client) throw new Error(`Client ${clientName} not found in ${importPath}`)
 		return new Client(buildConfig(model, apiKey, type))
@@ -185,7 +222,9 @@ export async function extractRecipeWithLLM({
 	type = 'html',
 	url = '',
 	imageBuffer,
-	imageMimeType
+	imageMimeType,
+	mode = 'parse', // parse | prompt
+	unitsPreference
 }) {
 	if (env.LLM_API_ENABLED !== 'true') throw new Error('LLM API is disabled')
 
@@ -228,7 +267,10 @@ export async function extractRecipeWithLLM({
 	} else {
 		const trimmedContent = content.substring(0, 40000)
 		const blockType = type === 'html' ? 'HTML' : 'Text'
-		const prompt = buildRecipePrompt(blockType, trimmedContent, url)
+		const prompt =
+			mode === 'prompt'
+				? buildRecipeFromPrompt(trimmedContent, unitsPreference)
+				: buildRecipePrompt(blockType, trimmedContent, url)
 
 		messages.push(new HumanMessage(prompt))
 	}

@@ -7,7 +7,7 @@
 
 2) **Prompt-to-Recipe Creation**
    - In `RecipeNewScrape.svelte`, add mode toggle: paste text vs prompt → recipe generation (optional image generation).
-   - Define backend endpoint to accept prompt, call configured text/image models, return recipe object (and optional image).
+   - Backend: accept prompt mode, use generation prompt (see `buildRecipeFromPrompt` in `ai.js`), return recipe object.
    - Handle UX states (loading, errors) and populate form with generated recipe.
 
 3) **Directions Summarization**

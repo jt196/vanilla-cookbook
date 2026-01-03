@@ -3,16 +3,17 @@ import { json } from '@sveltejs/kit'
 
 export async function POST({ request }) {
 	try {
-		const { text } = await request.json()
+		const { text, mode = 'parse', unitsPreference } = await request.json()
 
 		if (!text || typeof text !== 'string') {
 			return json({ error: 'Invalid or missing text field.' }, { status: 400 })
 		}
 
 		const recipe = await extractRecipeWithLLM({
-			provider: 'openai',
 			type: 'text',
-			content: text
+			content: text,
+			mode,
+			unitsPreference
 			// model will be selected automatically from env.LLM_API_ENGINE_TEXT
 		})
 

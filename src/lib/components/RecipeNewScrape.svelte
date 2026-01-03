@@ -6,6 +6,7 @@
 	import Textarea from '$lib/components/ui/Form/Textarea.svelte'
 	import FileInput from '$lib/components/ui/Form/FileInput.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
+	import Toggle from '$lib/components/ui/Form/Toggle.svelte'
 	import Spinner from '$lib/components/Spinner.svelte'
 
 	let {
@@ -15,7 +16,8 @@
 		apiKeyPresent = false,
 		aiEnabled = false,
 		imageAllowed = true,
-		initialMode = 'url'
+		initialMode = 'url',
+		userUnits = 'metric'
 	} = $props()
 
 	let feedbackMessage = $state('')
@@ -25,6 +27,10 @@
 
 	// Tab state
 	let selectedMode = $state(initialMode)
+	let isPromptMode = $state(false)
+
+	// Derive textMode from isPromptMode for cleaner reactivity
+	let textMode = $derived(isPromptMode ? 'prompt' : 'parse')
 
 	$effect(() => {
 		if (!imageAllowed && selectedMode === 'image') {
@@ -56,10 +62,14 @@
 					feedbackType = 'warning'
 				}
 			} else if (selectedMode === 'text') {
-				feedbackMessage = 'Parsing text...'
-				const parsedData = await handleParse(event, sharedText)
+				feedbackMessage = textMode === 'prompt' ? 'Generating recipe...' : 'Parsing text...'
+				const parsedData = await handleParse(event, sharedText, {
+					mode: textMode,
+					unitsPreference: userUnits
+				})
 				recipe = { ...recipe, ...parsedData }
-				feedbackMessage = 'Text parsed successfully.'
+				feedbackMessage =
+					textMode === 'prompt' ? 'Recipe generated successfully.' : 'Text parsed successfully.'
 				feedbackType = 'success'
 			} else if (selectedMode === 'image') {
 				if (!imageFiles?.length) {
@@ -101,13 +111,13 @@
 			type="radio"
 			name="scrape_tabs"
 			class="tab"
-			aria-label="Scrape URL"
+			aria-label="URL"
 			value="url"
 			bind:group={selectedMode}
 			checked={selectedMode === 'url'} />
 		<div class="tab-content bg-base-100 border-base-300 p-2">
 			<Input type="text" placeholder="Enter recipe URL" bind:value={url} />
-			<Button type="submit" class="w-auto self-start mt-2">Scrape</Button>
+			<Button type="submit" class="w-auto self-start mt-2">Scrape URL</Button>
 		</div>
 
 		{#if aiEnabled && apiKeyPresent}
@@ -115,13 +125,25 @@
 				type="radio"
 				name="scrape_tabs"
 				class="tab"
-				aria-label="Paste Text"
+				aria-label="Text"
 				value="text"
 				bind:group={selectedMode}
 				checked={selectedMode === 'text'} />
 			<div class="tab-content bg-base-100 border-base-300 p-2">
-				<Textarea rows={8} placeholder="Paste recipe text..." bind:value={sharedText} />
-				<Button type="submit" class="w-auto self-start  mt-2">Parse Text</Button>
+				<div class="flex items-center gap-2 mb-2">
+					<span class="text-sm">Text</span>
+					<Toggle bind:checked={isPromptMode} size="sm" />
+					<span class="text-sm">Prompt</span>
+				</div>
+				<Textarea
+					rows={8}
+					placeholder={textMode === 'prompt'
+						? 'Describe the recipe you want...'
+						: 'Paste recipe text...'}
+					bind:value={sharedText} />
+				<Button type="submit" class="w-auto self-start  mt-2">
+					{textMode === 'prompt' ? 'Generate Recipe' : 'Parse Text'}
+				</Button>
 			</div>
 
 			{#if imageAllowed}
@@ -129,7 +151,7 @@
 					type="radio"
 					name="scrape_tabs"
 					class="tab"
-					aria-label="Upload Image"
+					aria-label="Image"
 					value="image"
 					bind:group={selectedMode}
 					checked={selectedMode === 'image'} />

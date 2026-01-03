@@ -62,11 +62,14 @@ export async function handleScrape(event = null, url) {
  *
  * @param {Event|null} event - The optional event to prevent default on.
  * @param {string} text - The text to parse for recipe data.
+ * @param {Object} [options]
+ * @param {'parse'|'prompt'} [options.mode='parse'] - Whether to parse pasted text or generate from prompt
+ * @param {string} [options.unitsPreference] - Preferred units for generated recipes (e.g., 'metric' or 'us')
  * @returns {Promise<Object>} A promise that resolves to an object containing the formatted recipe data,
  *   along with `_source` and `_status` properties from the raw data.
  * @throws Will throw an error if the parsing fails.
  */
-export async function handleParse(event = null, text) {
+export async function handleParse(event = null, text, { mode = 'parse', unitsPreference } = {}) {
 	if (event) event.preventDefault()
 
 	try {
@@ -75,7 +78,7 @@ export async function handleParse(event = null, text) {
 			headers: {
 				'Content-Type': 'application/json'
 			},
-			body: JSON.stringify({ text })
+			body: JSON.stringify({ text, mode, unitsPreference })
 		})
 
 		if (!response.ok) {

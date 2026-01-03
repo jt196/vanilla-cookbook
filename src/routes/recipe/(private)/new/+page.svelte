@@ -32,9 +32,9 @@
 
 	let initialMode = $state('url') // 'url' | 'text' | 'image'
 
-	let { data } = $props()
+let { data } = $props()
 
-	let { apiKeyPresent, aiEnabled, imageAllowed } = $state(data)
+let { apiKeyPresent, aiEnabled, imageAllowed, userUnits } = $state(data)
 
 	/**
 	 * Handles the scraping event.
@@ -93,7 +93,8 @@
 	{apiKeyPresent}
 	{aiEnabled}
 	{initialMode}
-	{imageAllowed} />
+	{imageAllowed}
+	{userUnits} />
 
 <RecipeForm bind:recipe onSubmit={handleCreateRecipe} />
 
