@@ -90,7 +90,7 @@ function resolveApiKey(provider) {
 	const generic = env.LLM_API_KEY
 	if (provider === 'openai') return env.OPENAI_API_KEY || generic
 	if (provider === 'anthropic') return env.ANTHROPIC_API_KEY || generic
-	if (provider === 'gemini') return env.GEMINI_API_KEY || generic
+	if (provider === 'google') return env.GOOGLE_API_KEY || generic
 	return generic
 }
 
@@ -128,8 +128,8 @@ const providerLoaders = {
 			temperature: 0.3
 		})
 	}),
-	gemini: makeProviderLoader({
-		provider: 'gemini',
+	google: makeProviderLoader({
+		provider: 'google',
 		importPath: '@langchain/google-genai',
 		clientName: 'ChatGoogleGenerativeAI',
 		buildConfig: (model, apiKey) => ({

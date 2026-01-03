@@ -101,13 +101,30 @@ If the standard recipe scrape fails (criteria being: no name, no ingredients), i
 
 If the recipe parse fails, and you have the ai option enabled, plus key set in the variables, it'll submit the HTML of the recipe page for an AI to parse.
 
-Add your OpenAI key to the .env variables. The model will default to 3.5 turbo, but you can change it there.
+Add your LLM config to the `.env` file. Supported providers out of the box: OpenAI, Anthropic, Google (Gemini), Ollama (text only). Env shape:
+
+```env
+LLM_API_ENABLED=true
+LLM_PROVIDER=openai           # default provider (openai|anthropic|gemini|ollama)
+LLM_TEXT_MODEL=gpt-3.5-turbo  # text model
+LLM_IMAGE_MODEL=gpt-4o        # image model (ignored for ollama)
+# optional per-stream overrides
+LLM_TEXT_PROVIDER=
+LLM_IMAGE_PROVIDER=
+# keys (generic or provider-specific)
+LLM_API_KEY=
+OPENAI_API_KEY=
+ANTHROPIC_API_KEY=
+GOOGLE_API_KEY=
+OLLAMA_BASE_URL=http://localhost:11434
+```
+
+- Image parsing is disabled when using Ollama as the image provider (it does not support image prompts). The UI hides the image tab if the selected provider is Ollama.
+- For exact model names, refer to each provider’s own documentation/console. LangChain docs show usage but not full model catalogs. Choose a text model for `LLM_TEXT_MODEL` and an image-capable model for `LLM_IMAGE_MODEL` (OpenAI/Google support images; Anthropic/Ollama are text-only in this flow).
 
 Set `LLM_API_ENABLED=true`. The default model should work.
 
 Test the demo on [this URL](https://pastebin.com/raw/zwgsuVKd) to check it works.
-
-It's using the Langchain npm package, so read the docs there for more info. I'll integrate more models in the future, but it's currently working with OpenAI.
 
 Here's a demo of it working:
 
@@ -122,7 +139,7 @@ Click on the Parse button at the top of the + new page (hidden if you don't have
 
 #### Image Recognition
 
-Beta-ish, but working on my test computer. Upload an image, and process it with an LLM of your choice. It'll resize it and send it off to be processed. It'll take a bit longer than the text parsing, but not too long. Pukka!
+Beta-ish, but working on my test computer. Upload up to 3 images; the app will resize and stitch them together for better multi-page parsing, then send to the configured image-capable LLM. It may take a bit longer than text parsing, but not too long. Pukka!
 
 Here's a demo, feel free to fast forward the middle bit where it's waiting for the response... Unless 20 seconds of me wiggling my mouse around sounds attractive.
 
