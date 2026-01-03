@@ -5,6 +5,8 @@
 	import { validatePasswords, validateEmail } from '$lib/utils/security.js'
 	import Input from '$lib/components/ui/Form/Input.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
+	import Checkbox from '$lib/components/ui/Form/Checkbox.svelte'
+	import Dropdown from '$lib/components/ui/Form/Dropdown.svelte'
 	import ValidationMessage from '$lib/components/ui/Form/ValidationMessage.svelte'
 
 	let { data } = $props()
@@ -109,59 +111,41 @@
 						isValid={emailValidation?.isValid}
 						isError={!emailValidation?.isValid}
 						hidden={!emailValidation?.message} />
-				<Input
-					type="password"
-					id="password"
-					placeholder="123grigsyruleZ"
-					label="Password"
-					bind:value={adminPassword}
-					name="password"
-					required />
-				<Input
-					type="password"
-					id="passwordConfirm"
-					placeholder="123grigsyruleZ"
-					label="Confirm Password"
-					bind:value={adminPasswordConfirm}
-					name="passwordConfirm"
-					required />
-				<ValidationMessage
-					message={passwordValidation?.message}
-					isValid={passwordValidation?.isValid}
-					isError={!passwordValidation?.isValid}
-					hidden={!passwordValidation?.message} />
+					<Input
+						type="password"
+						id="password"
+						placeholder="123grigsyruleZ"
+						label="Password"
+						bind:value={adminPassword}
+						name="password"
+						required />
+					<Input
+						type="password"
+						id="passwordConfirm"
+						placeholder="123grigsyruleZ"
+						label="Confirm Password"
+						bind:value={adminPasswordConfirm}
+						name="passwordConfirm"
+						required />
+					<ValidationMessage
+						message={passwordValidation?.message}
+						isValid={passwordValidation?.isValid}
+						isError={!passwordValidation?.isValid}
+						hidden={!passwordValidation?.message} />
 
-					<label class="flex items-center gap-2 cursor-pointer">
-						<input type="checkbox" bind:checked={recipeSeed} class="checkbox checkbox-primary" />
-						<span class="label-text">Add Sample Recipes</span>
-					</label>
+					<Checkbox name="seedRecipes" bind:checked={recipeSeed} size="sm" color="primary">
+						Add Sample Recipes</Checkbox>
 
-					<div class="form-control">
-						<label class="label">
-							<span class="label-text">Units</span>
-						</label>
-						<select class="select select-bordered w-full" bind:value={adminUnits}>
-							{#each systems as system}
-								<option value={system.value}>{system.label}</option>
-							{/each}
-						</select>
-					</div>
+					<Dropdown name="units" legend="Units" options={systems} bind:selected={adminUnits} />
 
-					<div class="form-control">
-						<label class="label">
-							<span class="label-text">Language</span>
-						</label>
-						<select class="select select-bordered w-full" bind:value={adminLanguage}>
-							{#each languages as language}
-								<option value={language.value}>{language.label}</option>
-							{/each}
-						</select>
-					</div>
+					<Dropdown
+						name="language"
+						legend="Language"
+						options={languages}
+						bind:selected={adminLanguage} />
 
 					<div class="card-actions justify-end mt-6">
-						<Button type="submit" class="w-full" disabled={isSubmitDisabled}>
-							Create Admin
-						</Button>
+						<Button type="submit" class="w-full" disabled={isSubmitDisabled}>Create Admin</Button>
 					</div>
 				</form>
 			</div>
