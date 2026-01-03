@@ -7,9 +7,10 @@
 	import Input from '$lib/components/ui/Form/Input.svelte'
 	import Textarea from '$lib/components/ui/Form/Textarea.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
+	import Spinner from '$lib/components/Spinner.svelte'
 
 	// If new recipe, default set to false
-	/** @type {{recipe: any, onSubmit: any, buttonText?: string, selectedFiles?: any, baseUrl?: string, editMode?: boolean, recipeCategories?: any}} */
+	/** @type {{recipe: any, onSubmit: any, buttonText?: string, selectedFiles?: any, baseUrl?: string, editMode?: boolean, recipeCategories?: any, aiEnabled?: boolean, userUnits?: string, userLanguage?: string}} */
 	let {
 		recipe = $bindable(),
 		onSubmit,
@@ -17,7 +18,10 @@
 		onSelectedFilesChange,
 		baseUrl = '',
 		editMode = false,
-		recipeCategories = null
+		recipeCategories = null,
+		aiEnabled = false,
+		userUnits = 'metric',
+		userLanguage = 'eng'
 	} = $props()
 
 	// Ensure is_public is always defined
@@ -32,6 +36,72 @@
 	})
 
 	let imageExists = $state(false)
+	let cleaningIngredients = $state(false)
+	let cleaningDirections = $state(false)
+
+	async function handleCleanIngredients() {
+		if (!recipe.ingredients || recipe.ingredients.trim() === '') return
+
+		cleaningIngredients = true
+		try {
+			const response = await fetch('/api/recipe/cleanup', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					type: 'ingredients',
+					content: recipe.ingredients,
+					userUnits,
+					language: userLanguage
+				})
+			})
+
+			if (!response.ok) {
+				throw new Error('Cleanup failed')
+			}
+
+			const data = await response.json()
+			if (data.ingredients) {
+				recipe.ingredients = data.ingredients.join('\n')
+			}
+		} catch (err) {
+			console.error('Ingredient cleanup failed:', err)
+			alert('Failed to clean ingredients. Please try again.')
+		} finally {
+			cleaningIngredients = false
+		}
+	}
+
+	async function handleSummarizeDirections() {
+		if (!recipe.directions || recipe.directions.trim() === '') return
+
+		cleaningDirections = true
+		try {
+			const response = await fetch('/api/recipe/cleanup', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					type: 'directions',
+					content: recipe.directions,
+					userUnits,
+					language: userLanguage
+				})
+			})
+
+			if (!response.ok) {
+				throw new Error('Cleanup failed')
+			}
+
+			const data = await response.json()
+			if (data.instructions) {
+				recipe.directions = data.instructions.join('\n\n')
+			}
+		} catch (err) {
+			console.error('Direction summarization failed:', err)
+			alert('Failed to summarize directions. Please try again.')
+		} finally {
+			cleaningDirections = false
+		}
+	}
 
 	function handleRatingChange(event) {
 		recipe.rating = event.detail
@@ -137,13 +207,43 @@
 		{/if}
 
 		<!-- Full-width large text fields -->
-		<Textarea
-			id="ingredients"
-			name="ingredients"
-			rows="7"
-			placeholder="500g of pasta..."
-			bind:value={recipe.ingredients}
-			label="Ingredients" />
+		<div>
+			<Textarea
+				id="ingredients"
+				name="ingredients"
+				rows="7"
+				placeholder="500g of pasta..."
+				bind:value={recipe.ingredients}
+				label="Ingredients" />
+			{#if aiEnabled}
+				<Button
+					type="button"
+					size="sm"
+					style="soft"
+					class="mt-2"
+					onclick={handleCleanIngredients}
+					disabled={cleaningIngredients || !recipe.ingredients || recipe.ingredients.trim() === ''}>
+					{#if cleaningIngredients}
+						<Spinner visible={true} size="xs" type="dots" />
+						Cleaning...
+					{:else}
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							class="h-4 w-4"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke="currentColor">
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M13 10V3L4 14h7v7l9-11h-7z" />
+						</svg>
+						Clean Ingredients
+					{/if}
+				</Button>
+			{/if}
+		</div>
 		<Textarea
 			id="description"
 			name="description"
@@ -151,13 +251,43 @@
 			placeholder="This pasta was a favourite of my Nonna's"
 			bind:value={recipe.description}
 			label="Description" />
-		<Textarea
-			id="directions"
-			placeholder="Boil the pasta according to instructions..."
-			rows="7"
-			name="directions"
-			bind:value={recipe.directions}
-			label="Directions" />
+		<div>
+			<Textarea
+				id="directions"
+				placeholder="Boil the pasta according to instructions..."
+				rows="7"
+				name="directions"
+				bind:value={recipe.directions}
+				label="Directions" />
+			{#if aiEnabled}
+				<Button
+					type="button"
+					size="sm"
+					style="soft"
+					class="mt-2"
+					onclick={handleSummarizeDirections}
+					disabled={cleaningDirections || !recipe.directions || recipe.directions.trim() === ''}>
+					{#if cleaningDirections}
+						<Spinner visible={true} size="xs" type="dots" />
+						Summarizing...
+					{:else}
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							class="h-4 w-4"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke="currentColor">
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M13 10V3L4 14h7v7l9-11h-7z" />
+						</svg>
+						Summarize Directions
+					{/if}
+				</Button>
+			{/if}
+		</div>
 		<Textarea
 			id="notes"
 			name="notes"

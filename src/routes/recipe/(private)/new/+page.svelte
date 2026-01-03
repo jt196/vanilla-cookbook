@@ -97,7 +97,12 @@ let { apiKeyPresent, aiEnabled, imageAllowed, userUnits, userLanguage } = $state
 	{userUnits}
 	{userLanguage} />
 
-<RecipeForm bind:recipe onSubmit={handleCreateRecipe} />
+<RecipeForm
+	bind:recipe
+	onSubmit={handleCreateRecipe}
+	{aiEnabled}
+	{userUnits}
+	{userLanguage} />
 
 {#if feedbackMessage}
 	<FeedbackMessage message={feedbackMessage} type={feedbackType} timeout={4000} />

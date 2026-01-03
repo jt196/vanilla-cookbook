@@ -27,6 +27,9 @@
 	let recipe = $state(data?.recipe ?? {})
 	let allCategories = $state(data?.allCategories ?? [])
 	let user = $state(data?.user ?? {})
+	let aiEnabled = $state(data?.aiEnabled ?? false)
+	let userUnits = $state(data?.userUnits ?? 'metric')
+	let userLanguage = $state(data?.userLanguage ?? 'eng')
 	let showDeleteConfirm = $state(false)
 
 	$effect(() => {
@@ -128,6 +131,9 @@
 		editMode={true}
 		bind:selectedFiles
 		{recipeCategories}
+		{aiEnabled}
+		{userUnits}
+		{userLanguage}
 		buttonText="Update Recipe"
 		onSelectedFilesChange={handleSelectedFilesChange}
 		onSubmit={handleSubmit} />

@@ -5,5 +5,14 @@ export const load = async ({ locals, params }) => {
 	if (!user) {
 		throw redirect(302, '/login')
 	}
-	return {}
+
+	const ai = locals.site.ai
+	const units = locals.user?.units || 'metric'
+	const language = locals.user?.language || 'eng'
+
+	return {
+		aiEnabled: ai.aiEnabled,
+		userUnits: units,
+		userLanguage: language
+	}
 }
