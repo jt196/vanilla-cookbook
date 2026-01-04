@@ -2,8 +2,8 @@
 
 For a full getting started guide, [read the docs](https://vanilla-cookbook.readthedocs.io/en/latest/).
 
-![Recipe List](docs/images/screen-desktop-list-dark.png)
-![Recipe View](docs/images/screen-desktop-first-recipe-dark.png)
+![Recipe List](docs/images/screen-desktop-list-dracula.png)
+![Recipe View](docs/images/screen-desktop-first-recipe-dracula.png)
 
 ## Overview
 
@@ -116,6 +116,7 @@ Currently:
 ### Local Dev
 
 **Prerequisites**: You'll need build tools installed for native module compilation (better-sqlite3):
+
 - **macOS**: Xcode Command Line Tools (`xcode-select --install`)
 - **Linux**: `build-essential` package (Ubuntu/Debian: `sudo apt-get install build-essential`)
 - **Windows**: Visual Studio Build Tools or windows-build-tools npm package

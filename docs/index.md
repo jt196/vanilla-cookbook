@@ -1,5 +1,5 @@
-![Recipes List Desktop](images/screen-desktop-list-dark.png)
-![Recipe View Desktop](images/screen-desktop-first-recipe-dark.png)
+![Recipes List Desktop](images/screen-desktop-list-dracula.png)
+![Recipe View Desktop](images/screen-desktop-first-recipe-dracula.png)
 
 # Overview
 

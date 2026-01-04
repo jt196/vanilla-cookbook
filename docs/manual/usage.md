@@ -72,7 +72,7 @@ You can set your default options in the settings section.
 
 ## Recipe Add
 
-![Recipe View Desktop](../images/screen-desktop-new-dark.png)
+![Recipe View Desktop](../images/screen-desktop-new-dracula.png)
 
 Add your recipe here. Multiple sources accepted:
 
@@ -216,7 +216,7 @@ GITHUB_CLIENT_SECRET=
 
 ## Options
 
-![Settings](../images/screen-desktop-settings-dark.png)
+![Settings](../images/screen-desktop-settings-dracula.png)
 
 I've tried to keep most of the under the hood stuff here.
 
@@ -245,20 +245,20 @@ Here's a demo of the language and **Display Original** setting working.
 - **Profile public** - show/hide your profile in the _/users_ view
 - **Recipes public** - make your recipe public by default
 
-![Bookmark](../images/screen-desktop-bookmark-dark.png)
+![Bookmark](../images/screen-desktop-bookmark-dracula.png)
 
 **Bookmark** - grab your bookmarklet for saving recipes to the site.
 
-![Import](../images/screen-desktop-import-dark.png)
-![Export](../images/screen-desktop-export-dark.png)
-![Upload](../images/screen-desktop-upload-dark.png)
+![Import](../images/screen-desktop-import-dracula.png)
+![Export](../images/screen-desktop-export-dracula.png)
+![Upload](../images/screen-desktop-upload-dracula.png)
 
 **Import**, **Export**, **Upload** see the [Import Docs](import.md).
 
-![Users](../images/screen-desktop-admin-users-dark.png)
+![Users](../images/screen-desktop-admin-users-dracula.png)
 
 **Users** - admin only. User management. Change passwords, add and remove users etc.
 
-![Site](../images/screen-desktop-admin-site-dark.png)
+![Site](../images/screen-desktop-admin-site-dracula.png)
 
 **Site** - admin only. Turn on/off registrations.
