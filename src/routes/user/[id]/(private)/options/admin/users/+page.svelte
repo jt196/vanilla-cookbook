@@ -30,15 +30,15 @@
 	let passwordConfirm = $state('')
 	let userFeedback = $state('')
 
-let editingUser = $state({
-	id: null,
-	username: '',
-	email: '',
-	isAdmin: false,
-	userSeed: true
-})
+	let editingUser = $state({
+		id: null,
+		username: '',
+		email: '',
+		isAdmin: false,
+		userSeed: true
+	})
 
-let emailValidation = $derived(editingUser.email ? validateEmail(editingUser.email) : null)
+	let emailValidation = $derived(editingUser.email ? validateEmail(editingUser.email) : null)
 	let showDeleteConfirm = $state(false)
 	let pendingDeleteId = $state(null)
 
@@ -125,9 +125,9 @@ let emailValidation = $derived(editingUser.email ? validateEmail(editingUser.ema
 				console.log('An unknown error occurred:', data.error)
 				userFeedback = 'There was an error updating the user!'
 			}
+		}
 	}
-}
-async function deleteUser(id) {
+	async function deleteUser(id) {
 		pendingDeleteId = id
 		showDeleteConfirm = true
 	}
@@ -161,16 +161,14 @@ async function deleteUser(id) {
 	)
 
 	// Disable submit if any validation fails
-let isSubmitDisabled = $derived(() => {
-	const baseInvalid =
-		!editingUser.username ||
-		!editingUser.email ||
-		(emailValidation && !emailValidation.isValid)
-	const hasPasswordInput = password || passwordConfirm
-	const passwordInvalid = hasPasswordInput && passwordValidation && !passwordValidation.isValid
-		const createMissingPassword = !isEditMode && !hasPasswordInput
-		return baseInvalid || passwordInvalid || createMissingPassword
-	})
+	const usernameOk = $derived(!!editingUser.username)
+	const emailOk = $derived(!!emailValidation?.isValid)
+	const passwordOk = $derived(
+		isEditMode
+			? (!password && !passwordConfirm) || !!passwordValidation?.isValid
+			: !!passwordValidation?.isValid
+	)
+	let isSubmitDisabled = $derived(!(usernameOk && emailOk && passwordOk))
 </script>
 
 <Button class="tooltip mb-3" data-tip="New User" onclick={openCreateDialog}>
@@ -238,11 +236,11 @@ let isSubmitDisabled = $derived(() => {
 <Dialog bind:isOpen={isDialogOpen}>
 	<div class="flex flex-col gap-4 w-full">
 		<h3 class="font-bold text-lg mb-4">{isEditMode ? 'Edit User' : 'Create User'}</h3>
-	<Input
-		type="text"
-		id="username"
-		name="username"
-		label="Username"
+		<Input
+			type="text"
+			id="username"
+			name="username"
+			label="Username"
 			class="tooltip"
 			data-tip="Username is not editable"
 			disabled={isEditMode}
