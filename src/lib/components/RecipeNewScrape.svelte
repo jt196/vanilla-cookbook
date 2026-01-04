@@ -112,7 +112,7 @@
 
 <!-- Form Inputs -->
 <form onsubmit={scrapeEventHandler} class="flex flex-col gap-4 max-w-none w-full">
-	<div class="tabs tabs-box">
+	<div class="tabs tabs-box p-0">
 		<input
 			type="radio"
 			name="scrape_tabs"
@@ -121,7 +121,7 @@
 			value="url"
 			bind:group={selectedMode}
 			checked={selectedMode === 'url'} />
-		<div class="tab-content bg-base-100 border-base-300 p-2">
+		<div class="tab-content bg-base-100 border-base-300 p-2 ml-0 mr-0">
 			<Input type="text" placeholder="Enter recipe URL" bind:value={url} />
 			<Button type="submit" class="w-auto self-start mt-2" disabled={isUrlEmpty}>Scrape URL</Button>
 		</div>
@@ -135,7 +135,7 @@
 				value="text"
 				bind:group={selectedMode}
 				checked={selectedMode === 'text'} />
-			<div class="tab-content bg-base-100 border-base-300 p-2">
+			<div class="tab-content bg-base-100 border-base-300 p-2 ml-0 mr-0">
 				<div class="flex items-center gap-2 mb-2">
 					<span class="text-sm">Text</span>
 					<Toggle bind:checked={isPromptMode} size="sm" />
@@ -161,7 +161,7 @@
 					value="image"
 					bind:group={selectedMode}
 					checked={selectedMode === 'image'} />
-				<div class="tab-content bg-base-100 border-base-300 p-2">
+				<div class="tab-content bg-base-100 border-base-300 p-2 ml-0 mr-0">
 					<FileInput
 						accept="image/*"
 						multiple={true}

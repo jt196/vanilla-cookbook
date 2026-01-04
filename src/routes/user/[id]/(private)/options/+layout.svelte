@@ -5,7 +5,7 @@
 	const { user } = $state(data)
 </script>
 
-<div role="tablist" class="tabs tabs-lift">
+<div role="tablist" class="tabs tabs-box">
 	<a
 		role="tab"
 		class="tab"
