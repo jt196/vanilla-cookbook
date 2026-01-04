@@ -29,15 +29,23 @@ Multiple import formats supported, exports supported. [Docs](https://vanilla-coo
 
 Scrape recipes using a browser bookmarklet or simply paste a URL in. Hundreds of sites supported. [Docs](https://vanilla-cookbook.readthedocs.io/en/latest/manual/usage/#recipe-add)
 
-### AI Scrape Assist
+### LLM Assist
 
-Add an LLM API key to assist in:
-
-- Parsing HTML on fail
-- Parsing plain text paste
-- Processing an image
+Add an LLM API key to activate these features. Google, OpenAI, Anthropic and Ollama currently supported.
 
 [Docs](https://vanilla-cookbook.readthedocs.io/en/latest/manual/usage/#ai-assist)
+
+- Scrape Assist
+  - HTML fallback when JSON data not present
+  - text analysis
+  - image analysis
+- Recipe tweak
+  - Messy ingredient tidy up - removing cruft and extra gubbins that makes the parser fail
+  - Directions summarise. Look dude, I know how to boil an egg, I don't need complex directions, I just want a very simple overview.
+- Recipe generate from prompt
+  - Haven't really tested the recipes but it seems to work pretty well. Unless you're asking for some weird recipe, I think they do a pretty decent job at creating recipes.
+
+#### Image Analysis
 
 ### Progressive Web App
 
