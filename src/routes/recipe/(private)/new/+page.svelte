@@ -58,12 +58,17 @@ let { apiKeyPresent, aiEnabled, imageAllowed, userUnits, userLanguage } = $state
 			url = decodeURIComponent(url)
 			initialMode = 'url'
 			try {
+				feedbackMessage = 'Scraping URL...'
+				feedbackType = 'info'
 				const scrapedData = await handleScrape(null, url)
 				if (scrapedData) {
 					recipe = { ...recipe, ...scrapedData }
+					feedbackMessage = scrapedData._status === 'complete' ? 'URL scraped successfully.' : ''
 				}
 			} catch (error) {
 				console.error('Error during scrape:', error)
+				feedbackMessage = 'Error scraping URL.'
+				feedbackType = 'error'
 			}
 		} else if (sharedText && apiKeyPresent && aiEnabled) {
 			initialMode = 'text'
