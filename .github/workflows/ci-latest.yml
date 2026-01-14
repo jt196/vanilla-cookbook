@@ -7,9 +7,11 @@ on:
 
 jobs:
   run-tests:
+    if: github.repository == 'jt196/vanilla-cookbook'
     uses: ./.github/workflows/run-tests.yml
 
   docker-build-latest:
+    if: github.repository == 'jt196/vanilla-cookbook'
     needs: run-tests
     uses: ./.github/workflows/docker-build.yml
     with:
