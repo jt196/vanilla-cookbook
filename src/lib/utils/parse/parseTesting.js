@@ -38,6 +38,7 @@ export function urlToFilename(url) {
 		.replace(/\//g, '_')
 		.replace(/-/g, '_')
 		.replace(/\./g, '_')
+		.replace(/[<>:"/\\|?*]/g, '_') // Remove characters that are invalid on Windows
 
 	return `${simplifiedUrl}.html`
 }
