@@ -39,8 +39,9 @@
 	}
 
 	function handleFilesChange(event) {
+		const inputEvent = event?.detail ?? event
 		// Convert the FileList to an array of files
-		const files = Array.from(event.target.files)
+		const files = Array.from(inputEvent?.target?.files ?? [])
 		// Use the callback to notify the parent of the change
 		onSelectedFilesChange && onSelectedFilesChange(files)
 	}
@@ -71,7 +72,7 @@
 	}
 </script>
 
-<FileInput id="file" label="Upload Images" name="file" onchange={handleFilesChange} multiple />
+<FileInput id="file" label="Upload Images" name="images" on:change={handleFilesChange} multiple />
 
 <div class="flex flex-wrap gap-3 mb-4 mt-4">
 	{#each filteredPhotos as photo}
