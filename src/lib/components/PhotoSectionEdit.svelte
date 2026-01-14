@@ -72,7 +72,7 @@
 	}
 </script>
 
-<FileInput id="file" label="Upload Images" name="images" on:change={handleFilesChange} multiple />
+<FileInput id="file" label="Upload Images" name="images" onchange={handleFilesChange} multiple />
 
 <div class="flex flex-wrap gap-3 mb-4 mt-4">
 	{#each filteredPhotos as photo}
