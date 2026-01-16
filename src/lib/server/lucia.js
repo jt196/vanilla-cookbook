@@ -4,6 +4,12 @@ import { prisma as prismaAdapter } from '@lucia-auth/adapter-prisma'
 import { sveltekit } from 'lucia/middleware'
 import { prisma as client } from '$lib/server/prisma'
 import { dev } from '$app/environment'
+import { env } from '$env/dynamic/private'
+
+// Secure cookies require HTTPS. If ORIGIN is HTTP, we must disable secure cookies
+// even in production builds, otherwise browsers won't store the session cookie.
+const isHttpOrigin = env.ORIGIN?.startsWith('http://') ?? false
+const useSecureCookies = !dev && !isHttpOrigin
 
 export const auth = lucia({
 	adapter: prismaAdapter(client, {
@@ -32,7 +38,7 @@ export const auth = lucia({
 	sessionCookie: {
 		attributes: {
 			sameSite: 'lax',
-			secure: !dev,
+			secure: useSecureCookies,
 			path: '/'
 		}
 	}
