@@ -94,6 +94,28 @@ export const handle = async ({ event, resolve }) => {
 
 	const response = await resolve(event)
 
+	const isHttpRequest =
+		event.url?.protocol === 'http:' || (env.ORIGIN?.startsWith('http://') ?? false)
+	if (isHttpRequest) {
+		const sessionCookieName = auth.sessionCookieName ?? 'auth_session'
+		const setCookies =
+			typeof response.headers.getSetCookie === 'function'
+				? response.headers.getSetCookie()
+				: splitSetCookieHeader(response.headers.get('set-cookie'))
+
+		if (setCookies.length > 0) {
+			const updated = setCookies.map((value) => {
+				if (!value.startsWith(`${sessionCookieName}=`)) return value
+				return value.replace(/;\s*Secure\b/gi, '')
+			})
+
+			response.headers.delete('set-cookie')
+			for (const value of updated) {
+				response.headers.append('set-cookie', value)
+			}
+		}
+	}
+
 	if (allowed.has(origin)) {
 		response.headers.set('Access-Control-Allow-Origin', origin)
 		response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
@@ -106,4 +128,38 @@ export const handle = async ({ event, resolve }) => {
 	}
 
 	return response
+}
+
+const splitSetCookieHeader = (header) => {
+	if (!header) return []
+	const cookies = []
+	let current = ''
+	let inExpires = false
+
+	for (let i = 0; i < header.length; i++) {
+		const slice = header.slice(i, i + 8).toLowerCase()
+		if (slice === 'expires=') {
+			inExpires = true
+			current += header[i]
+			continue
+		}
+
+		const ch = header[i]
+		if (ch === ';') {
+			inExpires = false
+			current += ch
+			continue
+		}
+
+		if (ch === ',' && !inExpires) {
+			if (current.trim()) cookies.push(current.trim())
+			current = ''
+			continue
+		}
+
+		current += ch
+	}
+
+	if (current.trim()) cookies.push(current.trim())
+	return cookies
 }
