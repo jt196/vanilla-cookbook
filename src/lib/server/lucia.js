@@ -11,9 +11,6 @@ import { env } from '$env/dynamic/private'
 const isHttpOrigin = env.ORIGIN?.startsWith('http://') ?? false
 const useSecureCookies = !dev && !isHttpOrigin
 
-// Debug logging for cookie security settings
-console.log(`[Lucia Auth] ORIGIN=${env.ORIGIN}, dev=${dev}, isHttpOrigin=${isHttpOrigin}, useSecureCookies=${useSecureCookies}`)
-
 export const auth = lucia({
 	adapter: prismaAdapter(client, {
 		user: 'authUser',
