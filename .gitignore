@@ -32,6 +32,8 @@ uploads/**/*
 # ───── Tests, patches, coverage ────────────────────────────────────────────────
 *.diff
 coverage/
+test-results/
+playwright-report/
 
 # ───── Docker & local infra ─────────────────────────
 docker-compose.yml

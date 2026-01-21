@@ -8,7 +8,7 @@ export default defineConfig({
 	plugins: [sveltekit()],
 	test: {
 		include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
-		exclude: ['**/node_modules/**', '**/dist/**', '**/testDist/**'],
+		exclude: ['**/node_modules/**', '**/dist/**', '**/testDist/**', 'src/tests/e2e/**'],
 		globals: true,
 		environment: 'jsdom'
 	},

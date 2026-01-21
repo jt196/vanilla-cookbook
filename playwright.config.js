@@ -17,10 +17,14 @@
  */
 const config = {
 	webServer: {
-		command: 'pnpm build && pnpm preview',
-		port: 4173
+		command: 'node tests/scripts/run-e2e-server.js',
+		port: 4173,
+		reuseExistingServer: false
 	},
-	testDir: 'tests'
+	testDir: 'src/tests/e2e',
+	use: {
+		baseURL: 'http://127.0.0.1:4173'
+	}
 }
 
 export default config
