@@ -26,11 +26,15 @@ const cleanup = () => {
 	}
 }
 
+const skipBuild = env.E2E_SKIP_BUILD === '1'
+
 try {
 	execSync('pnpm prisma generate', { stdio: 'inherit', env })
 	execSync('pnpm prisma migrate deploy', { stdio: 'inherit', env })
 	execSync('pnpm seed', { stdio: 'inherit', env })
-	execSync('pnpm build', { stdio: 'inherit', env })
+	if (!skipBuild) {
+		execSync('pnpm build', { stdio: 'inherit', env })
+	}
 } catch (error) {
 	cleanup()
 	process.exit(typeof error?.status === 'number' ? error.status : 1)

@@ -101,3 +101,6 @@ jobs:
 
       - name: Run Playwright E2E
         run: pnpm exec playwright test
+        env:
+          # Build already ran earlier; skip to avoid duplicate work in the E2E webServer script.
+          E2E_SKIP_BUILD: '1'
