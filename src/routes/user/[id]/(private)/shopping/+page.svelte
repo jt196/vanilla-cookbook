@@ -244,7 +244,7 @@
 </ul>
 {#if hiddenMatches.length > 0}
 	<p class="prose text-xs mt-3 mb-2 flex justify-center max-w-none">
-		Matches from previously bought items - uncheck to Add
+		Matches from previously bought items - uncheck to add
 	</p>
 	<ul class="list bg-base-100 rounded-box shadow-md divide-y divide-base-300">
 		{#each hiddenMatches as item (item.uid)}
