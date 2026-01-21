@@ -148,18 +148,6 @@
 								{/if}
 							{/if}
 						</i>
-						{#if ingredient.approx}<Badge color="secondary" style="outline" title="Approximate"
-								>~</Badge
-							>{/if}
-						{#if ingredient.optional}<Badge color="secondary" style="outline" title="Optional"
-								>opt</Badge
-							>{/if}
-						{#if ingredient.toServe}<Badge color="secondary" style="outline" title="To serve"
-								>srv</Badge
-							>{/if}
-						{#if ingredient.toTaste}<Badge color="secondary" style="outline" title="To taste"
-								>tt</Badge
-							>{/if}
 						<span>
 							{@html ingredient.ingredient}
 							{#if extraText}
@@ -213,6 +201,18 @@
 									<span class="chevron" aria-hidden="true">▸</span>
 								</button>
 							{/if}
+							{#if ingredient.approx}<Badge color="secondary" style="outline" title="Approximate"
+									>~</Badge
+								>{/if}
+							{#if ingredient.optional}<Badge color="secondary" style="outline" title="Optional"
+									>opt</Badge
+								>{/if}
+							{#if ingredient.toServe}<Badge color="secondary" style="outline" title="To serve"
+									>srv</Badge
+								>{/if}
+							{#if ingredient.toTaste}<Badge color="secondary" style="outline" title="To taste"
+									>tt</Badge
+								>{/if}
 						</span>
 					{/if}
 				</li>
