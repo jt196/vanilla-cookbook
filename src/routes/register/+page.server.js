@@ -3,17 +3,6 @@ import { prisma } from '$lib/server/prisma'
 import { fail, redirect } from '@sveltejs/kit'
 import { validatePassword } from '$lib/utils/security.js'
 import { seedRecipes } from '$lib/utils/seed/seedHelpers.js'
-import {
-	GITHUB_CLIENT_ID,
-	GITHUB_CLIENT_SECRET,
-	GOOGLE_CLIENT_ID,
-	GOOGLE_CLIENT_SECRET,
-	REGISTRATION_ALLOWED
-} from '$env/static/private'
-import Oauth from '$lib/components/Oauth.svelte'
-
-// small helper: parse truthy envs
-const envTrue = (v) => typeof v === 'string' && /^(true|1|yes|on)$/i.test(v.trim())
 
 export const load = async ({ locals }) => {
 	const user = locals.user

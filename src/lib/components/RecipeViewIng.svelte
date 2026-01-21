@@ -265,13 +265,6 @@
 		list-style-type: none;
 	}
 
-	details {
-		margin: 0 !important;
-		padding: 3px;
-		background-color: var(--pico-text-selection-color);
-		border-radius: 5px;
-	}
-
 	.struck {
 		text-decoration: line-through;
 	}
@@ -380,14 +373,4 @@
 		font-size: 0.7rem;
 	}
 
-	.alt-label {
-		display: inline-block;
-		margin-right: 0.35rem;
-		padding: 0 0.35rem;
-		border-radius: 999px;
-		background: var(--pico-secondary-border);
-		color: var(--pico-muted-color);
-		font-size: 0.7rem;
-		text-transform: lowercase;
-	}
 </style>

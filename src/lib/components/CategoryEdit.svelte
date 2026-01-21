@@ -202,7 +202,7 @@
 		justify-content: space-between;
 		align-items: center;
 		width: 100%;
-		button {
+		:global(button) {
 			padding: 0.2rem;
 			background-color: var(--pico-contrast-focus);
 			border: none;

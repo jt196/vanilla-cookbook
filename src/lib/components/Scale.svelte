@@ -62,14 +62,14 @@
 			margin-bottom: 0;
 		}
 
-		input {
+		:global(input) {
 			margin: 0;
 			min-width: 5rem;
 			text-align: center;
 			font-weight: 600;
 		}
 
-		button {
+		:global(button) {
 			border-width: 0;
 			justify-content: center;
 			min-width: 3.25rem;
