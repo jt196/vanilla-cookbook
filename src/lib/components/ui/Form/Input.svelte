@@ -33,7 +33,8 @@
 		id = '',
 		name = '',
 		class: className = '',
-		oninput = undefined
+		oninput = undefined,
+		onkeydown = undefined
 	} = $props()
 
 	function handleInput(event) {
@@ -98,6 +99,7 @@
 				{disabled}
 				bind:value
 				oninput={handleInput}
+				{onkeydown}
 				aria-invalid={error ? 'true' : undefined} />
 		</label>
 	{:else}
@@ -110,6 +112,7 @@
 			{disabled}
 			bind:value
 			oninput={handleInput}
+			{onkeydown}
 			class={inputClasses}
 			aria-invalid={error ? 'true' : undefined} />
 	{/if}

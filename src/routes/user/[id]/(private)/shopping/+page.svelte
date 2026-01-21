@@ -193,6 +193,18 @@
 					'asc'
 				)
 	)
+	let hiddenMatchQuery = $derived(newIngredient.trim().toLowerCase())
+	let hiddenMatches = $derived(
+		!showHidden && hiddenMatchQuery.length >= 3
+			? sortByTwoKeys(
+					shoppingList.filter(
+						(item) => item.purchased && item.name?.toLowerCase().includes(hiddenMatchQuery)
+					),
+					'name',
+					'asc'
+				)
+			: []
+	)
 	let purchasedItemCount = $derived(shoppingList.filter((item) => item.purchased).length)
 	let uncheckedItemCount = $derived(shoppingList.filter((item) => !item.purchased).length)
 </script>
@@ -230,6 +242,16 @@
 		{/if}
 	{/each}
 </ul>
+{#if hiddenMatches.length > 0}
+	<p class="prose text-xs mt-3 mb-2 flex justify-center max-w-none">
+		Matches from previously bought items - uncheck to Add
+	</p>
+	<ul class="list bg-base-100 rounded-box shadow-md divide-y divide-base-300">
+		{#each hiddenMatches as item (item.uid)}
+			<ShoppingListItem {item} onCheckboxChange={handleCheckboxChange} onEdit={openEditModal} />
+		{/each}
+	</ul>
+{/if}
 
 <ConfirmationDialog
 	isOpen={isDeleteDialogOpen}
