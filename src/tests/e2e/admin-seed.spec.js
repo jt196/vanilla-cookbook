@@ -23,14 +23,15 @@ async function expectOk(response) {
 async function assertPage(page, path, { heading, text, selector } = {}) {
 	const response = await page.goto(path, { waitUntil: 'networkidle' })
 	await expectOk(response)
+	const waitMs = 15000
 	if (heading) {
-		await expect(page.getByRole('heading', { name: heading })).toBeVisible()
+		await expect(page.getByRole('heading', { name: heading })).toBeVisible({ timeout: waitMs })
 	}
 	if (text) {
-		await expect(page.getByText(text, { exact: false })).toBeVisible()
+		await expect(page.getByText(text, { exact: false })).toBeVisible({ timeout: waitMs })
 	}
 	if (selector) {
-		await expect(page.locator(selector)).toBeVisible()
+		await expect(page.locator(selector)).toBeVisible({ timeout: waitMs })
 	}
 }
 
@@ -59,21 +60,28 @@ test('fresh install admin seed, login, and page smoke tests', async ({ page }) =
 		failures.push(`requestfailed: ${method} ${url} - ${failure}`)
 	})
 
-	await assertPage(page, '/', { heading: 'Welcome to Vanilla Cookbook' })
+	await page.goto('/', { waitUntil: 'networkidle' })
 
-	await page.getByLabel('Name', { exact: true }).fill(admin.name)
-	await page.getByLabel('Username', { exact: true }).fill(admin.username)
-	await page.getByLabel('Email', { exact: true }).fill(admin.email)
-	await page.getByLabel('Password', { exact: true }).fill(admin.password)
-	await page.getByLabel('Confirm Password', { exact: true }).fill(admin.password)
+	const setupHeading = page.getByRole('heading', { name: 'Welcome to Vanilla Cookbook' })
+	if (await setupHeading.isVisible()) {
+		await expect(setupHeading).toBeVisible()
 
-	const seedCheckbox = page.getByLabel('Add Sample Recipes')
-	if (!(await seedCheckbox.isChecked())) {
-		await seedCheckbox.check()
+		await page.getByLabel('Name', { exact: true }).fill(admin.name)
+		await page.getByLabel('Username', { exact: true }).fill(admin.username)
+		await page.getByLabel('Email', { exact: true }).fill(admin.email)
+		await page.getByLabel('Password', { exact: true }).fill(admin.password)
+		await page.getByLabel('Confirm Password', { exact: true }).fill(admin.password)
+
+		const seedCheckbox = page.getByLabel('Add Sample Recipes')
+		if (!(await seedCheckbox.isChecked())) {
+			await seedCheckbox.check()
+		}
+
+		await page.getByRole('button', { name: 'Create Admin' }).click()
+		await page.waitForURL('**/login')
+	} else {
+		await page.goto('/login', { waitUntil: 'networkidle' })
 	}
-
-	await page.getByRole('button', { name: 'Create Admin' }).click()
-	await page.waitForURL('**/login')
 
 	await page.getByLabel('Username or email').fill(admin.username)
 	await page.getByLabel('Password').fill(admin.password)

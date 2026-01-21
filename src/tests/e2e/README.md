@@ -42,3 +42,11 @@ You can assert one of:
 - `selector`: a CSS selector
 
 Keep pages that cause known noisy requests (e.g. missing endpoints) out of the smoke list unless you also add an allowlist for those expected errors.
+
+## Adding or changing browsers
+
+Playwright runs the browser matrix defined in `playwright.config.js` under the `projects` list.
+
+- To add a new browser, add another project entry (for example `firefox` or `webkit`).
+- If you add a browser, update the CI workflow step that installs Playwright browsers so it includes it.
+  - See `.github/workflows/run-tests.yml` (`playwright install --with-deps ...`).
