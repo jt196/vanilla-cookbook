@@ -8,6 +8,7 @@
 		accept = '*/*',
 		multiple = false,
 		required = false,
+		onchange = null,
 		/**
 		 * @type {'xs' | 'sm' | 'md' | 'lg' | 'xl'}
 		 */
@@ -70,7 +71,18 @@
 {#if legend}
 	<fieldset class={`fieldset ${fullWidth ? 'w-full' : ''}`}>
 		<legend class="fieldset-legend">{legend}</legend>
-		<input type="file" id={inputId} name={name} {accept} {multiple} {required} class={classes} />
+		<input
+			type="file"
+			id={inputId}
+			name={name}
+			{accept}
+			{multiple}
+			{required}
+			class={classes}
+			onchange={(event) => {
+				onchange && onchange(event)
+				dispatch('change', event)
+			}} />
 		{#if optionalLabel}
 			<label class="label" for={inputId}>{optionalLabel}</label>
 		{/if}
@@ -90,7 +102,10 @@
 			{multiple}
 			{required}
 			class={classes}
-			onchange={(event) => dispatch('change', event)} />
+			onchange={(event) => {
+				onchange && onchange(event)
+				dispatch('change', event)
+			}} />
 		{#if optionalLabel}
 			<label class="label" for={inputId}>
 				<span class="label-text-alt text-xs">{optionalLabel}</span>

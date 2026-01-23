@@ -2,26 +2,27 @@
 	import { checkImageExistence } from '$lib/utils/image/imageUtils'
 	import { onMount } from 'svelte'
 
-	import PhotoSectionEdit from './PhotoSectionEdit.svelte'
-	import PhotoSectionNew from './PhotoSectionNew.svelte'
+	import PhotoSection from './PhotoSection.svelte'
 	import Input from '$lib/components/ui/Form/Input.svelte'
 	import Textarea from '$lib/components/ui/Form/Textarea.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Spinner from '$lib/components/Spinner.svelte'
 
-	// If new recipe, default set to false
-	/** @type {{recipe: any, onSubmit: any, buttonText?: string, selectedFiles?: any, baseUrl?: string, editMode?: boolean, recipeCategories?: any, aiEnabled?: boolean, userUnits?: string, userLanguage?: string}} */
+	/** @type {{recipe: any, onSubmit: any, buttonText?: string, selectedFiles?: any, onSelectedFilesChange?: any, baseUrl?: string, editMode?: boolean, recipeCategories?: any, aiEnabled?: boolean, userUnits?: string, userLanguage?: string, cancelHref?: string, onDelete?: (() => void) | null}} */
 	let {
 		recipe = $bindable(),
 		onSubmit,
 		buttonText = 'Add Recipe',
+		selectedFiles = $bindable([]),
 		onSelectedFilesChange,
 		baseUrl = '',
 		editMode = false,
 		recipeCategories = null,
 		aiEnabled = false,
 		userUnits = 'metric',
-		userLanguage = 'eng'
+		userLanguage = 'eng',
+		cancelHref = '',
+		onDelete = null
 	} = $props()
 
 	// Ensure is_public is always defined
@@ -36,6 +37,7 @@
 	})
 
 	let imageExists = $state(false)
+	let imageChecked = $state(false)
 	let cleaningIngredients = $state(false)
 	let cleaningDirections = $state(false)
 
@@ -110,8 +112,10 @@
 
 	$effect(() => {
 		if (recipe.image_url && baseUrl) {
+			imageChecked = false
 			checkImageExistence(recipe.image_url, baseUrl).then((result) => {
-				return (imageExists = result)
+				imageExists = result
+				imageChecked = true
 			})
 		}
 	})
@@ -123,13 +127,20 @@
 </p>
 
 <form onsubmit={onSubmit} class="flex flex-col gap-5">
-	<div class="form-grid">
-		<div class="form-col">
-			{#if !editMode}
-				<h3>New Recipe</h3>
-			{:else}
-				<h3>Editing: {recipe.name}</h3>
+	<div>
+		{#if !editMode}
+			<h3>New Recipe</h3>
+		{:else}
+			<h3>Editing: {recipe.name}</h3>
+		{/if}
+		<div class="flex gap-2 mt-2">
+			{#if cancelHref}
+				<a href={cancelHref} class="btn btn-soft btn-secondary btn-sm">Cancel</a>
 			{/if}
+			{#if onDelete}
+				<Button type="button" size="sm" style="soft" color="error" onclick={onDelete}>Delete</Button>
+			{/if}
+			<Button type="submit" size="sm">{buttonText}</Button>
 		</div>
 	</div>
 	<div>
@@ -200,11 +211,7 @@
 		</div>
 
 		<!-- Full-width photo section -->
-		{#if editMode}
-			<PhotoSectionEdit {recipe} {onSelectedFilesChange} />
-		{:else}
-			<PhotoSectionNew {recipe} {imageExists} />
-		{/if}
+		<PhotoSection {recipe} {imageExists} {imageChecked} {selectedFiles} {onSelectedFilesChange} />
 
 		<!-- Full-width large text fields -->
 		<div>
@@ -301,7 +308,7 @@
 			rows="3"
 			bind:value={recipe.nutritional_info}
 			label="Nutritional Information" />
-		<Button type="submit">{buttonText}</Button>
+		<Button type="submit" size="sm" class="mt-4">{buttonText}</Button>
 		{#if recipeCategories}
 			{#each recipeCategories as categoryUid}
 				<input type="hidden" name="categories[]" value={categoryUid} />

@@ -3,8 +3,6 @@
 	import { deleteRecipeById, updateRecipe } from '$lib/utils/crud'
 	import { goto } from '$app/navigation'
 	import RecipeForm from '$lib/components/RecipeForm.svelte'
-	import View from '$lib/components/svg/View.svelte'
-	import Delete from '$lib/components/svg/Delete.svelte'
 	import Sidebar from '$lib/components/Sidebar.svelte'
 	import Burger from '$lib/components/svg/Burger.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
@@ -102,24 +100,6 @@
 		selectedCategoryUids={recipeCategories} />
 </Sidebar>
 
-<div class="flex gap-2">
-	{#if recipe?.userId === user?.userId}
-		<a
-			href="/recipe/{recipe?.uid}/view/"
-			class="btn btn-soft btn-primary btn-sm tooltip"
-			data-tip="View Recipe"
-			data-testid="view-button">
-			<View />
-		</a>
-		<Button
-			onclick={() => handleDelete(recipe?.uid)}
-			data-testid="delete-button"
-			class="btn btn-soft btn-sm tooltip btn-secondary">
-			<Delete />
-		</Button>
-	{/if}
-</div>
-
 <div class="recipe-container" class:sidebar-open={sidebarOpen} onclose={handleSidebarClose}>
 	{#if user.useCats}
 		<Button class="tooltip" data-tip="Display Category Selector" onclick={toggleSidebar}>
@@ -135,6 +115,8 @@
 		{userUnits}
 		{userLanguage}
 		buttonText="Update Recipe"
+		cancelHref="/recipe/{recipe?.uid}/view/"
+		onDelete={() => handleDelete(recipe?.uid)}
 		onSelectedFilesChange={handleSelectedFilesChange}
 		onSubmit={handleSubmit} />
 </div>

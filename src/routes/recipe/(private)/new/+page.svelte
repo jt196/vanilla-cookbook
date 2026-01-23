@@ -29,6 +29,7 @@
 	let sharedText = $state(null)
 	let feedbackMessage = $state('')
 	let feedbackType = $state('info')
+	let selectedFiles = $state([])
 
 	let initialMode = $state('url') // 'url' | 'text' | 'image'
 
@@ -79,15 +80,25 @@ let { apiKeyPresent, aiEnabled, imageAllowed, userUnits, userLanguage } = $state
 	})
 
 	async function handleCreateRecipe(event) {
-		event.preventDefault() // Prevent default form submission
+		event.preventDefault()
 
-		const result = await createRecipe(recipe)
+		const formData = new FormData()
+		formData.append('recipe', JSON.stringify(recipe))
+
+		for (const file of selectedFiles) {
+			formData.append('images', file)
+		}
+
+		const result = await createRecipe(formData)
 		if (result.success) {
-			// Handle success, maybe redirect or show a success message
 			await goto(`/recipe/${result.data.uid}/view/`)
 		} else {
 			console.error('Error:', result.error)
 		}
+	}
+
+	function handleSelectedFilesChange(files) {
+		selectedFiles = files
 	}
 </script>
 
@@ -105,9 +116,12 @@ let { apiKeyPresent, aiEnabled, imageAllowed, userUnits, userLanguage } = $state
 <RecipeForm
 	bind:recipe
 	onSubmit={handleCreateRecipe}
+	cancelHref="/"
 	{aiEnabled}
 	{userUnits}
-	{userLanguage} />
+	{userLanguage}
+	{selectedFiles}
+	onSelectedFilesChange={handleSelectedFilesChange} />
 
 {#if feedbackMessage}
 	<FeedbackMessage message={feedbackMessage} type={feedbackType} timeout={4000} />

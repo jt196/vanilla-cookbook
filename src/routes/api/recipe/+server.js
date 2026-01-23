@@ -6,6 +6,8 @@ import {
 } from '$lib/utils/image/imageUtils'
 import { processImage } from '$lib/utils/image/imageBackend'
 import { createRecipePhotoEntry, removeRecipePhotoEntry } from '$lib/utils/api'
+import { saveFile, validImageTypes } from '$lib/utils/import/importHelpers'
+import { fileTypeFromBuffer } from 'file-type'
 
 export async function POST({ request, locals, url }) {
 	const session = await locals.auth.validate()
@@ -21,8 +23,9 @@ export async function POST({ request, locals, url }) {
 		})
 	}
 
-	const bodyText = await request.text()
-	const recipeData = JSON.parse(bodyText)
+	const formData = await request.formData()
+	const recipeData = JSON.parse(formData.get('recipe'))
+	const imageData = formData.getAll('images')
 
 	const {
 		name,
@@ -49,14 +52,14 @@ export async function POST({ request, locals, url }) {
 				description,
 				source,
 				source_url,
-				cook_time: cook_time ? cook_time.toString() : null, // Ensure cook_time is a string
+				cook_time: cook_time ? cook_time.toString() : null,
 				image_url,
-				prep_time: prep_time ? prep_time.toString() : null, // Ensure prep_time is a string
+				prep_time: prep_time ? prep_time.toString() : null,
 				notes,
 				ingredients,
 				directions,
-				total_time: total_time ? total_time.toString() : null, // Ensure total_time is a string
-				servings: servings ? servings.toString() : null, // Use the string version of servings
+				total_time: total_time ? total_time.toString() : null,
+				servings: servings ? servings.toString() : null,
 				nutritional_info,
 				is_public,
 				created: new Date(),
@@ -66,7 +69,7 @@ export async function POST({ request, locals, url }) {
 	} catch (err) {
 		console.log('Error: ' + err)
 		return new Response(
-			{ err: `Failed to update recipe: ${err.message}` },
+			JSON.stringify({ error: `Failed to create recipe: ${err.message}` }),
 			{
 				status: 500,
 				headers: {
@@ -76,6 +79,7 @@ export async function POST({ request, locals, url }) {
 		)
 	}
 
+	// Process remote image_url if it exists
 	if (await checkImageExistence(image_url, url.origin)) {
 		console.log('Image exists, processing!')
 		const contentType = await getContentTypeFromUrl(image_url)
@@ -83,7 +87,6 @@ export async function POST({ request, locals, url }) {
 
 		let photoEntry
 		try {
-			// Creating the main image on save - set to isMain
 			photoEntry = await createRecipePhotoEntry(recipe.uid, image_url, extension, true)
 			await processImage(image_url, photoEntry.id, extension)
 		} catch (error) {
@@ -91,17 +94,33 @@ export async function POST({ request, locals, url }) {
 			if (photoEntry) {
 				await removeRecipePhotoEntry(photoEntry.id)
 			}
-			return new Response(
-				{ message: `Failed to process image` },
-				{
-					status: 500,
-					headers: {
-						'Content-Type': 'application/json'
-					}
-				}
-			)
 		}
 	}
+
+	// Process uploaded image files
+	for (const file of imageData) {
+		let photoEntry
+		try {
+			const extension = mapContentTypeToFileTypeAndExtension(file.type).extension
+			photoEntry = await createRecipePhotoEntry(recipe.uid, null, extension)
+			const photoBuffer = await file.arrayBuffer()
+
+			const fileTypeResult = await fileTypeFromBuffer(photoBuffer)
+			if (!fileTypeResult || !validImageTypes.includes(fileTypeResult.ext)) {
+				throw new Error('Invalid image type.')
+			}
+
+			const directory = 'uploads/images'
+			const fullFilename = `${photoEntry.id}.${extension}`
+			await saveFile(photoBuffer, fullFilename, directory)
+		} catch (err) {
+			console.log('Error saving photo! Deleting photo entry!', err)
+			if (photoEntry) {
+				removeRecipePhotoEntry(photoEntry.id)
+			}
+		}
+	}
+
 	return new Response(
 		JSON.stringify({
 			uid: recipe.uid

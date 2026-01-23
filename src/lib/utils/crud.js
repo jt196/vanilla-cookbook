@@ -136,30 +136,17 @@ export async function updateRecipe(formData, recipeId) {
 /**
  * Creates a new recipe on the server.
  *
- * @param {Object} recipe - The new recipe information, with the following properties:
- *   - name: string
- *   - source: string
- *   - source_url: string
- *   - cook_time: string
- *   - image_url: string
- *   - prep_time: string
- *   - ingredients: string
- *   - directions: string
- *   - total_time: string
- *   - servings: string
- *   - nutritional_info: string
+ * @param {FormData} formData - The form data containing the recipe JSON (under 'recipe' key)
+ *   and optional image files (under 'images' key).
  * @returns {Promise<Object>} A promise that resolves to an object indicating success or failure.
  *   If successful, the object contains the newly created recipe data under the `data` property.
  *   If unsuccessful, the object contains an error message under the `error` property.
  */
-export async function createRecipe(recipe) {
+export async function createRecipe(formData) {
 	try {
 		const response = await fetch(`/api/recipe`, {
 			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify(recipe)
+			body: formData
 		})
 
 		if (response.ok) {
