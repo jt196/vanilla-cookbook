@@ -1,4 +1,5 @@
 <script>
+	import { invalidateAll } from '$app/navigation'
 	import FoodBowl from '$lib/components/svg/FoodBowl.svelte'
 	import { deletePhotoById, updatePhotos } from '$lib/utils/crud'
 	import ConfirmationDialog from '$lib/components/ConfirmationDialog.svelte'
@@ -28,10 +29,12 @@
 		const success = await updatePhotos(filteredPhotos)
 		if (!success) {
 			console.error('Failed to set the main photo.')
+		} else {
+			await invalidateAll()
 		}
 	}
 
-	function handleDeletePhoto(photoId) {
+	async function handleDeletePhoto(photoId) {
 		pendingPhotoId = photoId
 		showDeleteConfirm = true
 	}
@@ -48,6 +51,8 @@
 			const success = await updatePhotos(filteredPhotos)
 			if (!success) {
 				console.error('Failed to update photo notes.')
+			} else {
+				await invalidateAll()
 			}
 		}
 		editingPhotoId = null
@@ -72,6 +77,7 @@
 			if (isMainPhotoBeingDeleted && filteredPhotos.length > 0) {
 				handleSetMainPhoto(filteredPhotos[0].id)
 			}
+			await invalidateAll()
 		} catch (error) {
 			console.error('Error deleting photo:', error.message)
 		}
@@ -111,7 +117,9 @@
 							<img
 								src="/api/recipe/image/{photo.id}"
 								alt="{recipe.name} photo"
-								class="max-h-[70vh] object-contain rounded-lg {photo.isMain ? 'ring-4 ring-primary' : ''}" />
+								class="max-h-[70vh] object-contain rounded-lg {photo.isMain
+									? 'ring-4 ring-primary'
+									: ''}" />
 						{/if}
 					</div>
 					{#if !viewMode}
@@ -122,11 +130,16 @@
 									class="input input-sm input-bordered w-48"
 									bind:value={editingNotes}
 									placeholder="Enter notes..." />
-								<button type="button" class="btn btn-xs btn-primary" onclick={saveNotes}>Save</button>
-								<button type="button" class="btn btn-xs btn-ghost" onclick={cancelEditingNotes}>Cancel</button>
+								<button type="button" class="btn btn-xs btn-primary" onclick={saveNotes}
+									>Save</button>
+								<button type="button" class="btn btn-xs btn-ghost" onclick={cancelEditingNotes}
+									>Cancel</button>
 							{:else}
 								<p class="text-xs text-base-content/70 italic">{photo.notes || 'No notes'}</p>
-								<button type="button" class="btn btn-xs btn-ghost" onclick={() => startEditingNotes(photo)}>Edit</button>
+								<button
+									type="button"
+									class="btn btn-xs btn-ghost"
+									onclick={() => startEditingNotes(photo)}>Edit</button>
 							{/if}
 						</div>
 					{:else if photo.notes}
@@ -134,7 +147,8 @@
 					{/if}
 				</div>
 				{#if filteredPhotos.length > 1}
-					<div class="absolute left-2 right-2 top-1/2 flex -translate-y-1/2 transform justify-between pointer-events-none">
+					<div
+						class="absolute left-2 right-2 top-1/2 flex -translate-y-1/2 transform justify-between pointer-events-none">
 						<a
 							href="#slide{(index - 1 + filteredPhotos.length) % filteredPhotos.length}"
 							class="btn btn-circle btn-sm opacity-70 hover:opacity-100 pointer-events-auto">❮</a>
