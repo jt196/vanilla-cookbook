@@ -41,7 +41,8 @@ export async function POST({ request, locals, url }) {
 		total_time,
 		servings,
 		nutritional_info,
-		is_public
+		is_public,
+		saveImageUrl = true
 	} = recipeData
 
 	let recipe
@@ -79,8 +80,8 @@ export async function POST({ request, locals, url }) {
 		)
 	}
 
-	// Process remote image_url if it exists
-	if (await checkImageExistence(image_url, url.origin)) {
+	// Process remote image_url if it exists and user opted to save
+	if (saveImageUrl && (await checkImageExistence(image_url, url.origin))) {
 		console.log('Image exists, processing!')
 		const contentType = await getContentTypeFromUrl(image_url)
 		const { extension } = mapContentTypeToFileTypeAndExtension(contentType)

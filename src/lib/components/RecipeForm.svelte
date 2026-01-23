@@ -8,7 +8,7 @@
 	import Button from '$lib/components/ui/Button.svelte'
 	import Spinner from '$lib/components/Spinner.svelte'
 
-	/** @type {{recipe: any, onSubmit: any, buttonText?: string, selectedFiles?: any, onSelectedFilesChange?: any, baseUrl?: string, editMode?: boolean, recipeCategories?: any, aiEnabled?: boolean, userUnits?: string, userLanguage?: string, cancelHref?: string, onDelete?: (() => void) | null}} */
+	/** @type {{recipe: any, onSubmit: any, buttonText?: string, selectedFiles?: any, onSelectedFilesChange?: any, baseUrl?: string, editMode?: boolean, recipeCategories?: any, aiEnabled?: boolean, userUnits?: string, userLanguage?: string, cancelHref?: string, onDelete?: (() => void) | null, saveImageUrl?: boolean}} */
 	let {
 		recipe = $bindable(),
 		onSubmit,
@@ -22,7 +22,8 @@
 		userUnits = 'metric',
 		userLanguage = 'eng',
 		cancelHref = '',
-		onDelete = null
+		onDelete = null,
+		saveImageUrl = $bindable(true)
 	} = $props()
 
 	// Ensure is_public is always defined
@@ -211,7 +212,7 @@
 		</div>
 
 		<!-- Full-width photo section -->
-		<PhotoSection {recipe} {imageExists} {imageChecked} {selectedFiles} {onSelectedFilesChange} />
+		<PhotoSection {recipe} {imageExists} {imageChecked} {selectedFiles} {onSelectedFilesChange} bind:saveImageUrl />
 
 		<!-- Full-width large text fields -->
 		<div>

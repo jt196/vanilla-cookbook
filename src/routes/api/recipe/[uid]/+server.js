@@ -1,6 +1,11 @@
 import { prisma } from '$lib/server/prisma'
 import { deleteSinglePhotoFile } from '$lib/utils/image/imageBackend.js'
-import { mapContentTypeToFileTypeAndExtension } from '$lib/utils/image/imageUtils.js'
+import {
+	checkImageExistence,
+	getContentTypeFromUrl,
+	mapContentTypeToFileTypeAndExtension
+} from '$lib/utils/image/imageUtils.js'
+import { processImage } from '$lib/utils/image/imageBackend.js'
 import { createRecipePhotoEntry, removeRecipePhotoEntry } from '$lib/utils/api'
 import { saveFile, validImageTypes } from '$lib/utils/import/importHelpers'
 import { fileTypeFromBuffer } from 'file-type'
@@ -74,7 +79,7 @@ export async function DELETE({ params, locals }) {
 // Handle post request to update an existing recipe
 // API Endpoint: /api/recipe/[uid].js
 
-export async function PUT({ request, locals, params }) {
+export async function PUT({ request, locals, params, url }) {
 	const session = await locals.auth.validate()
 	const user = session?.user
 	const formData = await request.formData()
@@ -108,6 +113,9 @@ export async function PUT({ request, locals, params }) {
 	// eslint-disable-next-line no-unused-vars
 	const recipePhotos = recipeData.photos || []
 	delete recipeData.photos // Remove the photos key from the main data object
+
+	const saveImageUrl = recipeData.saveImageUrl || false
+	delete recipeData.saveImageUrl
 
 	try {
 		const recipe = await prisma.recipe.findUnique({
@@ -164,6 +172,27 @@ export async function PUT({ request, locals, params }) {
 			} catch (err) {
 				console.log('Error Saving Photo! Deleting Photo Entry!', err)
 				removeRecipePhotoEntry(photoEntry.id)
+			}
+		}
+
+		// Process remote image_url if user opted to save
+		if (saveImageUrl && recipeData.image_url) {
+			const existingPhoto = await prisma.recipePhoto.findFirst({
+				where: { recipeUid: uid, url: recipeData.image_url }
+			})
+			if (!existingPhoto && (await checkImageExistence(recipeData.image_url, url.origin))) {
+				const contentType = await getContentTypeFromUrl(recipeData.image_url)
+				const { extension } = mapContentTypeToFileTypeAndExtension(contentType)
+				let remotePhotoEntry
+				try {
+					remotePhotoEntry = await createRecipePhotoEntry(uid, recipeData.image_url, extension, true)
+					await processImage(recipeData.image_url, remotePhotoEntry.id, extension)
+				} catch (error) {
+					console.error('Error saving remote image:', error)
+					if (remotePhotoEntry) {
+						await removeRecipePhotoEntry(remotePhotoEntry.id)
+					}
+				}
 			}
 		}
 

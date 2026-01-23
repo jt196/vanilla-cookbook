@@ -30,6 +30,7 @@
 	let feedbackMessage = $state('')
 	let feedbackType = $state('info')
 	let selectedFiles = $state([])
+	let saveImageUrl = $state(true)
 
 	let initialMode = $state('url') // 'url' | 'text' | 'image'
 
@@ -83,7 +84,7 @@ let { apiKeyPresent, aiEnabled, imageAllowed, userUnits, userLanguage } = $state
 		event.preventDefault()
 
 		const formData = new FormData()
-		formData.append('recipe', JSON.stringify(recipe))
+		formData.append('recipe', JSON.stringify({ ...recipe, saveImageUrl }))
 
 		for (const file of selectedFiles) {
 			formData.append('images', file)
@@ -121,6 +122,7 @@ let { apiKeyPresent, aiEnabled, imageAllowed, userUnits, userLanguage } = $state
 	{userUnits}
 	{userLanguage}
 	{selectedFiles}
+	bind:saveImageUrl
 	onSelectedFilesChange={handleSelectedFilesChange} />
 
 {#if feedbackMessage}

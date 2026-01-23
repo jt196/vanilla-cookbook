@@ -17,6 +17,7 @@
 
 	let recipeCategories = $state([]) // This will store the selected category UIDs for the recipe
 	let selectedFiles = $state([])
+	let saveImageUrl = $state(false)
 	let sidebarOpen = $state(false)
 
 	// /** @type {{data: PageData}} */
@@ -53,7 +54,8 @@
 
 		const recipeWithCategories = {
 			...recipe,
-			categories: recipeCategories
+			categories: recipeCategories,
+			saveImageUrl
 		}
 
 		const formData = new FormData()
@@ -110,6 +112,7 @@
 		bind:recipe
 		editMode={true}
 		bind:selectedFiles
+		bind:saveImageUrl
 		{recipeCategories}
 		{aiEnabled}
 		{userUnits}
