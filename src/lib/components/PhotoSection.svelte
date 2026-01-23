@@ -92,90 +92,98 @@
 	}
 </script>
 
-<!-- 1. External Image URL -->
-{#if recipe.image_url}
-	<div class="mb-4 mt-4">
-		<h4 class="text-sm font-semibold mb-2">External Image</h4>
-		{#if imageExists}
-			<img
-				class="w-32 h-auto object-cover rounded-lg shadow-md mb-2"
-				loading="lazy"
-				src={recipe.image_url}
-				alt="{recipe.name} external" />
-		{/if}
-		{#if !imageExists && imageChecked}
-			<p class="text-warning text-sm mb-2">
-				The external image URL appears to be unreachable. The image may not display correctly.
-			</p>
-		{/if}
-		{#if imageAlreadySaved}
-			<span class="badge badge-success badge-sm">Already saved</span>
-		{:else if imageExists}
-			<label class="label cursor-pointer justify-start gap-2 mt-1">
-				<input type="checkbox" class="checkbox checkbox-sm checkbox-primary" bind:checked={saveImageUrl} />
-				<span class="label-text text-sm">Save to recipe</span>
-			</label>
+<div class="rounded-box border border-solid border-accent p-2">
+	<!-- 1. External Image URL -->
+	{#if recipe.image_url}
+		<div class="mb-4 mt-4">
+			<h4 class="text-sm font-semibold mb-2">Source URL Image</h4>
+			{#if imageExists}
+				<img
+					class="w-32 h-auto object-cover rounded-lg shadow-md mb-2"
+					loading="lazy"
+					src={recipe.image_url}
+					alt="{recipe.name} external" />
+			{/if}
+			{#if !imageExists && imageChecked}
+				<p class="text-warning text-sm mb-2">
+					The external image URL appears to be unreachable. The image may not display correctly.
+				</p>
+			{/if}
+			{#if imageAlreadySaved}
+				<span class="badge badge-success badge-sm">Already saved</span>
+			{:else if imageExists}
+				<label class="label cursor-pointer justify-start gap-2 mt-1">
+					<input
+						type="checkbox"
+						class="checkbox checkbox-sm checkbox-primary"
+						bind:checked={saveImageUrl} />
+					<span class="label-text text-sm">Save to recipe</span>
+				</label>
+			{/if}
+		</div>
+	{/if}
+
+	<!-- 2. Upload Images -->
+	<div class="mb-4">
+		<h4 class="text-sm font-semibold mb-2">Image Upload</h4>
+		<FileInput
+			id="file"
+			name="images"
+			accept="image/*"
+			fullWidth="false"
+			multiple={true}
+			onchange={handleFilesChange} />
+
+		{#if previewUrls?.length}
+			<div class="flex flex-wrap gap-3 mt-3">
+				{#each previewUrls as previewUrl, index}
+					<img
+						src={previewUrl}
+						alt={`Selected image ${index + 1}`}
+						class="w-32 h-auto object-cover rounded-lg shadow-md" />
+				{/each}
+			</div>
 		{/if}
 	</div>
-{/if}
 
-<!-- 2. Upload Images -->
-<div class="mb-4">
-	<FileInput
-		id="file"
-		name="images"
-		label="Upload Images"
-		accept="image/*"
-		multiple={true}
-		onchange={handleFilesChange}
-		optionalLabel="Images are uploaded after you save the recipe." />
-
-	{#if previewUrls?.length}
-		<div class="flex flex-wrap gap-3 mt-3">
-			{#each previewUrls as previewUrl, index}
-				<img
-					src={previewUrl}
-					alt={`Selected image ${index + 1}`}
-					class="w-32 h-auto object-cover rounded-lg shadow-md" />
-			{/each}
+	<!-- 3. Saved Images -->
+	{#if filteredPhotos.length > 0}
+		<div class="mb-4">
+			<h4 class="text-sm font-semibold mb-2">Recipe Images</h4>
+			<div class="flex flex-wrap gap-3">
+				{#each filteredPhotos as photo}
+					<div class="indicator">
+						<span
+							class="indicator-item badge badge-error badge-xs cursor-pointer"
+							onclick={() => handleDeletePhoto(photo.id)}
+							role="button"
+							tabindex="0"
+							onkeydown={(e) => e.key === 'Enter' && handleDeletePhoto(photo.id)}>✕</span>
+						{#if photo.isMain}
+							<img
+								src="/api/recipe/image/{photo.id}"
+								alt="{recipe.name} photo"
+								class="max-h-40 rounded-lg shadow-md ring-4 ring-primary" />
+						{:else}
+							<button
+								type="button"
+								class="btn btn-ghost p-0 h-auto min-h-0"
+								onclick={() => handleSetMainPhoto(photo.id)}>
+								<img
+									src="/api/recipe/image/{photo.id}"
+									alt="{recipe.name} photo - click to set as main"
+									class="max-h-40 rounded-lg shadow-md opacity-80 hover:opacity-100 transition-opacity" />
+							</button>
+						{/if}
+					</div>
+				{/each}
+			</div>
+			<span class="label block whitespace-normal wrap-break-word text-sm leading-snug max-w-full">
+				Click on an image to set main.
+			</span>
 		</div>
 	{/if}
 </div>
-
-<!-- 3. Saved Images -->
-{#if filteredPhotos.length > 0}
-	<div class="mb-4">
-		<h4 class="text-sm font-semibold mb-2">Recipe Images</h4>
-		<div class="flex flex-wrap gap-3">
-			{#each filteredPhotos as photo}
-				<div class="indicator">
-					<span
-						class="indicator-item badge badge-error badge-xs cursor-pointer"
-						onclick={() => handleDeletePhoto(photo.id)}
-						role="button"
-						tabindex="0"
-						onkeydown={(e) => e.key === 'Enter' && handleDeletePhoto(photo.id)}>✕</span>
-					{#if photo.isMain}
-						<img
-							src="/api/recipe/image/{photo.id}"
-							alt="{recipe.name} photo"
-							class="max-h-40 rounded-lg shadow-md ring-4 ring-primary" />
-					{:else}
-						<button
-							type="button"
-							class="btn btn-ghost p-0 h-auto min-h-0"
-							onclick={() => handleSetMainPhoto(photo.id)}>
-							<img
-								src="/api/recipe/image/{photo.id}"
-								alt="{recipe.name} photo - click to set as main"
-								class="max-h-40 rounded-lg shadow-md opacity-80 hover:opacity-100 transition-opacity" />
-						</button>
-					{/if}
-				</div>
-			{/each}
-		</div>
-	</div>
-{/if}
 
 <ConfirmationDialog
 	bind:isOpen={showDeleteConfirm}

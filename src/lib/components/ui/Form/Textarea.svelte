@@ -81,7 +81,7 @@
 			style="min-width:0;max-width:100%;"
 			{...rest}></textarea>
 		{#if optionalLabel}
-			<span class="label block whitespace-normal break-words text-sm leading-snug max-w-full">
+			<span class="label block whitespace-normal wrap-break-word text-sm leading-snug max-w-full">
 				{optionalLabel}
 			</span>
 		{/if}
