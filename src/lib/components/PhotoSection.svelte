@@ -145,7 +145,7 @@
 <!-- 3. Saved Images -->
 {#if filteredPhotos.length > 0}
 	<div class="mb-4">
-		<h4 class="text-sm font-semibold mb-2">Saved Images</h4>
+		<h4 class="text-sm font-semibold mb-2">Recipe Images</h4>
 		<div class="flex flex-wrap gap-3">
 			{#each filteredPhotos as photo}
 				<div class="indicator">

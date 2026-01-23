@@ -17,7 +17,7 @@
 	import RecipeViewLogs from '$lib/components/RecipeViewLogs.svelte'
 	import FeedbackMessage from '$lib/components/FeedbackMessage.svelte'
 	import { sortByDate } from '$lib/utils/sorting.js'
-	import { recipeRatingChange } from '$lib/utils/crud.js'
+	import { recipeRatingChange, updatePhotos } from '$lib/utils/crud.js'
 
 	/** @type {{data: any}} */
 	let { data } = $props()
@@ -156,6 +156,18 @@
 	function handleRecipeRatingChanged(newRating) {
 		recipeRatingChange(newRating, recipe.uid)
 		recipe.rating = newRating
+	}
+
+	async function handleSetMainPhoto(photoId) {
+		recipe.photos = recipe.photos.map((photo) => ({
+			...photo,
+			isMain: photo.id === photoId
+		}))
+		const photosWithFileType = recipe.photos.filter((p) => p.fileType)
+		const success = await updatePhotos(photosWithFileType)
+		if (!success) {
+			console.error('Failed to set the main photo.')
+		}
 	}
 
 	let isLatest = true
@@ -298,4 +310,4 @@
 	{/if}
 {/if}
 
-<RecipeViewOtherPhotos {otherPhotos} recipeName={recipe.name} />
+<RecipeViewOtherPhotos {otherPhotos} recipeName={recipe.name} onSetMainPhoto={handleSetMainPhoto} {viewOnly} />

@@ -31,7 +31,13 @@
 	}
 </script>
 
-<img src="/api/recipe/image/{photo.id}" alt="{recipeName} photo" />
+{#if photo.isMain}
+	<img src="/api/recipe/image/{photo.id}" alt="{recipeName} photo" class="main-photo" />
+{:else}
+	<button type="button" class="promote-btn" onclick={() => onSetMainPhoto(photo.id)}>
+		<img src="/api/recipe/image/{photo.id}" alt="{recipeName} photo - click to set as main" class="promotable-photo" />
+	</button>
+{/if}
 <div class="photo-note">
 	{#if editingPhotoId === photo.id}
 		<Input bind:value={editingPhotoNotes} type="text" placeholder="Enter notes..." />
@@ -57,11 +63,32 @@
 
 <style lang="scss">
 	img {
-		width: 100%; /* Set to your desired height */
-		height: auto; /* This will ensure the width remains proportional */
+		width: 100%;
+		height: auto;
 		object-fit: cover;
-		display: block; /* To remove any default spacing at the bottom of images */
+		display: block;
 		margin-bottom: 1rem;
+	}
+
+	.main-photo {
+		border: 3px solid var(--pico-primary, oklch(0.6 0.2 260));
+		border-radius: 0.5rem;
+	}
+
+	.promotable-photo {
+		opacity: 0.8;
+		transition: opacity 0.2s;
+		border-radius: 0.5rem;
+		&:hover {
+			opacity: 1;
+		}
+	}
+
+	.promote-btn {
+		all: unset;
+		cursor: pointer;
+		display: block;
+		width: 100%;
 	}
 
 	.photo-note {

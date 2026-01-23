@@ -181,11 +181,15 @@ export async function PUT({ request, locals, params, url }) {
 				where: { recipeUid: uid, url: recipeData.image_url }
 			})
 			if (!existingPhoto && (await checkImageExistence(recipeData.image_url, url.origin))) {
+				// Only set as main if there's no existing main photo
+				const hasMainPhoto = await prisma.recipePhoto.findFirst({
+					where: { recipeUid: uid, isMain: true }
+				})
 				const contentType = await getContentTypeFromUrl(recipeData.image_url)
 				const { extension } = mapContentTypeToFileTypeAndExtension(contentType)
 				let remotePhotoEntry
 				try {
-					remotePhotoEntry = await createRecipePhotoEntry(uid, recipeData.image_url, extension, true)
+					remotePhotoEntry = await createRecipePhotoEntry(uid, recipeData.image_url, extension, !hasMainPhoto)
 					await processImage(recipeData.image_url, remotePhotoEntry.id, extension)
 				} catch (error) {
 					console.error('Error saving remote image:', error)
