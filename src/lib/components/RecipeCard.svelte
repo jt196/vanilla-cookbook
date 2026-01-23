@@ -14,6 +14,7 @@
 
 	let logged = $derived(item.log?.length > 0)
 	let favourite = $derived(item?.on_favorites)
+	let loadingFav = $state(false)
 
 	// Reset image visibility when the recipe changes
 	$effect(() => {
@@ -26,8 +27,9 @@
 	async function handleFavourite(uid, event) {
 		event.preventDefault()
 		event.stopPropagation()
-		console.log('Handle favourite button clicked for uid: ' + uid)
+		loadingFav = true
 		const success = await changeRecipeFavourite(uid)
+		loadingFav = false
 		if (success && recipeFavourited) {
 			recipeFavourited(uid)
 		}
@@ -69,9 +71,14 @@
 							onclick={(event) => handleFavourite(item?.uid, event)}
 							style="ghost"
 							size="xs"
+							disabled={loadingFav}
 							class="btn-circle tooltip hover:opacity-100 {favourite ? 'text-error opacity-100' : ''}"
 							data-tip="Favourite Recipe">
-							<Favourite {favourite} width="16px" height="16px" />
+							{#if loadingFav}
+								<span class="loading loading-spinner loading-xs"></span>
+							{:else}
+								<Favourite {favourite} width="16px" height="16px" />
+							{/if}
 						</Button>
 						<Button
 							style="ghost"

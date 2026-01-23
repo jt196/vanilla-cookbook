@@ -20,6 +20,9 @@
 	let { recipe, updateLogs, favRecipe, pubRecipe, logs, viewOnly } = $props()
 	let showDeleteConfirm = $state(false)
 	let pendingDeleteUid = $state(null)
+	let loadingFav = $state(false)
+	let loadingPub = $state(false)
+	let loadingLog = $state(false)
 
 	async function handleDelete(uid) {
 		pendingDeleteUid = uid
@@ -27,23 +30,27 @@
 	}
 
 	async function handleFavourite(uid) {
-		console.log('Handle favourites button clicked for uid: ' + uid)
+		loadingFav = true
 		const success = await changeRecipeFavourite(uid)
+		loadingFav = false
 		if (success) {
 			favRecipe(success)
 		}
 	}
 
 	async function handlePublic(uid) {
-		console.log('Handle public button clicked for uid: ' + uid)
+		loadingPub = true
 		const success = await changeRecipePublic(uid)
+		loadingPub = false
 		if (success) {
 			pubRecipe(success)
 		}
 	}
 
 	async function handleLog(uid) {
+		loadingLog = true
 		let response = await addRecipeLog(uid)
+		loadingLog = false
 		if (response.success) {
 			const newLog = response.data
 			updateLogs(newLog.recipeLog, response)
@@ -79,23 +86,38 @@
 		onclick={(event) => handlePublic(recipe?.uid)}
 		class="btn btn-soft btn-primary btn-sm tooltip"
 		class:btn-success={recipe?.is_public}
+		disabled={loadingPub}
 		data-tip={recipe?.is_public ? 'Private Recipe?' : 'Public Recipe?'}>
-		<Public isPublic={recipe?.is_public} width="20px" height="20px" fill="currentColor" />
+		{#if loadingPub}
+			<span class="loading loading-spinner loading-sm"></span>
+		{:else}
+			<Public isPublic={recipe?.is_public} width="20px" height="20px" fill="currentColor" />
+		{/if}
 	</button>
 	<button
 		onclick={(event) => handleFavourite(recipe?.uid)}
 		class="btn btn-soft btn-primary btn-sm tooltip"
 		class:text-error={recipe?.on_favorites}
+		disabled={loadingFav}
 		data-tip={recipe?.on_favorites ? 'Unfavourite Recipe' : 'Favourite Recipe'}>
-		<Favourite favourite={recipe?.on_favorites} width="20px" height="20px" fill="currentColor" />
+		{#if loadingFav}
+			<span class="loading loading-spinner loading-sm"></span>
+		{:else}
+			<Favourite favourite={recipe?.on_favorites} width="20px" height="20px" fill="currentColor" />
+		{/if}
 	</button>
 	<button
 		onclick={() => handleLog(recipe?.uid)}
 		class="btn btn-soft btn-primary btn-sm tooltip"
 		class:text-success={logs?.length > 0}
+		disabled={loadingLog}
 		data-tip="Mark Recipe Cooked Today"
 		data-testid="check-button">
-		<Check width="20px" height="20px" checked={logs?.length > 0} fill="currentColor" />
+		{#if loadingLog}
+			<span class="loading loading-spinner loading-sm"></span>
+		{:else}
+			<Check width="20px" height="20px" checked={logs?.length > 0} fill="currentColor" />
+		{/if}
 	</button>
 	<button
 		onclick={() => handleDelete(recipe?.uid)}
