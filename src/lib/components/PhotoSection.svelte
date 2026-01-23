@@ -21,6 +21,13 @@
 	let showDeleteConfirm = $state(false)
 	let pendingPhotoId = $state(null)
 	let previewUrls = $state([])
+	let imageBroken = $state(false)
+
+	$effect(() => {
+		// Reset broken flag when URL changes
+		recipe.image_url
+		imageBroken = false
+	})
 
 	$effect(() => {
 		const urls = (selectedFiles ?? []).map((file) => URL.createObjectURL(file))
@@ -92,22 +99,46 @@
 	}
 </script>
 
-<div class="rounded-box border border-solid border-accent p-2">
+<div class="rounded-field border border-solid border-accent p-2">
 	<!-- 1. External Image URL -->
 	{#if recipe.image_url}
 		<div class="mb-4 mt-4">
 			<h4 class="text-sm font-semibold mb-2">Source URL Image</h4>
 			{#if imageExists}
-				<img
-					class="w-32 h-auto object-cover rounded-lg shadow-md mb-2"
-					loading="lazy"
-					src={recipe.image_url}
-					alt="{recipe.name} external" />
+				{#if imageBroken}
+					<div class="w-32 h-24 rounded-lg shadow-md mb-2 bg-base-300 flex items-center justify-center">
+						<svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+						</svg>
+					</div>
+				{:else}
+					<img
+						class="w-32 h-auto object-cover rounded-lg shadow-md mb-2"
+						loading="lazy"
+						src={recipe.image_url}
+						alt=""
+						onerror={() => (imageBroken = true)} />
+				{/if}
 			{/if}
 			{#if !imageExists && imageChecked}
-				<p class="text-warning text-sm mb-2">
-					The external image URL appears to be unreachable. The image may not display correctly.
-				</p>
+				<div class="alert alert-warning py-2 px-3 text-sm">
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						class="h-4 w-4 shrink-0"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke="currentColor">
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+					</svg>
+					<div>
+						<p class="font-semibold">Image unreachable</p>
+						<p class="text-xs break-all opacity-70">{recipe.image_url}</p>
+					</div>
+				</div>
 			{/if}
 			{#if imageAlreadySaved}
 				<span class="badge badge-success badge-sm">Already saved</span>
