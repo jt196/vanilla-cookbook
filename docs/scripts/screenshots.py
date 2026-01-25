@@ -1,15 +1,31 @@
 from playwright.sync_api import sync_playwright
 from dotenv import load_dotenv
+from pathlib import Path
 import os
 import re
 
-# Load .env
-load_dotenv(override=True)
+ROOT_ENV = Path(__file__).resolve().parents[2] / ".env"
+# Load .env from repo root to avoid picking up a different working directory.
+load_dotenv(ROOT_ENV, override=True)
 USERNAME = os.getenv("ADMIN_USER")
 PASSWORD = os.getenv("ADMIN_PASSWORD")
 ID = os.getenv("ADMIN_ID")
 ORIGIN = os.getenv("ORIGIN", "http://localhost:5173")
 ONLY_RECIPE = os.getenv("ONLY_RECIPE") in ("1", "true", "yes", "on")
+
+def _mask(value):
+    if not value:
+        return "missing"
+    if len(value) <= 2:
+        return "*" * len(value)
+    return f"{value[:2]}***{value[-2:]}"
+
+print("🔎 Env check:")
+print(f"  ADMIN_USER: {_mask(USERNAME)}")
+print(f"  ADMIN_PASSWORD: {_mask(PASSWORD)}")
+print(f"  ADMIN_ID: {ID or 'missing'}")
+print(f"  ORIGIN: {ORIGIN}")
+print(f"  ONLY_RECIPE: {ONLY_RECIPE}")
 
 LOGIN_URL = f"{ORIGIN}/login"
 RECIPE_LIST = re.compile(fr"{re.escape(ORIGIN)}/user/.+/recipes")
