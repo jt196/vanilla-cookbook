@@ -6,6 +6,7 @@
 	import Input from '$lib/components/ui/Form/Input.svelte'
 	import Textarea from '$lib/components/ui/Form/Textarea.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
+	import InfoText from '$lib/components/ui/InfoText.svelte'
 	import Spinner from '$lib/components/Spinner.svelte'
 
 	/** @type {{recipe: any, onSubmit: any, buttonText?: string, selectedFiles?: any, onSelectedFilesChange?: any, baseUrl?: string, editMode?: boolean, recipeCategories?: any, aiEnabled?: boolean, userUnits?: string, userLanguage?: string, cancelHref?: string, onDelete?: (() => void) | null, saveImageUrl?: boolean}} */
@@ -122,10 +123,10 @@
 	})
 </script>
 
-<p class="text-xs mb-2 mt-2">
+<InfoText class="my-4">
 	<a target="_blank" href="https://www.markdownguide.org/basic-syntax/">Markdown</a> is supported for
 	ingredients, directions and notes.
-</p>
+</InfoText>
 
 <form onsubmit={onSubmit} class="flex flex-col gap-5">
 	<div>
@@ -139,7 +140,8 @@
 				<a href={cancelHref} class="btn btn-soft btn-secondary btn-sm">Cancel</a>
 			{/if}
 			{#if onDelete}
-				<Button type="button" size="sm" style="soft" color="error" onclick={onDelete}>Delete</Button>
+				<Button type="button" size="sm" style="soft" color="error" onclick={onDelete}
+					>Delete</Button>
 			{/if}
 			<Button type="submit" size="sm">{buttonText}</Button>
 		</div>
@@ -212,7 +214,13 @@
 		</div>
 
 		<!-- Full-width photo section -->
-		<PhotoSection {recipe} {imageExists} {imageChecked} {selectedFiles} {onSelectedFilesChange} bind:saveImageUrl />
+		<PhotoSection
+			{recipe}
+			{imageExists}
+			{imageChecked}
+			{selectedFiles}
+			{onSelectedFilesChange}
+			bind:saveImageUrl />
 
 		<!-- Full-width large text fields -->
 		<div>
@@ -250,6 +258,7 @@
 						Clean Ingredients
 					{/if}
 				</Button>
+				<InfoText class="mt-1">Simplify complex ingredients for more accurate conversion results.</InfoText>
 			{/if}
 		</div>
 		<Textarea
@@ -294,6 +303,7 @@
 						Summarize Directions
 					{/if}
 				</Button>
+				<InfoText class="mt-1">Condense lengthy directions into clear, concise steps.</InfoText>
 			{/if}
 		</div>
 		<Textarea

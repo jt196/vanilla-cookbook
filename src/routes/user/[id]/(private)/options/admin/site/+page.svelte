@@ -4,13 +4,13 @@
 	import FeedbackMessage from '$lib/components/FeedbackMessage.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Badge from '$lib/components/ui/Badge.svelte'
-	import Container from '$lib/components/ui/Container.svelte'
 	import Checkbox from '$lib/components/ui/Form/Checkbox.svelte'
 	import Table from '$lib/components/ui/Table/Table.svelte'
 	import TableHead from '$lib/components/ui/Table/TableHead.svelte'
 	import TableBody from '$lib/components/ui/Table/TableBody.svelte'
 	import TableRow from '$lib/components/ui/Table/TableRow.svelte'
 	import TableCell from '$lib/components/ui/Table/TableCell.svelte'
+	import InfoText from '$lib/components/ui/InfoText.svelte'
 
 	/** @type {{data: any}} */
 	let { data } = $props()
@@ -107,7 +107,7 @@
 			<strong>Image Model:</strong>
 			{llm?.imageProvider} / {llm?.imageModel}
 		</p>
-		<p class="text-xs">Update values in your .env file to change providers or models.</p>
+		<InfoText class="my-4">Update values in your .env file to change providers or models.</InfoText>
 	</div>
 </div>
 
@@ -121,7 +121,7 @@
 			<p>
 				<strong>Retention:</strong> Keep {backupInfo.retentionCount} most recent scheduled backups
 			</p>
-			<p class="text-xs">Please edit your .env file to change these</p>
+			<InfoText class="my-4">Please edit your .env file to change these</InfoText>
 		</div>
 		<div class="backup-actions">
 			<Button
