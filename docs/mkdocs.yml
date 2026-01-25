@@ -1,4 +1,5 @@
 site_name: Vanilla Cookbook Documentation
+docs_dir: .
 theme:
   name: material
   logo: images/vanilla-notype.png # Path to the logo inside docs/
