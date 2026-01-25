@@ -2,7 +2,7 @@
 	import { invalidateAll } from '$app/navigation'
 	import FoodBowl from '$lib/components/svg/FoodBowl.svelte'
 	import { deletePhotoById, updatePhotos } from '$lib/utils/crud'
-	import ConfirmationDialog from '$lib/components/ConfirmationDialog.svelte'
+	import ConfirmationDialog from '$lib/components/ui/ConfirmationDialog.svelte'
 
 	/** @type {{data: any}} */
 	let { data } = $props()

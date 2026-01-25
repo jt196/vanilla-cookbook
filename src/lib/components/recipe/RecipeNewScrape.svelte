@@ -1,13 +1,13 @@
 <script>
 	import { handleParse, handleScrape, handleImage } from '$lib/utils/parse/parseHelpersClient'
-	import FeedbackMessage from '$lib/components/FeedbackMessage.svelte'
+	import FeedbackMessage from '$lib/components/ui/FeedbackMessage.svelte'
 	import { defaultRecipe } from '$lib/utils/config'
 	import Input from '$lib/components/ui/Form/Input.svelte'
 	import Textarea from '$lib/components/ui/Form/Textarea.svelte'
 	import FileInput from '$lib/components/ui/Form/FileInput.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Toggle from '$lib/components/ui/Form/Toggle.svelte'
-	import Spinner from '$lib/components/Spinner.svelte'
+	import Spinner from '$lib/components/ui/Spinner.svelte'
 
 	let {
 		url = $bindable(''),

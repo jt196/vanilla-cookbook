@@ -1,5 +1,5 @@
 <script>
-	import CategoryEdit from '$lib/components/CategoryEdit.svelte'
+	import CategoryEdit from '$lib/components/category/CategoryEdit.svelte'
 	import { fetchAndTransformCategories } from '$lib/utils/categories.js'
 	import { browser } from '$app/environment'
 	import Input from '$lib/components/ui/Form/Input.svelte'

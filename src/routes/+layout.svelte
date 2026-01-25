@@ -6,9 +6,9 @@
 
 	// Import Tailwind CSS with DaisyUI
 	import '../app.css'
-	import SiteIcons from '$lib/components/SiteIcons.svelte'
+	import SiteIcons from '$lib/components/ui/SiteIcons.svelte'
 	import CookBook from '$lib/components/svg/CookBook.svelte'
-	import NavLinks from '$lib/components/NavLinks.svelte'
+	import NavLinks from '$lib/components/ui/NavLinks.svelte'
 
 	/** @type {{data: PageData, children?: import('svelte').Snippet}} */
 	let { data, children } = $props()
@@ -109,11 +109,21 @@
 			<!-- Mobile Hamburger Menu -->
 			<div class="dropdown dropdown-end lg:hidden">
 				<div tabindex="0" role="button" class="btn btn-ghost btn-circle" aria-label="Menu">
-					<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						class="h-6 w-6"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke="currentColor">
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M4 6h16M4 12h16M4 18h16" />
 					</svg>
 				</div>
-				<ul class="dropdown-content menu bg-base-100 rounded-box z-50 mt-3 w-52 p-2 shadow-lg border border-base-300">
+				<ul
+					class="dropdown-content menu bg-base-100 rounded-box z-50 mt-3 w-52 p-2 shadow-lg border border-base-300">
 					<NavLinks {user} {settings} {theme} onToggleTheme={toggleTheme} mobile={true} />
 				</ul>
 			</div>

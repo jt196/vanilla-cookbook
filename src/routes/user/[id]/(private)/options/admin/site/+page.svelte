@@ -1,7 +1,7 @@
 <script>
 	import { localDateAndTime } from '$lib/utils/dateTime'
 	import { invalidateAll } from '$app/navigation'
-	import FeedbackMessage from '$lib/components/FeedbackMessage.svelte'
+	import FeedbackMessage from '$lib/components/ui/FeedbackMessage.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Badge from '$lib/components/ui/Badge.svelte'
 	import Checkbox from '$lib/components/ui/Form/Checkbox.svelte'

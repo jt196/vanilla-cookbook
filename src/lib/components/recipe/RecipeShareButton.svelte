@@ -1,9 +1,9 @@
 <script>
-	import FeedbackMessage from '$lib/components/FeedbackMessage.svelte'
+	import FeedbackMessage from '$lib/components/ui/FeedbackMessage.svelte'
 	import Dialog from '$lib/components/ui/Dialog.svelte'
 	import { changeRecipePublic } from '$lib/utils/crud'
 	import { onMount } from 'svelte'
-	import Share from './svg/Share.svelte'
+	import Share from '$lib/components/svg/Share.svelte'
 
 	let { name, isPublic = true, uid, pubRecipe } = $props()
 

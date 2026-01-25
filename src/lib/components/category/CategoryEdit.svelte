@@ -1,14 +1,14 @@
 <script>
-	import CategoryEdit from './CategoryEdit.svelte';
+	import CategoryEdit from '../CategoryEdit.svelte'
 
 	import { flip } from 'svelte/animate'
 	import { dndzone, SHADOW_PLACEHOLDER_ITEM_ID } from 'svelte-dnd-action'
-	import Ellipsis from './svg/Ellipsis.svelte'
+	import Ellipsis from '../svg/Ellipsis.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
-	import ConfirmationDialog from '$lib/components/ConfirmationDialog.svelte'
+	import ConfirmationDialog from '$lib/components/ui/ConfirmationDialog.svelte'
 
 	/** @type {{nodes?: any, node: any}} */
-	let { nodes = $bindable({}), node = $bindable() } = $props();
+	let { nodes = $bindable({}), node = $bindable() } = $props()
 
 	// Sort the items when the node is updated
 	$effect(() => {
@@ -17,17 +17,17 @@
 			const sortedItems = node.items
 				.filter((item) => nodes[item.uid]) // remove items not in nodes
 				.sort((a, b) => {
-					const nameA = nodes[a.uid].name.toLowerCase();
-					const nameB = nodes[b.uid].name.toLowerCase();
-					return nameA.localeCompare(nameB);
-				});
+					const nameA = nodes[a.uid].name.toLowerCase()
+					const nameB = nodes[b.uid].name.toLowerCase()
+					return nameA.localeCompare(nameB)
+				})
 
 			// Only assign if it actually changes to prevent reactivity loops
 			if (JSON.stringify(sortedItems) !== JSON.stringify(node.items)) {
-				node.items = sortedItems;
+				node.items = sortedItems
 			}
 		}
-	});
+	})
 
 	const flipDurationMs = 300
 	function handleDndConsider(e) {

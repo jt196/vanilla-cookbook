@@ -6,16 +6,16 @@
 	import { onMount, onDestroy } from 'svelte'
 	import { setupWakeLock, cleanupWakeLock } from '$lib/utils/wakeLock.js'
 
-	import RecipeViewButtons from '$lib/components/RecipeViewButtons.svelte'
-	import RecipeViewCover from '$lib/components/RecipeViewCover.svelte'
-	import RecipeViewAbout from '$lib/components/RecipeViewAbout.svelte'
-	import RecipeViewDesc from '$lib/components/RecipeViewDesc.svelte'
-	import RecipeViewIngs from '$lib/components/RecipeViewIngs.svelte'
-	import RecipeViewOtherPhotos from '$lib/components/RecipeViewOtherPhotos.svelte'
-	import RecipeViewDirections from '$lib/components/RecipeViewDirections.svelte'
-	import RecipeViewNotes from '$lib/components/RecipeViewNotes.svelte'
-	import RecipeViewLogs from '$lib/components/RecipeViewLogs.svelte'
-	import FeedbackMessage from '$lib/components/FeedbackMessage.svelte'
+	import RecipeViewButtons from '$lib/components/recipe/RecipeViewButtons.svelte'
+	import RecipeViewCover from '$lib/components/recipe/RecipeViewCover.svelte'
+	import RecipeViewAbout from '$lib/components/recipe/RecipeViewAbout.svelte'
+	import RecipeViewDesc from '$lib/components/recipe/RecipeViewDesc.svelte'
+	import RecipeViewIngs from '$lib/components/recipe/RecipeViewIngs.svelte'
+	import RecipeViewOtherPhotos from '$lib/components/recipe/RecipeViewOtherPhotos.svelte'
+	import RecipeViewDirections from '$lib/components/recipe/RecipeViewDirections.svelte'
+	import RecipeViewNotes from '$lib/components/recipe/RecipeViewNotes.svelte'
+	import RecipeViewLogs from '$lib/components/recipe/RecipeViewLogs.svelte'
+	import FeedbackMessage from '$lib/components/ui/FeedbackMessage.svelte'
 	import { sortByDate } from '$lib/utils/sorting.js'
 	import { recipeRatingChange, updatePhotos } from '$lib/utils/crud.js'
 
@@ -179,20 +179,22 @@
 
 		const directionsResult = await Promise.all(
 			parseRecipeText(
-			directionLines,
-			selectedSystem,
-			measurementSystem.system,
-			convertedIngredients,
-			viewUser.language
-		).map((direction) =>
-				getSanitizedHTML(direction)
-			)
+				directionLines,
+				selectedSystem,
+				measurementSystem.system,
+				convertedIngredients,
+				viewUser.language
+			).map((direction) => getSanitizedHTML(direction))
 		)
 
 		const notesResult = await Promise.all(
-			parseRecipeText(notesLines, selectedSystem, measurementSystem.system, null, viewUser.language).map((note) =>
-				getSanitizedHTML(note)
-			)
+			parseRecipeText(
+				notesLines,
+				selectedSystem,
+				measurementSystem.system,
+				null,
+				viewUser.language
+			).map((note) => getSanitizedHTML(note))
 		)
 
 		if (currentInvocation !== isLatest) return // Ignore results if this isn't the latest invocation
@@ -310,4 +312,8 @@
 	{/if}
 {/if}
 
-<RecipeViewOtherPhotos {otherPhotos} recipeName={recipe.name} onSetMainPhoto={handleSetMainPhoto} {viewOnly} />
+<RecipeViewOtherPhotos
+	{otherPhotos}
+	recipeName={recipe.name}
+	onSetMainPhoto={handleSetMainPhoto}
+	{viewOnly} />

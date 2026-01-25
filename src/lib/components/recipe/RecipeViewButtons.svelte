@@ -9,12 +9,11 @@
 		changeRecipePublic,
 		deleteRecipeById
 	} from '$lib/utils/crud'
-	import Favourite from './svg/Favourite.svelte'
-	import Check from './svg/Check.svelte'
-	import RecipeShareButton from './RecipeShareButton.svelte'
-	import Public from './svg/Public.svelte'
-	import Button from '$lib/components/ui/Button.svelte'
-	import ConfirmationDialog from '$lib/components/ConfirmationDialog.svelte'
+	import Favourite from '$lib/components/svg/Favourite.svelte'
+	import Check from '$lib/components/svg/Check.svelte'
+	import RecipeShareButton from '$lib/components/recipe/RecipeShareButton.svelte'
+	import Public from '$lib/components/svg/Public.svelte'
+	import ConfirmationDialog from '$lib/components/ui/ConfirmationDialog.svelte'
 
 	/** @type {{recipe: any, updateLogs: any, favRecipe: any}} */
 	let { recipe, updateLogs, favRecipe, pubRecipe, logs, viewOnly } = $props()

@@ -1,7 +1,7 @@
 <script>
 	import { addIngredientToShoppingList } from '$lib/utils/crud'
 	import { decimalToFraction, roundIngredientQuantity } from '$lib/utils/filters'
-	import Shopping from './svg/Shopping.svelte'
+	import Shopping from '$lib/components/svg/Shopping.svelte'
 	import Badge from '$lib/components/ui/Badge.svelte'
 
 	/** @type {{ingredient: any, scale: any, displayExtra: any, displayDryMatch: any, displayOriginal: any, selectedSystem: any, recipeUid: any}} */
@@ -372,5 +372,4 @@
 		color: var(--pico-muted-color);
 		font-size: 0.7rem;
 	}
-
 </style>

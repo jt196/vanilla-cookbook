@@ -1,10 +1,10 @@
 <script>
 	import { filterSearch } from '$lib/utils/filters'
 	import { sortRecipesByKey } from '$lib/utils/sorting'
-	import RecipeFilter from '$lib/components/RecipeFilter.svelte'
-	import RecipeList from '$lib/components/RecipeList.svelte'
-	import Sidebar from '$lib/components/Sidebar.svelte'
-	import CategoryTree from '$lib/components/CategoryTree.svelte'
+	import RecipeFilter from '$lib/components/recipe/RecipeFilter.svelte'
+	import RecipeList from '$lib/components/recipe/RecipeList.svelte'
+	import Sidebar from '$lib/components/ui/Sidebar.svelte'
+	import CategoryTree from '$lib/components/category/CategoryTree.svelte'
 	import { page, navigating } from '$app/stores'
 	import {
 		sortState,
@@ -14,7 +14,7 @@
 		favouriteFilter
 	} from '$lib/stores/recipeFilter'
 	import Button from '$lib/components/ui/Button.svelte'
-	import Spinner from '$lib/components/Spinner.svelte'
+	import Spinner from '$lib/components/ui/Spinner.svelte'
 
 	/** @type {{data: any}} */
 	let { data = $bindable() } = $props()
@@ -119,7 +119,9 @@
 		filteredRecipes = filterSearch($searchString, categoryFilteredRecipes, $searchKey)
 
 		// Set loading to false after a small delay to prevent flash
-		setTimeout(() => { isLoading = false }, 0)
+		setTimeout(() => {
+			isLoading = false
+		}, 0)
 	})
 	function handleSort(event) {
 		if ($sortState.key === event.detail.key) {

@@ -1,6 +1,6 @@
 <script>
 	import VirtualList from 'svelte-virtual-list'
-	import UserCard from './UserCard.svelte'
+	import UserCard from '$lib/components/user/UserCard.svelte'
 
 	/** @type {{users?: any}} */
 	let { users = [] } = $props()

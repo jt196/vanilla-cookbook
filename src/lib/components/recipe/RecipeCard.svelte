@@ -2,7 +2,7 @@
 <script>
 	import Favourite from '$lib/components/svg/Favourite.svelte'
 	import Check from '$lib/components/svg/Check.svelte'
-	import StarRating from '$lib/components/StarRating.svelte'
+	import StarRating from '$lib/components/ui/StarRating.svelte'
 	import { changeRecipeFavourite } from '$lib/utils/crud'
 	import Card from '$lib/components/ui/Card.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
@@ -72,7 +72,9 @@
 							style="ghost"
 							size="xs"
 							disabled={loadingFav}
-							class="btn-circle tooltip hover:opacity-100 {favourite ? 'text-error opacity-100' : ''}"
+							class="btn-circle tooltip hover:opacity-100 {favourite
+								? 'text-error opacity-100'
+								: ''}"
 							data-tip="Favourite Recipe">
 							{#if loadingFav}
 								<span class="loading loading-spinner loading-xs"></span>
@@ -83,7 +85,9 @@
 						<Button
 							style="ghost"
 							size="xs"
-							class="btn-circle tooltip hover:opacity-100 {logged ? 'text-success opacity-100' : ''}"
+							class="btn-circle tooltip hover:opacity-100 {logged
+								? 'text-success opacity-100'
+								: ''}"
 							data-tip={item.log?.length > 0
 								? `Cooked ${item.log.length} time${item.log.length > 1 ? 's' : ''}`
 								: 'Never cooked'}>

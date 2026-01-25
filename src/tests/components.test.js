@@ -5,9 +5,9 @@ import { get } from 'svelte/store'
 
 import { render, fireEvent, screen } from '@testing-library/svelte/svelte5'
 
-import Scale from '$lib/components/Scale.svelte'
-import RecipeFilter from '$lib/components/RecipeFilter.svelte'
-import RecipeList from '$lib/components/RecipeList.svelte'
+import Scale from '$lib/components/ui/Scale.svelte'
+import RecipeFilter from '$lib/components/recipe/RecipeFilter.svelte'
+import RecipeList from '$lib/components/recipe/RecipeList.svelte'
 
 /* global expect, it, describe, beforeEach */
 

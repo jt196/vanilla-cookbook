@@ -1,5 +1,5 @@
 <script>
-	import RecipeCard from '$lib/components/RecipeCard.svelte'
+	import RecipeCard from '$lib/components/recipe/RecipeCard.svelte'
 	import VirtualList from 'svelte-virtual-list'
 
 	/** @type {{filteredRecipes?: any, useVirtualList?: boolean, data: any, recipeRatingChanged?: (uid: string, rating: number) => void}}}} */

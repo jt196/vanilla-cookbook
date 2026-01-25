@@ -1,6 +1,6 @@
 <script>
 	/** @type {{otherPhotos?: any, recipeName?: string, onSetMainPhoto?: (photoId: string) => void, viewOnly?: boolean}} */
-	let { otherPhotos = [], recipeName = '', onSetMainPhoto, viewOnly = false } = $props();
+	let { otherPhotos = [], recipeName = '', onSetMainPhoto, viewOnly = false } = $props()
 </script>
 
 {#if otherPhotos.length > 0}

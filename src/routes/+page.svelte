@@ -1,6 +1,6 @@
 <script>
 	import { goto } from '$app/navigation'
-	import Spinner from '$lib/components/Spinner.svelte'
+	import Spinner from '$lib/components/ui/Spinner.svelte'
 	import { systems, languages } from '$lib/utils/config.js'
 	import { validatePasswords, validateEmail } from '$lib/utils/security.js'
 	import Input from '$lib/components/ui/Form/Input.svelte'

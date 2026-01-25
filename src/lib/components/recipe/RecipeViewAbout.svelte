@@ -2,8 +2,8 @@
 	import { localDateAndTime } from '$lib/utils/dateTime'
 	import { collectSelectedUids } from '$lib/utils/categories'
 
-	import CategoryTree from '$lib/components/CategoryTree.svelte'
-	import StarRating from '$lib/components/StarRating.svelte'
+	import CategoryTree from '$lib/components/category/CategoryTree.svelte'
+	import StarRating from '$lib/components/ui/StarRating.svelte'
 	import InfoText from '$lib/components/ui/InfoText.svelte'
 
 	/** @type {{recipe: any, categories: any}} */

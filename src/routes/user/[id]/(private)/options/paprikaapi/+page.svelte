@@ -1,6 +1,6 @@
 <script>
-	import FeedbackMessage from '$lib/components/FeedbackMessage.svelte'
-	import TrueFalse from '$lib/components/TrueFalse.svelte'
+	import FeedbackMessage from '$lib/components/ui/FeedbackMessage.svelte'
+	import TrueFalse from '$lib/components/ui/TrueFalse.svelte'
 	import Delete from '$lib/components/svg/Delete.svelte'
 	import {
 		dbCatCount,
@@ -13,7 +13,7 @@
 	import Input from '$lib/components/ui/Form/Input.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Checkbox from '$lib/components/ui/Form/Checkbox.svelte'
-	import ConfirmationDialog from '$lib/components/ConfirmationDialog.svelte'
+	import ConfirmationDialog from '$lib/components/ui/ConfirmationDialog.svelte'
 
 	/** @type {{data: any}} */
 	let { data } = $props()
@@ -253,7 +253,11 @@
 {/if}
 <div class="container">
 	<Input type="text" id="paprikaUser" label="Paprika User" bind:value={paprikaUser} />
-	<Input type="password" id="paprikaPassword" label="Paprika Password" bind:value={paprikaPassword} />
+	<Input
+		type="password"
+		id="paprikaPassword"
+		label="Paprika Password"
+		bind:value={paprikaPassword} />
 	<div class="paprika-api">
 		<div class="import-categories">
 			<Button loading={downloadCatBusy} disabled={catFileExists} onclick={downloadCategories}
@@ -297,12 +301,12 @@
 				</div>
 				<p>Recipes in File: {recFile}</p>
 				<p>Recipes in DB: {recDb}</p>
-					<Checkbox
-						name="Recipes Public"
-						bind:checked={isPublic}
-						legend="Recipes Public"
-						size="sm"
-						color="primary">Make your imported recipes public</Checkbox>
+				<Checkbox
+					name="Recipes Public"
+					bind:checked={isPublic}
+					legend="Recipes Public"
+					size="sm"
+					color="primary">Make your imported recipes public</Checkbox>
 				<Button
 					loading={importRecBusy}
 					class="outline secondary"

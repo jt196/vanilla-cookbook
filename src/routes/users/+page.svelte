@@ -1,5 +1,5 @@
 <script>
-	import UserList from '$lib/components/UserList.svelte'
+	import UserList from '$lib/components/user/UserList.svelte'
 
 	/** @type {{data: any}} */
 	let { data } = $props()

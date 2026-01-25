@@ -2,12 +2,12 @@
 	import { checkImageExistence } from '$lib/utils/image/imageUtils'
 	import { onMount } from 'svelte'
 
-	import PhotoSection from './PhotoSection.svelte'
+	import PhotoSection from '$lib/components/recipe/PhotoSection.svelte'
 	import Input from '$lib/components/ui/Form/Input.svelte'
 	import Textarea from '$lib/components/ui/Form/Textarea.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import InfoText from '$lib/components/ui/InfoText.svelte'
-	import Spinner from '$lib/components/Spinner.svelte'
+	import Spinner from '$lib/components/ui/Spinner.svelte'
 
 	/** @type {{recipe: any, onSubmit: any, buttonText?: string, selectedFiles?: any, onSelectedFilesChange?: any, baseUrl?: string, editMode?: boolean, recipeCategories?: any, aiEnabled?: boolean, userUnits?: string, userLanguage?: string, cancelHref?: string, onDelete?: (() => void) | null, saveImageUrl?: boolean}} */
 	let {
@@ -258,7 +258,8 @@
 						Clean Ingredients
 					{/if}
 				</Button>
-				<InfoText class="mt-1">Simplify complex ingredients for more accurate conversion results.</InfoText>
+				<InfoText class="mt-1"
+					>Simplify complex ingredients for more accurate conversion results.</InfoText>
 			{/if}
 		</div>
 		<Textarea

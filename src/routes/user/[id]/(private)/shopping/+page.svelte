@@ -8,12 +8,12 @@
 	} from '$lib/utils/crud.js'
 	import { ingredientParse } from '$lib/submodules/recipe-ingredient-parser/src/index.js'
 	import { sortByTwoKeys } from '$lib/utils/sorting.js'
-	import FeedbackMessage from '$lib/components/FeedbackMessage.svelte'
-	import ConfirmationDialog from '$lib/components/ConfirmationDialog.svelte'
-	import ShoppingToolbar from '$lib/components/Shopping/ShoppingToolbar.svelte'
-	import ShoppingItemInput from '$lib/components/Shopping/ShoppingItemInput.svelte'
-	import ShoppingListItem from '$lib/components/Shopping/ShoppingListItem.svelte'
-	import ShoppingEditDialog from '$lib/components/Shopping/ShoppingEditDialog.svelte'
+	import FeedbackMessage from '$lib/components/ui/FeedbackMessage.svelte'
+	import ConfirmationDialog from '$lib/components/ui/ConfirmationDialog.svelte'
+	import ShoppingToolbar from '$lib/components/shopping/ShoppingToolbar.svelte'
+	import ShoppingItemInput from '$lib/components/shopping/ShoppingItemInput.svelte'
+	import ShoppingListItem from '$lib/components/shopping/ShoppingListItem.svelte'
+	import ShoppingEditDialog from '$lib/components/shopping/ShoppingEditDialog.svelte'
 
 	/** @type {{data: any}} */
 	let { data } = $props()

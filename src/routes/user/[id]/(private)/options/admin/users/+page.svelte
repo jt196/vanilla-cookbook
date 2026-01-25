@@ -4,8 +4,8 @@
 	import New from '$lib/components/svg/New.svelte'
 	import { validatePasswords, validateEmail } from '$lib/utils/security.js'
 	import { goto } from '$app/navigation'
-	import TrueFalse from '$lib/components/TrueFalse.svelte'
-	import FeedbackMessage from '$lib/components/FeedbackMessage.svelte'
+	import TrueFalse from '$lib/components/ui/TrueFalse.svelte'
+	import FeedbackMessage from '$lib/components/ui/FeedbackMessage.svelte'
 	import Dialog from '$lib/components/ui/Dialog.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Input from '$lib/components/ui/Form/Input.svelte'
@@ -16,7 +16,7 @@
 	import TableBody from '$lib/components/ui/Table/TableBody.svelte'
 	import TableRow from '$lib/components/ui/Table/TableRow.svelte'
 	import TableCell from '$lib/components/ui/Table/TableCell.svelte'
-	import ConfirmationDialog from '$lib/components/ConfirmationDialog.svelte'
+	import ConfirmationDialog from '$lib/components/ui/ConfirmationDialog.svelte'
 
 	/** @type {{data: any}} */
 	let { data } = $props()

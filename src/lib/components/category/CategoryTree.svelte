@@ -1,9 +1,9 @@
 <script>
-	import CategoryTree from '$lib/components/CategoryTree.svelte'
+	import CategoryTree from '$lib/components/category/CategoryTree.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 
 	/** @type {{categories?: any, onCategoryClick?: any, selectedCategoryUids?: any}} */
-	let { categories = [], onCategoryClick = () => {}, selectedCategoryUids = [] } = $props();
+	let { categories = [], onCategoryClick = () => {}, selectedCategoryUids = [] } = $props()
 </script>
 
 <ul>

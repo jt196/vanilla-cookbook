@@ -3,10 +3,10 @@
 	import { goto } from '$app/navigation'
 	import { createRecipe } from '$lib/utils/crud'
 	import { handleScrape } from '$lib/utils/parse/parseHelpersClient'
-	import RecipeNewScrape from '$lib/components/RecipeNewScrape.svelte'
-	import RecipeForm from '$lib/components/RecipeForm.svelte'
-	import FeedbackMessage from '$lib/components/FeedbackMessage.svelte'
+	import RecipeForm from '$lib/components/recipe/RecipeForm.svelte'
+	import FeedbackMessage from '$lib/components/ui/FeedbackMessage.svelte'
 	import { defaultRecipe } from '$lib/utils/config'
+	import RecipeNewScrape from '$lib/components/recipe/RecipeNewScrape.svelte'
 
 	/**
 	 * The scraped recipe object.
@@ -34,9 +34,9 @@
 
 	let initialMode = $state('url') // 'url' | 'text' | 'image'
 
-let { data } = $props()
+	let { data } = $props()
 
-let { apiKeyPresent, aiEnabled, imageAllowed, userUnits, userLanguage } = $state(data)
+	let { apiKeyPresent, aiEnabled, imageAllowed, userUnits, userLanguage } = $state(data)
 
 	/**
 	 * Handles the scraping event.

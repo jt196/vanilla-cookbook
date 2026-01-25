@@ -1,12 +1,12 @@
 <script>
 	import { enhance } from '$app/forms'
 	import { validatePasswords, validateEmail } from '$lib/utils/security.js'
-	import FeedbackMessage from '$lib/components/FeedbackMessage.svelte'
+	import FeedbackMessage from '$lib/components/ui/FeedbackMessage.svelte'
 	import ValidationMessage from '$lib/components/ui/Form/ValidationMessage.svelte'
 	import Input from '$lib/components/ui/Form/Input.svelte'
 	import Checkbox from '$lib/components/ui/Form/Checkbox.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
-	import Oauth from '$lib/components/Oauth.svelte'
+	import Oauth from '$lib/components/auth/Oauth.svelte'
 
 	let { data, form } = $props()
 

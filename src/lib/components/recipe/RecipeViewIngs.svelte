@@ -1,6 +1,6 @@
 <script>
-	import Scale from '$lib/components/Scale.svelte'
-	import RecipeViewIng from './RecipeViewIng.svelte'
+	import Scale from '$lib/components/ui/Scale.svelte'
+	import RecipeViewIng from '$lib/components/recipe/RecipeViewIng.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Badge from '$lib/components/ui/Badge.svelte'
 

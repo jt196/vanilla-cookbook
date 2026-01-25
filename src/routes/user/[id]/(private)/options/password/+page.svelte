@@ -1,7 +1,7 @@
 <script>
 	import { goto } from '$app/navigation'
 	import { validatePassword } from '$lib/utils/security.js'
-	import FeedbackMessage from '$lib/components/FeedbackMessage.svelte'
+	import FeedbackMessage from '$lib/components/ui/FeedbackMessage.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Container from '$lib/components/ui/Container.svelte'
 	import Input from '$lib/components/ui/Form/Input.svelte'

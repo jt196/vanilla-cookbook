@@ -1,5 +1,5 @@
 <script>
-	import Bookmarklet from '$lib/components/Bookmarklet.svelte'
+	import Bookmarklet from '$lib/components/settings/Bookmarklet.svelte'
 </script>
 
 <Bookmarklet />

@@ -1,6 +1,6 @@
 <script>
 	import { systems, languages } from '$lib/utils/config.js'
-	import FeedbackMessage from '$lib/components/FeedbackMessage.svelte'
+	import FeedbackMessage from '$lib/components/ui/FeedbackMessage.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Checkbox from '$lib/components/ui/Form/Checkbox.svelte'
 	import Dropdown from '$lib/components/ui/Form/Dropdown.svelte'

@@ -1,12 +1,12 @@
 <script>
-	import CategoryTree from '$lib/components/CategoryTree.svelte'
+	import CategoryTree from '$lib/components/category/CategoryTree.svelte'
 	import { deleteRecipeById, updateRecipe } from '$lib/utils/crud'
 	import { goto } from '$app/navigation'
-	import RecipeForm from '$lib/components/RecipeForm.svelte'
-	import Sidebar from '$lib/components/Sidebar.svelte'
+	import RecipeForm from '$lib/components/recipe/RecipeForm.svelte'
+	import Sidebar from '$lib/components/ui/Sidebar.svelte'
 	import Burger from '$lib/components/svg/Burger.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
-	import ConfirmationDialog from '$lib/components/ConfirmationDialog.svelte'
+	import ConfirmationDialog from '$lib/components/ui/ConfirmationDialog.svelte'
 
 	/**
 	 * The page data type.
