@@ -91,7 +91,13 @@
 							data-tip={item.log?.length > 0
 								? `Cooked ${item.log.length} time${item.log.length > 1 ? 's' : ''}`
 								: 'Never cooked'}>
-							<Check checked={logged} width="16px" height="16px" />
+							{#if item.log?.length > 1}
+								<span
+									class="badge badge-success badge-xs text-success-content font-bold min-w-5"
+									>{item.log.length}</span>
+							{:else}
+								<Check checked={logged} width="16px" height="16px" />
+							{/if}
 						</Button>
 					</div>
 				{/if}

@@ -106,7 +106,14 @@
 
 		// Filtering by cooked status
 		if ($cookedFilter) {
-			categoryFilteredRecipes = categoryFilteredRecipes.filter((recipe) => recipe.log.length > 0)
+			categoryFilteredRecipes = categoryFilteredRecipes
+				.filter((recipe) => recipe.log.length > 0)
+				.sort((a, b) => {
+					// Sort by number of cooks (descending), then by name (ascending)
+					const cooksDiff = b.log.length - a.log.length
+					if (cooksDiff !== 0) return cooksDiff
+					return (a.name || '').localeCompare(b.name || '')
+				})
 		}
 
 		// Filtering by favourite status

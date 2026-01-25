@@ -565,18 +565,20 @@ export async function deleteShoppingListItem(uid) {
  * flag and an error message.
  *
  * @param {string} recipeUid The unique identifier for the recipe to log.
+ * @param {string} [note] Optional note for the log entry.
  * @return {Promise<object>} A promise that resolves to an object with a success
  *                  flag and either the newly created recipe log entry's data
  *                  or an error message.
  * @throws {Error} If the request fails or the server responds with an error.
  */
-export async function addRecipeLog(recipeUid) {
+export async function addRecipeLog(recipeUid, note = null) {
 	try {
 		const response = await fetch(`/api/recipe/${recipeUid}/log`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
-			}
+			},
+			body: JSON.stringify({ note })
 		})
 
 		if (response.ok) {

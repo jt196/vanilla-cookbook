@@ -3,11 +3,19 @@
 
 	/** @type {{logs?: any}} */
 	let { logs = [] } = $props()
+
+	let logsWithNotes = $derived(logs.filter((log) => log.note))
 </script>
 
-{#if logs.length > 0}
-	<h3 class="text-2xl font-bold mb-4">Dates Cooked</h3>
-	{#each logs as log}
-		<p class="text-base mb-2 text-base-content/70">{localDateAndTime(log.cooked)}</p>
-	{/each}
+{#if logsWithNotes.length > 0}
+	<div class="card bg-base-200/50 p-4 mt-4">
+		<div class="space-y-3">
+			{#each logsWithNotes as log}
+				<div class="border-l-2 border-primary pl-3">
+					<p class="text-sm text-base-content/60 mb-1">{localDateAndTime(log.cooked)}</p>
+					<p class="text-base-content/80">{log.note}</p>
+				</div>
+			{/each}
+		</div>
+	</div>
 {/if}

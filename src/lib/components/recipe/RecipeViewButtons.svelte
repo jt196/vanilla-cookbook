@@ -14,6 +14,8 @@
 	import RecipeShareButton from '$lib/components/recipe/RecipeShareButton.svelte'
 	import Public from '$lib/components/svg/Public.svelte'
 	import ConfirmationDialog from '$lib/components/ui/ConfirmationDialog.svelte'
+	import CookedLogModal from '$lib/components/recipe/CookedLogModal.svelte'
+	import CookedHistoryModal from '$lib/components/recipe/CookedHistoryModal.svelte'
 
 	/** @type {{recipe: any, updateLogs: any, favRecipe: any}} */
 	let { recipe, updateLogs, favRecipe, pubRecipe, logs, viewOnly } = $props()
@@ -22,6 +24,8 @@
 	let loadingFav = $state(false)
 	let loadingPub = $state(false)
 	let loadingLog = $state(false)
+	let showCookedModal = $state(false)
+	let showHistoryModal = $state(false)
 
 	async function handleDelete(uid) {
 		pendingDeleteUid = uid
@@ -46,10 +50,11 @@
 		}
 	}
 
-	async function handleLog(uid) {
+	async function handleLogSubmit(note) {
 		loadingLog = true
-		let response = await addRecipeLog(uid)
+		let response = await addRecipeLog(recipe?.uid, note)
 		loadingLog = false
+		showCookedModal = false
 		if (response.success) {
 			const newLog = response.data
 			updateLogs(newLog.recipeLog, response)
@@ -106,18 +111,28 @@
 		{/if}
 	</button>
 	<button
-		onclick={() => handleLog(recipe?.uid)}
+		onclick={() => (showCookedModal = true)}
 		class="btn btn-soft btn-primary btn-sm tooltip"
 		class:text-success={logs?.length > 0}
-		disabled={loadingLog}
-		data-tip="Mark Recipe Cooked Today"
+		data-tip={logs?.length > 0
+			? `Cooked ${logs.length} time${logs.length > 1 ? 's' : ''}`
+			: 'Mark Recipe Cooked'}
 		data-testid="check-button">
-		{#if loadingLog}
-			<span class="loading loading-spinner loading-sm"></span>
+		{#if logs?.length > 1}
+			<span class="badge badge-success badge-sm text-success-content font-bold min-w-5"
+				>{logs.length}</span>
 		{:else}
-			<Check width="20px" height="20px" checked={logs?.length > 0} fill="currentColor" />
+			<Check checked={logs?.length > 0} width="20px" height="20px" fill="currentColor" />
 		{/if}
 	</button>
+	{#if logs?.length > 0}
+		<button
+			onclick={() => (showHistoryModal = true)}
+			class="btn btn-soft btn-primary btn-sm tooltip"
+			data-tip="View Cooking History">
+			History
+		</button>
+	{/if}
 	<button
 		onclick={() => handleDelete(recipe?.uid)}
 		data-testid="delete-button"
@@ -143,3 +158,7 @@
 		<p class="py-4">Are you sure you want to delete this recipe?</p>
 	{/snippet}
 </ConfirmationDialog>
+
+<CookedLogModal bind:isOpen={showCookedModal} onSubmit={handleLogSubmit} loading={loadingLog} />
+
+<CookedHistoryModal bind:isOpen={showHistoryModal} {logs} />

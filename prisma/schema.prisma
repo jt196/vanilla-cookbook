@@ -62,6 +62,7 @@ model RecipeLog {
     userId    String
     cooked    DateTime  @default(now())
     cookedEnd DateTime?
+    note      String?
     recipe    Recipe    @relation(fields: [recipeUid], references: [uid], onDelete: Cascade)
     user      AuthUser  @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

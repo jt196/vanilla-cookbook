@@ -1,35 +1,46 @@
 import { prisma } from '$lib/server/prisma'
 
 // Handle recipe log creation
-export async function POST({ locals, params }) {
+export async function POST({ locals, params, request }) {
 	const session = await locals.auth.validate()
 	const user = session?.user
 
 	const { uid } = params
 	let recipeLog
 	if (!session || !user) {
-		return new Response('User not authenticated!', {
+		return new Response(JSON.stringify({ error: 'User not authenticated!' }), {
 			status: 401,
 			headers: {
 				'Content-Type': 'application/json'
 			}
 		})
 	}
+
+	// Parse optional note from request body
+	let note = null
 	try {
-		const cookedTime = new Date() // Or any other time
+		const body = await request.json()
+		note = body.note || null
+	} catch {
+		// No body or invalid JSON - note remains null
+	}
+
+	try {
+		const cookedTime = new Date()
 		const cookedEndTime = new Date(cookedTime.getTime() + 180 * 60 * 1000)
 		recipeLog = await prisma.RecipeLog.create({
 			data: {
 				recipeUid: uid,
 				userId: user.userId,
 				cooked: cookedTime,
-				cookedEnd: cookedEndTime
+				cookedEnd: cookedEndTime,
+				note
 			}
 		})
 	} catch (err) {
 		console.log('Error: ' + err)
 		return new Response(
-			{ err: `Failed to add recipe log: ${err.message}` },
+			JSON.stringify({ err: `Failed to add recipe log: ${err.message}` }),
 			{
 				status: 500,
 				headers: {
@@ -64,7 +75,7 @@ export async function GET({ params, locals }) {
 			}
 		})
 		if (!recipe.is_public && (!session || !user)) {
-			return new Response('User not authenticated!', {
+			return new Response(JSON.stringify({ error: 'User not authenticated!' }), {
 				status: 401,
 				headers: {
 					'Content-Type': 'application/json'

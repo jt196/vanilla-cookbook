@@ -14,7 +14,6 @@
 	import RecipeViewOtherPhotos from '$lib/components/recipe/RecipeViewOtherPhotos.svelte'
 	import RecipeViewDirections from '$lib/components/recipe/RecipeViewDirections.svelte'
 	import RecipeViewNotes from '$lib/components/recipe/RecipeViewNotes.svelte'
-	import RecipeViewLogs from '$lib/components/recipe/RecipeViewLogs.svelte'
 	import FeedbackMessage from '$lib/components/ui/FeedbackMessage.svelte'
 	import { sortByDate } from '$lib/utils/sorting.js'
 	import { recipeRatingChange, updatePhotos } from '$lib/utils/crud.js'
@@ -306,10 +305,7 @@
 			<RecipeViewDirections {directionLines} {sanitizedDirections} {loadingIngredients} />
 		</div>
 	</div>
-	<RecipeViewNotes {notesLines} {sanitizedNotes} />
-	{#if logs && logs.length > 0}
-		<RecipeViewLogs {logs} />
-	{/if}
+	<RecipeViewNotes {notesLines} {sanitizedNotes} {logs} />
 {/if}
 
 <RecipeViewOtherPhotos
