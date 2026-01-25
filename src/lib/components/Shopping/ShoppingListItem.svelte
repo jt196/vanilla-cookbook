@@ -2,6 +2,7 @@
 	import { fade } from 'svelte/transition'
 	import Link from '$lib/components/svg/Link.svelte'
 	import Edit from '$lib/components/svg/Edit.svelte'
+	import Check from '$lib/components/svg/Check.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Checkbox from '$lib/components/ui/Form/Checkbox.svelte'
 
@@ -17,8 +18,18 @@
 		/**
 		 * @type {(item: any) => void}
 		 */
-		onEdit
+		onEdit,
+		/**
+		 * @type {(item: any) => void}
+		 */
+		onTogglePurchase,
+		/**
+		 * @type {boolean}
+		 */
+		purchaseLoading = false
 	} = $props()
+
+	let purchaseCount = $derived(item?.purchaseCount ?? item?.purchaseLogs?.length ?? 0)
 </script>
 
 <li class="list-row items-center gap-3" out:fade={{ duration: 300 }}>
@@ -54,13 +65,31 @@
 		</div>
 	</div>
 
-	<Button
-		color="primary"
-		style="ghost"
-		class="btn-square shadow-none border-none text-primary"
-		id="edit-item"
-		aria-label="Edit item"
-		onclick={() => onEdit(item)}>
-		<Edit width="18px" height="18px" />
-	</Button>
+	<div class="flex items-center gap-2">
+		<Button
+			onclick={() => onTogglePurchase && onTogglePurchase(item)}
+			class={`btn btn-soft btn-primary btn-sm tooltip ${purchaseCount > 0 ? 'text-success' : ''}`}
+			disabled={purchaseLoading}
+			data-tip={purchaseCount > 0
+				? `Purchased ${purchaseCount} time${purchaseCount > 1 ? 's' : ''}`
+				: 'Mark Item Purchased'}>
+			{#if purchaseLoading}
+				<span class="loading loading-spinner loading-sm"></span>
+			{:else if purchaseCount > 1}
+				<span class="badge badge-success badge-sm text-success-content font-bold min-w-5">
+					{purchaseCount}
+				</span>
+			{:else}
+				<Check checked={purchaseCount > 0} width="20px" height="20px" fill="currentColor" />
+			{/if}
+		</Button>
+		<Button
+			onclick={() => onEdit(item)}
+			class="btn btn-soft btn-primary btn-sm tooltip"
+			data-tip="Edit item"
+			id="edit-item"
+			aria-label="Edit item">
+			<Edit width="18px" height="18px" fill="currentColor" />
+		</Button>
+	</div>
 </li>

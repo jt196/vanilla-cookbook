@@ -14,6 +14,7 @@
 	import ShoppingItemInput from '$lib/components/shopping/ShoppingItemInput.svelte'
 	import ShoppingListItem from '$lib/components/shopping/ShoppingListItem.svelte'
 	import ShoppingEditDialog from '$lib/components/shopping/ShoppingEditDialog.svelte'
+	import InfoText from '$lib/components/ui/InfoText.svelte'
 
 	/** @type {{data: any}} */
 	let { data } = $props()
@@ -26,6 +27,8 @@
 	let newIngredient = $state('')
 	let showHidden = $state(false)
 	let isEditDialogOpen = $state(false)
+	let sortByPurchased = $state(false)
+	let purchaseLoadingByUid = $state({})
 	const emptyEditingItem = {
 		uid: '',
 		name: '',
@@ -34,23 +37,29 @@
 	}
 	let editingItem = $state({ ...emptyEditingItem })
 
-	async function handleCheckboxChange(item, event) {
-		const purchased = event.target.checked
-		await updateShoppingListItem({ uid: item.uid, purchased })
-
-		// Update local state to reflect the change
-		setTimeout(() => {
-			const updatedList = shoppingList.map((listItem) => {
+	async function handlePurchaseToggle(item, purchased) {
+		purchaseLoadingByUid = { ...purchaseLoadingByUid, [item.uid]: true }
+		try {
+			const updatedItem = await updateShoppingListItem({ uid: item.uid, purchased })
+			shoppingList = shoppingList.map((listItem) => {
 				if (listItem.uid === item.uid) {
-					// If the item is unchecked (purchased is false), also set hidden to false
-					// Otherwise, just update the purchased status
-					return purchased ? { ...listItem, purchased } : { ...listItem, purchased }
+					return {
+						...listItem,
+						...updatedItem
+					}
 				}
 				return listItem
 			})
+		} catch (error) {
+			console.error('Error updating shopping list item:', error.message)
+		} finally {
+			purchaseLoadingByUid = { ...purchaseLoadingByUid, [item.uid]: false }
+		}
+	}
 
-			shoppingList = updatedList
-		}, 300)
+	async function handleCheckboxChange(item, event) {
+		const purchased = event.target.checked
+		await handlePurchaseToggle(item, purchased)
 	}
 
 	async function handleDelete() {
@@ -107,6 +116,19 @@
 		showHidden = !showHidden
 	}
 
+	function togglePurchasedSort() {
+		sortByPurchased = !sortByPurchased
+	}
+
+	function sortPurchasedByCountThenName(items) {
+		return [...items].sort((a, b) => {
+			const aCount = a.purchaseCount ?? a.purchaseLogs?.length ?? 0
+			const bCount = b.purchaseCount ?? b.purchaseLogs?.length ?? 0
+			if (bCount !== aCount) return bCount - aCount
+			return (a.name ?? '').localeCompare(b.name ?? '')
+		})
+	}
+
 	async function handleCheckAll() {
 		shoppingFeedback = '' // Reset or clear the feedback message before starting the updates
 		try {
@@ -147,8 +169,8 @@
 			// Update the item in the local shopping list state if the backend update is successful
 			shoppingList = shoppingList.map((item) => {
 				if (item.uid === updatedItem.uid) {
-					// Replace the old item data with the updated item data
-					return updatedItem
+					// Preserve purchase counts when the API response omits them
+					return { ...item, ...updatedItem }
 				}
 				return item
 			})
@@ -184,24 +206,25 @@
 		}
 	}
 
-	let sortedList = $derived(
-		showHidden
-			? sortByTwoKeys(shoppingList, 'purchased', 'name', 'asc', 'asc')
-			: sortByTwoKeys(
-					shoppingList.filter((item) => !item.purchased),
-					'name',
-					'asc'
-				)
+	let uncheckedItems = $derived(shoppingList.filter((item) => !item.purchased))
+	let purchasedItems = $derived(shoppingList.filter((item) => item.purchased))
+	let sortedUncheckedItems = $derived(
+		sortByPurchased
+			? sortPurchasedByCountThenName(uncheckedItems)
+			: sortByTwoKeys(uncheckedItems, 'name', 'name', 'asc', 'asc')
+	)
+	let sortedPurchasedItems = $derived(
+		sortByPurchased
+			? sortPurchasedByCountThenName(purchasedItems)
+			: sortByTwoKeys(purchasedItems, 'name', 'name', 'asc', 'asc')
 	)
 	let hiddenMatchQuery = $derived(newIngredient.trim().toLowerCase())
 	let hiddenMatches = $derived(
 		!showHidden && hiddenMatchQuery.length >= 3
-			? sortByTwoKeys(
+			? sortPurchasedByCountThenName(
 					shoppingList.filter(
 						(item) => item.purchased && item.name?.toLowerCase().includes(hiddenMatchQuery)
-					),
-					'name',
-					'asc'
+					)
 				)
 			: []
 	)
@@ -215,9 +238,11 @@
 <div class="mb-2 max-w-none flex gap-2 justify-center">
 	<ShoppingToolbar
 		{showHidden}
+		{sortByPurchased}
 		{uncheckedItemCount}
 		{purchasedItemCount}
 		onToggleHidden={toggleHidden}
+		onTogglePurchasedSort={togglePurchasedSort}
 		onCheckAll={() => (isCheckAllDialogOpen = true)}
 		onDeletePurchased={() => (isDeleteDialogOpen = true)} />
 </div>
@@ -232,23 +257,47 @@
 	{/if}
 </div>
 <FeedbackMessage message={shoppingFeedback} />
-{#if showHidden}
-	<p class="prose text-xs mb-2 flex justify-center max-w-none">Uncheck to add to shopping list</p>
+
+{#if sortedUncheckedItems.length > 0}
+	<h3 class="mt-2 mb-2">To buy</h3>
 {/if}
 <ul class="list bg-base-100 rounded-box shadow-md divide-y divide-base-300">
-	{#each sortedList as item (item.uid)}
-		{#if !item.purchased || showHidden}
-			<ShoppingListItem {item} onCheckboxChange={handleCheckboxChange} onEdit={openEditModal} />
-		{/if}
+	{#each sortedUncheckedItems as item (item.uid)}
+		<ShoppingListItem
+			{item}
+			onCheckboxChange={handleCheckboxChange}
+			onEdit={openEditModal}
+			onTogglePurchase={(targetItem) => handlePurchaseToggle(targetItem, !targetItem.purchased)}
+			purchaseLoading={purchaseLoadingByUid[item.uid] ?? false} />
 	{/each}
 </ul>
+
+{#if showHidden}
+	<h3 class="mt-4 mb-2">Purchased</h3>
+	<InfoText class="my-2">Uncheck to add to shopping list</InfoText>
+	<ul class="list bg-base-100 rounded-box shadow-md divide-y divide-base-300">
+		{#each sortedPurchasedItems as item (item.uid)}
+			<ShoppingListItem
+				{item}
+				onCheckboxChange={handleCheckboxChange}
+				onEdit={openEditModal}
+				onTogglePurchase={(targetItem) => handlePurchaseToggle(targetItem, !targetItem.purchased)}
+				purchaseLoading={purchaseLoadingByUid[item.uid] ?? false} />
+		{/each}
+	</ul>
+{/if}
 {#if hiddenMatches.length > 0}
 	<p class="prose text-xs mt-3 mb-2 flex justify-center max-w-none">
 		Matches from previously bought items - uncheck to add
 	</p>
 	<ul class="list bg-base-100 rounded-box shadow-md divide-y divide-base-300">
 		{#each hiddenMatches as item (item.uid)}
-			<ShoppingListItem {item} onCheckboxChange={handleCheckboxChange} onEdit={openEditModal} />
+			<ShoppingListItem
+				{item}
+				onCheckboxChange={handleCheckboxChange}
+				onEdit={openEditModal}
+				onTogglePurchase={(targetItem) => handlePurchaseToggle(targetItem, !targetItem.purchased)}
+				purchaseLoading={purchaseLoadingByUid[item.uid] ?? false} />
 		{/each}
 	</ul>
 {/if}

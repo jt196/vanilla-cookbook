@@ -75,11 +75,22 @@ export const GET = async ({ locals }) => {
 						name: true,
 						uid: true
 					}
+				},
+				purchaseLogs: {
+					select: {
+						id: true
+					}
 				}
 			}
 		})
 
-		return new Response(JSON.stringify(shoppingList), {
+		// Add purchaseCount to each item
+		const shoppingListWithCounts = shoppingList.map((item) => ({
+			...item,
+			purchaseCount: item.purchaseLogs?.length || 0
+		}))
+
+		return new Response(JSON.stringify(shoppingListWithCounts), {
 			status: 200,
 			headers: {
 				'Content-Type': 'application/json'
@@ -115,6 +126,11 @@ export async function PATCH({ request, locals }) {
 	let updateData = { purchased, name, quantity, unit }
 
 	try {
+		// Get the current item to check if purchased status is changing
+		const currentItem = await prisma.shoppingListItem.findUnique({
+			where: { uid }
+		})
+
 		const updatedItem = await prisma.shoppingListItem.update({
 			where: { uid },
 			data: updateData,
@@ -128,7 +144,24 @@ export async function PATCH({ request, locals }) {
 			}
 		})
 
-		return new Response(JSON.stringify(updatedItem), {
+		// Log purchase if item is being marked as purchased (and wasn't already)
+		if (purchased && !currentItem?.purchased) {
+			await prisma.purchaseLog.create({
+				data: {
+					userId: user.userId,
+					shoppingItemUid: uid,
+					itemName: updatedItem.name,
+					quantity: updatedItem.quantity,
+					unit: updatedItem.unit
+				}
+			})
+		}
+
+		const purchaseCount = await prisma.purchaseLog.count({
+			where: { shoppingItemUid: uid }
+		})
+
+		return new Response(JSON.stringify({ ...updatedItem, purchaseCount }), {
 			status: 200,
 			headers: {
 				'Content-Type': 'application/json'
