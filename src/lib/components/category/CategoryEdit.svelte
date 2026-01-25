@@ -1,9 +1,9 @@
 <script>
-	import CategoryEdit from '../CategoryEdit.svelte'
+	import CategoryEdit from '$lib/components/category/CategoryEdit.svelte'
 
 	import { flip } from 'svelte/animate'
 	import { dndzone, SHADOW_PLACEHOLDER_ITEM_ID } from 'svelte-dnd-action'
-	import Ellipsis from '../svg/Ellipsis.svelte'
+	import Ellipsis from '$lib/components/svg/Ellipsis.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import ConfirmationDialog from '$lib/components/ui/ConfirmationDialog.svelte'
 

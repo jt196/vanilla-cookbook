@@ -10,11 +10,11 @@
 	import { sortByTwoKeys } from '$lib/utils/sorting.js'
 	import FeedbackMessage from '$lib/components/ui/FeedbackMessage.svelte'
 	import ConfirmationDialog from '$lib/components/ui/ConfirmationDialog.svelte'
+	import InfoText from '$lib/components/ui/InfoText.svelte'
 	import ShoppingToolbar from '$lib/components/shopping/ShoppingToolbar.svelte'
 	import ShoppingItemInput from '$lib/components/shopping/ShoppingItemInput.svelte'
 	import ShoppingListItem from '$lib/components/shopping/ShoppingListItem.svelte'
 	import ShoppingEditDialog from '$lib/components/shopping/ShoppingEditDialog.svelte'
-	import InfoText from '$lib/components/ui/InfoText.svelte'
 
 	/** @type {{data: any}} */
 	let { data } = $props()
