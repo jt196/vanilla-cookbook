@@ -190,5 +190,3 @@
 {#if feedbackMessage}
 	<FeedbackMessage message={feedbackMessage} type={feedbackType} inline timeout={4000} />
 {/if}
-
-<style lang="scss"></style>
