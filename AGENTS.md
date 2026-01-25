@@ -118,9 +118,9 @@ vanilla-cookbook/
 - **Installable**: Web app manifest for mobile/desktop installation
 - **Share target**: Receive URLs and text from other apps (mobile)
 - **Offline caching**: Recipes and assets cached for offline access
-- **Domain switching**: `./sw-domain.sh` updates service worker scope when `ORIGIN` changes
+- **Domain switching**: `./scripts/pwa/sw-domain.sh` updates service worker scope when `ORIGIN` changes
 
-**Key commands**: `pnpm generate-sw`, `./sw-domain.sh`
+**Key commands**: `pnpm generate-sw`, `./scripts/pwa/sw-domain.sh`
 
 ### 5. Shopping List & Cooking Logs
 **Location**: `src/routes/api/log/`, Prisma models
@@ -214,7 +214,7 @@ pnpm seed                 # Seed sample data
 
 # PWA
 pnpm generate-sw          # Rebuild service worker
-./sw-domain.sh            # Update SW scope (run after ORIGIN change)
+./scripts/pwa/sw-domain.sh            # Update SW scope (run after ORIGIN change)
 
 # Documentation
 pnpm docs:build           # Generate JSDoc + screenshots (requires Python setup)
@@ -347,7 +347,7 @@ pnpm coverage          # Coverage report
 
 ### PWA & Service Worker
 - **Regenerate after changes**: Run `pnpm generate-sw` if static assets change
-- **Domain changes**: Run `./sw-domain.sh` after changing `ORIGIN` in `.env`
+- **Domain changes**: Run `./scripts/pwa/sw-domain.sh` after changing `ORIGIN` in `.env`
 - **Cache invalidation**: SW version bumps automatically on rebuild
 
 ### Environment & CORS

@@ -36,9 +36,9 @@ ENV APP_ROOT_PATH=/app
 COPY . .
 
 # Make scripts executable
-RUN chmod +x /app/entrypoint.sh /app/backup-db.sh
+RUN chmod +x /app/scripts/docker/entrypoint.sh /app/scripts/backup/backup-db.sh
 
-ENTRYPOINT ["/app/entrypoint.sh"]
+ENTRYPOINT ["/app/scripts/docker/entrypoint.sh"]
 
 # Create DB folder
 RUN mkdir -p /app/prisma/db

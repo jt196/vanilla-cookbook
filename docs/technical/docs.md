@@ -24,3 +24,8 @@ To generate updated docs from the scripts below, make sure the dev server is run
 ## JSDocs Generate
 
 1. Run `pnpm docs:jsdocs`
+
+## MkDocs Site
+
+1. Install MkDocs dependencies: `pip install -r docs/requirements.txt`
+2. Build or serve the docs with the config: `mkdocs build -f docs/mkdocs.yml` or `mkdocs serve -f docs/mkdocs.yml`

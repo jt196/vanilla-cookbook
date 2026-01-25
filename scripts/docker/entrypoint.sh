@@ -7,7 +7,7 @@ set -e
 
 # Set up cron schedule from env var (default: Sundays at 3am)
 CRON_SCHEDULE="${BACKUP_CRON_SCHEDULE:-0 3 * * 0}"
-echo "$CRON_SCHEDULE /app/backup-db.sh >> /var/log/cron.log 2>&1" | crontab -
+echo "$CRON_SCHEDULE /app/scripts/backup/backup-db.sh >> /var/log/cron.log 2>&1" | crontab -
 
 # Start cron for scheduled backups
 service cron start
