@@ -40,7 +40,6 @@ PAGES_TO_CAPTURE = [
     {"name": "bookmark", "route": "/user/{ID}/options/bookmark"},
     {"name": "import", "route": "/user/{ID}/options/import"},
     {"name": "export", "route": "/user/{ID}/options/export"},
-    {"name": "upload", "route": "/user/{ID}/options/upload"},
     {"name": "admin-users", "route": "/user/{ID}/options/admin/users"},
     {"name": "admin-site", "route": "/user/{ID}/options/admin/site"},
 ]
