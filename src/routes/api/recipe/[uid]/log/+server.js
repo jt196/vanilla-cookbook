@@ -16,13 +16,15 @@ export async function POST({ locals, params, request }) {
 		})
 	}
 
-	// Parse optional note from request body
+	// Parse optional note and scale from request body
 	let note = null
+	let scale = 1
 	try {
 		const body = await request.json()
 		note = body.note || null
+		scale = body.scale ?? 1
 	} catch {
-		// No body or invalid JSON - note remains null
+		// No body or invalid JSON - defaults remain
 	}
 
 	try {
@@ -34,7 +36,8 @@ export async function POST({ locals, params, request }) {
 				userId: user.userId,
 				cooked: cookedTime,
 				cookedEnd: cookedEndTime,
-				note
+				note,
+				scale
 			}
 		})
 	} catch (err) {

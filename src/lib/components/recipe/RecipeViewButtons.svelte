@@ -16,9 +16,10 @@
 	import ConfirmationDialog from '$lib/components/ui/ConfirmationDialog.svelte'
 	import CookedLogModal from '$lib/components/recipe/CookedLogModal.svelte'
 	import CookedHistoryModal from '$lib/components/recipe/CookedHistoryModal.svelte'
+	import Calendar from '$lib/components/svg/Calendar.svelte'
 
-	/** @type {{recipe: any, updateLogs: any, favRecipe: any}} */
-	let { recipe, updateLogs, favRecipe, pubRecipe, logs, viewOnly } = $props()
+	/** @type {{recipe: any, updateLogs: any, favRecipe: any, scale?: number, onRestoreScale?: (scale: number) => void}} */
+	let { recipe, updateLogs, favRecipe, pubRecipe, logs, viewOnly, scale = 1, onRestoreScale = null } = $props()
 	let showDeleteConfirm = $state(false)
 	let pendingDeleteUid = $state(null)
 	let loadingFav = $state(false)
@@ -52,7 +53,7 @@
 
 	async function handleLogSubmit(note) {
 		loadingLog = true
-		let response = await addRecipeLog(recipe?.uid, note)
+		let response = await addRecipeLog(recipe?.uid, note, scale)
 		loadingLog = false
 		showCookedModal = false
 		if (response.success) {
@@ -130,7 +131,7 @@
 			onclick={() => (showHistoryModal = true)}
 			class="btn btn-soft btn-primary btn-sm tooltip"
 			data-tip="View Cooking History">
-			History
+			<Calendar width="20px" height="20px" fill="currentColor" />
 		</button>
 	{/if}
 	<button
@@ -161,4 +162,4 @@
 
 <CookedLogModal bind:isOpen={showCookedModal} onSubmit={handleLogSubmit} loading={loadingLog} />
 
-<CookedHistoryModal bind:isOpen={showHistoryModal} {logs} />
+<CookedHistoryModal bind:isOpen={showHistoryModal} {logs} {onRestoreScale} />

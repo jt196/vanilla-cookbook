@@ -571,14 +571,14 @@ export async function deleteShoppingListItem(uid) {
  *                  or an error message.
  * @throws {Error} If the request fails or the server responds with an error.
  */
-export async function addRecipeLog(recipeUid, note = null) {
+export async function addRecipeLog(recipeUid, note = null, scale = 1) {
 	try {
 		const response = await fetch(`/api/recipe/${recipeUid}/log`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
 			},
-			body: JSON.stringify({ note })
+			body: JSON.stringify({ note, scale })
 		})
 
 		if (response.ok) {

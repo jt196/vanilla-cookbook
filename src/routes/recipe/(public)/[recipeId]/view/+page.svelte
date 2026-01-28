@@ -262,7 +262,7 @@
 {/if}
 <FeedbackMessage message={recipeFeedback} />
 <div class="flex flex-wrap justify-between gap-1 my-4 w-full md:gap-2 md:justify-end">
-	<RecipeViewButtons {recipe} {updateLogs} {favRecipe} {pubRecipe} {logs} {viewOnly} />
+	<RecipeViewButtons {recipe} {updateLogs} {favRecipe} {pubRecipe} {logs} {viewOnly} {scale} onRestoreScale={handleScaleChange} />
 </div>
 
 {#if isLoading}

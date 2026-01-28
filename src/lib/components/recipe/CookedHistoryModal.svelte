@@ -7,12 +7,21 @@
 	let {
 		/** @type {boolean} */
 		isOpen = $bindable(false),
-		/** @type {Array<{id: string, cooked: string, note?: string}>} */
-		logs = []
+		/** @type {Array<{id: string, cooked: string, note?: string, scale?: number}>} */
+		logs = [],
+		/** @type {(scale: number) => void} */
+		onRestoreScale = null
 	} = $props()
 
 	function handleClose() {
 		isOpen = false
+	}
+
+	function handleRestoreScale(scale) {
+		if (onRestoreScale && scale) {
+			onRestoreScale(scale)
+			isOpen = false
+		}
 	}
 </script>
 
@@ -24,6 +33,7 @@
 				<tr>
 					<th>Date</th>
 					<th>Note</th>
+					<th>Scale</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -31,6 +41,20 @@
 					<tr>
 						<td class="whitespace-nowrap">{localDateAndTime(log.cooked)}</td>
 						<td class="text-base-content/70">{log.note || '-'}</td>
+						<td>
+							{log.scale ?? 1}x
+							{#if onRestoreScale}
+								<Button
+									size="xs"
+									style="soft"
+									color="primary"
+									onclick={() => handleRestoreScale(log.scale ?? 1)}
+									class="ml-2 tooltip"
+									data-tip="Use this scale">
+									Use
+								</Button>
+							{/if}
+						</td>
 					</tr>
 				{/each}
 			</tbody>
