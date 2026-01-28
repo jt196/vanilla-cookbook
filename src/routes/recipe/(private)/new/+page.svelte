@@ -7,6 +7,7 @@
 	import FeedbackMessage from '$lib/components/ui/FeedbackMessage.svelte'
 	import { defaultRecipe } from '$lib/utils/config'
 	import RecipeNewScrape from '$lib/components/recipe/RecipeNewScrape.svelte'
+	import Spinner from '$lib/components/ui/Spinner.svelte'
 
 	/**
 	 * The scraped recipe object.
@@ -33,6 +34,7 @@
 	let saveImageUrl = $state(true)
 
 	let initialMode = $state('url') // 'url' | 'text' | 'image'
+	let saving = $state(false)
 
 	let { data } = $props()
 
@@ -82,6 +84,7 @@
 
 	async function handleCreateRecipe(event) {
 		event.preventDefault()
+		saving = true
 
 		const formData = new FormData()
 		formData.append('recipe', JSON.stringify({ ...recipe, saveImageUrl }))
@@ -128,3 +131,5 @@
 {#if feedbackMessage}
 	<FeedbackMessage message={feedbackMessage} type={feedbackType} timeout={4000} />
 {/if}
+
+<Spinner visible={saving} spinnerContent="Saving recipe..." />

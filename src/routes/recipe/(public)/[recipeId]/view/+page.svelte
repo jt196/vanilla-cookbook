@@ -15,6 +15,7 @@
 	import RecipeViewDirections from '$lib/components/recipe/RecipeViewDirections.svelte'
 	import RecipeViewNotes from '$lib/components/recipe/RecipeViewNotes.svelte'
 	import FeedbackMessage from '$lib/components/ui/FeedbackMessage.svelte'
+	import Toggle from '$lib/components/ui/Form/Toggle.svelte'
 	import { sortByDate } from '$lib/utils/sorting.js'
 	import { recipeRatingChange, updatePhotos } from '$lib/utils/crud.js'
 
@@ -38,6 +39,9 @@
 	let otherPhotos = $state([])
 
 	let loadingIngredients = $state(true)
+
+	// Toggle for showing original vs summarized directions
+	let showOriginalDirections = $state(false)
 
 	let viewOnly = $derived(recipe.userId !== viewUser.userId)
 
@@ -100,7 +104,13 @@
 	let ingredients = $derived(recipe.ingredients ? recipe.ingredients.split('\n') : [])
 	let ingredientsArray = $derived(ingredientProcess(ingredients, viewUser.language))
 	let measurementSystem = $derived(determineSystem(ingredientsArray))
-	let directionLines = $derived(recipe.directions ? recipe.directions.split('\n') : [])
+	// Use original directions if toggle is on and original exists, otherwise use summarized
+	let activeDirections = $derived(
+		showOriginalDirections && recipe.directions_original
+			? recipe.directions_original
+			: recipe.directions
+	)
+	let directionLines = $derived(activeDirections ? activeDirections.split('\n') : [])
 	let notesLines = $derived(recipe.notes ? recipe.notes.split('\n') : [])
 
 	let scaledServings = $state(null) // ✅ Use $state instead of $derived
@@ -302,6 +312,13 @@
 
 		<div class="w-full md:w-2/3">
 			<RecipeViewDesc {recipe} />
+			{#if recipe.directions_original}
+				<div class="flex items-center gap-2 mt-6 mb-2">
+					<span class="text-sm">Summarized</span>
+					<Toggle bind:checked={showOriginalDirections} size="sm" />
+					<span class="text-sm">Original</span>
+				</div>
+			{/if}
 			<RecipeViewDirections {directionLines} {sanitizedDirections} {loadingIngredients} />
 		</div>
 	</div>

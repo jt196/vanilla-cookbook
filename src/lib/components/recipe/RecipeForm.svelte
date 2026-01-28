@@ -43,10 +43,17 @@
 	let cleaningIngredients = $state(false)
 	let cleaningDirections = $state(false)
 
+	// Undo state for AI cleanup
+	let ingredientsBeforeClean = $state(null)
+	let directionsBeforeSummarize = $state(null)
+
 	async function handleCleanIngredients() {
 		if (!recipe.ingredients || recipe.ingredients.trim() === '') return
 
 		cleaningIngredients = true
+		// Store original for undo
+		ingredientsBeforeClean = recipe.ingredients
+
 		try {
 			const response = await fetch('/api/recipe/cleanup', {
 				method: 'POST',
@@ -65,13 +72,32 @@
 
 			const data = await response.json()
 			if (data.ingredients) {
+				// Store original in recipe if not already set
+				if (!recipe.ingredients_original) {
+					recipe.ingredients_original = ingredientsBeforeClean
+				}
 				recipe.ingredients = data.ingredients.join('\n')
 			}
 		} catch (err) {
 			console.error('Ingredient cleanup failed:', err)
 			alert('Failed to clean ingredients. Please try again.')
+			ingredientsBeforeClean = null // Clear on failure
 		} finally {
 			cleaningIngredients = false
+		}
+	}
+
+	function undoCleanIngredients() {
+		if (ingredientsBeforeClean) {
+			recipe.ingredients = ingredientsBeforeClean
+			ingredientsBeforeClean = null
+		}
+	}
+
+	function restoreOriginalIngredients() {
+		if (recipe.ingredients_original) {
+			recipe.ingredients = recipe.ingredients_original
+			recipe.ingredients_original = ''
 		}
 	}
 
@@ -79,6 +105,9 @@
 		if (!recipe.directions || recipe.directions.trim() === '') return
 
 		cleaningDirections = true
+		// Store original for undo
+		directionsBeforeSummarize = recipe.directions
+
 		try {
 			const response = await fetch('/api/recipe/cleanup', {
 				method: 'POST',
@@ -97,13 +126,32 @@
 
 			const data = await response.json()
 			if (data.instructions) {
+				// Store original in recipe if not already set
+				if (!recipe.directions_original) {
+					recipe.directions_original = directionsBeforeSummarize
+				}
 				recipe.directions = data.instructions.join('\n\n')
 			}
 		} catch (err) {
 			console.error('Direction summarization failed:', err)
 			alert('Failed to summarize directions. Please try again.')
+			directionsBeforeSummarize = null // Clear on failure
 		} finally {
 			cleaningDirections = false
+		}
+	}
+
+	function undoSummarizeDirections() {
+		if (directionsBeforeSummarize) {
+			recipe.directions = directionsBeforeSummarize
+			directionsBeforeSummarize = null
+		}
+	}
+
+	function restoreOriginalDirections() {
+		if (recipe.directions_original) {
+			recipe.directions = recipe.directions_original
+			recipe.directions_original = ''
 		}
 	}
 
@@ -232,34 +280,84 @@
 				bind:value={recipe.ingredients}
 				label="Ingredients" />
 			{#if aiEnabled}
-				<Button
-					type="button"
-					size="sm"
-					style="soft"
-					class="mt-2"
-					onclick={handleCleanIngredients}
-					disabled={cleaningIngredients || !recipe.ingredients || recipe.ingredients.trim() === ''}>
-					{#if cleaningIngredients}
-						<Spinner visible={true} size="xs" type="dots" />
-						Cleaning...
+				<div class="flex gap-2 mt-2">
+					{#if recipe.ingredients_original}
+						<Button
+							type="button"
+							size="sm"
+							style="outline"
+							color="warning"
+							onclick={restoreOriginalIngredients}>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								class="h-4 w-4"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke="currentColor">
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									stroke-width="2"
+									d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+							</svg>
+							Restore Original
+						</Button>
 					{:else}
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							class="h-4 w-4"
-							fill="none"
-							viewBox="0 0 24 24"
-							stroke="currentColor">
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								stroke-width="2"
-								d="M13 10V3L4 14h7v7l9-11h-7z" />
-						</svg>
-						Clean Ingredients
+						<Button
+							type="button"
+							size="sm"
+							style="soft"
+							onclick={handleCleanIngredients}
+							disabled={cleaningIngredients || !recipe.ingredients || recipe.ingredients.trim() === ''}>
+							{#if cleaningIngredients}
+								<Spinner visible={true} size="xs" type="dots" />
+								Cleaning...
+							{:else}
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									class="h-4 w-4"
+									fill="none"
+									viewBox="0 0 24 24"
+									stroke="currentColor">
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M13 10V3L4 14h7v7l9-11h-7z" />
+								</svg>
+								Clean Ingredients
+							{/if}
+						</Button>
+						{#if ingredientsBeforeClean}
+							<Button
+								type="button"
+								size="sm"
+								style="outline"
+								color="secondary"
+								onclick={undoCleanIngredients}>
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									class="h-4 w-4"
+									fill="none"
+									viewBox="0 0 24 24"
+									stroke="currentColor">
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+								</svg>
+								Undo
+							</Button>
+						{/if}
 					{/if}
-				</Button>
-				<InfoText class="mt-1"
-					>Simplify complex ingredients for more accurate conversion results.</InfoText>
+				</div>
+				{#if recipe.ingredients_original}
+					<InfoText class="mt-1">Restore the original uncleaned ingredients.</InfoText>
+				{:else}
+					<InfoText class="mt-1"
+						>Simplify complex ingredients for more accurate conversion results.</InfoText>
+				{/if}
 			{/if}
 		</div>
 		<Textarea
@@ -278,33 +376,83 @@
 				bind:value={recipe.directions}
 				label="Directions" />
 			{#if aiEnabled}
-				<Button
-					type="button"
-					size="sm"
-					style="soft"
-					class="mt-2"
-					onclick={handleSummarizeDirections}
-					disabled={cleaningDirections || !recipe.directions || recipe.directions.trim() === ''}>
-					{#if cleaningDirections}
-						<Spinner visible={true} size="xs" type="dots" />
-						Summarizing...
+				<div class="flex gap-2 mt-2">
+					{#if recipe.directions_original}
+						<Button
+							type="button"
+							size="sm"
+							style="outline"
+							color="warning"
+							onclick={restoreOriginalDirections}>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								class="h-4 w-4"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke="currentColor">
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									stroke-width="2"
+									d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+							</svg>
+							Restore Original
+						</Button>
 					{:else}
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							class="h-4 w-4"
-							fill="none"
-							viewBox="0 0 24 24"
-							stroke="currentColor">
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								stroke-width="2"
-								d="M13 10V3L4 14h7v7l9-11h-7z" />
-						</svg>
-						Summarize Directions
+						<Button
+							type="button"
+							size="sm"
+							style="soft"
+							onclick={handleSummarizeDirections}
+							disabled={cleaningDirections || !recipe.directions || recipe.directions.trim() === ''}>
+							{#if cleaningDirections}
+								<Spinner visible={true} size="xs" type="dots" />
+								Summarizing...
+							{:else}
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									class="h-4 w-4"
+									fill="none"
+									viewBox="0 0 24 24"
+									stroke="currentColor">
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M13 10V3L4 14h7v7l9-11h-7z" />
+								</svg>
+								Summarize Directions
+							{/if}
+						</Button>
+						{#if directionsBeforeSummarize}
+							<Button
+								type="button"
+								size="sm"
+								style="outline"
+								color="secondary"
+								onclick={undoSummarizeDirections}>
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									class="h-4 w-4"
+									fill="none"
+									viewBox="0 0 24 24"
+									stroke="currentColor">
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+								</svg>
+								Undo
+							</Button>
+						{/if}
 					{/if}
-				</Button>
-				<InfoText class="mt-1">Condense lengthy directions into clear, concise steps.</InfoText>
+				</div>
+				{#if recipe.directions_original}
+					<InfoText class="mt-1">Restore the original unsummarized directions.</InfoText>
+				{:else}
+					<InfoText class="mt-1">Condense lengthy directions into clear, concise steps.</InfoText>
+				{/if}
 			{/if}
 		</div>
 		<Textarea

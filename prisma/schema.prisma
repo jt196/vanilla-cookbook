@@ -18,7 +18,8 @@ model Recipe {
     on_favorites       Boolean?           @default(false)
     photo              String?
     scale              String?
-    ingredients        String?
+    ingredients          String?
+    ingredients_original String?
     is_pinned          Boolean?           @default(false)
     is_public          Boolean?           @default(false)
     source             String?
@@ -29,7 +30,8 @@ model Recipe {
     difficulty         String?
     on_grocery_list    Boolean?           @default(false)
     in_trash           Boolean?           @default(false)
-    directions         String?
+    directions           String?
+    directions_original  String?
     photo_url          String?
     cook_time          String?
     name               String?

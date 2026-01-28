@@ -10,23 +10,42 @@ export async function POST({ request }) {
 		}
 
 		let prompt = ''
-		let systemMessage = ''
 
 		if (type === 'ingredients') {
-			systemMessage = 'You are an ingredient formatting AI.'
-			prompt = `Clean up the following ingredient list according to these rules:
+			const preferredUnit =
+				userUnits === 'metric'
+					? 'metric (grams, milliliters, kilograms, liters)'
+					: userUnits === 'americanVolumetric'
+						? 'US volumetric (cups, tablespoons, teaspoons)'
+						: 'imperial (ounces, pounds, pints)'
+			const nonPreferredExamples =
+				userUnits === 'metric'
+					? '"100g (3.5oz) flour" → "100g flour", "1 cup (240ml) milk" → "240ml milk"'
+					: userUnits === 'americanVolumetric'
+						? '"240ml (1 cup) milk" → "1 cup milk", "28g (1oz) cheese" → "1oz cheese"'
+						: '"100g (3.5oz) flour" → "3.5oz flour", "240ml (1 cup) milk" → "1 cup milk"'
 
-1. If there are dual units (metric and imperial), only keep the ${userUnits === 'metric' ? 'metric' : userUnits === 'americanVolumetric' ? 'US volumetric' : 'imperial'} unit
-   Example: "28g (1oz) flour" → "28g flour"
-2. Move alternative ingredients after a comma with "or"
+			prompt = `You are an ingredient formatting AI that strictly follows unit preferences.
+
+Clean up the following ingredient list according to these rules:
+
+CRITICAL - UNIT HANDLING:
+- The user prefers ${preferredUnit} units ONLY
+- REMOVE ALL non-preferred units completely. The output must contain ONLY ${userUnits === 'metric' ? 'metric' : userUnits === 'americanVolumetric' ? 'US volumetric' : 'imperial'} measurements
+- If dual units are present, keep ONLY the ${userUnits === 'metric' ? 'metric' : userUnits === 'americanVolumetric' ? 'US volumetric' : 'imperial'} one and DELETE the other entirely
+- Examples: ${nonPreferredExamples}
+- NEVER output both metric and imperial/US units together
+
+Other formatting rules:
+1. Move alternative ingredients after a comma with "or"
    Example: "1 tomato or 0.5 tin tomatoes" → "1 tomato, or 0.5 tin tomatoes"
-3. Remove brackets and double brackets, keeping info after comma
+2. Remove brackets and double brackets, keeping info after comma
    Example: "200g flour (sifted)" → "200g flour, sifted"
-4. Move preparation instructions after a comma
+3. Move preparation instructions after a comma
    Example: "1 onion (chopped)" → "1 onion, chopped"
-5. Remove non-essential conversational text, keep only ingredient data
-6. Use decimal numbers (1.5 kg) instead of fractions
-7. Avoid prepositions like "of" (write "1.5 kg flour" not "1.5 kg of flour")
+4. Remove non-essential conversational text, keep only ingredient data
+5. Use decimal numbers (1.5 kg) instead of fractions
+6. Avoid prepositions like "of" (write "1.5 kg flour" not "1.5 kg of flour")
 
 Return ONLY a JSON object with an "ingredients" array (one cleaned ingredient per line).
 Each line should be a separate array element.
@@ -39,8 +58,9 @@ Return format:
   "ingredients": ["cleaned ingredient 1", "cleaned ingredient 2"]
 }`
 		} else if (type === 'directions') {
-			systemMessage = 'You are a recipe instruction simplification AI.'
-			prompt = `These recipe instructions are too long and complex. Strip out all the extra explanations and pare them down to the bare essentials needed to cook this recipe.
+			prompt = `You are a recipe instruction simplification AI.
+
+These recipe instructions are too long and complex. Strip out all the extra explanations and pare them down to the bare essentials needed to cook this recipe.
 
 Rules:
 - No steps should be missed out

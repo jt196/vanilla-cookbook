@@ -7,6 +7,7 @@
 	import Burger from '$lib/components/svg/Burger.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import ConfirmationDialog from '$lib/components/ui/ConfirmationDialog.svelte'
+	import Spinner from '$lib/components/ui/Spinner.svelte'
 
 	/**
 	 * The page data type.
@@ -30,6 +31,7 @@
 	let userUnits = $state(data?.userUnits ?? 'metric')
 	let userLanguage = $state(data?.userLanguage ?? 'eng')
 	let showDeleteConfirm = $state(false)
+	let saving = $state(false)
 
 	$effect(() => {
 		recipeCategories =
@@ -51,6 +53,7 @@
 
 	async function handleSubmit(event) {
 		event.preventDefault()
+		saving = true
 
 		const recipeWithCategories = {
 			...recipe,
@@ -139,6 +142,8 @@
 		<p class="py-4">Are you sure you want to delete this recipe?</p>
 	{/snippet}
 </ConfirmationDialog>
+
+<Spinner visible={saving} spinnerContent="Saving recipe..." />
 
 <style lang="scss">
 	.recipe-container {
