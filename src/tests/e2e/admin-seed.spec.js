@@ -61,6 +61,10 @@ test('fresh install admin seed, login, and page smoke tests', async ({ page }, t
 		const url = request.url()
 		const method = request.method()
 		const failure = request.failure()?.errorText || 'request failed'
+		// Ignore aborted requests (happen during navigation, not real errors)
+		if (failure === 'NS_BINDING_ABORTED' || failure === 'net::ERR_ABORTED') {
+			return
+		}
 		failures.push(`requestfailed: ${method} ${url} - ${failure}`)
 	})
 
