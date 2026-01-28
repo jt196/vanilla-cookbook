@@ -284,7 +284,56 @@ async function invokeLLM({ provider, model, type, messages }) {
 		// Remove trailing commas
 		output = output.replace(/,\s*([\]}])/g, '$1')
 
-		return JSON.parse(output)
+		// Try to extract JSON if there's extra content
+		const jsonMatch = output.match(/\{[\s\S]*\}/)
+		if (jsonMatch) {
+			output = jsonMatch[0]
+		}
+
+		try {
+			return JSON.parse(output)
+		} catch (parseErr) {
+			// Log the problematic output for debugging
+			console.error('JSON parse error. Raw LLM output (first 500 chars):', output.substring(0, 500))
+			console.error('Parse error:', parseErr.message)
+
+			// Attempt to fix common truncation issues
+			// Count open/close braces and brackets
+			const openBraces = (output.match(/\{/g) || []).length
+			const closeBraces = (output.match(/\}/g) || []).length
+			const openBrackets = (output.match(/\[/g) || []).length
+			const closeBrackets = (output.match(/\]/g) || []).length
+
+			// If truncated, try to close it
+			if (openBraces > closeBraces || openBrackets > closeBrackets) {
+				console.log('Attempting to repair truncated JSON...')
+
+				// Find the last complete value (ends with ", or ", or ], or number, or true/false/null)
+				// Look for last occurrence of a complete JSON value followed by comma or end
+				const lastCompleteMatch = output.match(/^([\s\S]*(?:"\s*,|"\s*$|\]\s*,|\]\s*$|\d\s*,|\d\s*$|true\s*,|true\s*$|false\s*,|false\s*$|null\s*,|null\s*$))/);
+
+				if (lastCompleteMatch) {
+					output = lastCompleteMatch[1].trim()
+					// Remove trailing comma if present
+					output = output.replace(/,\s*$/, '')
+				}
+
+				// Recount after cleanup
+				const newOpenBrackets = (output.match(/\[/g) || []).length
+				const newCloseBrackets = (output.match(/\]/g) || []).length
+				const newOpenBraces = (output.match(/\{/g) || []).length
+				const newCloseBraces = (output.match(/\}/g) || []).length
+
+				// Close arrays and objects
+				for (let i = 0; i < newOpenBrackets - newCloseBrackets; i++) output += ']'
+				for (let i = 0; i < newOpenBraces - newCloseBraces; i++) output += '}'
+
+				console.log('Repaired JSON (first 500 chars):', output.substring(0, 500))
+				return JSON.parse(output)
+			}
+
+			throw parseErr
+		}
 	} catch (err) {
 		console.error('LLM invocation failed:', err)
 		throw new Error('LLM parsing error')
