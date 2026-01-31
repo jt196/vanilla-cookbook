@@ -20,7 +20,7 @@ import { auth } from '$lib/server/lucia'
  *   }
  * }
  */
-export async function POST({ request }) {
+export async function POST({ request, locals }) {
 	try {
 		const { adminUser } = await request.json()
 		const { adminUsername, adminEmail, adminPassword, adminUnits, adminLanguage, recipeSeed } = adminUser
@@ -77,6 +77,9 @@ export async function POST({ request }) {
 		if (recipeSeed) {
 			await seedRecipes(newUser.id, client)
 		}
+
+		const session = await auth.createSession({ userId: newUser.id, attributes: {} })
+		await locals.auth.setSession(session)
 
 		await client.$disconnect()
 

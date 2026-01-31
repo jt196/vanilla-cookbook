@@ -94,10 +94,6 @@
 						bind:value={password}
 						label="Password"
 						required />
-					<ValidationMessage
-						message={passwordValidation?.message}
-						isValid={passwordValidation?.isValid}
-						hidden={!passwordValidation?.message} />
 				</div>
 
 				<div>

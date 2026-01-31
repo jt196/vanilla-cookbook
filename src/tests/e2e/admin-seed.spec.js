@@ -84,7 +84,7 @@ test('fresh install admin seed, login, and page smoke tests', async ({ page }, t
 		}
 
 		await page.getByRole('button', { name: 'Create Admin' }).click()
-		await page.waitForURL('**/login')
+		await page.waitForURL('**/user/*/recipes')
 	} else {
 		await page.goto('/login', { waitUntil: 'networkidle' })
 	}

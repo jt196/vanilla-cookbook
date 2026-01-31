@@ -1,5 +1,5 @@
 <script>
-	import { goto } from '$app/navigation'
+	import { goto, invalidateAll } from '$app/navigation'
 	import Spinner from '$lib/components/ui/Spinner.svelte'
 	import { systems, languages } from '$lib/utils/config.js'
 	import { validatePasswords, validateEmail, buildPasswordEnv } from '$lib/utils/security.js'
@@ -63,7 +63,8 @@
 			const result = await res.json()
 			if (res.ok && result.success) {
 				spinnerVisible = false // Hide the spinner before redirecting
-				goto(`/login`)
+				await invalidateAll()
+				await goto(`/user/${result.id}/recipes`, { invalidateAll: true })
 			} else {
 				console.error('Error seeding DB:', result.error)
 			}
