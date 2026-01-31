@@ -271,7 +271,7 @@ OAuth availability is exposed via `locals.site.oauth`:
 
 ## Auth Helper Module
 
-The `$lib/server/authHelpers.js` module provides reusable authentication utilities that reduce boilerplate in API routes.
+The `$lib/server/authHelpers.js` module provides reusable authentication utilities that reduce boilerplate in API routes. These helpers throw HTTP errors or return JSON responses and should only be used in API endpoints. For page/layout redirects, use `$lib/server/authPage.js` instead.
 
 ### Functions
 
@@ -399,6 +399,27 @@ export async function PUT({ locals, params }) {
 }
 ```
 
+## Backend Auth Flow (API Routes)
+
+Typical API route pattern:
+
+1. Validate session with `requireAuth()` or `requireAdmin()`.
+2. Load the resource.
+3. Enforce ownership or public access with `requireOwnership()` / `requireAccessOrPublic()`.
+4. Return `jsonSuccess()` or throw `error()` for failures.
+
+```javascript
+import { requireAuth, requireOwnership, jsonSuccess } from '$lib/server/authHelpers'
+
+export async function PUT({ locals, params }) {
+  const user = requireAuth(locals)
+  const recipe = await prisma.recipe.findUnique({ where: { uid: params.id } })
+  requireOwnership(user, recipe)
+  // ... mutate
+  return jsonSuccess({ recipe })
+}
+```
+
 ## Cookie Configuration
 
 ### Development
@@ -469,6 +490,13 @@ const useSecureCookies = !dev && !isHttpOrigin
 
 ## Frontend Integration
 
+### Frontend Auth Flow
+
+1. Root `+layout.server.js` loads `locals.user` and site settings for all pages.
+2. If the database is not seeded, any non-root route redirects to the setup page (`/`).
+3. Route groups enforce access (`(private)` requires auth; `(public)` is open).
+4. Page/layout loads use `authPage` helpers to redirect unauthenticated users.
+
 ### Route Groups
 
 - `(private)/` - Routes requiring authentication
@@ -515,23 +543,9 @@ passwordRequirementsDescription: getPasswordRequirementsDescription(env)
 
 Frontend forms pass these requirements into `validatePassword()` / `validatePasswords()` so client-side messaging matches the server policy. Use `buildPasswordEnv()` from `src/lib/utils/security.js` to convert `passwordRequirements` into the expected env-shape.
 
-## Frontend Auth Plan (Upcoming)
+### Seeded Setup Redirects
 
-Short-term plan to finish the frontend auth refactor and documentation. This keeps UI simple while enforcing the same security rules as the backend.
-
-1. Password requirements on the client (done)
-   - Frontend now consumes server-configured PASSWORD_* values via root `+layout.server.js`.
-   - Password validation messaging updated on:
-     - `src/routes/+page.svelte`
-     - `src/routes/register/+page.svelte`
-     - `src/routes/user/[id]/(private)/options/password/+page.svelte`
-     - `src/routes/user/[id]/(private)/options/admin/users/+page.svelte`
-   - Client-side validation now mirrors server-side requirements.
-2. Route-group auth checks (done)
-   - Added shared layout/page auth helpers in `src/lib/server/authPage.js`.
-   - Updated private layouts to use helpers.
-3. Documentation updates (done)
-   - Added "Page Auth Helpers" and "Password Requirements in the UI" sections above.
+Until the database is seeded, the root `+layout.server.js` redirects any request (except `/`) back to the setup page. This prevents login/register pages from being used before initial configuration is complete.
 
 ## Troubleshooting
 
