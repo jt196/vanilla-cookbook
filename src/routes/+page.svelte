@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation'
 	import Spinner from '$lib/components/ui/Spinner.svelte'
 	import { systems, languages } from '$lib/utils/config.js'
-	import { validatePasswords, validateEmail } from '$lib/utils/security.js'
+	import { validatePasswords, validateEmail, buildPasswordEnv } from '$lib/utils/security.js'
 	import Input from '$lib/components/ui/Form/Input.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Checkbox from '$lib/components/ui/Form/Checkbox.svelte'
@@ -10,7 +10,9 @@
 	import ValidationMessage from '$lib/components/ui/Form/ValidationMessage.svelte'
 
 	let { data } = $props()
-	const { dbSeed } = data
+	const { dbSeed, passwordRequirements, passwordRequirementsDescription } = data
+
+	const passwordEnv = $derived(buildPasswordEnv(passwordRequirements))
 
 	let adminName = $state('')
 	let adminUsername = $state('')
@@ -26,7 +28,7 @@
 	let emailValidation = $derived(adminEmail ? validateEmail(adminEmail) : null)
 	let passwordValidation = $derived(
 		adminPassword || adminPasswordConfirm
-			? validatePasswords(adminPassword, adminPasswordConfirm || adminPassword)
+			? validatePasswords(adminPassword, adminPasswordConfirm || adminPassword, passwordEnv)
 			: null
 	)
 
@@ -119,6 +121,9 @@
 						bind:value={adminPassword}
 						name="password"
 						required />
+					{#if passwordRequirementsDescription}
+						<p class="text-sm text-base-content/70">{passwordRequirementsDescription}</p>
+					{/if}
 					<Input
 						type="password"
 						id="passwordConfirm"

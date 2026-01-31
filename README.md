@@ -7,9 +7,9 @@ For a full getting started guide, [read the docs](https://vanilla-cookbook.readt
 
 ## Overview
 
-Vanilla Cookbook is a self hosted recipe manager built with Svelte(kit). It is designed with complexity under the hood, keeping the user experience as uncluttered, simply vanilla as possible.
+Vanilla Cookbook is a self hosted recipe manager. It is designed with complexity under the hood, keeping the user experience as uncluttered, simply vanilla as possible.
 
-Most of the web's recipes are stored as text, without much thought to a consistent language or structure. Many self-hosted apps go down the structuring route, automating, or asking the user to organise their data. This can lead to cluttered and complex interfaces, limiting user experiences to those technically minded. The philosophy behind Vanilla was to do as much as I could with that text as it was, limiting the work the user has to do to a minimum. You should be able to get cooking with a few clicks.
+Most of the web's recipes are written without much thought to a consistent language or structure. Many self-hosted apps go down the structuring route, automating, or asking the user to organise their data. This can lead to cluttered and complex interfaces, meaning you have to work more, just to get cooking. The philosophy behind Vanilla is to do most of that work for the user. You should be able to get cooking with a few clicks.
 
 ## Features
 
@@ -19,7 +19,7 @@ Smart conversion from US Volumetric to imperial and metric weight. Thousands of 
 
 ### Recipe Scaling
 
-Scale your recipe ingredients. No complicated data entry, it's all done under the hood.
+Scale your recipe ingredients. No complicated data entry, it's all done for you, and stored in the original text format.
 
 ### Control Your Data
 
@@ -104,6 +104,8 @@ Currently:
 - Arabic
 
 ## Installation
+
+Docker set up is dead simple.
 
 ### Docker
 

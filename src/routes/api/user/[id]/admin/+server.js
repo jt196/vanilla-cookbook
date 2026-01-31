@@ -2,6 +2,7 @@ import { prisma } from '$lib/server/prisma'
 import { auth } from '$lib/server/lucia'
 import { validatePassword } from '$lib/utils/security.js'
 import { requireAdmin, jsonSuccess, jsonError } from '$lib/server/authHelpers'
+import { env } from '$env/dynamic/private'
 
 export async function PUT({ request, locals, params }) {
 	const user = requireAdmin(locals)
@@ -20,7 +21,7 @@ export async function PUT({ request, locals, params }) {
 
 		// Update the user's password
 		if (userData.password) {
-			const passwordValidation = validatePassword(userData.password)
+			const passwordValidation = validatePassword(userData.password, env)
 			if (!passwordValidation.isValid) {
 				return jsonError(400, passwordValidation.message)
 			}

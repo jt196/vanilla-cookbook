@@ -1,6 +1,6 @@
 <script>
 	import { goto } from '$app/navigation'
-	import { validatePassword } from '$lib/utils/security.js'
+	import { validatePassword, buildPasswordEnv } from '$lib/utils/security.js'
 	import FeedbackMessage from '$lib/components/ui/FeedbackMessage.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Container from '$lib/components/ui/Container.svelte'
@@ -14,13 +14,17 @@
 	/** @type {{data: any}} */
 	let { data } = $props()
 
-	const { user } = $state(data)
+	const { user, passwordRequirements, passwordRequirementsDescription } = $state(data)
 	let feedbackMessage = $state('')
 
 	let passwordsMismatch = $derived(newPass !== newPassConfirm && newPass && newPassConfirm)
 
+	const passwordEnv = $derived(buildPasswordEnv(passwordRequirements))
+
 	// Validate the new password
-	let newPasswordValidation = $derived(newPass.length > 0 ? validatePassword(newPass) : null)
+	let newPasswordValidation = $derived(
+		newPass.length > 0 ? validatePassword(newPass, passwordEnv) : null
+	)
 
 	// Disable submit button if validation fails
 	let isSubmitDisabled = $derived(
@@ -88,6 +92,9 @@
 		<h3>Update Password</h3>
 		<Input type="password" id="old" label="Old Password" bind:value={oldPass} />
 		<Input type="password" id="new" label="New Password" bind:value={newPass} />
+		{#if passwordRequirementsDescription}
+			<p class="text-sm text-base-content/70">{passwordRequirementsDescription}</p>
+		{/if}
 		<ValidationMessage
 			message={newPasswordValidation?.message}
 			isValid={newPasswordValidation?.isValid} />

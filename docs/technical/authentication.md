@@ -20,6 +20,7 @@ Vanilla Cookbook uses **Lucia v2** with the **Prisma adapter** for session-based
 | Prisma adapter | `@lucia-auth/adapter-prisma` | Database integration |
 | Hooks | `src/hooks.server.js` | Session validation on every request |
 | Auth helpers | `src/lib/server/authHelpers.js` | Reusable auth utilities for API routes |
+| Page auth helpers | `src/lib/server/authPage.js` | Reusable auth utilities for layout/page loads |
 | Security utils | `src/lib/utils/security.js` | Password validation |
 | Rate limiting | `src/lib/server/rateLimit.js` | Login attempt throttling |
 
@@ -490,6 +491,49 @@ export async function load({ locals }) {
 ```
 
 Or via `+layout.server.js` for group-wide protection.
+
+### Page Auth Helpers
+
+For layout/page `load()` functions, use the helpers in `src/lib/server/authPage.js` to reduce boilerplate:
+
+```javascript
+import { requireUser, requireUserMatch, requireAdminUser } from '$lib/server/authPage'
+
+export const load = async ({ locals, params }) => {
+  const user = requireUser(locals)        // Redirects to /login if not authenticated
+  requireUserMatch(user, params.id)       // Redirects to / if mismatched
+  // or: const admin = requireAdminUser(locals)
+}
+```
+
+### Password Requirements in the UI
+
+The root `+layout.server.js` exposes the active password requirements to the client:
+
+```javascript
+passwordRequirements: getPasswordRequirements(env),
+passwordRequirementsDescription: getPasswordRequirementsDescription(env)
+```
+
+Frontend forms pass these requirements into `validatePassword()` / `validatePasswords()` so client-side messaging matches the server policy. Use `buildPasswordEnv()` from `src/lib/utils/security.js` to convert `passwordRequirements` into the expected env-shape.
+
+## Frontend Auth Plan (Upcoming)
+
+Short-term plan to finish the frontend auth refactor and documentation. This keeps UI simple while enforcing the same security rules as the backend.
+
+1. Password requirements on the client (done)
+   - Frontend now consumes server-configured PASSWORD_* values via root `+layout.server.js`.
+   - Password validation messaging updated on:
+     - `src/routes/+page.svelte`
+     - `src/routes/register/+page.svelte`
+     - `src/routes/user/[id]/(private)/options/password/+page.svelte`
+     - `src/routes/user/[id]/(private)/options/admin/users/+page.svelte`
+   - Client-side validation now mirrors server-side requirements.
+2. Route-group auth checks (done)
+   - Added shared layout/page auth helpers in `src/lib/server/authPage.js`.
+   - Updated private layouts to use helpers.
+3. Documentation updates (done)
+   - Added "Page Auth Helpers" and "Password Requirements in the UI" sections above.
 
 ## Troubleshooting
 

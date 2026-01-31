@@ -155,6 +155,23 @@ export function validatePasswords(password, confirmPassword, env = {}) {
 }
 
 /**
+ * Converts password requirements into the env-shape expected by validation helpers.
+ *
+ * @param {{ minLength: number, requireUppercase: boolean, requireLowercase: boolean, requireDigit: boolean, requireSpecial: boolean } | null | undefined} requirements
+ * @returns {Record<string, string>}
+ */
+export function buildPasswordEnv(requirements) {
+	if (!requirements) return {}
+	return {
+		PASSWORD_MIN_LENGTH: String(requirements.minLength),
+		PASSWORD_REQUIRE_UPPERCASE: String(requirements.requireUppercase),
+		PASSWORD_REQUIRE_LOWERCASE: String(requirements.requireLowercase),
+		PASSWORD_REQUIRE_DIGIT: String(requirements.requireDigit),
+		PASSWORD_REQUIRE_SPECIAL: String(requirements.requireSpecial)
+	}
+}
+
+/**
  * Validates a single email address with a basic regex.
  *
  * @param {string} email

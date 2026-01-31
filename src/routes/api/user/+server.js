@@ -3,6 +3,7 @@ import { prisma } from '$lib/server/prisma'
 import { validatePassword } from '$lib/utils/security.js'
 import { seedRecipes } from '$lib/utils/seed/seedHelpers'
 import { requireAdmin, jsonSuccess, jsonError } from '$lib/server/authHelpers'
+import { env } from '$env/dynamic/private'
 
 /**
  * Handles the POST request to create a new user.
@@ -26,7 +27,7 @@ export async function POST({ request, locals }) {
 	const bodyText = await request.text()
 	const userData = JSON.parse(bodyText)
 
-	const passwordValidation = validatePassword(userData.password)
+	const passwordValidation = validatePassword(userData.password, env)
 
 	if (!passwordValidation.isValid) {
 		return jsonError(400, passwordValidation.message)

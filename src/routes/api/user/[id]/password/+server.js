@@ -3,6 +3,7 @@ import { auth } from '$lib/server/lucia'
 import { prisma } from '$lib/server/prisma'
 import { validatePassword } from '$lib/utils/security.js'
 import { requireAuth, jsonSuccess, jsonError } from '$lib/server/authHelpers'
+import { env } from '$env/dynamic/private'
 
 export async function POST({ request, locals, params }) {
 	const user = requireAuth(locals)
@@ -30,7 +31,7 @@ export async function POST({ request, locals, params }) {
 		return jsonError(401, 'Old password is incorrect!')
 	}
 
-	const passwordValidation = validatePassword(newPass)
+	const passwordValidation = validatePassword(newPass, env)
 	if (!passwordValidation.isValid) {
 		return jsonError(400, passwordValidation.message)
 	}
