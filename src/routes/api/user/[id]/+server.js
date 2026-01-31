@@ -1,17 +1,13 @@
+import { error } from '@sveltejs/kit'
 import { prisma } from '$lib/server/prisma'
+import { requireAuth, getOptionalUser, jsonSuccess, jsonError } from '$lib/server/authHelpers'
 
-export const PUT = async ({ request, locals, params }) => {
-	const session = await locals.auth.validate()
-	const user = session?.user
+export async function PUT({ request, locals, params }) {
+	const user = requireAuth(locals)
 	const { id } = params
 
-	if (!session || !user || user.userId !== id) {
-		return new Response(JSON.stringify({ error: 'User not authenticated or wrong user.' }), {
-			status: 403,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
+	if (user.userId !== id) {
+		throw error(403, 'Unauthorized to update this user')
 	}
 
 	const userData = await request.json()
@@ -36,51 +32,32 @@ export const PUT = async ({ request, locals, params }) => {
 	)
 
 	if (Object.keys(updates).length === 0) {
-		return new Response('No valid fields to update.', { status: 400 })
+		return jsonError(400, 'No valid fields to update.')
 	}
 
 	const updatedUser = await prisma.authUser.update({
-		where: { id: id },
+		where: { id },
 		data: updates
 	})
 
-	return new Response(JSON.stringify(updatedUser), {
-		status: 200,
-		headers: {
-			'Content-Type': 'application/json'
-		}
-	})
+	return jsonSuccess(updatedUser)
 }
 
 export async function GET({ locals, params }) {
 	const { id } = params
 	const userProfile = await prisma.authUser.findUnique({
-		where: { id: id }
+		where: { id }
 	})
-	const session = await locals.auth.validate()
-	const user = session?.user
-	if (!userProfile.publicProfile && (!session || !user)) {
-		console.log('Not public profile, or no session or user!')
-		return new Response('User not authenticated!', {
-			status: 401,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
+
+	if (!userProfile) {
+		throw error(404, 'User not found')
 	}
-	try {
-		return new Response(JSON.stringify({ userProfile: userProfile }), {
-			status: 200,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
-	} catch (error) {
-		return new Response(JSON.stringify({ error: `Failed to fetch users: ${error.message}` }), {
-			status: 500,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
+
+	const user = getOptionalUser(locals)
+
+	if (!userProfile.publicProfile && !user) {
+		throw error(401, 'User not authenticated')
 	}
+
+	return jsonSuccess({ userProfile })
 }

@@ -1,33 +1,19 @@
 import { prisma } from '$lib/server/prisma'
+import { error } from '@sveltejs/kit'
+import { requireAuth, jsonSuccess, jsonError } from '$lib/server/authHelpers'
 
 export async function GET({ params, locals }) {
-	// Validate the requesting user's session and get their userId
-	const session = await locals.auth.validate()
-	const user = session?.user
-	const id = params.id
+	const user = requireAuth(locals)
+	const { id } = params
 
-	if (!session || !user || user.userId !== id) {
-		return new Response(JSON.stringify({ error: 'User not authenticated or wrong user.' }), {
-			status: 403,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
-	}
-
-	if (params.id !== user.userId) {
-		return new Response('Unauthorized to view recipe logs.', {
-			status: 200,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
+	if (user.userId !== id) {
+		throw error(403, 'Unauthorized to view recipe logs')
 	}
 
 	try {
 		const recipeLogs = await prisma.recipeLog.findMany({
 			where: {
-				userId: params.id // Replace `userId` with the actual user ID
+				userId: id
 			},
 			select: {
 				id: true,
@@ -43,19 +29,9 @@ export async function GET({ params, locals }) {
 			}
 		})
 
-		return new Response(JSON.stringify(recipeLogs), {
-			status: 200,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
-	} catch (error) {
-		console.error(error)
-		return new Response(JSON.stringify({ error: 'Failed to fetch recipe logs.' }), {
-			status: 500,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
+		return jsonSuccess(recipeLogs)
+	} catch (err) {
+		console.error(err)
+		return jsonError(500, 'Failed to fetch recipe logs.')
 	}
 }

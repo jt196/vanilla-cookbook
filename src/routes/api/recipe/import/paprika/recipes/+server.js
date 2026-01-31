@@ -2,138 +2,59 @@ import { fetchData } from '$lib/utils/import/paprika/paprikaAPI.js'
 import path from 'path'
 import { getJSONLength } from '$lib/utils/import/paprika/paprikaAPIUtils.js'
 import { importPaprikaRecipes } from '$lib/utils/import/paprika/paprikaFileImport.js'
+import { requireAuth, jsonSuccess, jsonError } from '$lib/server/authHelpers'
 
-// Grab the Paprika categories from their API
 export async function POST({ request, locals }) {
-	const session = await locals.auth.validate()
-	const user = session?.user
-	if (!session || !user) {
-		return new Response(JSON.stringify({ error: 'User not authenticated.' }), {
-			status: 401,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
-	}
+	const user = requireAuth(locals)
 
 	const { paprikaUser, paprikaPassword } = await request.json()
 	try {
 		await fetchData('recipes', paprikaUser, paprikaPassword, user.userId)
-		return new Response(JSON.stringify({ success: 'Recipes fetched successfully.' }), {
-			status: 200,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
-	} catch (error) {
-		console.error('Error during fetchData:', error)
-		return new Response(JSON.stringify({ error: 'Failed to fetch recipes.' }), {
-			status: 500,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
+		return jsonSuccess({ success: 'Recipes fetched successfully.' })
+	} catch (err) {
+		console.error('Error during fetchData:', err)
+		return jsonError(500, 'Failed to fetch recipes.')
 	}
 }
 
-// If [userId]_recipes.json exists, how many items are in it
 export async function GET({ locals }) {
-	// Validate the logged-in user from the Lucia locals object
-	const session = await locals.auth.validate()
-	const user = session?.user
-	if (!session || !user) {
-		return new Response(JSON.stringify({ error: 'User not authenticated or wrong user.' }), {
-			status: 403,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
-	}
+	const user = requireAuth(locals)
 
 	try {
-		// Get the count from the JSON file
 		const filePath = path.join(process.cwd(), 'uploads/imports', `${user.userId}_recipes.json`)
 		const fileCount = await getJSONLength(filePath)
 
-		return new Response(JSON.stringify({ fileCount }), {
-			status: 200,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
-	} catch (error) {
-		console.error('Error getting recipe count from JSON file:', error)
+		return jsonSuccess({ fileCount })
+	} catch (err) {
+		console.error('Error getting recipe count from JSON file:', err)
 
-		if (error.code === 'ENOENT') {
-			// File not found
-			return new Response(JSON.stringify({ fileCount: 0 }), {
-				status: 200,
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			})
+		if (err.code === 'ENOENT') {
+			return jsonSuccess({ fileCount: 0 })
 		} else {
-			return new Response(JSON.stringify({ error: 'Internal server error.' }), {
-				status: 500,
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			})
+			return jsonError(500, 'Internal server error.')
 		}
 	}
 }
 
 export async function PUT({ request, locals }) {
-	const session = await locals.auth.validate()
-	const user = session?.user
-	if (!session || !user) {
-		return new Response(JSON.stringify({ error: 'User not authenticated or wrong user.' }), {
-			status: 403,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
-	}
+	const user = requireAuth(locals)
 
 	const bodyText = await request.text()
 	const isPublic = JSON.parse(bodyText).isPublic
 
-	console.log('isPublic:', isPublic) // You can now use this boolean as needed
-
 	try {
 		const filename = user.userId + '_recipes.json'
-		// Import recipes from .json file
 		const importedCount = await importPaprikaRecipes(user.userId, filename, isPublic)
 		if (importedCount.count >= 0) {
-			return new Response(
-				JSON.stringify({
-					success: importedCount.message,
-					count: importedCount.count
-				}),
-				{
-					status: 200,
-					headers: {
-						'Content-Type': 'application/json'
-					}
-				}
-			)
-		} else {
-			// Handle errors from the importPaprikaData function, if any
-			return new Response(JSON.stringify({ error: 'Failed to import paprika data.' }), {
-				status: 500,
-				headers: {
-					'Content-Type': 'application/json'
-				}
+			return jsonSuccess({
+				success: importedCount.message,
+				count: importedCount.count
 			})
+		} else {
+			return jsonError(500, 'Failed to import paprika data.')
 		}
-	} catch (error) {
-		console.error('Error adding recipes to database:', error)
-
-		return new Response(JSON.stringify({ error: 'Internal server error.' }), {
-			status: 500,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
+	} catch (err) {
+		console.error('Error adding recipes to database:', err)
+		return jsonError(500, 'Internal server error.')
 	}
 }

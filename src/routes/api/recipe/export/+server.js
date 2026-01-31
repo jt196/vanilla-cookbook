@@ -114,15 +114,10 @@ async function createZipWithGzippedRecipes(recipeData) {
 	})
 }
 
+import { requireAuth } from '$lib/server/authHelpers'
+
 export async function POST({ locals }) {
-	const session = await locals.auth.validate()
-	const user = session?.user
-	if (!session || !user) {
-		return new Response('User not authenticated', {
-			status: 401,
-			headers: { 'Content-Type': 'application/json' }
-		})
-	}
+	const user = requireAuth(locals)
 
 	try {
 		const recipes = await prisma.recipe.findMany({

@@ -9,141 +9,75 @@ import { processImage } from '$lib/utils/image/imageBackend.js'
 import { createRecipePhotoEntry, removeRecipePhotoEntry } from '$lib/utils/api'
 import { saveFile, validImageTypes } from '$lib/utils/import/importHelpers'
 import { fileTypeFromBuffer } from 'file-type'
+import {
+	requireAuth,
+	requireOwnership,
+	getOptionalUser,
+	jsonSuccess,
+	jsonError
+} from '$lib/server/authHelpers'
 
-// Handle delete request
 export async function DELETE({ params, locals }) {
-	const session = await locals.auth.validate()
-	const user = session?.user
+	const user = requireAuth(locals)
 	const { uid } = params
 
-	const recipe = await prisma.recipe.findUniqueOrThrow({
-		where: {
-			uid
-		}
-	})
-
-	if (!session || !user) {
-		console.log('User Not Authenticated!')
-		return new Response('User not authenticated', {
-			status: 401,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
-	}
-
-	if (!recipe || recipe.userId !== user.userId) {
-		return new Response('Unauthorized to delete this recipe.', {
-			status: 200,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
-	}
 	try {
-		// 1. Fetch the associated RecipePhoto entries for the recipe
-		const photos = await prisma.recipePhoto.findMany({
-			where: {
-				recipeUid: uid
-			}
+		const recipe = await prisma.recipe.findUnique({
+			where: { uid }
 		})
-		// 2. Delete the images from the file system
+
+		requireOwnership(user, recipe)
+
+		const photos = await prisma.recipePhoto.findMany({
+			where: { recipeUid: uid }
+		})
+
 		for (const photo of photos) {
 			deleteSinglePhotoFile(photo.id, photo.fileType)
 		}
+
 		await prisma.recipe.delete({
 			where: { uid }
 		})
-		return new Response(
-			{ message: 'recipe deleted successfully', uid: uid },
-			{
-				status: 200,
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			}
-		)
-	} catch (error) {
-		return new Response(
-			{ error: `Failed to delete recipe: ${error.message}` },
-			{
-				status: 500,
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			}
-		)
+
+		return jsonSuccess({ message: 'Recipe deleted successfully', uid })
+	} catch (err) {
+		if (err.status) throw err
+		return jsonError(500, `Failed to delete recipe: ${err.message}`)
 	}
 }
 
-// Handle post request to update an existing recipe
-// API Endpoint: /api/recipe/[uid].js
-
 export async function PUT({ request, locals, params, url }) {
-	const session = await locals.auth.validate()
-	const user = session?.user
+	const user = requireAuth(locals)
 	const formData = await request.formData()
-	// Retrieve and parse the 'recipe' field from the FormData
 	const recipeData = JSON.parse(formData.get('recipe'))
 	const imageData = formData.getAll('images')
-
-	// Now you have the 'recipe' data as an object
-	// console.log('Recipe Data:', recipeData)
-
 	const { uid } = params
 
-	// Parse fields fields directly in recipeData
 	recipeData.cook_time = recipeData.cook_time ? recipeData.cook_time.toString() : null
 	recipeData.prep_time = recipeData.prep_time ? recipeData.prep_time.toString() : null
 	recipeData.total_time = recipeData.total_time ? recipeData.total_time.toString() : null
 	recipeData.servings = recipeData.servings ? recipeData.servings.toString() : null
 
-	if (!session || !user) {
-		return new Response('User not authenticated!', {
-			status: 401,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
-	}
-
 	const recipeCategories = recipeData.categories || []
-	delete recipeData.categories // Remove the categories key from the main data object
+	delete recipeData.categories
 
 	// eslint-disable-next-line no-unused-vars
 	const recipePhotos = recipeData.photos || []
-	delete recipeData.photos // Remove the photos key from the main data object
+	delete recipeData.photos
 
 	const saveImageUrl = recipeData.saveImageUrl || false
 	delete recipeData.saveImageUrl
 
 	try {
 		const recipe = await prisma.recipe.findUnique({
-			where: { uid: uid }
+			where: { uid }
 		})
 
-		if (!recipe) {
-			console.log('Recipe not found!')
-			return new Response('Recipe not found!', {
-				status: 404,
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			})
-		}
-
-		if (recipe.userId !== user.userId) {
-			console.log('Unauthorised to update!')
-			return new Response('Unauthorized to update this recipe!', {
-				status: 401,
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			})
-		}
+		requireOwnership(user, recipe)
 
 		await prisma.recipe.update({
-			where: { uid: uid },
+			where: { uid },
 			data: recipeData
 		})
 
@@ -217,37 +151,21 @@ export async function PUT({ request, locals, params, url }) {
 			})
 		}
 
-		return new Response(JSON.stringify({ message: 'Recipe updated successfully' }), {
-			status: 200,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
-	} catch (error) {
-		console.error('Error updating recipe:', error)
-		return new Response(
-			{ error: `Failed to update recipe: ${error.message}` },
-			{
-				status: 500,
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			}
-		)
+		return jsonSuccess({ message: 'Recipe updated successfully' })
+	} catch (err) {
+		if (err.status) throw err
+		console.error('Error updating recipe:', err)
+		return jsonError(500, `Failed to update recipe: ${err.message}`)
 	}
 }
 
-// Handle GET request
 export async function GET({ params, locals }) {
-	const session = await locals.auth.validate()
-	const user = session?.user
+	const user = getOptionalUser(locals)
 	const { uid } = params
 
 	try {
 		const recipe = await prisma.recipe.findUnique({
-			where: {
-				uid: uid
-			},
+			where: { uid },
 			include: {
 				photos: {
 					select: {
@@ -262,46 +180,22 @@ export async function GET({ params, locals }) {
 			}
 		})
 
-		if (!recipe.is_public && (!session || !user) && !user.isAdmin) {
-			return new Response(JSON.stringify({ error: 'User not authenticated and recipe private.' }), {
-				status: 401,
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			})
-		}
-
 		if (!recipe) {
-			return new Response(JSON.stringify({ error: 'Recipe not found!' }), {
-				status: 404,
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			})
+			return jsonError(404, 'Recipe not found!')
 		}
-		if (!recipe.is_public && recipe.userId !== user.userId && !user.isAdmin) {
-			console.log('Unauthorised to view!')
-			return new Response(JSON.stringify({ error: 'Unauthorised!' }), {
-				status: 403,
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			})
-		}
-		// TODO: #41 Make this into a get categories function for reuse
 
-		return new Response(JSON.stringify(recipe), {
-			status: 200,
-			headers: {
-				'Content-Type': 'application/json'
+		// Check access: public recipes are accessible to all, private only to owner/admin
+		if (!recipe.is_public) {
+			if (!user) {
+				return jsonError(401, 'User not authenticated and recipe private.')
 			}
-		})
-	} catch (error) {
-		return new Response(JSON.stringify({ error: `Failed to fetch recipe: ${error.message}` }), {
-			status: 500,
-			headers: {
-				'Content-Type': 'application/json'
+			if (recipe.userId !== user.userId && !user.isAdmin) {
+				return jsonError(403, 'Unauthorised!')
 			}
-		})
+		}
+
+		return jsonSuccess(recipe)
+	} catch (err) {
+		return jsonError(500, `Failed to fetch recipe: ${err.message}`)
 	}
 }

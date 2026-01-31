@@ -8,20 +8,10 @@ import { processImage } from '$lib/utils/image/imageBackend'
 import { createRecipePhotoEntry, removeRecipePhotoEntry } from '$lib/utils/api'
 import { saveFile, validImageTypes } from '$lib/utils/import/importHelpers'
 import { fileTypeFromBuffer } from 'file-type'
+import { requireAuth, jsonSuccess, jsonError } from '$lib/server/authHelpers'
 
 export async function POST({ request, locals, url }) {
-	const session = await locals.auth.validate()
-	const user = session?.user
-
-	if (!session || !user) {
-		console.log('User not authenticated!')
-		return new Response(JSON.stringify({ error: 'User not authenticated.' }), {
-			status: 401,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
-	}
+	const user = requireAuth(locals)
 
 	const formData = await request.formData()
 	const recipeData = JSON.parse(formData.get('recipe'))
@@ -69,15 +59,7 @@ export async function POST({ request, locals, url }) {
 		})
 	} catch (err) {
 		console.log('Error: ' + err)
-		return new Response(
-			JSON.stringify({ error: `Failed to create recipe: ${err.message}` }),
-			{
-				status: 500,
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			}
-		)
+		return jsonError(500, `Failed to create recipe: ${err.message}`)
 	}
 
 	// Process remote image_url if it exists and user opted to save
@@ -122,15 +104,5 @@ export async function POST({ request, locals, url }) {
 		}
 	}
 
-	return new Response(
-		JSON.stringify({
-			uid: recipe.uid
-		}),
-		{
-			status: 200,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		}
-	)
+	return jsonSuccess({ uid: recipe.uid })
 }

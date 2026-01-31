@@ -1,19 +1,17 @@
 import { prisma } from '$lib/server/prisma'
+import { getOptionalUser, jsonSuccess, jsonError } from '$lib/server/authHelpers'
 
 export async function GET({ params, locals }) {
-	const requestedUserId = params.id // Extracting the uid from the request parameters
-
-	// Validate the requesting user's session and get their userId
-	const session = await locals.auth.validate()
-	const user = session?.user
+	const requestedUserId = params.id
+	const user = getOptionalUser(locals)
 
 	let whereClause = {
-		userId: requestedUserId // Ensure recipes belong to the requested user
+		userId: requestedUserId
 	}
 
 	// If the requesting user's ID doesn't match the requested ID, only fetch public recipes
 	if (!user || (user.userId !== requestedUserId && !user.isAdmin)) {
-		whereClause.is_public = true // Assuming `isPublic` is a field in your Recipe model indicating if a recipe is public or not
+		whereClause.is_public = true
 	}
 
 	try {
@@ -53,8 +51,8 @@ export async function GET({ params, locals }) {
 				log: true,
 				photos: {
 					orderBy: [
-						{ isMain: 'desc' }, // true first
-						{ id: 'asc' } // fallback to earliest if no isMain
+						{ isMain: 'desc' },
+						{ id: 'asc' }
 					],
 					select: {
 						id: true,
@@ -72,19 +70,9 @@ export async function GET({ params, locals }) {
 			}
 		})
 
-		return new Response(JSON.stringify(updatedRecipes), {
-			status: 200,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
-	} catch (error) {
-		console.error('Error fetching recipes:', error)
-		return new Response(JSON.stringify({ error: 'Failed to fetch recipes.', details: error.message }), {
-			status: 500,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
+		return jsonSuccess(updatedRecipes)
+	} catch (err) {
+		console.error('Error fetching recipes:', err)
+		return jsonError(500, `Failed to fetch recipes: ${err.message}`)
 	}
 }
