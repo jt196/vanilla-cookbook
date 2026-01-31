@@ -9,11 +9,10 @@ import { auth } from '$lib/server/lucia'
 /**
  * POST /api/site/seed
  *
- * Expects a JSON body with a "user" object:
+ * Expects a JSON body with an "adminUser" object:
  * {
- *   user: {
- *     adminName: string,
- *     adminUser: string,
+ *   adminUser: {
+ *     adminUsername: string,
  *     adminEmail: string,
  *     adminUnits: string,
  *     adminLanguage: string,
@@ -24,18 +23,10 @@ import { auth } from '$lib/server/lucia'
 export async function POST({ request }) {
 	try {
 		const { adminUser } = await request.json()
-		const {
-			adminName,
-			adminUsername,
-			adminEmail,
-			adminPassword,
-			adminUnits,
-			adminLanguage,
-			recipeSeed
-		} = adminUser
+		const { adminUsername, adminEmail, adminPassword, adminUnits, adminLanguage, recipeSeed } = adminUser
 
 		// Basic validation
-		if (!adminName || !adminUsername || !adminEmail || !adminPassword) {
+		if (!adminUsername || !adminEmail || !adminPassword) {
 			return new Response(JSON.stringify({ error: 'All fields are required.' }), {
 				status: 400,
 				headers: {
@@ -59,7 +50,6 @@ export async function POST({ request }) {
 				password: adminPassword
 			},
 			attributes: {
-				name: adminName,
 				username: adminUsername,
 				units: adminUnits,
 				language: adminLanguage,

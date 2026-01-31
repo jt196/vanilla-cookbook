@@ -90,18 +90,37 @@
 <Container>
 	<form onsubmit={updatePassword} class="flex flex-col gap-4 w-full md:w-1/2">
 		<h3>Update Password</h3>
-		<Input type="password" id="old" label="Old Password" bind:value={oldPass} />
-		<Input type="password" id="new" label="New Password" bind:value={newPass} />
-		{#if passwordRequirementsDescription}
-			<p class="text-sm text-base-content/70">{passwordRequirementsDescription}</p>
-		{/if}
-		<ValidationMessage
-			message={newPasswordValidation?.message}
-			isValid={newPasswordValidation?.isValid} />
-		<Input type="password" id="confirm" label="Confirm New Password" bind:value={newPassConfirm} />
-		<ValidationMessage
-			message={passwordsMismatch ? "Passwords don't match!" : null}
-			isError={true} />
+		<div class="flex flex-col gap-2">
+			<Input
+				type="password"
+				id="old"
+				label="Old Password"
+				placeholder="Old Password"
+				bind:value={oldPass} />
+		</div>
+		<div class="flex flex-col gap-2">
+			{#if passwordRequirementsDescription}
+				<p class="text-sm text-base-content/70">{passwordRequirementsDescription}</p>
+			{/if}
+			<Input
+				type="password"
+				id="new"
+				label="New Password"
+				placeholder="New Password"
+				bind:value={newPass} />
+			<Input
+				type="password"
+				id="confirm"
+				placeholder="Confirm New Password"
+				label="Confirm New Password"
+				bind:value={newPassConfirm} />
+			<ValidationMessage
+				message={newPasswordValidation?.message}
+				isValid={newPasswordValidation?.isValid} />
+			<ValidationMessage
+				message={passwordsMismatch ? "Passwords don't match!" : null}
+				isError={true} />
+		</div>
 		<Button type="submit" class="w-auto self-start" disabled={isSubmitDisabled}
 			>Update Password</Button>
 	</form>

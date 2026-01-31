@@ -83,6 +83,9 @@
 				</div>
 
 				<div>
+					{#if passwordRequirementsDescription}
+						<p class="text-sm text-base-content/70 mb-2">{passwordRequirementsDescription}</p>
+					{/if}
 					<Input
 						type="password"
 						id="password"
@@ -91,9 +94,6 @@
 						bind:value={password}
 						label="Password"
 						required />
-					{#if passwordRequirementsDescription}
-						<p class="text-sm text-base-content/70">{passwordRequirementsDescription}</p>
-					{/if}
 					<ValidationMessage
 						message={passwordValidation?.message}
 						isValid={passwordValidation?.isValid}

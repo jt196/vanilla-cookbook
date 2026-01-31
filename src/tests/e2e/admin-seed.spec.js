@@ -3,7 +3,6 @@ import { test, expect } from '@playwright/test'
 test.setTimeout(120_000)
 
 const admin = {
-	name: 'E2E Admin',
 	username: 'e2e_admin',
 	email: 'e2e_admin@example.com',
 	password: 'E2Epassw0rd!'
@@ -74,7 +73,6 @@ test('fresh install admin seed, login, and page smoke tests', async ({ page }, t
 	if (await setupHeading.isVisible()) {
 		await expect(setupHeading).toBeVisible()
 
-		await page.getByLabel('Name', { exact: true }).fill(admin.name)
 		await page.getByLabel('Username', { exact: true }).fill(admin.username)
 		await page.getByLabel('Email', { exact: true }).fill(admin.email)
 		await page.getByLabel('Password', { exact: true }).fill(admin.password)

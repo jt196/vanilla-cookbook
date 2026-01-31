@@ -8,7 +8,6 @@ export async function GET({ locals }) {
 		const usersWithRecipeCount = await prisma.authUser.findMany({
 			select: {
 				id: true,
-				name: true,
 				username: true,
 				email: true,
 				about: true,

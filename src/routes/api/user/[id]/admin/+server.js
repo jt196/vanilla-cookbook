@@ -65,7 +65,6 @@ export async function PUT({ request, locals, params }) {
 		const updatedUser = await prisma.authUser.update({
 			where: { id },
 			data: {
-				name: userData.name || updatingUser.name,
 				email: userData.email || updatingUser.email,
 				about: userData.about || updatingUser.about,
 				units: userData.units || updatingUser.units,

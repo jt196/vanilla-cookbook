@@ -63,7 +63,6 @@ After hooks processing, `event.locals` contains:
   user: {                      // null if not authenticated
     userId: string,
     username: string,
-    name: string,
     isAdmin: boolean,
     publicProfile: boolean,
     publicRecipes: boolean,
@@ -98,7 +97,6 @@ Primary user model with authentication and preference fields:
 model AuthUser {
   id             String    @id @unique
   username       String    @unique
-  name           String?
   email          String?   @unique
   isAdmin        Boolean   @default(false)
   isRoot         Boolean   @default(false)

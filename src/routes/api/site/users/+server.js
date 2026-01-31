@@ -13,7 +13,6 @@ export async function GET({ locals }) {
 				select: {
 					id: true,
 					username: true,
-					name: true,
 					_count: {
 						select: {
 							recipes: { where: { is_public: true } }
@@ -35,7 +34,6 @@ export async function GET({ locals }) {
 			return {
 				id: u.id,
 				username: u.username,
-				name: u.name,
 				publicRecipesCount: u._count.recipes,
 				totalRecipesCount: totalCount
 			}

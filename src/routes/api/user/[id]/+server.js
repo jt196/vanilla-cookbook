@@ -23,7 +23,6 @@ export async function PUT({ request, locals, params }) {
 		'ingExtra',
 		'ingSymbol',
 		'about',
-		'name',
 		'useCats'
 	]
 

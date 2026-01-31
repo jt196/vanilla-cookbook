@@ -14,7 +14,6 @@
 
 	const passwordEnv = $derived(buildPasswordEnv(passwordRequirements))
 
-	let adminName = $state('')
 	let adminUsername = $state('')
 	let adminUnits = $state('metric')
 	let adminLanguage = $state('eng')
@@ -33,8 +32,7 @@
 	)
 
 	let isSubmitDisabled = $derived(
-		!adminName ||
-			!adminUsername ||
+		!adminUsername ||
 			!adminEmail ||
 			(emailValidation && !emailValidation.isValid) ||
 			!adminPassword ||
@@ -47,7 +45,6 @@
 
 		const formData = {
 			adminUser: {
-				adminName,
 				adminUsername,
 				adminEmail,
 				adminPassword,
@@ -86,14 +83,6 @@
 				<form onsubmit={handleSubmit} method="POST" class="space-y-4">
 					<Input
 						type="text"
-						id="name"
-						placeholder="Jane Grigson"
-						label="Name"
-						bind:value={adminName}
-						name="name"
-						required />
-					<Input
-						type="text"
 						id="username"
 						placeholder="jgcooks"
 						label="Username"
@@ -113,6 +102,9 @@
 						isValid={emailValidation?.isValid}
 						isError={!emailValidation?.isValid}
 						hidden={!emailValidation?.message} />
+					{#if passwordRequirementsDescription}
+						<p class="text-sm text-base-content/70">{passwordRequirementsDescription}</p>
+					{/if}
 					<Input
 						type="password"
 						id="password"
@@ -121,9 +113,6 @@
 						bind:value={adminPassword}
 						name="password"
 						required />
-					{#if passwordRequirementsDescription}
-						<p class="text-sm text-base-content/70">{passwordRequirementsDescription}</p>
-					{/if}
 					<Input
 						type="password"
 						id="passwordConfirm"

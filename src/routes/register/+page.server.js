@@ -57,7 +57,7 @@ export const actions = {
 		try {
 			const user = await auth.createUser({
 				key: { providerId: 'username', providerUserId: username, password },
-				attributes: { name: username, username, about: '', email, isAdmin: false }
+				attributes: { username, about: '', email, isAdmin: false }
 			})
 
 			// Seed recipes if checkbox was checked
