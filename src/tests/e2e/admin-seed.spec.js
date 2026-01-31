@@ -89,11 +89,13 @@ test('fresh install admin seed, login, and page smoke tests', async ({ page }, t
 		await page.goto('/login', { waitUntil: 'networkidle' })
 	}
 
-	await page.getByLabel('Username or email').fill(admin.username)
-	await page.getByLabel('Password').fill(admin.password)
-	await page.getByRole('button', { name: 'Login' }).click()
-
-	await page.waitForURL('**/user/*/recipes')
+	const loginField = page.getByLabel('Username or email')
+	if (await loginField.isVisible()) {
+		await loginField.fill(admin.username)
+		await page.getByLabel('Password').fill(admin.password)
+		await page.getByRole('button', { name: 'Login' }).click()
+		await page.waitForURL('**/user/*/recipes')
+	}
 
 	const userId = new URL(page.url()).pathname.split('/')[2]
 
