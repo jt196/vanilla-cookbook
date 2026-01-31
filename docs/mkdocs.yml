@@ -61,6 +61,7 @@ nav:
   - Import/Export: manual/import.md
   - Roadmap: roadmap.md
   - Technical:
+      - Authentication: technical/authentication.md
       - General Utils: technical/utils.md
       - Image Utils: technical/utils_image.md
       - Import Utils: technical/utils_import.md

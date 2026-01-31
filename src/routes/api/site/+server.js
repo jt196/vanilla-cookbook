@@ -1,25 +1,12 @@
 import { prisma } from '$lib/server/prisma'
+import { requireAdmin, jsonSuccess, jsonError } from '$lib/server/authHelpers'
 
-const JSON_HEADERS = { 'Content-Type': 'application/json' }
-
-export const POST = async ({ request, locals }) => {
-	const session = await locals.auth.validate()
-	const user = session?.user
+export async function POST({ request, locals }) {
+	requireAdmin(locals)
 	const siteData = await request.json()
-	if (!session || !user) {
-		return new Response('User not authenticated!', { status: 401, headers: JSON_HEADERS })
-	}
 
-	if (!user.isAdmin) {
-		return new Response('Unauthorised to update this site settings!', {
-			status: 403,
-			headers: JSON_HEADERS
-		})
-	}
-
-	// Validate siteData before using
 	if (typeof siteData.registrationAllowed !== 'boolean') {
-		return new Response('Invalid input data', { status: 400, headers: JSON_HEADERS })
+		return jsonError(400, 'Invalid input data')
 	}
 
 	try {
@@ -30,14 +17,8 @@ export const POST = async ({ request, locals }) => {
 				registrationAllowed: siteData.registrationAllowed
 			}
 		})
-		return new Response(JSON.stringify(updatedSettings), { status: 200, headers: JSON_HEADERS })
-	} catch (error) {
-		return new Response(
-			JSON.stringify({ error: `Failed to update site settings: ${error.message}` }),
-			{
-				status: 500,
-				headers: JSON_HEADERS
-			}
-		)
+		return jsonSuccess(updatedSettings)
+	} catch (err) {
+		return jsonError(500, `Failed to update site settings: ${err.message}`)
 	}
 }

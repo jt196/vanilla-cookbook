@@ -3,6 +3,7 @@ import { prisma } from '$lib/server/prisma'
 import { fail, redirect } from '@sveltejs/kit'
 import { validatePassword } from '$lib/utils/security.js'
 import { seedRecipes } from '$lib/utils/seed/seedHelpers.js'
+import { env } from '$env/dynamic/private'
 
 export const load = async ({ locals }) => {
 	const user = locals.user
@@ -43,7 +44,7 @@ export const actions = {
 		}
 
 		// Validate password
-		const passwordValidation = validatePassword(password)
+		const passwordValidation = validatePassword(password, env)
 		if (!passwordValidation.isValid) {
 			return fail(400, { message: passwordValidation.message })
 		}
@@ -56,7 +57,7 @@ export const actions = {
 		try {
 			const user = await auth.createUser({
 				key: { providerId: 'username', providerUserId: username, password },
-				attributes: { name: username, username, about: '', email, isAdmin: false }
+				attributes: { username, about: '', email, isAdmin: false }
 			})
 
 			// Seed recipes if checkbox was checked

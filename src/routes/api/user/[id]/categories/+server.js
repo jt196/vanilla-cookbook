@@ -1,42 +1,27 @@
 import { prisma } from '$lib/server/prisma'
+import { error } from '@sveltejs/kit'
 import { buildHierarchy } from '$lib/utils/categories.js'
 import { sortByNameRecursive } from '$lib/utils/sorting.js'
+import { requireAuth, jsonSuccess, jsonError } from '$lib/server/authHelpers'
 
-// Handle GET request
 export async function GET({ params, locals }) {
-	const session = await locals.auth.validate()
-	const user = session?.user
+	const user = requireAuth(locals)
 	const { id } = params
-	if (!session || !user || user.userId !== id) {
-		return new Response(JSON.stringify({ error: 'User not authenticated or wrong user.' }), {
-			status: 403,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
+
+	if (user.userId !== id) {
+		throw error(403, 'Unauthorized to view categories')
 	}
+
 	try {
 		const categories = await prisma.category.findMany({
-			where: {
-				userId: id // Assuming you have a userId field in your Category model
-			}
+			where: { userId: id }
 		})
 		const sortedCategories = sortByNameRecursive(categories)
 		const hierarchicalCategories = buildHierarchy(sortedCategories)
-		// return new Response(JSON.stringify(hierarchicalCategories), { status: 200 })
-		return new Response(JSON.stringify(hierarchicalCategories), {
-			status: 200,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
-	} catch (error) {
-		console.error(error)
-		return new Response(JSON.stringify({ error: 'Failed to fetch categories.' }), {
-			status: 500,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
+
+		return jsonSuccess(hierarchicalCategories)
+	} catch (err) {
+		console.error(err)
+		return jsonError(500, 'Failed to fetch categories.')
 	}
 }

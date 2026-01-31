@@ -3,171 +3,78 @@ import { importPaprikaRecipes } from '$lib/utils/import/paprika/paprikaFileImpor
 import { fileTypeFromBuffer } from 'file-type'
 import fs from 'fs'
 import path from 'path'
+import { requireAuth, jsonSuccess, jsonError } from '$lib/server/authHelpers'
 
-// Gets a list of .paprikarecipes files in the uploads/imports folder
 export async function GET({ locals }) {
-	const session = await locals.auth.validate()
-	const user = session?.user
-	if (!session || !user) {
-		return new Response(JSON.stringify({ error: 'User not authenticated.' }), {
-			status: 401,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
-	}
+	const user = requireAuth(locals)
 
 	try {
 		const directory = 'uploads/imports'
-
-		// Read the directory
 		const files = fs.readdirSync(directory)
 
-		// Filter out filenames with the .paprikarecipes extension
-		// Filter out filenames that start with userId and have the .paprikarecipes extension
 		const paprikaFiles = files
 			.filter((file) => file.startsWith(user.userId) && path.extname(file) === '.paprikarecipes')
 			.map((file) => file.replace(`${user.userId}_`, ''))
 
-		return new Response(JSON.stringify({ files: paprikaFiles }), {
-			status: 200,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
-	} catch (error) {
-		console.error('Error reading the directory', error)
-		return new Response(JSON.stringify({ error: 'Failed to read the directory.' }), {
-			status: 500,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
+		return jsonSuccess({ files: paprikaFiles })
+	} catch (err) {
+		console.error('Error reading the directory', err)
+		return jsonError(500, 'Failed to read the directory.')
 	}
 }
 
-// Uploads a .paprikarecipes zip file to the uploads/import folder
 export async function PUT({ request, locals }) {
-	const session = await locals.auth.validate()
-	const user = session?.user
-	if (!session || !user) {
-		return new Response(JSON.stringify({ error: 'User not authenticated.' }), {
-			status: 401,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
-	}
+	const user = requireAuth(locals)
 
 	const formData = await request.formData()
 	const paprikaFile = formData.get('paprikaFile')
 
-	if (paprikaFile) {
-		try {
-			const fileBuffer = await paprikaFile.arrayBuffer()
-			const fileTypeResult = await fileTypeFromBuffer(fileBuffer)
-
-			// Ensure that the file type is 'zip'
-			if (!fileTypeResult || fileTypeResult.ext !== 'zip') {
-				return new Response(JSON.stringify({ error: 'Invalid file type.' }), {
-					status: 400,
-					headers: {
-						'Content-Type': 'application/json'
-					}
-				})
-			}
-
-			// Specify the directory where you want to save the file
-			const directory = 'uploads/imports'
-			// Change the filename to userId_recipes.paprikarecipes
-			// const filename = `${user.userId}_recipes.paprikarecipes`
-			// Use the original filename
-			const filename = `${user.userId}_${paprikaFile.name}`
-			// Save the paprika file
-			await saveFile(fileBuffer, filename, directory)
-
-			return new Response(JSON.stringify({ success: 'File uploaded successfully!' }), {
-				status: 200,
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			})
-		} catch (error) {
-			console.error('Error processing file', error)
-			return new Response(JSON.stringify({ error: 'Failed to save file.' }), {
-				status: 500,
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			})
-		}
+	if (!paprikaFile) {
+		return jsonError(400, 'No file provided.')
 	}
 
-	// If no file was provided, you might want to handle this case too.
-	return new Response(JSON.stringify({ error: 'No file provided.' }), {
-		status: 400,
-		headers: {
-			'Content-Type': 'application/json'
+	try {
+		const fileBuffer = await paprikaFile.arrayBuffer()
+		const fileTypeResult = await fileTypeFromBuffer(fileBuffer)
+
+		if (!fileTypeResult || fileTypeResult.ext !== 'zip') {
+			return jsonError(400, 'Invalid file type.')
 		}
-	})
+
+		const directory = 'uploads/imports'
+		const filename = `${user.userId}_${paprikaFile.name}`
+		await saveFile(fileBuffer, filename, directory)
+
+		return jsonSuccess({ success: 'File uploaded successfully!' })
+	} catch (err) {
+		console.error('Error processing file', err)
+		return jsonError(500, 'Failed to save file.')
+	}
 }
 
 export async function POST({ request, locals }) {
-	const session = await locals.auth.validate()
-	const user = session?.user
-	if (!session || !user) {
-		return new Response(JSON.stringify({ error: 'User not authenticated.' }), {
-			status: 401,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
-	}
+	const user = requireAuth(locals)
 
 	try {
 		const requestData = await request.json()
 		const filename = `${user.userId}_${requestData.filename}`
 		const isPublic = requestData.isPublic
-		if (!filename) {
-			return new Response(JSON.stringify({ error: 'Filename is required.' }), {
-				status: 400,
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			})
+
+		if (!requestData.filename) {
+			return jsonError(400, 'Filename is required.')
 		}
 
-		// Importing the paprika file
 		const importedCount = await importPaprikaRecipes(user.userId, filename, isPublic)
 		if (importedCount.count >= 0) {
-			return new Response(
-				JSON.stringify({
-					success: importedCount.message,
-					count: importedCount.count
-				}),
-				{
-					status: 200,
-					headers: {
-						'Content-Type': 'application/json'
-					}
-				}
-			)
-		} else {
-			// Handle errors from the importPaprikaData function, if any
-			return new Response(JSON.stringify({ error: 'Failed to import paprika data.' }), {
-				status: 500,
-				headers: {
-					'Content-Type': 'application/json'
-				}
+			return jsonSuccess({
+				success: importedCount.message,
+				count: importedCount.count
 			})
+		} else {
+			return jsonError(500, 'Failed to import paprika data.')
 		}
-	} catch (error) {
-		console.error('Error processing the request', error)
-		return new Response(JSON.stringify({ error: 'Failed to process the request.' }), {
-			status: 500,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
+	} catch (err) {
+		console.error('Error processing the request', err)
+		return jsonError(500, 'Failed to process the request.')
 	}
 }

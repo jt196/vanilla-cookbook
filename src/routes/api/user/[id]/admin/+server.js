@@ -1,19 +1,11 @@
 import { prisma } from '$lib/server/prisma'
 import { auth } from '$lib/server/lucia'
 import { validatePassword } from '$lib/utils/security.js'
+import { requireAdmin, jsonSuccess, jsonError } from '$lib/server/authHelpers'
+import { env } from '$env/dynamic/private'
 
-export const PUT = async ({ request, locals, params }) => {
-	const session = await locals.auth.validate()
-	const user = session?.user
-
-	if (!session || !user || !user.isAdmin) {
-		return new Response(JSON.stringify({ error: 'Admin only!' }), {
-			status: 403,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
-	}
+export async function PUT({ request, locals, params }) {
+	const user = requireAdmin(locals)
 
 	const bodyText = await request.text()
 	const userData = JSON.parse(bodyText)
@@ -21,119 +13,58 @@ export const PUT = async ({ request, locals, params }) => {
 
 	try {
 		const updatingUser = await prisma.authUser.findUnique({
-			where: { id: id }
+			where: { id }
 		})
 		if (!updatingUser) {
-			console.log('User not found!')
-			return new Response('User not found!', {
-				status: 404,
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			})
-		}
-
-		if (!user.isAdmin && updatingUser.id !== user.userId) {
-			console.log('Unauthorised to update this user!')
-			return new Response('Unauthorised to update this user!', {
-				status: 401,
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			})
+			return jsonError(404, 'User not found!')
 		}
 
 		// Update the user's password
 		if (userData.password) {
-			console.log('Attempting password update!')
-			const passwordValidation = validatePassword(userData.password)
-			if (passwordValidation.isValid) {
-				try {
-					// Reset user password
-					await auth.updateKeyPassword('username', userData.username, userData.password)
-					console.log('1st invalidate session: ', userData)
-					console.log('1st invalidate session: ', user)
-					// Invalidate all of the user's sessions
-					await auth.invalidateAllUserSessions(id)
-					// If the admin user has reset their own password, create a new session and set a new session cookie
-					if (user.userId === id) {
-						try {
-							// // Create a new session for the user
-							// const newSession = await auth.createSession(user.id)
-							const newSession = await auth.createSession({
-								userId: user.id,
-								attributes: {}
-							})
-							locals.auth.setSession(newSession)
+			const passwordValidation = validatePassword(userData.password, env)
+			if (!passwordValidation.isValid) {
+				return jsonError(400, passwordValidation.message)
+			}
 
-							return new Response(JSON.stringify({ message: 'Password updated successfully' }), {
-								status: 200,
-								headers: {
-									'Content-Type': 'application/json'
-								}
-							})
-						} catch (e) {
-							if (e.name === 'LuciaError' && e.message === 'AUTH_INVALID_USER_ID') {
-								console.log('LuciaError: ' + e.message)
-								console.error('Invalid user id:', id)
-								return new Response(JSON.stringify({ error: 'Invalid user id.' }), {
-									status: 400,
-									headers: {
-										'Content-Type': 'application/json'
-									}
-								})
-							} else {
-								console.error('Unexpected error while creating session:', e)
-								return new Response(JSON.stringify({ error: 'Unexpected error.' }), {
-									status: 500,
-									headers: {
-										'Content-Type': 'application/json'
-									}
-								})
-							}
+			try {
+				await auth.updateKeyPassword('username', userData.username, userData.password)
+				await auth.invalidateAllUserSessions(id)
+
+				if (user.userId === id) {
+					try {
+						const newSession = await auth.createSession({
+							userId: user.userId,
+							attributes: {}
+						})
+						locals.auth.setSession(newSession)
+						return jsonSuccess({ message: 'Password updated successfully' })
+					} catch (e) {
+						if (e.name === 'LuciaError' && e.message === 'AUTH_INVALID_USER_ID') {
+							console.error('Invalid user id:', id)
+							return jsonError(400, 'Invalid user id.')
 						}
+						console.error('Unexpected error while creating session:', e)
+						return jsonError(500, 'Unexpected error.')
 					}
-				} catch (e) {
-					console.log('Error changing password: ' + e)
 				}
-			} else {
-				return new Response(JSON.stringify({ error: passwordValidation.message }), {
-					status: 400,
-					headers: {
-						'Content-Type': 'application/json'
-					}
-				})
+			} catch (e) {
+				console.log('Error changing password: ' + e)
 			}
 		}
 
 		// Check if this user is the only admin
-		if ('isAdmin' in userData) {
-			if (updatingUser.isAdmin) {
-				const adminCount = await prisma.authUser.count({
-					where: {
-						isAdmin: true
-					}
-				})
-				// Return error if they are the only admin
-				if (adminCount === 1 && !userData.isAdmin) {
-					return new Response(
-						JSON.stringify({ error: "The only admin user can't make themselves non-admin." }),
-						{
-							status: 400,
-							headers: {
-								'Content-Type': 'application/json'
-							}
-						}
-					)
-				}
+		if ('isAdmin' in userData && updatingUser.isAdmin) {
+			const adminCount = await prisma.authUser.count({
+				where: { isAdmin: true }
+			})
+			if (adminCount === 1 && !userData.isAdmin) {
+				return jsonError(400, "The only admin user can't make themselves non-admin.")
 			}
 		}
-		// Updating the user object with a fallback if the value doesn't exist
-		// Note the different format for boolean values
+
 		const updatedUser = await prisma.authUser.update({
-			where: { id: id },
+			where: { id },
 			data: {
-				name: userData.name || updatingUser.name,
 				email: userData.email || updatingUser.email,
 				about: userData.about || updatingUser.about,
 				units: userData.units || updatingUser.units,
@@ -153,135 +84,59 @@ export const PUT = async ({ request, locals, params }) => {
 				useCats: 'useCats' in userData ? userData.useCats : updatingUser.useCats
 			}
 		})
-		// if the user being edited is the current user, update the session
-		if (user.isAdmin && user.userId === id) {
-			// Invalidate all of the user's sessions
-			console.log('2nd invalidate session: ', userData)
-			console.log('2nd invalidate session: ', user)
-			await auth.invalidateAllUserSessions(id)
 
-			// // Create a new session for the user
+		if (user.userId === id) {
+			await auth.invalidateAllUserSessions(id)
 			const newSession = await auth.createSession({
 				userId: id,
 				attributes: {}
 			})
 			locals.auth.setSession(newSession)
-			return new Response(
-				JSON.stringify({ message: 'Role updated successfully. Please log in again.' }),
-				{
-					status: 200,
-					headers: {
-						'Content-Type': 'application/json'
-					}
-				}
-			)
+			return jsonSuccess({ message: 'Role updated successfully. Please log in again.' })
 		} else {
-			console.log('3rd invalidate session (current user): ', user)
-			console.log('3rd invalidate session (editing user): ', userData)
-			// Invalidate all of the user's sessions
 			await auth.invalidateAllUserSessions(id)
-			return new Response(JSON.stringify(updatedUser), {
-				status: 200,
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			})
+			return jsonSuccess(updatedUser)
 		}
-	} catch (error) {
-		// console.error('Error updating user:', error)
-		// Check for duplicate entry errors from Prisma
-		if (error.code === 'P2002') {
-			if (error.meta?.target?.includes('username')) {
-				// console.error('Duplicate username error:', error)
-				return new Response(JSON.stringify({ error: 'Username already taken!' }), {
-					status: 400,
-					headers: { 'Content-Type': 'application/json' }
-				})
-			} else if (error.meta?.target?.includes('email')) {
-				// console.error('Duplicate email error:', error)
-				return new Response(JSON.stringify({ error: 'Email already taken!' }), {
-					status: 400,
-					headers: { 'Content-Type': 'application/json' }
-				})
+	} catch (err) {
+		if (err.code === 'P2002') {
+			if (err.meta?.target?.includes('username')) {
+				return jsonError(400, 'Username already taken!')
+			} else if (err.meta?.target?.includes('email')) {
+				return jsonError(400, 'Email already taken!')
 			}
 		}
-		return new Response(JSON.stringify({ error: `Failed to update user: ${error.message}` }), {
-			status: 500,
-			headers: { 'Content-Type': 'application/json' }
-		})
+		return jsonError(500, `Failed to update user: ${err.message}`)
 	}
 }
 
 export async function DELETE({ params, locals }) {
+	const user = requireAdmin(locals)
 	const { id } = params
 
-	const session = await locals.auth.validate()
-	const user = session?.user
-
-	if (!session || !user || !user.isAdmin) {
-		return new Response(JSON.stringify({ error: 'Admin only!' }), {
-			status: 403,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
-	}
-
 	const deletingUser = await prisma.authUser.findUnique({
-		where: { id: id }
+		where: { id }
 	})
 
-	// Error if user tries to delete themself
+	if (!deletingUser) {
+		return jsonError(404, 'User not found!')
+	}
+
 	if (user.userId === id) {
-		console.log('Cannot delete yourself!')
-		return new Response('Cannot delete yourself!', {
-			status: 401,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
+		return jsonError(400, 'Cannot delete yourself!')
 	}
 
-	// Error if user is not admin
-	if (!user.isAdmin) {
-		console.log('Unauthorised to delete this user!')
-		return new Response('Unauthorised to delete this user!', {
-			status: 401,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
-	}
-
-	// Error if user is root
 	if (deletingUser.isRoot) {
-		console.log('Unauthorised to delete root user!')
-		return new Response('Cannot delete root user!', {
-			status: 401,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
+		return jsonError(403, 'Cannot delete root user!')
 	}
+
 	try {
-		console.log('Attempting to delete user!')
 		await auth.deleteUser(id)
-		return new Response(JSON.stringify('User successfully deleted!.'), {
-			status: 200,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
+		return jsonSuccess({ message: 'User successfully deleted!' })
 	} catch (e) {
 		console.log('Error: ' + e)
 		if (e.name === 'LuciaError') {
 			console.log('LuciaError: ' + e.message)
 		}
-		return new Response(JSON.stringify({ error: 'An unexpected error occurred.' }), {
-			status: 500,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
+		return jsonError(500, 'An unexpected error occurred.')
 	}
 }

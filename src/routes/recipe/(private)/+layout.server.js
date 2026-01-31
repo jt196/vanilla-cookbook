@@ -1,14 +1,11 @@
-import { redirect } from '@sveltejs/kit'
+import { requireUser } from '$lib/server/authPage'
 
 export const load = async ({ locals, params }) => {
-	const user = locals.user
-	if (!user) {
-		throw redirect(302, '/login')
-	}
+	const user = requireUser(locals)
 
 	const ai = locals.site.ai
-	const units = locals.user?.units || 'metric'
-	const language = locals.user?.language || 'eng'
+	const units = user?.units || 'metric'
+	const language = user?.language || 'eng'
 
 	return {
 		aiEnabled: ai.aiEnabled,

@@ -1,8 +1,8 @@
 <script>
-	import { goto } from '$app/navigation'
+	import { goto, invalidateAll } from '$app/navigation'
 	import Spinner from '$lib/components/ui/Spinner.svelte'
 	import { systems, languages } from '$lib/utils/config.js'
-	import { validatePasswords, validateEmail } from '$lib/utils/security.js'
+	import { validatePasswords, validateEmail, buildPasswordEnv } from '$lib/utils/security.js'
 	import Input from '$lib/components/ui/Form/Input.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Checkbox from '$lib/components/ui/Form/Checkbox.svelte'
@@ -10,9 +10,10 @@
 	import ValidationMessage from '$lib/components/ui/Form/ValidationMessage.svelte'
 
 	let { data } = $props()
-	const { dbSeed } = data
+	const { dbSeed, passwordRequirements, passwordRequirementsDescription } = data
 
-	let adminName = $state('')
+	const passwordEnv = $derived(buildPasswordEnv(passwordRequirements))
+
 	let adminUsername = $state('')
 	let adminUnits = $state('metric')
 	let adminLanguage = $state('eng')
@@ -26,13 +27,12 @@
 	let emailValidation = $derived(adminEmail ? validateEmail(adminEmail) : null)
 	let passwordValidation = $derived(
 		adminPassword || adminPasswordConfirm
-			? validatePasswords(adminPassword, adminPasswordConfirm || adminPassword)
+			? validatePasswords(adminPassword, adminPasswordConfirm || adminPassword, passwordEnv)
 			: null
 	)
 
 	let isSubmitDisabled = $derived(
-		!adminName ||
-			!adminUsername ||
+		!adminUsername ||
 			!adminEmail ||
 			(emailValidation && !emailValidation.isValid) ||
 			!adminPassword ||
@@ -45,7 +45,6 @@
 
 		const formData = {
 			adminUser: {
-				adminName,
 				adminUsername,
 				adminEmail,
 				adminPassword,
@@ -64,7 +63,8 @@
 			const result = await res.json()
 			if (res.ok && result.success) {
 				spinnerVisible = false // Hide the spinner before redirecting
-				goto(`/login`)
+				await invalidateAll()
+				await goto(`/user/${result.id}/recipes`, { invalidateAll: true })
 			} else {
 				console.error('Error seeding DB:', result.error)
 			}
@@ -82,14 +82,6 @@
 				<p class="text-base-content/70 mb-4">Let's get cooking! Create your account:</p>
 
 				<form onsubmit={handleSubmit} method="POST" class="space-y-4">
-					<Input
-						type="text"
-						id="name"
-						placeholder="Jane Grigson"
-						label="Name"
-						bind:value={adminName}
-						name="name"
-						required />
 					<Input
 						type="text"
 						id="username"
@@ -111,6 +103,9 @@
 						isValid={emailValidation?.isValid}
 						isError={!emailValidation?.isValid}
 						hidden={!emailValidation?.message} />
+					{#if passwordRequirementsDescription}
+						<p class="text-sm text-base-content/70">{passwordRequirementsDescription}</p>
+					{/if}
 					<Input
 						type="password"
 						id="password"

@@ -1,22 +1,10 @@
 import { prisma } from '$lib/server/prisma'
+import { requireAuth, requireOwnership, jsonSuccess, jsonError } from '$lib/server/authHelpers'
 
-// Handle recipe log creation
 export async function POST({ locals, params, request }) {
-	const session = await locals.auth.validate()
-	const user = session?.user
-
+	const user = requireAuth(locals)
 	const { uid } = params
-	let recipeLog
-	if (!session || !user) {
-		return new Response(JSON.stringify({ error: 'User not authenticated!' }), {
-			status: 401,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
-	}
 
-	// Parse optional note and scale from request body
 	let note = null
 	let scale = 1
 	try {
@@ -30,7 +18,7 @@ export async function POST({ locals, params, request }) {
 	try {
 		const cookedTime = new Date()
 		const cookedEndTime = new Date(cookedTime.getTime() + 180 * 60 * 1000)
-		recipeLog = await prisma.RecipeLog.create({
+		const recipeLog = await prisma.RecipeLog.create({
 			data: {
 				recipeUid: uid,
 				userId: user.userId,
@@ -40,92 +28,32 @@ export async function POST({ locals, params, request }) {
 				scale
 			}
 		})
+		return jsonSuccess({ recipeLog })
 	} catch (err) {
 		console.log('Error: ' + err)
-		return new Response(
-			JSON.stringify({ err: `Failed to add recipe log: ${err.message}` }),
-			{
-				status: 500,
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			}
-		)
+		return jsonError(500, `Failed to add recipe log: ${err.message}`)
 	}
-	return new Response(
-		JSON.stringify({
-			recipeLog
-		}),
-		{
-			status: 200,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		}
-	)
 }
 
-// Handle GET request
 export async function GET({ params, locals }) {
-	const session = await locals.auth.validate()
-	const user = session?.user
+	const user = requireAuth(locals)
 	const { uid } = params
 
 	try {
 		const recipe = await prisma.recipe.findUnique({
-			where: {
-				uid: uid
-			}
+			where: { uid }
 		})
-		if (!recipe.is_public && (!session || !user)) {
-			return new Response(JSON.stringify({ error: 'User not authenticated!' }), {
-				status: 401,
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			})
-		}
-		if (recipe.userId !== user.userId) {
-			return new Response(
-				JSON.stringify({ error: 'Recipe does not belong to authenticated user.' }),
-				{
-					status: 401,
-					headers: {
-						'Content-Type': 'application/json'
-					}
-				}
-			)
-		}
-	} catch (error) {
-		return new Response(JSON.stringify({ error: `Failed to find recipe: ${error.message}` }), {
-			status: 500,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
-	}
 
-	try {
+		requireOwnership(user, recipe)
+
 		const recipeLogs = await prisma.RecipeLog.findMany({
-			where: {
-				recipeUid: uid
-			},
-			orderBy: {
-				cooked: 'desc'
-			}
+			where: { recipeUid: uid },
+			orderBy: { cooked: 'desc' }
 		})
-		return new Response(JSON.stringify(recipeLogs), {
-			status: 200,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
-	} catch (error) {
-		return new Response(JSON.stringify({ error: `Failed to fetch recipe: ${error.message}` }), {
-			status: 500,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
+
+		return jsonSuccess(recipeLogs)
+	} catch (err) {
+		if (err.status) throw err
+		return jsonError(500, `Failed to fetch recipe logs: ${err.message}`)
 	}
 }

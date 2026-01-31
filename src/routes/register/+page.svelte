@@ -1,6 +1,6 @@
 <script>
 	import { enhance } from '$app/forms'
-	import { validatePasswords, validateEmail } from '$lib/utils/security.js'
+	import { validatePasswords, validateEmail, buildPasswordEnv } from '$lib/utils/security.js'
 	import FeedbackMessage from '$lib/components/ui/FeedbackMessage.svelte'
 	import ValidationMessage from '$lib/components/ui/Form/ValidationMessage.svelte'
 	import Input from '$lib/components/ui/Form/Input.svelte'
@@ -10,7 +10,7 @@
 
 	let { data, form } = $props()
 
-	const { oauth } = $state(data)
+	const { oauth, passwordRequirements, passwordRequirementsDescription } = $state(data)
 
 	let { oauthEnabled, googleEnabled, githubEnabled } = $state(oauth)
 
@@ -22,12 +22,14 @@
 	let passwordConfirm = $state('')
 	let seedRecipes = $state(true)
 
+	const passwordEnv = $derived(buildPasswordEnv(passwordRequirements))
+
 	// Email validation
 	let emailValidation = $derived(email ? validateEmail(email) : null)
 
 	// Password validation
 	let passwordValidation = $derived(
-		password || passwordConfirm ? validatePasswords(password, passwordConfirm) : null
+		password || passwordConfirm ? validatePasswords(password, passwordConfirm, passwordEnv) : null
 	)
 
 	// Disable submit if any validation fails
@@ -81,6 +83,9 @@
 				</div>
 
 				<div>
+					{#if passwordRequirementsDescription}
+						<p class="text-sm text-base-content/70 mb-2">{passwordRequirementsDescription}</p>
+					{/if}
 					<Input
 						type="password"
 						id="password"
@@ -89,10 +94,6 @@
 						bind:value={password}
 						label="Password"
 						required />
-					<ValidationMessage
-						message={passwordValidation?.message}
-						isValid={passwordValidation?.isValid}
-						hidden={!passwordValidation?.message} />
 				</div>
 
 				<div>

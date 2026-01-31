@@ -1,23 +1,13 @@
 import { prisma } from '$lib/server/prisma'
+import { requireAuth, jsonSuccess, jsonError } from '$lib/server/authHelpers'
 
 export async function POST({ request, locals }) {
-	const session = await locals.auth.validate()
-	const user = session?.user
-
-	if (!session || !user) {
-		return new Response(JSON.stringify({ error: 'User not authenticated.' }), {
-			status: 401,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
-	}
+	const user = requireAuth(locals)
 
 	const bodyText = await request.text()
 	const ingredient = JSON.parse(bodyText)
 
 	try {
-		// Use Prisma to add the ingredient to the shopping list, associated with a user
 		const newItem = await prisma.shoppingListItem.create({
 			data: {
 				name: ingredient.ingredient,
@@ -28,39 +18,16 @@ export async function POST({ request, locals }) {
 			}
 		})
 
-		// Construct and return the response using the Response object
-		return new Response(JSON.stringify(newItem), {
-			status: 200, // HTTP status code
-			headers: {
-				'Content-Type': 'application/json' // Set the Content-Type header
-			}
-		})
+		return jsonSuccess(newItem)
 	} catch (error) {
-		// Handle potential errors, such as database issues
 		console.error('Failed to add ingredient to shopping list:', error)
-
-		// Return an error response
-		return new Response(JSON.stringify({ error: 'Failed to add ingredient to shopping list' }), {
-			status: 500, // Internal Server Error
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
+		return jsonError(500, 'Failed to add ingredient to shopping list')
 	}
 }
 
-export const GET = async ({ locals }) => {
-	const session = await locals.auth.validate()
-	const user = session?.user
+export async function GET({ locals }) {
+	const user = requireAuth(locals)
 
-	if (!session || !user) {
-		return new Response(JSON.stringify({ error: 'User not authenticated.' }), {
-			status: 401,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
-	}
 	try {
 		const shoppingList = await prisma.shoppingListItem.findMany({
 			where: {
@@ -84,49 +51,26 @@ export const GET = async ({ locals }) => {
 			}
 		})
 
-		// Add purchaseCount to each item
 		const shoppingListWithCounts = shoppingList.map((item) => ({
 			...item,
 			purchaseCount: item.purchaseLogs?.length || 0
 		}))
 
-		return new Response(JSON.stringify(shoppingListWithCounts), {
-			status: 200,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
+		return jsonSuccess(shoppingListWithCounts)
 	} catch (error) {
 		console.error(error)
-		return new Response(JSON.stringify({ error: 'Failed to fetch shopping list.' }), {
-			status: 500,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
+		return jsonError(500, 'Failed to fetch shopping list.')
 	}
 }
 
 export async function PATCH({ request, locals }) {
-	const session = await locals.auth.validate()
-	const user = session?.user
-
-	if (!session || !user) {
-		return new Response(JSON.stringify({ error: 'User not authenticated.' }), {
-			status: 401,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
-	}
+	const user = requireAuth(locals)
 
 	const bodyText = await request.text()
 	const { uid, purchased, name, quantity, unit } = JSON.parse(bodyText)
-	// Start constructing the data object with the purchased field
 	let updateData = { purchased, name, quantity, unit }
 
 	try {
-		// Get the current item to check if purchased status is changing
 		const currentItem = await prisma.shoppingListItem.findUnique({
 			where: { uid }
 		})
@@ -144,7 +88,6 @@ export async function PATCH({ request, locals }) {
 			}
 		})
 
-		// Log purchase if item is being marked as purchased (and wasn't already)
 		if (purchased && !currentItem?.purchased) {
 			await prisma.purchaseLog.create({
 				data: {
@@ -161,20 +104,9 @@ export async function PATCH({ request, locals }) {
 			where: { shoppingItemUid: uid }
 		})
 
-		return new Response(JSON.stringify({ ...updatedItem, purchaseCount }), {
-			status: 200,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
+		return jsonSuccess({ ...updatedItem, purchaseCount })
 	} catch (error) {
 		console.error('Failed to update shopping list item:', error)
-
-		return new Response(JSON.stringify({ error: 'Failed to update shopping list item' }), {
-			status: 500,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
+		return jsonError(500, 'Failed to update shopping list item')
 	}
 }

@@ -1,84 +1,49 @@
+import { error } from '@sveltejs/kit'
 import { auth } from '$lib/server/lucia'
 import { prisma } from '$lib/server/prisma'
 import { validatePassword } from '$lib/utils/security.js'
+import { requireAuth, jsonSuccess, jsonError } from '$lib/server/authHelpers'
+import { env } from '$env/dynamic/private'
 
-// eslint-disable-next-line no-unused-vars
-export const POST = async ({ request, locals, params }) => {
-	const session = await locals.auth.validate()
-	const user = session?.user
+export async function POST({ request, locals, params }) {
+	const user = requireAuth(locals)
 	const userId = params.id
 
-	if (!session || !user || user.userId !== userId) {
-		return new Response(JSON.stringify({ error: 'User not authenticated or wrong user.' }), {
-			status: 403,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
+	if (user.userId !== userId) {
+		throw error(403, 'Unauthorized to change this password')
 	}
 
 	const body = await request.json()
-
 	const { oldPass, newPass, newPassConfirm } = body
 
 	const updatingUser = await prisma.authUser.findUnique({
-		where: {
-			id: userId
-		}
+		where: { id: userId }
 	})
 	const username = updatingUser.username
 
 	if (newPass !== newPassConfirm) {
-		return new Response('Passwords do not match!', {
-			status: 400,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
+		return jsonError(400, 'Passwords do not match!')
 	}
 
 	try {
-		// Verify the old password
 		await auth.useKey('username', username, oldPass)
 	} catch (err) {
-		return new Response(JSON.stringify({ error: 'Old password is incorrect!' }), {
-			status: 401,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
+		return jsonError(401, 'Old password is incorrect!')
 	}
-	const passwordValidation = validatePassword(newPass)
-	if (passwordValidation.isValid) {
-		try {
-			// Update the user's password
-			await auth.updateKeyPassword('username', username, newPass)
 
-			// Return success response - keep user logged in with current session
-			return new Response(JSON.stringify({ message: 'Password updated successfully' }), {
-				status: 200,
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			})
-		} catch (e) {
-			console.log('Error: ' + e)
-			if (e.name === 'LuciaError') {
-				console.log('LuciaError: ' + e.message)
-			}
-			return new Response(JSON.stringify({ error: 'An unexpected error occurred.' }), {
-				status: 500,
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			})
+	const passwordValidation = validatePassword(newPass, env)
+	if (!passwordValidation.isValid) {
+		return jsonError(400, passwordValidation.message)
+	}
+
+	try {
+		await auth.updateKeyPassword('username', username, newPass)
+		return jsonSuccess({ message: 'Password updated successfully' })
+	} catch (e) {
+		console.log('Error: ' + e)
+		if (e.name === 'LuciaError') {
+			console.log('LuciaError: ' + e.message)
 		}
-	} else {
-		return new Response(JSON.stringify({ error: passwordValidation.message }), {
-			status: 401,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
+		return jsonError(500, 'An unexpected error occurred.')
 	}
 }

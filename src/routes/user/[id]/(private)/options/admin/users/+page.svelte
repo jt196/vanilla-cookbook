@@ -2,7 +2,7 @@
 	import Edit from '$lib/components/svg/Edit.svelte'
 	import Delete from '$lib/components/svg/Delete.svelte'
 	import New from '$lib/components/svg/New.svelte'
-	import { validatePasswords, validateEmail } from '$lib/utils/security.js'
+	import { validatePasswords, validateEmail, buildPasswordEnv } from '$lib/utils/security.js'
 	import { goto } from '$app/navigation'
 	import TrueFalse from '$lib/components/ui/TrueFalse.svelte'
 	import FeedbackMessage from '$lib/components/ui/FeedbackMessage.svelte'
@@ -20,7 +20,7 @@
 
 	/** @type {{data: any}} */
 	let { data } = $props()
-	let { users, user } = $state(data)
+	let { users, user, passwordRequirements, passwordRequirementsDescription } = $state(data)
 	// If the logged in user is an admin, this will return the id
 	// If the page is attempted access by a non-admin, it'll redirect
 	let currentAdminUserId = user.adminId
@@ -41,6 +41,8 @@
 	let emailValidation = $derived(editingUser.email ? validateEmail(editingUser.email) : null)
 	let showDeleteConfirm = $state(false)
 	let pendingDeleteId = $state(null)
+
+	const passwordEnv = $derived(buildPasswordEnv(passwordRequirements))
 
 	function openCreateDialog() {
 		isEditMode = false
@@ -157,7 +159,7 @@
 
 	// Password validation (single message)
 	let passwordValidation = $derived(
-		password || passwordConfirm ? validatePasswords(password, passwordConfirm) : null
+		password || passwordConfirm ? validatePasswords(password, passwordConfirm, passwordEnv) : null
 	)
 
 	// Disable submit if any validation fails
@@ -252,6 +254,9 @@
 			isError={!emailValidation?.isValid}
 			hidden={!emailValidation?.message} />
 		<Input type="password" id="password" name="password" label="Password" bind:value={password} />
+		{#if passwordRequirementsDescription}
+			<p class="text-sm text-base-content/70">{passwordRequirementsDescription}</p>
+		{/if}
 		<Input
 			type="password"
 			id="passwordConfirm"

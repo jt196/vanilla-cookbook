@@ -1,18 +1,10 @@
 import { prisma } from '$lib/server/prisma'
+import { requireAuth, jsonSuccess, jsonError } from '$lib/server/authHelpers'
 
-// Create a new category
-export const POST = async ({ request, locals }) => {
-	const session = await locals.auth.validate()
-	const user = session?.user
+export async function POST({ request, locals }) {
+	const user = requireAuth(locals)
 	const bodyText = await request.text()
 	const categoryData = JSON.parse(bodyText)
-
-	if (!session || !user) {
-		return {
-			status: 401,
-			body: { error: 'User not authenticated.' }
-		}
-	}
 
 	try {
 		const newCategory = await prisma.category.create({
@@ -23,18 +15,8 @@ export const POST = async ({ request, locals }) => {
 			}
 		})
 
-		return new Response(JSON.stringify(newCategory), {
-			status: 200,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
-	} catch (error) {
-		return new Response('Failed to create new category!', {
-			status: 500,
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
+		return jsonSuccess(newCategory)
+	} catch (err) {
+		return jsonError(500, 'Failed to create new category!')
 	}
 }

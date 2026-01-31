@@ -15,7 +15,7 @@
 	/** @type {{data: any}} */
 	let { data } = $props()
 
-	const { settings, llmConfig } = $state(data)
+	const { settings, llmConfig, passwordRequirements, passwordRequirementsDescription } = $state(data)
 
 	let settingsFeedback = $state('')
 	let backupInfo = $state(data.backupInfo)
@@ -108,6 +108,36 @@
 			{llm?.imageProvider} / {llm?.imageModel}
 		</p>
 		<InfoText class="my-4">Update values in your .env file to change providers or models.</InfoText>
+	</div>
+</div>
+
+<div class="w-full md:w-3/4 lg:w-2/3 space-y-2 mb-3">
+	<h3>Password Requirements</h3>
+	<div class="rounded-box border border-base-300 bg-base-200 p-4 space-y-1">
+		<p>
+			<strong>Summary:</strong>
+			{passwordRequirementsDescription || 'Using default password requirements.'}
+		</p>
+		{#if passwordRequirements}
+			<p><strong>Minimum Length:</strong> {passwordRequirements.minLength}</p>
+			<p>
+				<strong>Uppercase:</strong>
+				{passwordRequirements.requireUppercase ? 'Required' : 'Not required'}
+			</p>
+			<p>
+				<strong>Lowercase:</strong>
+				{passwordRequirements.requireLowercase ? 'Required' : 'Not required'}
+			</p>
+			<p>
+				<strong>Digits:</strong>
+				{passwordRequirements.requireDigit ? 'Required' : 'Not required'}
+			</p>
+			<p>
+				<strong>Special Characters:</strong>
+				{passwordRequirements.requireSpecial ? 'Required' : 'Not required'}
+			</p>
+		{/if}
+		<InfoText class="my-4">Update values in your .env file to change password rules.</InfoText>
 	</div>
 </div>
 

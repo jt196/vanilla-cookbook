@@ -1,4 +1,5 @@
-import { error } from '@sveltejs/kit'
+import { requireUser } from '$lib/server/authPage'
+import { requireOwnership } from '$lib/server/authHelpers'
 
 /**
  * Handles loading the page data.
@@ -12,15 +13,13 @@ import { error } from '@sveltejs/kit'
  * @returns {Promise<{ recipe: Object }>} The loaded recipe.
  */
 export const load = async ({ url, params, locals, fetch }) => {
-	const user = locals.user
+	const user = requireUser(locals)
 
 	let recipeData = await fetch(`${url.origin}/api/recipe/${params.recipeId}`)
 	const recipe = await recipeData.json()
 
 	// Check if the user is logged in and if the recipe belongs to the user
-	if (recipe.userId !== user.userId) {
-		throw error(401, 'Unauthorized')
-	}
+	requireOwnership(user, recipe)
 
 	const hierarchicalCategories = await fetch(`${url.origin}/api/user/${user.userId}/categories`)
 	const categories = await hierarchicalCategories.json()
