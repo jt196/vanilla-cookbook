@@ -183,21 +183,25 @@ describe('RecipeList component', () => {
 		const { container } = render(RecipeList, {
 			useVirtualList: false,
 			filteredRecipes: mockRecipes,
-			data: mockData
+			viewMode: 'owner',
+			viewerUserId: 1
 		})
 		expect(container).toBeInTheDocument()
 	})
 
 	it('renders the correct number of recipes', () => {
-		const { getAllByRole } = render(RecipeList, {
+		const { container } = render(RecipeList, {
 			useVirtualList: false,
 			filteredRecipes: mockRecipes,
-			data: mockData
+			viewMode: 'owner',
+			viewerUserId: 1
 		})
 
 		// Each recipe card renders as a link to its detail page
-		const links = getAllByRole('link')
-		expect(links.length).toBe(mockRecipes.length)
+		const recipeLinks = [...container.querySelectorAll('a')].filter((link) =>
+			link.getAttribute('href')?.startsWith('/recipe/')
+		)
+		expect(recipeLinks.length).toBe(mockRecipes.length)
 	})
 
 	it('displays an image if the recipe has a valid image_url', () => {})
@@ -206,7 +210,8 @@ describe('RecipeList component', () => {
 		const { getByAltText } = render(RecipeList, {
 			useVirtualList: false,
 			filteredRecipes: mockRecipes,
-			data: mockData
+			viewMode: 'owner',
+			viewerUserId: 1
 		})
 
 		const image = getByAltText('Recipe A thumbnail')
