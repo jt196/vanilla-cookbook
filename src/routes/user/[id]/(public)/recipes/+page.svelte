@@ -18,4 +18,5 @@
 	viewerUserId={viewingUserId}
 	ownerUserId={requestedUserId}
 	ownerUsername={publicProfile.username}
-	{useCats} />
+	{useCats}
+	feedKind="user" />

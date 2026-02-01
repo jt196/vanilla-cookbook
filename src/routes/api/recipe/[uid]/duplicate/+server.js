@@ -24,13 +24,29 @@ export async function POST({ locals, params }) {
 			return jsonError(404, 'Recipe not found')
 		}
 
+		if (recipe.userId === user.userId) {
+			return jsonError(400, 'Cannot duplicate your own recipe')
+		}
+
 		if (!recipe.is_public && recipe.userId !== user.userId && !user.isAdmin) {
 			return jsonError(403, 'Access denied: this recipe is private')
+		}
+
+		const existingFork = await prisma.recipe.findFirst({
+			where: {
+				userId: user.userId,
+				parentRecipeId: uid
+			},
+			select: { uid: true }
+		})
+		if (existingFork) {
+			return jsonError(409, 'You have already copied this recipe')
 		}
 
 		const newRecipe = await prisma.recipe.create({
 			data: {
 				userId: user.userId,
+				parentRecipeId: uid,
 				name: recipe.name,
 				ingredients: recipe.ingredients,
 				ingredients_original: recipe.ingredients_original,

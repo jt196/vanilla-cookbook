@@ -12,4 +12,5 @@
 	viewMode="social"
 	viewerUserId={viewerUserId}
 	title="All Recipes"
-	useCats={false} />
+	useCats={false}
+	feedKind="all" />

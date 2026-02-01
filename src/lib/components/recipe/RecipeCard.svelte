@@ -4,30 +4,34 @@
 	import Check from '$lib/components/svg/Check.svelte'
 	import New from '$lib/components/svg/New.svelte'
 	import StarRating from '$lib/components/ui/StarRating.svelte'
-	import { changeRecipeFavourite, duplicateRecipe } from '$lib/utils/crud'
+	import { changeRecipeFavourite } from '$lib/utils/crud'
 	import Card from '$lib/components/ui/Card.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	let showPrimaryPhoto = $state(true)
 	let showImageUrl = $state(true)
 
-	/** @type {{item: any, viewMode?: 'owner' | 'social', viewerUserId?: string | null, recipeFavourited?: (uid: string) => void, recipeRatingChanged?: (uid: string, rating: number) => void, recipeDuplicated?: (uid: string) => void}}, */
+	/** @type {{item: any, viewMode?: 'owner' | 'social', viewerUserId?: string | null, recipeFavourited?: (uid: string) => void, recipeRatingChanged?: (uid: string, rating: number) => void, onDuplicate?: (uid: string, event: Event) => void}}, */
 	let {
 		item,
 		viewMode = 'owner',
 		viewerUserId = null,
 		recipeFavourited,
 		recipeRatingChanged,
-		recipeDuplicated
+		onDuplicate
 	} = $props()
 
 	let logged = $derived(item.log?.length > 0)
 	let favourite = $derived(item?.on_favorites)
 	let loadingFav = $state(false)
-	let duplicating = $state(false)
-
 	const isOwnerView = $derived(viewMode === 'owner')
 	const canFavourite = $derived(!!viewerUserId)
-	const canDuplicate = $derived(viewMode === 'social' && !!viewerUserId)
+	const canDuplicate = $derived(
+		viewMode === 'social' &&
+			!!viewerUserId &&
+			item.userId !== viewerUserId &&
+			!item.parentRecipeId &&
+			!item.duplicatedByViewer
+	)
 
 	// Reset image visibility when the recipe changes
 	$effect(() => {
@@ -49,16 +53,11 @@
 		}
 	}
 
-	async function handleDuplicate(uid, event) {
+	function handleDuplicate(uid, event) {
 		event.preventDefault()
 		event.stopPropagation()
 		if (!canDuplicate) return
-		duplicating = true
-		const newUid = await duplicateRecipe(uid)
-		duplicating = false
-		if (newUid && recipeDuplicated) {
-			recipeDuplicated(newUid)
-		}
+		onDuplicate?.(uid, event)
 	}
 </script>
 
@@ -132,15 +131,19 @@
 							<Button
 								style="ghost"
 								size="xs"
-								disabled={duplicating}
 								class="btn-circle tooltip hover:opacity-100"
 								data-tip="Duplicate Recipe"
 								onclick={(event) => handleDuplicate(item?.uid, event)}>
-								{#if duplicating}
-									<span class="loading loading-spinner loading-xs"></span>
-								{:else}
-									<New width="16px" height="16px" />
-								{/if}
+								<New width="16px" height="16px" />
+							</Button>
+						{:else if viewMode === 'social' && viewerUserId && item.userId !== viewerUserId}
+							<Button
+								style="ghost"
+								size="xs"
+								disabled={true}
+								class="btn-circle tooltip opacity-40"
+								data-tip="Already copied">
+								<New width="16px" height="16px" />
 							</Button>
 						{/if}
 					</div>
@@ -157,9 +160,13 @@
 			{:else}
 				<p class="text-sm text-base-content/70">
 					by
-					<a href="/user/{item.userId}/recipes" class="link link-primary">
-						{item.auth_user?.username ?? 'Unknown'}
-					</a>
+					{#if viewerUserId && item.userId === viewerUserId}
+						<span class="font-medium text-base-content/80">Me</span>
+					{:else}
+						<a href="/user/{item.userId}/recipes" class="link link-primary">
+							{item.auth_user?.username ?? 'Unknown'}
+						</a>
+					{/if}
 				</p>
 			{/if}
 		{/snippet}

@@ -13,6 +13,9 @@ model Recipe {
     uid                String             @id @default(uuid())
     auth_user          AuthUser           @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId             String
+    parentRecipeId     String?
+    parentRecipe       Recipe?            @relation("RecipeForks", fields: [parentRecipeId], references: [uid], onDelete: SetNull)
+    forks              Recipe[]           @relation("RecipeForks")
     rating             Float?
     photo_hash         String?
     on_favorites       Boolean?           @default(false)

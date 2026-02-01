@@ -37,6 +37,7 @@ export async function GET({ params, locals }) {
 				is_pinned: true,
 				in_trash: true,
 				on_favorites: true,
+				parentRecipeId: true,
 				userId: true,
 				auth_user: {
 					select: {
@@ -69,6 +70,7 @@ export async function GET({ params, locals }) {
 		})
 
 		let favouriteLookup = new Set()
+		let forkLookup = new Set()
 		if (user && recipes.length > 0) {
 			const favs = await prisma.recipeFavorite.findMany({
 				where: {
@@ -80,6 +82,15 @@ export async function GET({ params, locals }) {
 				}
 			})
 			favouriteLookup = new Set(favs.map((fav) => fav.recipeUid))
+
+			const forks = await prisma.recipe.findMany({
+				where: {
+					userId: user.userId,
+					parentRecipeId: { in: recipes.map((recipe) => recipe.uid) }
+				},
+				select: { parentRecipeId: true }
+			})
+			forkLookup = new Set(forks.map((fork) => fork.parentRecipeId).filter(Boolean))
 		}
 
 		const updatedRecipes = recipes.map((recipe) => {
@@ -87,6 +98,7 @@ export async function GET({ params, locals }) {
 			return {
 				...recipe,
 				on_favorites: favouriteLookup.has(recipe.uid),
+				duplicatedByViewer: forkLookup.has(recipe.uid),
 				photos: mainOrFirstPhoto ? [mainOrFirstPhoto] : []
 			}
 		})

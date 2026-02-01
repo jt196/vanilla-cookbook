@@ -9,6 +9,8 @@
 	import CategoryTree from '$lib/components/category/CategoryTree.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Spinner from '$lib/components/ui/Spinner.svelte'
+	import Dialog from '$lib/components/ui/Dialog.svelte'
+	import { duplicateRecipe } from '$lib/utils/crud'
 	import {
 		sortState,
 		searchString,
@@ -17,7 +19,7 @@
 		favouriteFilter
 	} from '$lib/stores/recipeFilter'
 
-	/** @type {{recipes?: any[], categories?: any[], viewMode?: 'owner' | 'social', title?: string | null, useCats?: boolean, viewerUserId?: string | null, ownerUserId?: string | null, ownerUsername?: string | null}} */
+	/** @type {{recipes?: any[], categories?: any[], viewMode?: 'owner' | 'social', title?: string | null, useCats?: boolean, viewerUserId?: string | null, ownerUserId?: string | null, ownerUsername?: string | null, feedKind?: 'all' | 'user'}} */
 	let {
 		recipes = [],
 		categories = [],
@@ -26,7 +28,8 @@
 		useCats = false,
 		viewerUserId = null,
 		ownerUserId = null,
-		ownerUsername = null
+		ownerUsername = null,
+		feedKind = 'user'
 	} = $props()
 
 	let sidebarOpen = $state(false)
@@ -34,6 +37,9 @@
 	let isLoading = $state(true)
 	let selectedCategoryUids = $state([])
 	let useAndLogic = $state(false)
+	let isCopying = $state(false)
+	let copyDialogOpen = $state(false)
+	let copiedRecipe = $state(null)
 
 	function handleCategoryClick(category) {
 		if (selectedCategoryUids.includes(category.uid)) {
@@ -55,8 +61,47 @@
 		)
 	}
 
-	function handleRecipeDuplicated(uid) {
-		goto(`/recipe/${uid}/view/`)
+	async function handleDuplicateRequested(uid) {
+		if (!viewerUserId) return
+		isCopying = true
+		const newUid = await duplicateRecipe(uid)
+		if (!newUid) {
+			isCopying = false
+			return
+		}
+
+		try {
+			const response = await fetch(`/api/recipe/${newUid}`)
+			if (response.ok) {
+				copiedRecipe = await response.json()
+			}
+		} catch (err) {
+			console.error('Failed to load duplicated recipe:', err)
+		}
+
+		isCopying = false
+		copyDialogOpen = true
+	}
+
+	function handleCopyCancel() {
+		copyDialogOpen = false
+		copiedRecipe = null
+	}
+
+	function handleCopyStay() {
+		copyDialogOpen = false
+		if (feedKind === 'all' && copiedRecipe) {
+			recipes = [copiedRecipe, ...recipes]
+		}
+		copiedRecipe = null
+	}
+
+	function handleCopyView() {
+		if (copiedRecipe?.uid) {
+			goto(`/recipe/${copiedRecipe.uid}/view/`)
+		}
+		copyDialogOpen = false
+		copiedRecipe = null
 	}
 
 	$effect(() => {
@@ -194,5 +239,21 @@
 		{viewerUserId}
 		recipeFavourited={handleRecipeFavourited}
 		recipeRatingChanged={handleRecipeRatingChanged}
-		recipeDuplicated={handleRecipeDuplicated} />
+		onDuplicate={handleDuplicateRequested} />
 </div>
+
+<Dialog bind:isOpen={copyDialogOpen}>
+	<div class="flex flex-col gap-4">
+		<h3 class="font-bold text-lg">Copy Recipe</h3>
+		<p>Would you like to view it now?</p>
+		<div class="flex items-center justify-between gap-2">
+			<Button style="outline" onclick={handleCopyCancel}>Cancel</Button>
+			<div class="flex gap-2">
+				<Button style="outline" onclick={handleCopyStay}>Stay</Button>
+				<Button onclick={handleCopyView}>View</Button>
+			</div>
+		</div>
+	</div>
+</Dialog>
+
+<Spinner visible={isCopying} spinnerContent="Copying Recipe" />

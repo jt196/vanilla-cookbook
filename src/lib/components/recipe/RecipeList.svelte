@@ -2,7 +2,7 @@
 	import RecipeCard from '$lib/components/recipe/RecipeCard.svelte'
 	import VirtualList from 'svelte-virtual-list'
 
-	/** @type {{filteredRecipes?: any, useVirtualList?: boolean, viewMode?: 'owner' | 'social', viewerUserId?: string | null, recipeRatingChanged?: (uid: string, rating: number) => void, recipeFavourited?: (uid: string) => void, recipeDuplicated?: (uid: string) => void}}}} */
+	/** @type {{filteredRecipes?: any, useVirtualList?: boolean, viewMode?: 'owner' | 'social', viewerUserId?: string | null, recipeRatingChanged?: (uid: string, rating: number) => void, recipeFavourited?: (uid: string) => void, onDuplicate?: (uid: string, event: Event) => void}}}} */
 	let {
 		filteredRecipes = [],
 		useVirtualList = true,
@@ -10,7 +10,7 @@
 		viewerUserId = null,
 		recipeFavourited,
 		recipeRatingChanged,
-		recipeDuplicated
+		onDuplicate
 	} = $props()
 
 	let start = $state()
@@ -27,7 +27,7 @@
 					{viewerUserId}
 					{recipeFavourited}
 					{recipeRatingChanged}
-					{recipeDuplicated} />
+					{onDuplicate} />
 			{/snippet}
 		</VirtualList>
 		<div class="flex justify-center p-2">
@@ -41,7 +41,7 @@
 				{viewerUserId}
 				{recipeFavourited}
 				{recipeRatingChanged}
-				{recipeDuplicated} />
+				{onDuplicate} />
 		{/each}
 	{/if}
 </div>
