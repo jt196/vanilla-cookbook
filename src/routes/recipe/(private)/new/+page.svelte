@@ -93,11 +93,15 @@
 			formData.append('images', file)
 		}
 
-		const result = await createRecipe(formData)
-		if (result.success) {
-			await goto(`/recipe/${result.data.uid}/view/`)
-		} else {
-			console.error('Error:', result.error)
+		try {
+			const result = await createRecipe(formData)
+			if (result.success) {
+				await goto(`/recipe/${result.data.uid}/view/`)
+			} else {
+				console.error('Error:', result.error)
+			}
+		} finally {
+			saving = false
 		}
 	}
 

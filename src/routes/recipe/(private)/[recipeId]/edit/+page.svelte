@@ -82,6 +82,8 @@
 			}
 		} catch (error) {
 			console.error('Error:', error)
+		} finally {
+			saving = false
 		}
 	}
 

@@ -14,7 +14,17 @@ export async function POST({ request, locals, url }) {
 	const user = requireAuth(locals)
 
 	const formData = await request.formData()
-	const recipeData = JSON.parse(formData.get('recipe'))
+	let recipeData
+	try {
+		const rawRecipe = formData.get('recipe')
+		recipeData = JSON.parse(rawRecipe)
+	} catch (err) {
+		console.error('Failed to parse recipe payload', {
+			userId: user?.userId,
+			error: err?.message
+		})
+		return jsonError(400, 'Invalid recipe payload')
+	}
 	const imageData = formData.getAll('images')
 
 	const {
@@ -58,7 +68,13 @@ export async function POST({ request, locals, url }) {
 			}
 		})
 	} catch (err) {
-		console.log('Error: ' + err)
+		console.error('Failed to create recipe', {
+			userId: user?.userId,
+			name,
+			source,
+			source_url,
+			error: err?.message
+		})
 		return jsonError(500, `Failed to create recipe: ${err.message}`)
 	}
 
@@ -73,7 +89,12 @@ export async function POST({ request, locals, url }) {
 			photoEntry = await createRecipePhotoEntry(recipe.uid, image_url, extension, true)
 			await processImage(image_url, photoEntry.id, extension)
 		} catch (error) {
-			console.error(error)
+			console.error('Failed to process remote image', {
+				userId: user?.userId,
+				recipeUid: recipe?.uid,
+				image_url,
+				error: error?.message
+			})
 			if (photoEntry) {
 				await removeRecipePhotoEntry(photoEntry.id)
 			}
@@ -97,7 +118,11 @@ export async function POST({ request, locals, url }) {
 			const fullFilename = `${photoEntry.id}.${extension}`
 			await saveFile(photoBuffer, fullFilename, directory)
 		} catch (err) {
-			console.log('Error saving photo! Deleting photo entry!', err)
+			console.error('Error saving photo, deleting photo entry', {
+				userId: user?.userId,
+				recipeUid: recipe?.uid,
+				error: err?.message
+			})
 			if (photoEntry) {
 				removeRecipePhotoEntry(photoEntry.id)
 			}
