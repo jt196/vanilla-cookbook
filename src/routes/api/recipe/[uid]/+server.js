@@ -176,7 +176,13 @@ export async function GET({ params, locals }) {
 						notes: true
 					}
 				},
-				categories: true
+				categories: true,
+				parentRecipe: {
+					select: {
+						uid: true,
+						name: true
+					}
+				}
 			}
 		})
 

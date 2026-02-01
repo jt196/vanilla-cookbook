@@ -2,7 +2,7 @@
 <script>
 	import Favourite from '$lib/components/svg/Favourite.svelte'
 	import Check from '$lib/components/svg/Check.svelte'
-	import New from '$lib/components/svg/New.svelte'
+	import Fork from '$lib/components/svg/Fork.svelte'
 	import StarRating from '$lib/components/ui/StarRating.svelte'
 	import { changeRecipeFavourite } from '$lib/utils/crud'
 	import Card from '$lib/components/ui/Card.svelte'
@@ -131,9 +131,9 @@
 								style="ghost"
 								size="xs"
 								class="btn-circle tooltip hover:opacity-100"
-								data-tip="Duplicate Recipe"
+								data-tip="Fork Recipe"
 								onclick={(event) => handleDuplicate(item?.uid, event)}>
-								<New width="16px" height="16px" />
+								<Fork width="16px" height="16px" />
 							</Button>
 						{:else if viewMode === 'social' && viewerUserId && item.userId !== viewerUserId}
 							<Button
@@ -141,8 +141,8 @@
 								size="xs"
 								disabled={true}
 								class="btn-circle tooltip opacity-40"
-								data-tip="Already copied">
-								<New width="16px" height="16px" />
+								data-tip="Already forked">
+								<Fork width="16px" height="16px" />
 							</Button>
 						{/if}
 					</div>

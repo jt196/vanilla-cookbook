@@ -8,8 +8,8 @@
 
 <Dialog bind:isOpen>
 	<div class="flex flex-col gap-4">
-		<h3 class="font-bold text-lg">Copy Recipe</h3>
-		<p>{message || 'Would you like to view it now?'}</p>
+		<h3 class="font-bold text-lg">Fork Recipe</h3>
+		<p>{message || 'Fork this recipe into your account and view it now?'}</p>
 		<div class="flex items-center justify-between gap-2">
 			<Button style="outline" onclick={onCancel}>Cancel</Button>
 			<div class="flex gap-2">

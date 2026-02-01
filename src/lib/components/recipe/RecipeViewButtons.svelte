@@ -18,7 +18,7 @@ import { goto, invalidateAll } from '$app/navigation'
 	import CookedLogModal from '$lib/components/recipe/CookedLogModal.svelte'
 	import CookedHistoryModal from '$lib/components/recipe/CookedHistoryModal.svelte'
 	import Calendar from '$lib/components/svg/Calendar.svelte'
-	import New from '$lib/components/svg/New.svelte'
+import Fork from '$lib/components/svg/Fork.svelte'
 import Spinner from '$lib/components/ui/Spinner.svelte'
 
 	/** @type {{recipe: any, updateLogs: any, favRecipe: any, scale?: number, onRestoreScale?: (scale: number) => void, viewerUserId?: string | null}} */
@@ -196,15 +196,15 @@ async function confirmDuplicate() {
 			<button
 				onclick={handleDuplicate}
 				class="btn btn-soft btn-primary btn-sm tooltip"
-				data-tip="Duplicate Recipe">
-				<New width="20px" height="20px" fill="currentColor" />
+				data-tip="Fork Recipe">
+				<Fork width="20px" height="20px" fill="currentColor" />
 			</button>
 		{:else if recipe?.userId !== viewerUserId}
 			<button
 				class="btn btn-soft btn-primary btn-sm tooltip opacity-40"
 				disabled={true}
 				data-tip="Already copied">
-				<New width="20px" height="20px" fill="currentColor" />
+				<Fork width="20px" height="20px" fill="currentColor" />
 			</button>
 		{/if}
 	{/if}
@@ -237,7 +237,7 @@ async function confirmDuplicate() {
 	onConfirm={confirmDuplicate}>
 	{#snippet content()}
 		<h3 class="font-bold text-lg">Copy Recipe</h3>
-		<p class="py-4">Copy this recipe to your account?</p>
+		<p class="py-4">Fork this recipe into your account?</p>
 	{/snippet}
 </ConfirmationDialog>
 
