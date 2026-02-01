@@ -20,10 +20,6 @@
 		 */
 		purchasedItemCount = 0,
 		/**
-		 * @type {'name' | 'purchaseCount'}
-		 */
-		sortBy = 'name',
-		/**
 		 * @type {boolean}
 		 */
 		sortByPurchased = false,
@@ -42,22 +38,14 @@
 		/**
 		 * @type {() => void}
 		 */
-		onTogglePurchasedSort,
-		/**
-		 * @type {(sortBy: 'name' | 'purchaseCount') => void}
-		 */
-		onSortChange
+		onTogglePurchasedSort
 	} = $props()
 
-	const purchasedFilterBtnClasses = $derived(
-		['tooltip', sortByPurchased ? 'opacity-100 text-success' : 'opacity-60', 'hover:opacity-100']
-			.filter(Boolean)
-			.join(' ')
-	)
 </script>
 
 <div class="shopping-buttons">
 	<Button
+		disabled={purchasedItemCount === 0}
 		onclick={onToggleHidden}
 		class="tooltip"
 		data-tip={showHidden ? 'Show Unpurchased Items' : 'Show Purchased Items'}>
@@ -69,13 +57,10 @@
 	</Button>
 
 	<Button
-		style="outline"
-		size="md"
-		color="success"
 		onclick={onTogglePurchasedSort}
-		class={`btn-square ${purchasedFilterBtnClasses}`}
+		class="tooltip"
 		data-tip="Sort by Purchase Count">
-		<Check checked={sortByPurchased} width="20px" height="20px" fill="currentColor" />
+		<Check checked={sortByPurchased} width="20px" height="20px" fill={sortByPurchased ? '#4ade80' : 'white'} />
 	</Button>
 
 	<Button

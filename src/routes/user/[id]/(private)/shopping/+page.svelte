@@ -208,6 +208,15 @@
 
 	let uncheckedItems = $derived(shoppingList.filter((item) => !item.purchased))
 	let purchasedItems = $derived(shoppingList.filter((item) => item.purchased))
+
+	// Auto-show purchased items when all items are purchased, hide when no purchased items
+	$effect(() => {
+		if (uncheckedItems.length === 0 && purchasedItems.length > 0) {
+			showHidden = true
+		} else if (purchasedItems.length === 0) {
+			showHidden = false
+		}
+	})
 	let sortedUncheckedItems = $derived(
 		sortByPurchased
 			? sortPurchasedByCountThenName(uncheckedItems)
@@ -246,16 +255,14 @@
 		onCheckAll={() => (isCheckAllDialogOpen = true)}
 		onDeletePurchased={() => (isDeleteDialogOpen = true)} />
 </div>
+{#if shoppingList.length === 0}
+	<InfoText class="my-2">Add something to your shopping list</InfoText>
+{/if}
 
 <ShoppingItemInput
 	bind:value={newIngredient}
 	onAdd={handleAddIngredient}
 	onKeyPress={handleKeyPressIngredient} />
-<div class="list-info">
-	{#if shoppingList.length === 0}
-		<FeedbackMessage message={'List empty: add some items!'} />
-	{/if}
-</div>
 <FeedbackMessage message={shoppingFeedback} />
 
 {#if sortedUncheckedItems.length > 0}
