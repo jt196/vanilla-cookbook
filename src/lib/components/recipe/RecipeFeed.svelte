@@ -1,15 +1,15 @@
 <script>
-	import { goto } from '$app/navigation'
+import { goto, invalidateAll } from '$app/navigation'
 	import { navigating } from '$app/stores'
 	import { filterSearch } from '$lib/utils/filters'
 	import { sortRecipesByKey } from '$lib/utils/sorting'
 	import RecipeFilter from '$lib/components/recipe/RecipeFilter.svelte'
 	import RecipeList from '$lib/components/recipe/RecipeList.svelte'
 	import Sidebar from '$lib/components/ui/Sidebar.svelte'
-	import CategoryTree from '$lib/components/category/CategoryTree.svelte'
-	import Button from '$lib/components/ui/Button.svelte'
+import CategoryTree from '$lib/components/category/CategoryTree.svelte'
+import Button from '$lib/components/ui/Button.svelte'
 	import Spinner from '$lib/components/ui/Spinner.svelte'
-	import Dialog from '$lib/components/ui/Dialog.svelte'
+import CopyRecipeDialog from '$lib/components/recipe/CopyRecipeDialog.svelte'
 	import { duplicateRecipe } from '$lib/utils/crud'
 	import {
 		sortState,
@@ -40,6 +40,7 @@
 	let isCopying = $state(false)
 	let copyDialogOpen = $state(false)
 	let copiedRecipe = $state(null)
+	let copyMessage = $state(null)
 
 	function handleCategoryClick(category) {
 		if (selectedCategoryUids.includes(category.uid)) {
@@ -49,9 +50,14 @@
 		}
 	}
 
-	function handleRecipeFavourited(uid) {
+	function handleRecipeFavourited(uid, nextState, recipeItem) {
+		if (feedKind === 'user' && recipeItem?.userId && recipeItem.userId !== viewerUserId && !nextState) {
+			recipes = recipes.filter((recipe) => recipe.uid !== uid)
+			return
+		}
+
 		recipes = recipes.map((recipe) =>
-			recipe.uid === uid ? { ...recipe, on_favorites: !recipe.on_favorites } : recipe
+			recipe.uid === uid ? { ...recipe, on_favorites: nextState } : recipe
 		)
 	}
 
@@ -64,11 +70,15 @@
 	async function handleDuplicateRequested(uid) {
 		if (!viewerUserId) return
 		isCopying = true
+		copyMessage = null
 		const newUid = await duplicateRecipe(uid)
 		if (!newUid) {
 			isCopying = false
+			copyMessage = 'Recipe already copied.'
+			copyDialogOpen = true
 			return
 		}
+		await invalidateAll()
 
 		try {
 			const response = await fetch(`/api/recipe/${newUid}`)
@@ -86,6 +96,7 @@
 	function handleCopyCancel() {
 		copyDialogOpen = false
 		copiedRecipe = null
+		copyMessage = null
 	}
 
 	function handleCopyStay() {
@@ -94,14 +105,16 @@
 			recipes = [copiedRecipe, ...recipes]
 		}
 		copiedRecipe = null
+		copyMessage = null
 	}
 
 	function handleCopyView() {
-		if (copiedRecipe?.uid) {
-			goto(`/recipe/${copiedRecipe.uid}/view/`)
-		}
+		if (!copiedRecipe?.uid) return
+		const targetUid = copiedRecipe.uid
 		copyDialogOpen = false
 		copiedRecipe = null
+		copyMessage = null
+		invalidateAll().then(() => goto(`/recipe/${targetUid}/view/`))
 	}
 
 	$effect(() => {
@@ -242,18 +255,12 @@
 		onDuplicate={handleDuplicateRequested} />
 </div>
 
-<Dialog bind:isOpen={copyDialogOpen}>
-	<div class="flex flex-col gap-4">
-		<h3 class="font-bold text-lg">Copy Recipe</h3>
-		<p>Would you like to view it now?</p>
-		<div class="flex items-center justify-between gap-2">
-			<Button style="outline" onclick={handleCopyCancel}>Cancel</Button>
-			<div class="flex gap-2">
-				<Button style="outline" onclick={handleCopyStay}>Stay</Button>
-				<Button onclick={handleCopyView}>View</Button>
-			</div>
-		</div>
-	</div>
-</Dialog>
+<CopyRecipeDialog
+	bind:isOpen={copyDialogOpen}
+	onCancel={handleCopyCancel}
+	onStay={handleCopyStay}
+	onView={handleCopyView}
+	viewDisabled={!copiedRecipe?.uid}
+	message={copyMessage} />
 
 <Spinner visible={isCopying} spinnerContent="Copying Recipe" />

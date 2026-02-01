@@ -2,7 +2,7 @@
 	import RecipeCard from '$lib/components/recipe/RecipeCard.svelte'
 	import VirtualList from 'svelte-virtual-list'
 
-	/** @type {{filteredRecipes?: any, useVirtualList?: boolean, viewMode?: 'owner' | 'social', viewerUserId?: string | null, recipeRatingChanged?: (uid: string, rating: number) => void, recipeFavourited?: (uid: string) => void, onDuplicate?: (uid: string, event: Event) => void}}}} */
+	/** @type {{filteredRecipes?: any, useVirtualList?: boolean, viewMode?: 'owner' | 'social', viewerUserId?: string | null, recipeRatingChanged?: (uid: string, rating: number) => void, recipeFavourited?: (uid: string, nextState: boolean, recipe: any) => void, onDuplicate?: (uid: string, event: Event) => void}}}} */
 	let {
 		filteredRecipes = [],
 		useVirtualList = true,

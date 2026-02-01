@@ -10,7 +10,7 @@
 	let showPrimaryPhoto = $state(true)
 	let showImageUrl = $state(true)
 
-	/** @type {{item: any, viewMode?: 'owner' | 'social', viewerUserId?: string | null, recipeFavourited?: (uid: string) => void, recipeRatingChanged?: (uid: string, rating: number) => void, onDuplicate?: (uid: string, event: Event) => void}}, */
+	/** @type {{item: any, viewMode?: 'owner' | 'social', viewerUserId?: string | null, recipeFavourited?: (uid: string, nextState: boolean, recipe: any) => void, recipeRatingChanged?: (uid: string, rating: number) => void, onDuplicate?: (uid: string, event: Event) => void}}, */
 	let {
 		item,
 		viewMode = 'owner',
@@ -23,11 +23,10 @@
 	let logged = $derived(item.log?.length > 0)
 	let favourite = $derived(item?.on_favorites)
 	let loadingFav = $state(false)
-	const isOwnerView = $derived(viewMode === 'owner')
+	const isOwnerView = $derived(viewMode === 'owner' && item.userId === viewerUserId)
 	const canFavourite = $derived(!!viewerUserId)
 	const canDuplicate = $derived(
-		viewMode === 'social' &&
-			!!viewerUserId &&
+		!!viewerUserId &&
 			item.userId !== viewerUserId &&
 			!item.parentRecipeId &&
 			!item.duplicatedByViewer
@@ -49,7 +48,7 @@
 		const success = await changeRecipeFavourite(uid)
 		loadingFav = false
 		if (success && recipeFavourited) {
-			recipeFavourited(uid)
+			recipeFavourited(uid, !favourite, item)
 		}
 	}
 
@@ -90,7 +89,7 @@
 		{#snippet title()}
 			<div class="flex items-start justify-between gap-2 w-full">
 				<span class="text-base md:text-2xl leading-snug line-clamp-2">{item.name}</span>
-				{#if isOwnerView || viewMode === 'social'}
+				{#if viewerUserId}
 					<div class="flex gap-1 shrink-0">
 						{#if canFavourite}
 							<Button

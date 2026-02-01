@@ -9,9 +9,28 @@ export async function GET({ params, locals }) {
 		userId: requestedUserId
 	}
 
+	const isOwner = user && user.userId === requestedUserId
+	const isAdmin = user?.isAdmin
+
 	// If the requesting user's ID doesn't match the requested ID, only fetch public recipes
-	if (!user || (user.userId !== requestedUserId && !user.isAdmin)) {
+	if (!user || (!isOwner && !isAdmin)) {
 		whereClause.is_public = true
+	} else if (isOwner) {
+		// Owner view: include their recipes plus public recipes they've favourited
+		whereClause = {
+			in_trash: false,
+			OR: [
+				{ userId: requestedUserId },
+				{
+					is_public: true,
+					favorites: {
+						some: {
+							userId: requestedUserId
+						}
+					}
+				}
+			]
+		}
 	}
 
 	try {

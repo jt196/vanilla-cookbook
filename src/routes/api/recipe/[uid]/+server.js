@@ -195,6 +195,7 @@ export async function GET({ params, locals }) {
 		}
 
 		let favourited = false
+		let duplicatedByViewer = false
 		if (user) {
 			const fav = await prisma.recipeFavorite.findUnique({
 				where: {
@@ -205,9 +206,18 @@ export async function GET({ params, locals }) {
 				}
 			})
 			favourited = !!fav
+
+			const fork = await prisma.recipe.findFirst({
+				where: {
+					userId: user.userId,
+					parentRecipeId: uid
+				},
+				select: { uid: true }
+			})
+			duplicatedByViewer = !!fork
 		}
 
-		return jsonSuccess({ ...recipe, on_favorites: favourited })
+		return jsonSuccess({ ...recipe, on_favorites: favourited, duplicatedByViewer })
 	} catch (err) {
 		return jsonError(500, `Failed to fetch recipe: ${err.message}`)
 	}
