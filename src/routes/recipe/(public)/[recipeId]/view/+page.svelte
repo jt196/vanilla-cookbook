@@ -20,10 +20,13 @@
 	import { recipeRatingChange, updatePhotos } from '$lib/utils/crud.js'
 
 	/** @type {{data: any}} */
-	let { data } = $props()
+	let { data = $bindable() } = $props()
 	let isLoading = $state(true)
 
 	let { recipe, categories, viewUser, logs, recUser } = $state(data)
+	$effect(() => {
+		({ recipe, categories, viewUser, logs, recUser } = data)
+	})
 
 	// Scaling factor for the ingredients
 	let scale = $state(1)
@@ -262,7 +265,16 @@
 {/if}
 <FeedbackMessage message={recipeFeedback} />
 <div class="flex flex-wrap justify-between gap-1 my-4 w-full md:gap-2 md:justify-end">
-	<RecipeViewButtons {recipe} {updateLogs} {favRecipe} {pubRecipe} {logs} {viewOnly} {scale} onRestoreScale={handleScaleChange} />
+	<RecipeViewButtons
+		{recipe}
+		{updateLogs}
+		{favRecipe}
+		{pubRecipe}
+		{logs}
+		{viewOnly}
+		{scale}
+		viewerUserId={viewUser?.userId}
+		onRestoreScale={handleScaleChange} />
 </div>
 
 {#if isLoading}
@@ -322,7 +334,7 @@
 			<RecipeViewDirections {directionLines} {sanitizedDirections} {loadingIngredients} />
 		</div>
 	</div>
-	<RecipeViewNotes {notesLines} {sanitizedNotes} {logs} />
+	<RecipeViewNotes {notesLines} {sanitizedNotes} logs={viewOnly ? [] : logs} />
 {/if}
 
 <RecipeViewOtherPhotos

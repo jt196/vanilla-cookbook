@@ -16,7 +16,7 @@
 	<InfoText class="my-2"
 		>Created: <span class="italic">{localDateAndTime(recipe.created)}</span></InfoText>
 
-	{#if recipe?.source || recipe?.source_url}
+	{#if recipe?.source || recipe?.source_url || recipe?.parentRecipeId}
 		<InfoText class="my-2">
 			{#if recipe?.source && recipe?.source_url}
 				Source:
@@ -33,6 +33,12 @@
 					target="_blank"
 					rel="noopener noreferrer"
 					class="link link-primary">Source</a>
+			{/if}
+			{#if recipe?.parentRecipeId}
+				<span class="mx-1 text-base-content/60">|</span>
+				<a href={`/recipe/${recipe.parentRecipeId}/view/`} class="link link-primary">
+					Forked From {recipe.parentRecipe?.name ?? 'Recipe'}
+				</a>
 			{/if}
 		</InfoText>
 	{/if}

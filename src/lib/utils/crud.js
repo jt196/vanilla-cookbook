@@ -82,6 +82,34 @@ export async function changeRecipePublic(uid) {
 }
 
 /**
+ * Duplicates a recipe into the current user's account.
+ *
+ * @param {number|string} uid - Unique identifier for the recipe to duplicate.
+ * @returns {Promise<string|null>} New recipe uid if successful, otherwise null.
+ */
+export async function duplicateRecipe(uid) {
+	try {
+		const response = await fetch(`/api/recipe/${uid}/duplicate`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		})
+
+		if (!response.ok) {
+			const errorData = await response.json()
+			throw new Error(errorData.message || 'Error duplicating recipe')
+		}
+
+		const result = await response.json()
+		return result.uid || null
+	} catch (error) {
+		console.error('Error duplicating recipe:', error.message)
+		return null
+	}
+}
+
+/**
  * Updates the rating of a recipe on the server.
  *
  * @param {number} newRating - The new rating to be set, between 1 and 5.
