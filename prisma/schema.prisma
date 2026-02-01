@@ -46,6 +46,7 @@ model Recipe {
     photos             RecipePhoto[]
     log                RecipeLog[]
     shopping_list_item ShoppingListItem[]
+    favorites          RecipeFavorite[]
 }
 
 model RecipePhoto {
@@ -56,6 +57,17 @@ model RecipePhoto {
     isMain    Boolean @default(false)
     notes     String?
     recipe    Recipe  @relation(fields: [recipeUid], references: [uid], onDelete: Cascade)
+}
+
+model RecipeFavorite {
+    id        String   @id @default(uuid())
+    userId    String
+    recipeUid String
+    created   DateTime @default(now())
+    user      AuthUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+    recipe    Recipe   @relation(fields: [recipeUid], references: [uid], onDelete: Cascade)
+
+    @@unique([userId, recipeUid])
 }
 
 model RecipeLog {
@@ -144,6 +156,7 @@ model AuthUser {
     auth_account       AuthAccount[]
     shopping_list_item ShoppingListItem[]
     purchase_logs      PurchaseLog[]
+    recipe_favorites   RecipeFavorite[]
 
     @@map("auth_user")
 }

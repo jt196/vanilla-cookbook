@@ -12,7 +12,7 @@ export const load = async ({ params, url, fetch, locals }) => {
 	const userPublic = await userPublicResponse.json()
 
 	if (!userPublic.userProfile.publicProfile && !user?.isAdmin && user?.userId !== requestedUserId) {
-		throw redirect(302, '/users')
+		throw redirect(302, '/recipes')
 	}
 
 	let viewingUserId

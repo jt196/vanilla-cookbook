@@ -1,5 +1,5 @@
 <script>
-	import Users from '$lib/components/svg/Users.svelte'
+	import FoodBowl from '$lib/components/svg/FoodBowl.svelte'
 	import Shopping from '$lib/components/svg/Shopping.svelte'
 	import Calendar from '$lib/components/svg/Calendar.svelte'
 	import New from '$lib/components/svg/New.svelte'
@@ -22,7 +22,11 @@
 			<span>Toggle Theme</span>
 		</button>
 	</li>
-	<li><a href="/users" class="flex items-center gap-2 text-primary"><Users width="20px" /><span>Users</span></a></li>
+	<li>
+		<a href="/recipes" class="flex items-center gap-2 text-primary">
+			<FoodBowl width="20px" /><span>All Recipes</span>
+		</a>
+	</li>
 	{#if !user}
 		<li><a href="/login" class="flex items-center gap-2"><span>Login</span></a></li>
 		{#if settings?.registrationAllowed}
@@ -46,8 +50,8 @@
 			<Theme {theme} width="25px" />
 		</Button>
 
-		<a href="/users" class="btn btn-ghost btn-circle text-primary" aria-label="Users">
-			<Users width="25px" />
+		<a href="/recipes" class="btn btn-ghost btn-circle text-primary" aria-label="All recipes">
+			<FoodBowl width="25px" />
 		</a>
 
 		{#if !user}

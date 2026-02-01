@@ -1,17 +1,20 @@
 import { prisma } from '$lib/server/prisma'
 import { getOptionalUser, jsonSuccess, jsonError } from '$lib/server/authHelpers'
 
-export async function GET({ params, locals }) {
-	const requestedUserId = params.id
+export async function GET({ locals }) {
 	const user = getOptionalUser(locals)
 
-	let whereClause = {
-		userId: requestedUserId
-	}
+	let whereClause = { in_trash: false }
 
-	// If the requesting user's ID doesn't match the requested ID, only fetch public recipes
-	if (!user || (user.userId !== requestedUserId && !user.isAdmin)) {
-		whereClause.is_public = true
+	if (user?.isAdmin) {
+		whereClause = { in_trash: false }
+	} else if (user) {
+		whereClause = {
+			in_trash: false,
+			OR: [{ userId: user.userId }, { is_public: true }]
+		}
+	} else {
+		whereClause = { in_trash: false, is_public: true }
 	}
 
 	try {
@@ -56,13 +59,11 @@ export async function GET({ params, locals }) {
 				},
 				log: true,
 				photos: {
-					orderBy: [
-						{ isMain: 'desc' },
-						{ id: 'asc' }
-					],
+					orderBy: [{ isMain: 'desc' }, { id: 'asc' }],
 					select: {
 						id: true,
-						fileType: true
+						fileType: true,
+						url: true
 					}
 				}
 			}

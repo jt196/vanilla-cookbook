@@ -14,7 +14,7 @@
 		favouriteFilter
 	} from '$lib/stores/recipeFilter'
 
-	let { toggleSidebar, viewOnly, useCats = 'false', username } = $props()
+	let { toggleSidebar, viewOnly, useCats = 'false', username, viewMode = 'owner' } = $props()
 
 	const favouriteBtnClasses = $derived(
 		['tooltip', $favouriteFilter ? 'opacity-100 text-error' : 'opacity-60', 'hover:opacity-100']
@@ -98,15 +98,17 @@
 					data-tip="Filter by Favourites">
 					<Favourite favourite={$favouriteFilter} width="20px" height="20px" fill="currentColor" />
 				</Button>
-				<Button
-					style="outline"
-					size="sm"
-					color="success"
-					onclick={() => ($cookedFilter = !$cookedFilter)}
-					class={`btn-square ${cookedBtnClasses}`}
-					data-tip="Filter by Cooked">
-					<Check checked={$cookedFilter} width="20px" height="20px" fill="currentColor" />
-				</Button>
+				{#if viewMode === 'owner'}
+					<Button
+						style="outline"
+						size="sm"
+						color="success"
+						onclick={() => ($cookedFilter = !$cookedFilter)}
+						class={`btn-square ${cookedBtnClasses}`}
+						data-tip="Filter by Cooked">
+						<Check checked={$cookedFilter} width="20px" height="20px" fill="currentColor" />
+					</Button>
+				{/if}
 			</div>
 
 			<!-- Sort buttons -->
@@ -129,15 +131,17 @@
 					onclick={() => updateSort('name')}>
 					Title <SortAscDesc sort={$sortState.key === 'name' ? $sortState.direction : ''} />
 				</Button>
-				<Button
-					style={$sortState.key === 'rating' ? 'standard' : 'outline'}
-					class="tooltip px-2 text-xs"
-					size="sm"
-					color="info"
-					data-tip="Sort by Rating"
-					onclick={() => updateSort('rating')}>
-					Rating <SortAscDesc sort={$sortState.key === 'rating' ? $sortState.direction : ''} />
-				</Button>
+				{#if viewMode === 'owner'}
+					<Button
+						style={$sortState.key === 'rating' ? 'standard' : 'outline'}
+						class="tooltip px-2 text-xs"
+						size="sm"
+						color="info"
+						data-tip="Sort by Rating"
+						onclick={() => updateSort('rating')}>
+						Rating <SortAscDesc sort={$sortState.key === 'rating' ? $sortState.direction : ''} />
+					</Button>
+				{/if}
 			</div>
 		</div>
 	</div>
