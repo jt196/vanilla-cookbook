@@ -133,6 +133,37 @@ test('fresh install admin seed, login, and page smoke tests', async ({ page }, t
 
 	await assertPage(page, firstRecipeHref, { heading: seededRecipes[0] }, projectName)
 
+	// Test recipe edit flow - this catches issues like extra fields breaking Prisma updates
+	await test.step(`[${projectName}] edit recipe`, async () => {
+		// Navigate to first recipe view page
+		await page.goto(firstRecipeHref, { waitUntil: 'networkidle' })
+		await expect(page.getByRole('heading', { name: seededRecipes[0] })).toBeVisible({ timeout: 15000 })
+
+		// Click the edit recipe link (not the edit images link)
+		const editLink = page.locator('a[href*="/edit"]').first()
+		await expect(editLink).toBeVisible({ timeout: 5000 })
+		await editLink.click()
+		await page.waitForURL('**/edit**', { timeout: 15000 })
+
+		// Wait for the form to be ready
+		const submitButton = page.getByRole('button', { name: 'Update Recipe' }).first()
+		await expect(submitButton).toBeVisible({ timeout: 15000 })
+
+		// Make a small change to the notes field
+		const notesField = page.locator('textarea[name="notes"]')
+		await expect(notesField).toBeVisible({ timeout: 5000 })
+		const timestamp = new Date().toISOString()
+		await notesField.fill(`E2E test edit - ${timestamp}`)
+
+		// Submit the form
+		await submitButton.click()
+
+		// Verify redirect back to view page (indicates success)
+		await page.waitForURL('**/view**', { timeout: 30000 })
+		await expect(page.getByRole('heading', { name: seededRecipes[0] })).toBeVisible({ timeout: 15000 })
+	})
+	console.log(`[${projectName}] PASS edit recipe`)
+
 	if (failures.length > 0) {
 		throw new Error(`Runtime errors detected:\\n${failures.join('\\n')}`)
 	}
