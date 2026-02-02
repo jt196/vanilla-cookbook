@@ -67,7 +67,41 @@ export async function PUT({ request, locals, params, url }) {
 	delete recipeData.photos
 
 	const saveImageUrl = recipeData.saveImageUrl || false
-	delete recipeData.saveImageUrl
+
+	// Allowlist of fields that can be updated
+	const allowedFields = [
+		'name',
+		'description',
+		'source',
+		'source_url',
+		'cook_time',
+		'prep_time',
+		'total_time',
+		'servings',
+		'ingredients',
+		'ingredients_original',
+		'directions',
+		'directions_original',
+		'notes',
+		'image_url',
+		'photo_url',
+		'photo',
+		'photo_large',
+		'nutritional_info',
+		'difficulty',
+		'rating',
+		'scale',
+		'is_public',
+		'is_pinned',
+		'in_trash',
+		'on_favorites',
+		'on_grocery_list',
+		'parentRecipeId'
+	]
+
+	const updates = Object.fromEntries(
+		Object.entries(recipeData).filter(([key]) => allowedFields.includes(key))
+	)
 
 	try {
 		const recipe = await prisma.recipe.findUnique({
@@ -78,7 +112,7 @@ export async function PUT({ request, locals, params, url }) {
 
 		await prisma.recipe.update({
 			where: { uid },
-			data: recipeData
+			data: updates
 		})
 
 		let photoEntry

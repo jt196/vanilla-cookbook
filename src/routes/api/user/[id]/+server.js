@@ -12,6 +12,7 @@ export async function PUT({ request, locals, params }) {
 
 	const userData = await request.json()
 	const allowedFields = [
+		'email',
 		'theme',
 		'language',
 		'units',
