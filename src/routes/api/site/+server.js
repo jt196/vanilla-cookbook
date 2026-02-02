@@ -15,6 +15,7 @@ export async function POST({ request, locals }) {
 			where: { id: settings.id },
 			data: {
 				registrationAllowed: siteData.registrationAllowed,
+				requireLogin: siteData.requireLogin ?? settings.requireLogin,
 				llmEnabled: siteData.llmEnabled ?? settings.llmEnabled,
 				llmProvider: siteData.llmProvider ?? settings.llmProvider,
 				llmTextModel: siteData.llmTextModel ?? settings.llmTextModel,

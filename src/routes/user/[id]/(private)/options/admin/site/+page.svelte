@@ -164,12 +164,23 @@
 		onsubmit={updateAdminSettings}
 		class="flex flex-col gap-3">
 		<Checkbox
-			name="Admin"
+			name="registrationAllowed"
 			bind:checked={settings.registrationAllowed}
 			legend="Allow Registrations"
 			size="sm"
 			color="primary">
 			Turn on site registration</Checkbox>
+		<Checkbox
+			name="requireLogin"
+			bind:checked={settings.requireLogin}
+			legend="Require Login"
+			size="sm"
+			color="primary">
+			Require authentication for all pages (private site mode)</Checkbox>
+		<InfoText>
+			When enabled, all visitors must log in to access any page. Public recipes and profiles will
+			still be hidden from unauthenticated users.
+		</InfoText>
 		<footer class="flex flex-col gap-2">
 			<Button type="submit" class="self-start w-auto">Update</Button>
 			<FeedbackMessage message={settingsFeedback} inline />

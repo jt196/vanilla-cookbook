@@ -4,8 +4,27 @@ import { prisma } from '$lib/server/prisma'
 import { dbSeeded } from '$lib/utils/seed/seedHelpers'
 import { env } from '$env/dynamic/private'
 import { getClientIp, makeLimiter } from '$lib/server/rateLimit'
+import { redirect } from '@sveltejs/kit'
 
 const envTrue = (v) => typeof v === 'string' && /^(true|1|yes|on)$/i.test(v.trim())
+
+// Routes that should always be accessible even when requireLogin is enabled
+const publicRoutes = [
+	'/login',
+	'/register',
+	'/api/auth',
+	'/api/oauth',
+	'/api/health',
+	'/_app', // SvelteKit internals
+	'/favicon',
+	'/manifest',
+	'/sw.js',
+	'/workbox'
+]
+
+function isPublicRoute(pathname) {
+	return publicRoutes.some((route) => pathname.startsWith(route))
+}
 
 export const handle = async ({ event, resolve }) => {
 	// Lucia
@@ -75,10 +94,10 @@ export const handle = async ({ event, resolve }) => {
 		}
 
 		// normalize onto settings so everyone just reads settings.*
-		settings = { ...s, registrationAllowed: regAllowed }
+		settings = { ...s, registrationAllowed: regAllowed, requireLogin: s?.requireLogin ?? false }
 	} else {
 		// Provide safe defaults when not seeded to avoid undefined access
-		settings = { registrationAllowed: false }
+		settings = { registrationAllowed: false, requireLogin: false }
 		ai = {
 			enabled: false,
 			hasAnyApiKey,
@@ -95,6 +114,19 @@ export const handle = async ({ event, resolve }) => {
 		settings,
 		oauth,
 		ai
+	}
+
+	// ---- Enforce login requirement if enabled ----
+	if (settings.requireLogin && !event.locals.user && !isPublicRoute(event.url.pathname)) {
+		// For API routes, return 401 instead of redirecting
+		if (event.url.pathname.startsWith('/api/')) {
+			return new Response(JSON.stringify({ error: 'Authentication required' }), {
+				status: 401,
+				headers: { 'Content-Type': 'application/json' }
+			})
+		}
+		// Redirect to login page for regular pages
+		redirect(302, '/login')
 	}
 
 	// --- your CORS code unchanged ---
