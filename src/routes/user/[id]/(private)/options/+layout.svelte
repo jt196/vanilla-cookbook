@@ -16,9 +16,9 @@
 	<a
 		role="tab"
 		class="tab"
-		class:tab-active={data.pathname === `/user/${user.userId}/options/password`}
-		href={`/user/${user.userId}/options/password`}>
-		Password
+		class:tab-active={data.pathname === `/user/${user.userId}/options/recipes`}
+		href={`/user/${user.userId}/options/recipes`}>
+		Recipes
 	</a>
 	<a
 		role="tab"
