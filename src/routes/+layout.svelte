@@ -1,5 +1,6 @@
 <script>
 	import { browser } from '$app/environment'
+	import { navigating } from '$app/state'
 	/**
 	 * This script is responsible for importing styles and managing page data.
 	 */
@@ -9,12 +10,14 @@
 	import SiteIcons from '$lib/components/ui/SiteIcons.svelte'
 	import CookBook from '$lib/components/svg/CookBook.svelte'
 	import NavLinks from '$lib/components/ui/NavLinks.svelte'
+	import Spinner from '$lib/components/ui/Spinner.svelte'
 
 	/** @type {{data: PageData, children?: import('svelte').Snippet}} */
 	let { data, children } = $props()
 	let user = $derived(data.user)
 	let settings = $derived(data.settings)
 	let dbSeed = $derived(data.dbSeed)
+	let isNavigating = $derived(!!navigating.to)
 
 	const siteName = import.meta.env.VITE_SITE_NAME || 'Vanilla Cookbook'
 	const LIGHT_THEME = 'light'
@@ -130,6 +133,8 @@
 		</div>
 	{/if}
 </div>
+
+<Spinner visible={isNavigating} spinnerContent="Loading..." />
 
 <div class="min-h-screen bg-base-200">
 	<div class="container mx-auto px-4 py-6">
