@@ -228,17 +228,33 @@ GITHUB_CLIENT_SECRET=
   - **Authorised JavaScript origins**: <https://my-vanilla-site.com>
   - **Authorised redirect URIs**: <https://my-vanilla-site.com/api/oauth/callback>
 
+## Public Recipes
+
+![Public Recipes](../images/screen-desktop-recipes-dracula.png)
+
+The public recipes page at `/recipes` shows all recipes that have been marked as public by their owners. This allows visitors to browse shared recipes without needing to log in (unless the site has "Require Login" enabled).
+
 ## Options
 
-![Settings](../images/screen-desktop-settings-dracula.png)
+![Settings](../images/screen-desktop-options-settings-dracula.png)
 
 I've tried to keep most of the under the hood stuff here.
 
 ### Settings
 
-#### Ingredients
+Account and privacy settings:
 
-See also [ingredients docs](./ingredients.md)
+- **Username** - View your username (read-only)
+- **Email** - Update your email address
+- **Change Password** - Update your password
+- **Profile public** - show/hide your profile in the _/users_ view
+- **Recipes public** - make your recipe public by default
+
+### Recipe Settings
+
+![Recipe Settings](../images/screen-desktop-options-recipes-dracula.png)
+
+Configure how ingredients are displayed. See also [ingredients docs](./ingredients.md)
 
 - **Teaspoons instead of grams** - use these instead of weight for smaller measures
 - **Display Cup Match** - set as default
@@ -254,30 +270,37 @@ Here's a demo of the language and **Display Original** setting working.
   Your browser does not support the video tag.
 </video>
 
-#### Privacy
+### Bookmark
 
-- **Profile public** - show/hide your profile in the _/users_ view
-- **Recipes public** - make your recipe public by default
+![Bookmark](../images/screen-desktop-options-bookmark-dracula.png)
 
-![Bookmark](../images/screen-desktop-bookmark-dracula.png)
+Grab your bookmarklet for saving recipes to the site.
 
-**Bookmark** - grab your bookmarklet for saving recipes to the site.
+### Import / Export
 
-![Import](../images/screen-desktop-import-dracula.png)
-![Export](../images/screen-desktop-export-dracula.png)
-![Upload](../images/screen-desktop-upload-dracula.png)
+![Import](../images/screen-desktop-options-import-dracula.png)
+![Export](../images/screen-desktop-options-export-dracula.png)
 
-**Import**, **Export**, **Upload** see the [Import Docs](import.md).
+See the [Import Docs](import.md) for details on importing and exporting recipes.
+
+### Users (Admin)
 
 ![Users](../images/screen-desktop-admin-users-dracula.png)
 
-**Users** - admin only. User management. Change passwords, add and remove users etc.
+Admin only. User management including:
+
+- Change passwords
+- Add and remove users
+- Manage admin privileges
+
+### Site (Admin)
 
 ![Site](../images/screen-desktop-admin-site-dracula.png)
 
-**Site** - admin only. Site-wide settings including:
+Admin only. Site-wide settings including:
 
 - **Registration** - Turn on/off new user registration
+- **Require Login** - Enable private site mode (all visitors must log in to access any page)
 - **LLM Configuration** - Enable AI features, choose provider and models
 - **Password Requirements** - View current password policy (configured via .env)
 - **Database Backups** - View backup schedule and create manual backups

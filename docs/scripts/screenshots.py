@@ -4,6 +4,12 @@ from pathlib import Path
 import os
 import re
 
+# TIPS
+#
+# admin user, password and id need to be set correctly or it'll silently fail
+# If the admin id isn't correct, it'll just redirect and you'll get the same view for all screenshots
+# Run this from root so the output files are in the correct dirs: `python docs/scripts/screenshots.py`
+
 ROOT_ENV = Path(__file__).resolve().parents[2] / ".env"
 # Load .env from repo root to avoid picking up a different working directory.
 load_dotenv(ROOT_ENV, override=True)
@@ -33,13 +39,14 @@ RECIPE_LIST = re.compile(fr"{re.escape(ORIGIN)}/user/.+/recipes")
 PAGES_TO_CAPTURE = [
     {"name": "login", "route": "/login"},
     {"name": "new", "route": "/recipe/new"},
+    {"name": "recipes", "route": "/recipes"},
     {"name": "shopping", "route": "/user/{ID}/shopping"},
     {"name": "calendar", "route": "/user/{ID}/calendar"},
-    {"name": "settings", "route": "/user/{ID}/options/settings"},
-    {"name": "password", "route": "/user/{ID}/options/password"},
-    {"name": "bookmark", "route": "/user/{ID}/options/bookmark"},
-    {"name": "import", "route": "/user/{ID}/options/import"},
-    {"name": "export", "route": "/user/{ID}/options/export"},
+    {"name": "options-settings", "route": "/user/{ID}/options/settings"},
+    {"name": "options-recipes", "route": "/user/{ID}/options/recipes"},
+    {"name": "options-bookmark", "route": "/user/{ID}/options/bookmark"},
+    {"name": "options-import", "route": "/user/{ID}/options/import"},
+    {"name": "options-export", "route": "/user/{ID}/options/export"},
     {"name": "admin-users", "route": "/user/{ID}/options/admin/users"},
     {"name": "admin-site", "route": "/user/{ID}/options/admin/site"},
 ]
