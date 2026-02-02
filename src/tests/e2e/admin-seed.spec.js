@@ -111,8 +111,8 @@ test('fresh install admin seed, login, and page smoke tests', async ({ page }, t
 	await assertPage(page, '/recipe/new', { heading: 'New Recipe' }, projectName)
 	await assertPage(page, `/user/${userId}/shopping`, { heading: 'Shopping' }, projectName)
 	await assertPage(page, `/user/${userId}/calendar`, { selector: '.ec' }, projectName)
-	await assertPage(page, `/user/${userId}/options/settings`, { heading: 'Ingredients' }, projectName)
-	await assertPage(page, `/user/${userId}/options/password`, { heading: 'Update Password' }, projectName)
+	await assertPage(page, `/user/${userId}/options/settings`, { heading: 'Account' }, projectName)
+	await assertPage(page, `/user/${userId}/options/recipes`, { heading: 'Ingredients' }, projectName)
 	await assertPage(
 		page,
 		`/user/${userId}/options/bookmark`,
