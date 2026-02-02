@@ -160,7 +160,7 @@
 				<p class="text-sm text-base-content/70">
 					by
 					{#if viewerUserId && item.userId === viewerUserId}
-						<span class="font-medium text-base-content/80">Me</span>
+						<a href="/user/{viewerUserId}/recipes" class="link link-primary font-medium">Me</a>
 					{:else}
 						<a href="/user/{item.userId}/recipes" class="link link-primary">
 							{item.auth_user?.username ?? 'Unknown'}
