@@ -198,9 +198,14 @@ model AuthAccount {
 }
 
 model SiteSettings {
-    id                  Int     @id @default(autoincrement())
-    version             Float   @default(0)
-    registrationAllowed Boolean @default(false)
+    id                  Int      @id @default(autoincrement())
+    version             Float    @default(0)
+    registrationAllowed Boolean  @default(false)
+    // LLM Configuration
+    llmEnabled          Boolean  @default(false)
+    llmProvider         String?  // Default provider: 'openai' | 'anthropic' | 'google' | 'ollama'
+    llmTextModel        String?  // Model for text parsing
+    llmImageModel       String?  // Model for image parsing
 }
 
 model Ingredient {

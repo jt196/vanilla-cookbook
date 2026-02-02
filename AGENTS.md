@@ -235,16 +235,16 @@ pnpm start                # Build then serve
   - Production: Your actual domain
 
 **Optional**:
-- `OPENAI_API_KEY`: For AI-assisted parsing
-- `ANTHROPIC_API_KEY`: Alternative to OpenAI
-- `LLM_API_ENABLED`: Enable/disable AI features (default: true if key provided)
-- `LLM_API_ENGINE_TEXT`: OpenAI model for text parsing (default: gpt-3.5-turbo)
-- `LLM_API_ENGINE_IMAGE`: OpenAI model for image parsing (default: gpt-4o)
+- `OPENAI_API_KEY`: For AI-assisted parsing (OpenAI)
+- `ANTHROPIC_API_KEY`: For AI-assisted parsing (Anthropic)
+- `GOOGLE_API_KEY`: For AI-assisted parsing (Google/Gemini)
+- `OLLAMA_BASE_URL`: For local AI models (default: http://localhost:11434)
 - `VITE_APP_ROOT_PATH`: Absolute path for Paprika import (rarely needed)
 - `BODY_SIZE_LIMIT`: Max upload size in bytes (default: 5242880 = 5MB)
-- `REGISTRATION_ALLOWED`: Allow new user registration (default: true)
 - `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`: OAuth
 - `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`: OAuth
+
+**Note**: LLM provider/model selection and registration settings are configured in the Site Settings admin panel, not .env.
 
 ## Database Schema (Prisma)
 

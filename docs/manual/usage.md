@@ -97,32 +97,46 @@ If the standard recipe scrape fails (criteria being: no name, no ingredients), i
 
 ### AI Assist
 
-#### Scrape Fallback
+AI-powered features help with recipe scraping, text parsing, image recognition, and ingredient cleanup.
 
-If the recipe parse fails, and you have the ai option enabled, plus key set in the variables, it'll submit the HTML of the recipe page for an AI to parse.
+#### Configuration
 
-Add your LLM config to the `.env` file. Supported providers out of the box: OpenAI, Anthropic, Google (Gemini), Ollama (text only). Env shape:
+**Step 1: Add API Keys**
+
+Add one or more API keys to your `.env` file:
 
 ```env
-LLM_API_ENABLED=true
-LLM_PROVIDER=openai           # default provider (openai|anthropic|gemini|ollama)
-LLM_TEXT_MODEL=gpt-3.5-turbo  # text model
-LLM_IMAGE_MODEL=gpt-4o        # image model (ignored for ollama)
-# optional per-stream overrides
-LLM_TEXT_PROVIDER=
-LLM_IMAGE_PROVIDER=
-# keys (generic or provider-specific)
-LLM_API_KEY=
-OPENAI_API_KEY=
-ANTHROPIC_API_KEY=
-GOOGLE_API_KEY=
+# Add keys for the providers you want to use
+OPENAI_API_KEY=sk-...
+ANTHROPIC_API_KEY=sk-ant-...
+GOOGLE_API_KEY=...
+# For local models
 OLLAMA_BASE_URL=http://localhost:11434
 ```
 
-- Image parsing is disabled when using Ollama as the image provider (it does not support image prompts). The UI hides the image tab if the selected provider is Ollama.
-- For exact model names, refer to each provider’s own documentation/console. LangChain docs show usage but not full model catalogs. Choose a text model for `LLM_TEXT_MODEL` and an image-capable model for `LLM_IMAGE_MODEL` (OpenAI/Google support images; Anthropic/Ollama are text-only in this flow).
+**Step 2: Configure in Site Settings**
 
-Set `LLM_API_ENABLED=true`. The default model should work.
+Go to **Options > Site** (admin only) to configure LLM features:
+
+- **Enable LLM Features** - Turn AI features on/off
+- **Provider** - Choose from providers with valid API keys (OpenAI, Anthropic, Google, Ollama)
+- **Text Model** - For recipe parsing and text cleanup (recommended: fast/cheap models like GPT-4o Mini, Claude 3.5 Haiku, Gemini Flash)
+- **Image Model** - For recipe photo analysis (Ollama doesn't support images)
+
+Each dropdown includes common models with a "Custom..." option if you need a specific model version.
+
+**Supported Providers:**
+
+| Provider | Text Models | Image Models | Notes |
+|----------|-------------|--------------|-------|
+| OpenAI | GPT-4o Mini, GPT-3.5 Turbo, GPT-4o | GPT-4o Mini, GPT-4o | Full support |
+| Anthropic | Claude 3.5 Haiku, Claude 3.5 Sonnet | Claude 3.5 Sonnet, Haiku | Full support |
+| Google | Gemini 2.0 Flash, 1.5 Flash/Pro | Same as text | Full support |
+| Ollama | Llama 3.2, Mistral, Phi-3 | Not supported | Local only, no images |
+
+#### Scrape Fallback
+
+If the standard recipe scrape fails (no name or ingredients found), it'll automatically submit the HTML to your configured LLM for parsing.
 
 Test the demo on [this URL](https://pastebin.com/raw/zwgsuVKd) to check it works.
 
@@ -135,7 +149,7 @@ Here's a demo of it working:
 
 #### Text Parsing
 
-Click on the Parse button at the top of the + new page (hidden if you don't have API key or AI enabled in the `.env` file) and you'll be presented with a large input box. Paste your recipe in there and see whether an LLM can make something of the data! It works pretty well in the demo above.
+Click on the Parse button at the top of the + new page (hidden if AI is not configured) and you'll be presented with a large input box. Paste your recipe in there and see whether an LLM can make something of the data! It works pretty well in the demo above.
 
 #### Image Recognition
 
@@ -261,4 +275,9 @@ Here's a demo of the language and **Display Original** setting working.
 
 ![Site](../images/screen-desktop-admin-site-dracula.png)
 
-**Site** - admin only. Turn on/off registrations.
+**Site** - admin only. Site-wide settings including:
+
+- **Registration** - Turn on/off new user registration
+- **LLM Configuration** - Enable AI features, choose provider and models
+- **Password Requirements** - View current password policy (configured via .env)
+- **Database Backups** - View backup schedule and create manual backups

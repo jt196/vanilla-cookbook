@@ -30,23 +30,20 @@ export const handle = async ({ event, resolve }) => {
 		oauthEnabled
 	}
 
-	const providerDefault = env.LLM_PROVIDER || 'openai'
-	const textProvider = env.LLM_TEXT_PROVIDER || providerDefault
-	const imageProvider = env.LLM_IMAGE_PROVIDER || env.LLM_TEXT_PROVIDER || providerDefault
-	const apiKeyPresent = Boolean(
-		env.LLM_API_KEY || env.OPENAI_API_KEY || env.ANTHROPIC_API_KEY || env.GEMINI_API_KEY
-	)
-	const ai = {
-		aiEnabled: envTrue(env.LLM_API_ENABLED),
-		apiKeyPresent,
-		textProvider,
-		imageProvider,
-		imageAllowed: imageProvider !== 'ollama'
-	}
+	// ---- Detect available LLM providers based on API keys ----
+	const availableProviders = []
+	if (env.OPENAI_API_KEY || env.LLM_API_KEY) availableProviders.push('openai')
+	if (env.ANTHROPIC_API_KEY) availableProviders.push('anthropic')
+	if (env.GOOGLE_API_KEY || env.GEMINI_API_KEY) availableProviders.push('google')
+	if (env.OLLAMA_BASE_URL) availableProviders.push('ollama')
+
+	const hasAnyApiKey = availableProviders.length > 0
 
 	// Site-wide bits (do once here)
 	const seeded = await dbSeeded(prisma)
 	let settings
+	let ai
+
 	if (seeded) {
 		const s = await prisma.siteSettings.findFirst()
 
@@ -55,11 +52,42 @@ export const handle = async ({ event, resolve }) => {
 				? envTrue(env.REGISTRATION_ALLOWED)
 				: !!s?.registrationAllowed
 
-		// normalize onto settings so everyone just reads settings.registrationAllowed
+		// LLM config: DB settings take precedence, then env fallbacks
+		// Only enabled if DB says so AND we have API keys
+		const llmEnabled = hasAnyApiKey && (s?.llmEnabled ?? envTrue(env.LLM_API_ENABLED))
+
+		// Provider: DB setting → env fallback → first available
+		const llmProvider =
+			s?.llmProvider || env.LLM_PROVIDER || availableProviders[0] || 'openai'
+
+		// Models: DB setting → env fallback
+		const textModel = s?.llmTextModel || env.LLM_TEXT_MODEL || null
+		const imageModel = s?.llmImageModel || env.LLM_IMAGE_MODEL || null
+
+		ai = {
+			enabled: llmEnabled,
+			hasAnyApiKey,
+			availableProviders,
+			provider: llmProvider,
+			textModel,
+			imageModel,
+			imageAllowed: llmProvider !== 'ollama'
+		}
+
+		// normalize onto settings so everyone just reads settings.*
 		settings = { ...s, registrationAllowed: regAllowed }
 	} else {
 		// Provide safe defaults when not seeded to avoid undefined access
 		settings = { registrationAllowed: false }
+		ai = {
+			enabled: false,
+			hasAnyApiKey,
+			availableProviders,
+			provider: null,
+			textModel: null,
+			imageModel: null,
+			imageAllowed: false
+		}
 	}
 
 	event.locals.site = {
