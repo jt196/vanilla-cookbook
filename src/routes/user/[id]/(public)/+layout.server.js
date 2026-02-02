@@ -8,6 +8,7 @@ export const load = async ({ params, url, fetch, locals }) => {
 	const user = locals.user
 	const requestedUserId = params.id
 
+	// First fetch user profile to check access (required before other fetches)
 	const userPublicResponse = await fetch(`${url.origin}/api/user/${requestedUserId}/public`)
 	const userPublic = await userPublicResponse.json()
 
@@ -15,19 +16,18 @@ export const load = async ({ params, url, fetch, locals }) => {
 		throw redirect(302, '/recipes')
 	}
 
-	let viewingUserId
-	user ? (viewingUserId = user.userId) : null
-	const recipeResponse = await fetch(`${url.origin}/api/user/${requestedUserId}/recipes`)
-	const recipes = await recipeResponse.json()
-	const hierarchicalCategories = await fetch(`${url.origin}/api/user/${requestedUserId}/categories`)
-	const categories = await hierarchicalCategories.json()
+	// Fetch recipes and categories in parallel
+	const [recipes, categories] = await Promise.all([
+		fetch(`${url.origin}/api/user/${requestedUserId}/recipes`).then((r) => r.json()),
+		fetch(`${url.origin}/api/user/${requestedUserId}/categories`).then((r) => r.json())
+	])
 
 	return {
 		recipes,
 		categories,
 		user: {
 			requestedUserId: requestedUserId,
-			viewingUserId,
+			viewingUserId: user?.userId ?? null,
 			publicProfile: userPublic.userProfile
 		}
 	}

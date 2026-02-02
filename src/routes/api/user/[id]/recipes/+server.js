@@ -91,24 +91,27 @@ export async function GET({ params, locals }) {
 		let favouriteLookup = new Set()
 		let forkLookup = new Set()
 		if (user && recipes.length > 0) {
-			const favs = await prisma.recipeFavorite.findMany({
-				where: {
-					userId: user.userId,
-					recipeUid: { in: recipes.map((recipe) => recipe.uid) }
-				},
-				select: {
-					recipeUid: true
-				}
-			})
-			favouriteLookup = new Set(favs.map((fav) => fav.recipeUid))
+			const recipeUids = recipes.map((recipe) => recipe.uid)
 
-			const forks = await prisma.recipe.findMany({
-				where: {
-					userId: user.userId,
-					parentRecipeId: { in: recipes.map((recipe) => recipe.uid) }
-				},
-				select: { parentRecipeId: true }
-			})
+			// Run favorites and forks queries in parallel
+			const [favs, forks] = await Promise.all([
+				prisma.recipeFavorite.findMany({
+					where: {
+						userId: user.userId,
+						recipeUid: { in: recipeUids }
+					},
+					select: { recipeUid: true }
+				}),
+				prisma.recipe.findMany({
+					where: {
+						userId: user.userId,
+						parentRecipeId: { in: recipeUids }
+					},
+					select: { parentRecipeId: true }
+				})
+			])
+
+			favouriteLookup = new Set(favs.map((fav) => fav.recipeUid))
 			forkLookup = new Set(forks.map((fork) => fork.parentRecipeId).filter(Boolean))
 		}
 
