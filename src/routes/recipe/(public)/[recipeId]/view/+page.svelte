@@ -165,6 +165,25 @@
 		}
 	}
 
+	async function handleNoteUpdated(logId, note) {
+		try {
+			const response = await fetch(`/api/log/${logId}`, {
+				method: 'PUT',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ note })
+			})
+			if (response.ok) {
+				logs = logs.map((log) => (log.id === logId ? { ...log, note } : log))
+				recipeFeedback = 'Note updated!'
+			} else {
+				recipeFeedback = 'Failed to update note!'
+			}
+		} catch (err) {
+			console.error('Error updating note:', err)
+			recipeFeedback = 'Failed to update note!'
+		}
+	}
+
 	function handleRecipeRatingChanged(newRating) {
 		recipeRatingChange(newRating, recipe.uid)
 		recipe.rating = newRating
@@ -334,7 +353,11 @@
 			<RecipeViewDirections {directionLines} {sanitizedDirections} {loadingIngredients} />
 		</div>
 	</div>
-	<RecipeViewNotes {notesLines} {sanitizedNotes} logs={viewOnly ? [] : logs} />
+	<RecipeViewNotes
+		{notesLines}
+		{sanitizedNotes}
+		logs={viewOnly ? [] : logs}
+		onNoteUpdated={viewOnly ? undefined : handleNoteUpdated} />
 {/if}
 
 <RecipeViewOtherPhotos

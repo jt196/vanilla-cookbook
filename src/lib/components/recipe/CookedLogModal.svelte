@@ -1,7 +1,7 @@
 <script>
 	import Dialog from '$lib/components/ui/Dialog.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
-	import Input from '$lib/components/ui/Form/Input.svelte'
+	import Textarea from '$lib/components/ui/Form/Textarea.svelte'
 
 	let {
 		/** @type {boolean} */
@@ -32,12 +32,12 @@
 			e.preventDefault()
 			handleSubmit()
 		}}>
-		<Input
+		<Textarea
 			label="Add a note (optional)"
 			bind:value={note}
-			placeholder="How did it turn out?"
-			disabled={loading}
-			style="bordered" />
+			rows={3}
+			placeholder="How did it turn out? Any tweaks you made?"
+			disabled={loading} />
 		<div class="modal-action">
 			<Button type="button" class="btn-ghost" onclick={handleClose} disabled={loading}>
 				Cancel

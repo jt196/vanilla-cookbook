@@ -8,7 +8,7 @@ export async function PUT({ locals, request, params }) {
 
 	// Parse the request body to get updated fields
 	const body = await request.json()
-	const { start, end } = body
+	const { start, end, note } = body
 
 	const log = await prisma.RecipeLog.findUnique({
 		where: { id }
@@ -16,13 +16,16 @@ export async function PUT({ locals, request, params }) {
 
 	requireOwnership(user, log)
 
+	// Build update data - only include fields that were provided
+	const updateData = {}
+	if (start !== undefined) updateData.cooked = new Date(start)
+	if (end !== undefined) updateData.cookedEnd = end ? new Date(end) : null
+	if (note !== undefined) updateData.note = note
+
 	try {
 		const updatedLog = await prisma.RecipeLog.update({
 			where: { id },
-			data: {
-				cooked: new Date(start),
-				cookedEnd: end ? new Date(end) : undefined
-			}
+			data: updateData
 		})
 		return jsonSuccess({ updatedLog })
 	} catch (err) {
