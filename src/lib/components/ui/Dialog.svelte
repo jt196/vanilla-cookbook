@@ -78,8 +78,9 @@
 		{@render children()}
 	</div>
 	{#if closeOnBackdrop}
-		<form method="dialog" class="modal-backdrop">
-			<button onclick={handleBackdropClick}>close</button>
-		</form>
+		<!-- Using div instead of form to avoid nested form issues -->
+		<div class="modal-backdrop" role="button" tabindex="-1" onclick={handleBackdropClick} onkeydown={(e) => e.key === 'Enter' && handleBackdropClick()}>
+			<span class="sr-only">close</span>
+		</div>
 	{/if}
 </dialog>

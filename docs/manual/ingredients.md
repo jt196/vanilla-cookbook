@@ -172,7 +172,7 @@ First we figure out the measurement system from the units contained within the i
 - pounds + ounces + fluid ounces => **Imperial**
 - cups => **US Cups**
 
-If they're mixed, it'll try and get the system by counting the instances of each one belonging to whatever category, e.g. grams _ 2, cups _ 1 => metric. If they're equal, it'll get a bit confused. They shouldn't be there anyway, so take them out!
+If they're mixed, it'll try and get the system by counting the instances of each one belonging to whatever category, e.g. grams _2, cups_ 1 => metric. If they're equal, it'll get a bit confused. They shouldn't be there anyway, so take them out!
 
 Note, teaspoons/tablespoons is system agnostic, as many folks use them for smaller ingredient quantities in recipes. However, if the system is found to be **US Cups**, it will attempt to convert them to grams. You can prevent this behaviour by checking **Use teaspoons and tablespoons instead of grams.** in the user settings.
 
@@ -183,7 +183,7 @@ What we have is a big list of ingredients, and their approximate volumetric weig
 - 1 cup Madagascan weeping bee honey => **237** _grams_ Madagascan weeping bee honey \*
 - 1 cup honey => **336** _grams_ honey | _Honey (336 g/cup)_
 
-* Converted using default water density
+- Converted using default water density
 
 ### Per-item quantities and multipliers
 
@@ -192,3 +192,17 @@ If a line has a multiplier (e.g. `6 x 50 g patties`), the main quantity remains 
 As you can see the longer honey ingredient failed. If you want it to work better, just move the extra bit to after a comma or in brackets:
 
 - 1 cup honey, Madagascan weeping bee => **336** _grams_ honey _| Madagascan weeping bee | Honey (336 g/cup)_
+
+## Advanced: Ingredient Matching Configuration
+
+The conversion feature uses fuzzy matching (Fuse.js) to find ingredients in the density database. The defaults work well for most cases, but advanced users can fine-tune the matching behaviour via environment variables.
+
+| Variable | Default | Description |
+| --- | --- | --- |
+| `FUSE_THRESHOLD_STRICT` | `0.3` | Threshold for strict matching (0.0 = perfect match, 1.0 = match anything). Lower = stricter. |
+| `FUSE_THRESHOLD_RELAXED` | `0.5` | Threshold for relaxed matching on individual words (e.g. "yellow onions" → "onions"). |
+| `FUSE_MIN_WORD_LENGTH` | `3` | Minimum word length to attempt matching (prevents matching "of", "in", etc.). |
+| `FUSE_DISTANCE` | `100` | How far from the start of text a match can be. Lower = matches must be near the beginning. |
+| `FUSE_MIN_MATCH_CHAR_LENGTH` | `2` | Minimum characters that must match for a valid result. |
+
+These are optional overrides - only set them if you're experiencing matching issues and understand Fuse.js parameters.

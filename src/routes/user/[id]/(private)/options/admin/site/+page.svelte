@@ -1,10 +1,17 @@
 <script>
 	import { localDateAndTime } from '$lib/utils/dateTime'
 	import { invalidateAll } from '$app/navigation'
+	import {
+		getAvailableProviders,
+		getTextModelsForProvider,
+		getImageModelsForProvider
+	} from '$lib/utils/llmModels.js'
 	import FeedbackMessage from '$lib/components/ui/FeedbackMessage.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Badge from '$lib/components/ui/Badge.svelte'
 	import Checkbox from '$lib/components/ui/Form/Checkbox.svelte'
+	import Dropdown from '$lib/components/ui/Form/Dropdown.svelte'
+	import Input from '$lib/components/ui/Form/Input.svelte'
 	import Table from '$lib/components/ui/Table/Table.svelte'
 	import TableHead from '$lib/components/ui/Table/TableHead.svelte'
 	import TableBody from '$lib/components/ui/Table/TableBody.svelte'
@@ -15,14 +22,72 @@
 	/** @type {{data: any}} */
 	let { data } = $props()
 
-	const { settings, llmConfig, passwordRequirements, passwordRequirementsDescription } = $state(data)
+	const { settings, llmConfig, passwordRequirements, passwordRequirementsDescription } =
+		$state(data)
 
 	let settingsFeedback = $state('')
+	let llmFeedback = $state('')
 	let backupInfo = $state(data.backupInfo)
 	let backupError = $state(data.backupError || '')
 	let backupInProgress = $state(false)
 	let backupFeedback = $state('')
-	let llm = $state(llmConfig)
+
+	// LLM form state
+	let llmEnabled = $state(llmConfig.dbEnabled)
+	const initialProvider = llmConfig.dbProvider || llmConfig.availableProviders[0] || ''
+	let llmProvider = $state(initialProvider)
+
+	// Check if current model is in the list or custom
+	function getModelSelection(currentModel, provider, isImage = false) {
+		const modelList = isImage
+			? getImageModelsForProvider(provider)
+			: getTextModelsForProvider(provider)
+		if (!currentModel) return modelList[0]?.value || ''
+		const found = modelList.find((m) => m.value === currentModel)
+		return found ? currentModel : 'custom'
+	}
+
+	// Compute initial selections based on DB values and initial provider
+	const initialTextSelection = getModelSelection(llmConfig.dbTextModel, initialProvider, false)
+	const initialImageSelection = getModelSelection(llmConfig.dbImageModel, initialProvider, true)
+
+	let textModelSelection = $state(initialTextSelection)
+	let imageModelSelection = $state(initialImageSelection)
+	let customTextModel = $state(initialTextSelection === 'custom' ? llmConfig.dbTextModel || '' : '')
+	let customImageModel = $state(
+		initialImageSelection === 'custom' ? llmConfig.dbImageModel || '' : ''
+	)
+
+	let textModelList = $derived(getTextModelsForProvider(llmProvider))
+	let imageModelList = $derived(getImageModelsForProvider(llmProvider))
+
+	// Track provider changes to reset model selections
+	let previousProvider = initialProvider
+	$effect(() => {
+		if (llmProvider !== previousProvider) {
+			previousProvider = llmProvider
+			const newTextModels = getTextModelsForProvider(llmProvider)
+			const newImageModels = getImageModelsForProvider(llmProvider)
+			textModelSelection = newTextModels[0]?.value || ''
+			imageModelSelection = newImageModels[0]?.value || ''
+			customTextModel = ''
+			customImageModel = ''
+		}
+	})
+
+	let showCustomTextInput = $derived(textModelSelection === 'custom')
+	let showCustomImageInput = $derived(imageModelSelection === 'custom')
+	let supportsImages = $derived(imageModelList.length > 0)
+
+	// Get the actual model value to save
+	let effectiveTextModel = $derived(
+		textModelSelection === 'custom' ? customTextModel : textModelSelection
+	)
+	let effectiveImageModel = $derived(
+		imageModelSelection === 'custom' ? customImageModel : imageModelSelection
+	)
+
+	let availableProviderOptions = $derived(getAvailableProviders(llmConfig.availableProviders))
 
 	async function updateAdminSettings(event) {
 		event.preventDefault()
@@ -37,6 +102,27 @@
 			settingsFeedback = 'Settings updated successfully!'
 		} else {
 			settingsFeedback = 'There was a problem updating your settings!'
+		}
+	}
+
+	async function updateLlmSettings(event) {
+		event.preventDefault()
+		const response = await fetch('/api/site', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({
+				...settings,
+				llmEnabled,
+				llmProvider,
+				llmTextModel: effectiveTextModel || null,
+				llmImageModel: supportsImages ? effectiveImageModel || null : null
+			})
+		})
+		if (response.ok) {
+			llmFeedback = 'LLM settings updated successfully!'
+			await invalidateAll()
+		} else {
+			llmFeedback = 'There was a problem updating LLM settings!'
 		}
 	}
 
@@ -67,7 +153,6 @@
 	$effect(() => {
 		backupInfo = data.backupInfo
 		backupError = data.backupError || ''
-		llm = data.llmConfig
 	})
 </script>
 
@@ -79,12 +164,23 @@
 		onsubmit={updateAdminSettings}
 		class="flex flex-col gap-3">
 		<Checkbox
-			name="Admin"
+			name="registrationAllowed"
 			bind:checked={settings.registrationAllowed}
 			legend="Allow Registrations"
 			size="sm"
 			color="primary">
 			Turn on site registration</Checkbox>
+		<Checkbox
+			name="requireLogin"
+			bind:checked={settings.requireLogin}
+			legend="Require Login"
+			size="sm"
+			color="primary">
+			Require authentication for all pages (private site mode)</Checkbox>
+		<InfoText>
+			When enabled, all visitors must log in to access any page. Public recipes and profiles will
+			still be hidden from unauthenticated users.
+		</InfoText>
 		<footer class="flex flex-col gap-2">
 			<Button type="submit" class="self-start w-auto">Update</Button>
 			<FeedbackMessage message={settingsFeedback} inline />
@@ -94,21 +190,77 @@
 
 <div class="w-full md:w-3/4 lg:w-2/3 space-y-2 mb-3">
 	<h3>LLM Configuration</h3>
-	<div class="rounded-box border border-base-300 bg-base-200 p-4 space-y-1">
-		<p>
-			<strong>LLM API Enabled:</strong>
-			{llm?.enabled ? 'Yes' : 'No'}
-		</p>
-		<p>
-			<strong>Text Model:</strong>
-			{llm?.textProvider} / {llm?.textModel}
-		</p>
-		<p>
-			<strong>Image Model:</strong>
-			{llm?.imageProvider} / {llm?.imageModel}
-		</p>
-		<InfoText class="my-4">Update values in your .env file to change providers or models.</InfoText>
-	</div>
+	{#if !llmConfig.hasAnyApiKey}
+		<div class="rounded-box border border-base-300 bg-base-200 p-4">
+			<InfoText>
+				No API keys configured. Add API keys to your .env file to enable LLM features:
+				<code>OPENAI_API_KEY</code>, <code>ANTHROPIC_API_KEY</code>, <code>GOOGLE_API_KEY</code>, or
+				configure <code>OLLAMA_BASE_URL</code> for local models.
+			</InfoText>
+		</div>
+	{:else}
+		<form onsubmit={updateLlmSettings} class="flex flex-col gap-4">
+			<Checkbox
+				name="llmEnabled"
+				bind:checked={llmEnabled}
+				legend="Enable LLM Features"
+				size="sm"
+				color="primary">
+				Enable AI-assisted recipe parsing and image analysis
+			</Checkbox>
+
+			{#if llmEnabled}
+				<Dropdown
+					name="llmProvider"
+					options={availableProviderOptions}
+					bind:selected={llmProvider}
+					legend="LLM Provider" />
+
+				<div class="flex flex-col gap-2">
+					<Dropdown
+						name="textModel"
+						options={textModelList}
+						bind:selected={textModelSelection}
+						legend="Text Model (for recipe parsing)" />
+					{#if showCustomTextInput}
+						<Input
+							type="text"
+							id="customTextModel"
+							label="Custom Text Model"
+							placeholder="e.g. gpt-4o-2024-08-06"
+							bind:value={customTextModel} />
+					{/if}
+				</div>
+
+				{#if supportsImages}
+					<div class="flex flex-col gap-2">
+						<Dropdown
+							name="imageModel"
+							options={imageModelList}
+							bind:selected={imageModelSelection}
+							legend="Image Model (for image analysis)" />
+						{#if showCustomImageInput}
+							<Input
+								type="text"
+								id="customImageModel"
+								label="Custom Image Model"
+								placeholder="e.g. claude-3-5-sonnet-20241022"
+								bind:value={customImageModel} />
+						{/if}
+					</div>
+				{:else}
+					<InfoText>
+						{llmProvider === 'ollama' ? 'Ollama' : 'This provider'} does not support image analysis.
+					</InfoText>
+				{/if}
+			{/if}
+
+			<footer class="flex flex-col gap-2">
+				<Button type="submit" class="self-start w-auto">Update LLM Settings</Button>
+				<FeedbackMessage message={llmFeedback} inline />
+			</footer>
+		</form>
+	{/if}
 </div>
 
 <div class="w-full md:w-3/4 lg:w-2/3 space-y-2 mb-3">

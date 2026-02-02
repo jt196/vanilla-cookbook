@@ -1,16 +1,36 @@
 import { getBackupInfo } from '$lib/server/backups'
-import { env } from '$env/dynamic/private'
 
-export const load = async ({ parent }) => {
+export const load = async ({ parent, locals }) => {
 	// Get parent data (settings, user)
 	const parentData = await parent()
 
+	// Get AI config from hooks (includes DB settings + available providers)
+	const ai = locals.site?.ai ?? {
+		enabled: false,
+		hasAnyApiKey: false,
+		availableProviders: [],
+		provider: null,
+		textModel: null,
+		imageModel: null,
+		imageAllowed: false
+	}
+
+	// Get the raw DB settings for the form
+	const dbSettings = locals.site?.settings ?? {}
+
 	const llmConfig = {
-		enabled: env.LLM_API_ENABLED === 'true',
-		textProvider: env.LLM_TEXT_PROVIDER || 'openai',
-		textModel: env.LLM_TEXT_MODEL || env.LLM_API_ENGINE_TEXT || 'gpt-3.5-turbo',
-		imageProvider: env.LLM_IMAGE_PROVIDER || env.LLM_TEXT_PROVIDER || 'openai',
-		imageModel: env.LLM_IMAGE_MODEL || env.LLM_API_ENGINE_IMAGE || 'gpt-4o'
+		enabled: ai.enabled,
+		hasAnyApiKey: ai.hasAnyApiKey,
+		availableProviders: ai.availableProviders,
+		provider: ai.provider,
+		textModel: ai.textModel,
+		imageModel: ai.imageModel,
+		imageAllowed: ai.imageAllowed,
+		// DB values for form binding
+		dbEnabled: dbSettings.llmEnabled ?? false,
+		dbProvider: dbSettings.llmProvider ?? null,
+		dbTextModel: dbSettings.llmTextModel ?? null,
+		dbImageModel: dbSettings.llmImageModel ?? null
 	}
 
 	try {

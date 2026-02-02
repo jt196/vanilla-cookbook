@@ -14,7 +14,12 @@ export async function POST({ request, locals }) {
 		const updatedSettings = await prisma.siteSettings.update({
 			where: { id: settings.id },
 			data: {
-				registrationAllowed: siteData.registrationAllowed
+				registrationAllowed: siteData.registrationAllowed,
+				requireLogin: siteData.requireLogin ?? settings.requireLogin,
+				llmEnabled: siteData.llmEnabled ?? settings.llmEnabled,
+				llmProvider: siteData.llmProvider ?? settings.llmProvider,
+				llmTextModel: siteData.llmTextModel ?? settings.llmTextModel,
+				llmImageModel: siteData.llmImageModel ?? settings.llmImageModel
 			}
 		})
 		return jsonSuccess(updatedSettings)

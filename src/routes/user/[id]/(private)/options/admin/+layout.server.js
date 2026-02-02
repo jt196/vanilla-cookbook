@@ -4,7 +4,7 @@ export const load = async ({ locals }) => {
 	const user = requireAdminUser(locals)
 
 	// Settings are placed on locals.site in hooks; provide a safe fallback.
-	const settings = locals.site?.settings ?? { registrationAllowed: false }
+	const settings = locals.site?.settings ?? { registrationAllowed: false, requireLogin: false }
 
 	return { settings, user }
 }
