@@ -8,21 +8,22 @@
 
 From left to right:
 
-- **Add Recipe**: Add new recipes manually or using the scraper
+- **Dark/Light Theme Mode**
+- **All Recipes**: List of all the public recipes on your Vanilla Instance
+- **Add Recipe**: Add a new recipe
 - **[Shopping List](apps.md#shopping)**: A simple list to help you with your weekly shop
 - **[Calendar](apps.md#calendar)**: Visual record of your previous cooked recipes
-- **Users**: List of the users on your instance
 - **Settings**: Configuration section
 
 ### Filters
 
 From left to right
 
-- **Display Category Tree** - Imported Paprika categories will be displayed here
+- **Display Category Tree** - Imported Paprika categories will be displayed here (hidden by default)
 - **Filter with text string** - Search by multiple methods
 - **Specify filter** - Name, Ingredient, Source, Notes
 - **Filter favourites** - List all your favourite recipes
-- **Filter cooked** - List all the cooked recipes
+- **Filter cooked** - List all the cooked recipes (sort by x cooked, then alphabetically)
 - **Sort by Date, Title or Rating** - Sort the recipes by various means
 
 ### Recipe Card
@@ -37,11 +38,13 @@ Displays info about your recipes.
 
 From left to right:
 
-- **Back** to the recipe list
+- **Share** share recipe link
 - **Edit Recipe**
 - **Manage Images**
+- **Make Recipe Public**
 - **Favourite Recipe**
 - **Mark Recipe as Cooked today**
+- **Show Cooked List** (button only visible if cooked.length > 1)
 - **Delete Recipe**
 
 ### Recipe About
@@ -62,13 +65,24 @@ Click on the ingredient line to mark as "checked" for the duration of the recipe
 
 Hover over and click the shopping basket button to the left of the ingredient to add it to the shopping list.
 
-You have three checkboxes here:
+### Ingredient Buttons
 
-- **Display Cup Match** volumetric ingredients by default when converting to and from US Cups. This is a bit "fuzzy" and not always perfect, so sometimes useful to check what ingredient the system. If no ingredient has been found, you'll see a '\*' and a note that it has been matched to water.
-- **Display Original** ingredient line text instead of parsed text. The parser will go through an ingredient line and attempt to separate quantity, unit, ingredient and any extra information. If this fails, you can simply use a fallback, but the scaling won't work.
-- **Display Extra** ingredient text, eg after the comma in "1 clove garlic, chopped"
+You can set your default options in the settings.
 
-You can set your default options in the settings section.
+#### First Row - Systems
+
+By default, your chosen system will be selected. The recipe system will have an outline.
+
+US Vol = US volumetric, e.g. cups etc.
+
+#### Second Row - Display
+
+Ingredient display has been optimised for easy skimming. We remove some extra stuff, but sometimes you need to check it.
+
+- **Original** - Display original ingredient string. I have this turned off by default, but sometimes it's useful to switch it when converting between Vol <-> Weight
+- **Extra** - displays instructions etc - items that go after a comma or are in brackets, e.g. "1 potato, King Edward". I'm often not interested in these extras, but it's handy to just double check what's there.
+- **Match** - display the ingredient match when converting between Vol <-> Weight. We match up with a database of ingredients. Sometimes this fails, it's usually worth checking before you start baking a cake...
+- **Symbols** - tsp instead of teaspoon etc.
 
 ## Recipe Add
 
@@ -78,7 +92,8 @@ Add your recipe here. Multiple sources accepted:
 
 - Websites with Schema.org recipe schema (most of the web)
 - Websites with no schema
-- Pasted Text
+- Pasted text
+- Prompted text
 - Images of recipes
 
 **Android PWA sharing** a URL or text to the new page is supported.

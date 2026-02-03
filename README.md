@@ -36,16 +36,15 @@ Add an LLM API key to activate these features. Google, OpenAI, Anthropic and Oll
 [Docs](https://vanilla-cookbook.readthedocs.io/en/latest/manual/usage/#ai-assist)
 
 - Scrape Assist
-  - HTML fallback when JSON data not present
-  - text analysis
-  - image analysis
+  - LLM parses the HTML of a page when Schema.org data absent or malformed
+  - text analysis - paste in text for saving
 - Recipe tweak
-  - Messy ingredient tidy up - removing cruft and extra gubbins that makes the parser fail
-  - Directions summarise. Look dude, I know how to boil an egg, I don't need complex directions, I just want a very simple overview.
+  - Messy ingredient tidy up - trimming the fat of those lengthy ingredient strings
+  - Directions summarise. Look dude, I know how to boil an egg
 - Recipe generate from prompt
-  - Haven't really tested the recipes but it seems to work pretty well. Unless you're asking for some weird recipe, I think they do a pretty decent job at creating recipes.
-
-#### Image Analysis
+  - Build a new recipe from a prompt, e.g. "Original pesto genovese"
+- Image Analysis
+  - Drop up to three photos of your next recipe and it'll parse it into the correct form
 
 ### Progressive Web App
 
@@ -59,11 +58,18 @@ Simple shopping list section. Add ingredients from your recipe. Checked ingredie
 
 ### Cooking Logs
 
-Log when you've cooked a recipe. Calendar view, recipe view of logs. [Docs](https://vanilla-cookbook.readthedocs.io/en/latest/manual/apps/#calendar)
+Log when you've cooked a recipe.
+
+- Calendar view
+- recipe view
+- Saves log notes and scaling
+- Recook a recipe with previous scaling
+
+[Docs](https://vanilla-cookbook.readthedocs.io/en/latest/manual/apps/#calendar)
 
 ### User Management
 
-User authentication is supported. You can add users, turn on/off registration. [Docs](https://vanilla-cookbook.readthedocs.io/en/latest/manual/usage/#privacy)
+User authentication is supported. You can manage users, turn on/off registration & site-wide privacy, specify password strength. [Docs](https://vanilla-cookbook.readthedocs.io/en/latest/manual/usage/#privacy)
 
 ### Automated Database Backups
 
@@ -80,7 +86,7 @@ After changing backup settings, restart the container: `docker-compose restart`
 
 ### Public Recipes
 
-Recipes and your personal cookbook can be made public, so you can share them with friends and family.
+Recipes and your personal cookbook can be made public, so you can share them with friends and family. Fork (duplicate - geddit) another member's recipe, or just favourite it to see it in your own feed.
 
 ### Easy Installation
 
@@ -105,7 +111,7 @@ Currently:
 
 ## Installation
 
-Docker set up is dead simple.
+Docker set up is dead simple. Single container, portable SQLite database.
 
 ### Docker
 
@@ -123,27 +129,28 @@ Docker set up is dead simple.
 5. Run `docker-compose up -d`
 6. On first run, you'll be prompted to enter Admin user details.
 
+#### Upgrade
+
+1. Grab the latest image: `docker pull jt196/vanilla-cookbook`
+2. Check the _.env.template_ and _docker-compose.yml.template_ files haven't been modified. Add any additional fields. The _.env_ is the most likely to change.
+3. From the project directory, run `docker-compose up -d` or `docker compose up -d` depending on how you have it installed on your system.
+
 ### Local Dev
 
-**Prerequisites**: You'll need build tools installed for native module compilation (better-sqlite3):
+#### Prerequisites: You'll need build tools installed for native module compilation (better-sqlite3)
 
 - **macOS**: Xcode Command Line Tools (`xcode-select --install`)
 - **Linux**: `build-essential` package (Ubuntu/Debian: `sudo apt-get install build-essential`)
 - **Windows**: Visual Studio Build Tools or windows-build-tools npm package
 
-**Setup**:
+#### Setup
 
 1. Clone the repo and the recipe-ingredient-parser submodule: `git clone --recursive https://github.com/jt196/vanilla-cookbook.git`
 2. At the root of the project, create the .env file: `cp .env.template .env`
 3. In the _.env_ file
    1. Set `ORIGIN` to `http://localhost:5173` (dev).
 4. Run it
-   - `pnpm dev:install` (node packages and prisma client install)
+   - `pnpm i` (node packages install)
+   - `pnpm dev:setup` (prisma client gen, migration)
    - `pnpm dev`
 5. You'll be prompted for admin user details on accessing root
-
-## Upgrade
-
-1. Grab the latest image: `docker pull jt196/vanilla-cookbook`
-2. Check the _.env.template_ and _docker-compose.yml.template_ files haven't been modified. Add any additional fields. The _.env_ is the most likely to change.
-3. From the project directory, run `docker-compose up -d` or `docker compose up -d` depending on how you have it installed on your system.
