@@ -7,6 +7,7 @@ import {
 	jsonSuccess,
 	jsonError
 } from '$lib/server/authHelpers'
+import { normalizeString } from '$lib/utils/normalize'
 
 export async function DELETE({ params, locals }) {
 	const user = requireAuth(locals)
@@ -46,7 +47,7 @@ export async function POST({ request, locals, params }) {
 		const updatedCategory = await prisma.category.update({
 			where: { uid },
 			data: {
-				name: categoryData.name || category.name,
+				name: normalizeString(categoryData.name) ?? category.name,
 				parent_uid: 'parent_uid' in categoryData ? categoryData.parent_uid : category.parent_uid
 			}
 		})

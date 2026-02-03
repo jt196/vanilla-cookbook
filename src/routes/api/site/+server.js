@@ -1,11 +1,13 @@
 import { prisma } from '$lib/server/prisma'
 import { requireAdmin, jsonSuccess, jsonError } from '$lib/server/authHelpers'
+import { normalizeBoolean } from '$lib/utils/normalize'
 
 export async function POST({ request, locals }) {
 	requireAdmin(locals)
 	const siteData = await request.json()
 
-	if (typeof siteData.registrationAllowed !== 'boolean') {
+	const registrationAllowed = normalizeBoolean(siteData.registrationAllowed)
+	if (registrationAllowed === null) {
 		return jsonError(400, 'Invalid input data')
 	}
 
@@ -14,9 +16,9 @@ export async function POST({ request, locals }) {
 		const updatedSettings = await prisma.siteSettings.update({
 			where: { id: settings.id },
 			data: {
-				registrationAllowed: siteData.registrationAllowed,
-				requireLogin: siteData.requireLogin ?? settings.requireLogin,
-				llmEnabled: siteData.llmEnabled ?? settings.llmEnabled,
+				registrationAllowed,
+				requireLogin: normalizeBoolean(siteData.requireLogin) ?? settings.requireLogin,
+				llmEnabled: normalizeBoolean(siteData.llmEnabled) ?? settings.llmEnabled,
 				llmProvider: siteData.llmProvider ?? settings.llmProvider,
 				llmTextModel: siteData.llmTextModel ?? settings.llmTextModel,
 				llmImageModel: siteData.llmImageModel ?? settings.llmImageModel

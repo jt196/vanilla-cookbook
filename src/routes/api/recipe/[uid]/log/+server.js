@@ -1,5 +1,6 @@
 import { prisma } from '$lib/server/prisma'
 import { requireAuth, requireOwnership, jsonSuccess, jsonError } from '$lib/server/authHelpers'
+import { normalizeString, normalizeNumber } from '$lib/utils/normalize'
 
 export async function POST({ locals, params, request }) {
 	const user = requireAuth(locals)
@@ -9,8 +10,9 @@ export async function POST({ locals, params, request }) {
 	let scale = 1
 	try {
 		const body = await request.json()
-		note = body.note || null
-		scale = body.scale ?? 1
+		note = normalizeString(body.note)
+		const { value: parsedScale } = normalizeNumber(body.scale)
+		scale = parsedScale ?? 1
 	} catch {
 		// No body or invalid JSON - defaults remain
 	}

@@ -9,6 +9,7 @@ import { createRecipePhotoEntry, removeRecipePhotoEntry } from '$lib/utils/api'
 import { saveFile, validImageTypes } from '$lib/utils/import/importHelpers'
 import { fileTypeFromBuffer } from 'file-type'
 import { requireAuth, jsonSuccess, jsonError } from '$lib/server/authHelpers'
+import { normalizeToString } from '$lib/utils/normalize'
 
 export async function POST({ request, locals, url }) {
 	const user = requireAuth(locals)
@@ -53,14 +54,14 @@ export async function POST({ request, locals, url }) {
 				description,
 				source,
 				source_url,
-				cook_time: cook_time ? cook_time.toString() : null,
+				cook_time: normalizeToString(cook_time),
 				image_url,
-				prep_time: prep_time ? prep_time.toString() : null,
+				prep_time: normalizeToString(prep_time),
 				notes,
 				ingredients,
 				directions,
-				total_time: total_time ? total_time.toString() : null,
-				servings: servings ? servings.toString() : null,
+				total_time: normalizeToString(total_time),
+				servings: normalizeToString(servings),
 				nutritional_info,
 				is_public,
 				created: new Date(),

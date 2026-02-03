@@ -1,19 +1,31 @@
 import { prisma } from '$lib/server/prisma'
 import { requireAuth, jsonSuccess, jsonError } from '$lib/server/authHelpers'
+import { normalizeString, normalizeNumber, pickFirst } from '$lib/utils/normalize'
 
 export async function POST({ request, locals }) {
 	const user = requireAuth(locals)
 
 	const bodyText = await request.text()
 	const ingredient = JSON.parse(bodyText)
+	const name = normalizeString(pickFirst(ingredient?.ingredient, ingredient?.name))
+	const { value: quantity, valid: quantityValid } = normalizeNumber(ingredient?.quantity)
+	const unit = normalizeString(pickFirst(ingredient?.unitPlural, ingredient?.unit))
+
+	if (!name) {
+		return jsonError(400, 'Invalid ingredient name')
+	}
+
+	if (!quantityValid) {
+		return jsonError(400, 'Invalid quantity value')
+	}
 
 	try {
 		const newItem = await prisma.shoppingListItem.create({
 			data: {
-				name: ingredient.ingredient,
-				quantity: ingredient.quantity,
+				name,
+				quantity,
 				userId: user.userId,
-				unit: ingredient.quantity > 1 ? ingredient.unitPlural : ingredient.unit,
+				unit,
 				...(ingredient.recipeUid && { recipeUid: ingredient.recipeUid })
 			}
 		})
@@ -68,12 +80,39 @@ export async function PATCH({ request, locals }) {
 
 	const bodyText = await request.text()
 	const { uid, purchased, name, quantity, unit } = JSON.parse(bodyText)
-	let updateData = { purchased, name, quantity, unit }
+	const updateData = {}
+
+	if (typeof purchased === 'boolean') updateData.purchased = purchased
+
+	if (name !== undefined) {
+		const normalizedName = normalizeString(name)
+		if (normalizedName) updateData.name = normalizedName
+	}
+
+	if (quantity !== undefined) {
+		const { value: normalizedQty, valid } = normalizeNumber(quantity)
+		if (!valid) {
+			return jsonError(400, 'Invalid quantity value')
+		}
+		updateData.quantity = normalizedQty
+	}
+
+	if (unit !== undefined) {
+		updateData.unit = normalizeString(unit)
+	}
+
+	if (Object.keys(updateData).length === 0) {
+		return jsonError(400, 'No fields to update')
+	}
 
 	try {
 		const currentItem = await prisma.shoppingListItem.findUnique({
 			where: { uid }
 		})
+
+		if (!currentItem || currentItem.userId !== user.userId) {
+			return jsonError(404, 'Shopping list item not found')
+		}
 
 		const updatedItem = await prisma.shoppingListItem.update({
 			where: { uid },

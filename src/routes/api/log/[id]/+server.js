@@ -1,5 +1,6 @@
 import { prisma } from '$lib/server/prisma'
 import { requireAuth, requireOwnership, jsonSuccess, jsonError } from '$lib/server/authHelpers'
+import { normalizeString } from '$lib/utils/normalize'
 
 // Handle recipe log updates
 export async function PUT({ locals, request, params }) {
@@ -20,7 +21,7 @@ export async function PUT({ locals, request, params }) {
 	const updateData = {}
 	if (start !== undefined) updateData.cooked = new Date(start)
 	if (end !== undefined) updateData.cookedEnd = end ? new Date(end) : null
-	if (note !== undefined) updateData.note = note
+	if (note !== undefined) updateData.note = normalizeString(note)
 
 	try {
 		const updatedLog = await prisma.RecipeLog.update({
