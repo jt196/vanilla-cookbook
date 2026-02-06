@@ -1,5 +1,6 @@
 import { HumanMessage, SystemMessage } from '@langchain/core/messages'
 import { env } from '$env/dynamic/private'
+import { languageLabels } from '$lib/submodules/recipe-ingredient-parser/src/i18n'
 
 /**
  * Map of measurement system codes to human-readable descriptions for AI prompts
@@ -14,18 +15,7 @@ const unitsMap = {
  * Map of language codes to full language names for AI prompts
  * Matches the i18n language codes from recipe-ingredient-parser
  */
-const languageMap = {
-	eng: 'English',
-	deu: 'German',
-	ita: 'Italian',
-	esp: 'Spanish',
-	fra: 'French',
-	por: 'Portuguese',
-	rus: 'Russian',
-	hin: 'Hindi',
-	ind: 'Indonesian',
-	ara: 'Arabic'
-}
+const languageMap = languageLabels
 
 /**
  * Converts a Buffer to a base64 encoded image data URI.

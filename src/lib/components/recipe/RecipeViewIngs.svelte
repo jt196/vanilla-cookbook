@@ -3,6 +3,7 @@
 	import RecipeViewIng from '$lib/components/recipe/RecipeViewIng.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Badge from '$lib/components/ui/Badge.svelte'
+	import { i18nMap } from '$lib/submodules/recipe-ingredient-parser/src/i18n'
 
 	/** @type {{ingredients: any, sanitizedIngredients: any, scale: any, scaledServings: any, selectedSystem: any, measurementSystem: any, recipeUid: any }} */
 	let {
@@ -37,6 +38,11 @@
 	const hasOptional = $derived(sanitizedIngredients.some((i) => i.optional))
 	const hasToServe = $derived(sanitizedIngredients.some((i) => i.toServe))
 	const hasToTaste = $derived(sanitizedIngredients.some((i) => i.toTaste))
+
+	const badgeLabels = $derived.by(() => {
+		const langData = i18nMap[user?.language] ?? i18nMap.eng
+		return langData.badgeLabels ?? i18nMap.eng.badgeLabels
+	})
 </script>
 
 <div>
@@ -62,7 +68,8 @@
 				{displaySymbol}
 				{displayDryMatch}
 				{displayOriginal}
-				{selectedSystem} />
+				{selectedSystem}
+				userLanguage={user?.language || 'eng'} />
 		{/each}
 	</ul>
 
@@ -72,18 +79,38 @@
 
 	{#if hasApprox || hasOptional || hasToServe || hasToTaste}
 		<div class="flex flex-wrap gap-3 text-sm text-base-content/60 my-4">
-			{#if hasApprox}<span
-					><Badge color="secondary" style="outline" title="Approximate">~</Badge> approx</span
-				>{/if}
-			{#if hasOptional}<span
-					><Badge color="secondary" style="outline" title="Optional">opt</Badge> optional</span
-				>{/if}
-			{#if hasToServe}<span
-					><Badge color="secondary" style="outline" title="To serve">srv</Badge> to serve</span
-				>{/if}
-			{#if hasToTaste}<span
-					><Badge color="secondary" style="outline" title="To taste">tt</Badge> to taste</span
-				>{/if}
+			{#if hasApprox}
+				<span>
+					<Badge color="secondary" style="outline" title={badgeLabels.approx.title}>
+						{badgeLabels.approx.short}
+					</Badge>
+					{badgeLabels.approx.label}
+				</span>
+			{/if}
+			{#if hasOptional}
+				<span>
+					<Badge color="secondary" style="outline" title={badgeLabels.optional.title}>
+						{badgeLabels.optional.short}
+					</Badge>
+					{badgeLabels.optional.label}
+				</span>
+			{/if}
+			{#if hasToServe}
+				<span>
+					<Badge color="secondary" style="outline" title={badgeLabels.toServe.title}>
+						{badgeLabels.toServe.short}
+					</Badge>
+					{badgeLabels.toServe.label}
+				</span>
+			{/if}
+			{#if hasToTaste}
+				<span>
+					<Badge color="secondary" style="outline" title={badgeLabels.toTaste.title}>
+						{badgeLabels.toTaste.short}
+					</Badge>
+					{badgeLabels.toTaste.label}
+				</span>
+			{/if}
 		</div>
 	{/if}
 

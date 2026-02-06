@@ -3,6 +3,7 @@
 	import { decimalToFraction, roundIngredientQuantity } from '$lib/utils/filters'
 	import Shopping from '$lib/components/svg/Shopping.svelte'
 	import Badge from '$lib/components/ui/Badge.svelte'
+	import { i18nMap } from '$lib/submodules/recipe-ingredient-parser/src/i18n'
 
 	/** @type {{ingredient: any, scale: any, displayExtra: any, displayDryMatch: any, displayOriginal: any, selectedSystem: any, recipeUid: any}} */
 	let {
@@ -13,7 +14,8 @@
 		displaySymbol,
 		displayOriginal,
 		selectedSystem,
-		recipeUid
+		recipeUid,
+		userLanguage = 'eng'
 	} = $props()
 
 	let scaleIng = $state(1)
@@ -98,6 +100,11 @@
 				!(alt.quantity === null || alt.quantity === undefined) || (alt.unit && alt.unit !== null)
 		)
 	)
+
+	const badgeLabels = $derived.by(() => {
+		const langData = i18nMap[userLanguage] ?? i18nMap.eng
+		return langData.badgeLabels ?? i18nMap.eng.badgeLabels
+	})
 </script>
 
 <div class="ingredient-line" class:highlight={isHighlighted}>
@@ -201,18 +208,26 @@
 									<span class="chevron" aria-hidden="true">▸</span>
 								</button>
 							{/if}
-							{#if ingredient.approx}<Badge color="secondary" style="outline" title="Approximate"
-									>~</Badge
-								>{/if}
-							{#if ingredient.optional}<Badge color="secondary" style="outline" title="Optional"
-									>opt</Badge
-								>{/if}
-							{#if ingredient.toServe}<Badge color="secondary" style="outline" title="To serve"
-									>srv</Badge
-								>{/if}
-							{#if ingredient.toTaste}<Badge color="secondary" style="outline" title="To taste"
-									>tt</Badge
-								>{/if}
+							{#if ingredient.approx}
+								<Badge color="secondary" style="outline" title={badgeLabels.approx.title}>
+									{badgeLabels.approx.short}
+								</Badge>
+							{/if}
+							{#if ingredient.optional}
+								<Badge color="secondary" style="outline" title={badgeLabels.optional.title}>
+									{badgeLabels.optional.short}
+								</Badge>
+							{/if}
+							{#if ingredient.toServe}
+								<Badge color="secondary" style="outline" title={badgeLabels.toServe.title}>
+									{badgeLabels.toServe.short}
+								</Badge>
+							{/if}
+							{#if ingredient.toTaste}
+								<Badge color="secondary" style="outline" title={badgeLabels.toTaste.title}>
+									{badgeLabels.toTaste.short}
+								</Badge>
+							{/if}
 						</span>
 					{/if}
 				</li>

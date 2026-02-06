@@ -1,3 +1,5 @@
+import { languageLabels } from '$lib/submodules/recipe-ingredient-parser/src/i18n'
+
 /**
  * Supported measurement systems for recipe data.
  * Each system includes a machine-readable value and a user-friendly label.
@@ -16,18 +18,10 @@ export const systems = [
  *
  * @type {{ value: string, label: string }[]}
  */
-export const languages = [
-	{ value: 'eng', label: 'English' },
-	{ value: 'deu', label: 'Deutsch' },
-	{ value: 'ita', label: 'Italiano' },
-	{ value: 'esp', label: 'Español' },
-	{ value: 'fra', label: 'Français' },
-	{ value: 'por', label: 'Português' },
-	{ value: 'rus', label: 'Русский' },
-	{ value: 'hin', label: 'हिन्दी' },
-	{ value: 'ind', label: 'Bahasa Indonesia' },
-	{ value: 'ara', label: 'العربية' }
-]
+export const languages = Object.entries(languageLabels).map(([value, label]) => ({
+	value,
+	label
+}))
 
 /**
  * Default structure for a recipe object.
