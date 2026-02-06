@@ -2,6 +2,7 @@
 import { github, google } from '@lucia-auth/oauth/providers'
 import { auth } from './lucia.js'
 import { env } from '$env/dynamic/private'
+import { oidcAuth } from './oidc.js'
 
 const BASE = env.ORIGIN?.trim()?.replace(/\/$/, '')
 
@@ -33,10 +34,14 @@ export const googleAuth =
 			})
 		: null
 
+// Re-export OIDC provider from oidc.js
+export { oidcAuth }
+
 export const getOAuthProviders = () => {
 	const providers = {}
 	if (githubAuth) providers.github = githubAuth
 	if (googleAuth) providers.google = googleAuth
+	if (oidcAuth) providers.oidc = oidcAuth
 	return providers
 }
 

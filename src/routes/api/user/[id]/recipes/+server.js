@@ -76,10 +76,7 @@ export async function GET({ params, locals }) {
 				},
 				log: true,
 				photos: {
-					orderBy: [
-						{ isMain: 'desc' },
-						{ id: 'asc' }
-					],
+					orderBy: [{ isMain: 'desc' }, { id: 'asc' }],
 					select: {
 						id: true,
 						fileType: true

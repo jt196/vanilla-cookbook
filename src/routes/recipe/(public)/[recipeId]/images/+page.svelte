@@ -101,17 +101,20 @@
 								onclick={() => handleDeletePhoto(photo.id)}
 								role="button"
 								tabindex="0"
-								onkeydown={(e) => e.key === 'Enter' && handleDeletePhoto(photo.id)}>✕</span>
+								onkeydown={(e) => e.key === 'Enter' && handleDeletePhoto(photo.id)}>✕</span
+							>
 						{/if}
 						{#if !viewMode && !photo.isMain}
 							<button
 								type="button"
 								class="btn btn-ghost p-0 h-auto min-h-0"
-								onclick={() => handleSetMainPhoto(photo.id)}>
+								onclick={() => handleSetMainPhoto(photo.id)}
+							>
 								<img
 									src="/api/recipe/image/{photo.id}"
 									alt="{recipe.name} photo - click to set as main"
-									class="max-h-[70vh] object-contain rounded-lg opacity-80 hover:opacity-100 transition-opacity" />
+									class="max-h-[70vh] object-contain rounded-lg opacity-80 hover:opacity-100 transition-opacity"
+								/>
 							</button>
 						{:else}
 							<img
@@ -119,7 +122,8 @@
 								alt="{recipe.name} photo"
 								class="max-h-[70vh] object-contain rounded-lg {photo.isMain
 									? 'ring-4 ring-primary'
-									: ''}" />
+									: ''}"
+							/>
 						{/if}
 					</div>
 					{#if !viewMode}
@@ -129,17 +133,21 @@
 									type="text"
 									class="input input-sm input-bordered w-48"
 									bind:value={editingNotes}
-									placeholder="Enter notes..." />
+									placeholder="Enter notes..."
+								/>
 								<button type="button" class="btn btn-xs btn-primary" onclick={saveNotes}
-									>Save</button>
+									>Save</button
+								>
 								<button type="button" class="btn btn-xs btn-ghost" onclick={cancelEditingNotes}
-									>Cancel</button>
+									>Cancel</button
+								>
 							{:else}
 								<p class="text-xs text-base-content/70 italic">{photo.notes || 'No notes'}</p>
 								<button
 									type="button"
 									class="btn btn-xs btn-ghost"
-									onclick={() => startEditingNotes(photo)}>Edit</button>
+									onclick={() => startEditingNotes(photo)}>Edit</button
+								>
 							{/if}
 						</div>
 					{:else if photo.notes}
@@ -148,13 +156,16 @@
 				</div>
 				{#if filteredPhotos.length > 1}
 					<div
-						class="absolute left-2 right-2 top-1/2 flex -translate-y-1/2 transform justify-between pointer-events-none">
+						class="absolute left-2 right-2 top-1/2 flex -translate-y-1/2 transform justify-between pointer-events-none"
+					>
 						<a
 							href="#slide{(index - 1 + filteredPhotos.length) % filteredPhotos.length}"
-							class="btn btn-circle btn-sm opacity-70 hover:opacity-100 pointer-events-auto">❮</a>
+							class="btn btn-circle btn-sm opacity-70 hover:opacity-100 pointer-events-auto">❮</a
+						>
 						<a
 							href="#slide{(index + 1) % filteredPhotos.length}"
-							class="btn btn-circle btn-sm opacity-70 hover:opacity-100 pointer-events-auto">❯</a>
+							class="btn btn-circle btn-sm opacity-70 hover:opacity-100 pointer-events-auto">❯</a
+						>
 					</div>
 				{/if}
 			</div>
@@ -175,7 +186,8 @@
 <ConfirmationDialog
 	bind:isOpen={showDeleteConfirm}
 	onClose={() => (showDeleteConfirm = false)}
-	onConfirm={confirmDelete}>
+	onConfirm={confirmDelete}
+>
 	{#snippet content()}
 		<h3 class="font-bold text-lg">Delete Photo</h3>
 		<p class="py-4">Are you sure you want to delete this photo?</p>

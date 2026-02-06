@@ -117,16 +117,19 @@
 						class="h-6 w-6"
 						fill="none"
 						viewBox="0 0 24 24"
-						stroke="currentColor">
+						stroke="currentColor"
+					>
 						<path
 							stroke-linecap="round"
 							stroke-linejoin="round"
 							stroke-width="2"
-							d="M4 6h16M4 12h16M4 18h16" />
+							d="M4 6h16M4 12h16M4 18h16"
+						/>
 					</svg>
 				</div>
 				<ul
-					class="dropdown-content menu bg-base-100 rounded-box z-50 mt-3 w-52 p-2 shadow-lg border border-base-300">
+					class="dropdown-content menu bg-base-100 rounded-box z-50 mt-3 w-52 p-2 shadow-lg border border-base-300"
+				>
 					<NavLinks {user} {settings} {theme} onToggleTheme={toggleTheme} mobile={true} />
 				</ul>
 			</div>

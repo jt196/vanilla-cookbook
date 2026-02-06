@@ -1,6 +1,6 @@
 <script>
 	/** @type {{directionLines?: any, sanitizedDirections?: any, loadingIngredients?: boolean}} */
-	let { directionLines = [], sanitizedDirections = [], loadingIngredients = false } = $props();
+	let { directionLines = [], sanitizedDirections = [], loadingIngredients = false } = $props()
 </script>
 
 {#if directionLines.length > 0}

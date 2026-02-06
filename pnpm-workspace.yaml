@@ -1,0 +1,9 @@
+onlyBuiltDependencies:
+  - '@parcel/watcher'
+  - '@prisma/engines'
+  - better-sqlite3
+  - esbuild
+  - prisma
+  - rome
+  - sharp
+  - svelte-preprocess

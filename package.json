@@ -92,6 +92,7 @@
 		"marked": "^9.0.0",
 		"node-html-parser": "^6.1.10",
 		"openai": "^4.88.0",
+		"openid-client": "^6.8.1",
 		"parse-iso-duration": "^1.1.0",
 		"sanitize-html": "^2.14.0",
 		"sharp": "^0.33.5",

@@ -196,7 +196,8 @@
 					>{user.username}
 					{#if user.id === currentAdminUserId}
 						<span class="you-label">(You)</span>
-					{/if}</TableCell>
+					{/if}</TableCell
+				>
 				<TableCell class="hidden sm:table-cell">{user.email}</TableCell>
 				<TableCell class="hidden sm:table-cell">
 					{#if user.recipesCount > 0}
@@ -212,7 +213,8 @@
 						style="outline"
 						size="sm"
 						onclick={() => openEditDialog(user)}
-						data-testid="edit-button">
+						data-testid="edit-button"
+					>
 						<Edit width="20px" fill="currentColor" />
 					</Button>
 				</TableCell>
@@ -223,7 +225,8 @@
 							color="error"
 							size="sm"
 							onclick={() => deleteUser(user.id)}
-							data-testid="delete-button">
+							data-testid="delete-button"
+						>
 							<Delete width="20px" fill="currentColor" />
 						</Button>
 					{/if}
@@ -246,13 +249,15 @@
 			class="tooltip"
 			data-tip="Username is not editable"
 			disabled={isEditMode}
-			bind:value={editingUser.username} />
+			bind:value={editingUser.username}
+		/>
 		<Input type="email" id="email" name="email" label="Email" bind:value={editingUser.email} />
 		<ValidationMessage
 			message={emailValidation?.message}
 			isValid={emailValidation?.isValid}
 			isError={!emailValidation?.isValid}
-			hidden={!emailValidation?.message} />
+			hidden={!emailValidation?.message}
+		/>
 		<Input type="password" id="password" name="password" label="Password" bind:value={password} />
 		{#if passwordRequirementsDescription}
 			<p class="text-sm text-base-content/70">{passwordRequirementsDescription}</p>
@@ -262,19 +267,22 @@
 			id="passwordConfirm"
 			name="passwordConfirm"
 			label="Confirm Password"
-			bind:value={passwordConfirm} />
+			bind:value={passwordConfirm}
+		/>
 		<ValidationMessage
 			message={passwordValidation?.message}
 			isValid={passwordValidation?.isValid}
 			isError={!passwordValidation?.isValid}
-			hidden={!passwordValidation?.message} />
+			hidden={!passwordValidation?.message}
+		/>
 		{#if !isEditMode || !editingUser.isAdmin || adminCount > 1}
 			<Checkbox
 				name="Admin"
 				bind:checked={editingUser.isAdmin}
 				legend="Admin"
 				size="sm"
-				color="primary">
+				color="primary"
+			>
 				Give user admin rights
 			</Checkbox>
 		{/if}
@@ -284,7 +292,8 @@
 				bind:checked={editingUser.userSeed}
 				legend="Seed Recipes"
 				size="sm"
-				color="neutral">Add three sample recipes to account</Checkbox>
+				color="neutral">Add three sample recipes to account</Checkbox
+			>
 		{/if}
 		<div class="modal-action">
 			<Button onclick={() => (isDialogOpen = false)} style="outline">Cancel</Button>
@@ -298,7 +307,8 @@
 <ConfirmationDialog
 	bind:isOpen={showDeleteConfirm}
 	onClose={() => (showDeleteConfirm = false)}
-	onConfirm={confirmDeleteUser}>
+	onConfirm={confirmDeleteUser}
+>
 	{#snippet content()}
 		<h3 class="font-bold text-lg">Delete User</h3>
 		<p class="py-4">Are you sure you want to delete this user?</p>

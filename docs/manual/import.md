@@ -14,16 +14,16 @@ Your cookbook can now import from several apps, using a single, simple flow:
 
 These match the code in `src/lib/utils/import/registry.js` and follow the same “pick type → upload → import” flow.
 
-| Source | File(s) you upload | What the ZIP/CSV must contain | Notes |
-| --- | --- | --- | --- |
-| **Paprika** | `.paprikarecipes` or `.zip` | A `.paprikarecipes` file, or a ZIP with `*.paprikarecipe` members | Categories ignored; photos imported if present |
-| **Chowdown** | `.zip` | `_recipes/*.md` and optional `images/*` | Front-matter + body parsed; local images imported |
-| **Mealie** | `.zip` | `recipes/<dir>/*.json` and `recipes/<dir>/images/*` | Ingredients/steps normalized; images imported from archive |
-| **MyRecipeBox** | `.csv` | Columns like `title, description, ingredients, instructions, notes, …` | Maps columns directly to your schema; no images |
-| **Nextcloud** | `.zip` | `<dir>/recipe.json` and `<dir>/full.jpg` (use `full.jpg`) | JSON is schema.org-ish; image imported |
-| **PlanToEat** | `.csv` | Official PTE export CSV | Downloads `Photo Url` if present |
-| **Recipe Keeper** | `.zip` | `recipes.html` and `images/<uid>_*.jpg` | HTML parsed; photos matched by filename |
-| **Tandoor** | `.zip` | Top-level numbered zips each with `recipe.json` and `image` (with or without extension) | Uses embedded image; images without extension are handled |
+| Source            | File(s) you upload          | What the ZIP/CSV must contain                                                           | Notes                                                      |
+| ----------------- | --------------------------- | --------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| **Paprika**       | `.paprikarecipes` or `.zip` | A `.paprikarecipes` file, or a ZIP with `*.paprikarecipe` members                       | Categories ignored; photos imported if present             |
+| **Chowdown**      | `.zip`                      | `_recipes/*.md` and optional `images/*`                                                 | Front-matter + body parsed; local images imported          |
+| **Mealie**        | `.zip`                      | `recipes/<dir>/*.json` and `recipes/<dir>/images/*`                                     | Ingredients/steps normalized; images imported from archive |
+| **MyRecipeBox**   | `.csv`                      | Columns like `title, description, ingredients, instructions, notes, …`                  | Maps columns directly to your schema; no images            |
+| **Nextcloud**     | `.zip`                      | `<dir>/recipe.json` and `<dir>/full.jpg` (use `full.jpg`)                               | JSON is schema.org-ish; image imported                     |
+| **PlanToEat**     | `.csv`                      | Official PTE export CSV                                                                 | Downloads `Photo Url` if present                           |
+| **Recipe Keeper** | `.zip`                      | `recipes.html` and `images/<uid>_*.jpg`                                                 | HTML parsed; photos matched by filename                    |
+| **Tandoor**       | `.zip`                      | Top-level numbered zips each with `recipe.json` and `image` (with or without extension) | Uses embedded image; images without extension are handled  |
 
 ## What gets mapped where?
 

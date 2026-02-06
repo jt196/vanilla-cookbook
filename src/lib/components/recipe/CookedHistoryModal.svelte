@@ -50,7 +50,8 @@
 									color="primary"
 									onclick={() => handleRestoreScale(log.scale ?? 1)}
 									class="ml-2 tooltip"
-									data-tip="Use this scale">
+									data-tip="Use this scale"
+								>
 									Use
 								</Button>
 							{/if}

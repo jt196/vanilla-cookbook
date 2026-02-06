@@ -52,7 +52,8 @@
 						style="ghost"
 						size="sm"
 						class="btn-square opacity-50 hover:opacity-100"
-						onclick={() => openEditDialog(log)}>
+						onclick={() => openEditDialog(log)}
+					>
 						<Edit width="16px" height="16px" />
 					</Button>
 				{/if}
@@ -67,13 +68,15 @@
 		onsubmit={(e) => {
 			e.preventDefault()
 			handleSaveNote()
-		}}>
+		}}
+	>
 		<Textarea
 			label="Note"
 			bind:value={editNote}
 			rows={4}
 			placeholder="How did it turn out?"
-			disabled={saving} />
+			disabled={saving}
+		/>
 		<div class="modal-action">
 			<Button type="button" class="btn-ghost" onclick={closeEditDialog} disabled={saving}>
 				Cancel

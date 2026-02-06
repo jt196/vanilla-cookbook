@@ -39,7 +39,8 @@
 		color="accent"
 		size="xl"
 		onchange={(checked) => onCheckboxChange(item, { target: { checked } })}
-		class="self-center" />
+		class="self-center"
+	/>
 
 	<div class="flex flex-col gap-1 flex-1 min-w-0">
 		<div class="flex items-center gap-2">
@@ -50,7 +51,8 @@
 				<a
 					href="/recipe/{item.recipeUid}/view"
 					class="btn btn-ghost btn-circle btn-xs text-base-content"
-					title={item.recipe?.name ?? 'View recipe'}>
+					title={item.recipe?.name ?? 'View recipe'}
+				>
 					<Link width="18px" />
 				</a>
 			{/if}
@@ -72,7 +74,8 @@
 			disabled={purchaseLoading}
 			data-tip={purchaseCount > 0
 				? `Purchased ${purchaseCount} time${purchaseCount > 1 ? 's' : ''}`
-				: 'Mark Item Purchased'}>
+				: 'Mark Item Purchased'}
+		>
 			{#if purchaseLoading}
 				<span class="loading loading-spinner loading-sm"></span>
 			{:else if purchaseCount > 1}
@@ -88,7 +91,8 @@
 			class="btn btn-soft btn-primary btn-sm tooltip"
 			data-tip="Edit item"
 			id="edit-item"
-			aria-label="Edit item">
+			aria-label="Edit item"
+		>
 			<Edit width="18px" height="18px" fill="currentColor" />
 		</Button>
 	</div>

@@ -142,12 +142,12 @@ Each dropdown includes common models with a "Custom..." option if you need a spe
 
 **Supported Providers:**
 
-| Provider | Text Models | Image Models | Notes |
-|----------|-------------|--------------|-------|
-| OpenAI | GPT-4o Mini, GPT-3.5 Turbo, GPT-4o | GPT-4o Mini, GPT-4o | Full support |
-| Anthropic | Claude 3.5 Haiku, Claude 3.5 Sonnet | Claude 3.5 Sonnet, Haiku | Full support |
-| Google | Gemini 2.0 Flash, 1.5 Flash/Pro | Same as text | Full support |
-| Ollama | Llama 3.2, Mistral, Phi-3 | Not supported | Local only, no images |
+| Provider  | Text Models                         | Image Models             | Notes                 |
+| --------- | ----------------------------------- | ------------------------ | --------------------- |
+| OpenAI    | GPT-4o Mini, GPT-3.5 Turbo, GPT-4o  | GPT-4o Mini, GPT-4o      | Full support          |
+| Anthropic | Claude 3.5 Haiku, Claude 3.5 Sonnet | Claude 3.5 Sonnet, Haiku | Full support          |
+| Google    | Gemini 2.0 Flash, 1.5 Flash/Pro     | Same as text             | Full support          |
+| Ollama    | Llama 3.2, Mistral, Phi-3           | Not supported            | Local only, no images |
 
 #### Scrape Fallback
 

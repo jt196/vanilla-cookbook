@@ -10,35 +10,40 @@
 		role="tab"
 		class="tab"
 		class:tab-active={data.pathname === `/user/${user.userId}/options/settings`}
-		href={`/user/${user.userId}/options/settings`}>
+		href={`/user/${user.userId}/options/settings`}
+	>
 		Settings
 	</a>
 	<a
 		role="tab"
 		class="tab"
 		class:tab-active={data.pathname === `/user/${user.userId}/options/recipes`}
-		href={`/user/${user.userId}/options/recipes`}>
+		href={`/user/${user.userId}/options/recipes`}
+	>
 		Recipes
 	</a>
 	<a
 		role="tab"
 		class="tab"
 		class:tab-active={data.pathname === `/user/${user.userId}/options/bookmark`}
-		href={`/user/${user.userId}/options/bookmark`}>
+		href={`/user/${user.userId}/options/bookmark`}
+	>
 		Bookmark
 	</a>
 	<a
 		role="tab"
 		class="tab"
 		class:tab-active={data.pathname === `/user/${user.userId}/options/import`}
-		href={`/user/${user.userId}/options/import`}>
+		href={`/user/${user.userId}/options/import`}
+	>
 		Import
 	</a>
 	<a
 		role="tab"
 		class="tab"
 		class:tab-active={data.pathname === `/user/${user.userId}/options/export`}
-		href={`/user/${user.userId}/options/export`}>
+		href={`/user/${user.userId}/options/export`}
+	>
 		Export
 	</a>
 	{#if data.user.isAdmin}
@@ -46,14 +51,16 @@
 			role="tab"
 			class="tab"
 			class:tab-active={data.pathname === `/user/${user.userId}/options/admin/users`}
-			href={`/user/${user.userId}/options/admin/users`}>
+			href={`/user/${user.userId}/options/admin/users`}
+		>
 			Users
 		</a>
 		<a
 			role="tab"
 			class="tab"
 			class:tab-active={data.pathname === `/user/${user.userId}/options/admin/site`}
-			href={`/user/${user.userId}/options/admin/site`}>
+			href={`/user/${user.userId}/options/admin/site`}
+		>
 			Site
 		</a>
 	{/if}

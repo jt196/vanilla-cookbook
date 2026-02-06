@@ -31,10 +31,12 @@
 				setRating(star)
 			}}
 			onkeydown={(event) => handleKeydown(event, star)}
-			tabindex="0">
+			tabindex="0"
+		>
 			<Star
 				state={rating >= star ? 'full' : rating >= star - 0.5 ? 'half' : 'empty'}
-				fill="currentColor" />
+				fill="currentColor"
+			/>
 		</button>
 	{/each}
 </div>

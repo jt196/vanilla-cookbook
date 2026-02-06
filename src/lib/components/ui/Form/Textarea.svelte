@@ -79,7 +79,8 @@
 			bind:value
 			class={textareaClass}
 			style="min-width:0;max-width:100%;"
-			{...rest}></textarea>
+			{...rest}
+		></textarea>
 		{#if optionalLabel}
 			<span class="label block whitespace-normal wrap-break-word text-sm leading-snug max-w-full">
 				{optionalLabel}
@@ -98,6 +99,7 @@
 			bind:value
 			class={textareaClass}
 			style="min-width:0;max-width:100%;"
-			{...rest}></textarea>
+			{...rest}
+		></textarea>
 	</div>
 {/if}

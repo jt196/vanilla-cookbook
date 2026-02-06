@@ -10,7 +10,8 @@
 <RecipeFeed
 	{recipes}
 	viewMode="social"
-	viewerUserId={viewerUserId}
+	{viewerUserId}
 	title="All Recipes"
 	useCats={false}
-	feedKind="all" />
+	feedKind="all"
+/>

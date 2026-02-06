@@ -104,7 +104,8 @@
 	<CategoryTree
 		categories={allCategories}
 		onCategoryClick={handleCategoryClick}
-		selectedCategoryUids={recipeCategories} />
+		selectedCategoryUids={recipeCategories}
+	/>
 </Sidebar>
 
 <div class="recipe-container" class:sidebar-open={sidebarOpen} onclose={handleSidebarClose}>
@@ -126,7 +127,8 @@
 		cancelHref="/recipe/{recipe?.uid}/view/"
 		onDelete={() => handleDelete(recipe?.uid)}
 		onSelectedFilesChange={handleSelectedFilesChange}
-		onSubmit={handleSubmit} />
+		onSubmit={handleSubmit}
+	/>
 </div>
 
 <ConfirmationDialog
@@ -138,7 +140,8 @@
 		if (success) {
 			goto('/')
 		}
-	}}>
+	}}
+>
 	{#snippet content()}
 		<h3 class="font-bold text-lg">Delete Recipe</h3>
 		<p class="py-4">Are you sure you want to delete this recipe?</p>

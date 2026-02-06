@@ -31,7 +31,8 @@
 	<div
 		class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
 		aria-busy="true"
-		transition:fade={{ duration: transitionTime }}>
+		transition:fade={{ duration: transitionTime }}
+	>
 		<div class="flex flex-col items-center gap-4 bg-base-100 p-8 rounded-lg shadow-xl">
 			<span class="loading {typeClass} {sizeClass} {colorClass}"></span>
 			<p class="text-lg text-base-content">{spinnerContent}</p>

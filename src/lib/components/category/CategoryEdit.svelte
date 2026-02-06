@@ -126,7 +126,8 @@
 			<input
 				bind:value={editedName}
 				onblur={() => saveChanges(node.uid)}
-				onkeydown={(e) => e.key === 'Enter' && saveChanges(node.uid)} />
+				onkeydown={(e) => e.key === 'Enter' && saveChanges(node.uid)}
+			/>
 			<Button onclick={() => (editingId = null)}>Cancel</Button>
 			<Button onclick={() => saveChanges(node.uid)}>Save</Button>
 			<Button onclick={() => deleteCategory(node.uid)}>Delete</Button>
@@ -164,7 +165,8 @@
 		} catch (error) {
 			console.error('Error deleting category:', error.message)
 		}
-	}}>
+	}}
+>
 	{#snippet content()}
 		<h3 class="font-bold text-lg">Delete Category</h3>
 		<p class="py-4">Are you sure you want to delete this category?</p>
@@ -174,7 +176,8 @@
 <section
 	use:dndzone={{ items: node.items || [], flipDurationMs, centreDraggedOnCursor: true }}
 	onconsider={handleDndConsider}
-	onfinalize={handleDndFinalize}>
+	onfinalize={handleDndFinalize}
+>
 	{#if node.items}
 		{#each node.items.filter((item) => item.uid !== SHADOW_PLACEHOLDER_ITEM_ID) as item (item.uid)}
 			<div animate:flip={{ duration: flipDurationMs }} class="item">

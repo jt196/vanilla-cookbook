@@ -84,7 +84,8 @@
 	aria-busy={loading}
 	aria-label={ariaLabel}
 	class={classes}
-	{onclick}>
+	{onclick}
+>
 	{#if loading}
 		<span class="loading loading-spinner"></span>
 	{/if}

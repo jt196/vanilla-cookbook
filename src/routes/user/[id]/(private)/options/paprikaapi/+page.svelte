@@ -236,7 +236,8 @@
 </p>
 <p>
 	1. Download your categories by entering your username and password, then pressing the <strong
-		>Download Paprika Categories</strong> button.
+		>Download Paprika Categories</strong
+	> button.
 </p>
 <p>2. If the Category File is there (look for a tick!), press <strong>Import Categories</strong></p>
 <p>3. Delete the file, or hang on to it.</p>
@@ -248,7 +249,8 @@
 	<p>
 		<i
 			>Please note: access to the images in the recipes have a limited time, if you want to download
-			them with your recipes, do this soon after you download the recipes.</i>
+			them with your recipes, do this soon after you download the recipes.</i
+		>
 	</p>
 {/if}
 <div class="container">
@@ -257,11 +259,13 @@
 		type="password"
 		id="paprikaPassword"
 		label="Paprika Password"
-		bind:value={paprikaPassword} />
+		bind:value={paprikaPassword}
+	/>
 	<div class="paprika-api">
 		<div class="import-categories">
 			<Button loading={downloadCatBusy} disabled={catFileExists} onclick={downloadCategories}
-				>Download Paprika Categories</Button>
+				>Download Paprika Categories</Button
+			>
 			<div class="feedback">
 				<FeedbackMessage message={catFeedbackMessage} />
 				<div class="file-manage">
@@ -270,7 +274,8 @@
 							class="outline secondary"
 							disabled={!catFileExists}
 							onclick={() => removeFile('categories.json')}
-							><Delete width="30px" height="30px" fill="var(--pico-del-color)" /></Button>
+							><Delete width="30px" height="30px" fill="var(--pico-del-color)" /></Button
+						>
 					{/if}
 				</div>
 			</div>
@@ -280,13 +285,15 @@
 				loading={importCatBusy}
 				class="outline secondary delete"
 				disabled={catDb === catFile || catFile === 0 || catFile === null}
-				onclick={importCategoriesFromFile}>Import Categories</Button>
+				onclick={importCategoriesFromFile}>Import Categories</Button
+			>
 			<FeedbackMessage message={catImportStatus} />
 		</div>
 		{#if user.isAdmin}
 			<div class="import-recipes">
 				<Button disabled={recFileExists} loading={downloadRecBusy} onclick={downloadRecipes}
-					>Download Paprika Recipes</Button>
+					>Download Paprika Recipes</Button
+				>
 				<div class="feedback">
 					<FeedbackMessage message={recFeedbackMessage} />
 					<div class="file-manage">
@@ -295,7 +302,8 @@
 								class="outline secondary delete"
 								disabled={!recFileExists}
 								onclick={() => removeFile('recipes.json')}
-								><Delete width="30px" height="30px" fill="var(--pico-del-color)" /></Button>
+								><Delete width="30px" height="30px" fill="var(--pico-del-color)" /></Button
+							>
 						{/if}
 					</div>
 				</div>
@@ -306,12 +314,14 @@
 					bind:checked={isPublic}
 					legend="Recipes Public"
 					size="sm"
-					color="primary">Make your imported recipes public</Checkbox>
+					color="primary">Make your imported recipes public</Checkbox
+				>
 				<Button
 					loading={importRecBusy}
 					class="outline secondary"
 					disabled={recDb === recFile || recFile === 0 || recFile === null}
-					onclick={importRecipesFromFile}>Import Recipes</Button>
+					onclick={importRecipesFromFile}>Import Recipes</Button
+				>
 				<FeedbackMessage message={recImportStatus} />
 			</div>
 		{/if}
@@ -321,7 +331,8 @@
 <ConfirmationDialog
 	bind:isOpen={showDeleteConfirm}
 	onClose={() => (showDeleteConfirm = false)}
-	onConfirm={confirmRemoveFile}>
+	onConfirm={confirmRemoveFile}
+>
 	{#snippet content()}
 		<h3 class="font-bold text-lg">Remove File</h3>
 		<p class="py-4">Are you sure you want to remove this file?</p>

@@ -52,13 +52,7 @@
 	}
 
 	const classes = $derived(
-		[
-			'badge',
-			color ? colorClasses[color] : '',
-			styleClasses[style],
-			sizeClasses[size],
-			className
-		]
+		['badge', color ? colorClasses[color] : '', styleClasses[style], sizeClasses[size], className]
 			.filter(Boolean)
 			.join(' ')
 	)

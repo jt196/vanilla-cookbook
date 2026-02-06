@@ -1,8 +1,8 @@
 <script>
 	import { getSanitizedHTML } from '$lib/utils/render'
-	
+
 	/** @type {{recipe: any}} */
-	let { recipe } = $props();
+	let { recipe } = $props()
 
 	let descriptionLines = []
 	let sanitisedDescription = $state([])
@@ -21,7 +21,7 @@
 		if (recipe.description) {
 			loadSanitizedDescription()
 		}
-	});
+	})
 </script>
 
 {#if sanitisedDescription.length > 0}

@@ -2,7 +2,7 @@
 
 As the ingredient parser is an important part of the way that Vanilla works, there's a separate part of the manual dedicated to it.
 
-The way ingredients are written on the internet is *really* messy and unfortunately, I can't account for some of the patterns. If your ingredients look off, tidy them up or run **Clean Ingredients** (if you have an LLM set up) in the recipe edit to tidy them up a bit.
+The way ingredients are written on the internet is _really_ messy and unfortunately, I can't account for some of the patterns. If your ingredients look off, tidy them up or run **Clean Ingredients** (if you have an LLM set up) in the recipe edit to tidy them up a bit.
 
 Each ingredient line is analysed by the system and split into:
 
@@ -22,7 +22,7 @@ Instructions/states (e.g. “finely chopped”, “lukewarm”, “rinsed”) ar
 
 ## Quick pattern summary
 
-*tldr;* Here are the common ingredient patterns the parser recognises.
+_tldr;_ Here are the common ingredient patterns the parser recognises.
 
 - Quantities: whole numbers, decimals, fractions (including unicode), and ranges (`1-2`, `1 to 2`, `¼-½`).
 - Written numbers: `one`, `five`, `twenty-one`, `a` (treated as 1).
@@ -36,7 +36,7 @@ Instructions/states (e.g. “finely chopped”, “lukewarm”, “rinsed”) ar
 
 ## Quantity
 
-*tldr;* scale your recipe, with a variety of formats!
+_tldr;_ scale your recipe, with a variety of formats!
 
 This can be:
 
@@ -45,8 +45,8 @@ A number/decimal or range with an optional fraction and unit joined, or with a s
 - 4 vanilla beans (number) => **4** vanilla beans
 - 4.5 vanilla beans (decimal) => **4.5** vanilla beans
 - 4-5 vanilla beans (range) => **4-5** vanilla beans
-- 1 tsp vanilla essence (attached fraction) => **1** *teaspoon* vanilla essence
-- 1 ½ tbsp vanilla essence (spaced fraction) => **1.5** *tablespoons* vanilla essence
+- 1 tsp vanilla essence (attached fraction) => **1** _teaspoon_ vanilla essence
+- 1 ½ tbsp vanilla essence (spaced fraction) => **1.5** _tablespoons_ vanilla essence
 
 The parser will normalise any fractions to decimals e.g.
 
@@ -82,8 +82,8 @@ const units = {
 
 We're basically looking for units like can, cup, stick, then **normalising** them with a standard unit, e.g.
 
-- **1** *btl* milk => **1** *bottle* milk.
-- **1** *kg* sugar => **1** *kilogram* sugar.
+- **1** _btl_ milk => **1** _bottle_ milk.
+- **1** _kg_ sugar => **1** _kilogram_ sugar.
 
 The idea being, if we know what to expect in the ingredients, they're easier to read and manipulate.
 
@@ -91,8 +91,8 @@ The idea being, if we know what to expect in the ingredients, they're easier to 
 
 When the quantity is over 1, the units will return as plural, e.g.
 
-- 1 tsp sugar => **1** *teaspoon* sugar
-- 2 tsp sugar => **2** *teaspoons* sugar
+- 1 tsp sugar => **1** _teaspoon_ sugar
+- 2 tsp sugar => **2** _teaspoons_ sugar
 
 ### Unit systems and symbols
 
@@ -100,11 +100,11 @@ The parser tags each unit with a system (`metric`, `imperial`, `americanVolumetr
 
 ### Languages
 
-*tldr;* change your default language in the user settings.
+_tldr;_ change your default language in the user settings.
 
 Obviously, different units and even numbers look different depending on your native tongue.
 
-- **1.5** *kilogram* potatoes in German => **1,5** *Kilogramm* Kartoffeln
+- **1.5** _kilogram_ potatoes in German => **1,5** _Kilogramm_ Kartoffeln
 
 The above ingredients need to be interpreted differently, depending on what language they're in.
 
@@ -121,15 +121,15 @@ Have a look at this demo for an example of language switching:
 
 ## Ingredient and Extra
 
-*tldr;* the bit that goes after the ingredient, hidden by default.
+_tldr;_ the bit that goes after the ingredient, hidden by default.
 
 I'll talk about these together, as they're intrinsically related.
 
 A common pattern of recipes is to include any instructions or specifics after the recipe in brackets, or separated by one or more commas, e.g.
 
-- 1 cup of sugar, granulated => **1** *cup* sugar *| granulated*
-- 1 cup of sugar, granulated, caster is fine. => **1** *cup* sugar *| granulated, caster is fine.*
-- 200g flour (sifted) => **200** *grams* flour *| sifted*
+- 1 cup of sugar, granulated => **1** _cup_ sugar _| granulated_
+- 1 cup of sugar, granulated, caster is fine. => **1** _cup_ sugar _| granulated, caster is fine._
+- 200g flour (sifted) => **200** _grams_ flour _| sifted_
 
 You'll also notice that the "of" has been removed, yep, it's doing that. All in the interest of brevity = readability.
 
@@ -168,7 +168,7 @@ If it's truly borked and you don't want to edit the recipe, just check **Display
 
 ## Conversion
 
-*tldr;* Set your default measurement system in the settings, or change it in the dropdown below the ingredients. Metric, imperial are supported well, US Cups/Volumetric is supported, kind of.
+_tldr;_ Set your default measurement system in the settings, or change it in the dropdown below the ingredients. Metric, imperial are supported well, US Cups/Volumetric is supported, kind of.
 
 At the bottom of the ingredients section is a rather nifty feature, ingredient conversion.
 
@@ -176,7 +176,7 @@ Weight and volumes of liquid are easy enough to convert from one system to anoth
 
 - **US Cups to Metric** - Measurement Dropdown
 
-- 1 cup vegetable oil => **216** *grams* vegetable oil | *Vegetable oil (216 g/cup)*
+- 1 cup vegetable oil => **216** _grams_ vegetable oil | _Vegetable oil (216 g/cup)_
 
 That last bit isn't the extra, but the **Cup Match** - unchecked by default, I've included it so folks can feel reassured that they're not adding an incorrect match to their baking recipe.
 
@@ -188,7 +188,7 @@ First we figure out the measurement system from the units contained within the i
 - pounds + ounces + fluid ounces => **Imperial**
 - cups => **US Cups**
 
-If they're mixed, it'll try and get the system by counting the instances of each one belonging to whatever category, e.g. grams *2, cups* 1 => metric. If they're equal, it'll get a bit confused. They shouldn't be there anyway, so take them out!
+If they're mixed, it'll try and get the system by counting the instances of each one belonging to whatever category, e.g. grams _2, cups_ 1 => metric. If they're equal, it'll get a bit confused. They shouldn't be there anyway, so take them out!
 
 Note, teaspoons/tablespoons is system agnostic, as many folks use them for smaller ingredient quantities in recipes. However, if the system is found to be **US Cups**, it will attempt to convert them to grams. You can prevent this behaviour by checking **Use teaspoons and tablespoons instead of grams.** in the user settings.
 
@@ -196,8 +196,8 @@ Once we have a **Measurement System**, we can work out what conversion to do. Se
 
 What we have is a big list of ingredients, and their approximate volumetric weight in grams, we can use this to run the conversion. It'll help if the ingredient is as simple as possible to run this. If it fails, it'll use the default weight, which is the cup weight of water, or 237g, you'll see an asterisk.
 
-- 1 cup Madagascan weeping bee honey => **237** *grams* Madagascan weeping bee honey \*
-- 1 cup honey => **336** *grams* honey | *Honey (336 g/cup)*
+- 1 cup Madagascan weeping bee honey => **237** _grams_ Madagascan weeping bee honey \*
+- 1 cup honey => **336** _grams_ honey | _Honey (336 g/cup)_
 
 - Converted using default water density
 
@@ -207,18 +207,18 @@ If a line has a multiplier (e.g. `6 x 50 g patties`), the main quantity remains 
 
 As you can see the longer honey ingredient failed. If you want it to work better, just move the extra bit to after a comma or in brackets:
 
-- 1 cup honey, Madagascan weeping bee => **336** *grams* honey *| Madagascan weeping bee | Honey (336 g/cup)*
+- 1 cup honey, Madagascan weeping bee => **336** _grams_ honey _| Madagascan weeping bee | Honey (336 g/cup)_
 
 ## Advanced: Ingredient Matching Configuration
 
 The conversion feature uses fuzzy matching (Fuse.js) to find ingredients in the density database. The defaults work well for most cases, but advanced users can fine-tune the matching behaviour via environment variables.
 
-| Variable | Default | Description |
-| --- | --- | --- |
-| `FUSE_THRESHOLD_STRICT` | `0.3` | Threshold for strict matching (0.0 = perfect match, 1.0 = match anything). Lower = stricter. |
-| `FUSE_THRESHOLD_RELAXED` | `0.5` | Threshold for relaxed matching on individual words (e.g. "yellow onions" → "onions"). |
-| `FUSE_MIN_WORD_LENGTH` | `3` | Minimum word length to attempt matching (prevents matching "of", "in", etc.). |
-| `FUSE_DISTANCE` | `100` | How far from the start of text a match can be. Lower = matches must be near the beginning. |
-| `FUSE_MIN_MATCH_CHAR_LENGTH` | `2` | Minimum characters that must match for a valid result. |
+| Variable                     | Default | Description                                                                                  |
+| ---------------------------- | ------- | -------------------------------------------------------------------------------------------- |
+| `FUSE_THRESHOLD_STRICT`      | `0.3`   | Threshold for strict matching (0.0 = perfect match, 1.0 = match anything). Lower = stricter. |
+| `FUSE_THRESHOLD_RELAXED`     | `0.5`   | Threshold for relaxed matching on individual words (e.g. "yellow onions" → "onions").        |
+| `FUSE_MIN_WORD_LENGTH`       | `3`     | Minimum word length to attempt matching (prevents matching "of", "in", etc.).                |
+| `FUSE_DISTANCE`              | `100`   | How far from the start of text a match can be. Lower = matches must be near the beginning.   |
+| `FUSE_MIN_MATCH_CHAR_LENGTH` | `2`     | Minimum characters that must match for a valid result.                                       |
 
 These are optional overrides - only set them if you're experiencing matching issues and understand Fuse.js parameters.

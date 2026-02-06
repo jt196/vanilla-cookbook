@@ -9,14 +9,14 @@ Doesn't use local storage, runs everything in memory.
 
 #### Parameters
 
-| Parameter | Type | Description |
-| --- | --- | --- |
+| Parameter   | Type       | Description                                      |
+| ----------- | ---------- | ------------------------------------------------ |
 | zipFilePath | `{string}` | The path to the zip file containing the recipes. |
 
 #### Returns
 
-| Type | Description |
-| --- | --- |
+| Type               | Description                    |
+| ------------------ | ------------------------------ |
 | `{Promise<Array>}` | An array of extracted recipes. |
 
 ### filterRecipeData
@@ -25,16 +25,15 @@ Filters the recipe JSON data to only include fields that exist in the database.
 
 #### Parameters
 
-| Parameter | Type | Description |
-| --- | --- | --- |
-| recipe | `{Object}` | The recipe data to be filtered. |
+| Parameter | Type       | Description                     |
+| --------- | ---------- | ------------------------------- |
+| recipe    | `{Object}` | The recipe data to be filtered. |
 
 #### Returns
 
-| Type | Description |
-| --- | --- |
+| Type       | Description               |
+| ---------- | ------------------------- |
 | `{Object}` | The filtered recipe data. |
-
 
 ## files.js
 
@@ -48,15 +47,15 @@ any of the desired extensions, false otherwise.
 
 #### Parameters
 
-| Parameter | Type | Description |
-| --- | --- | --- |
-| stream | `{ReadableStream}` | The stream of the file to be checked. |
+| Parameter         | Type                 | Description                           |
+| ----------------- | -------------------- | ------------------------------------- |
+| stream            | `{ReadableStream}`   | The stream of the file to be checked. |
 | desiredExtensions | `{string\|string[]}` | The extension(s) to validate against. |
 
 #### Returns
 
-| Type | Description |
-| --- | --- |
+| Type                 | Description                                              |
+| -------------------- | -------------------------------------------------------- |
 | `{Promise<boolean>}` | A promise that resolves to true if the file type matches |
 
 ### saveFile
@@ -66,16 +65,16 @@ If the file already exists, this function will not overwrite it.
 
 #### Parameters
 
-| Parameter | Type | Description |
-| --- | --- | --- |
-| fileData | `{ArrayBuffer\|string}` | The data of the file to be saved. |
-| filename | `{string}` | The name of the file to be saved. |
-| directory | `{string}` | The directory in which to save the file. |
+| Parameter | Type                    | Description                              |
+| --------- | ----------------------- | ---------------------------------------- |
+| fileData  | `{ArrayBuffer\|string}` | The data of the file to be saved.        |
+| filename  | `{string}`              | The name of the file to be saved.        |
+| directory | `{string}`              | The directory in which to save the file. |
 
 #### Throws
 
-| Type | Description |
-| --- | --- |
+| Type      | Description                                 |
+| --------- | ------------------------------------------- |
 | `{Error}` | If there is an error while saving the file. |
 
 ### isValidRecipeStructure
@@ -89,8 +88,8 @@ The required fields are:
 
 #### Parameters
 
-| Parameter | Type | Description |
-| --- | --- | --- |
-| recipes | `{Array}` | The recipes data structure to be validated. |
+| Parameter | Type      | Description                                 |
+| --------- | --------- | ------------------------------------------- |
+| recipes   | `{Array}` | The recipes data structure to be validated. |
 
 @return {boolean} true if the structure is valid, false otherwise.

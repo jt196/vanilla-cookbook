@@ -14,7 +14,8 @@
 	<h1 class="text-3xl md:text-4xl font-bold mb-4">{recipe?.name}</h1>
 
 	<InfoText class="my-2"
-		>Created: <span class="italic">{localDateAndTime(recipe.created)}</span></InfoText>
+		>Created: <span class="italic">{localDateAndTime(recipe.created)}</span></InfoText
+	>
 
 	{#if recipe?.source || recipe?.source_url || recipe?.parentRecipeId}
 		<InfoText class="my-2">
@@ -24,7 +25,8 @@
 					href={recipe.source_url}
 					target="_blank"
 					rel="noopener noreferrer"
-					class="link link-primary">{recipe.source}</a>
+					class="link link-primary">{recipe.source}</a
+				>
 			{:else if recipe?.source}
 				Source: {recipe.source}
 			{:else if recipe?.source_url}
@@ -32,7 +34,8 @@
 					href={recipe.source_url}
 					target="_blank"
 					rel="noopener noreferrer"
-					class="link link-primary">Source</a>
+					class="link link-primary">Source</a
+				>
 			{/if}
 			{#if recipe?.parentRecipeId}
 				<span class="mx-1 text-base-content/60">|</span>
@@ -49,7 +52,8 @@
 			editable={true}
 			ratingChanged={(newRating) => {
 				recipeRatingChanged?.(newRating)
-			}} />
+			}}
+		/>
 	</div>
 
 	{#if scaledServings}

@@ -120,7 +120,8 @@
 			aria-label="URL"
 			value="url"
 			bind:group={selectedMode}
-			checked={selectedMode === 'url'} />
+			checked={selectedMode === 'url'}
+		/>
 		<div class="tab-content bg-base-100 border-base-300 p-2 ml-0 mr-0">
 			<Input type="text" placeholder="Enter recipe URL" bind:value={url} />
 			<Button type="submit" class="w-auto self-start mt-2" disabled={isUrlEmpty}>Scrape URL</Button>
@@ -134,7 +135,8 @@
 				aria-label="Text"
 				value="text"
 				bind:group={selectedMode}
-				checked={selectedMode === 'text'} />
+				checked={selectedMode === 'text'}
+			/>
 			<div class="tab-content bg-base-100 border-base-300 p-2 ml-0 mr-0">
 				<div class="flex items-center gap-2 mb-2">
 					<span class="text-sm">Text</span>
@@ -146,7 +148,8 @@
 					placeholder={textMode === 'prompt'
 						? 'Describe the recipe you want...'
 						: 'Paste recipe text...'}
-					bind:value={sharedText} />
+					bind:value={sharedText}
+				/>
 				<Button type="submit" class="w-auto self-start  mt-2" disabled={isTextEmpty}>
 					{textMode === 'prompt' ? 'Generate Recipe' : 'Parse Text'}
 				</Button>
@@ -160,7 +163,8 @@
 					aria-label="Image"
 					value="image"
 					bind:group={selectedMode}
-					checked={selectedMode === 'image'} />
+					checked={selectedMode === 'image'}
+				/>
 				<div class="tab-content bg-base-100 border-base-300 p-2 ml-0 mr-0">
 					<FileInput
 						accept="image/*"
@@ -175,7 +179,8 @@
 								feedbackMessage = ''
 							}
 						}}
-						optionalLabel={`You can upload up to ${maxImages} images.`} />
+						optionalLabel={`You can upload up to ${maxImages} images.`}
+					/>
 					<Button type="submit" class="w-auto self-start mt-2" disabled={isImageEmpty}>
 						Analyze Image{imageFiles?.length > 1 ? 's' : ''}
 					</Button>

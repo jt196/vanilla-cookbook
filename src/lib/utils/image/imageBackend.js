@@ -162,7 +162,10 @@ export async function resizeImageBuffer(buffer, maxSize = 1024) {
  * @param {number} [options.maxWidth=1200] - Max width to normalize images to
  * @returns {Promise<Buffer>} Combined image buffer (PNG)
  */
-export async function stitchImages(buffers, { padding = 12, background = '#ffffff', maxWidth = 1200 } = {}) {
+export async function stitchImages(
+	buffers,
+	{ padding = 12, background = '#ffffff', maxWidth = 1200 } = {}
+) {
 	if (!Array.isArray(buffers) || buffers.length === 0) {
 		throw new Error('No images provided to stitch')
 	}
@@ -173,9 +176,15 @@ export async function stitchImages(buffers, { padding = 12, background = '#fffff
 		const img = sharp(buf)
 		const meta = await img.metadata()
 		const targetWidth = Math.min(maxWidth, meta.width || maxWidth)
-		const resized = await img.resize({ width: targetWidth, fit: 'inside', withoutEnlargement: true }).toBuffer()
+		const resized = await img
+			.resize({ width: targetWidth, fit: 'inside', withoutEnlargement: true })
+			.toBuffer()
 		const resizedMeta = await sharp(resized).metadata()
-		normalized.push({ buffer: resized, width: resizedMeta.width || targetWidth, height: resizedMeta.height || 0 })
+		normalized.push({
+			buffer: resized,
+			width: resizedMeta.width || targetWidth,
+			height: resizedMeta.height || 0
+		})
 	}
 
 	const width = Math.max(...normalized.map((n) => n.width))

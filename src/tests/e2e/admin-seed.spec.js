@@ -112,17 +112,32 @@ test('fresh install admin seed, login, and page smoke tests', async ({ page }, t
 	await assertPage(page, `/user/${userId}/shopping`, { heading: 'Shopping' }, projectName)
 	await assertPage(page, `/user/${userId}/calendar`, { selector: '.ec' }, projectName)
 	await assertPage(page, `/user/${userId}/options/settings`, { heading: 'Account' }, projectName)
-	await assertPage(page, `/user/${userId}/options/recipes`, { text: 'Select language' }, projectName)
+	await assertPage(
+		page,
+		`/user/${userId}/options/recipes`,
+		{ text: 'Select language' },
+		projectName
+	)
 	await assertPage(
 		page,
 		`/user/${userId}/options/bookmark`,
 		{
-		text: 'Drag This Bookmark to Your Browser Toolbar'
+			text: 'Drag This Bookmark to Your Browser Toolbar'
 		},
 		projectName
 	)
-	await assertPage(page, `/user/${userId}/options/export`, { heading: 'Export Recipes' }, projectName)
-	await assertPage(page, `/user/${userId}/options/import`, { heading: 'Import Recipes' }, projectName)
+	await assertPage(
+		page,
+		`/user/${userId}/options/export`,
+		{ heading: 'Export Recipes' },
+		projectName
+	)
+	await assertPage(
+		page,
+		`/user/${userId}/options/import`,
+		{ heading: 'Import Recipes' },
+		projectName
+	)
 	await assertPage(
 		page,
 		`/user/${userId}/options/admin/site`,
@@ -137,7 +152,9 @@ test('fresh install admin seed, login, and page smoke tests', async ({ page }, t
 	await test.step(`[${projectName}] edit recipe`, async () => {
 		// Navigate to first recipe view page
 		await page.goto(firstRecipeHref, { waitUntil: 'networkidle' })
-		await expect(page.getByRole('heading', { name: seededRecipes[0] })).toBeVisible({ timeout: 15000 })
+		await expect(page.getByRole('heading', { name: seededRecipes[0] })).toBeVisible({
+			timeout: 15000
+		})
 
 		// Click the edit recipe link (not the edit images link)
 		const editLink = page.locator('a[href*="/edit"]').first()
@@ -160,7 +177,9 @@ test('fresh install admin seed, login, and page smoke tests', async ({ page }, t
 
 		// Verify redirect back to view page (indicates success)
 		await page.waitForURL('**/view**', { timeout: 30000 })
-		await expect(page.getByRole('heading', { name: seededRecipes[0] })).toBeVisible({ timeout: 15000 })
+		await expect(page.getByRole('heading', { name: seededRecipes[0] })).toBeVisible({
+			timeout: 15000
+		})
 	})
 	console.log(`[${projectName}] PASS edit recipe`)
 

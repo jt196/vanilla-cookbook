@@ -26,7 +26,8 @@
 		bind:value
 		useLabelAsPlaceholder={false}
 		size="lg"
-		onkeydown={onKeyPress} />
+		onkeydown={onKeyPress}
+	/>
 	<Button onclick={onAdd} size="lg" aria-label="Add ingredient">
 		<New width="20px" fill="white" />
 	</Button>

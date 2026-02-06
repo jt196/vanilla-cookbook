@@ -141,23 +141,30 @@
 			id="old"
 			label="Current Password"
 			placeholder="Current Password"
-			bind:value={oldPass} />
+			bind:value={oldPass}
+		/>
 		<Input
 			type="password"
 			id="new"
 			label="New Password"
 			placeholder="New Password"
-			bind:value={newPass} />
+			bind:value={newPass}
+		/>
 		<Input
 			type="password"
 			id="confirm"
 			label="Confirm New Password"
 			placeholder="Confirm New Password"
-			bind:value={newPassConfirm} />
+			bind:value={newPassConfirm}
+		/>
 		<ValidationMessage
 			message={newPasswordValidation?.message}
-			isValid={newPasswordValidation?.isValid} />
-		<ValidationMessage message={passwordsMismatch ? "Passwords don't match!" : null} isError={true} />
+			isValid={newPasswordValidation?.isValid}
+		/>
+		<ValidationMessage
+			message={passwordsMismatch ? "Passwords don't match!" : null}
+			isError={true}
+		/>
 		<footer>
 			<Button type="submit" disabled={isPasswordSubmitDisabled}>Update Password</Button>
 			<FeedbackMessage message={passwordFeedback} />
@@ -174,7 +181,8 @@
 				bind:checked={user.publicProfile}
 				label="Profile Public"
 				size="sm"
-				color="primary">
+				color="primary"
+			>
 				Show or hide your profile from other users.
 			</Checkbox>
 			<Checkbox
@@ -182,7 +190,8 @@
 				bind:checked={user.publicRecipes}
 				legend="Recipes Public"
 				size="sm"
-				color="primary">
+				color="primary"
+			>
 				Make your recipes public or private by default
 			</Checkbox>
 		</div>

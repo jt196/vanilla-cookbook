@@ -27,13 +27,15 @@
 	method="POST"
 	action="?/importRecipes"
 	class="flex flex-col gap-4 w-full md:w-2/3 lg:w-1/2"
-	enctype="multipart/form-data">
+	enctype="multipart/form-data"
+>
 	<Dropdown
 		name="type"
 		legend="Choose Migration Type"
 		options={dropdownOptions}
 		bind:selected={selectedType}
-		optionalLabel={info} />
+		optionalLabel={info}
+	/>
 
 	<FileInput id="file" name="file" label="File" {accept} required />
 
@@ -42,7 +44,8 @@
 		bind:checked={isPublic}
 		legend="Set as Public"
 		size="sm"
-		color="primary">
+		color="primary"
+	>
 		I want to make these recipes public
 	</Checkbox>
 
