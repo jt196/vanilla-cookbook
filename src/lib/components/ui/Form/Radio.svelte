@@ -19,15 +19,7 @@
 </script>
 
 <label class={className}>
-	<input
-		type="radio"
-		{name}
-		{value}
-		{checked}
-		{disabled}
-		bind:group
-		onchange={handleChange}
-	/>
+	<input type="radio" {name} {value} {checked} {disabled} bind:group onchange={handleChange} />
 	{label}
 </label>
 

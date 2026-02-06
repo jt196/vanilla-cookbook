@@ -62,7 +62,8 @@
 
 <a
 	href="/recipe/{item.uid}/view/"
-	class="flex items-stretch gap-3 mb-3 rounded-lg transition no-underline text-current">
+	class="flex items-stretch gap-3 mb-3 rounded-lg transition no-underline text-current"
+>
 	<Card class="flex-1 hover:bg-base-200 min-h-36" size="md" side figureClass="w-32 flex-shrink-0">
 		{#snippet figure()}
 			<div class="h-36 w-full overflow-hidden">
@@ -72,14 +73,16 @@
 						loading="lazy"
 						src="/api/recipe/image/{item.photos[0].id}"
 						alt="{item.name} thumbnail"
-						onerror={() => (showPrimaryPhoto = false)} />
+						onerror={() => (showPrimaryPhoto = false)}
+					/>
 				{:else if item.image_url && showImageUrl}
 					<img
 						class="h-full w-full object-cover"
 						loading="lazy"
 						src={item.image_url}
 						alt="{item.name} thumbnail"
-						onerror={() => (showImageUrl = false)} />
+						onerror={() => (showImageUrl = false)}
+					/>
 				{:else}
 					<div class="h-full w-full bg-base-300" aria-hidden="true"></div>
 				{/if}
@@ -100,7 +103,8 @@
 								class="btn-circle tooltip hover:opacity-100 {favourite
 									? 'text-error opacity-100'
 									: ''}"
-								data-tip="Favourite Recipe">
+								data-tip="Favourite Recipe"
+							>
 								{#if loadingFav}
 									<span class="loading loading-spinner loading-xs"></span>
 								{:else}
@@ -117,11 +121,12 @@
 									: ''}"
 								data-tip={item.log?.length > 0
 									? `Cooked ${item.log.length} time${item.log.length > 1 ? 's' : ''}`
-									: 'Never cooked'}>
+									: 'Never cooked'}
+							>
 								{#if item.log?.length > 1}
-									<span
-										class="badge badge-success badge-xs text-success-content font-bold min-w-5"
-										>{item.log.length}</span>
+									<span class="badge badge-success badge-xs text-success-content font-bold min-w-5"
+										>{item.log.length}</span
+									>
 								{:else}
 									<Check checked={logged} width="16px" height="16px" />
 								{/if}
@@ -132,7 +137,8 @@
 								size="xs"
 								class="btn-circle tooltip hover:opacity-100"
 								data-tip="Fork Recipe"
-								onclick={(event) => handleDuplicate(item?.uid, event)}>
+								onclick={(event) => handleDuplicate(item?.uid, event)}
+							>
 								<Fork width="16px" height="16px" />
 							</Button>
 						{:else if viewMode === 'social' && viewerUserId && item.userId !== viewerUserId}
@@ -141,7 +147,8 @@
 								size="xs"
 								disabled={true}
 								class="btn-circle tooltip opacity-40"
-								data-tip="Already forked">
+								data-tip="Already forked"
+							>
 								<Fork width="16px" height="16px" />
 							</Button>
 						{/if}
@@ -155,7 +162,8 @@
 				<StarRating
 					rating={item.rating}
 					editable={true}
-					ratingChanged={(newRating) => recipeRatingChanged?.(item.uid, newRating)} />
+					ratingChanged={(newRating) => recipeRatingChanged?.(item.uid, newRating)}
+				/>
 			{:else}
 				<p class="text-sm text-base-content/70">
 					by

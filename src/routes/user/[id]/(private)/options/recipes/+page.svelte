@@ -31,23 +31,27 @@
 	method="POST"
 	action="?/updateSettings"
 	onsubmit={updateSettings}
-	class="flex flex-col gap-4 w-full md:w-2/3 lg:w-1/2">
+	class="flex flex-col gap-4 w-full md:w-2/3 lg:w-1/2"
+>
 	<Dropdown
 		name="language"
 		options={languages}
 		bind:selected={user.language}
-		legend="Select language" />
+		legend="Select language"
+	/>
 	<Dropdown
 		name="system"
 		options={systems}
 		bind:selected={user.units}
-		legend="Select measurement system" />
+		legend="Select measurement system"
+	/>
 	<Checkbox
 		name="Skip Small"
 		bind:checked={user.skipSmallUnits}
 		legend="Skip Small Units"
 		size="sm"
-		color="neutral">
+		color="neutral"
+	>
 		Use teaspoons and tablespoons instead of grams.
 	</Checkbox>
 	<Checkbox
@@ -55,7 +59,8 @@
 		bind:checked={user.ingMatch}
 		size="sm"
 		color="neutral"
-		legend="Display Cup Match">
+		legend="Display Cup Match"
+	>
 		volumetric ingredients by default when converting to and from US Cups
 	</Checkbox>
 	<Checkbox
@@ -63,7 +68,8 @@
 		bind:checked={user.ingOriginal}
 		size="sm"
 		color="neutral"
-		legend="Display Original">
+		legend="Display Original"
+	>
 		ingredient line text instead of parsed text
 	</Checkbox>
 	<Checkbox
@@ -71,7 +77,8 @@
 		bind:checked={user.ingSymbol}
 		size="sm"
 		color="neutral"
-		legend="Display Symbols">
+		legend="Display Symbols"
+	>
 		Display short form instead of long form units. e.g. g vs grams
 	</Checkbox>
 	<Checkbox
@@ -79,7 +86,8 @@
 		bind:checked={user.ingExtra}
 		size="sm"
 		color="neutral"
-		legend="Display Extra">
+		legend="Display Extra"
+	>
 		ingredient text, eg after the comma in "1 clove garlic, chopped"
 	</Checkbox>
 	<Checkbox
@@ -87,7 +95,8 @@
 		bind:checked={user.useCats}
 		size="sm"
 		color="neutral"
-		legend="Use Categories">
+		legend="Use Categories"
+	>
 		enables the user to filter by category.
 	</Checkbox>
 	<footer>

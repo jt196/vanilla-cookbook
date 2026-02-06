@@ -3,7 +3,14 @@
 	import Button from '$lib/components/ui/Button.svelte'
 
 	/** @type {{isOpen?: boolean, onCancel?: () => void, onStay?: () => void, onView?: () => void, viewDisabled?: boolean, message?: string | null}} */
-	let { isOpen = $bindable(), onCancel, onStay, onView, viewDisabled = false, message = null } = $props()
+	let {
+		isOpen = $bindable(),
+		onCancel,
+		onStay,
+		onView,
+		viewDisabled = false,
+		message = null
+	} = $props()
 </script>
 
 <Dialog bind:isOpen>

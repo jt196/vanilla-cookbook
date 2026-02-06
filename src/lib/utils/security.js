@@ -45,8 +45,14 @@ const DEFAULT_REQUIREMENTS = {
 export function getPasswordRequirements(env = {}) {
 	return {
 		minLength: Number(env.PASSWORD_MIN_LENGTH) || DEFAULT_REQUIREMENTS.minLength,
-		requireUppercase: envBool(env.PASSWORD_REQUIRE_UPPERCASE, DEFAULT_REQUIREMENTS.requireUppercase),
-		requireLowercase: envBool(env.PASSWORD_REQUIRE_LOWERCASE, DEFAULT_REQUIREMENTS.requireLowercase),
+		requireUppercase: envBool(
+			env.PASSWORD_REQUIRE_UPPERCASE,
+			DEFAULT_REQUIREMENTS.requireUppercase
+		),
+		requireLowercase: envBool(
+			env.PASSWORD_REQUIRE_LOWERCASE,
+			DEFAULT_REQUIREMENTS.requireLowercase
+		),
 		requireDigit: envBool(env.PASSWORD_REQUIRE_DIGIT, DEFAULT_REQUIREMENTS.requireDigit),
 		requireSpecial: envBool(env.PASSWORD_REQUIRE_SPECIAL, DEFAULT_REQUIREMENTS.requireSpecial)
 	}
@@ -108,7 +114,10 @@ export function validatePassword(password, env = {}) {
 	const reqs = getPasswordRequirements(env)
 
 	if (password.length < reqs.minLength)
-		return { isValid: false, message: `Password should be at least ${reqs.minLength} characters long.` }
+		return {
+			isValid: false,
+			message: `Password should be at least ${reqs.minLength} characters long.`
+		}
 	if (reqs.requireUppercase && !/[A-Z]/.test(password))
 		return { isValid: false, message: 'Password should contain at least one uppercase letter.' }
 	if (reqs.requireLowercase && !/[a-z]/.test(password))

@@ -40,7 +40,7 @@ export async function POST({ request, locals }) {
 				providerUserId: userData.username,
 				password: userData.password
 			},
-		attributes: {
+			attributes: {
 				username: userData.username,
 				about: userData.about,
 				email: userData.email,

@@ -14,16 +14,16 @@ Fetches data from the Paprika API for a given endpoint.
 
 #### Parameters
 
-| Parameter | Type | Description |
-| --- | --- | --- |
-| endpoint | `{string}` | The Paprika API endpoint. |
-| email | `{string}` | The user's email. |
-| password | `{string}` | The user's password. |
+| Parameter | Type       | Description               |
+| --------- | ---------- | ------------------------- |
+| endpoint  | `{string}` | The Paprika API endpoint. |
+| email     | `{string}` | The user's email.         |
+| password  | `{string}` | The user's password.      |
 
 #### Returns
 
-| Type | Description |
-| --- | --- |
+| Type                | Description                    |
+| ------------------- | ------------------------------ |
 | `{Promise<Object>}` | The data fetched from the API. |
 
 ### bookmarks
@@ -32,15 +32,15 @@ Fetches bookmarks from the Paprika API.
 
 #### Parameters
 
-| Parameter | Type | Description |
-| --- | --- | --- |
-| email | `{string}` | The user's email. |
-| password | `{string}` | The user's password. |
+| Parameter | Type       | Description          |
+| --------- | ---------- | -------------------- |
+| email     | `{string}` | The user's email.    |
+| password  | `{string}` | The user's password. |
 
 #### Returns
 
-| Type | Description |
-| --- | --- |
+| Type                | Description                              |
+| ------------------- | ---------------------------------------- |
 | `{Promise<Object>}` | The bookmarks data fetched from the API. |
 
 ### download
@@ -49,16 +49,16 @@ Downloads a file from a given URI and saves it to a specified filename.
 
 #### Parameters
 
-| Parameter | Type | Description |
-| --- | --- | --- |
-| uri | `{string}` | The URI of the file to be downloaded. |
-| filename | `{string}` | The name of the file where the data will be saved. |
+| Parameter | Type       | Description                                        |
+| --------- | ---------- | -------------------------------------------------- |
+| uri       | `{string}` | The URI of the file to be downloaded.              |
+| filename  | `{string}` | The name of the file where the data will be saved. |
 
 #### Returns
 
-| Type | Description |
-| --- | --- |
-| `{Promise<void>}` |  |
+| Type              | Description |
+| ----------------- | ----------- |
+| `{Promise<void>}` |             |
 
 ### downloadImageAsBuffer
 
@@ -66,14 +66,14 @@ Downloads an image from a given URL and returns it as a buffer.
 
 #### Parameters
 
-| Parameter | Type | Description |
-| --- | --- | --- |
-| url | `{string}` | The URL of the image to download. |
+| Parameter | Type       | Description                       |
+| --------- | ---------- | --------------------------------- |
+| url       | `{string}` | The URL of the image to download. |
 
 #### Returns
 
-| Type | Description |
-| --- | --- |
+| Type                | Description                                                    |
+| ------------------- | -------------------------------------------------------------- |
 | `{Promise<Buffer>}` | A promise that resolves with the downloaded image as a buffer. |
 
 ### exportRecipes
@@ -82,15 +82,15 @@ Exports recipes from the Paprika API.
 
 #### Parameters
 
-| Parameter | Type | Description |
-| --- | --- | --- |
-| username | `{string}` | The user's username. |
-| password | `{string}` | The user's password. |
+| Parameter | Type       | Description          |
+| --------- | ---------- | -------------------- |
+| username  | `{string}` | The user's username. |
+| password  | `{string}` | The user's password. |
 
 #### Returns
 
-| Type | Description |
-| --- | --- |
+| Type               | Description                   |
+| ------------------ | ----------------------------- |
 | `{Promise<Array>}` | An array of detailed recipes. |
 
 ### saveRecipes
@@ -99,18 +99,18 @@ Saves recipes to a specified file and downloads their photos.
 
 #### Parameters
 
-| Parameter | Type | Description |
-| --- | --- | --- |
-| username | `{string}` | The user's username. |
-| password | `{string}` | The user's password. |
-| filename | `{string}` | The name of the file where recipes will be saved. |
-| photoDirectory | `{string}` | The directory where recipe photos will be saved. |
+| Parameter      | Type       | Description                                       |
+| -------------- | ---------- | ------------------------------------------------- |
+| username       | `{string}` | The user's username.                              |
+| password       | `{string}` | The user's password.                              |
+| filename       | `{string}` | The name of the file where recipes will be saved. |
+| photoDirectory | `{string}` | The directory where recipe photos will be saved.  |
 
 #### Returns
 
-| Type | Description |
-| --- | --- |
-| `{Promise<void>}` |  |
+| Type              | Description |
+| ----------------- | ----------- |
+| `{Promise<void>}` |             |
 
 ### fetchFirstRecipeDetails
 
@@ -118,15 +118,15 @@ Fetches details of the first recipe from the Paprika API.
 
 #### Parameters
 
-| Parameter | Type | Description |
-| --- | --- | --- |
-| email | `{string}` | The user's email. |
-| password | `{string}` | The user's password. |
+| Parameter | Type       | Description          |
+| --------- | ---------- | -------------------- |
+| email     | `{string}` | The user's email.    |
+| password  | `{string}` | The user's password. |
 
 #### Returns
 
-| Type | Description |
-| --- | --- |
+| Type               | Description                                      |
+| ------------------ | ------------------------------------------------ |
 | `{Promise<Array>}` | An array containing details of the first recipe. |
 
 ### fetchDetailedRecipes
@@ -137,15 +137,15 @@ Grab the list of uids from the API, then grab each recipe's details
 
 #### Parameters
 
-| Parameter | Type | Description |
-| --- | --- | --- |
-| email | `{string}` | The user's email. |
-| password | `{string}` | The user's password. |
+| Parameter | Type       | Description          |
+| --------- | ---------- | -------------------- |
+| email     | `{string}` | The user's email.    |
+| password  | `{string}` | The user's password. |
 
 #### Returns
 
-| Type | Description |
-| --- | --- |
+| Type               | Description                   |
+| ------------------ | ----------------------------- |
 | `{Promise<Array>}` | An array of detailed recipes. |
 
 ### replaceCategoryUIDsWithNames
@@ -154,16 +154,16 @@ Replaces category UIDs in a recipe with their respective names.
 
 #### Parameters
 
-| Parameter | Type | Description |
-| --- | --- | --- |
-| recipe | `{Object}` | The recipe object containing category UIDs. |
-| email | `{string}` | The user's email. |
-| password | `{string}` | The user's password. |
+| Parameter | Type       | Description                                 |
+| --------- | ---------- | ------------------------------------------- |
+| recipe    | `{Object}` | The recipe object containing category UIDs. |
+| email     | `{string}` | The user's email.                           |
+| password  | `{string}` | The user's password.                        |
 
 #### Returns
 
-| Type | Description |
-| --- | --- |
+| Type                | Description                             |
+| ------------------- | --------------------------------------- |
 | `{Promise<Object>}` | The updated recipe with category names. |
 
 ### getCategories
@@ -172,36 +172,36 @@ Downloads categories from the Paprika API and saves them to lib/data/categories.
 
 #### Parameters
 
-| Parameter | Type | Description |
-| --- | --- | --- |
-| email | `{string}` | The user's email. |
-| password | `{string}` | The user's password. |
+| Parameter | Type       | Description          |
+| --------- | ---------- | -------------------- |
+| email     | `{string}` | The user's email.    |
+| password  | `{string}` | The user's password. |
 
 #### Returns
 
-| Type | Description |
-| --- | --- |
+| Type               | Description             |
+| ------------------ | ----------------------- |
 | `{Promise<Array>}` | An array of categories. |
 
 ### loadCategories
 
 1. Loads categories from a specified file path.
-Tries to access and read the file, parsing its contents as JSON.
-If the file does not exist or an error occurs during reading,
-logs the error and returns an empty array.
+   Tries to access and read the file, parsing its contents as JSON.
+   If the file does not exist or an error occurs during reading,
+   logs the error and returns an empty array.
 
 or an empty array if the file cannot be accessed or read.
 
 #### Parameters
 
-| Parameter | Type | Description |
-| --- | --- | --- |
-| filepath | `{string}` | The path to the categories file. |
+| Parameter | Type       | Description                      |
+| --------- | ---------- | -------------------------------- |
+| filepath  | `{string}` | The path to the categories file. |
 
 #### Returns
 
-| Type | Description |
-| --- | --- |
+| Type               | Description                                        |
+| ------------------ | -------------------------------------------------- |
 | `{Promise<Array>}` | A promise that resolves to an array of categories, |
 
 ### loadRecipes
@@ -215,14 +215,14 @@ If there is an error loading the recipes, an error is logged to the console and 
 
 #### Parameters
 
-| Parameter | Type | Description |
-| --- | --- | --- |
-| filename | `{string}` | The name of the file to load recipes from. |
+| Parameter | Type       | Description                                |
+| --------- | ---------- | ------------------------------------------ |
+| filename  | `{string}` | The name of the file to load recipes from. |
 
 #### Returns
 
-| Type | Description |
-| --- | --- |
+| Type               | Description                                                  |
+| ------------------ | ------------------------------------------------------------ |
 | `{Promise<Array>}` | The loaded recipes, or an empty array if there was an error. |
 
 ### addCategoriesToDB
@@ -231,16 +231,16 @@ If there is an error loading the recipes, an error is logged to the console and 
 
 #### Parameters
 
-| Parameter | Type | Description |
-| --- | --- | --- |
-| categories | `{Array}` | An array of categories to be added. |
-| userId | `{string}` | The user's ID. |
+| Parameter  | Type       | Description                         |
+| ---------- | ---------- | ----------------------------------- |
+| categories | `{Array}`  | An array of categories to be added. |
+| userId     | `{string}` | The user's ID.                      |
 
 #### Returns
 
-| Type | Description |
-| --- | --- |
-| `{Promise<void>}` |  |
+| Type              | Description |
+| ----------------- | ----------- |
+| `{Promise<void>}` |             |
 
 ### addRecipesToDB
 
@@ -249,21 +249,22 @@ stripped of any fields that don't exist on the recipe table in the DB).
 
 #### Parameters
 
-| Parameter | Type | Description |
-| --- | --- | --- |
-| declaredRecipes | `{Array}` | An array of declared recipes (i.e. recipes |
-| userId | `{string}` | The user's ID. |
+| Parameter       | Type       | Description                                |
+| --------------- | ---------- | ------------------------------------------ |
+| declaredRecipes | `{Array}`  | An array of declared recipes (i.e. recipes |
+| userId          | `{string}` | The user's ID.                             |
 
 #### Returns
 
-| Type | Description |
-| --- | --- |
+| Type               | Description                  |
+| ------------------ | ---------------------------- |
 | `{Promise<Array>}` | An array of created recipes. |
 
 ### handlePhotosForRecipes
 
 Handles all of the photo-related processing for recipes that have been added to the database.
 This includes:
+
 - Saving the main photo to the uploads directory
 - Creating a RecipePhoto record for the main photo
 - Handling the photos array by saving each photo to the uploads directory and creating a RecipePhoto record
@@ -272,15 +273,15 @@ This includes:
 
 #### Parameters
 
-| Parameter | Type | Description |
-| --- | --- | --- |
+| Parameter      | Type      | Description                  |
+| -------------- | --------- | ---------------------------- |
 | createdRecipes | `{Array}` | An array of created recipes. |
 
 #### Returns
 
-| Type | Description |
-| --- | --- |
-| `{Promise<void>}` |  |
+| Type              | Description |
+| ----------------- | ----------- |
+| `{Promise<void>}` |             |
 
 ### addRecipeCategoriesToDB
 
@@ -288,10 +289,10 @@ Adds categories to recipes in the database.
 
 #### Parameters
 
-| Parameter | Type | Description |
-| --- | --- | --- |
+| Parameter      | Type      | Description                  |
+| -------------- | --------- | ---------------------------- |
 | createdRecipes | `{Array}` | An array of created recipes. |
-| rawRecipes | `{Array}` | An array of raw recipes. |
+| rawRecipes     | `{Array}` | An array of raw recipes.     |
 
 ### ensureCategoriesExist
 
@@ -301,15 +302,15 @@ and newly created.
 
 #### Parameters
 
-| Parameter | Type | Description |
-| --- | --- | --- |
-| rawRecipes | `{Array}` | An array of raw recipes. |
+| Parameter   | Type       | Description                                              |
+| ----------- | ---------- | -------------------------------------------------------- |
+| rawRecipes  | `{Array}`  | An array of raw recipes.                                 |
 | adminUserId | `{string}` | The ID of the admin user to create the categories under. |
 
 #### Returns
 
-| Type | Description |
-| --- | --- |
+| Type               | Description                                                          |
+| ------------------ | -------------------------------------------------------------------- |
 | `{Promise<Array>}` | A promise that resolves to an array of all categories, both existing |
 
 ### Function 19
@@ -318,14 +319,14 @@ Extracts the file extension from a given filename.
 
 #### Parameters
 
-| Parameter | Type | Description |
-| --- | --- | --- |
-| filename | `{string}` | The name of the file to extract the extension from. |
+| Parameter | Type       | Description                                         |
+| --------- | ---------- | --------------------------------------------------- |
+| filename  | `{string}` | The name of the file to extract the extension from. |
 
 #### Returns
 
-| Type | Description |
-| --- | --- |
+| Type       | Description         |
+| ---------- | ------------------- |
 | `{string}` | The file extension. |
 
 ### getFileType
@@ -334,14 +335,14 @@ Extracts the file extension from a given filename.
 
 #### Parameters
 
-| Parameter | Type | Description |
-| --- | --- | --- |
-| filename | `{string}` | The name of the file to extract the extension from. |
+| Parameter | Type       | Description                                         |
+| --------- | ---------- | --------------------------------------------------- |
+| filename  | `{string}` | The name of the file to extract the extension from. |
 
 #### Returns
 
-| Type | Description |
-| --- | --- |
+| Type       | Description         |
+| ---------- | ------------------- |
 | `{string}` | The file extension. |
 
 ### declareRecipes
@@ -351,15 +352,15 @@ remapped to match the columns in the Recipe table.
 
 #### Parameters
 
-| Parameter | Type | Description |
-| --- | --- | --- |
-| rawRecipes | `{Array}` | The array of raw recipes. |
-| isPublic | `{boolean}` | Whether the recipes should be marked as public. |
+| Parameter  | Type        | Description                                     |
+| ---------- | ----------- | ----------------------------------------------- |
+| rawRecipes | `{Array}`   | The array of raw recipes.                       |
+| isPublic   | `{boolean}` | Whether the recipes should be marked as public. |
 
 #### Returns
 
-| Type | Description |
-| --- | --- |
+| Type               | Description                                                     |
+| ------------------ | --------------------------------------------------------------- |
 | `{Promise<Array>}` | A promise that resolves to an array of remapped recipe objects. |
 
 ### getJSONLength
@@ -372,14 +373,14 @@ stored in the file, or null if the file does not exist or is malformed.
 
 #### Parameters
 
-| Parameter | Type | Description |
-| --- | --- | --- |
-| filePath | `{string}` | The path to the JSON file. |
+| Parameter | Type       | Description                |
+| --------- | ---------- | -------------------------- |
+| filePath  | `{string}` | The path to the JSON file. |
 
 #### Returns
 
-| Type | Description |
-| --- | --- |
+| Type                        | Description                                        |
+| --------------------------- | -------------------------------------------------- |
 | `{Promise<number \| null>}` | A promise that resolves to the length of the array |
 
 ### filterExistingRecipes
@@ -392,16 +393,15 @@ that are not already present in the database.
 
 #### Parameters
 
-| Parameter | Type | Description |
-| --- | --- | --- |
+| Parameter  | Type      | Description                                                                |
+| ---------- | --------- | -------------------------------------------------------------------------- |
 | rawRecipes | `{Array}` | An array of raw recipe objects, each containing a unique identifier (UID). |
 
 #### Returns
 
-| Type | Description |
-| --- | --- |
+| Type               | Description                                                                       |
+| ------------------ | --------------------------------------------------------------------------------- |
 | `{Promise<Array>}` | A promise that resolves to an array of recipes that do not exist in the database. |
-
 
 ## paprikaAPI.js
 
@@ -426,19 +426,18 @@ Fetches data from the Paprika API and saves it to a JSON file.
 
 #### Parameters
 
-| Parameter | Type | Description |
-| --- | --- | --- |
+| Parameter | Type       | Description                                                                   |
+| --------- | ---------- | ----------------------------------------------------------------------------- |
 | fetchType | `{string}` | The type of data to fetch (e.g., 'categories', 'recipes', 'groceries', etc.). |
-| email | `{string}` | The user's email. |
-| password | `{string}` | The user's password. |
-| userId | `{string}` | The ID of the user whose data to fetch. |
+| email     | `{string}` | The user's email.                                                             |
+| password  | `{string}` | The user's password.                                                          |
+| userId    | `{string}` | The ID of the user whose data to fetch.                                       |
 
 #### Returns
 
-| Type | Description |
-| --- | --- |
+| Type                | Description                                                                                                                     |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
 | `{Promise<string>}` | A promise that resolves with a success message if the fetch is successful, or rejects with an error message if the fetch fails. |
-
 
 ## paprikaFileImport.js
 
@@ -448,9 +447,9 @@ Load categories and recipes from the Paprika API, or local JSON at uploads/impor
 
 #### Parameters
 
-| Parameter | Type | Description |
-| --- | --- | --- |
-| userId | `{number}` | The ID of the user whose data we are importing. |
+| Parameter | Type       | Description                                     |
+| --------- | ---------- | ----------------------------------------------- |
+| userId    | `{number}` | The ID of the user whose data we are importing. |
 
 ### importPaprikaCategories
 
@@ -458,9 +457,9 @@ Load categories from the Paprika API, or local JSON at uploads/imports/categorie
 
 #### Parameters
 
-| Parameter | Type | Description |
-| --- | --- | --- |
-| userId | `{number}` | The ID of the user whose categories we are importing. |
+| Parameter | Type       | Description                                           |
+| --------- | ---------- | ----------------------------------------------------- |
+| userId    | `{number}` | The ID of the user whose categories we are importing. |
 
 ### importPaprikaRecipes
 
@@ -472,14 +471,14 @@ and associates them with the recipes. Additionally, it handles the import of rec
 
 #### Parameters
 
-| Parameter | Type | Description |
-| --- | --- | --- |
-| userId | `{number}` | The ID of the user whose recipes are being imported. |
-| filename | `{string}` | The name of the file from which recipes will be loaded. |
-| isPublic | `{boolean}` | A flag indicating whether the imported recipes should be public. |
+| Parameter | Type        | Description                                                      |
+| --------- | ----------- | ---------------------------------------------------------------- |
+| userId    | `{number}`  | The ID of the user whose recipes are being imported.             |
+| filename  | `{string}`  | The name of the file from which recipes will be loaded.          |
+| isPublic  | `{boolean}` | A flag indicating whether the imported recipes should be public. |
 
 #### Returns
 
-| Type | Description |
-| --- | --- |
+| Type                | Description                                                                            |
+| ------------------- | -------------------------------------------------------------------------------------- |
 | `{Promise<Object>}` | An object containing the success status, a message, and the count of imported recipes. |

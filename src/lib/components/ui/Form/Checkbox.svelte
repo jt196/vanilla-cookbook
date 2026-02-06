@@ -54,7 +54,9 @@
 </script>
 
 {#if legend}
-	<fieldset class={`fieldset bg-base-100 border-base-300 rounded-box border p-4 ${fullWidth ? 'w-full' : ''}`}>
+	<fieldset
+		class={`fieldset bg-base-100 border-base-300 rounded-box border p-4 ${fullWidth ? 'w-full' : ''}`}
+	>
 		<legend class="fieldset-legend">{legendText}</legend>
 		<label class={`flex items-center gap-2 ${className}`}>
 			<input
@@ -77,14 +79,7 @@
 	</fieldset>
 {:else}
 	<label class={`flex items-center gap-2 ${className}`}>
-		<input
-			type="checkbox"
-			class={classes}
-			{name}
-			{disabled}
-			bind:checked
-			onchange={handleChange}
-		/>
+		<input type="checkbox" class={classes} {name} {disabled} bind:checked onchange={handleChange} />
 		{#if children}
 			{@render children()}
 		{:else}

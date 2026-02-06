@@ -5,13 +5,7 @@
 	import Input from '$lib/components/ui/Form/Input.svelte'
 
 	/** @type {{photo: any, recipeName?: string, onSetMainPhoto: any, onDeletePhoto: any, onSaveEditedNotes: any}} */
-	let {
-		photo,
-		recipeName = '',
-		onSetMainPhoto,
-		onDeletePhoto,
-		onSaveEditedNotes
-	} = $props();
+	let { photo, recipeName = '', onSetMainPhoto, onDeletePhoto, onSaveEditedNotes } = $props()
 
 	let editingPhotoId = $state(null)
 	let editingPhotoNotes = $state(photo.notes || '')
@@ -35,7 +29,11 @@
 	<img src="/api/recipe/image/{photo.id}" alt="{recipeName} photo" class="main-photo" />
 {:else}
 	<button type="button" class="promote-btn" onclick={() => onSetMainPhoto(photo.id)}>
-		<img src="/api/recipe/image/{photo.id}" alt="{recipeName} photo - click to set as main" class="promotable-photo" />
+		<img
+			src="/api/recipe/image/{photo.id}"
+			alt="{recipeName} photo - click to set as main"
+			class="promotable-photo"
+		/>
 	</button>
 {/if}
 <div class="photo-note">

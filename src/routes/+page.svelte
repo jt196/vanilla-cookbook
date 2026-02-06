@@ -89,7 +89,8 @@
 						label="Username"
 						bind:value={adminUsername}
 						name="username"
-						required />
+						required
+					/>
 					<Input
 						type="email"
 						id="email"
@@ -97,12 +98,14 @@
 						label="Email"
 						bind:value={adminEmail}
 						name="email"
-						required />
+						required
+					/>
 					<ValidationMessage
 						message={emailValidation?.message}
 						isValid={emailValidation?.isValid}
 						isError={!emailValidation?.isValid}
-						hidden={!emailValidation?.message} />
+						hidden={!emailValidation?.message}
+					/>
 					{#if passwordRequirementsDescription}
 						<p class="text-sm text-base-content/70">{passwordRequirementsDescription}</p>
 					{/if}
@@ -113,7 +116,8 @@
 						label="Password"
 						bind:value={adminPassword}
 						name="password"
-						required />
+						required
+					/>
 					<Input
 						type="password"
 						id="passwordConfirm"
@@ -121,15 +125,18 @@
 						label="Confirm Password"
 						bind:value={adminPasswordConfirm}
 						name="passwordConfirm"
-						required />
+						required
+					/>
 					<ValidationMessage
 						message={passwordValidation?.message}
 						isValid={passwordValidation?.isValid}
 						isError={!passwordValidation?.isValid}
-						hidden={!passwordValidation?.message} />
+						hidden={!passwordValidation?.message}
+					/>
 
 					<Checkbox name="seedRecipes" bind:checked={recipeSeed} size="sm" color="primary">
-						Add Sample Recipes</Checkbox>
+						Add Sample Recipes</Checkbox
+					>
 
 					<Dropdown name="units" legend="Units" options={systems} bind:selected={adminUnits} />
 
@@ -137,7 +144,8 @@
 						name="language"
 						legend="Language"
 						options={languages}
-						bind:selected={adminLanguage} />
+						bind:selected={adminLanguage}
+					/>
 
 					<div class="card-actions justify-end mt-6">
 						<Button type="submit" class="w-full" disabled={isSubmitDisabled}>Create Admin</Button>

@@ -119,7 +119,8 @@
 	{initialMode}
 	{imageAllowed}
 	{userUnits}
-	{userLanguage} />
+	{userLanguage}
+/>
 
 <RecipeForm
 	bind:recipe
@@ -130,7 +131,8 @@
 	{userLanguage}
 	{selectedFiles}
 	bind:saveImageUrl
-	onSelectedFilesChange={handleSelectedFilesChange} />
+	onSelectedFilesChange={handleSelectedFilesChange}
+/>
 
 {#if feedbackMessage}
 	<FeedbackMessage message={feedbackMessage} type={feedbackType} timeout={4000} />

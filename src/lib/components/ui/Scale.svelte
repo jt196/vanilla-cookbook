@@ -32,20 +32,24 @@
 		onclick={() => adjust(-BIG_STEP)}
 		style="soft"
 		color="secondary"
-		aria-label="Decrease by 1">-1</Button>
+		aria-label="Decrease by 1">-1</Button
+	>
 	<Button
 		onclick={() => adjust(-SMALL_STEP)}
 		style="soft"
 		color="secondary"
-		aria-label="Decrease by 0.1">-0.1</Button>
+		aria-label="Decrease by 0.1">-0.1</Button
+	>
 	<Input type="number" value={scale} min="0.1" step="0.1" oninput={handleInput} />
 	<Button
 		onclick={() => adjust(SMALL_STEP)}
 		style="soft"
 		color="secondary"
-		aria-label="Increase by 0.1">+0.1</Button>
+		aria-label="Increase by 0.1">+0.1</Button
+	>
 	<Button onclick={() => adjust(BIG_STEP)} style="soft" color="secondary" aria-label="Increase by 1"
-		>+1</Button>
+		>+1</Button
+	>
 </div>
 
 <style lang="scss">

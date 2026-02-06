@@ -249,9 +249,11 @@ async function invokeLLM({ provider, model, type, messages }) {
 	if (env.LLM_API_ENABLED !== 'true') throw new Error('LLM API is disabled')
 
 	const defaultProvider = env.LLM_PROVIDER || 'openai'
-	const effectiveProvider = provider || (type === 'image' ?
-		(env.LLM_IMAGE_PROVIDER || env.LLM_TEXT_PROVIDER || defaultProvider) :
-		(env.LLM_TEXT_PROVIDER || defaultProvider))
+	const effectiveProvider =
+		provider ||
+		(type === 'image'
+			? env.LLM_IMAGE_PROVIDER || env.LLM_TEXT_PROVIDER || defaultProvider
+			: env.LLM_TEXT_PROVIDER || defaultProvider)
 
 	const defaultTextModel = env.LLM_TEXT_MODEL || env.LLM_API_ENGINE_TEXT || 'gpt-3.5-turbo'
 	const defaultImageModel = env.LLM_IMAGE_MODEL || env.LLM_API_ENGINE_IMAGE || 'gpt-4o'
@@ -300,7 +302,9 @@ async function invokeLLM({ provider, model, type, messages }) {
 
 				// Find the last complete value (ends with ", or ", or ], or number, or true/false/null)
 				// Look for last occurrence of a complete JSON value followed by comma or end
-				const lastCompleteMatch = output.match(/^([\s\S]*(?:"\s*,|"\s*$|\]\s*,|\]\s*$|\d\s*,|\d\s*$|true\s*,|true\s*$|false\s*,|false\s*$|null\s*,|null\s*$))/);
+				const lastCompleteMatch = output.match(
+					/^([\s\S]*(?:"\s*,|"\s*$|\]\s*,|\]\s*$|\d\s*,|\d\s*$|true\s*,|true\s*$|false\s*,|false\s*$|null\s*,|null\s*$))/
+				)
 
 				if (lastCompleteMatch) {
 					output = lastCompleteMatch[1].trim()

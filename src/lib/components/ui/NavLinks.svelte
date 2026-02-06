@@ -17,7 +17,8 @@
 		<button
 			aria-label="Toggle theme"
 			onclick={onToggleTheme}
-			class="flex items-center gap-2 text-primary">
+			class="flex items-center gap-2 text-primary"
+		>
 			<Theme {theme} width="20px" />
 			<span>Toggle Theme</span>
 		</button>
@@ -33,10 +34,26 @@
 			<li><a href="/register" class="flex items-center gap-2"><span>Register</span></a></li>
 		{/if}
 	{:else}
-		<li><a href="/recipe/new" class="flex items-center gap-2 text-primary"><New width="20px" /><span>New Recipe</span></a></li>
-		<li><a href={`/user/${user.userId}/shopping`} class="flex items-center gap-2 text-primary"><Shopping width="20px" /><span>Shopping</span></a></li>
-		<li><a href={`/user/${user.userId}/calendar`} class="flex items-center gap-2 text-primary"><Calendar width="20px" /><span>Calendar</span></a></li>
-		<li><a href={`/user/${user.userId}/options/settings`} class="flex items-center gap-2 text-primary"><Settings width="20px" /><span>Settings</span></a></li>
+		<li>
+			<a href="/recipe/new" class="flex items-center gap-2 text-primary"
+				><New width="20px" /><span>New Recipe</span></a
+			>
+		</li>
+		<li>
+			<a href={`/user/${user.userId}/shopping`} class="flex items-center gap-2 text-primary"
+				><Shopping width="20px" /><span>Shopping</span></a
+			>
+		</li>
+		<li>
+			<a href={`/user/${user.userId}/calendar`} class="flex items-center gap-2 text-primary"
+				><Calendar width="20px" /><span>Calendar</span></a
+			>
+		</li>
+		<li>
+			<a href={`/user/${user.userId}/options/settings`} class="flex items-center gap-2 text-primary"
+				><Settings width="20px" /><span>Settings</span></a
+			>
+		</li>
 	{/if}
 {:else}
 	<!-- Desktop layout - horizontal icons -->
@@ -46,7 +63,8 @@
 			color="neutral"
 			class="btn-circle text-primary shadow-none border-none hover:bg-base-300"
 			aria-label="Toggle theme"
-			onclick={onToggleTheme}>
+			onclick={onToggleTheme}
+		>
 			<Theme {theme} width="25px" />
 		</Button>
 
@@ -66,19 +84,22 @@
 			<a
 				href={`/user/${user.userId}/shopping`}
 				class="btn btn-ghost btn-circle text-primary"
-				aria-label="Shopping list">
+				aria-label="Shopping list"
+			>
 				<Shopping width="25px" />
 			</a>
 			<a
 				href={`/user/${user.userId}/calendar`}
 				class="btn btn-ghost btn-circle text-primary"
-				aria-label="Calendar">
+				aria-label="Calendar"
+			>
 				<Calendar width="25px" />
 			</a>
 			<a
 				href={`/user/${user.userId}/options/settings`}
 				class="btn btn-ghost btn-circle text-primary"
-				aria-label="Settings">
+				aria-label="Settings"
+			>
 				<Settings width="25px" />
 			</a>
 		{/if}

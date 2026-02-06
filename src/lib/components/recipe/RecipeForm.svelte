@@ -188,8 +188,8 @@
 				<a href={cancelHref} class="btn btn-soft btn-secondary btn-sm">Cancel</a>
 			{/if}
 			{#if onDelete}
-				<Button type="button" size="sm" style="soft" color="error" onclick={onDelete}
-					>Delete</Button>
+				<Button type="button" size="sm" style="soft" color="error" onclick={onDelete}>Delete</Button
+				>
 			{/if}
 			<Button type="submit" size="sm">{buttonText}</Button>
 		</div>
@@ -204,7 +204,8 @@
 					name="name"
 					bind:value={recipe.name}
 					label="Name"
-					placeholder="Pasta alla Norma" />
+					placeholder="Pasta alla Norma"
+				/>
 
 				<Input
 					type="text"
@@ -212,21 +213,24 @@
 					name="source"
 					bind:value={recipe.source}
 					label="Source"
-					placeholder="Mia nonna" />
+					placeholder="Mia nonna"
+				/>
 				<Input
 					type="text"
 					id="source_url"
 					name="source_url"
 					placeholder="https://grannysrecipes.com"
 					bind:value={recipe.source_url}
-					label="Source URL" />
+					label="Source URL"
+				/>
 				<Input
 					type="text"
 					id="image_url"
 					placeholder="https://grannysrecipes.com/norma.jpg"
 					name="image_url"
 					bind:value={recipe.image_url}
-					label="Image URL" />
+					label="Image URL"
+				/>
 			</div>
 
 			<div class="form-col">
@@ -236,28 +240,32 @@
 					name="prep_time"
 					placeholder="1 hour"
 					bind:value={recipe.prep_time}
-					label="Prep Time" />
+					label="Prep Time"
+				/>
 				<Input
 					type="text"
 					id="cook_time"
 					name="cook_time"
 					placeholder="30 minutes"
 					bind:value={recipe.cook_time}
-					label="Cook Time" />
+					label="Cook Time"
+				/>
 				<Input
 					type="text"
 					id="total_time"
 					name="total_time"
 					placeholder="1.5 hours"
 					bind:value={recipe.total_time}
-					label="Total Time" />
+					label="Total Time"
+				/>
 				<Input
 					type="text"
 					id="servings"
 					placeholder="4 main course"
 					name="servings"
 					bind:value={recipe.servings}
-					label="Servings" />
+					label="Servings"
+				/>
 			</div>
 		</div>
 
@@ -268,7 +276,8 @@
 			{imageChecked}
 			{selectedFiles}
 			{onSelectedFilesChange}
-			bind:saveImageUrl />
+			bind:saveImageUrl
+		/>
 
 		<!-- Full-width large text fields -->
 		<div>
@@ -278,7 +287,8 @@
 				rows="7"
 				placeholder="500g of pasta..."
 				bind:value={recipe.ingredients}
-				label="Ingredients" />
+				label="Ingredients"
+			/>
 			{#if aiEnabled}
 				<div class="flex gap-2 mt-2">
 					{#if recipe.ingredients_original}
@@ -287,18 +297,21 @@
 							size="sm"
 							style="outline"
 							color="warning"
-							onclick={restoreOriginalIngredients}>
+							onclick={restoreOriginalIngredients}
+						>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								class="h-4 w-4"
 								fill="none"
 								viewBox="0 0 24 24"
-								stroke="currentColor">
+								stroke="currentColor"
+							>
 								<path
 									stroke-linecap="round"
 									stroke-linejoin="round"
 									stroke-width="2"
-									d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+									d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"
+								/>
 							</svg>
 							Restore Original
 						</Button>
@@ -308,7 +321,10 @@
 							size="sm"
 							style="soft"
 							onclick={handleCleanIngredients}
-							disabled={cleaningIngredients || !recipe.ingredients || recipe.ingredients.trim() === ''}>
+							disabled={cleaningIngredients ||
+								!recipe.ingredients ||
+								recipe.ingredients.trim() === ''}
+						>
 							{#if cleaningIngredients}
 								<Spinner visible={true} size="xs" type="dots" />
 								Cleaning...
@@ -318,12 +334,14 @@
 									class="h-4 w-4"
 									fill="none"
 									viewBox="0 0 24 24"
-									stroke="currentColor">
+									stroke="currentColor"
+								>
 									<path
 										stroke-linecap="round"
 										stroke-linejoin="round"
 										stroke-width="2"
-										d="M13 10V3L4 14h7v7l9-11h-7z" />
+										d="M13 10V3L4 14h7v7l9-11h-7z"
+									/>
 								</svg>
 								Clean Ingredients
 							{/if}
@@ -334,18 +352,21 @@
 								size="sm"
 								style="outline"
 								color="secondary"
-								onclick={undoCleanIngredients}>
+								onclick={undoCleanIngredients}
+							>
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
 									class="h-4 w-4"
 									fill="none"
 									viewBox="0 0 24 24"
-									stroke="currentColor">
+									stroke="currentColor"
+								>
 									<path
 										stroke-linecap="round"
 										stroke-linejoin="round"
 										stroke-width="2"
-										d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+										d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"
+									/>
 								</svg>
 								Undo
 							</Button>
@@ -356,7 +377,8 @@
 					<InfoText class="mt-1">Restore the original uncleaned ingredients.</InfoText>
 				{:else}
 					<InfoText class="mt-1"
-						>Simplify complex ingredients for more accurate conversion results.</InfoText>
+						>Simplify complex ingredients for more accurate conversion results.</InfoText
+					>
 				{/if}
 			{/if}
 		</div>
@@ -366,7 +388,8 @@
 			rows="3"
 			placeholder="This pasta was a favourite of my Nonna's"
 			bind:value={recipe.description}
-			label="Description" />
+			label="Description"
+		/>
 		<div>
 			<Textarea
 				id="directions"
@@ -374,7 +397,8 @@
 				rows="7"
 				name="directions"
 				bind:value={recipe.directions}
-				label="Directions" />
+				label="Directions"
+			/>
 			{#if aiEnabled}
 				<div class="flex gap-2 mt-2">
 					{#if recipe.directions_original}
@@ -383,18 +407,21 @@
 							size="sm"
 							style="outline"
 							color="warning"
-							onclick={restoreOriginalDirections}>
+							onclick={restoreOriginalDirections}
+						>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								class="h-4 w-4"
 								fill="none"
 								viewBox="0 0 24 24"
-								stroke="currentColor">
+								stroke="currentColor"
+							>
 								<path
 									stroke-linecap="round"
 									stroke-linejoin="round"
 									stroke-width="2"
-									d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+									d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"
+								/>
 							</svg>
 							Restore Original
 						</Button>
@@ -404,7 +431,8 @@
 							size="sm"
 							style="soft"
 							onclick={handleSummarizeDirections}
-							disabled={cleaningDirections || !recipe.directions || recipe.directions.trim() === ''}>
+							disabled={cleaningDirections || !recipe.directions || recipe.directions.trim() === ''}
+						>
 							{#if cleaningDirections}
 								<Spinner visible={true} size="xs" type="dots" />
 								Summarizing...
@@ -414,12 +442,14 @@
 									class="h-4 w-4"
 									fill="none"
 									viewBox="0 0 24 24"
-									stroke="currentColor">
+									stroke="currentColor"
+								>
 									<path
 										stroke-linecap="round"
 										stroke-linejoin="round"
 										stroke-width="2"
-										d="M13 10V3L4 14h7v7l9-11h-7z" />
+										d="M13 10V3L4 14h7v7l9-11h-7z"
+									/>
 								</svg>
 								Summarize Directions
 							{/if}
@@ -430,18 +460,21 @@
 								size="sm"
 								style="outline"
 								color="secondary"
-								onclick={undoSummarizeDirections}>
+								onclick={undoSummarizeDirections}
+							>
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
 									class="h-4 w-4"
 									fill="none"
 									viewBox="0 0 24 24"
-									stroke="currentColor">
+									stroke="currentColor"
+								>
 									<path
 										stroke-linecap="round"
 										stroke-linejoin="round"
 										stroke-width="2"
-										d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+										d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"
+									/>
 								</svg>
 								Undo
 							</Button>
@@ -461,13 +494,15 @@
 			rows="3"
 			placeholder="Don't overcook the pasta or she'll come back to haunt you"
 			bind:value={recipe.notes}
-			label="Notes" />
+			label="Notes"
+		/>
 		<Textarea
 			id="nutritional_info"
 			name="nutritional_info"
 			rows="3"
 			bind:value={recipe.nutritional_info}
-			label="Nutritional Information" />
+			label="Nutritional Information"
+		/>
 		<Button type="submit" size="sm" class="mt-4">{buttonText}</Button>
 		{#if recipeCategories}
 			{#each recipeCategories as categoryUid}

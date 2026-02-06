@@ -3,7 +3,7 @@
 	import Button from '$lib/components/ui/Button.svelte'
 
 	/** @type {{node: any, nodes: any}} */
-	let { node = $bindable(), nodes = $bindable() } = $props();
+	let { node = $bindable(), nodes = $bindable() } = $props()
 
 	let isEditing = $state(false)
 	let editedName = $state(node.name)
@@ -38,7 +38,8 @@
 	<input
 		bind:value={editedName}
 		onblur={saveChanges}
-		onkeydown={(e) => e.key === 'Enter' && saveChanges()} />
+		onkeydown={(e) => e.key === 'Enter' && saveChanges()}
+	/>
 	<Button onclick={() => (isEditing = false)}>Cancel</Button>
 	<Button onclick={saveChanges}>Save</Button>
 {:else}

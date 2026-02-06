@@ -74,7 +74,7 @@
 		<input
 			type="file"
 			id={inputId}
-			name={name}
+			{name}
 			{accept}
 			{multiple}
 			{required}
@@ -82,7 +82,8 @@
 			onchange={(event) => {
 				onchange && onchange(event)
 				dispatch('change', event)
-			}} />
+			}}
+		/>
 		{#if optionalLabel}
 			<label class="label" for={inputId}>{optionalLabel}</label>
 		{/if}
@@ -97,7 +98,7 @@
 		<input
 			type="file"
 			id={inputId}
-			name={name}
+			{name}
 			{accept}
 			{multiple}
 			{required}
@@ -105,7 +106,8 @@
 			onchange={(event) => {
 				onchange && onchange(event)
 				dispatch('change', event)
-			}} />
+			}}
+		/>
 		{#if optionalLabel}
 			<label class="label" for={inputId}>
 				<span class="label-text-alt text-xs">{optionalLabel}</span>

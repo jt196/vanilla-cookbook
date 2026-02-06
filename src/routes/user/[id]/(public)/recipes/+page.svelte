@@ -19,4 +19,5 @@
 	ownerUserId={requestedUserId}
 	ownerUsername={publicProfile.username}
 	{useCats}
-	feedKind="user" />
+	feedKind="user"
+/>

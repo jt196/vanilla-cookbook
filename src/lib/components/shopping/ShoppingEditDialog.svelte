@@ -43,7 +43,8 @@
 			id="edit-quantity"
 			label="Quantity:"
 			type="number"
-			bind:value={item.quantity} />
+			bind:value={item.quantity}
+		/>
 		<Input class="mb-2" id="edit-unit" label="Unit:" type="text" bind:value={item.unit} />
 
 		<div class="modal-action justify-between">
@@ -54,7 +55,8 @@
 					style="outline"
 					color="error"
 					id="delete-item"
-					onclick={() => onDelete(item.uid)}>
+					onclick={() => onDelete(item.uid)}
+				>
 					<Delete width="15px" height="15px" fill="currentColor" />
 				</Button>
 				<Button type="submit">Save</Button>

@@ -40,7 +40,6 @@
 		 */
 		onTogglePurchasedSort
 	} = $props()
-
 </script>
 
 <div class="shopping-buttons">
@@ -48,7 +47,8 @@
 		disabled={purchasedItemCount === 0}
 		onclick={onToggleHidden}
 		class="tooltip"
-		data-tip={showHidden ? 'Show Unpurchased Items' : 'Show Purchased Items'}>
+		data-tip={showHidden ? 'Show Unpurchased Items' : 'Show Purchased Items'}
+	>
 		{#if showHidden}
 			<View width="20px" height="20px" fill="white" />
 		{:else}
@@ -56,18 +56,21 @@
 		{/if}
 	</Button>
 
-	<Button
-		onclick={onTogglePurchasedSort}
-		class="tooltip"
-		data-tip="Sort by Purchase Count">
-		<Check checked={sortByPurchased} width="20px" height="20px" fill={sortByPurchased ? '#4ade80' : 'white'} />
+	<Button onclick={onTogglePurchasedSort} class="tooltip" data-tip="Sort by Purchase Count">
+		<Check
+			checked={sortByPurchased}
+			width="20px"
+			height="20px"
+			fill={sortByPurchased ? '#4ade80' : 'white'}
+		/>
 	</Button>
 
 	<Button
 		disabled={uncheckedItemCount === 0}
 		onclick={onCheckAll}
 		class="tooltip"
-		data-tip="Mark all items as purchased">
+		data-tip="Mark all items as purchased"
+	>
 		<CheckAll width="20px" height="20px" fill="white" />
 	</Button>
 
@@ -75,7 +78,8 @@
 		disabled={purchasedItemCount === 0}
 		onclick={onDeletePurchased}
 		class="tooltip"
-		data-tip="Delete all purchased items">
+		data-tip="Delete all purchased items"
+	>
 		<Delete width="20px" height="20px" fill="white" />
 	</Button>
 </div>

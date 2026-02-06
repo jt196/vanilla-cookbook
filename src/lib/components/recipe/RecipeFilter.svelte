@@ -53,7 +53,8 @@
 					size="md"
 					class="btn-square tooltip shrink-0"
 					data-tip="Display Category Filter"
-					onclick={toggleSidebar}>
+					onclick={toggleSidebar}
+				>
 					<Burger width="1.25rem" />
 				</Button>
 			{/if}
@@ -65,7 +66,8 @@
 					bind:value={$searchString}
 					size="sm"
 					color="info"
-					useLabelAsPlaceholder={false} />
+					useLabelAsPlaceholder={false}
+				/>
 			</div>
 			<div class="tooltip shrink-0" data-tip="Choose Search Key">
 				<Dropdown
@@ -81,7 +83,8 @@
 					color="info"
 					fullWidth={false}
 					class="w-35"
-					aria-label="selections" />
+					aria-label="selections"
+				/>
 			</div>
 		</div>
 
@@ -95,7 +98,8 @@
 					color="secondary"
 					onclick={() => ($favouriteFilter = !$favouriteFilter)}
 					class={`btn-square ${favouriteBtnClasses}`}
-					data-tip="Filter by Favourites">
+					data-tip="Filter by Favourites"
+				>
 					<Favourite favourite={$favouriteFilter} width="20px" height="20px" fill="currentColor" />
 				</Button>
 				{#if viewMode === 'owner'}
@@ -105,7 +109,8 @@
 						color="success"
 						onclick={() => ($cookedFilter = !$cookedFilter)}
 						class={`btn-square ${cookedBtnClasses}`}
-						data-tip="Filter by Cooked">
+						data-tip="Filter by Cooked"
+					>
 						<Check checked={$cookedFilter} width="20px" height="20px" fill="currentColor" />
 					</Button>
 				{/if}
@@ -119,7 +124,8 @@
 					size="sm"
 					color="info"
 					data-tip="Sort by Date"
-					onclick={() => updateSort('created')}>
+					onclick={() => updateSort('created')}
+				>
 					Date <SortAscDesc sort={$sortState.key === 'created' ? $sortState.direction : ''} />
 				</Button>
 				<Button
@@ -128,7 +134,8 @@
 					size="sm"
 					color="info"
 					data-tip="Sort by Name"
-					onclick={() => updateSort('name')}>
+					onclick={() => updateSort('name')}
+				>
 					Title <SortAscDesc sort={$sortState.key === 'name' ? $sortState.direction : ''} />
 				</Button>
 				{#if viewMode === 'owner'}
@@ -138,7 +145,8 @@
 						size="sm"
 						color="info"
 						data-tip="Sort by Rating"
-						onclick={() => updateSort('rating')}>
+						onclick={() => updateSort('rating')}
+					>
 						Rating <SortAscDesc sort={$sortState.key === 'rating' ? $sortState.direction : ''} />
 					</Button>
 				{/if}

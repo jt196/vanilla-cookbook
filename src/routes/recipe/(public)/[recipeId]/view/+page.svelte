@@ -25,7 +25,7 @@
 
 	let { recipe, categories, viewUser, logs, recUser } = $state(data)
 	$effect(() => {
-		({ recipe, categories, viewUser, logs, recUser } = data)
+		;({ recipe, categories, viewUser, logs, recUser } = data)
 	})
 
 	// Scaling factor for the ingredients
@@ -293,7 +293,8 @@
 		{viewOnly}
 		{scale}
 		viewerUserId={viewUser?.userId}
-		onRestoreScale={handleScaleChange} />
+		onRestoreScale={handleScaleChange}
+	/>
 </div>
 
 {#if isLoading}
@@ -315,7 +316,8 @@
 				{categories}
 				useCats={viewUser?.useCats}
 				{scaledServings}
-				recipeRatingChanged={handleRecipeRatingChanged} />
+				recipeRatingChanged={handleRecipeRatingChanged}
+			/>
 		</div>
 	</div>
 
@@ -332,7 +334,8 @@
 					{measurementSystem}
 					{selectedSystem}
 					onScaleChange={handleScaleChange}
-					onSelectedSystemChange={handleSelectedSystemChange} />
+					onSelectedSystemChange={handleSelectedSystemChange}
+				/>
 			{:else}
 				<div class="flex justify-center items-center p-8">
 					<span class="loading loading-spinner loading-md text-primary"></span>
@@ -357,11 +360,13 @@
 		{notesLines}
 		{sanitizedNotes}
 		logs={viewOnly ? [] : logs}
-		onNoteUpdated={viewOnly ? undefined : handleNoteUpdated} />
+		onNoteUpdated={viewOnly ? undefined : handleNoteUpdated}
+	/>
 {/if}
 
 <RecipeViewOtherPhotos
 	{otherPhotos}
 	recipeName={recipe.name}
 	onSetMainPhoto={handleSetMainPhoto}
-	{viewOnly} />
+	{viewOnly}
+/>

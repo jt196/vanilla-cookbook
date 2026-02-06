@@ -27,7 +27,8 @@
 					{viewerUserId}
 					{recipeFavourited}
 					{recipeRatingChanged}
-					{onDuplicate} />
+					{onDuplicate}
+				/>
 			{/snippet}
 		</VirtualList>
 		<div class="flex justify-center p-2">
@@ -41,7 +42,8 @@
 				{viewerUserId}
 				{recipeFavourited}
 				{recipeRatingChanged}
-				{onDuplicate} />
+				{onDuplicate}
+			/>
 		{/each}
 	{/if}
 </div>

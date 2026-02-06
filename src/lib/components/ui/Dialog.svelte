@@ -73,13 +73,20 @@
 		if (!closeOnEscape) {
 			e.preventDefault()
 		}
-	}}>
+	}}
+>
 	<div class="modal-box {className}">
 		{@render children()}
 	</div>
 	{#if closeOnBackdrop}
 		<!-- Using div instead of form to avoid nested form issues -->
-		<div class="modal-backdrop" role="button" tabindex="-1" onclick={handleBackdropClick} onkeydown={(e) => e.key === 'Enter' && handleBackdropClick()}>
+		<div
+			class="modal-backdrop"
+			role="button"
+			tabindex="-1"
+			onclick={handleBackdropClick}
+			onkeydown={(e) => e.key === 'Enter' && handleBackdropClick()}
+		>
 			<span class="sr-only">close</span>
 		</div>
 	{/if}

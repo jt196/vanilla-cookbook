@@ -157,7 +157,12 @@ export async function PUT({ request, locals, params, url }) {
 				const { extension } = mapContentTypeToFileTypeAndExtension(contentType)
 				let remotePhotoEntry
 				try {
-					remotePhotoEntry = await createRecipePhotoEntry(uid, recipeData.image_url, extension, !hasMainPhoto)
+					remotePhotoEntry = await createRecipePhotoEntry(
+						uid,
+						recipeData.image_url,
+						extension,
+						!hasMainPhoto
+					)
 					await processImage(recipeData.image_url, remotePhotoEntry.id, extension)
 				} catch (error) {
 					console.error('Error saving remote image:', error)

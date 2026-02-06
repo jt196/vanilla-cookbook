@@ -31,13 +31,15 @@
 		onsubmit={(e) => {
 			e.preventDefault()
 			handleSubmit()
-		}}>
+		}}
+	>
 		<Textarea
 			label="Add a note (optional)"
 			bind:value={note}
 			rows={3}
 			placeholder="How did it turn out? Any tweaks you made?"
-			disabled={loading} />
+			disabled={loading}
+		/>
 		<div class="modal-action">
 			<Button type="button" class="btn-ghost" onclick={handleClose} disabled={loading}>
 				Cancel

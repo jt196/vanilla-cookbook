@@ -253,7 +253,8 @@
 		onToggleHidden={toggleHidden}
 		onTogglePurchasedSort={togglePurchasedSort}
 		onCheckAll={() => (isCheckAllDialogOpen = true)}
-		onDeletePurchased={() => (isDeleteDialogOpen = true)} />
+		onDeletePurchased={() => (isDeleteDialogOpen = true)}
+	/>
 </div>
 {#if shoppingList.length === 0}
 	<InfoText class="my-2">Add something to your shopping list</InfoText>
@@ -262,7 +263,8 @@
 <ShoppingItemInput
 	bind:value={newIngredient}
 	onAdd={handleAddIngredient}
-	onKeyPress={handleKeyPressIngredient} />
+	onKeyPress={handleKeyPressIngredient}
+/>
 <FeedbackMessage message={shoppingFeedback} />
 
 {#if sortedUncheckedItems.length > 0}
@@ -275,7 +277,8 @@
 			onCheckboxChange={handleCheckboxChange}
 			onEdit={openEditModal}
 			onTogglePurchase={(targetItem) => handlePurchaseToggle(targetItem, !targetItem.purchased)}
-			purchaseLoading={purchaseLoadingByUid[item.uid] ?? false} />
+			purchaseLoading={purchaseLoadingByUid[item.uid] ?? false}
+		/>
 	{/each}
 </ul>
 
@@ -289,7 +292,8 @@
 				onCheckboxChange={handleCheckboxChange}
 				onEdit={openEditModal}
 				onTogglePurchase={(targetItem) => handlePurchaseToggle(targetItem, !targetItem.purchased)}
-				purchaseLoading={purchaseLoadingByUid[item.uid] ?? false} />
+				purchaseLoading={purchaseLoadingByUid[item.uid] ?? false}
+			/>
 		{/each}
 	</ul>
 {/if}
@@ -304,7 +308,8 @@
 				onCheckboxChange={handleCheckboxChange}
 				onEdit={openEditModal}
 				onTogglePurchase={(targetItem) => handlePurchaseToggle(targetItem, !targetItem.purchased)}
-				purchaseLoading={purchaseLoadingByUid[item.uid] ?? false} />
+				purchaseLoading={purchaseLoadingByUid[item.uid] ?? false}
+			/>
 		{/each}
 	</ul>
 {/if}
@@ -312,7 +317,8 @@
 <ConfirmationDialog
 	isOpen={isDeleteDialogOpen}
 	onConfirm={handleDelete}
-	onClose={() => (isDeleteDialogOpen = false)}>
+	onClose={() => (isDeleteDialogOpen = false)}
+>
 	{#snippet content()}
 		<div>
 			<h2>Delete Your Purchased Items?</h2>
@@ -324,7 +330,8 @@
 <ConfirmationDialog
 	isOpen={isCheckAllDialogOpen}
 	onConfirm={handleCheckAll}
-	onClose={() => (isCheckAllDialogOpen = false)}>
+	onClose={() => (isCheckAllDialogOpen = false)}
+>
 	{#snippet content()}
 		<div>
 			<h2>Check all items as purchased?</h2>
@@ -337,4 +344,5 @@
 	bind:isOpen={isEditDialogOpen}
 	bind:item={editingItem}
 	onSave={handleSaveEdit}
-	onDelete={handleDeleteItem} />
+	onDelete={handleDeleteItem}
+/>

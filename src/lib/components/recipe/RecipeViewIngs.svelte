@@ -69,7 +69,8 @@
 				{displayDryMatch}
 				{displayOriginal}
 				{selectedSystem}
-				userLanguage={user?.language || 'eng'} />
+				userLanguage={user?.language || 'eng'}
+			/>
 		{/each}
 	</ul>
 
@@ -121,7 +122,8 @@
 				color="primary"
 				size="sm"
 				class={originalSystem === 'metric' ? 'ring-2 ring-primary' : ''}
-				onclick={() => onSelectedSystemChange('metric')}>
+				onclick={() => onSelectedSystemChange('metric')}
+			>
 				Metric
 			</Button>
 			<Button
@@ -129,7 +131,8 @@
 				color="primary"
 				size="sm"
 				class={originalSystem === 'americanVolumetric' ? 'ring-2 ring-primary' : ''}
-				onclick={() => onSelectedSystemChange('americanVolumetric')}>
+				onclick={() => onSelectedSystemChange('americanVolumetric')}
+			>
 				US Vol
 			</Button>
 			<Button
@@ -137,7 +140,8 @@
 				color="primary"
 				size="sm"
 				class={originalSystem === 'imperial' ? 'ring-2 ring-primary' : ''}
-				onclick={() => onSelectedSystemChange('imperial')}>
+				onclick={() => onSelectedSystemChange('imperial')}
+			>
 				Imperial
 			</Button>
 		</div>
@@ -149,7 +153,8 @@
 			color="primary"
 			size="sm"
 			class="flex-1"
-			onclick={() => (displayOriginal = !displayOriginal)}>
+			onclick={() => (displayOriginal = !displayOriginal)}
+		>
 			Original
 		</Button>
 		{#if sanitizedIngredients.some((item) => item.additional)}
@@ -159,7 +164,8 @@
 				size="sm"
 				class="flex-1"
 				disabled={displayOriginal}
-				onclick={() => (displayExtra = !displayExtra)}>
+				onclick={() => (displayExtra = !displayExtra)}
+			>
 				Extra
 			</Button>
 		{/if}
@@ -169,7 +175,8 @@
 			size="sm"
 			class="flex-1"
 			disabled={displayOriginal || !isVolumetricConversion}
-			onclick={() => (displayDryMatch = !displayDryMatch)}>
+			onclick={() => (displayDryMatch = !displayDryMatch)}
+		>
 			Match
 		</Button>
 		<Button
@@ -178,7 +185,8 @@
 			size="sm"
 			class="flex-1"
 			disabled={displayOriginal}
-			onclick={() => (displaySymbol = !displaySymbol)}>
+			onclick={() => (displaySymbol = !displaySymbol)}
+		>
 			Symbols
 		</Button>
 	</div>

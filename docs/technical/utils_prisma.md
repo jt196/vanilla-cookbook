@@ -37,7 +37,6 @@ pnpm node admin.js disconnect
 
 Ensure you have the correct environment and database configuration before running these commands.
 
-
 ## prismaUtils.js
 
 ### deleteAndDisconnect
@@ -50,8 +49,8 @@ deleted and the database has been disconnected.
 
 #### Returns
 
-| Type | Description |
-| --- | --- |
+| Type              | Description                                         |
+| ----------------- | --------------------------------------------------- |
 | `{Promise<void>}` | A promise that resolves when all sessions have been |
 
 ### updatePassword
@@ -60,15 +59,15 @@ Updates a user's password in Lucia
 
 #### Parameters
 
-| Parameter | Type | Description |
-| --- | --- | --- |
-| username | `{string}` | The username of the user whose password is to be updated. |
-| newPassword | `{string}` | The new password to set for the user. |
+| Parameter   | Type       | Description                                               |
+| ----------- | ---------- | --------------------------------------------------------- |
+| username    | `{string}` | The username of the user whose password is to be updated. |
+| newPassword | `{string}` | The new password to set for the user.                     |
 
 #### Returns
 
-| Type | Description |
-| --- | --- |
+| Type              | Description                                                 |
+| ----------------- | ----------------------------------------------------------- |
 | `{Promise<void>}` | A promise that resolves when the password has been updated. |
 
 ### deleteUser
@@ -77,18 +76,18 @@ Deletes a user from the authUser table, as well as all associated sessions and a
 
 #### Parameters
 
-| Parameter | Type | Description |
-| --- | --- | --- |
-| userId | `{string}` |  |
+| Parameter | Type       | Description |
+| --------- | ---------- | ----------- |
+| userId    | `{string}` |             |
 
 #### Returns
 
-| Type | Description |
-| --- | --- |
+| Type                                  | Description       |
+| ------------------------------------- | ----------------- |
 | `{Promise<PrismaClientPkg.authUser>}` | The deleted user. |
 
 #### Throws
 
-| Type | Description |
-| --- | --- |
+| Type      | Description                             |
+| --------- | --------------------------------------- |
 | `{Error}` | If there is an error deleting the user. |

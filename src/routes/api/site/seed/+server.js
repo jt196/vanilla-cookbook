@@ -23,7 +23,8 @@ import { auth } from '$lib/server/lucia'
 export async function POST({ request, locals }) {
 	try {
 		const { adminUser } = await request.json()
-		const { adminUsername, adminEmail, adminPassword, adminUnits, adminLanguage, recipeSeed } = adminUser
+		const { adminUsername, adminEmail, adminPassword, adminUnits, adminLanguage, recipeSeed } =
+			adminUser
 
 		// Basic validation
 		if (!adminUsername || !adminEmail || !adminPassword) {

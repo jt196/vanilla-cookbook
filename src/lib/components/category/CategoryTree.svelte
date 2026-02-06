@@ -12,7 +12,8 @@
 		<li class="categories">
 			<Button
 				onclick={() => onCategoryClick(category)}
-				class={selectedCategoryUids.includes(category.uid) ? 'selected' : ''}>
+				class={selectedCategoryUids.includes(category.uid) ? 'selected' : ''}
+			>
 				{category.name ? category.name : 'Unnamed Cat'}
 			</Button>
 			{#if category.children && category.children.length}
