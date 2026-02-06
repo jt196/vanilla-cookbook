@@ -3,8 +3,9 @@ import { error as svelteError, redirect } from '@sveltejs/kit'
 import { dev } from '$app/environment'
 import { prisma } from '$lib/server/prisma.js'
 import { auth } from '$lib/server/lucia.js'
-import { githubAuth, googleAuth } from '$lib/server/oauth.js'
+import { githubAuth, googleAuth, oidcAuth } from '$lib/server/oauth.js'
 import { OAuthRequestError } from '@lucia-auth/oauth'
+import * as oidcClient from 'openid-client'
 
 // --- helpers ---
 function clearOauthCookies(cookies) {
@@ -65,11 +66,15 @@ export async function GET({ url, cookies, locals }) {
 		} else if (provider === 'google') {
 			const verifier = cookies.get('oauth_code_verifier') || null
 			pa = await googleAuth.validateCallback(code, verifier)
+		} else if (provider === 'oidc') {
+			const verifier = cookies.get('oauth_code_verifier') || null
+			pa = await oidcAuth.validateCallback(code, verifier, url, storedState)
 		} else {
 			return bounce(cookies, 'Unsupported provider.')
 		}
 
 		const registrationAllowed = !!locals.site?.settings?.registrationAllowed
+		const oidcAutoProvision = locals.site?.settings?.oidcAutoProvision ?? true
 
 		// 2) already linked?
 		let user = await pa.getExistingUser()
@@ -77,7 +82,7 @@ export async function GET({ url, cookies, locals }) {
 		// 3) not linked → try email match and link
 		if (!user) {
 			let email = null
-			let usernameBase = provider === 'github' ? 'gh' : 'gg'
+			let usernameBase = provider === 'github' ? 'gh' : provider === 'google' ? 'gg' : 'oidc'
 
 			if (provider === 'github') {
 				usernameBase = pa.githubUser?.login || 'gh'
@@ -85,7 +90,7 @@ export async function GET({ url, cookies, locals }) {
 					pa.githubUser?.email ||
 					(await getGithubVerifiedEmail(pa.githubTokens.accessToken)) ||
 					null
-			} else {
+			} else if (provider === 'google') {
 				usernameBase = pa.googleUser?.name || pa.googleUser?.email?.split('@')[0] || 'gg'
 				if (pa.googleUser?.email && (pa.googleUser.email_verified ?? pa.googleUser.emailVerified)) {
 					email = pa.googleUser.email
@@ -93,10 +98,19 @@ export async function GET({ url, cookies, locals }) {
 					const info = await getGoogleUserInfo(pa.googleTokens.accessToken)
 					if (info?.email && info?.email_verified) email = info.email
 				}
+			} else if (provider === 'oidc') {
+				const oidcEmail = pa.oidcUser?.email || pa.oidcUser?.unverifiedEmail || null
+				usernameBase = pa.oidcUser?.name || oidcEmail?.split('@')[0] || 'oidc'
+				// Use verified email; fall back to unverified for linking to existing accounts
+				email = oidcEmail
 			}
 
 			if (email) {
-				const existing = await prisma.authUser.findUnique({ where: { email } })
+				// Exact match first; if not found, try lowercase for case-insensitive linking
+				let existing = await prisma.authUser.findUnique({ where: { email } })
+				if (!existing) {
+					existing = await prisma.authUser.findUnique({ where: { email: email.toLowerCase() } })
+				}
 				if (existing) {
 					const linked = auth.transformDatabaseUser(existing)
 					await pa.createKey(linked.userId)
@@ -105,7 +119,13 @@ export async function GET({ url, cookies, locals }) {
 			}
 		}
 
-		// 4) still no user & sign-ups OFF → bounce to login with message
+		// 4) still no user → check registration / provisioning gates
+		if (!user && provider === 'oidc' && !oidcAutoProvision) {
+			return bounce(
+				cookies,
+				'OIDC account provisioning is disabled. Ask an administrator to create your account.'
+			)
+		}
 		if (!user && !registrationAllowed) {
 			return bounce(cookies, 'Sign-ups are disabled. Use an existing account.')
 		}
@@ -113,9 +133,11 @@ export async function GET({ url, cookies, locals }) {
 		// 5) still no user & sign-ups ON → create
 		if (!user) {
 			const base =
-				(provider === 'github' ? pa.githubUser?.login : pa.googleUser?.name) ||
-				(provider === 'github' ? pa.githubUser?.email : pa.googleUser?.email)?.split('@')[0] ||
-				(provider === 'github' ? 'gh' : 'gg')
+				provider === 'oidc'
+					? pa.oidcUser?.name || pa.oidcUser?.email?.split('@')[0] || 'oidc'
+					: (provider === 'github' ? pa.githubUser?.login : pa.googleUser?.name) ||
+						(provider === 'github' ? pa.githubUser?.email : pa.googleUser?.email)?.split('@')[0] ||
+						(provider === 'github' ? 'gh' : 'gg')
 
 			const username = await ensureUniqueUsername(base)
 
@@ -125,11 +147,13 @@ export async function GET({ url, cookies, locals }) {
 					pa.githubUser?.email ||
 					(await getGithubVerifiedEmail(pa.githubTokens.accessToken)) ||
 					null
-			} else {
+			} else if (provider === 'google') {
 				email =
 					pa.googleUser?.email && (pa.googleUser.email_verified ?? pa.googleUser.emailVerified)
 						? pa.googleUser.email
 						: ((await getGoogleUserInfo(pa.googleTokens.accessToken))?.email ?? null)
+			} else if (provider === 'oidc') {
+				email = pa.oidcUser?.email || null
 			}
 
 			const attrs = email ? { username, email } : { username }
@@ -150,6 +174,19 @@ export async function GET({ url, cookies, locals }) {
 		if (e instanceof OAuthRequestError) {
 			// e.g. invalid/expired code, PKCE mismatch, user denied consent, etc.
 			return bounce(cookies, dev ? `OAuth failed: ${e.message}` : 'OAuth failed. Please try again.')
+		}
+
+		// openid-client errors (OIDC provider failures)
+		if (
+			e instanceof oidcClient.AuthorizationResponseError ||
+			e instanceof oidcClient.ClientError ||
+			e instanceof oidcClient.ResponseBodyError
+		) {
+			console.error('OIDC callback error:', e)
+			return bounce(
+				cookies,
+				dev ? `OIDC failed: ${e.message}` : 'OIDC authentication failed. Please try again.'
+			)
 		}
 
 		// (optionally) handle HTTP-ish errors with a message

@@ -17,6 +17,8 @@ export async function POST({ request, locals }) {
 			where: { id: settings.id },
 			data: {
 				registrationAllowed,
+				oidcAutoProvision:
+					normalizeBoolean(siteData.oidcAutoProvision) ?? settings.oidcAutoProvision,
 				requireLogin: normalizeBoolean(siteData.requireLogin) ?? settings.requireLogin,
 				llmEnabled: normalizeBoolean(siteData.llmEnabled) ?? settings.llmEnabled,
 				llmProvider: siteData.llmProvider ?? settings.llmProvider,

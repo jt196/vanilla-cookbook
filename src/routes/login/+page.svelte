@@ -11,9 +11,12 @@
 	let settings = $derived(data.settings)
 	let oauth = $derived(data.oauth)
 	let registrationAllowed = $derived(settings.registrationAllowed)
+	let oidcAutoProvision = $derived(settings.oidcAutoProvision ?? true)
 	let oauthEnabled = $derived(oauth.oauthEnabled)
 	let googleEnabled = $derived(oauth.googleEnabled)
 	let githubEnabled = $derived(oauth.githubEnabled)
+	let oidcEnabled = $derived(oauth.oidcEnabled)
+	let oidcName = $derived(oauth.oidcName)
 
 	// messages
 	let flashMessage = $derived(data.message) // from URL (?message=...)
@@ -41,14 +44,16 @@
 					placeholder="jgcooks or griggers@cooksmail.com"
 					name="identifier"
 					label="Username or email"
-					required />
+					required
+				/>
 				<Input
 					type="password"
 					id="password"
 					placeholder="123grigsyruleZ"
 					name="password"
 					label="Password"
-					required />
+					required
+				/>
 
 				<div class="card-actions justify-end mt-6">
 					<Button type="submit" class="w-full">Login</Button>
@@ -66,10 +71,15 @@
 			{/if}
 
 			{#if oauthEnabled}
-				<Oauth {googleEnabled} {githubEnabled} layout="column" />
+				<Oauth {googleEnabled} {githubEnabled} {oidcEnabled} {oidcName} layout="column" />
 				{#if !registrationAllowed}
 					<p class="text-sm text-base-content/60 text-center mt-4">
 						New account sign-ups are disabled. You can still sign in with an existing account.
+					</p>
+				{/if}
+				{#if oidcEnabled && !oidcAutoProvision}
+					<p class="text-sm text-base-content/60 text-center mt-2">
+						OIDC auto-provisioning is disabled. Only existing accounts can sign in via {oidcName || 'OIDC'}.
 					</p>
 				{/if}
 			{/if}

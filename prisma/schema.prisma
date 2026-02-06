@@ -198,16 +198,17 @@ model AuthAccount {
 }
 
 model SiteSettings {
-    id                  Int      @id @default(autoincrement())
-    version             Float    @default(0)
-    registrationAllowed Boolean  @default(false)
+    id                   Int      @id @default(autoincrement())
+    version              Float    @default(0)
+    registrationAllowed  Boolean  @default(false)
+    oidcAutoProvision    Boolean  @default(true) // Auto-create users on first OIDC login
     // Site Access
-    requireLogin        Boolean  @default(false) // If true, all pages require authentication
+    requireLogin         Boolean  @default(false) // If true, all pages require authentication
     // LLM Configuration
-    llmEnabled          Boolean  @default(false)
-    llmProvider         String?  // Default provider: 'openai' | 'anthropic' | 'google' | 'ollama'
-    llmTextModel        String?  // Model for text parsing
-    llmImageModel       String?  // Model for image parsing
+    llmEnabled           Boolean  @default(false)
+    llmProvider          String?  // Default provider: 'openai' | 'anthropic' | 'google' | 'ollama'
+    llmTextModel         String?  // Model for text parsing
+    llmImageModel        String?  // Model for image parsing
 }
 
 model Ingredient {

@@ -12,7 +12,7 @@
 
 	const { oauth, passwordRequirements, passwordRequirementsDescription } = $state(data)
 
-	let { oauthEnabled, googleEnabled, githubEnabled } = $state(oauth)
+	let { oauthEnabled, googleEnabled, githubEnabled, oidcEnabled, oidcName } = $state(oauth)
 
 	let errorMessage = $derived(form?.message)
 
@@ -56,7 +56,8 @@
 					return async ({ update }) => {
 						await update()
 					}
-				}}>
+				}}
+			>
 				<Input
 					type="text"
 					id="username"
@@ -64,7 +65,8 @@
 					name="username"
 					bind:value={username}
 					label="Username"
-					required />
+					required
+				/>
 
 				<div>
 					<Input
@@ -74,12 +76,14 @@
 						name="email"
 						bind:value={email}
 						label="Email"
-						required />
+						required
+					/>
 					<ValidationMessage
 						message={emailValidation?.message}
 						isValid={emailValidation?.isValid}
 						isError={!emailValidation?.isValid}
-						hidden={!emailValidation?.message} />
+						hidden={!emailValidation?.message}
+					/>
 				</div>
 
 				<div>
@@ -93,7 +97,8 @@
 						name="password"
 						bind:value={password}
 						label="Password"
-						required />
+						required
+					/>
 				</div>
 
 				<div>
@@ -103,12 +108,14 @@
 						name="passwordConfirm"
 						bind:value={passwordConfirm}
 						label="Confirm Password"
-						required />
+						required
+					/>
 					<ValidationMessage
 						message={passwordValidation?.message}
 						isError={!passwordValidation?.isValid}
 						isValid={passwordValidation?.isValid}
-						hidden={!passwordValidation?.message} />
+						hidden={!passwordValidation?.message}
+					/>
 				</div>
 
 				<Checkbox
@@ -116,8 +123,10 @@
 					bind:checked={seedRecipes}
 					legend="Seed Recipes"
 					size="sm"
-					color="primary">
-					Seed my account with 3 example recipes</Checkbox>
+					color="primary"
+				>
+					Seed my account with 3 example recipes</Checkbox
+				>
 
 				<div class="card-actions justify-end mt-6">
 					<Button type="submit" disabled={isSubmitDisabled} class="w-full">Register</Button>
@@ -133,7 +142,7 @@
 			</p>
 
 			{#if oauthEnabled}
-				<Oauth {googleEnabled} {githubEnabled} layout="column" />
+				<Oauth {googleEnabled} {githubEnabled} {oidcEnabled} {oidcName} layout="column" />
 			{/if}
 		</div>
 	</div>

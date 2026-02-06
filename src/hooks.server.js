@@ -42,10 +42,14 @@ export const handle = async ({ event, resolve }) => {
 
 	const githubEnabled = !!(GITHUB_CLIENT_ID && GITHUB_CLIENT_SECRET)
 	const googleEnabled = !!(GOOGLE_CLIENT_ID && GOOGLE_CLIENT_SECRET)
-	const oauthEnabled = !!(googleEnabled && githubEnabled)
+	const oidcEnabled = !!(env.OIDC_CLIENT_ID && env.OIDC_CLIENT_SECRET && env.OIDC_ISSUER_URL)
+	const oidcName = env.OIDC_NAME?.trim() || 'OIDC'
+	const oauthEnabled = !!(googleEnabled || githubEnabled || oidcEnabled)
 	const oauth = {
 		githubEnabled,
 		googleEnabled,
+		oidcEnabled,
+		oidcName,
 		oauthEnabled
 	}
 
@@ -76,8 +80,7 @@ export const handle = async ({ event, resolve }) => {
 		const llmEnabled = hasAnyApiKey && (s?.llmEnabled ?? envTrue(env.LLM_API_ENABLED))
 
 		// Provider: DB setting → env fallback → first available
-		const llmProvider =
-			s?.llmProvider || env.LLM_PROVIDER || availableProviders[0] || 'openai'
+		const llmProvider = s?.llmProvider || env.LLM_PROVIDER || availableProviders[0] || 'openai'
 
 		// Models: DB setting → env fallback
 		const textModel = s?.llmTextModel || env.LLM_TEXT_MODEL || null
@@ -94,10 +97,15 @@ export const handle = async ({ event, resolve }) => {
 		}
 
 		// normalize onto settings so everyone just reads settings.*
-		settings = { ...s, registrationAllowed: regAllowed, requireLogin: s?.requireLogin ?? false }
+		settings = {
+			...s,
+			registrationAllowed: regAllowed,
+			requireLogin: s?.requireLogin ?? false,
+			oidcAutoProvision: s?.oidcAutoProvision ?? true
+		}
 	} else {
 		// Provide safe defaults when not seeded to avoid undefined access
-		settings = { registrationAllowed: false, requireLogin: false }
+		settings = { registrationAllowed: false, requireLogin: false, oidcAutoProvision: true }
 		ai = {
 			enabled: false,
 			hasAnyApiKey,

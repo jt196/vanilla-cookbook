@@ -1,11 +1,17 @@
 // src/routes/api/oauth/+server.js
 import { dev } from '$app/environment'
-import { githubAuth, googleAuth } from '$lib/server/oauth.js'
+import { githubAuth, googleAuth, oidcAuth } from '$lib/server/oauth.js'
 
 export async function GET({ url, cookies }) {
 	const provider = url.searchParams.get('provider')
 	const authProvider =
-		provider === 'github' ? githubAuth : provider === 'google' ? googleAuth : null
+		provider === 'github'
+			? githubAuth
+			: provider === 'google'
+				? googleAuth
+				: provider === 'oidc'
+					? oidcAuth
+					: null
 	if (!authProvider) return new Response('Invalid provider', { status: 400 })
 
 	// Some providers (Google) return [url, state, codeVerifier]; others return [url, state]
