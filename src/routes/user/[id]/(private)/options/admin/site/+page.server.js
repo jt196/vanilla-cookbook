@@ -18,6 +18,9 @@ export const load = async ({ parent, locals }) => {
 	// Get the raw DB settings for the form
 	const dbSettings = locals.site?.settings ?? {}
 
+	// OAuth config for conditional OIDC toggle
+	const oauth = locals.site?.oauth ?? { oidcEnabled: false }
+
 	const llmConfig = {
 		enabled: ai.enabled,
 		hasAnyApiKey: ai.hasAnyApiKey,
@@ -38,7 +41,8 @@ export const load = async ({ parent, locals }) => {
 		return {
 			...parentData,
 			backupInfo,
-			llmConfig
+			llmConfig,
+			oauth
 		}
 	} catch (error) {
 		console.error('Failed to load backup information:', error)
@@ -46,7 +50,8 @@ export const load = async ({ parent, locals }) => {
 			...parentData,
 			backupInfo: null,
 			backupError: `Failed to load backup information: ${error.message}`,
-			llmConfig
+			llmConfig,
+			oauth
 		}
 	}
 }

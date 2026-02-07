@@ -42,10 +42,13 @@ export const handle = async ({ event, resolve }) => {
 
 	const githubEnabled = !!(GITHUB_CLIENT_ID && GITHUB_CLIENT_SECRET)
 	const googleEnabled = !!(GOOGLE_CLIENT_ID && GOOGLE_CLIENT_SECRET)
-	const oauthEnabled = !!(googleEnabled && githubEnabled)
+	const oidcConfigured = !!(env.OIDC_ISSUER_URL && env.OIDC_CLIENT_ID && env.OIDC_CLIENT_SECRET)
+	const oauthEnabled = githubEnabled || googleEnabled || oidcConfigured
 	const oauth = {
 		githubEnabled,
 		googleEnabled,
+		oidcEnabled: oidcConfigured,
+		oidcName: env.OIDC_NAME?.trim() || 'OIDC',
 		oauthEnabled
 	}
 

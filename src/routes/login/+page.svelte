@@ -14,6 +14,8 @@
 	let oauthEnabled = $derived(oauth.oauthEnabled)
 	let googleEnabled = $derived(oauth.googleEnabled)
 	let githubEnabled = $derived(oauth.githubEnabled)
+	let oidcEnabled = $derived(oauth.oidcEnabled)
+	let oidcName = $derived(oauth.oidcName ?? 'OIDC')
 
 	// messages
 	let flashMessage = $derived(data.message) // from URL (?message=...)
@@ -66,7 +68,7 @@
 			{/if}
 
 			{#if oauthEnabled}
-				<Oauth {googleEnabled} {githubEnabled} layout="column" />
+				<Oauth {googleEnabled} {githubEnabled} {oidcEnabled} {oidcName} layout="column" />
 				{#if !registrationAllowed}
 					<p class="text-sm text-base-content/60 text-center mt-4">
 						New account sign-ups are disabled. You can still sign in with an existing account.

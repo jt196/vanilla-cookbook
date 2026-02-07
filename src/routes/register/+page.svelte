@@ -12,7 +12,8 @@
 
 	const { oauth, passwordRequirements, passwordRequirementsDescription } = $state(data)
 
-	let { oauthEnabled, googleEnabled, githubEnabled } = $state(oauth)
+	let { oauthEnabled, googleEnabled, githubEnabled, oidcEnabled } = $state(oauth)
+	let oidcName = $state(oauth.oidcName ?? 'OIDC')
 
 	let errorMessage = $derived(form?.message)
 
@@ -133,7 +134,7 @@
 			</p>
 
 			{#if oauthEnabled}
-				<Oauth {googleEnabled} {githubEnabled} layout="column" />
+				<Oauth {googleEnabled} {githubEnabled} {oidcEnabled} {oidcName} layout="column" />
 			{/if}
 		</div>
 	</div>
