@@ -32,6 +32,9 @@ ENV GIT_VERSION=${GIT_VERSION}
 # Specify base directory env variable
 ENV APP_ROOT_PATH=/app
 
+# Set sensible body size limit (SvelteKit default of 512kb is too small for recipe imports)
+ENV BODY_SIZE_LIMIT=5242880
+
 # Copy the current directory contents into the container
 COPY . .
 

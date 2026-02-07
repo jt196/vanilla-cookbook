@@ -231,18 +231,19 @@ pnpm start                # Build then serve
 **Required**:
 - `ORIGIN`: Full URL where app is hosted (critical for CORS, auth cookies)
   - Dev: `http://localhost:5173`
-  - Docker: `http://localhost:3000` (default)
+  - Docker: `http://localhost:3000`
   - Production: Your actual domain
 
-**Optional**:
-- `OPENAI_API_KEY`: For AI-assisted parsing (OpenAI)
-- `ANTHROPIC_API_KEY`: For AI-assisted parsing (Anthropic)
-- `GOOGLE_API_KEY`: For AI-assisted parsing (Google/Gemini)
+**Optional** (all have sensible defaults):
+- `VITE_SITE_NAME`: Site name in browser tab (default: "Vanilla Cookbook")
+- `BODY_SIZE_LIMIT`: Max upload size in bytes (default: 512kb, recommend 5MB)
+- `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GOOGLE_API_KEY`: LLM providers
 - `OLLAMA_BASE_URL`: For local AI models (default: http://localhost:11434)
-- `VITE_APP_ROOT_PATH`: Absolute path for Paprika import (rarely needed)
-- `BODY_SIZE_LIMIT`: Max upload size in bytes (default: 5242880 = 5MB)
-- `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`: OAuth
-- `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`: OAuth
+- `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`: Google OAuth
+- `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`: GitHub OAuth
+- `OIDC_ISSUER_URL`, `OIDC_CLIENT_ID`, `OIDC_CLIENT_SECRET`: Generic OIDC provider
+- `RATE_LIMIT_*`: Rate limiting config (has defaults)
+- `PASSWORD_*`: Password requirements (has defaults)
 
 **Note**: LLM provider/model selection and registration settings are configured in the Site Settings admin panel, not .env.
 
