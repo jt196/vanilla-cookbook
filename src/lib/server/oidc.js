@@ -126,7 +126,7 @@ export async function validateCallback(callbackUrl, expectedState, codeVerifier)
 
 	// Check if email is verified
 	if (email) {
-		emailVerified = !!(claims?.email_verified)
+		emailVerified = !!claims?.email_verified
 	}
 
 	// If we have a userinfo endpoint and missing data, try fetching from there
@@ -135,7 +135,7 @@ export async function validateCallback(callbackUrl, expectedState, codeVerifier)
 			const userinfo = await client.fetchUserInfo(config, tokens.access_token, sub)
 			if (!email && userinfo?.[oidcEmailClaim]) {
 				email = userinfo[oidcEmailClaim]
-				emailVerified = !!(userinfo?.email_verified)
+				emailVerified = !!userinfo?.email_verified
 			}
 			if (!username && userinfo?.[oidcNameClaim]) {
 				username = userinfo[oidcNameClaim]

@@ -79,8 +79,7 @@ export const handle = async ({ event, resolve }) => {
 		const llmEnabled = hasAnyApiKey && (s?.llmEnabled ?? envTrue(env.LLM_API_ENABLED))
 
 		// Provider: DB setting → env fallback → first available
-		const llmProvider =
-			s?.llmProvider || env.LLM_PROVIDER || availableProviders[0] || 'openai'
+		const llmProvider = s?.llmProvider || env.LLM_PROVIDER || availableProviders[0] || 'openai'
 
 		// Models: DB setting → env fallback
 		const textModel = s?.llmTextModel || env.LLM_TEXT_MODEL || null

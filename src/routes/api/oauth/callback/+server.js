@@ -192,9 +192,7 @@ async function handleLegacyOauthCallback(provider, url, cookies, locals) {
 		if (provider === 'github') {
 			usernameBase = pa.githubUser?.login || 'gh'
 			email =
-				pa.githubUser?.email ||
-				(await getGithubVerifiedEmail(pa.githubTokens.accessToken)) ||
-				null
+				pa.githubUser?.email || (await getGithubVerifiedEmail(pa.githubTokens.accessToken)) || null
 		} else {
 			usernameBase = pa.googleUser?.name || pa.googleUser?.email?.split('@')[0] || 'gg'
 			if (pa.googleUser?.email && (pa.googleUser.email_verified ?? pa.googleUser.emailVerified)) {
@@ -232,9 +230,7 @@ async function handleLegacyOauthCallback(provider, url, cookies, locals) {
 		let email = null
 		if (provider === 'github') {
 			email =
-				pa.githubUser?.email ||
-				(await getGithubVerifiedEmail(pa.githubTokens.accessToken)) ||
-				null
+				pa.githubUser?.email || (await getGithubVerifiedEmail(pa.githubTokens.accessToken)) || null
 		} else {
 			email =
 				pa.googleUser?.email && (pa.googleUser.email_verified ?? pa.googleUser.emailVerified)
