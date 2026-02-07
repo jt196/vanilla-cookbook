@@ -69,7 +69,7 @@ Log when you've cooked a recipe.
 
 ### User Management
 
-User authentication is supported. You can manage users, turn on/off registration & site-wide privacy, specify password strength. [Docs](https://vanilla-cookbook.readthedocs.io/en/latest/manual/usage/#privacy)
+User authentication is supported. You can manage users, turn on/off registration & site-wide privacy, specify password strength. Optional OAuth login with GitHub, Google, or any OpenID Connect provider (Authentik, Keycloak, etc.). [Docs](https://vanilla-cookbook.readthedocs.io/en/latest/manual/usage/#oauth-sso)
 
 ### Automated Database Backups
 

@@ -215,33 +215,61 @@ The AI assumes an intermediate level of culinary experience, keeping all necessa
 
 Complete the recipe form, then click the **Add Recipe** button at the bottom. The Edit page is basically the same as this. If the images are successfully saved, they'll be in the _uploads/images_ folder. Image URLs should grab the image and save it there.
 
-## OAuth
+## OAuth / SSO
 
-Two providers are available, GitHub and Google. You'll need to set the relevant _.env_ variables in the file:
-
-```shell
-GOOGLE_CLIENT_ID=
-GOOGLE_CLIENT_SECRET=
-GITHUB_CLIENT_ID=
-GITHUB_CLIENT_SECRET=
-```
+Enable social login with GitHub, Google, or any OpenID Connect provider (Authentik, Keycloak, etc.). You can configure multiple providers - they all appear as options on the login page, and users can link multiple providers to the same account.
 
 ### GitHub
 
-- GitHub instructions are [here](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app)
-- Basically go to your [Developer Settings](https://github.com/settings/developers) > OAuth Apps > New OAuth App
-- Essential fields:
-  - **Homepage URL**: <https://my-vanilla-site.com>
-  - **Authorisation Callback URL**: <https://my-vanilla-site.com/api/oauth/callback>
+Add to your `.env`:
+
+```shell
+GITHUB_CLIENT_ID=your_client_id
+GITHUB_CLIENT_SECRET=your_client_secret
+```
+
+Setup:
+
+- Go to [Developer Settings](https://github.com/settings/developers) > OAuth Apps > New OAuth App
+- **Homepage URL**: `https://my-vanilla-site.com`
+- **Authorization Callback URL**: `https://my-vanilla-site.com/api/oauth/callback`
 
 ### Google
 
-- As usual, anything Google console related is somewhat more difficult than it has to be.
-- Get your project set up in the [Cloud Console](https://console.cloud.google.com).
-- Go to APIs and Services > Credentials > Create Credentials > OAuth Client ID
-- Essential Fields (you can have multiple URIs):
-  - **Authorised JavaScript origins**: <https://my-vanilla-site.com>
-  - **Authorised redirect URIs**: <https://my-vanilla-site.com/api/oauth/callback>
+Add to your `.env`:
+
+```shell
+GOOGLE_CLIENT_ID=your_client_id
+GOOGLE_CLIENT_SECRET=your_client_secret
+```
+
+Setup:
+
+- Go to [Cloud Console](https://console.cloud.google.com) > APIs and Services > Credentials
+- Create Credentials > OAuth Client ID
+- **Authorised JavaScript origins**: `https://my-vanilla-site.com`
+- **Authorised redirect URIs**: `https://my-vanilla-site.com/api/oauth/callback`
+
+### Generic OIDC (Authentik, Keycloak, etc.)
+
+For self-hosted identity providers that support OpenID Connect.
+
+Add to your `.env`:
+
+```shell
+OIDC_ISSUER_URL=https://auth.example.com/application/o/vanilla/
+OIDC_CLIENT_ID=vanilla-cookbook
+OIDC_CLIENT_SECRET=your_client_secret
+OIDC_NAME=Authentik  # Optional: button label (default: "OIDC")
+```
+
+Setup varies by provider, but the key steps are:
+
+1. Create an OAuth2/OpenID application with Authorization Code flow
+2. Set redirect URI to `https://my-vanilla-site.com/api/oauth/callback`
+3. Use the provider's issuer URL as `OIDC_ISSUER_URL`
+
+See [authentication docs](../technical/authentication.md#generic-oidc-provider) for detailed provider setup examples and claim mapping.
 
 ## Public Recipes
 
