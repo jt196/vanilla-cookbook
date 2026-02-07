@@ -18,6 +18,8 @@ export async function POST({ request, locals }) {
 			data: {
 				registrationAllowed,
 				requireLogin: normalizeBoolean(siteData.requireLogin) ?? settings.requireLogin,
+				oidcAutoProvision:
+					normalizeBoolean(siteData.oidcAutoProvision) ?? settings.oidcAutoProvision,
 				llmEnabled: normalizeBoolean(siteData.llmEnabled) ?? settings.llmEnabled,
 				llmProvider: siteData.llmProvider ?? settings.llmProvider,
 				llmTextModel: siteData.llmTextModel ?? settings.llmTextModel,

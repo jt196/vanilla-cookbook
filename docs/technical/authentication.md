@@ -9,20 +9,22 @@ Vanilla Cookbook uses **Lucia v2** with the **Prisma adapter** for session-based
 - Session-based authentication with secure cookies
 - Password authentication with Argon2id hashing (Lucia default)
 - Optional OAuth providers (GitHub, Google)
+- Generic OIDC support for custom identity providers (Authentik, Keycloak, etc.)
 - Configurable rate limiting for login attempts
 - Configurable password strength requirements
 
 ### Key Components
 
-| Component | Location | Purpose |
-|-----------|----------|---------|
-| Lucia config | `src/lib/server/lucia.js` | Auth instance with session config |
-| Prisma adapter | `@lucia-auth/adapter-prisma` | Database integration |
-| Hooks | `src/hooks.server.js` | Session validation on every request |
-| Auth helpers | `src/lib/server/authHelpers.js` | Reusable auth utilities for API routes |
-| Page auth helpers | `src/lib/server/authPage.js` | Reusable auth utilities for layout/page loads |
-| Security utils | `src/lib/utils/security.js` | Password validation |
-| Rate limiting | `src/lib/server/rateLimit.js` | Login attempt throttling |
+| Component         | Location                        | Purpose                                       |
+| ----------------- | ------------------------------- | --------------------------------------------- |
+| Lucia config      | `src/lib/server/lucia.js`       | Auth instance with session config             |
+| Prisma adapter    | `@lucia-auth/adapter-prisma`    | Database integration                          |
+| Hooks             | `src/hooks.server.js`           | Session validation on every request           |
+| Auth helpers      | `src/lib/server/authHelpers.js` | Reusable auth utilities for API routes        |
+| Page auth helpers | `src/lib/server/authPage.js`    | Reusable auth utilities for layout/page loads |
+| Security utils    | `src/lib/utils/security.js`     | Password validation                           |
+| Rate limiting     | `src/lib/server/rateLimit.js`   | Login attempt throttling                      |
+| OIDC provider     | `src/lib/server/oidc.js`        | Generic OIDC support                          |
 
 ## Session Flow
 
@@ -182,10 +184,10 @@ PASSWORD_REQUIRE_SPECIAL=true   # Require !@#$%^&*()_+-=[]{}...
 
 ```javascript
 import {
-  validatePassword,
-  validatePasswords,
-  getPasswordRequirements,
-  getPasswordRequirementsDescription
+ validatePassword,
+ validatePasswords,
+ getPasswordRequirements,
+ getPasswordRequirementsDescription
 } from '$lib/utils/security.js'
 
 // Validate single password
@@ -222,18 +224,19 @@ Rate limiting is applied in login routes:
 ```javascript
 const ipCheck = locals.limiter.loginByIp(locals.clientIp)
 if (!ipCheck.ok) {
-  return fail(429, { message: 'Too many login attempts. Try again later.' })
+ return fail(429, { message: 'Too many login attempts. Try again later.' })
 }
 
 const idCheck = locals.limiter.loginById(username)
 if (!idCheck.ok) {
-  return fail(429, { message: 'Too many login attempts for this account.' })
+ return fail(429, { message: 'Too many login attempts for this account.' })
 }
 ```
 
 ### Limitations
 
 ⚠️ **Current implementation uses in-memory storage**:
+
 - Rate limit counters reset when the server restarts
 - Not suitable for distributed deployments (multiple instances)
 - For production with multiple instances, consider Redis-backed rate limiting
@@ -244,6 +247,7 @@ if (!idCheck.ok) {
 
 - **GitHub**: Full OAuth flow
 - **Google**: Full OAuth flow
+- **Generic OIDC**: Any OpenID Connect-compliant provider (Authentik, Keycloak, etc.)
 
 ### Configuration
 
@@ -257,6 +261,68 @@ GOOGLE_CLIENT_ID=your_client_id
 GOOGLE_CLIENT_SECRET=your_client_secret
 ```
 
+### Generic OIDC Provider
+
+For self-hosted identity providers that support OpenID Connect (Authentik, Keycloak, Authelia, etc.).
+
+#### Configuration
+
+Set in `.env`:
+
+```bash
+# Required
+OIDC_ISSUER_URL=https://auth.example.com/application/o/vanilla/
+OIDC_CLIENT_ID=vanilla-cookbook
+OIDC_CLIENT_SECRET=your_client_secret
+
+# Optional (all have sensible defaults)
+OIDC_NAME=Authentik              # Display name on login button (default: "OIDC")
+OIDC_EMAIL_CLAIM=email           # Claim to use for email (default: "email")
+OIDC_NAME_CLAIM=preferred_username  # Claim to use for username (default: "preferred_username")
+OIDC_SCOPES=openid email profile # Space-separated scopes (default: "openid email profile")
+```
+
+#### How It Works
+
+1. On startup, the app discovers the provider's endpoints via `OIDC_ISSUER_URL/.well-known/openid-configuration`
+2. Login button shows "Continue with {OIDC_NAME}" on the login/register pages
+3. Authorization uses PKCE (Proof Key for Code Exchange) for security
+4. After authentication, the app exchanges the code for tokens and validates them
+5. User identity is matched by email (if verified) or a new account is created
+6. The `registrationAllowed` site setting controls whether new OIDC users can be auto-provisioned
+
+#### Provider Setup Examples
+
+**Authentik:**
+
+- Create an OAuth2/OpenID Provider with `Authorization Code` flow
+- Set redirect URI to `https://your-cookbook.example.com/api/oauth/callback`
+- Use the provider's issuer URL as `OIDC_ISSUER_URL`
+
+**Keycloak:**
+
+- Create a new client with `Standard Flow` enabled
+- Set redirect URI to `https://your-cookbook.example.com/api/oauth/callback`
+- Use `https://keycloak.example.com/realms/your-realm` as `OIDC_ISSUER_URL`
+
+#### Claim Mapping
+
+Different providers may use different claim names. Common mappings:
+
+| Provider  | Email Claim | Username Claim       |
+| --------- | ----------- | -------------------- |
+| Authentik | `email`     | `preferred_username` |
+| Keycloak  | `email`     | `preferred_username` |
+| Azure AD  | `email`     | `preferred_username` |
+| Auth0     | `email`     | `nickname`           |
+
+#### Troubleshooting
+
+- **Discovery fails**: Ensure `OIDC_ISSUER_URL` responds at `/.well-known/openid-configuration`
+- **HTTP issuer in dev**: HTTP issuers are automatically allowed (insecure requests enabled)
+- **No email on account**: If the provider doesn't return a verified email, the user is created without one
+- **Login fails after restart**: OIDC discovery is cached in memory; a server restart retries automatically
+
 ### Provider Detection
 
 OAuth availability is exposed via `locals.site.oauth`:
@@ -265,7 +331,9 @@ OAuth availability is exposed via `locals.site.oauth`:
 {
   githubEnabled: boolean,  // GitHub credentials configured
   googleEnabled: boolean,  // Google credentials configured
-  oauthEnabled: boolean    // Both providers available
+  oidcEnabled: boolean,    // OIDC credentials configured
+  oidcName: string,        // Display name for OIDC provider
+  oauthEnabled: boolean    // Any provider available
 }
 ```
 
@@ -283,8 +351,8 @@ Throws 401 if user is not authenticated. Returns user object.
 import { requireAuth } from '$lib/server/authHelpers'
 
 export async function GET({ locals }) {
-  const user = requireAuth(locals)  // Throws 401 if not logged in
-  // user is guaranteed to exist here
+ const user = requireAuth(locals) // Throws 401 if not logged in
+ // user is guaranteed to exist here
 }
 ```
 
@@ -296,8 +364,8 @@ Throws 401 if not authenticated, 403 if not admin. Returns user object.
 import { requireAdmin } from '$lib/server/authHelpers'
 
 export async function DELETE({ locals }) {
-  const user = requireAdmin(locals)  // Throws 401/403 if not admin
-  // user.isAdmin is guaranteed true here
+ const user = requireAdmin(locals) // Throws 401/403 if not admin
+ // user.isAdmin is guaranteed true here
 }
 ```
 
@@ -309,9 +377,9 @@ Throws 403 if user doesn't own the resource. Options: `{ allowAdmin: true }` to 
 import { requireAuth, requireOwnership } from '$lib/server/authHelpers'
 
 export async function PUT({ locals, params }) {
-  const user = requireAuth(locals)
-  const recipe = await prisma.recipe.findUnique({ where: { uid: params.id } })
-  requireOwnership(user, recipe)  // Throws 403 if user.userId !== recipe.userId
+ const user = requireAuth(locals)
+ const recipe = await prisma.recipe.findUnique({ where: { uid: params.id } })
+ requireOwnership(user, recipe) // Throws 403 if user.userId !== recipe.userId
 }
 
 // With admin override:
@@ -321,6 +389,7 @@ requireOwnership(user, recipe, { allowAdmin: true })
 #### requireAccessOrPublic(locals, resource)
 
 For resources that can be public. Allows access if:
+
 - Resource is public (`is_public` or `publicRecipes`)
 - User is authenticated and owns the resource
 - User is admin (if `allowAdmin: true`)
@@ -362,26 +431,26 @@ return jsonError(404, 'Recipe not found')
 
 ```javascript
 export async function PUT({ locals, params }) {
-  const session = await locals.auth.validate()
-  const user = session?.user
-  if (!session || !user) {
-    return new Response('User not authenticated!', {
-      status: 401,
-      headers: { 'Content-Type': 'application/json' }
-    })
-  }
-  const log = await prisma.RecipeLog.findUnique({ where: { id: params.id } })
-  if (log.userId !== user.userId) {
-    return new Response(JSON.stringify({ error: 'Not owner' }), {
-      status: 401,
-      headers: { 'Content-Type': 'application/json' }
-    })
-  }
-  // ... actual logic
-  return new Response(JSON.stringify({ updatedLog }), {
-    status: 200,
-    headers: { 'Content-Type': 'application/json' }
+ const session = await locals.auth.validate()
+ const user = session?.user
+ if (!session || !user) {
+  return new Response('User not authenticated!', {
+   status: 401,
+   headers: { 'Content-Type': 'application/json' }
   })
+ }
+ const log = await prisma.RecipeLog.findUnique({ where: { id: params.id } })
+ if (log.userId !== user.userId) {
+  return new Response(JSON.stringify({ error: 'Not owner' }), {
+   status: 401,
+   headers: { 'Content-Type': 'application/json' }
+  })
+ }
+ // ... actual logic
+ return new Response(JSON.stringify({ updatedLog }), {
+  status: 200,
+  headers: { 'Content-Type': 'application/json' }
+ })
 }
 ```
 
@@ -391,11 +460,11 @@ export async function PUT({ locals, params }) {
 import { requireAuth, requireOwnership, jsonSuccess } from '$lib/server/authHelpers'
 
 export async function PUT({ locals, params }) {
-  const user = requireAuth(locals)
-  const log = await prisma.RecipeLog.findUnique({ where: { id: params.id } })
-  requireOwnership(user, log)
-  // ... actual logic
-  return jsonSuccess({ updatedLog })
+ const user = requireAuth(locals)
+ const log = await prisma.RecipeLog.findUnique({ where: { id: params.id } })
+ requireOwnership(user, log)
+ // ... actual logic
+ return jsonSuccess({ updatedLog })
 }
 ```
 
@@ -412,11 +481,11 @@ Typical API route pattern:
 import { requireAuth, requireOwnership, jsonSuccess } from '$lib/server/authHelpers'
 
 export async function PUT({ locals, params }) {
-  const user = requireAuth(locals)
-  const recipe = await prisma.recipe.findUnique({ where: { uid: params.id } })
-  requireOwnership(user, recipe)
-  // ... mutate
-  return jsonSuccess({ recipe })
+ const user = requireAuth(locals)
+ const recipe = await prisma.recipe.findUnique({ where: { uid: params.id } })
+ requireOwnership(user, recipe)
+ // ... mutate
+ return jsonSuccess({ recipe })
 }
 ```
 
@@ -454,36 +523,43 @@ const useSecureCookies = !dev && !isHttpOrigin
 ### Known Vulnerabilities & Recommendations
 
 #### 1. In-Memory Rate Limiting
+
 **Risk**: Medium
 **Issue**: Rate limits reset on server restart; not distributed-ready
 **Recommendation**: For production with multiple instances, implement Redis-backed rate limiting
 
 #### 2. No Email Verification
+
 **Risk**: Low-Medium
 **Issue**: Users can register with any email without verification
 **Recommendation**: Add email verification flow for sensitive deployments
 
 #### 3. No Account Lockout
+
 **Risk**: Medium
 **Issue**: No permanent lockout after many failed attempts
 **Recommendation**: Implement progressive delays or temporary lockouts
 
 #### 4. HTTP Allowed in Production
+
 **Risk**: Medium
 **Issue**: Sessions can be sent over unencrypted connections
 **Recommendation**: Use HTTPS in production; document HTTP risks for self-hosters
 
 #### 5. No Two-Factor Authentication
+
 **Risk**: Low (for self-hosted app)
 **Issue**: Only password-based authentication
 **Recommendation**: Consider TOTP support for security-conscious users
 
 #### 6. No Audit Logging
+
 **Risk**: Low
 **Issue**: No logging of auth events (login, logout, failed attempts)
 **Recommendation**: Add structured logging for security events
 
 #### 7. Session Lifetime
+
 **Risk**: Low
 **Issue**: Sessions may persist longer than ideal
 **Recommendation**: Configure appropriate session expiration in Lucia
@@ -510,9 +586,9 @@ Access via `+page.server.js` load function:
 
 ```javascript
 export async function load({ locals }) {
-  const user = locals.user
-  if (!user) redirect(302, '/login')
-  return { user }
+ const user = locals.user
+ if (!user) redirect(302, '/login')
+ return { user }
 }
 ```
 
@@ -526,9 +602,9 @@ For layout/page `load()` functions, use the helpers in `src/lib/server/authPage.
 import { requireUser, requireUserMatch, requireAdminUser } from '$lib/server/authPage'
 
 export const load = async ({ locals, params }) => {
-  const user = requireUser(locals)        // Redirects to /login if not authenticated
-  requireUserMatch(user, params.id)       // Redirects to / if mismatched
-  // or: const admin = requireAdminUser(locals)
+ const user = requireUser(locals) // Redirects to /login if not authenticated
+ requireUserMatch(user, params.id) // Redirects to / if mismatched
+ // or: const admin = requireAdminUser(locals)
 }
 ```
 
@@ -557,7 +633,7 @@ Until the database is seeded, the root `+layout.server.js` redirects any request
 
 ### Rate limit issues
 
-1. Check RATE_LIMIT_* environment variables
+1. Check RATE*LIMIT*\* environment variables
 2. Restart server to reset in-memory counters (temporary fix)
 3. Check logs for IP detection issues
 
@@ -569,6 +645,6 @@ Until the database is seeded, the root `+layout.server.js` redirects any request
 
 ### Password validation failing
 
-1. Check PASSWORD_* environment variables
+1. Check PASSWORD\_\* environment variables
 2. Verify password meets all configured requirements
 3. Check for special character encoding issues

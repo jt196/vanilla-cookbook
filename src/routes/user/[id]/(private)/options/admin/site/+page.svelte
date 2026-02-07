@@ -22,8 +22,10 @@
 	/** @type {{data: any}} */
 	let { data } = $props()
 
-	const { settings, llmConfig, passwordRequirements, passwordRequirementsDescription } =
+	const { settings, llmConfig, passwordRequirements, passwordRequirementsDescription, oauth } =
 		$state(data)
+
+	let oidcEnabled = $derived(oauth?.oidcEnabled ?? false)
 
 	let settingsFeedback = $state('')
 	let llmFeedback = $state('')
@@ -162,25 +164,45 @@
 		method="POST"
 		action="?/updateAdminSettings"
 		onsubmit={updateAdminSettings}
-		class="flex flex-col gap-3">
+		class="flex flex-col gap-3"
+	>
 		<Checkbox
 			name="registrationAllowed"
 			bind:checked={settings.registrationAllowed}
 			legend="Allow Registrations"
 			size="sm"
-			color="primary">
-			Turn on site registration</Checkbox>
+			color="primary"
+		>
+			Turn on site registration</Checkbox
+		>
 		<Checkbox
 			name="requireLogin"
 			bind:checked={settings.requireLogin}
 			legend="Require Login"
 			size="sm"
-			color="primary">
-			Require authentication for all pages (private site mode)</Checkbox>
+			color="primary"
+		>
+			Require authentication for all pages (private site mode)</Checkbox
+		>
 		<InfoText>
 			When enabled, all visitors must log in to access any page. Public recipes and profiles will
 			still be hidden from unauthenticated users.
 		</InfoText>
+		{#if oidcEnabled}
+			<Checkbox
+				name="oidcAutoProvision"
+				bind:checked={settings.oidcAutoProvision}
+				legend="OIDC Auto-Provisioning"
+				size="sm"
+				color="primary"
+			>
+				Automatically create accounts for new OIDC users</Checkbox
+			>
+			<InfoText>
+				When enabled, users signing in via OIDC for the first time will have an account created
+				automatically. When disabled, only existing users can sign in via OIDC.
+			</InfoText>
+		{/if}
 		<footer class="flex flex-col gap-2">
 			<Button type="submit" class="self-start w-auto">Update</Button>
 			<FeedbackMessage message={settingsFeedback} inline />
@@ -205,7 +227,8 @@
 				bind:checked={llmEnabled}
 				legend="Enable LLM Features"
 				size="sm"
-				color="primary">
+				color="primary"
+			>
 				Enable AI-assisted recipe parsing and image analysis
 			</Checkbox>
 
@@ -214,21 +237,24 @@
 					name="llmProvider"
 					options={availableProviderOptions}
 					bind:selected={llmProvider}
-					legend="LLM Provider" />
+					legend="LLM Provider"
+				/>
 
 				<div class="flex flex-col gap-2">
 					<Dropdown
 						name="textModel"
 						options={textModelList}
 						bind:selected={textModelSelection}
-						legend="Text Model (for recipe parsing)" />
+						legend="Text Model (for recipe parsing)"
+					/>
 					{#if showCustomTextInput}
 						<Input
 							type="text"
 							id="customTextModel"
 							label="Custom Text Model"
 							placeholder="e.g. gpt-4o-2024-08-06"
-							bind:value={customTextModel} />
+							bind:value={customTextModel}
+						/>
 					{/if}
 				</div>
 
@@ -238,14 +264,16 @@
 							name="imageModel"
 							options={imageModelList}
 							bind:selected={imageModelSelection}
-							legend="Image Model (for image analysis)" />
+							legend="Image Model (for image analysis)"
+						/>
 						{#if showCustomImageInput}
 							<Input
 								type="text"
 								id="customImageModel"
 								label="Custom Image Model"
 								placeholder="e.g. claude-3-5-sonnet-20241022"
-								bind:value={customImageModel} />
+								bind:value={customImageModel}
+							/>
 						{/if}
 					</div>
 				{:else}
@@ -310,7 +338,8 @@
 				onclick={createManualBackup}
 				disabled={backupInProgress}
 				class="self-start w-auto"
-				loading={backupInProgress}>
+				loading={backupInProgress}
+			>
 				{backupInProgress ? 'Creating Backup...' : 'Backup Now'}
 			</Button>
 			<FeedbackMessage message={backupFeedback} inline />
