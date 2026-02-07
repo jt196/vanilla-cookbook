@@ -76,12 +76,6 @@
 					class="button outline oauth-btn oidc"
 					rel="nofollow"
 					data-provider="oidc">
-					<!-- Generic SSO/Key Icon SVG -->
-					<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-						<path
-							d="M12.65 10a6 6 0 1 0-1.3 0h-2.8L6.5 12.05l1.05 1.05L6.5 14.15l1.05 1.05-1.42 1.42L4 14.5V10H1.5L0 11.5V22h9V11.5L7.5 10h5.15zM6 7a2 2 0 1 1 4 0 2 2 0 0 1-4 0z"
-							transform="translate(4 1) scale(0.85)" />
-					</svg>
 					<span>Continue with {oidcName}</span>
 				</a>
 			{/if}
