@@ -378,13 +378,4 @@
 		gap: 0.25rem;
 		margin-right: 0.35rem;
 	}
-
-	.alt-badge {
-		display: inline-block;
-		padding: 0 0.35rem;
-		border-radius: 999px;
-		background: var(--pico-muted-border-color);
-		color: var(--pico-muted-color);
-		font-size: 0.7rem;
-	}
 </style>

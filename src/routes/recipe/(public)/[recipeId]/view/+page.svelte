@@ -35,7 +35,7 @@
 
 	let recipeFeedback = $state('')
 
-	let selectedSystem = $state(viewUser?.units)
+	let selectedSystem = $state(null)
 
 	let mainPhoto = $state()
 
@@ -71,6 +71,12 @@
 		} else {
 			mainPhoto = null
 			otherPhotos = []
+		}
+	})
+
+	$effect(() => {
+		if (!selectedSystem && viewUser?.units) {
+			selectedSystem = viewUser.units
 		}
 	})
 
