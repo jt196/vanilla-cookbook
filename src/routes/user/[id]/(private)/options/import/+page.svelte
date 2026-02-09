@@ -46,7 +46,7 @@
 		I want to make these recipes public
 	</Checkbox>
 
-	<Button class="self-start w-auto" aria-busy={busy} disabled={busy}>Import</Button>
+	<Button type="submit" class="self-start w-auto" aria-busy={busy} disabled={busy}>Import</Button>
 </form>
 
 <FeedbackMessage message={form?.message || form?.error || ''} inline />
