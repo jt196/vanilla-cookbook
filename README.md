@@ -108,6 +108,8 @@ Currently:
 - Hindi
 - Russian
 - Arabic
+- Hungarian
+- Czech
 
 ## Installation
 
