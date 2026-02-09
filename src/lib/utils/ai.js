@@ -51,6 +51,22 @@ function bufferToBase64ImageDataURI(buffer, mimeType) {
  * @param {string} [language='eng'] - Language code for output (eng, deu, ita, etc.)
  * @returns {string} The generated prompt.
  */
+const RECIPE_JSON_SHAPE = `{
+  "name": "",
+  "author": "",
+  "sourceUrl": "",
+  "imageUrl": "",
+  "description": "",
+  "notes": "",
+  "ingredients": ["ingredient 1", "ingredient 2"],
+  "instructions": ["Step 1", "Step 2"],
+  "cookTime": "",
+  "prepTime": "",
+  "totalTime": "",
+  "servings": "",
+  "nutrition": {}
+}`
+
 function buildRecipePrompt(inputLabel = 'Text', content = '', url = '', language = 'eng') {
 	const blockType = inputLabel
 	const urlLine = inputLabel.toLowerCase() === 'html' && url ? `\nURL: ${url}` : ''
@@ -77,20 +93,7 @@ Instructions:
 10. If the content language is ${languageName}, preserve ingredient and instruction text in that language.
 
 Expected format:
-{
-  "name": "",
-  "author": "",
-  "sourceUrl": "",
-  "imageUrl": "",
-  "description": "",
-  "ingredients": ["ingredient 1", "ingredient 2"],
-  "instructions": ["Step 1", "Step 2"],
-  "cookTime": "",
-  "prepTime": "",
-  "totalTime": "",
-  "servings": "",
-  "nutrition": {}
-}
+${RECIPE_JSON_SHAPE}
 
 ${blockType}:
 """${trimmedContent}"""${urlLine}`
@@ -130,23 +133,41 @@ Ingredient formatting rules (IMPORTANT):
 - Avoid using "or" for alternative ingredients (pick one ingredient instead of "1.5 kg strong flour or all-purpose flour")
 
 JSON shape:
-{
-  "name": "",
-  "author": "",
-  "sourceUrl": "",
-  "imageUrl": "",
-  "description": "",
-  "ingredients": ["ingredient 1", "ingredient 2"],
-  "instructions": ["Step 1", "Step 2"],
-  "cookTime": "PT30M",
-  "prepTime": "PT15M",
-  "totalTime": "PT45M",
-  "servings": "4",
-  "nutrition": {}
-}
+${RECIPE_JSON_SHAPE}
 
 User prompt:
 """${trimmedPrompt}"""
+`
+}
+
+/**
+ * Builds a prompt for translating a structured recipe object to a target language.
+ *
+ * @param {Object} recipe
+ * @param {string} [language='eng']
+ * @returns {string}
+ */
+function buildRecipeTranslatePrompt(recipe, language = 'eng') {
+	const languageName = languageMap[language] || 'English'
+	const recipeJson = JSON.stringify(recipe, null, 2)
+
+	return `
+You are a recipe translation AI. Translate the recipe JSON below into ${languageName}.
+
+Rules:
+- Detect the source language automatically.
+- Preserve quantities, units, and numeric values exactly as provided.
+- Keep the JSON structure identical to the input and expected shape.
+- Do not invent or omit fields.
+- Ingredients and instructions must remain arrays of strings.
+- Notes/description/name should be translated if present.
+- Return raw JSON only, no Markdown or extra commentary.
+
+Expected format:
+${RECIPE_JSON_SHAPE}
+
+Recipe JSON:
+${recipeJson}
 `
 }
 
@@ -404,6 +425,25 @@ export async function generateRecipeWithLLM({
 	const messages = [
 		new SystemMessage('You are an expert recipe creation AI.'),
 		new HumanMessage(buildRecipeFromPrompt(userPrompt, unitsPreference, language))
+	]
+
+	return invokeLLM({ provider, model, type: 'text', messages })
+}
+
+/**
+ * Translate an existing recipe object to a target language using an LLM.
+ *
+ * @param {Object} options
+ * @param {Object} options.recipe - Recipe JSON to translate
+ * @param {string} [options.provider]
+ * @param {string} [options.model]
+ * @param {string} [options.language='eng'] - Target language code
+ * @returns {Promise<Object>}
+ */
+export async function translateRecipeWithLLM({ recipe, provider, model, language = 'eng' }) {
+	const messages = [
+		new SystemMessage('You are an expert recipe translation AI.'),
+		new HumanMessage(buildRecipeTranslatePrompt(recipe, language))
 	]
 
 	return invokeLLM({ provider, model, type: 'text', messages })

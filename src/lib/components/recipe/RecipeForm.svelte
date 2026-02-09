@@ -1,6 +1,11 @@
 <script>
 	import { checkImageExistence } from '$lib/utils/image/imageUtils'
 	import { onMount } from 'svelte'
+	import { franc } from 'franc'
+	import {
+		getLanguageDisplayName,
+		normalizeLanguageCode
+	} from '$lib/submodules/recipe-ingredient-parser/src/i18n'
 
 	import PhotoSection from '$lib/components/recipe/PhotoSection.svelte'
 	import Input from '$lib/components/ui/Form/Input.svelte'
@@ -42,6 +47,34 @@
 	let imageChecked = $state(false)
 	let cleaningIngredients = $state(false)
 	let cleaningDirections = $state(false)
+	let translatingRecipe = $state(false)
+
+	const detectLanguage = (text) => {
+		if (!text || typeof text !== 'string') return null
+		const trimmed = text.trim()
+		if (trimmed.length < 40) return null
+		const detected = franc(trimmed, { minLength: 40 })
+		if (!detected || detected === 'und') return null
+		return {
+			raw: detected,
+			normalized: normalizeLanguageCode(detected) || detected
+		}
+	}
+
+	const detectedLang = $derived.by(() => {
+		const combined = [
+			recipe?.name,
+			recipe?.description,
+			recipe?.ingredients,
+			recipe?.directions,
+			recipe?.notes
+		]
+			.filter(Boolean)
+			.join('\n')
+		return detectLanguage(combined)
+	})
+
+	const showTranslate = $derived(!detectedLang || detectedLang.normalized !== userLanguage)
 
 	// Undo state for AI cleanup
 	let ingredientsBeforeClean = $state(null)
@@ -138,6 +171,89 @@
 			directionsBeforeSummarize = null // Clear on failure
 		} finally {
 			cleaningDirections = false
+		}
+	}
+
+	async function handleTranslateRecipe() {
+		if (!recipe) return
+		const hasContent =
+			(recipe.ingredients && recipe.ingredients.trim() !== '') ||
+			(recipe.directions && recipe.directions.trim() !== '') ||
+			(recipe.notes && recipe.notes.trim() !== '') ||
+			(recipe.name && recipe.name.trim() !== '') ||
+			(recipe.description && recipe.description.trim() !== '')
+
+		if (!hasContent) return
+
+		translatingRecipe = true
+
+		try {
+			const payload = {
+				recipe: {
+					name: recipe.name || '',
+					author: recipe.author || '',
+					sourceUrl: recipe.source_url || '',
+					imageUrl: recipe.image_url || '',
+					description: recipe.description || '',
+					notes: recipe.notes || '',
+					ingredients: recipe.ingredients
+						? recipe.ingredients
+								.split('\n')
+								.map((l) => l.trim())
+								.filter(Boolean)
+						: [],
+					instructions: recipe.directions
+						? recipe.directions
+								.split('\n')
+								.map((l) => l.trim())
+								.filter(Boolean)
+						: [],
+					cookTime: recipe.cook_time || '',
+					prepTime: recipe.prep_time || '',
+					totalTime: recipe.total_time || '',
+					servings: recipe.servings || '',
+					nutrition: recipe.nutritional_info ? { text: recipe.nutritional_info } : {}
+				},
+				language: userLanguage
+			}
+
+			const response = await fetch('/api/recipe/translate', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(payload)
+			})
+
+			if (!response.ok) {
+				throw new Error('Translation failed')
+			}
+
+			const data = await response.json()
+			const translated = data?.recipe
+			if (!translated) {
+				throw new Error('Translation failed - invalid response')
+			}
+
+			if (translated.name) recipe.name = translated.name
+			if (translated.description) recipe.description = translated.description
+			if (Array.isArray(translated.ingredients)) {
+				recipe.ingredients = translated.ingredients.join('\n')
+			}
+			if (Array.isArray(translated.instructions)) {
+				recipe.directions = translated.instructions.join('\n')
+			}
+			if (translated.notes) recipe.notes = translated.notes
+			if (translated.nutrition) {
+				if (typeof translated.nutrition === 'string') {
+					recipe.nutritional_info = translated.nutrition
+				} else if (translated.nutrition.text) {
+					recipe.nutritional_info = translated.nutrition.text
+				}
+			}
+		} catch (err) {
+			console.error('Recipe translation failed:', err)
+			alert('Failed to translate recipe. Please try again.')
+		} finally {
+			translatingRecipe = false
 		}
 	}
 
@@ -269,7 +385,29 @@
 			{selectedFiles}
 			{onSelectedFilesChange}
 			bind:saveImageUrl />
-
+		{#if aiEnabled && showTranslate}
+			<div class="mt-2">
+				<Button
+					type="button"
+					size="sm"
+					style="soft"
+					onclick={handleTranslateRecipe}
+					disabled={translatingRecipe}>
+					{#if translatingRecipe}
+						<Spinner visible={true} size="xs" type="dots" />
+						Translating...
+					{:else}
+						Translate
+					{/if}
+				</Button>
+				{#if detectedLang && detectedLang.normalized !== userLanguage}
+					<InfoText class="mt-1">
+						Detected {getLanguageDisplayName(detectedLang.raw, userLanguage)}. Translate to{' '}
+						{getLanguageDisplayName(userLanguage, userLanguage)}.
+					</InfoText>
+				{/if}
+			</div>
+		{/if}
 		<!-- Full-width large text fields -->
 		<div>
 			<Textarea
@@ -308,7 +446,9 @@
 							size="sm"
 							style="soft"
 							onclick={handleCleanIngredients}
-							disabled={cleaningIngredients || !recipe.ingredients || recipe.ingredients.trim() === ''}>
+							disabled={cleaningIngredients ||
+								!recipe.ingredients ||
+								recipe.ingredients.trim() === ''}>
 							{#if cleaningIngredients}
 								<Spinner visible={true} size="xs" type="dots" />
 								Cleaning...
@@ -404,7 +544,9 @@
 							size="sm"
 							style="soft"
 							onclick={handleSummarizeDirections}
-							disabled={cleaningDirections || !recipe.directions || recipe.directions.trim() === ''}>
+							disabled={cleaningDirections ||
+								!recipe.directions ||
+								recipe.directions.trim() === ''}>
 							{#if cleaningDirections}
 								<Spinner visible={true} size="xs" type="dots" />
 								Summarizing...

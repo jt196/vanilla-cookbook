@@ -85,6 +85,7 @@
 		"dotenv": "^16.4.7",
 		"file-type": "^20.4.0",
 		"fuse.js": "^6.6.2",
+		"franc": "^6.2.0",
 		"he": "^1.2.0",
 		"humanize-duration": "^3.29.0",
 		"langchain": "^0.3.19",
