@@ -241,14 +241,6 @@
 			{#each panelAlternatives as alt}
 				{#if alt}
 					<li>
-						<span class="alt-badges">
-							{#if alt.unit || (alt.quantity !== null && alt.quantity !== undefined)}
-								<span class="alt-badge">unit</span>
-							{/if}
-							{#if alt.ingredient}
-								<span class="alt-badge">ing</span>
-							{/if}
-						</span>
 						{#if alt.quantity}
 							<strong>
 								{formatQuantity(alt.quantity, alt.minQty, alt.maxQty)}
@@ -268,6 +260,14 @@
 								— {alt.instructions.join(', ')}
 							</small>
 						{/if}
+						<span class="alt-badges">
+							{#if alt.unit || (alt.quantity !== null && alt.quantity !== undefined)}
+								<Badge color="primary" style="outline">unit</Badge>
+							{/if}
+							{#if alt.ingredient}
+								<Badge color="primary" style="outline">ing</Badge>
+							{/if}
+						</span>
 					</li>
 				{/if}
 			{/each}
