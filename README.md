@@ -11,6 +11,38 @@ Vanilla Cookbook is a self hosted recipe manager. It is designed with complexity
 
 Most of the web's recipes are written without much thought to a consistent language or structure. Many self-hosted apps go down the structuring route, automating, or asking the user to organise their data. This can lead to cluttered and complex interfaces, meaning you have to work more, just to get cooking. The philosophy behind Vanilla is to do most of that work for the user. You should be able to get cooking with a few clicks.
 
+### Smart Ingredient Display
+
+All based on text string parsing, little or no work to do for the user.
+
+#### Original Ingredient Strings
+
+The following ingredients are based on [this Spruce Eats recipe](https://www.thespruceeats.com/revani-turkish-semolina-cake-3274191). No steps other than importing the recipe were taken.
+
+These are the original ingredients (click on **Original**):
+
+![volumetric-conversion-original](docs/images/ingredients-volconv-original.png)
+
+#### Parsed Ingredient Strings
+
+Default display (user units set to metric, display symbols):
+
+Note:
+
+- Scaling of ingredients
+- Separation out of instructions
+- Quantity/Unit/Ingredient structure
+- Badges (To Serve, also Approx/To Taste/Optional)
+- Cups have been translated to grams
+
+![volumetric-conversion-simple](docs/images/ingredients-volconv-simple.png)
+
+#### Ingredient Matches Displayed
+
+Volumetric ingredient matches displayed (click on **Match**):
+
+![volumetric-conversion-shown](docs/images/ingredients-volconv-match.png)
+
 ## Features
 
 ### Unit Conversion
@@ -41,6 +73,9 @@ Add an LLM API key to activate these features. Google, OpenAI, Anthropic and Oll
 - Recipe tweak
   - Messy ingredient tidy up - trimming the fat of those lengthy ingredient strings
   - Directions summarise. Look dude, I know how to boil an egg
+- Translate Recipe
+  - Detects recipe language
+  - Offers translation if recipe language is different.
 - Recipe generate from prompt
   - Build a new recipe from a prompt, e.g. "Original pesto genovese"
 - Image Analysis

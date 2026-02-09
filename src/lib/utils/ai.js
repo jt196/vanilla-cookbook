@@ -147,12 +147,14 @@ User prompt:
  * @param {string} [language='eng']
  * @returns {string}
  */
-function buildRecipeTranslatePrompt(recipe, language = 'eng') {
+function buildRecipeTranslatePrompt(recipe, language = 'eng', fromLanguage = null) {
 	const languageName = languageMap[language] || 'English'
+	const fromLanguageName = fromLanguage ? languageMap[fromLanguage] || fromLanguage : null
 	const recipeJson = JSON.stringify(recipe, null, 2)
 
 	return `
 You are a recipe translation AI. Translate the recipe JSON below into ${languageName}.
+${fromLanguageName ? `The source language is ${fromLanguageName}.` : 'Detect the source language automatically.'}
 
 Rules:
 - Detect the source language automatically.
@@ -438,12 +440,19 @@ export async function generateRecipeWithLLM({
  * @param {string} [options.provider]
  * @param {string} [options.model]
  * @param {string} [options.language='eng'] - Target language code
+ * @param {string} [options.fromLanguage] - Source language code (optional)
  * @returns {Promise<Object>}
  */
-export async function translateRecipeWithLLM({ recipe, provider, model, language = 'eng' }) {
+export async function translateRecipeWithLLM({
+	recipe,
+	provider,
+	model,
+	language = 'eng',
+	fromLanguage = null
+}) {
 	const messages = [
 		new SystemMessage('You are an expert recipe translation AI.'),
-		new HumanMessage(buildRecipeTranslatePrompt(recipe, language))
+		new HumanMessage(buildRecipeTranslatePrompt(recipe, language, fromLanguage))
 	]
 
 	return invokeLLM({ provider, model, type: 'text', messages })

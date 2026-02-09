@@ -13,6 +13,8 @@
 	import Button from '$lib/components/ui/Button.svelte'
 	import InfoText from '$lib/components/ui/InfoText.svelte'
 	import Spinner from '$lib/components/ui/Spinner.svelte'
+	import Bolt from '$lib/components/svg/Bolt.svelte'
+	import Undo from '$lib/components/svg/Undo.svelte'
 
 	/** @type {{recipe: any, onSubmit: any, buttonText?: string, selectedFiles?: any, onSelectedFilesChange?: any, baseUrl?: string, editMode?: boolean, recipeCategories?: any, aiEnabled?: boolean, userUnits?: string, userLanguage?: string, cancelHref?: string, onDelete?: (() => void) | null, saveImageUrl?: boolean}} */
 	let {
@@ -214,7 +216,8 @@
 					servings: recipe.servings || '',
 					nutrition: recipe.nutritional_info ? { text: recipe.nutritional_info } : {}
 				},
-				language: userLanguage
+				language: userLanguage,
+				fromLanguage: detectedLang?.normalized ?? null
 			}
 
 			const response = await fetch('/api/recipe/translate', {
@@ -309,6 +312,30 @@
 			{/if}
 			<Button type="submit" size="sm">{buttonText}</Button>
 		</div>
+		{#if aiEnabled && showTranslate}
+			<div class="mt-2">
+				<Button
+					type="button"
+					size="sm"
+					style="soft"
+					onclick={handleTranslateRecipe}
+					disabled={translatingRecipe}>
+					{#if translatingRecipe}
+						<Spinner visible={true} size="xs" type="dots" />
+						Translating...
+					{:else}
+						<Bolt width="16px" height="16px" />
+						Translate
+					{/if}
+				</Button>
+				{#if detectedLang && detectedLang.normalized !== userLanguage}
+					<InfoText class="mt-1">
+						Detected {getLanguageDisplayName(detectedLang.raw, userLanguage)}. Translate to{' '}
+						{getLanguageDisplayName(userLanguage, userLanguage)}.
+					</InfoText>
+				{/if}
+			</div>
+		{/if}
 	</div>
 	<div>
 		<!-- Two-column layout for compact fields -->
@@ -385,29 +412,6 @@
 			{selectedFiles}
 			{onSelectedFilesChange}
 			bind:saveImageUrl />
-		{#if aiEnabled && showTranslate}
-			<div class="mt-2">
-				<Button
-					type="button"
-					size="sm"
-					style="soft"
-					onclick={handleTranslateRecipe}
-					disabled={translatingRecipe}>
-					{#if translatingRecipe}
-						<Spinner visible={true} size="xs" type="dots" />
-						Translating...
-					{:else}
-						Translate
-					{/if}
-				</Button>
-				{#if detectedLang && detectedLang.normalized !== userLanguage}
-					<InfoText class="mt-1">
-						Detected {getLanguageDisplayName(detectedLang.raw, userLanguage)}. Translate to{' '}
-						{getLanguageDisplayName(userLanguage, userLanguage)}.
-					</InfoText>
-				{/if}
-			</div>
-		{/if}
 		<!-- Full-width large text fields -->
 		<div>
 			<Textarea
@@ -426,18 +430,7 @@
 							style="outline"
 							color="warning"
 							onclick={restoreOriginalIngredients}>
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								class="h-4 w-4"
-								fill="none"
-								viewBox="0 0 24 24"
-								stroke="currentColor">
-								<path
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									stroke-width="2"
-									d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
-							</svg>
+							<Undo width="16px" height="16px" />
 							Restore Original
 						</Button>
 					{:else}
@@ -453,18 +446,7 @@
 								<Spinner visible={true} size="xs" type="dots" />
 								Cleaning...
 							{:else}
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									class="h-4 w-4"
-									fill="none"
-									viewBox="0 0 24 24"
-									stroke="currentColor">
-									<path
-										stroke-linecap="round"
-										stroke-linejoin="round"
-										stroke-width="2"
-										d="M13 10V3L4 14h7v7l9-11h-7z" />
-								</svg>
+								<Bolt width="16px" height="16px" />
 								Clean Ingredients
 							{/if}
 						</Button>
@@ -475,18 +457,7 @@
 								style="outline"
 								color="secondary"
 								onclick={undoCleanIngredients}>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									class="h-4 w-4"
-									fill="none"
-									viewBox="0 0 24 24"
-									stroke="currentColor">
-									<path
-										stroke-linecap="round"
-										stroke-linejoin="round"
-										stroke-width="2"
-										d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
-								</svg>
+								<Undo width="16px" height="16px" />
 								Undo
 							</Button>
 						{/if}
@@ -524,18 +495,7 @@
 							style="outline"
 							color="warning"
 							onclick={restoreOriginalDirections}>
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								class="h-4 w-4"
-								fill="none"
-								viewBox="0 0 24 24"
-								stroke="currentColor">
-								<path
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									stroke-width="2"
-									d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
-							</svg>
+							<Undo width="16px" height="16px" />
 							Restore Original
 						</Button>
 					{:else}
@@ -551,18 +511,7 @@
 								<Spinner visible={true} size="xs" type="dots" />
 								Summarizing...
 							{:else}
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									class="h-4 w-4"
-									fill="none"
-									viewBox="0 0 24 24"
-									stroke="currentColor">
-									<path
-										stroke-linecap="round"
-										stroke-linejoin="round"
-										stroke-width="2"
-										d="M13 10V3L4 14h7v7l9-11h-7z" />
-								</svg>
+								<Bolt width="16px" height="16px" />
 								Summarize Directions
 							{/if}
 						</Button>
@@ -573,18 +522,7 @@
 								style="outline"
 								color="secondary"
 								onclick={undoSummarizeDirections}>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									class="h-4 w-4"
-									fill="none"
-									viewBox="0 0 24 24"
-									stroke="currentColor">
-									<path
-										stroke-linecap="round"
-										stroke-linejoin="round"
-										stroke-width="2"
-										d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
-								</svg>
+								<Undo width="16px" height="16px" />
 								Undo
 							</Button>
 						{/if}

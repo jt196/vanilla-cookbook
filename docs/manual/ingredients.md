@@ -1,6 +1,6 @@
 # Ingredients
 
-As the ingredient parser is an important part of the way that Vanilla works, there's a separate part of the manual dedicated to it.
+I spent a lot of time trying to make the ingredients of a recipe **very easy** to parse by eye, with minimal input from the user.
 
 The way ingredients are written on the internet is *really* messy and unfortunately, I can't account for some of the patterns. If your ingredients look off, tidy them up or run **Clean Ingredients** (if you have an LLM set up) in the recipe edit to tidy them up a bit.
 
@@ -19,6 +19,14 @@ You'll also see small badges for parser “flags”:
 - `tt` to-taste
 
 Instructions/states (e.g. “finely chopped”, “lukewarm”, “rinsed”) are kept as a muted tail after the ingredient. Inline alternatives that are ingredient-only appear on the same line separated by `|`; quantity/unit alternatives live behind a chevron.
+
+## Original Ingredient
+
+![volumetric-conversion-original](../images/ingredients-volconv-original.png)
+
+## Parsed Ingredient
+
+![volumetric-conversion-simple](../images/ingredients-volconv-simple.png)
 
 ## Quick pattern summary
 
@@ -135,17 +143,39 @@ You'll also notice that the "of" has been removed, yep, it's doing that. All in 
 
 By default, the Extra is hidden, to allow for a clean ingredients list. You can change the default setting in the user [options](usage.md#settings) section.
 
+![volumetric-conversion-original](../images/ingredients-extra-hidden.png)
+
+Click on the **Extra** button to show the extra instructions:
+
+![volumetric-conversion-original](../images/ingredients-extra-visible.png)
+
 ### Instructions vs Extras
 
 The parser actively pulls instruction/state words into `instructions` and removes them from `ingredient`/`additional` (e.g. “lukewarm” won’t leave stray “luke”). New tidy-up stopwords keep filler like “and/or” from cluttering extras.
 
 ### Alternatives
 
+Used to display optional inline ingredients. This can get very messy, so doesn't work super well on complex strings, **Clean Ingredients** is your friend, it should tidy things up a bit.
+
 - Ingredient-only alternatives stay inline: `black pepper | white pepper`.
 - Quantity/unit alternatives appear in the dropdown panel with small badges:
   - `ing` when an alternative ingredient is provided
   - `unit` when an alternative quantity/unit/system is provided
 - Parenthetical or slash alternatives are captured without leaking units into the primary ingredient.
+
+#### Original
+
+![alternative ingredient original](../images/ingredients-alternative-original.png)
+
+#### Alternative Hidden
+
+![alternative ingredient hidden](../images/ingredients-alternative-hidden.png)
+
+#### Alternative Shown
+
+Scaling should work on the alternative ingredient.
+
+![alternative ingredient shown](../images/ingredients-alternative-shown.png)
 
 ### Parsing Errors
 
