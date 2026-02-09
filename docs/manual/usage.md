@@ -149,6 +149,15 @@ Each dropdown includes common models with a "Custom..." option if you need a spe
 | Google | Gemini 2.0 Flash, 1.5 Flash/Pro | Same as text | Full support |
 | Ollama | Llama 3.2, Mistral, Phi-3 | Not supported | Local only, no images |
 
+#### Translate Recipe
+
+Recipe language is detected locally. If the user language is different to the recipe language, the user will have an option to translate the recipe into their own language.
+
+<video width="640" height="360" controls>
+  <source src="../../videos/translate-recipe.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 #### Scrape Fallback
 
 If the standard recipe scrape fails (no name or ingredients found), it'll automatically submit the HTML to your configured LLM for parsing.

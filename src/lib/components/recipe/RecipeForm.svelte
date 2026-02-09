@@ -76,7 +76,7 @@
 		return detectLanguage(combined)
 	})
 
-	const showTranslate = $derived(!detectedLang || detectedLang.normalized !== userLanguage)
+	const showTranslate = $derived(detectedLang && detectedLang.normalized !== userLanguage)
 
 	// Undo state for AI cleanup
 	let ingredientsBeforeClean = $state(null)
