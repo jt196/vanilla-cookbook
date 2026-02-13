@@ -16,6 +16,7 @@ import {
 	jsonSuccess,
 	jsonError
 } from '$lib/server/authHelpers'
+import { regenerateRecipeEmbedding } from '$lib/server/semanticEmbedding'
 
 export async function DELETE({ params, locals }) {
 	const user = requireAuth(locals)
@@ -157,7 +158,12 @@ export async function PUT({ request, locals, params, url }) {
 				const { extension } = mapContentTypeToFileTypeAndExtension(contentType)
 				let remotePhotoEntry
 				try {
-					remotePhotoEntry = await createRecipePhotoEntry(uid, recipeData.image_url, extension, !hasMainPhoto)
+					remotePhotoEntry = await createRecipePhotoEntry(
+						uid,
+						recipeData.image_url,
+						extension,
+						!hasMainPhoto
+					)
 					await processImage(recipeData.image_url, remotePhotoEntry.id, extension)
 				} catch (error) {
 					console.error('Error saving remote image:', error)
@@ -182,6 +188,19 @@ export async function PUT({ request, locals, params, url }) {
 					recipeUid: uid,
 					categoryUid: categoryUid
 				}
+			})
+		}
+
+		// Run semantic embedding update in background (non-blocking).
+		if (locals.site?.semantic?.enabled) {
+			const preferredEmbeddingProvider = locals.site?.semantic?.provider || null
+			const preferredEmbeddingModel = locals.site?.semantic?.model || null
+			regenerateRecipeEmbedding(
+				uid,
+				preferredEmbeddingProvider,
+				preferredEmbeddingModel
+			).catch((error) => {
+				console.error('Failed background embedding update after recipe update:', uid, error)
 			})
 		}
 

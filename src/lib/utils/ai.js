@@ -263,13 +263,30 @@ async function loadChatClient(provider, model, type) {
 	return loader(model, type)
 }
 
+const providerDefaultModels = {
+	openai: {
+		text: 'gpt-4o-mini',
+		image: 'gpt-4o-mini'
+	},
+	anthropic: {
+		text: 'claude-3-5-haiku-20241022',
+		image: 'claude-3-5-sonnet-20241022'
+	},
+	google: {
+		text: 'gemini-2.0-flash',
+		image: 'gemini-2.0-flash'
+	},
+	ollama: {
+		text: 'llama3.2',
+		image: null
+	}
+}
+
 /**
  * Core LLM invocation function - builds messages and calls the model
  * @private
  */
 async function invokeLLM({ provider, model, type, messages }) {
-	if (env.LLM_API_ENABLED !== 'true') throw new Error('LLM API is disabled')
-
 	const defaultProvider = env.LLM_PROVIDER || 'openai'
 	const effectiveProvider =
 		provider ||
@@ -277,8 +294,14 @@ async function invokeLLM({ provider, model, type, messages }) {
 			? env.LLM_IMAGE_PROVIDER || env.LLM_TEXT_PROVIDER || defaultProvider
 			: env.LLM_TEXT_PROVIDER || defaultProvider)
 
-	const defaultTextModel = env.LLM_TEXT_MODEL || env.LLM_API_ENGINE_TEXT || 'gpt-3.5-turbo'
-	const defaultImageModel = env.LLM_IMAGE_MODEL || env.LLM_API_ENGINE_IMAGE || 'gpt-4o'
+	const providerDefaults = providerDefaultModels[effectiveProvider] || providerDefaultModels.openai
+	const defaultTextModel =
+		env.LLM_TEXT_MODEL || env.LLM_API_ENGINE_TEXT || providerDefaults.text || 'gpt-4o-mini'
+	const defaultImageModel =
+		env.LLM_IMAGE_MODEL ||
+		env.LLM_API_ENGINE_IMAGE ||
+		providerDefaults.image ||
+		providerDefaults.text
 	const effectiveModel = model || (type === 'image' ? defaultImageModel : defaultTextModel)
 
 	if (type === 'image' && effectiveProvider === 'ollama') {

@@ -1,8 +1,7 @@
 <script>
 	import { goto, invalidateAll } from '$app/navigation'
 	import { navigating } from '$app/stores'
-	import { filterSearch } from '$lib/utils/filters'
-	import { sortRecipesByKey } from '$lib/utils/sorting'
+	import { sortByDate, sortByKeyGeneric } from '$lib/utils/sorting'
 	import RecipeFilter from '$lib/components/recipe/RecipeFilter.svelte'
 	import RecipeList from '$lib/components/recipe/RecipeList.svelte'
 	import Sidebar from '$lib/components/ui/Sidebar.svelte'
@@ -14,12 +13,12 @@
 	import {
 		sortState,
 		searchString,
-		searchKey,
+		searchFields,
 		cookedFilter,
 		favouriteFilter
 	} from '$lib/stores/recipeFilter'
 
-	/** @type {{recipes?: any[], categories?: any[], viewMode?: 'owner' | 'social', title?: string | null, useCats?: boolean, viewerUserId?: string | null, ownerUserId?: string | null, ownerUsername?: string | null, feedKind?: 'all' | 'user'}} */
+	/** @type {{recipes?: any[], categories?: any[], viewMode?: 'owner' | 'social', title?: string | null, useCats?: boolean, viewerUserId?: string | null, ownerUserId?: string | null, ownerUsername?: string | null, feedKind?: 'all' | 'user', semanticEnabled?: boolean}} */
 	let {
 		recipes = [],
 		categories = [],
@@ -29,7 +28,8 @@
 		viewerUserId = null,
 		ownerUserId = null,
 		ownerUsername = null,
-		feedKind = 'user'
+		feedKind = 'user',
+		semanticEnabled = false
 	} = $props()
 
 	let sidebarOpen = $state(false)
@@ -42,6 +42,81 @@
 	let copiedRecipe = $state(null)
 	let pendingCopyUid = $state(null)
 	let copyMessage = $state(null)
+	let semanticScores = $state(new Map())
+	let semanticPending = $state(false)
+	let semanticRuntimeEnabled = $state(!!semanticEnabled)
+
+	function includesQueryAcrossRecipe(recipe, query) {
+		const q = query?.toLowerCase?.().trim?.()
+		if (!q) return false
+
+		const searchable = [
+			recipe?.name,
+			recipe?.description,
+			recipe?.ingredients,
+			recipe?.directions,
+			recipe?.notes,
+			recipe?.source
+		]
+			.filter(Boolean)
+			.join('\n')
+			.toLowerCase()
+
+		return searchable.includes(q)
+	}
+
+	function applyManualSort(recipeList, key, direction) {
+		if (!key || !direction) return recipeList
+		if (key === 'created') return sortByDate(recipeList, 'created', direction)
+		return sortByKeyGeneric(recipeList, key, direction)
+	}
+
+	function matchesSelectedFields(recipe, query, fields) {
+		if (!query || !fields?.length) return false
+		const q = query.toLowerCase()
+		return fields.some((field) => {
+			const value = recipe?.[field]?.toString?.().toLowerCase?.() || ''
+			return value.includes(q)
+		})
+	}
+
+	function scoreRecipeScoped(recipe, query, fields) {
+		const q = query?.toLowerCase?.().trim?.()
+		if (!q || !fields?.length) return 0
+
+		let score = 0
+		for (const field of fields) {
+			const value = recipe?.[field]?.toString?.().toLowerCase?.() || ''
+			if (!value) continue
+			if (value === q) score += 100
+			else if (value.startsWith(q)) score += 60
+			else if (value.includes(q)) score += 35
+		}
+		return score
+	}
+
+	function scoreRecipeGlobal(recipe, query) {
+		const q = query?.toLowerCase?.().trim?.()
+		if (!q) return 0
+
+		const nameText = recipe?.name?.toString?.().toLowerCase?.() || ''
+		const broadMatch = includesQueryAcrossRecipe(recipe, q)
+		const semanticScore = semanticScores.get(recipe.uid) || 0
+
+		let score = 0
+		if (nameText === q) score += 90
+		else if (nameText.startsWith(q)) score += 60
+		else if (nameText.includes(q)) score += 35
+
+		if (broadMatch) score += 30
+		score += semanticScore * 100
+
+		return score
+	}
+
+	$effect(() => {
+		semanticRuntimeEnabled = !!semanticEnabled
+	})
 
 	function handleCategoryClick(category) {
 		if (selectedCategoryUids.includes(category.uid)) {
@@ -151,26 +226,36 @@
 
 		// Prevent rating sorting in social mode
 		if (viewMode !== 'owner' && $sortState.key === 'rating') {
-			sortState.set({ key: 'created', direction: 'desc' })
+			sortState.set({ key: null, direction: null })
 		}
 
-		let sortedRecipes = sortRecipesByKey(
-			recipeList,
-			$sortState.key,
-			$sortState.direction
-		).sortedRecipes
+		const manualSortEnabled = !!$sortState.key && !!$sortState.direction
+		const trimmedQuery = $searchString?.trim() || ''
+		const hasSearchQuery = trimmedQuery.length > 0
+		const selectedFields = $searchFields || []
+		const hasScopedFields = selectedFields.length > 0
 
-		let categoryFilteredRecipes = sortedRecipes
+		// Base order: most recent first (no search). If searching with no manual sort,
+		// relevance ranking takes over below.
+		const baseRecipes = hasSearchQuery
+			? recipeList
+			: applyManualSort(
+					recipeList,
+					manualSortEnabled ? $sortState.key : 'created',
+					manualSortEnabled ? $sortState.direction : 'desc'
+				)
+
+		let categoryFilteredRecipes = baseRecipes
 
 		if (useCats && selectedCategoryUids.length > 0) {
 			if (useAndLogic) {
-				categoryFilteredRecipes = sortedRecipes.filter((recipe) =>
+				categoryFilteredRecipes = baseRecipes.filter((recipe) =>
 					selectedCategoryUids.every((uid) =>
 						recipe.categories.some((rc) => rc.category.uid === uid)
 					)
 				)
 			} else {
-				categoryFilteredRecipes = sortedRecipes.filter((recipe) =>
+				categoryFilteredRecipes = baseRecipes.filter((recipe) =>
 					selectedCategoryUids.some((uid) =>
 						recipe.categories.some((rc) => rc.category.uid === uid)
 					)
@@ -196,23 +281,110 @@
 			)
 		}
 
-		filteredRecipes = filterSearch($searchString, categoryFilteredRecipes, $searchKey)
+		if (!hasSearchQuery) {
+			filteredRecipes = categoryFilteredRecipes
+		} else if (hasScopedFields) {
+			// Field-scoped mode: fuzzy/text only over selected fields (no semantic).
+			let searchResults = categoryFilteredRecipes.filter((recipe) =>
+				matchesSelectedFields(recipe, trimmedQuery, selectedFields)
+			)
+			if (manualSortEnabled) {
+				searchResults = applyManualSort(searchResults, $sortState.key, $sortState.direction)
+			} else {
+				searchResults = searchResults
+					.map((recipe, index) => ({
+						recipe,
+						score: scoreRecipeScoped(recipe, trimmedQuery, selectedFields),
+						index
+					}))
+					.sort((a, b) => {
+						if (b.score !== a.score) return b.score - a.score
+						return (
+							new Date(b.recipe.created).getTime() - new Date(a.recipe.created).getTime() ||
+							a.index - b.index
+						)
+					})
+					.map((entry) => entry.recipe)
+			}
+			filteredRecipes = searchResults
+		} else {
+			// Default mode (no selected fields): semantic + fuzzy/hybrid relevance.
+			const broadMatchIds = new Set(
+				categoryFilteredRecipes
+					.filter((recipe) => includesQueryAcrossRecipe(recipe, trimmedQuery))
+					.map((recipe) => recipe.uid)
+			)
+			let searchResults = categoryFilteredRecipes.filter(
+				(recipe) => broadMatchIds.has(recipe.uid) || semanticScores.has(recipe.uid)
+			)
+			if (manualSortEnabled) {
+				searchResults = applyManualSort(searchResults, $sortState.key, $sortState.direction)
+			} else {
+				searchResults = searchResults
+					.map((recipe, index) => ({
+						recipe,
+						score: scoreRecipeGlobal(recipe, trimmedQuery),
+						index
+					}))
+					.sort((a, b) => {
+						if (b.score !== a.score) return b.score - a.score
+						return (
+							new Date(b.recipe.created).getTime() - new Date(a.recipe.created).getTime() ||
+							a.index - b.index
+						)
+					})
+					.map((entry) => entry.recipe)
+			}
+			filteredRecipes = searchResults
+		}
 
 		setTimeout(() => {
 			isLoading = false
 		}, 0)
 	})
 
-	function handleSort(event) {
-		if ($sortState.key === event.detail.key) {
-			sortState.update((state) => ({
-				...state,
-				direction: state.direction === 'asc' ? 'desc' : 'asc'
-			}))
-		} else {
-			sortState.set({ key: event.detail.key, direction: 'desc' })
+	$effect(() => {
+		if (
+			!semanticRuntimeEnabled ||
+			!$searchString ||
+			$searchString.length < 3 ||
+			($searchFields || []).length > 0
+		) {
+			semanticScores = new Map()
+			semanticPending = false
+			return
 		}
-	}
+
+		const timeout = setTimeout(async () => {
+			semanticPending = true
+			try {
+				const response = await fetch(
+					`/api/recipe/search?q=${encodeURIComponent($searchString)}&mode=semantic&limit=80`
+				)
+
+				if (!response.ok) {
+					semanticScores = new Map()
+					return
+				}
+
+				const data = await response.json()
+				if (!data.enabled) {
+					semanticRuntimeEnabled = false
+					semanticScores = new Map()
+					return
+				}
+
+				semanticScores = new Map((data.results || []).map((result) => [result.uid, result.score]))
+			} catch (error) {
+				console.error('Semantic search request failed:', error)
+				semanticScores = new Map()
+			} finally {
+				semanticPending = false
+			}
+		}, 300)
+
+		return () => clearTimeout(timeout)
+	})
 
 	function toggleSidebar() {
 		sidebarOpen = !sidebarOpen
@@ -267,15 +439,8 @@
 	class:md:ml-64={sidebarOpen && useCats && viewMode === 'owner'}
 	class:max-md:ml-0={sidebarOpen}
 >
-	<RecipeFilter
-		on:sort={handleSort}
-		{toggleSidebar}
-		viewOnly={false}
-		{useCats}
-		username={ownerUsername}
-		{viewMode}
-	/>
-	<Spinner visible={isLoading || !!$navigating} spinnerContent="Loading" />
+	<RecipeFilter {toggleSidebar} viewOnly={false} {useCats} username={ownerUsername} {viewMode} />
+	<Spinner visible={isLoading || !!$navigating || semanticPending} spinnerContent="Loading" />
 	<RecipeList
 		{filteredRecipes}
 		{viewMode}

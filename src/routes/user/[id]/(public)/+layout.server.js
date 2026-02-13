@@ -25,6 +25,7 @@ export const load = async ({ params, url, fetch, locals }) => {
 	return {
 		recipes,
 		categories,
+		semanticAvailable: !!locals.site?.semantic?.enabled,
 		user: {
 			requestedUserId: requestedUserId,
 			viewingUserId: user?.userId ?? null,

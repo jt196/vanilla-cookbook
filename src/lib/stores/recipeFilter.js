@@ -1,11 +1,11 @@
 import { writable } from 'svelte/store'
 
 export const sortState = writable({
-	key: 'created',
-	direction: 'asc'
+	key: null,
+	direction: null
 })
 
 export const searchString = writable('')
-export const searchKey = writable('name')
+export const searchFields = writable([])
 export const cookedFilter = writable(false)
 export const favouriteFilter = writable(false)

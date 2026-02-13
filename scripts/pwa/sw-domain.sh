@@ -3,10 +3,17 @@
 # Suppress the language warning
 export PERL_BADLANG=0
 
-# Check if ORIGIN is set in the environment
+# Resolve ORIGIN from env, then .env file, then sensible local default.
+if [ -z "$ORIGIN" ] && [ -f ".env" ]; then
+  set -a
+  # shellcheck disable=SC1091
+  . ./.env
+  set +a
+fi
+
 if [ -z "$ORIGIN" ]; then
-  echo "Error: ORIGIN environment variable is not set!"
-  exit 1
+  ORIGIN="http://localhost:5173"
+  echo "Warning: ORIGIN not set. Falling back to $ORIGIN for SW domain substitution."
 fi
 
 # Log the DOMAIN to Docker logs

@@ -4,6 +4,7 @@ export const load = async ({ fetch, url, locals }) => {
 
 	return {
 		recipes,
-		viewerUserId: locals.user?.userId ?? null
+		viewerUserId: locals.user?.userId ?? null,
+		semanticAvailable: !!locals.site?.semantic?.enabled
 	}
 }

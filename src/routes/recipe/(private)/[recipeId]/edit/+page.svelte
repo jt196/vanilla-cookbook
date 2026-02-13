@@ -28,6 +28,10 @@
 	let allCategories = $state(data?.allCategories ?? [])
 	let user = $state(data?.user ?? {})
 	let aiEnabled = $state(data?.aiEnabled ?? false)
+	let aiProvider = $state(data?.aiProvider ?? null)
+	let aiSelectedProvider = $state(data?.aiSelectedProvider ?? null)
+	let aiSelectedProviderConfigured = $state(data?.aiSelectedProviderConfigured ?? false)
+	let isAdmin = $state(data?.isAdmin ?? false)
 	let userUnits = $state(data?.userUnits ?? 'metric')
 	let userLanguage = $state(data?.userLanguage ?? 'eng')
 	let showDeleteConfirm = $state(false)
@@ -104,7 +108,8 @@
 	<CategoryTree
 		categories={allCategories}
 		onCategoryClick={handleCategoryClick}
-		selectedCategoryUids={recipeCategories} />
+		selectedCategoryUids={recipeCategories}
+	/>
 </Sidebar>
 
 <div class="recipe-container" class:sidebar-open={sidebarOpen} onclose={handleSidebarClose}>
@@ -120,13 +125,18 @@
 		bind:saveImageUrl
 		{recipeCategories}
 		{aiEnabled}
+		{aiProvider}
+		{aiSelectedProvider}
+		{aiSelectedProviderConfigured}
+		{isAdmin}
 		{userUnits}
 		{userLanguage}
 		buttonText="Update Recipe"
 		cancelHref="/recipe/{recipe?.uid}/view/"
 		onDelete={() => handleDelete(recipe?.uid)}
 		onSelectedFilesChange={handleSelectedFilesChange}
-		onSubmit={handleSubmit} />
+		onSubmit={handleSubmit}
+	/>
 </div>
 
 <ConfirmationDialog
@@ -138,7 +148,8 @@
 		if (success) {
 			goto('/')
 		}
-	}}>
+	}}
+>
 	{#snippet content()}
 		<h3 class="font-bold text-lg">Delete Recipe</h3>
 		<p class="py-4">Are you sure you want to delete this recipe?</p>

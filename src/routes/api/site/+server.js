@@ -23,7 +23,11 @@ export async function POST({ request, locals }) {
 				llmEnabled: normalizeBoolean(siteData.llmEnabled) ?? settings.llmEnabled,
 				llmProvider: siteData.llmProvider ?? settings.llmProvider,
 				llmTextModel: siteData.llmTextModel ?? settings.llmTextModel,
-				llmImageModel: siteData.llmImageModel ?? settings.llmImageModel
+				llmImageModel: siteData.llmImageModel ?? settings.llmImageModel,
+				semanticEnabled: normalizeBoolean(siteData.semanticEnabled) ?? settings.semanticEnabled,
+				semanticEmbeddingProvider:
+					siteData.semanticEmbeddingProvider ?? settings.semanticEmbeddingProvider,
+				semanticEmbeddingModel: siteData.semanticEmbeddingModel ?? settings.semanticEmbeddingModel
 			}
 		})
 		return jsonSuccess(updatedSettings)

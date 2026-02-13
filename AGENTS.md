@@ -10,7 +10,7 @@ Vanilla Cookbook prioritizes **simplicity in user experience** while handling **
 
 - **Framework**: SvelteKit (Svelte 5) with Vite
 - **Database**: Prisma ORM with SQLite (default), supports migrations
-- **Styling**: PicoCSS (semantic, minimal CSS framework)
+- **Styling**: Tailwind CSS + DaisyUI component library
 - **Authentication**: Lucia v2 with Prisma adapter
 - **Testing**: Vitest with jsdom, @testing-library/svelte
 - **PWA**: Workbox for service worker generation
@@ -324,6 +324,16 @@ pnpm coverage          # Coverage report
 - **Component naming**: PascalCase for components, kebab-case for files (e.g., `RecipeCard.svelte`)
 - **Props**: Destructure props in component `<script>` tag
 - **Stores**: Use Svelte stores for global state (see `src/lib/stores/`)
+- **Styling**: Prefer Tailwind utility classes and DaisyUI components; keep custom CSS minimal
+
+### Component-First UI Development
+- **Default approach**: Reuse existing components before adding new markup or one-off Tailwind class blocks
+- **Primary UI primitives**: Prefer `src/lib/components/ui/` (`Button`, `Card`, `Dialog`, `ConfirmationDialog`, `Spinner`, `Sidebar`, `Badge`, `Container`)
+- **Form controls**: Prefer `src/lib/components/ui/Form/` (`Input`, `Textarea`, `Dropdown`, `Checkbox`, `Toggle`, `Radio`, `FileInput`, `ValidationMessage`)
+- **Tabular layouts**: Prefer `src/lib/components/ui/Table/` (`Table`, `TableHead`, `TableBody`, `TableRow`, `TableCell`)
+- **Icons**: Reuse `src/lib/components/svg/` icons instead of adding inline SVGs
+- **Domain components**: Reuse feature components under `recipe/`, `shopping/`, `category/`, `user/`, `auth/` when they match behavior
+- **New components**: Only create a new component when no existing component fits; place reusable primitives in `ui/` and feature-specific components in their domain folder
 
 ### API Routes
 - **Structure**: `src/routes/api/[resource]/[action]/+server.js`
@@ -474,11 +484,12 @@ See `docs/roadmap.md` for detailed feature wishlist. Key themes:
 6. Test with Vitest or manual API calls
 
 ### Adding a New Svelte Component
-1. Create `src/lib/components/[ComponentName].svelte`
-2. Use Svelte 5 runes for reactivity (`$state`, `$derived`)
-3. Follow PicoCSS semantic HTML (minimal custom styles)
-4. Document props with JSDoc comments
-5. Import and use in relevant pages
+1. Check `src/lib/components/` for an existing component to reuse (especially `ui/`, `ui/Form/`, `ui/Table/`, `svg/`)
+2. If no existing component fits, create `src/lib/components/[domain]/[ComponentName].svelte` (or `ui/` if broadly reusable)
+3. Use Svelte 5 runes for reactivity (`$state`, `$derived`)
+4. Follow existing Tailwind + DaisyUI patterns (minimal custom CSS)
+5. Document props with JSDoc comments
+6. Import and use in relevant pages
 
 ### Modifying Database Schema
 1. Edit `prisma/schema.prisma`

@@ -4,13 +4,15 @@
 	/** @type {{data: any}} */
 	let { data } = $props()
 
-	const { recipes, viewerUserId } = data
+	const { recipes, viewerUserId, semanticAvailable } = data
 </script>
 
 <RecipeFeed
 	{recipes}
 	viewMode="social"
-	viewerUserId={viewerUserId}
+	{viewerUserId}
+	semanticEnabled={semanticAvailable}
 	title="All Recipes"
 	useCats={false}
-	feedKind="all" />
+	feedKind="all"
+/>

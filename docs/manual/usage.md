@@ -21,10 +21,10 @@ From left to right
 
 - **Display Category Tree** - Imported Paprika categories will be displayed here (hidden by default)
 - **Filter with text string** - Search by multiple methods
-- **Specify filter** - Name, Ingredient, Source, Notes
+- **Search Fields (cog dropdown)** - Select Name/Ingredients/Source/Notes cumulatively
 - **Filter favourites** - List all your favourite recipes
 - **Filter cooked** - List all the cooked recipes (sort by x cooked, then alphabetically)
-- **Sort by Date, Title or Rating** - Sort the recipes by various means
+- **Sort (dropdown)** - Date, Title or Rating with 3-state cycle (desc/asc/off)
 
 ### Recipe Card
 
@@ -142,12 +142,12 @@ Each dropdown includes common models with a "Custom..." option if you need a spe
 
 **Supported Providers:**
 
-| Provider | Text Models | Image Models | Notes |
-|----------|-------------|--------------|-------|
-| OpenAI | GPT-4o Mini, GPT-3.5 Turbo, GPT-4o | GPT-4o Mini, GPT-4o | Full support |
-| Anthropic | Claude 3.5 Haiku, Claude 3.5 Sonnet | Claude 3.5 Sonnet, Haiku | Full support |
-| Google | Gemini 2.0 Flash, 1.5 Flash/Pro | Same as text | Full support |
-| Ollama | Llama 3.2, Mistral, Phi-3 | Not supported | Local only, no images |
+| Provider  | Text Models                         | Image Models             | Notes                 |
+| --------- | ----------------------------------- | ------------------------ | --------------------- |
+| OpenAI    | GPT-4o Mini, GPT-3.5 Turbo, GPT-4o  | GPT-4o Mini, GPT-4o      | Full support          |
+| Anthropic | Claude 3.5 Haiku, Claude 3.5 Sonnet | Claude 3.5 Sonnet, Haiku | Full support          |
+| Google    | Gemini 2.0 Flash, 1.5 Flash/Pro     | Same as text             | Full support          |
+| Ollama    | Llama 3.2, Mistral, Phi-3           | Not supported            | Local only, no images |
 
 #### Translate Recipe
 
@@ -219,6 +219,43 @@ The AI assumes an intermediate level of culinary experience, keeping all necessa
   <source src="../../videos/directions_summarize_demo.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
+
+### Semantic Search
+
+Semantic search is optional and **admin-controlled**. Users do not need to toggle it.
+
+#### Enablement
+
+1. Add a supported embedding provider in `.env`:
+   - `OPENAI_API_KEY` or
+   - `OLLAMA_BASE_URL` (and optional embedding model)
+2. Set `SEMANTIC_SEARCH_ENABLED=true` in `.env`
+3. In **Options > Site** (admin), enable semantic search.
+
+#### Build Embedding Index
+
+In **Options > Site** (admin), use the Semantic Embedding Index action to generate embeddings.
+
+- Processing runs in batches.
+- You can run repeatedly until remaining reaches zero.
+- Progress/status is shown in the admin page and backend logs.
+
+#### When Embeddings Update
+
+- Existing recipes: via admin batch generation.
+- New/updated recipes: embedding regeneration is triggered automatically after save/update in the background (non-blocking).
+
+#### Search Behavior
+
+- **No search fields selected (default)**:
+  - Search uses semantic + fuzzy/hybrid relevance.
+- **Any fields selected** (Name / Ingredients / Source / Notes):
+  - Search is scoped to those fields using fuzzy/text matching.
+  - Semantic request is skipped in this scoped mode.
+- **Sort override**:
+  - With no query, default order is most recent first.
+  - With a query, default order is relevance.
+  - Manual sort selection overrides relevance until cleared.
 
 ### Add it
 

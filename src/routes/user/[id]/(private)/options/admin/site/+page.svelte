@@ -2,7 +2,7 @@
 	import { localDateAndTime } from '$lib/utils/dateTime'
 	import { invalidateAll } from '$app/navigation'
 	import {
-		getAvailableProviders,
+		getProviderOptionsWithAvailability,
 		getTextModelsForProvider,
 		getImageModelsForProvider
 	} from '$lib/utils/llmModels.js'
@@ -33,9 +33,25 @@
 	let backupError = $state(data.backupError || '')
 	let backupInProgress = $state(false)
 	let backupFeedback = $state('')
+	let embeddingInProgress = $state(false)
+	let embeddingFeedback = $state('')
+	let embeddingBatchResult = $state(null)
+	let embeddingIndex = $state(data.embeddingIndex || { total: 0, remaining: 0, completed: 0 })
+	let embeddingPercent = $derived(
+		embeddingIndex.total > 0
+			? Math.round((Math.max(embeddingIndex.completed, 0) / embeddingIndex.total) * 100)
+			: 0
+	)
 
 	// LLM form state
 	let llmEnabled = $state(llmConfig.dbEnabled)
+	let semanticEnabled = $state(llmConfig.dbSemanticEnabled ?? false)
+	let semanticEmbeddingProvider = $state(
+		llmConfig.dbSemanticEmbeddingProvider || llmConfig.semanticSelectedProvider || ''
+	)
+	let semanticEmbeddingModel = $state(
+		llmConfig.dbSemanticEmbeddingModel || llmConfig.semanticModel || ''
+	)
 	const initialProvider = llmConfig.dbProvider || llmConfig.availableProviders[0] || ''
 	let llmProvider = $state(initialProvider)
 
@@ -80,6 +96,52 @@
 	let showCustomTextInput = $derived(textModelSelection === 'custom')
 	let showCustomImageInput = $derived(imageModelSelection === 'custom')
 	let supportsImages = $derived(imageModelList.length > 0)
+	const semanticProviderCatalog = [
+		{ value: 'openai', label: 'OpenAI', envVar: 'OPENAI_API_KEY' },
+		{ value: 'ollama', label: 'Ollama (Local)', envVar: 'OLLAMA_BASE_URL' }
+	]
+	let semanticProviderOptions = $derived.by(() => {
+		const available = new Set(llmConfig.semanticAvailableProviders || [])
+		return semanticProviderCatalog.map((provider) => ({
+			value: provider.value,
+			label: available.has(provider.value) ? provider.label : `${provider.label} (Missing API key)`
+		}))
+	})
+	let effectiveSemanticProvider = $derived(
+		semanticEmbeddingProvider || llmConfig.semanticProvider || null
+	)
+	let semanticProviderConfigured = $derived(
+		!!effectiveSemanticProvider &&
+			(llmConfig.semanticAvailableProviders || []).includes(effectiveSemanticProvider)
+	)
+	let semanticModelOptions = $derived.by(() => {
+		if (effectiveSemanticProvider === 'openai') {
+			return [
+				{ value: 'text-embedding-3-small', label: 'text-embedding-3-small (Recommended)' },
+				{ value: 'text-embedding-3-large', label: 'text-embedding-3-large' },
+				{ value: 'text-embedding-ada-002', label: 'text-embedding-ada-002 (Legacy)' }
+			]
+		}
+		if (effectiveSemanticProvider === 'ollama') {
+			return [
+				{ value: 'nomic-embed-text', label: 'nomic-embed-text (Recommended)' },
+				{ value: 'mxbai-embed-large', label: 'mxbai-embed-large' },
+				{ value: 'all-minilm', label: 'all-minilm' }
+			]
+		}
+		return []
+	})
+	$effect(() => {
+		if (!semanticEmbeddingModel && semanticModelOptions.length > 0) {
+			semanticEmbeddingModel = semanticModelOptions[0].value
+		}
+	})
+	let canGenerateEmbeddings = $derived(
+		semanticEnabled &&
+			llmConfig.semanticEnabledByEnv &&
+			semanticProviderConfigured &&
+			!!effectiveSemanticProvider
+	)
 
 	// Get the actual model value to save
 	let effectiveTextModel = $derived(
@@ -89,7 +151,9 @@
 		imageModelSelection === 'custom' ? customImageModel : imageModelSelection
 	)
 
-	let availableProviderOptions = $derived(getAvailableProviders(llmConfig.availableProviders))
+	let availableProviderOptions = $derived(
+		getProviderOptionsWithAvailability(llmConfig.availableProviders)
+	)
 
 	async function updateAdminSettings(event) {
 		event.preventDefault()
@@ -115,9 +179,12 @@
 			body: JSON.stringify({
 				...settings,
 				llmEnabled,
+				semanticEnabled,
 				llmProvider,
 				llmTextModel: effectiveTextModel || null,
-				llmImageModel: supportsImages ? effectiveImageModel || null : null
+				llmImageModel: supportsImages ? effectiveImageModel || null : null,
+				semanticEmbeddingProvider: semanticEmbeddingProvider || null,
+				semanticEmbeddingModel: semanticEmbeddingModel || null
 			})
 		})
 		if (response.ok) {
@@ -151,10 +218,52 @@
 		}
 	}
 
+	async function generateEmbeddingBatch() {
+		embeddingInProgress = true
+		embeddingFeedback = ''
+		embeddingBatchResult = null
+		let processedTotal = 0
+		let failedTotal = 0
+		try {
+			// Keep running batches until index is complete or no progress is possible.
+			while (true) {
+				const response = await fetch('/api/embeddings/generate', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ batchSize: 25 })
+				})
+				const data = await response.json().catch(() => ({}))
+				if (!response.ok) {
+					embeddingFeedback = data.error || data.reason || 'Failed to generate embeddings.'
+					return
+				}
+
+				processedTotal += data.processed || 0
+				failedTotal += data.failed || 0
+				embeddingBatchResult = data
+				embeddingIndex = {
+					total: embeddingIndex.total,
+					remaining: data.remaining ?? embeddingIndex.remaining,
+					completed: Math.max((embeddingIndex.total || 0) - (data.remaining || 0), 0)
+				}
+
+				if (data.remaining === 0) break
+				if ((data.processed || 0) === 0 && (data.failed || 0) === 0) break
+			}
+
+			embeddingFeedback = `Embedding run complete: ${processedTotal} processed, ${failedTotal} failed, ${embeddingIndex.remaining} remaining.`
+		} catch (error) {
+			embeddingFeedback = `Error generating embeddings: ${error.message}`
+		} finally {
+			embeddingInProgress = false
+		}
+	}
+
 	// Update backupInfo when data changes
 	$effect(() => {
 		backupInfo = data.backupInfo
 		backupError = data.backupError || ''
+		embeddingIndex = data.embeddingIndex || { total: 0, remaining: 0, completed: 0 }
 	})
 </script>
 
@@ -164,26 +273,21 @@
 		method="POST"
 		action="?/updateAdminSettings"
 		onsubmit={updateAdminSettings}
-		class="flex flex-col gap-3"
-	>
+		class="flex flex-col gap-3">
 		<Checkbox
 			name="registrationAllowed"
 			bind:checked={settings.registrationAllowed}
 			legend="Allow Registrations"
 			size="sm"
-			color="primary"
-		>
-			Turn on site registration</Checkbox
-		>
+			color="primary">
+			Turn on site registration</Checkbox>
 		<Checkbox
 			name="requireLogin"
 			bind:checked={settings.requireLogin}
 			legend="Require Login"
 			size="sm"
-			color="primary"
-		>
-			Require authentication for all pages (private site mode)</Checkbox
-		>
+			color="primary">
+			Require authentication for all pages (private site mode)</Checkbox>
 		<InfoText>
 			When enabled, all visitors must log in to access any page. Public recipes and profiles will
 			still be hidden from unauthenticated users.
@@ -194,10 +298,8 @@
 				bind:checked={settings.oidcAutoProvision}
 				legend="OIDC Auto-Provisioning"
 				size="sm"
-				color="primary"
-			>
-				Automatically create accounts for new OIDC users</Checkbox
-			>
+				color="primary">
+				Automatically create accounts for new OIDC users</Checkbox>
 			<InfoText>
 				When enabled, users signing in via OIDC for the first time will have an account created
 				automatically. When disabled, only existing users can sign in via OIDC.
@@ -227,53 +329,108 @@
 				bind:checked={llmEnabled}
 				legend="Enable LLM Features"
 				size="sm"
-				color="primary"
-			>
+				color="primary">
 				Enable AI-assisted recipe parsing and image analysis
 			</Checkbox>
+
+			<Checkbox
+				name="semanticEnabled"
+				bind:checked={semanticEnabled}
+				legend="Enable Semantic Search"
+				size="sm"
+				color="primary"
+				disabled={!llmConfig.semanticEnabledByEnv || !llmConfig.semanticProviderAvailable}>
+				Enable embedding-based recipe search
+			</Checkbox>
+
+			{#if !llmConfig.semanticEnabledByEnv}
+				<InfoText>
+					Set <code>SEMANTIC_SEARCH_ENABLED=true</code> in your <code>.env</code> file to enable this
+					feature.
+				</InfoText>
+			{:else if !(llmConfig.semanticAvailableProviders || []).length}
+				<InfoText>
+					No embedding providers configured. Add <code>OPENAI_API_KEY</code> and/or
+					<code>OLLAMA_BASE_URL</code> in <code>.env</code>.
+				</InfoText>
+			{/if}
+
+			{#if semanticEnabled}
+				<div class="rounded-box border border-base-300 bg-base-200 p-4 space-y-2">
+					<p class="font-semibold">Semantic Embedding Index</p>
+					<InfoText>Generate embeddings for recipes missing vectors.</InfoText>
+					<InfoText>
+						Batches run from this page. If you navigate away, processing pauses after the current
+						batch and can be resumed later.
+					</InfoText>
+					{#if semanticEmbeddingProvider && !semanticProviderConfigured}
+						<InfoText>
+							Selected embedding provider is not configured in <code>.env</code>.
+						</InfoText>
+					{/if}
+					<p class="text-sm">
+						Indexed: {embeddingIndex.completed} / {embeddingIndex.total} ({embeddingIndex.remaining}
+						remaining)
+					</p>
+					<progress
+						class="progress progress-info w-full"
+						value={embeddingPercent}
+						max="100"
+						aria-label="Embedding generation progress"></progress>
+					<p class="text-xs text-base-content/70">{embeddingPercent}% complete</p>
+					<Button
+						type="button"
+						class="self-start w-auto"
+						onclick={generateEmbeddingBatch}
+						disabled={embeddingInProgress || !canGenerateEmbeddings}>
+						{embeddingInProgress ? 'Generating Embeddings...' : 'Generate Embeddings'}
+					</Button>
+					{#if embeddingBatchResult}
+						<p class="text-sm">
+							Processed: {embeddingBatchResult.processed}, Failed: {embeddingBatchResult.failed},
+							Remaining: {embeddingBatchResult.remaining}
+						</p>
+					{/if}
+					<FeedbackMessage message={embeddingFeedback} inline />
+				</div>
+			{/if}
 
 			{#if llmEnabled}
 				<Dropdown
 					name="llmProvider"
 					options={availableProviderOptions}
 					bind:selected={llmProvider}
-					legend="LLM Provider"
-				/>
+					legend="Text/Image Provider" />
 
 				<div class="flex flex-col gap-2">
 					<Dropdown
 						name="textModel"
 						options={textModelList}
 						bind:selected={textModelSelection}
-						legend="Text Model (for recipe parsing)"
-					/>
+						legend="Text Model (for recipe parsing)" />
 					{#if showCustomTextInput}
 						<Input
 							type="text"
 							id="customTextModel"
 							label="Custom Text Model"
 							placeholder="e.g. gpt-4o-2024-08-06"
-							bind:value={customTextModel}
-						/>
+							bind:value={customTextModel} />
 					{/if}
 				</div>
-
 				{#if supportsImages}
 					<div class="flex flex-col gap-2">
 						<Dropdown
 							name="imageModel"
 							options={imageModelList}
 							bind:selected={imageModelSelection}
-							legend="Image Model (for image analysis)"
-						/>
+							legend="Image Model (for image analysis)" />
 						{#if showCustomImageInput}
 							<Input
 								type="text"
 								id="customImageModel"
 								label="Custom Image Model"
 								placeholder="e.g. claude-3-5-sonnet-20241022"
-								bind:value={customImageModel}
-							/>
+								bind:value={customImageModel} />
 						{/if}
 					</div>
 				{:else}
@@ -281,6 +438,24 @@
 						{llmProvider === 'ollama' ? 'Ollama' : 'This provider'} does not support image analysis.
 					</InfoText>
 				{/if}
+
+				<div class="mt-2 border-t border-base-300 pt-3 flex flex-col gap-2">
+					<Dropdown
+						name="semanticEmbeddingProvider"
+						options={semanticProviderOptions}
+						bind:selected={semanticEmbeddingProvider}
+						legend="Embedding Provider" />
+					{#if semanticModelOptions.length > 0}
+						<Dropdown
+							name="semanticEmbeddingModel"
+							options={semanticModelOptions}
+							bind:selected={semanticEmbeddingModel}
+							legend="Embedding Model"
+							disabled={!semanticProviderConfigured} />
+					{:else}
+						<InfoText>Select an embedding provider to choose a model.</InfoText>
+					{/if}
+				</div>
 			{/if}
 
 			<footer class="flex flex-col gap-2">
@@ -338,8 +513,7 @@
 				onclick={createManualBackup}
 				disabled={backupInProgress}
 				class="self-start w-auto"
-				loading={backupInProgress}
-			>
+				loading={backupInProgress}>
 				{backupInProgress ? 'Creating Backup...' : 'Backup Now'}
 			</Button>
 			<FeedbackMessage message={backupFeedback} inline />
