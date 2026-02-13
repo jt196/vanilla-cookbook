@@ -189,11 +189,10 @@ ${recipeJson}
  * @returns {Promise<import('@langchain/core/language_models/chat_models').BaseChatModel>}
  */
 function resolveApiKey(provider) {
-	const generic = env.LLM_API_KEY
-	if (provider === 'openai') return env.OPENAI_API_KEY || generic
-	if (provider === 'anthropic') return env.ANTHROPIC_API_KEY || generic
-	if (provider === 'google') return env.GOOGLE_API_KEY || generic
-	return generic
+	if (provider === 'openai') return env.OPENAI_API_KEY
+	if (provider === 'anthropic') return env.ANTHROPIC_API_KEY
+	if (provider === 'google') return env.GOOGLE_API_KEY
+	return undefined
 }
 
 function makeProviderLoader({ provider, importPath, clientName, buildConfig }) {
@@ -272,9 +271,11 @@ async function invokeLLM({ provider, model, type, messages }) {
 	if (env.LLM_API_ENABLED !== 'true') throw new Error('LLM API is disabled')
 
 	const defaultProvider = env.LLM_PROVIDER || 'openai'
-	const effectiveProvider = provider || (type === 'image' ?
-		(env.LLM_IMAGE_PROVIDER || env.LLM_TEXT_PROVIDER || defaultProvider) :
-		(env.LLM_TEXT_PROVIDER || defaultProvider))
+	const effectiveProvider =
+		provider ||
+		(type === 'image'
+			? env.LLM_IMAGE_PROVIDER || env.LLM_TEXT_PROVIDER || defaultProvider
+			: env.LLM_TEXT_PROVIDER || defaultProvider)
 
 	const defaultTextModel = env.LLM_TEXT_MODEL || env.LLM_API_ENGINE_TEXT || 'gpt-3.5-turbo'
 	const defaultImageModel = env.LLM_IMAGE_MODEL || env.LLM_API_ENGINE_IMAGE || 'gpt-4o'
@@ -323,7 +324,9 @@ async function invokeLLM({ provider, model, type, messages }) {
 
 				// Find the last complete value (ends with ", or ", or ], or number, or true/false/null)
 				// Look for last occurrence of a complete JSON value followed by comma or end
-				const lastCompleteMatch = output.match(/^([\s\S]*(?:"\s*,|"\s*$|\]\s*,|\]\s*$|\d\s*,|\d\s*$|true\s*,|true\s*$|false\s*,|false\s*$|null\s*,|null\s*$))/);
+				const lastCompleteMatch = output.match(
+					/^([\s\S]*(?:"\s*,|"\s*$|\]\s*,|\]\s*$|\d\s*,|\d\s*$|true\s*,|true\s*$|false\s*,|false\s*$|null\s*,|null\s*$))/
+				)
 
 				if (lastCompleteMatch) {
 					output = lastCompleteMatch[1].trim()

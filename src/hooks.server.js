@@ -54,9 +54,9 @@ export const handle = async ({ event, resolve }) => {
 
 	// ---- Detect available LLM providers based on API keys ----
 	const availableProviders = []
-	if (env.OPENAI_API_KEY || env.LLM_API_KEY) availableProviders.push('openai')
+	if (env.OPENAI_API_KEY) availableProviders.push('openai')
 	if (env.ANTHROPIC_API_KEY) availableProviders.push('anthropic')
-	if (env.GOOGLE_API_KEY || env.GEMINI_API_KEY) availableProviders.push('google')
+	if (env.GOOGLE_API_KEY) availableProviders.push('google')
 	if (env.OLLAMA_BASE_URL) availableProviders.push('ollama')
 
 	const hasAnyApiKey = availableProviders.length > 0

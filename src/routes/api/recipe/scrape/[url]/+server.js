@@ -1,11 +1,8 @@
 import { parseURL } from '$lib/utils/parse/recipeParse'
 import { extractRecipeWithLLM } from '$lib/utils/ai'
-import { env } from '$env/dynamic/private'
+import { resolveAIConfig } from '$lib/server/aiHelpers'
 
-const OPENAI_API_KEY = env.OPENAI_API_KEY || 'sk-xxxxxxxxxxxxxxxxxxxxxxxxx'
-const LLM_API_ENABLED = env.LLM_API_ENABLED || 'false'
-
-export async function GET({ params }) {
+export async function GET({ params, locals }) {
 	const url = decodeURIComponent(params.url)
 	let scrapedRecipe = null
 	let html = ''
@@ -32,25 +29,31 @@ export async function GET({ params }) {
 	}
 
 	// AI fallback
-	if (OPENAI_API_KEY && html && LLM_API_ENABLED) {
+	if (html) {
 		console.log('Attempting AI scrape...')
 		try {
-			const aiRecipe = await extractRecipeWithLLM({
-				provider: 'openai',
-				type: 'html',
-				content: html,
-				url
-			})
-			if (
-				aiRecipe &&
-				typeof aiRecipe === 'object' &&
-				aiRecipe.name &&
-				aiRecipe.ingredients?.length > 0
-			) {
-				console.log('AI scrape success.')
-				return jsonResponse({ ...aiRecipe, _source: 'AI', _status: 'complete' }, 200)
+			const aiConfig = resolveAIConfig(locals, 'text')
+			if (!aiConfig.ok) {
+				console.warn('AI scrape skipped: AI is unavailable for this request.')
 			} else {
-				console.warn('AI scrape incomplete, returning partial regular scrape.')
+				const aiRecipe = await extractRecipeWithLLM({
+					provider: aiConfig.provider,
+					model: aiConfig.model || undefined,
+					type: 'html',
+					content: html,
+					url
+				})
+				if (
+					aiRecipe &&
+					typeof aiRecipe === 'object' &&
+					aiRecipe.name &&
+					aiRecipe.ingredients?.length > 0
+				) {
+					console.log('AI scrape success.')
+					return jsonResponse({ ...aiRecipe, _source: 'AI', _status: 'complete' }, 200)
+				} else {
+					console.warn('AI scrape incomplete, returning partial regular scrape.')
+				}
 			}
 		} catch (aiErr) {
 			console.error('AI scrape failed:', aiErr)
