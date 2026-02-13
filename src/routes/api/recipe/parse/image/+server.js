@@ -2,8 +2,14 @@ import { extractRecipeWithLLM } from '$lib/utils/ai'
 import { fileTypeFromBuffer } from 'file-type'
 import { json } from '@sveltejs/kit'
 import { resizeImageBuffer, stitchImages } from '$lib/utils/image/imageBackend'
+import { resolveAIConfig } from '$lib/server/aiHelpers'
 
-export async function POST({ request }) {
+export async function POST({ request, locals }) {
+	const aiConfig = resolveAIConfig(locals, 'image')
+	if (!aiConfig.ok) {
+		return aiConfig.response
+	}
+
 	const formData = await request.formData()
 	const files = formData.getAll('image')
 	const language = formData.get('language') || 'eng'
@@ -37,7 +43,8 @@ export async function POST({ request }) {
 				: await stitchImages(processedBuffers, { padding: 12, maxWidth: 1400 })
 
 		const recipe = await extractRecipeWithLLM({
-			provider: 'openai',
+			provider: aiConfig.provider,
+			model: aiConfig.model || undefined,
 			type: 'image',
 			imageBuffer: stitchedBuffer,
 			imageMimeType: 'image/png',

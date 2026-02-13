@@ -1,8 +1,14 @@
 import { generateRecipeWithLLM } from '$lib/utils/ai'
 import { json } from '@sveltejs/kit'
+import { resolveAIConfig } from '$lib/server/aiHelpers'
 
-export async function POST({ request }) {
+export async function POST({ request, locals }) {
 	try {
+		const aiConfig = resolveAIConfig(locals, 'text')
+		if (!aiConfig.ok) {
+			return aiConfig.response
+		}
+
 		const { type, content, userUnits = 'metric', language = 'eng' } = await request.json()
 
 		if (!type || !content) {
@@ -86,6 +92,8 @@ Return format:
 		// Use generateRecipeWithLLM for cleanup task
 		const response = await generateRecipeWithLLM({
 			prompt,
+			provider: aiConfig.provider,
+			model: aiConfig.model || undefined,
 			unitsPreference: userUnits,
 			language
 		})
