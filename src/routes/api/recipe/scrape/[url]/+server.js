@@ -30,12 +30,12 @@ export async function GET({ params, locals }) {
 
 	// AI fallback
 	if (html) {
-		console.log('Attempting AI scrape...')
 		try {
 			const aiConfig = resolveAIConfig(locals, 'text')
 			if (!aiConfig.ok) {
 				console.warn('AI scrape skipped: AI is unavailable for this request.')
 			} else {
+				console.log('Attempting AI scrape...')
 				const aiRecipe = await extractRecipeWithLLM({
 					provider: aiConfig.provider,
 					model: aiConfig.model || undefined,
@@ -56,7 +56,7 @@ export async function GET({ params, locals }) {
 				}
 			}
 		} catch (aiErr) {
-			console.error('AI scrape failed:', aiErr)
+			console.warn('AI scrape failed:', aiErr instanceof Error ? aiErr.message : String(aiErr))
 		}
 	}
 	// Return partial scrape if possible

@@ -2,219 +2,225 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "sqlite"
+  provider = "sqlite"
 }
 
 model Recipe {
-    uid                String             @id @default(uuid())
-    auth_user          AuthUser           @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId             String
-    parentRecipeId     String?
-    parentRecipe       Recipe?            @relation("RecipeForks", fields: [parentRecipeId], references: [uid], onDelete: SetNull)
-    forks              Recipe[]           @relation("RecipeForks")
-    rating             Float?
-    photo_hash         String?
-    on_favorites       Boolean?           @default(false)
-    photo              String?
-    scale              String?
-    ingredients          String?
-    ingredients_original String?
-    is_pinned          Boolean?           @default(false)
-    is_public          Boolean?           @default(false)
-    source             String?
-    total_time         String?
-    hash               String?
-    description        String?
-    source_url         String?
-    difficulty         String?
-    on_grocery_list    Boolean?           @default(false)
-    in_trash           Boolean?           @default(false)
-    directions           String?
-    directions_original  String?
-    photo_url          String?
-    cook_time          String?
-    name               String?
-    created            DateTime
-    notes              String?
-    photo_large        String?
-    image_url          String?
-    prep_time          String?
-    servings           String?
-    nutritional_info   String?
-    categories         RecipeCategory[]   @relation("RecipeToRecipeCategory")
-    photos             RecipePhoto[]
-    log                RecipeLog[]
-    shopping_list_item ShoppingListItem[]
-    favorites          RecipeFavorite[]
+  uid                  String             @id @default(uuid())
+  auth_user            AuthUser           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId               String
+  parentRecipeId       String?
+  parentRecipe         Recipe?            @relation("RecipeForks", fields: [parentRecipeId], references: [uid], onDelete: SetNull)
+  forks                Recipe[]           @relation("RecipeForks")
+  rating               Float?
+  photo_hash           String?
+  on_favorites         Boolean?           @default(false)
+  photo                String?
+  scale                String?
+  ingredients          String?
+  ingredients_original String?
+  is_pinned            Boolean?           @default(false)
+  is_public            Boolean?           @default(false)
+  source               String?
+  total_time           String?
+  hash                 String?
+  description          String?
+  source_url           String?
+  difficulty           String?
+  on_grocery_list      Boolean?           @default(false)
+  in_trash             Boolean?           @default(false)
+  directions           String?
+  directions_original  String?
+  photo_url            String?
+  cook_time            String?
+  name                 String?
+  created              DateTime
+  notes                String?
+  photo_large          String?
+  image_url            String?
+  prep_time            String?
+  servings             String?
+  nutritional_info     String?
+  embedding            Bytes?
+  embeddingModel       String?
+  embeddingVersion     Int                @default(0)
+  categories           RecipeCategory[]   @relation("RecipeToRecipeCategory")
+  photos               RecipePhoto[]
+  log                  RecipeLog[]
+  shopping_list_item   ShoppingListItem[]
+  favorites            RecipeFavorite[]
 }
 
 model RecipePhoto {
-    id        String  @id @default(uuid())
-    recipeUid String
-    url       String?
-    fileType  String?
-    isMain    Boolean @default(false)
-    notes     String?
-    recipe    Recipe  @relation(fields: [recipeUid], references: [uid], onDelete: Cascade)
+  id        String  @id @default(uuid())
+  recipeUid String
+  url       String?
+  fileType  String?
+  isMain    Boolean @default(false)
+  notes     String?
+  recipe    Recipe  @relation(fields: [recipeUid], references: [uid], onDelete: Cascade)
 }
 
 model RecipeFavorite {
-    id        String   @id @default(uuid())
-    userId    String
-    recipeUid String
-    created   DateTime @default(now())
-    user      AuthUser @relation(fields: [userId], references: [id], onDelete: Cascade)
-    recipe    Recipe   @relation(fields: [recipeUid], references: [uid], onDelete: Cascade)
+  id        String   @id @default(uuid())
+  userId    String
+  recipeUid String
+  created   DateTime @default(now())
+  user      AuthUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+  recipe    Recipe   @relation(fields: [recipeUid], references: [uid], onDelete: Cascade)
 
-    @@unique([userId, recipeUid])
+  @@unique([userId, recipeUid])
 }
 
 model RecipeLog {
-    id        String    @id @default(uuid())
-    recipeUid String
-    userId    String
-    cooked    DateTime  @default(now())
-    cookedEnd DateTime?
-    note      String?
-    scale     Float?    @default(1)
-    recipe    Recipe    @relation(fields: [recipeUid], references: [uid], onDelete: Cascade)
-    user      AuthUser  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id        String    @id @default(uuid())
+  recipeUid String
+  userId    String
+  cooked    DateTime  @default(now())
+  cookedEnd DateTime?
+  note      String?
+  scale     Float?    @default(1)
+  recipe    Recipe    @relation(fields: [recipeUid], references: [uid], onDelete: Cascade)
+  user      AuthUser  @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Category {
-    uid        String           @id @default(uuid())
-    userId     String // This is just a scalar field
-    user       AuthUser         @relation(fields: [userId], references: [id], onDelete: Cascade)
-    order_flag Int?
-    parent_uid String?
-    name       String?
-    parent     Category?        @relation("CategoryToCategory", fields: [parent_uid], references: [uid], onDelete: Cascade)
-    children   Category[]       @relation("CategoryToCategory")
-    recipes    RecipeCategory[]
+  uid        String           @id @default(uuid())
+  userId     String // This is just a scalar field
+  user       AuthUser         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  order_flag Int?
+  parent_uid String?
+  name       String?
+  parent     Category?        @relation("CategoryToCategory", fields: [parent_uid], references: [uid], onDelete: Cascade)
+  children   Category[]       @relation("CategoryToCategory")
+  recipes    RecipeCategory[]
 }
 
 // Join table for many to many relationship between Category and Recipe
 model RecipeCategory {
-    recipeUid   String
-    categoryUid String
-    recipe      Recipe   @relation("RecipeToRecipeCategory", fields: [recipeUid], references: [uid], onDelete: Cascade)
-    category    Category @relation(fields: [categoryUid], references: [uid], onDelete: Cascade)
+  recipeUid   String
+  categoryUid String
+  recipe      Recipe   @relation("RecipeToRecipeCategory", fields: [recipeUid], references: [uid], onDelete: Cascade)
+  category    Category @relation(fields: [categoryUid], references: [uid], onDelete: Cascade)
 
-    @@id([recipeUid, categoryUid])
+  @@id([recipeUid, categoryUid])
 }
 
 model ShoppingListItem {
-    uid          String        @id @default(uuid())
-    auth_user    AuthUser      @relation(fields: [userId], references: [id], onDelete: Cascade)
-    recipeUid    String?
-    recipe       Recipe?       @relation(fields: [recipeUid], references: [uid], onDelete: SetNull)
-    userId       String
-    name         String
-    quantity     Float?
-    unit         String?
-    purchased    Boolean       @default(false)
-    createdAt    DateTime      @default(now())
-    purchaseLogs PurchaseLog[]
+  uid          String        @id @default(uuid())
+  auth_user    AuthUser      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  recipeUid    String?
+  recipe       Recipe?       @relation(fields: [recipeUid], references: [uid], onDelete: SetNull)
+  userId       String
+  name         String
+  quantity     Float?
+  unit         String?
+  purchased    Boolean       @default(false)
+  createdAt    DateTime      @default(now())
+  purchaseLogs PurchaseLog[]
 }
 
 model PurchaseLog {
-    id                 String            @id @default(uuid())
-    userId             String
-    shoppingItemUid    String?
-    itemName           String
-    quantity           Float?
-    unit               String?
-    purchasedAt        DateTime          @default(now())
-    auth_user          AuthUser          @relation(fields: [userId], references: [id], onDelete: Cascade)
-    shoppingListItem   ShoppingListItem? @relation(fields: [shoppingItemUid], references: [uid], onDelete: SetNull)
+  id               String            @id @default(uuid())
+  userId           String
+  shoppingItemUid  String?
+  itemName         String
+  quantity         Float?
+  unit             String?
+  purchasedAt      DateTime          @default(now())
+  auth_user        AuthUser          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  shoppingListItem ShoppingListItem? @relation(fields: [shoppingItemUid], references: [uid], onDelete: SetNull)
 }
 
 model AuthUser {
-    id                 String             @id @default(uuid())
-    username           String             @unique
-    email              String?            @unique
-    about              String?
-    units              String?            @default("metric")
-    language           String             @default("eng")
-    theme              String             @default("dracula")
-    publicProfile      Boolean            @default(false)
-    publicRecipes      Boolean            @default(false)
-    skipSmallUnits     Boolean            @default(true)
-    ingSymbol          Boolean            @default(true)
-    ingMatch           Boolean            @default(false)
-    ingOriginal        Boolean            @default(false)
-    ingExtra           Boolean            @default(false)
-    isAdmin            Boolean            @default(false)
-    isRoot             Boolean            @default(false)
-    useCats            Boolean            @default(false)
-    recipes            Recipe[]
-    recipe_logs        RecipeLog[]
-    categories         Category[]
-    auth_session       AuthSession[]
-    auth_key           AuthKey[]
-    auth_account       AuthAccount[]
-    shopping_list_item ShoppingListItem[]
-    purchase_logs      PurchaseLog[]
-    recipe_favorites   RecipeFavorite[]
+  id                    String             @id @default(uuid())
+  username              String             @unique
+  email                 String?            @unique
+  about                 String?
+  units                 String?            @default("metric")
+  language              String             @default("eng")
+  theme                 String             @default("dracula")
+  publicProfile         Boolean            @default(false)
+  publicRecipes         Boolean            @default(false)
+  skipSmallUnits        Boolean            @default(true)
+  ingSymbol             Boolean            @default(true)
+  ingMatch              Boolean            @default(false)
+  ingOriginal           Boolean            @default(false)
+  ingExtra              Boolean            @default(false)
+  isAdmin               Boolean            @default(false)
+  isRoot                Boolean            @default(false)
+  useCats               Boolean            @default(false)
+  recipes               Recipe[]
+  recipe_logs           RecipeLog[]
+  categories            Category[]
+  auth_session          AuthSession[]
+  auth_key              AuthKey[]
+  auth_account          AuthAccount[]
+  shopping_list_item    ShoppingListItem[]
+  purchase_logs         PurchaseLog[]
+  recipe_favorites      RecipeFavorite[]
 
-    @@map("auth_user")
+  @@map("auth_user")
 }
 
 model AuthSession {
-    id             String   @id @unique
-    user_id        String
-    active_expires BigInt
-    idle_expires   BigInt
-    auth_user      AuthUser @relation(references: [id], fields: [user_id], onDelete: Cascade)
+  id             String   @id @unique
+  user_id        String
+  active_expires BigInt
+  idle_expires   BigInt
+  auth_user      AuthUser @relation(references: [id], fields: [user_id], onDelete: Cascade)
 
-    @@index([user_id])
-    @@map("auth_session")
+  @@index([user_id])
+  @@map("auth_session")
 }
 
 model AuthKey {
-    id              String   @id @unique
-    hashed_password String?
-    user_id         String
-    auth_user       AuthUser @relation(references: [id], fields: [user_id], onDelete: Cascade)
+  id              String   @id @unique
+  hashed_password String?
+  user_id         String
+  auth_user       AuthUser @relation(references: [id], fields: [user_id], onDelete: Cascade)
 
-    @@index([user_id])
-    @@map("auth_key")
+  @@index([user_id])
+  @@map("auth_key")
 }
 
 model AuthAccount {
-    id               String   @id @unique
-    provider_id      String
-    provider_user_id String
-    user_id          String
-    auth_user        AuthUser @relation(references: [id], fields: [user_id], onDelete: Cascade)
+  id               String   @id @unique
+  provider_id      String
+  provider_user_id String
+  user_id          String
+  auth_user        AuthUser @relation(references: [id], fields: [user_id], onDelete: Cascade)
 
-    @@unique([provider_id, provider_user_id])
-    @@index([user_id])
-    @@map("auth_account")
+  @@unique([provider_id, provider_user_id])
+  @@index([user_id])
+  @@map("auth_account")
 }
 
 model SiteSettings {
-    id                   Int      @id @default(autoincrement())
-    version              Float    @default(0)
-    registrationAllowed  Boolean  @default(false)
-    oidcAutoProvision    Boolean  @default(true) // Auto-create users on first OIDC login
-    // Site Access
-    requireLogin         Boolean  @default(false) // If true, all pages require authentication
-    // LLM Configuration
-    llmEnabled           Boolean  @default(false)
-    llmProvider          String?  // Default provider: 'openai' | 'anthropic' | 'google' | 'ollama'
-    llmTextModel         String?  // Model for text parsing
-    llmImageModel        String?  // Model for image parsing
+  id                  Int     @id @default(autoincrement())
+  version             Float   @default(0)
+  registrationAllowed Boolean @default(false)
+  oidcAutoProvision   Boolean @default(true) // Auto-create users on first OIDC login
+  // Site Access
+  requireLogin        Boolean @default(false) // If true, all pages require authentication
+  // LLM Configuration
+  llmEnabled          Boolean @default(false)
+  llmProvider         String? // Default provider: 'openai' | 'anthropic' | 'google' | 'ollama'
+  llmTextModel        String? // Model for text parsing
+  llmImageModel       String? // Model for image parsing
+  semanticEnabled     Boolean @default(false)
+  semanticEmbeddingProvider String? // Embedding provider: 'openai' | 'ollama'
+  semanticEmbeddingModel String? // Embedding model override
 }
 
 model Ingredient {
-    id          Int      @id @default(autoincrement())
-    name        String   @unique
-    gramsPerCup Float
-    createdAt   DateTime @default(now())
-    updatedAt   DateTime @updatedAt
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  gramsPerCup Float
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

@@ -4,7 +4,7 @@
 	/** @type {{data: any}} */
 	let { data } = $props()
 
-	const { recipes, categories, user } = data
+	const { recipes, categories, user, semanticAvailable } = data
 	const { viewingUserId, requestedUserId, publicProfile } = user
 
 	const viewMode = viewingUserId === requestedUserId ? 'owner' : 'social'
@@ -18,5 +18,7 @@
 	viewerUserId={viewingUserId}
 	ownerUserId={requestedUserId}
 	ownerUsername={publicProfile.username}
+	semanticEnabled={semanticAvailable}
 	{useCats}
-	feedKind="user" />
+	feedKind="user"
+/>

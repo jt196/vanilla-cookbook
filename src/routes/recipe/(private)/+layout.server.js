@@ -9,6 +9,10 @@ export const load = async ({ locals, params }) => {
 
 	return {
 		aiEnabled: ai.enabled ?? false,
+		aiProvider: ai.provider ?? null,
+		aiSelectedProvider: ai.selectedProvider ?? null,
+		aiSelectedProviderConfigured: ai.selectedProviderConfigured ?? false,
+		isAdmin: user?.isAdmin ?? false,
 		userUnits: units,
 		userLanguage: language
 	}

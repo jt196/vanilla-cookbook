@@ -1,6 +1,6 @@
 // NOTE: jest-dom adds handy assertions to Jest and it is recommended, but not required.
 import '@testing-library/jest-dom'
-import { sortState, searchKey } from '$lib/stores/recipeFilter'
+import { sortState, searchFields } from '$lib/stores/recipeFilter'
 import { get } from 'svelte/store'
 
 import { render, fireEvent, screen } from '@testing-library/svelte/svelte5'
@@ -68,8 +68,8 @@ describe('RecipeFilter component', () => {
 
 	beforeEach(() => {
 		// Reset stores to default values before each test
-		sortState.set({ key: 'created', direction: 'desc' })
-		searchKey.set('name')
+		sortState.set({ key: null, direction: null })
+		searchFields.set([])
 	})
 
 	it('renders without crashing', () => {
@@ -85,36 +85,21 @@ describe('RecipeFilter component', () => {
 		expect(input.value).toBe('test')
 	})
 
-	it('binds search dropdown correctly', async () => {
-		const { container } = render(RecipeFilter, { sortState: mockSortState })
-		const dropdown = container.querySelector('select[name="selections"]')
+	it('toggles cumulative search fields correctly', async () => {
+		const { getByLabelText } = render(RecipeFilter, { sortState: mockSortState })
+		await fireEvent.click(getByLabelText('Search fields'))
 
-		await fireEvent.change(dropdown, { target: { value: 'ingredients' } })
-		expect(dropdown.value).toBe('ingredients')
-	})
+		const nameCheckbox = getByLabelText('Name')
+		const ingredientsCheckbox = getByLabelText('Ingredients')
 
-	it('defaults to "name" in the search dropdown', () => {
-		const { container } = render(RecipeFilter, { sortState: mockSortState })
-		const dropdown = container.querySelector('select[name="selections"]')
-		expect(dropdown.value).toBe('name')
-	})
+		await fireEvent.click(nameCheckbox)
+		expect(get(searchFields)).toEqual(['name'])
 
-	it('updates dropdown value correctly on name selection', async () => {
-		const { container } = render(RecipeFilter, { sortState: mockSortState })
-		const dropdown = container.querySelector('select[name="selections"]')
+		await fireEvent.click(ingredientsCheckbox)
+		expect(get(searchFields)).toEqual(['name', 'ingredients'])
 
-		await fireEvent.select(dropdown, { target: { value: 'name' } })
-
-		expect(dropdown.value).toBe('name')
-	})
-
-	it('updates dropdown value correctly on ingredients selection', async () => {
-		const { container } = render(RecipeFilter, { sortState: mockSortState })
-		const dropdown = container.querySelector('select[name="selections"]')
-
-		await fireEvent.change(dropdown, { target: { value: 'ingredients' } })
-
-		expect(dropdown.value).toBe('ingredients')
+		await fireEvent.click(nameCheckbox)
+		expect(get(searchFields)).toEqual(['ingredients'])
 	})
 
 	it('highlights the correct button based on activeButton prop', () => {
@@ -139,7 +124,7 @@ describe('RecipeFilter component', () => {
 		const updatedSortState = get(sortState)
 
 		// Check if the sortState store has been updated correctly
-		expect(updatedSortState).toEqual({ key: 'created', direction: 'asc' })
+		expect(updatedSortState).toEqual({ key: 'created', direction: 'desc' })
 	})
 
 	it('updates sort state correctly on title button click', async () => {
@@ -156,7 +141,7 @@ describe('RecipeFilter component', () => {
 		const updatedSortState = get(sortState)
 
 		// Check if the sortState store has been updated correctly
-		expect(updatedSortState).toEqual({ key: 'name', direction: 'asc' }) // or 'desc', depending on your implementation
+		expect(updatedSortState).toEqual({ key: 'name', direction: 'desc' })
 	})
 })
 

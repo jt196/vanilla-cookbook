@@ -3,13 +3,15 @@
 	import Favourite from '$lib/components/svg/Favourite.svelte'
 	import Check from '$lib/components/svg/Check.svelte'
 	import Burger from '$lib/components/svg/Burger.svelte'
+	import Settings from '$lib/components/svg/Settings.svelte'
 	import Input from '$lib/components/ui/Form/Input.svelte'
-	import Dropdown from '$lib/components/ui/Form/Dropdown.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
+	import Checkbox from '$lib/components/ui/Form/Checkbox.svelte'
+	import DropdownMenu from '$lib/components/ui/DropdownMenu.svelte'
 	import {
 		sortState,
 		searchString,
-		searchKey,
+		searchFields,
 		cookedFilter,
 		favouriteFilter
 	} from '$lib/stores/recipeFilter'
@@ -30,10 +32,27 @@
 
 	function updateSort(key) {
 		sortState.update((current) => {
-			// Toggle direction if the same key is clicked again, otherwise set to 'asc'
-			const direction = current.key === key && current.direction === 'asc' ? 'desc' : 'asc'
-			return { key, direction }
+			// 3-state cycle per key:
+			// unselected -> desc -> asc -> unselected
+			if (current.key !== key || !current.direction) {
+				return { key, direction: 'desc' }
+			}
+			if (current.direction === 'desc') {
+				return { key, direction: 'asc' }
+			}
+			return { key: null, direction: null }
 		})
+	}
+
+	function toggleSearchField(field) {
+		searchFields.update((fields) => {
+			if (fields.includes(field)) return fields.filter((f) => f !== field)
+			return [...fields, field]
+		})
+	}
+
+	function hasField(field) {
+		return $searchFields.includes(field)
 	}
 </script>
 
@@ -67,21 +86,56 @@
 					color="info"
 					useLabelAsPlaceholder={false} />
 			</div>
-			<div class="tooltip shrink-0" data-tip="Choose Search Key">
-				<Dropdown
-					name="selections"
-					bind:selected={$searchKey}
-					options={[
-						{ value: 'name', label: 'Name' },
-						{ value: 'ingredients', label: 'Ingredients' },
-						{ value: 'source', label: 'Source' },
-						{ value: 'notes', label: 'Notes' }
-					]}
-					size="sm"
-					color="info"
-					fullWidth={false}
-					class="w-35"
-					aria-label="selections" />
+			<div class="flex items-center gap-1 shrink-0">
+				<DropdownMenu
+					align="end"
+					summaryClass="btn btn-sm btn-outline btn-info"
+					summaryAriaLabel="Search fields"
+					contentClass="menu dropdown-content bg-base-100 rounded-box z-[1] w-56 p-3 shadow-sm">
+					{#snippet trigger()}
+						<Settings width="14px" height="14px" />
+						{#if $searchFields.length > 0}
+							<span class="badge badge-info badge-xs">{$searchFields.length}</span>
+						{/if}
+					{/snippet}
+					{#snippet children()}
+						<Checkbox
+							checked={hasField('name')}
+							onchange={() => toggleSearchField('name')}
+							color="info"
+							size="sm"
+							class="mb-1"
+							fullWidth={false}>
+							Name
+						</Checkbox>
+						<Checkbox
+							checked={hasField('ingredients')}
+							onchange={() => toggleSearchField('ingredients')}
+							color="info"
+							size="sm"
+							class="mb-1"
+							fullWidth={false}>
+							Ingredients
+						</Checkbox>
+						<Checkbox
+							checked={hasField('source')}
+							onchange={() => toggleSearchField('source')}
+							color="info"
+							size="sm"
+							class="mb-1"
+							fullWidth={false}>
+							Source
+						</Checkbox>
+						<Checkbox
+							checked={hasField('notes')}
+							onchange={() => toggleSearchField('notes')}
+							color="info"
+							size="sm"
+							fullWidth={false}>
+							Notes
+						</Checkbox>
+					{/snippet}
+				</DropdownMenu>
 			</div>
 		</div>
 
@@ -111,37 +165,52 @@
 				{/if}
 			</div>
 
-			<!-- Sort buttons -->
 			<div class="flex gap-1">
-				<Button
-					style={$sortState.key === 'created' ? 'standard' : 'outline'}
-					class="tooltip px-2 text-xs"
-					size="sm"
-					color="info"
-					data-tip="Sort by Date"
-					onclick={() => updateSort('created')}>
-					Date <SortAscDesc sort={$sortState.key === 'created' ? $sortState.direction : ''} />
-				</Button>
-				<Button
-					style={$sortState.key === 'name' ? 'standard' : 'outline'}
-					class="tooltip px-2 text-xs"
-					size="sm"
-					color="info"
-					data-tip="Sort by Name"
-					onclick={() => updateSort('name')}>
-					Title <SortAscDesc sort={$sortState.key === 'name' ? $sortState.direction : ''} />
-				</Button>
-				{#if viewMode === 'owner'}
-					<Button
-						style={$sortState.key === 'rating' ? 'standard' : 'outline'}
-						class="tooltip px-2 text-xs"
-						size="sm"
-						color="info"
-						data-tip="Sort by Rating"
-						onclick={() => updateSort('rating')}>
-						Rating <SortAscDesc sort={$sortState.key === 'rating' ? $sortState.direction : ''} />
-					</Button>
-				{/if}
+				<DropdownMenu
+					align="end"
+					summaryClass="btn btn-sm btn-outline btn-info"
+					summaryAriaLabel="Sort options"
+					contentClass="menu dropdown-content bg-base-100 rounded-box z-[1] w-48 p-2 shadow-sm">
+					{#snippet trigger()}
+						<SortAscDesc
+							sort={$sortState.direction}
+							propClass="h-4 w-4 fill-current text-info-content" />
+					{/snippet}
+					{#snippet children()}
+						<Button
+							type="button"
+							style={$sortState.key === 'created' && !!$sortState.direction ? 'standard' : 'ghost'}
+							class="justify-between"
+							size="sm"
+							color="info"
+							onclick={() => updateSort('created')}>
+							Date
+							<SortAscDesc sort={$sortState.key === 'created' ? $sortState.direction : null} />
+						</Button>
+						<Button
+							type="button"
+							style={$sortState.key === 'name' && !!$sortState.direction ? 'standard' : 'ghost'}
+							class="justify-between"
+							size="sm"
+							color="info"
+							onclick={() => updateSort('name')}>
+							Title
+							<SortAscDesc sort={$sortState.key === 'name' ? $sortState.direction : null} />
+						</Button>
+						{#if viewMode === 'owner'}
+							<Button
+								type="button"
+								style={$sortState.key === 'rating' && !!$sortState.direction ? 'standard' : 'ghost'}
+								class="justify-between"
+								size="sm"
+								color="info"
+								onclick={() => updateSort('rating')}>
+								Rating
+								<SortAscDesc sort={$sortState.key === 'rating' ? $sortState.direction : null} />
+							</Button>
+						{/if}
+					{/snippet}
+				</DropdownMenu>
 			</div>
 		</div>
 	</div>

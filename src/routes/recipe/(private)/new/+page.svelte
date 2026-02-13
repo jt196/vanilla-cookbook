@@ -38,7 +38,17 @@
 
 	let { data } = $props()
 
-	let { apiKeyPresent, aiEnabled, imageAllowed, userUnits, userLanguage } = $state(data)
+	let {
+		apiKeyPresent,
+		aiEnabled,
+		aiProvider,
+		aiSelectedProvider,
+		aiSelectedProviderConfigured,
+		isAdmin,
+		imageAllowed,
+		userUnits,
+		userLanguage
+	} = $state(data)
 
 	/**
 	 * Handles the scraping event.
@@ -119,18 +129,24 @@
 	{initialMode}
 	{imageAllowed}
 	{userUnits}
-	{userLanguage} />
+	{userLanguage}
+/>
 
 <RecipeForm
 	bind:recipe
 	onSubmit={handleCreateRecipe}
 	cancelHref="/"
 	{aiEnabled}
+	{aiProvider}
+	{aiSelectedProvider}
+	{aiSelectedProviderConfigured}
+	{isAdmin}
 	{userUnits}
 	{userLanguage}
 	{selectedFiles}
 	bind:saveImageUrl
-	onSelectedFilesChange={handleSelectedFilesChange} />
+	onSelectedFilesChange={handleSelectedFilesChange}
+/>
 
 {#if feedbackMessage}
 	<FeedbackMessage message={feedbackMessage} type={feedbackType} timeout={4000} />

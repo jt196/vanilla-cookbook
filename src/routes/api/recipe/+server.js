@@ -10,6 +10,7 @@ import { saveFile, validImageTypes } from '$lib/utils/import/importHelpers'
 import { fileTypeFromBuffer } from 'file-type'
 import { requireAuth, jsonSuccess, jsonError } from '$lib/server/authHelpers'
 import { normalizeToString } from '$lib/utils/normalize'
+import { regenerateRecipeEmbedding } from '$lib/server/semanticEmbedding'
 
 export async function POST({ request, locals, url }) {
 	const user = requireAuth(locals)
@@ -128,6 +129,19 @@ export async function POST({ request, locals, url }) {
 				removeRecipePhotoEntry(photoEntry.id)
 			}
 		}
+	}
+
+	// Run semantic embedding update in background (non-blocking).
+	if (locals.site?.semantic?.enabled) {
+		const preferredEmbeddingProvider = locals.site?.semantic?.provider || null
+		const preferredEmbeddingModel = locals.site?.semantic?.model || null
+		regenerateRecipeEmbedding(
+			recipe.uid,
+			preferredEmbeddingProvider,
+			preferredEmbeddingModel
+		).catch((error) => {
+			console.error('Failed background embedding update after recipe create:', recipe.uid, error)
+		})
 	}
 
 	return jsonSuccess({ uid: recipe.uid })

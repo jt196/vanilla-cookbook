@@ -1,4 +1,5 @@
 import { getBackupInfo } from '$lib/server/backups'
+import { prisma } from '$lib/server/prisma'
 
 export const load = async ({ parent, locals }) => {
 	// Get parent data (settings, user)
@@ -13,6 +14,13 @@ export const load = async ({ parent, locals }) => {
 		textModel: null,
 		imageModel: null,
 		imageAllowed: false
+	}
+	const semantic = locals.site?.semantic ?? {
+		enabled: false,
+		enabledByEnv: false,
+		enabledBySite: false,
+		providerAvailable: false,
+		provider: null
 	}
 
 	// Get the raw DB settings for the form
@@ -33,14 +41,43 @@ export const load = async ({ parent, locals }) => {
 		dbEnabled: dbSettings.llmEnabled ?? false,
 		dbProvider: dbSettings.llmProvider ?? null,
 		dbTextModel: dbSettings.llmTextModel ?? null,
-		dbImageModel: dbSettings.llmImageModel ?? null
+		dbImageModel: dbSettings.llmImageModel ?? null,
+		dbSemanticEnabled: dbSettings.semanticEnabled ?? false,
+		dbSemanticEmbeddingProvider: dbSettings.semanticEmbeddingProvider ?? null,
+		dbSemanticEmbeddingModel: dbSettings.semanticEmbeddingModel ?? null,
+		semanticEnabledByEnv: semantic.enabledByEnv,
+		semanticProviderAvailable: semantic.providerAvailable,
+		semanticProvider: semantic.provider,
+		semanticAvailableProviders: semantic.availableProviders ?? [],
+		semanticSelectedProvider: semantic.selectedProvider ?? null,
+		semanticSelectedProviderConfigured: semantic.selectedProviderConfigured ?? false,
+		semanticModel: semantic.model ?? null
 	}
 
 	try {
-		const backupInfo = await getBackupInfo()
+		const [backupInfo, embeddingRemaining, embeddingTotal] = await Promise.all([
+			getBackupInfo(),
+			prisma.recipe.count({
+				where: {
+					embedding: null,
+					in_trash: false
+				}
+			}),
+			prisma.recipe.count({
+				where: {
+					in_trash: false
+				}
+			})
+		])
+		const embeddingIndex = {
+			total: embeddingTotal,
+			remaining: embeddingRemaining,
+			completed: Math.max(embeddingTotal - embeddingRemaining, 0)
+		}
 		return {
 			...parentData,
 			backupInfo,
+			embeddingIndex,
 			llmConfig,
 			oauth
 		}
@@ -50,6 +87,7 @@ export const load = async ({ parent, locals }) => {
 			...parentData,
 			backupInfo: null,
 			backupError: `Failed to load backup information: ${error.message}`,
+			embeddingIndex: { total: 0, remaining: 0, completed: 0 },
 			llmConfig,
 			oauth
 		}

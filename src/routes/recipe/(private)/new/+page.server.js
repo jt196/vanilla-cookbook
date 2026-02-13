@@ -6,6 +6,10 @@ export const load = async ({ locals }) => {
 	return {
 		apiKeyPresent: ai.hasAnyApiKey ?? false,
 		aiEnabled: ai.enabled ?? false,
+		aiProvider: ai.provider ?? null,
+		aiSelectedProvider: ai.selectedProvider ?? null,
+		aiSelectedProviderConfigured: ai.selectedProviderConfigured ?? false,
+		isAdmin: locals.user?.isAdmin ?? false,
 		imageAllowed: ai.imageAllowed ?? false,
 		userUnits: units,
 		userLanguage: language

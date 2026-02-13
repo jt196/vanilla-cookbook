@@ -5,6 +5,8 @@ import { dbSeeded } from '$lib/utils/seed/seedHelpers'
 import { env } from '$env/dynamic/private'
 import { getClientIp, makeLimiter } from '$lib/server/rateLimit'
 import { redirect } from '@sveltejs/kit'
+import { resolveEmbeddingProvider } from '$lib/utils/embeddings'
+import { getAvailableAiProviders, resolveProviderSelection } from '$lib/utils/llmModels'
 
 const envTrue = (v) => typeof v === 'string' && /^(true|1|yes|on)$/i.test(v.trim())
 
@@ -53,18 +55,14 @@ export const handle = async ({ event, resolve }) => {
 	}
 
 	// ---- Detect available LLM providers based on API keys ----
-	const availableProviders = []
-	if (env.OPENAI_API_KEY) availableProviders.push('openai')
-	if (env.ANTHROPIC_API_KEY) availableProviders.push('anthropic')
-	if (env.GOOGLE_API_KEY) availableProviders.push('google')
-	if (env.OLLAMA_BASE_URL) availableProviders.push('ollama')
-
+	const availableProviders = getAvailableAiProviders(env)
 	const hasAnyApiKey = availableProviders.length > 0
 
 	// Site-wide bits (do once here)
 	const seeded = await dbSeeded(prisma)
 	let settings
 	let ai
+	let semantic
 
 	if (seeded) {
 		const s = await prisma.siteSettings.findFirst()
@@ -78,21 +76,74 @@ export const handle = async ({ event, resolve }) => {
 		// Only enabled if DB says so AND we have API keys
 		const llmEnabled = hasAnyApiKey && (s?.llmEnabled ?? envTrue(env.LLM_API_ENABLED))
 
-		// Provider: DB setting → env fallback → first available
-		const llmProvider = s?.llmProvider || env.LLM_PROVIDER || availableProviders[0] || 'openai'
+		// Provider: DB/env preference, but fall back to any configured provider
+		// when the preferred one is unavailable (e.g. OpenAI selected but only Anthropic key exists).
+		const preferredProvider = s?.llmProvider || env.LLM_PROVIDER || null
+		const {
+			provider: llmProvider,
+			selectedProvider,
+			selectedProviderConfigured
+		} = resolveProviderSelection(preferredProvider, availableProviders)
 
-		// Models: DB setting → env fallback
-		const textModel = s?.llmTextModel || env.LLM_TEXT_MODEL || null
-		const imageModel = s?.llmImageModel || env.LLM_IMAGE_MODEL || null
+		if (selectedProvider && !selectedProviderConfigured) {
+			if (llmProvider) {
+				console.warn(
+					`AI provider "${selectedProvider}" is selected but not configured in environment. Falling back to "${llmProvider}".`
+				)
+			} else {
+				console.warn(
+					`AI provider "${selectedProvider}" is selected but not configured in environment, and no fallback provider is available.`
+				)
+			}
+		}
+
+		// Models: use configured values only when provider preference is still valid.
+		// If we had to auto-fallback providers, clear models to let provider defaults apply.
+		const usingPreferredProvider = llmProvider && llmProvider === preferredProvider
+		const textModel = usingPreferredProvider ? s?.llmTextModel || env.LLM_TEXT_MODEL || null : null
+		const imageModel = usingPreferredProvider
+			? s?.llmImageModel || env.LLM_IMAGE_MODEL || null
+			: null
 
 		ai = {
 			enabled: llmEnabled,
 			hasAnyApiKey,
 			availableProviders,
 			provider: llmProvider,
+			selectedProvider,
+			selectedProviderConfigured,
 			textModel,
 			imageModel,
 			imageAllowed: llmProvider !== 'ollama'
+		}
+
+		// Semantic config:
+		// - env flag is hard capability gate
+		// - site setting (when present) can disable it at runtime
+		// - provider currently supported: OpenAI embeddings or Ollama embeddings
+		const semanticEnabledByEnv = envTrue(env.SEMANTIC_SEARCH_ENABLED)
+		const semanticProviderOptions = []
+		if (env.OPENAI_API_KEY) semanticProviderOptions.push('openai')
+		if (env.OLLAMA_BASE_URL) semanticProviderOptions.push('ollama')
+		const preferredSemanticProvider =
+			s?.semanticEmbeddingProvider || env.EMBEDDING_PROVIDER || llmProvider || null
+		const semanticProvider = resolveEmbeddingProvider(preferredSemanticProvider)
+		const semanticProviderAvailable = !!semanticProvider
+		const semanticEnabledBySite = s?.semanticEnabled ?? false
+		const semanticEmbeddingModel = s?.semanticEmbeddingModel || env.EMBEDDING_MODEL || null
+
+		semantic = {
+			enabled: semanticEnabledByEnv && semanticProviderAvailable && semanticEnabledBySite,
+			enabledByEnv: semanticEnabledByEnv,
+			enabledBySite: semanticEnabledBySite,
+			providerAvailable: semanticProviderAvailable,
+			provider: semanticProvider,
+			availableProviders: semanticProviderOptions,
+			selectedProvider: preferredSemanticProvider,
+			selectedProviderConfigured: !!preferredSemanticProvider
+				? semanticProviderOptions.includes(preferredSemanticProvider)
+				: false,
+			model: semanticEmbeddingModel
 		}
 
 		// normalize onto settings so everyone just reads settings.*
@@ -105,9 +156,22 @@ export const handle = async ({ event, resolve }) => {
 			hasAnyApiKey,
 			availableProviders,
 			provider: null,
+			selectedProvider: null,
+			selectedProviderConfigured: false,
 			textModel: null,
 			imageModel: null,
 			imageAllowed: false
+		}
+		semantic = {
+			enabled: false,
+			enabledByEnv: envTrue(env.SEMANTIC_SEARCH_ENABLED),
+			enabledBySite: false,
+			providerAvailable: !!resolveEmbeddingProvider(null),
+			provider: resolveEmbeddingProvider(null),
+			availableProviders: [],
+			selectedProvider: null,
+			selectedProviderConfigured: false,
+			model: env.EMBEDDING_MODEL || null
 		}
 	}
 
@@ -115,7 +179,8 @@ export const handle = async ({ event, resolve }) => {
 		dbSeeded: seeded,
 		settings,
 		oauth,
-		ai
+		ai,
+		semantic
 	}
 
 	// ---- Enforce login requirement if enabled ----
