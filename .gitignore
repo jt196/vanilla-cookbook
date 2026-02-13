@@ -38,6 +38,9 @@ playwright-report/
 # ───── Docker & local infra ─────────────────────────
 docker-compose.yml
 
+# ───── Development plans ─────────────────────────────────
+/plans/
+
 # ───── Allowlist ────────────────────────────────────
 !uploads/**/.gitkeep
 !.env.template

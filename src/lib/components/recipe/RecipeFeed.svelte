@@ -1,15 +1,15 @@
 <script>
-import { goto, invalidateAll } from '$app/navigation'
+	import { goto, invalidateAll } from '$app/navigation'
 	import { navigating } from '$app/stores'
 	import { filterSearch } from '$lib/utils/filters'
 	import { sortRecipesByKey } from '$lib/utils/sorting'
 	import RecipeFilter from '$lib/components/recipe/RecipeFilter.svelte'
 	import RecipeList from '$lib/components/recipe/RecipeList.svelte'
 	import Sidebar from '$lib/components/ui/Sidebar.svelte'
-import CategoryTree from '$lib/components/category/CategoryTree.svelte'
-import Button from '$lib/components/ui/Button.svelte'
+	import CategoryTree from '$lib/components/category/CategoryTree.svelte'
+	import Button from '$lib/components/ui/Button.svelte'
 	import Spinner from '$lib/components/ui/Spinner.svelte'
-import CopyRecipeDialog from '$lib/components/recipe/CopyRecipeDialog.svelte'
+	import CopyRecipeDialog from '$lib/components/recipe/CopyRecipeDialog.svelte'
 	import { duplicateRecipe } from '$lib/utils/crud'
 	import {
 		sortState,
@@ -40,6 +40,7 @@ import CopyRecipeDialog from '$lib/components/recipe/CopyRecipeDialog.svelte'
 	let isCopying = $state(false)
 	let copyDialogOpen = $state(false)
 	let copiedRecipe = $state(null)
+	let pendingCopyUid = $state(null)
 	let copyMessage = $state(null)
 
 	function handleCategoryClick(category) {
@@ -51,7 +52,12 @@ import CopyRecipeDialog from '$lib/components/recipe/CopyRecipeDialog.svelte'
 	}
 
 	function handleRecipeFavourited(uid, nextState, recipeItem) {
-		if (feedKind === 'user' && recipeItem?.userId && recipeItem.userId !== viewerUserId && !nextState) {
+		if (
+			feedKind === 'user' &&
+			recipeItem?.userId &&
+			recipeItem.userId !== viewerUserId &&
+			!nextState
+		) {
 			recipes = recipes.filter((recipe) => recipe.uid !== uid)
 			return
 		}
@@ -69,11 +75,23 @@ import CopyRecipeDialog from '$lib/components/recipe/CopyRecipeDialog.svelte'
 
 	async function handleDuplicateRequested(uid) {
 		if (!viewerUserId) return
-		isCopying = true
+		if (isCopying) return
+		pendingCopyUid = uid
+		copiedRecipe = null
 		copyMessage = null
-		const newUid = await duplicateRecipe(uid)
+		copyDialogOpen = true
+	}
+
+	async function runDuplicate(action = 'stay') {
+		if (isCopying) return
+		if (!pendingCopyUid) return
+
+		copyDialogOpen = false
+		isCopying = true
+		const newUid = await duplicateRecipe(pendingCopyUid)
 		if (!newUid) {
 			isCopying = false
+			pendingCopyUid = null
 			copyMessage = 'Recipe already copied.'
 			copyDialogOpen = true
 			return
@@ -90,11 +108,19 @@ import CopyRecipeDialog from '$lib/components/recipe/CopyRecipeDialog.svelte'
 		}
 
 		isCopying = false
-		copyDialogOpen = true
+		pendingCopyUid = null
+
+		if (action === 'view') {
+			handleCopyView()
+			return
+		}
+
+		handleCopyStay()
 	}
 
 	function handleCopyCancel() {
 		copyDialogOpen = false
+		pendingCopyUid = null
 		copiedRecipe = null
 		copyMessage = null
 	}
@@ -112,6 +138,7 @@ import CopyRecipeDialog from '$lib/components/recipe/CopyRecipeDialog.svelte'
 		if (!copiedRecipe?.uid) return
 		const targetUid = copiedRecipe.uid
 		copyDialogOpen = false
+		pendingCopyUid = null
 		copiedRecipe = null
 		copyMessage = null
 		invalidateAll().then(() => goto(`/recipe/${targetUid}/view/`))
@@ -217,10 +244,11 @@ import CopyRecipeDialog from '$lib/components/recipe/CopyRecipeDialog.svelte'
 			</label>
 		</div>
 		<CategoryTree
-			categories={categories}
+			{categories}
 			onCategoryClick={handleCategoryClick}
 			{selectedCategoryUids}
-			on:clearCategory={clearCategory} />
+			on:clearCategory={clearCategory}
+		/>
 	</Sidebar>
 {/if}
 
@@ -237,14 +265,16 @@ import CopyRecipeDialog from '$lib/components/recipe/CopyRecipeDialog.svelte'
 <div
 	class="transition-all duration-300"
 	class:md:ml-64={sidebarOpen && useCats && viewMode === 'owner'}
-	class:max-md:ml-0={sidebarOpen}>
+	class:max-md:ml-0={sidebarOpen}
+>
 	<RecipeFilter
 		on:sort={handleSort}
 		{toggleSidebar}
 		viewOnly={false}
-		useCats={useCats}
+		{useCats}
 		username={ownerUsername}
-		viewMode={viewMode} />
+		{viewMode}
+	/>
 	<Spinner visible={isLoading || !!$navigating} spinnerContent="Loading" />
 	<RecipeList
 		{filteredRecipes}
@@ -252,15 +282,17 @@ import CopyRecipeDialog from '$lib/components/recipe/CopyRecipeDialog.svelte'
 		{viewerUserId}
 		recipeFavourited={handleRecipeFavourited}
 		recipeRatingChanged={handleRecipeRatingChanged}
-		onDuplicate={handleDuplicateRequested} />
+		onDuplicate={handleDuplicateRequested}
+	/>
 </div>
 
 <CopyRecipeDialog
 	bind:isOpen={copyDialogOpen}
 	onCancel={handleCopyCancel}
-	onStay={handleCopyStay}
-	onView={handleCopyView}
-	viewDisabled={!copiedRecipe?.uid}
-	message={copyMessage} />
+	onStay={() => runDuplicate('stay')}
+	onView={() => runDuplicate('view')}
+	viewDisabled={false}
+	message={copyMessage}
+/>
 
 <Spinner visible={isCopying} spinnerContent="Copying Recipe" />
