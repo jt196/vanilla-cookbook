@@ -14,9 +14,12 @@ export function resolveAIConfig(locals, type = 'text') {
 		return { ok: false, response: jsonError(503, 'AI features are disabled.') }
 	}
 
-	const provider = ai.provider
+	const provider = type === 'image' ? ai.imageProvider || ai.provider : ai.provider
 	if (!provider) {
-		return { ok: false, response: jsonError(500, 'No AI provider configured.') }
+		return {
+			ok: false,
+			response: jsonError(500, `No AI ${type} provider configured.`)
+		}
 	}
 
 	const availableProviders = ai.availableProviders || []
@@ -37,7 +40,7 @@ export function resolveAIConfig(locals, type = 'text') {
 		}
 	}
 
-	const model = type === 'image' ? ai.imageModel || ai.textModel || null : ai.textModel || null
+	const model = type === 'image' ? ai.imageModel || null : ai.textModel || null
 
 	return { ok: true, provider, model }
 }

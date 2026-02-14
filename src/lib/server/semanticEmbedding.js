@@ -1,24 +1,8 @@
 import { prisma } from '$lib/server/prisma'
+import { semanticEmbeddingJobsEnabled } from '$lib/server/semanticHelpers'
 import { env } from '$env/dynamic/private'
-import {
-	getEmbedding,
-	prepareRecipeText,
-	serializeEmbedding,
-	resolveEmbeddingProvider,
-	resolveEmbeddingModel
-} from '$lib/utils/embeddings'
-
-const envTrue = (v) => typeof v === 'string' && /^(true|1|yes|on)$/i.test(v.trim())
-
-/**
- * Check whether semantic embedding jobs should run.
- *
- * @returns {boolean}
- */
-export function semanticEmbeddingJobsEnabled(preferredProvider = null) {
-	if (!envTrue(env.SEMANTIC_SEARCH_ENABLED)) return false
-	return !!resolveEmbeddingProvider(preferredProvider)
-}
+import { resolveEmbeddingProvider, resolveEmbeddingModel } from '$lib/utils/llmModels'
+import { getEmbedding, prepareRecipeText, serializeEmbedding } from '$lib/utils/embeddings'
 
 /**
  * Regenerate embedding for a single recipe by uid.
@@ -54,7 +38,7 @@ export async function regenerateRecipeEmbedding(
 	const embedding = await getEmbedding(text, preferredProvider, preferredModel)
 	if (!embedding) return false
 
-	const provider = resolveEmbeddingProvider(preferredProvider)
+	const provider = resolveEmbeddingProvider(preferredProvider, env)
 	if (!provider) return false
 
 	await prisma.recipe.update({

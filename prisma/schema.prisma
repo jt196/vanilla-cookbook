@@ -210,10 +210,11 @@ model SiteSettings {
   // LLM Configuration
   llmEnabled          Boolean @default(false)
   llmProvider         String? // Default provider: 'openai' | 'anthropic' | 'google' | 'ollama'
+  llmImageProvider    String? // Optional separate provider for image parsing
   llmTextModel        String? // Model for text parsing
   llmImageModel       String? // Model for image parsing
   semanticEnabled     Boolean @default(false)
-  semanticEmbeddingProvider String? // Embedding provider: 'openai' | 'ollama'
+  semanticEmbeddingProvider String? // Embedding provider: 'openai' | 'google' | 'ollama'
   semanticEmbeddingModel String? // Embedding model override
 }
 

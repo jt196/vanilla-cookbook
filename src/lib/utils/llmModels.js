@@ -15,6 +15,29 @@ const providerMeta = [
 	{ value: 'ollama', label: 'Ollama (Local)', envVar: 'OLLAMA_BASE_URL' }
 ]
 
+const embeddingProviderMeta = [
+	{ value: 'openai', label: 'OpenAI', envVar: 'OPENAI_API_KEY' },
+	{ value: 'google', label: 'Google (Gemini)', envVar: 'GOOGLE_API_KEY' },
+	{ value: 'ollama', label: 'Ollama (Local)', envVar: 'OLLAMA_BASE_URL' }
+]
+
+export const embeddingModels = {
+	openai: [
+		{ value: 'text-embedding-3-small', label: 'text-embedding-3-small (Recommended)' },
+		{ value: 'text-embedding-3-large', label: 'text-embedding-3-large' },
+		{ value: 'text-embedding-ada-002', label: 'text-embedding-ada-002 (Legacy)' }
+	],
+	google: [
+		{ value: 'gemini-embedding-001', label: 'gemini-embedding-001 (Recommended)' },
+		{ value: 'text-embedding-004', label: 'text-embedding-004 (Legacy)' }
+	],
+	ollama: [
+		{ value: 'nomic-embed-text', label: 'nomic-embed-text (Recommended)' },
+		{ value: 'mxbai-embed-large', label: 'mxbai-embed-large' },
+		{ value: 'all-minilm', label: 'all-minilm' }
+	]
+}
+
 export const providers = providerMeta.map((provider) => ({
 	value: provider.value,
 	label: provider.label
@@ -108,6 +131,88 @@ export function getProviderOptionsWithAvailability(availableProviders) {
 }
 
 /**
+ * Return embedding providers configured in environment variables.
+ *
+ * @param {Record<string, string | undefined>} env
+ * @returns {string[]}
+ */
+export function getAvailableEmbeddingProviders(env) {
+	return embeddingProviderMeta
+		.filter((provider) => env[provider.envVar])
+		.map((provider) => provider.value)
+}
+
+/**
+ * Get embedding providers and annotate ones missing configuration.
+ *
+ * @param {string[]} availableProviders - List of embedding provider IDs with API keys/URLs
+ * @returns {Array<{value: string, label: string}>}
+ */
+export function getEmbeddingProviderOptionsWithAvailability(availableProviders) {
+	const available = new Set(availableProviders || [])
+	return embeddingProviderMeta.map((provider) => ({
+		value: provider.value,
+		label: available.has(provider.value) ? provider.label : `${provider.label} (Missing API key)`
+	}))
+}
+
+/**
+ * Get embedding models for a provider.
+ *
+ * @param {string} provider
+ * @returns {Array<{value: string, label: string}>}
+ */
+export function getEmbeddingModelsForProvider(provider) {
+	return embeddingModels[provider] || []
+}
+
+/**
+ * Resolve embedding provider using configured provider availability.
+ *
+ * Precedence:
+ * 1. Preferred provider (from runtime settings) if supported and configured
+ * 2. First available configured provider
+ *
+ * @param {string | null | undefined} preferredProvider
+ * @param {Record<string, string | undefined>} env
+ * @returns {'openai' | 'google' | 'ollama' | null}
+ */
+export function resolveEmbeddingProvider(preferredProvider, env) {
+	const availableProviders = getAvailableEmbeddingProviders(env)
+	const preferred = (preferredProvider || '').trim().toLowerCase()
+
+	if (preferred) {
+		return availableProviders.includes(preferred) ? preferred : null
+	}
+
+	return availableProviders[0] ?? null
+}
+
+/**
+ * Resolve embedding model for a provider.
+ *
+ * Model precedence:
+ * 1. Explicit preferred model (admin/settings)
+ * 2. Provider default model from curated list
+ * 3. Hardcoded safety fallback
+ *
+ * @param {'openai' | 'google' | 'ollama'} provider
+ * @param {string | null | undefined} preferredModel
+ * @returns {string}
+ */
+export function resolveEmbeddingModel(provider, preferredModel) {
+	if (preferredModel) return preferredModel
+	return (
+		getEmbeddingModelsForProvider(provider)?.[0]?.value ||
+		(provider === 'openai'
+			? 'text-embedding-3-small'
+			: provider === 'google'
+				? 'gemini-embedding-001'
+				: 'nomic-embed-text')
+	)
+}
+
+/**
  * Get text models for a provider, with Custom option appended
  * @param {string} provider
  * @returns {Array<{value: string, label: string}>}
@@ -126,4 +231,17 @@ export function getImageModelsForProvider(provider) {
 	const models = imageModels[provider] || []
 	if (models.length === 0) return []
 	return [...models, { value: 'custom', label: 'Custom...' }]
+}
+
+/**
+ * Get default models for a provider (first model in each list is recommended).
+ * Used by ai.js for LLM invocation defaults.
+ *
+ * @param {string} provider
+ * @returns {{ text: string | null, image: string | null }}
+ */
+export function getDefaultModelsForProvider(provider) {
+	const text = textModels[provider]?.[0]?.value || null
+	const image = imageModels[provider]?.[0]?.value || null
+	return { text, image }
 }

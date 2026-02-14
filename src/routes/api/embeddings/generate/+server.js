@@ -1,10 +1,8 @@
 import { json } from '@sveltejs/kit'
 import { prisma } from '$lib/server/prisma'
 import { requireAdmin } from '$lib/server/authHelpers'
-import {
-	semanticEmbeddingJobsEnabled,
-	regenerateRecipeEmbedding
-} from '$lib/server/semanticEmbedding'
+import { semanticEmbeddingJobsEnabled } from '$lib/server/semanticHelpers'
+import { regenerateRecipeEmbedding } from '$lib/server/semanticEmbedding'
 
 export async function POST({ request, locals }) {
 	requireAdmin(locals)

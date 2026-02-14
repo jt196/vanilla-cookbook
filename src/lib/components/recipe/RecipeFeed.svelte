@@ -1,6 +1,6 @@
 <script>
 	import { goto, invalidateAll } from '$app/navigation'
-	import { navigating } from '$app/stores'
+	import { navigating } from '$app/state'
 	import { sortByDate, sortByKeyGeneric } from '$lib/utils/sorting'
 	import RecipeFilter from '$lib/components/recipe/RecipeFilter.svelte'
 	import RecipeList from '$lib/components/recipe/RecipeList.svelte'
@@ -43,8 +43,8 @@
 	let pendingCopyUid = $state(null)
 	let copyMessage = $state(null)
 	let semanticScores = $state(new Map())
-	let semanticPending = $state(false)
 	let semanticRuntimeEnabled = $state(!!semanticEnabled)
+	let isNavigating = $derived(!!navigating?.to)
 
 	function includesQueryAcrossRecipe(recipe, query) {
 		const q = query?.toLowerCase?.().trim?.()
@@ -347,16 +347,14 @@
 		if (
 			!semanticRuntimeEnabled ||
 			!$searchString ||
-			$searchString.length < 3 ||
+			$searchString.length < 4 ||
 			($searchFields || []).length > 0
 		) {
 			semanticScores = new Map()
-			semanticPending = false
 			return
 		}
 
 		const timeout = setTimeout(async () => {
-			semanticPending = true
 			try {
 				const response = await fetch(
 					`/api/recipe/search?q=${encodeURIComponent($searchString)}&mode=semantic&limit=80`
@@ -378,10 +376,8 @@
 			} catch (error) {
 				console.error('Semantic search request failed:', error)
 				semanticScores = new Map()
-			} finally {
-				semanticPending = false
 			}
-		}, 300)
+		}, 500)
 
 		return () => clearTimeout(timeout)
 	})
@@ -440,7 +436,7 @@
 	class:max-md:ml-0={sidebarOpen}
 >
 	<RecipeFilter {toggleSidebar} viewOnly={false} {useCats} username={ownerUsername} {viewMode} />
-	<Spinner visible={isLoading || !!$navigating || semanticPending} spinnerContent="Loading" />
+	<Spinner visible={isLoading || isNavigating} spinnerContent="Loading" />
 	<RecipeList
 		{filteredRecipes}
 		{viewMode}

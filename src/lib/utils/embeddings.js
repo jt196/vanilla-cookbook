@@ -1,48 +1,5 @@
 import { env } from '$env/dynamic/private'
-
-const OPENAI_DEFAULT_MODEL = 'text-embedding-3-small'
-const OLLAMA_DEFAULT_MODEL = 'nomic-embed-text'
-
-/**
- * Resolve embedding provider from environment.
- *
- * Precedence:
- * 1. EMBEDDING_PROVIDER env override (openai|ollama)
- * 2. Preferred provider (from runtime settings) if supported and configured
- *
- * No silent fallback when a preferred provider is provided but unsupported/unconfigured.
- *
- * @param {string | null} [preferredProvider=null]
- * @returns {'openai' | 'ollama' | null}
- */
-export function resolveEmbeddingProvider(preferredProvider = null) {
-	const forced = (env.EMBEDDING_PROVIDER || '').trim().toLowerCase()
-	if (forced === 'openai' && env.OPENAI_API_KEY) return 'openai'
-	if (forced === 'ollama' && env.OLLAMA_BASE_URL) return 'ollama'
-
-	const preferred = (preferredProvider || '').trim().toLowerCase()
-	if (preferred) {
-		if (preferred === 'openai' && env.OPENAI_API_KEY) return 'openai'
-		if (preferred === 'ollama' && env.OLLAMA_BASE_URL) return 'ollama'
-		return null
-	}
-
-	if (env.OPENAI_API_KEY) return 'openai'
-	if (env.OLLAMA_BASE_URL) return 'ollama'
-	return null
-}
-
-/**
- * Resolve embedding model for the active provider.
- *
- * @param {'openai' | 'ollama'} provider
- * @returns {string}
- */
-export function resolveEmbeddingModel(provider, preferredModel = null) {
-	if (preferredModel) return preferredModel
-	if (env.EMBEDDING_MODEL) return env.EMBEDDING_MODEL
-	return provider === 'openai' ? OPENAI_DEFAULT_MODEL : OLLAMA_DEFAULT_MODEL
-}
+import { resolveEmbeddingProvider, resolveEmbeddingModel } from '$lib/utils/llmModels'
 
 /**
  * Get embedding for text from configured provider.
@@ -55,11 +12,14 @@ export async function getEmbedding(text, preferredProvider = null, preferredMode
 	const trimmed = (text || '').trim()
 	if (!trimmed) return null
 
-	const provider = resolveEmbeddingProvider(preferredProvider)
+	const provider = resolveEmbeddingProvider(preferredProvider, env)
 	if (!provider) return null
 
 	if (provider === 'openai') {
 		return openaiEmbed(trimmed, preferredModel)
+	}
+	if (provider === 'google') {
+		return googleEmbed(trimmed, preferredModel)
 	}
 	return ollamaEmbed(trimmed, preferredModel)
 }
@@ -108,6 +68,35 @@ async function ollamaEmbed(text, preferredModel = null) {
 
 	const data = await response.json()
 	const vector = data?.embedding
+	if (!Array.isArray(vector)) return null
+	return new Float32Array(vector)
+}
+
+async function googleEmbed(text, preferredModel = null) {
+	const configuredModel = resolveEmbeddingModel('google', preferredModel)
+	const model = configuredModel.startsWith('models/')
+		? configuredModel
+		: `models/${configuredModel}`
+	const response = await fetch(
+		`https://generativelanguage.googleapis.com/v1beta/${model}:embedContent?key=${env.GOOGLE_API_KEY}`,
+		{
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({
+				content: {
+					parts: [{ text }]
+				}
+			})
+		}
+	)
+
+	if (!response.ok) {
+		const body = await response.text()
+		throw new Error(`Google embedding failed: ${response.status} ${body}`)
+	}
+
+	const data = await response.json()
+	const vector = data?.embedding?.values
 	if (!Array.isArray(vector)) return null
 	return new Float32Array(vector)
 }

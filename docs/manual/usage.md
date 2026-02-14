@@ -228,9 +228,23 @@ Semantic search is optional and **admin-controlled**. Users do not need to toggl
 
 1. Add a supported embedding provider in `.env`:
    - `OPENAI_API_KEY` or
-   - `OLLAMA_BASE_URL` (and optional embedding model)
-2. Set `SEMANTIC_SEARCH_ENABLED=true` in `.env`
-3. In **Options > Site** (admin), enable semantic search.
+   - `GOOGLE_API_KEY` (Gemini embeddings) or
+   - `OLLAMA_BASE_URL`
+2. In **Options > Site** (admin), enable semantic search.
+3. In **Options > Site** (admin), select embedding provider/model.
+
+#### Cost note
+
+- Search-time embedding sends only the query text (for example, `"Japanese"`), not your full recipe database.
+- Ballpark with OpenAI `text-embedding-3-small` pricing (~$0.02 per 1M input tokens):
+  - **1,000 searches** (short queries): roughly **<$0.001** (typically around $0.0001-$0.0004)
+  - **Embedding 1,000 recipes** (one-time index): roughly **$0.01-$0.04** depending on recipe length
+- With Ollama, there is no per-request API billing; cost is local CPU/RAM usage.
+- Ollama embedding model suggestions:
+  - `embeddinggemma` (good default)
+  - `qwen3-embedding` (strong quality option)
+  - `all-minilm` (lightweight/fast)
+- Prices can change over time, so treat these as approximate figures.
 
 #### Build Embedding Index
 
