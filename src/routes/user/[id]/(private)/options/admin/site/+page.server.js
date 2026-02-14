@@ -11,13 +11,13 @@ export const load = async ({ parent, locals }) => {
 		hasAnyApiKey: false,
 		availableProviders: [],
 		provider: null,
+		imageProvider: null,
 		textModel: null,
 		imageModel: null,
 		imageAllowed: false
 	}
 	const semantic = locals.site?.semantic ?? {
 		enabled: false,
-		enabledByEnv: false,
 		enabledBySite: false,
 		providerAvailable: false,
 		provider: null
@@ -34,19 +34,19 @@ export const load = async ({ parent, locals }) => {
 		hasAnyApiKey: ai.hasAnyApiKey,
 		availableProviders: ai.availableProviders,
 		provider: ai.provider,
+		imageProvider: ai.imageProvider,
 		textModel: ai.textModel,
 		imageModel: ai.imageModel,
 		imageAllowed: ai.imageAllowed,
 		// DB values for form binding
 		dbEnabled: dbSettings.llmEnabled ?? false,
 		dbProvider: dbSettings.llmProvider ?? null,
+		dbImageProvider: dbSettings.llmImageProvider ?? null,
 		dbTextModel: dbSettings.llmTextModel ?? null,
 		dbImageModel: dbSettings.llmImageModel ?? null,
 		dbSemanticEnabled: dbSettings.semanticEnabled ?? false,
 		dbSemanticEmbeddingProvider: dbSettings.semanticEmbeddingProvider ?? null,
 		dbSemanticEmbeddingModel: dbSettings.semanticEmbeddingModel ?? null,
-		semanticEnabledByEnv: semantic.enabledByEnv,
-		semanticProviderAvailable: semantic.providerAvailable,
 		semanticProvider: semantic.provider,
 		semanticAvailableProviders: semantic.availableProviders ?? [],
 		semanticSelectedProvider: semantic.selectedProvider ?? null,
