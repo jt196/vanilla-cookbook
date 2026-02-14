@@ -80,17 +80,9 @@ Add an LLM API key to activate these features. Google, OpenAI, Anthropic and Oll
   - Build a new recipe from a prompt, e.g. "Original pesto genovese"
 - Image Analysis
   - Drop up to three photos of your next recipe and it'll parse it into the correct form
-
-### Semantic Search (Optional)
-
-Semantic search can be enabled by admins to improve recipe discovery by meaning, not just literal text matches.
-
-- **Global/admin controlled**: users do not need to configure semantic settings
-- **Graceful fallback**: if semantic is unavailable, normal fuzzy/text search still works
-- **Background indexing**: embeddings are generated in batches from Site Settings and on recipe save/update (non-blocking)
-- **Scoped field mode**: selecting search fields (Name/Ingredients/Source/Notes) switches to field-scoped fuzzy/text matching
-
-[Docs](https://vanilla-cookbook.readthedocs.io/en/latest/manual/usage/#semantic-search)
+- Semantic Search
+  - Not just fuzzy search but associative meaning. "Japanese" will throw up noodles, miso etc.
+  - [Docs](https://vanilla-cookbook.readthedocs.io/en/latest/manual/usage/#semantic-search)
 
 ### Progressive Web App
 

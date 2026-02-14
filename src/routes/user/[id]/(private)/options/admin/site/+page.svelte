@@ -268,21 +268,26 @@
 		method="POST"
 		action="?/updateAdminSettings"
 		onsubmit={updateAdminSettings}
-		class="flex flex-col gap-3">
+		class="flex flex-col gap-3"
+	>
 		<Checkbox
 			name="registrationAllowed"
 			bind:checked={settings.registrationAllowed}
 			legend="Allow Registrations"
 			size="sm"
-			color="primary">
-			Turn on site registration</Checkbox>
+			color="primary"
+		>
+			Turn on site registration</Checkbox
+		>
 		<Checkbox
 			name="requireLogin"
 			bind:checked={settings.requireLogin}
 			legend="Require Login"
 			size="sm"
-			color="primary">
-			Require authentication for all pages (private site mode)</Checkbox>
+			color="primary"
+		>
+			Require authentication for all pages (private site mode)</Checkbox
+		>
 		<InfoText>
 			When enabled, all visitors must log in to access any page. Public recipes and profiles will
 			still be hidden from unauthenticated users.
@@ -293,8 +298,10 @@
 				bind:checked={settings.oidcAutoProvision}
 				legend="OIDC Auto-Provisioning"
 				size="sm"
-				color="primary">
-				Automatically create accounts for new OIDC users</Checkbox>
+				color="primary"
+			>
+				Automatically create accounts for new OIDC users</Checkbox
+			>
 			<InfoText>
 				When enabled, users signing in via OIDC for the first time will have an account created
 				automatically. When disabled, only existing users can sign in via OIDC.
@@ -324,7 +331,8 @@
 				bind:checked={llmEnabled}
 				legend="Enable LLM Features"
 				size="sm"
-				color="primary">
+				color="primary"
+			>
 				Enable AI-assisted recipe parsing and image analysis
 			</Checkbox>
 
@@ -332,26 +340,30 @@
 				<h4>Text</h4>
 				<InfoText
 					>Used for recipe fallback parsing/translation/generation, ingredient cleanup, and
-					direction summarising.</InfoText>
+					direction summarising.</InfoText
+				>
 				<Dropdown
 					name="llmProvider"
 					options={availableProviderOptions}
 					bind:selected={llmProvider}
-					legend="Provider" />
+					legend="Provider"
+				/>
 
 				<div class="flex flex-col gap-2">
 					<Dropdown
 						name="textModel"
 						options={textModelList}
 						bind:selected={textModelSelection}
-						legend="Model" />
+						legend="Model"
+					/>
 					{#if showCustomTextInput}
 						<Input
 							type="text"
 							id="customTextModel"
 							label="Custom Model"
 							placeholder="e.g. gpt-4o-2024-08-06"
-							bind:value={customTextModel} />
+							bind:value={customTextModel}
+						/>
 					{/if}
 				</div>
 				<h4>Image</h4>
@@ -361,20 +373,23 @@
 						name="imageProvider"
 						options={availableProviderOptions}
 						bind:selected={llmImageProvider}
-						legend="Provider" />
+						legend="Provider"
+					/>
 					{#if supportsImages}
 						<Dropdown
 							name="imageModel"
 							options={imageModelList}
 							bind:selected={imageModelSelection}
-							legend="Model" />
+							legend="Model"
+						/>
 						{#if showCustomImageInput}
 							<Input
 								type="text"
 								id="customImageModel"
 								label="Custom Model"
 								placeholder="e.g. claude-3-5-sonnet-20241022"
-								bind:value={customImageModel} />
+								bind:value={customImageModel}
+							/>
 						{/if}
 					{:else}
 						<InfoText>
@@ -393,7 +408,8 @@
 						legend="Enable Semantic Search"
 						size="sm"
 						color="primary"
-						disabled={!(llmConfig.semanticAvailableProviders || []).length}>
+						disabled={!(llmConfig.semanticAvailableProviders || []).length}
+					>
 						Enable embedding-based recipe search
 					</Checkbox>
 					{#if !(llmConfig.semanticAvailableProviders || []).length}
@@ -408,14 +424,16 @@
 						options={semanticProviderOptions}
 						bind:selected={semanticEmbeddingProvider}
 						legend="Provider"
-						disabled={!semanticEnabled} />
+						disabled={!semanticEnabled}
+					/>
 					{#if semanticModelOptions.length > 0}
 						<Dropdown
 							name="semanticEmbeddingModel"
 							options={semanticModelOptions}
 							bind:selected={semanticEmbeddingModel}
 							legend="Model"
-							disabled={!semanticEnabled || !semanticProviderConfigured} />
+							disabled={!semanticEnabled || !semanticProviderConfigured}
+						/>
 					{:else}
 						<InfoText>Select an embedding provider to choose a model.</InfoText>
 					{/if}
@@ -442,13 +460,15 @@
 								class="progress progress-info w-full"
 								value={embeddingPercent}
 								max="100"
-								aria-label="Embedding generation progress"></progress>
+								aria-label="Embedding generation progress"
+							></progress>
 							<p class="text-xs text-base-content/70">{embeddingPercent}% complete</p>
 							<Button
 								type="button"
 								class="self-start w-auto"
 								onclick={generateEmbeddingBatch}
-								disabled={embeddingInProgress || !canGenerateEmbeddings}>
+								disabled={embeddingInProgress || !canGenerateEmbeddings}
+							>
 								{embeddingInProgress ? 'Generating Embeddings...' : 'Generate Embeddings'}
 							</Button>
 							{#if embeddingBatchResult}
@@ -518,7 +538,8 @@
 				onclick={createManualBackup}
 				disabled={backupInProgress}
 				class="self-start w-auto"
-				loading={backupInProgress}>
+				loading={backupInProgress}
+			>
 				{backupInProgress ? 'Creating Backup...' : 'Backup Now'}
 			</Button>
 			<FeedbackMessage message={backupFeedback} inline />

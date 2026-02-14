@@ -181,7 +181,7 @@ ${recipeJson}
  * Supported providers (install the matching LangChain pkg):
  * - openai (@langchain/openai)
  * - anthropic (@langchain/anthropic)
- * - gemini (@langchain/google-genai)
+ * - google (@langchain/google-genai)
  * - ollama (@langchain/ollama)
  *
  * @param {string} provider
@@ -235,7 +235,7 @@ const providerLoaders = {
 		importPath: '@langchain/google-genai',
 		clientName: 'ChatGoogleGenerativeAI',
 		buildConfig: (model, apiKey) => ({
-			modelName: model,
+			model,
 			apiKey,
 			temperature: 0.3
 		})
@@ -262,6 +262,64 @@ async function loadChatClient(provider, model, type) {
 		)
 	}
 	return loader(model, type)
+}
+
+function parseLLMJsonOutput(rawOutput) {
+	let output = (rawOutput || '').trim()
+
+	// Clean up markdown code fences
+	if (output.startsWith('```')) {
+		output = output.replace(/```json\s*|\s*```/g, '')
+	}
+	// Remove trailing commas
+	output = output.replace(/,\s*([\]}])/g, '$1')
+
+	// Try to extract JSON if there's extra content
+	const jsonMatch = output.match(/\{[\s\S]*\}/)
+	if (jsonMatch) {
+		output = jsonMatch[0]
+	}
+
+	try {
+		return JSON.parse(output)
+	} catch (parseErr) {
+		// Log the problematic output for debugging
+		console.error('JSON parse error. Raw LLM output (first 500 chars):', output.substring(0, 500))
+		console.error('Parse error:', parseErr.message)
+
+		// Attempt to fix common truncation issues
+		const openBraces = (output.match(/\{/g) || []).length
+		const closeBraces = (output.match(/\}/g) || []).length
+		const openBrackets = (output.match(/\[/g) || []).length
+		const closeBrackets = (output.match(/\]/g) || []).length
+
+		// If truncated, try to close it
+		if (openBraces > closeBraces || openBrackets > closeBrackets) {
+			console.log('Attempting to repair truncated JSON...')
+
+			const lastCompleteMatch = output.match(
+				/^([\s\S]*(?:"\s*,|"\s*$|\]\s*,|\]\s*$|\d\s*,|\d\s*$|true\s*,|true\s*$|false\s*,|false\s*$|null\s*,|null\s*$))/
+			)
+
+			if (lastCompleteMatch) {
+				output = lastCompleteMatch[1].trim()
+				output = output.replace(/,\s*$/, '')
+			}
+
+			const newOpenBrackets = (output.match(/\[/g) || []).length
+			const newCloseBrackets = (output.match(/\]/g) || []).length
+			const newOpenBraces = (output.match(/\{/g) || []).length
+			const newCloseBraces = (output.match(/\}/g) || []).length
+
+			for (let i = 0; i < newOpenBrackets - newCloseBrackets; i++) output += ']'
+			for (let i = 0; i < newOpenBraces - newCloseBraces; i++) output += '}'
+
+			console.log('Repaired JSON (first 500 chars):', output.substring(0, 500))
+			return JSON.parse(output)
+		}
+
+		throw parseErr
+	}
 }
 
 /**
@@ -299,71 +357,11 @@ async function invokeLLM({ provider, model, type, messages }) {
 		throw new Error('Ollama provider does not support image prompts')
 	}
 
-	const chat = await loadChatClient(effectiveProvider, effectiveModel, type)
-
 	try {
+		const chat = await loadChatClient(effectiveProvider, effectiveModel, type)
 		const result = await chat.invoke(messages)
-		let output = result.content.trim()
-
-		// Clean up markdown code fences
-		if (output.startsWith('```')) {
-			output = output.replace(/```json\s*|\s*```/g, '')
-		}
-		// Remove trailing commas
-		output = output.replace(/,\s*([\]}])/g, '$1')
-
-		// Try to extract JSON if there's extra content
-		const jsonMatch = output.match(/\{[\s\S]*\}/)
-		if (jsonMatch) {
-			output = jsonMatch[0]
-		}
-
-		try {
-			return JSON.parse(output)
-		} catch (parseErr) {
-			// Log the problematic output for debugging
-			console.error('JSON parse error. Raw LLM output (first 500 chars):', output.substring(0, 500))
-			console.error('Parse error:', parseErr.message)
-
-			// Attempt to fix common truncation issues
-			// Count open/close braces and brackets
-			const openBraces = (output.match(/\{/g) || []).length
-			const closeBraces = (output.match(/\}/g) || []).length
-			const openBrackets = (output.match(/\[/g) || []).length
-			const closeBrackets = (output.match(/\]/g) || []).length
-
-			// If truncated, try to close it
-			if (openBraces > closeBraces || openBrackets > closeBrackets) {
-				console.log('Attempting to repair truncated JSON...')
-
-				// Find the last complete value (ends with ", or ", or ], or number, or true/false/null)
-				// Look for last occurrence of a complete JSON value followed by comma or end
-				const lastCompleteMatch = output.match(
-					/^([\s\S]*(?:"\s*,|"\s*$|\]\s*,|\]\s*$|\d\s*,|\d\s*$|true\s*,|true\s*$|false\s*,|false\s*$|null\s*,|null\s*$))/
-				)
-
-				if (lastCompleteMatch) {
-					output = lastCompleteMatch[1].trim()
-					// Remove trailing comma if present
-					output = output.replace(/,\s*$/, '')
-				}
-
-				// Recount after cleanup
-				const newOpenBrackets = (output.match(/\[/g) || []).length
-				const newCloseBrackets = (output.match(/\]/g) || []).length
-				const newOpenBraces = (output.match(/\{/g) || []).length
-				const newCloseBraces = (output.match(/\}/g) || []).length
-
-				// Close arrays and objects
-				for (let i = 0; i < newOpenBrackets - newCloseBrackets; i++) output += ']'
-				for (let i = 0; i < newOpenBraces - newCloseBraces; i++) output += '}'
-
-				console.log('Repaired JSON (first 500 chars):', output.substring(0, 500))
-				return JSON.parse(output)
-			}
-
-			throw parseErr
-		}
+		const output = result?.content?.toString?.() || ''
+		return parseLLMJsonOutput(output)
 	} catch (err) {
 		console.error('LLM invocation failed:', err)
 		throw new Error('LLM parsing error')
