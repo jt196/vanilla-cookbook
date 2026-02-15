@@ -1,0 +1,8 @@
+```json
+{
+  "name": "Fenced Recipe",
+  "author": "Markdown Author",
+  "ingredients": ["200g sugar", "3 apples"],
+  "instructions": ["Peel apples", "Add sugar"]
+}
+```

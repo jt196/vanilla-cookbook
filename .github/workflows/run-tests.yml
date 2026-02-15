@@ -99,6 +99,16 @@ jobs:
       - name: Run Tests
         run: pnpm test
 
+      - name: Run LLM Smoke Tests (optional)
+        if: ${{ secrets.OPENAI_API_KEY != '' || secrets.ANTHROPIC_API_KEY != '' || secrets.GOOGLE_API_KEY != '' || secrets.OLLAMA_BASE_URL != '' }}
+        continue-on-error: true
+        run: RUN_LLM_SMOKE=true pnpm -s vitest run src/tests/llm.smoke.test.js
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          OLLAMA_BASE_URL: ${{ secrets.OLLAMA_BASE_URL }}
+
       - name: Run Playwright E2E
         run: pnpm exec playwright test
         env:

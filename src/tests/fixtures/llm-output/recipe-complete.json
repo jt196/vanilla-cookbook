@@ -1,0 +1,35 @@
+{
+  "name": "Complete Test Recipe",
+  "author": "Test Chef",
+  "sourceUrl": "https://example.com/complete-recipe",
+  "imageUrl": "https://example.com/complete-image.jpg",
+  "description": "A complete recipe with all fields populated",
+  "notes": "Best served fresh",
+  "ingredients": [
+    "500g chicken breast, diced",
+    "2 tablespoons olive oil",
+    "1 onion, chopped",
+    "3 cloves garlic, minced",
+    "400g canned tomatoes",
+    "1 teaspoon paprika",
+    "Salt and pepper to taste"
+  ],
+  "instructions": [
+    "Heat olive oil in a large pan over medium heat.",
+    "Add chicken and cook until browned, about 5-7 minutes.",
+    "Add onion and garlic, cook until softened.",
+    "Pour in tomatoes and add paprika.",
+    "Simmer for 20 minutes until sauce thickens.",
+    "Season with salt and pepper to taste."
+  ],
+  "cookTime": "PT30M",
+  "prepTime": "PT15M",
+  "totalTime": "PT45M",
+  "servings": "4",
+  "nutrition": {
+    "calories": "350",
+    "protein": "35g",
+    "carbohydrates": "12g",
+    "fat": "18g"
+  }
+}

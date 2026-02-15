@@ -8,18 +8,19 @@
  * Prioritizes: speed, low cost, good instruction-following
  */
 
-const providerMeta = [
-	{ value: 'openai', label: 'OpenAI', envVar: 'OPENAI_API_KEY' },
-	{ value: 'anthropic', label: 'Anthropic', envVar: 'ANTHROPIC_API_KEY' },
-	{ value: 'google', label: 'Google', envVar: 'GOOGLE_API_KEY' },
-	{ value: 'ollama', label: 'Ollama (Local)', envVar: 'OLLAMA_BASE_URL' }
+export const providerMeta = [
+	{ value: 'openai', label: 'OpenAI', envVar: 'OPENAI_API_KEY', supportsEmbedding: true },
+	{ value: 'anthropic', label: 'Anthropic', envVar: 'ANTHROPIC_API_KEY', supportsEmbedding: false },
+	{ value: 'google', label: 'Google', envVar: 'GOOGLE_API_KEY', supportsEmbedding: true },
+	{ value: 'ollama', label: 'Ollama (Local)', envVar: 'OLLAMA_BASE_URL', supportsEmbedding: true }
 ]
 
-const embeddingProviderMeta = [
-	{ value: 'openai', label: 'OpenAI', envVar: 'OPENAI_API_KEY' },
-	{ value: 'google', label: 'Google (Gemini)', envVar: 'GOOGLE_API_KEY' },
-	{ value: 'ollama', label: 'Ollama (Local)', envVar: 'OLLAMA_BASE_URL' }
-]
+// Derived lists for convenience
+export const providerNames = providerMeta.map((p) => p.value)
+export const embeddingProviderNames = providerMeta.filter((p) => p.supportsEmbedding).map((p) => p.value)
+
+// Backwards compatibility alias
+export const embeddingProviderMeta = providerMeta.filter((p) => p.supportsEmbedding)
 
 export const embeddingModels = {
 	openai: [

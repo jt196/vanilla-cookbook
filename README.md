@@ -2,6 +2,8 @@
 
 For a full getting started guide, [read the docs](https://vanilla-cookbook.readthedocs.io/en/latest/).
 
+Contributing: [Technical Contributing Guide](docs/technical/contributing.md)
+
 ![Recipe List](docs/images/screen-desktop-list-dracula.png)
 ![Recipe View](docs/images/screen-desktop-first-recipe-dracula.png)
 
