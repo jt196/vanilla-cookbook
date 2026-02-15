@@ -1,0 +1,50 @@
+name-template: 'v$RESOLVED_VERSION'
+tag-template: 'v$RESOLVED_VERSION'
+version-resolver:
+  major:
+    labels:
+      - 'breaking'
+  minor:
+    labels:
+      - 'enhancement'
+  patch:
+    labels:
+      - 'bug'
+      - 'documentation'
+  default: patch
+
+categories:
+  - title: 'Enhancements'
+    labels:
+      - 'enhancement'
+  - title: 'Bug Fixes'
+    labels:
+      - 'bug'
+  - title: 'Docs'
+    labels:
+      - 'documentation'
+  - title: 'Other'
+    labels:
+      - 'question'
+      - 'help wanted'
+
+exclude-labels:
+  - 'duplicate'
+  - 'invalid'
+  - 'wontfix'
+  - 'skip-changelog'
+
+change-template: |
+  - $TITLE ([#$NUMBER]($URL)) @$AUTHOR
+
+    $BODY
+change-title-escapes: '\\<*_&'
+
+template: |
+  ## What's Changed
+
+  $CHANGES
+
+  ## Contributors
+
+  $CONTRIBUTORS
