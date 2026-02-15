@@ -4,11 +4,9 @@ version-resolver:
   major:
     labels:
       - 'breaking'
-  minor:
-    labels:
-      - 'enhancement'
   patch:
     labels:
+      - 'enhancement'
       - 'bug'
       - 'documentation'
   default: patch
@@ -39,12 +37,7 @@ change-template: |
 
     $BODY
 change-title-escapes: '\\<*_&'
-
 template: |
   ## What's Changed
 
   $CHANGES
-
-  ## Contributors
-
-  $CONTRIBUTORS

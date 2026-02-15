@@ -17,6 +17,13 @@ This guide explains how to contribute changes that are easy to review, test, and
 
 - Keep PRs scoped and readable.
 - Prefer clear PR titles (they are shown in generated release notes).
+- Keep PR body to `## Release Notes` bullets only (using `.github/pull_request_template.md`).
+
+## CI Behavior
+
+- PRs to `main`: run test suite without Playwright E2E.
+- Push to `main`: run test suite without Playwright E2E, then build/publish `latest` Docker image.
+- Published release: run full suite including Playwright E2E before stable Docker build.
 
 ## Local Testing
 
