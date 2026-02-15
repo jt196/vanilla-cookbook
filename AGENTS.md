@@ -317,6 +317,7 @@ pnpm coverage          # Coverage report
 - **No TypeScript**: Project uses JavaScript with JSDoc types (see `typeDefinitions.js`)
 - **Formatting**: Prettier enforced, 2-space indents, trailing commas
 - **Linting**: ESLint with svelte, jsdoc plugins
+- **Markdown docs**: Keep edited Markdown files compliant with `.markdownlint.json` (run `pnpm -s dlx markdownlint-cli <file>.md` on changed docs)
 - **JSDoc**: Document all utility functions (see `docs/technical/*.md` for examples)
 
 ### Svelte Conventions
@@ -510,6 +511,20 @@ See `docs/roadmap.md` for detailed feature wishlist. Key themes:
 2. Update `converter.js` matching logic
 3. Test with sample recipes containing new ingredients
 4. Consider edge cases (fractions, ranges, multiple units)
+
+## Release Notes & Labels
+
+- Release notes are drafted automatically via Release Drafter (`.github/release-drafter.yml`).
+- Contributors should fill the `## Release Notes` section in `.github/pull_request_template.md` with concise user-facing bullets.
+- PR labels drive release categorization and version bump behavior; apply at least one changelog label on every PR.
+- Required label set (create in GitHub UI under repository **Issues > Labels** if missing):
+  - `feature`, `enhancement`
+  - `fix`, `bug`, `bugfix`
+  - `docs`, `documentation`
+  - `chore`, `refactor`, `test`, `dependencies`
+  - `breaking`, `major`
+  - `skip-changelog` (exclude from release notes)
+- PR title should be clear and user-facing; Release Drafter includes title + body in draft notes.
 
 ## Support & Resources
 

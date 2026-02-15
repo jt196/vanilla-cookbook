@@ -1,0 +1,15 @@
+{
+  "name": "Test Recipe",
+  "author": "Test Author",
+  "sourceUrl": "https://example.com/recipe",
+  "imageUrl": "https://example.com/image.jpg",
+  "description": "A test recipe description",
+  "notes": "Some notes",
+  "ingredients": ["100g flour", "2 eggs", "50ml milk"],
+  "instructions": ["Mix ingredients", "Bake at 180C"],
+  "cookTime": "PT30M",
+  "prepTime": "PT15M",
+  "totalTime": "PT45M",
+  "servings": "4",
+  "nutrition": {}
+}

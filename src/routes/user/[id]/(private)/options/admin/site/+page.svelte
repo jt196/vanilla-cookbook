@@ -45,6 +45,14 @@
 			: 0
 	)
 
+	// Connection test state
+	let textTestResult = $state(null)
+	let textTesting = $state(false)
+	let imageTestResult = $state(null)
+	let imageTesting = $state(false)
+	let embeddingTestResult = $state(null)
+	let embeddingTesting = $state(false)
+
 	// LLM form state
 	let llmEnabled = $state(llmConfig.dbEnabled)
 	let semanticEnabled = $state(llmConfig.dbSemanticEnabled ?? false)
@@ -260,6 +268,43 @@
 		backupError = data.backupError || ''
 		embeddingIndex = data.embeddingIndex || { total: 0, remaining: 0, completed: 0 }
 	})
+
+	async function testConnection(provider, model, type) {
+		try {
+			const response = await fetch('/api/llm/test', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ provider, model, type })
+			})
+			return await response.json()
+		} catch (err) {
+			return { ok: false, error: err.message || 'Connection failed' }
+		}
+	}
+
+	async function testTextConnection() {
+		textTesting = true
+		textTestResult = null
+		const model = effectiveTextModel || undefined
+		textTestResult = await testConnection(llmProvider, model, 'chat')
+		textTesting = false
+	}
+
+	async function testImageConnection() {
+		imageTesting = true
+		imageTestResult = null
+		const model = effectiveImageModel || undefined
+		imageTestResult = await testConnection(llmImageProvider, model, 'chat')
+		imageTesting = false
+	}
+
+	async function testEmbeddingConnection() {
+		embeddingTesting = true
+		embeddingTestResult = null
+		const model = semanticEmbeddingModel || undefined
+		embeddingTestResult = await testConnection(effectiveSemanticProvider, model, 'embedding')
+		embeddingTesting = false
+	}
 </script>
 
 <h3>Update Site Settings</h3>
@@ -365,6 +410,23 @@
 							bind:value={customTextModel}
 						/>
 					{/if}
+					<div class="flex items-center gap-2">
+						<Button
+							type="button"
+							size="sm"
+							variant="outline"
+							onclick={testTextConnection}
+							disabled={textTesting || !llmProvider}
+							loading={textTesting}
+						>
+							{textTesting ? 'Testing...' : 'Test Connection'}
+						</Button>
+						{#if textTestResult}
+							<span class={textTestResult.ok ? 'text-success' : 'text-error'}>
+								{textTestResult.ok ? `Connected (${textTestResult.latencyMs}ms)` : textTestResult.error}
+							</span>
+						{/if}
+					</div>
 				</div>
 				<h4>Image</h4>
 				<InfoText>Used for recipe extraction from uploaded images.</InfoText>
@@ -391,6 +453,23 @@
 								bind:value={customImageModel}
 							/>
 						{/if}
+						<div class="flex items-center gap-2">
+							<Button
+								type="button"
+								size="sm"
+								variant="outline"
+								onclick={testImageConnection}
+								disabled={imageTesting || !llmImageProvider}
+								loading={imageTesting}
+							>
+								{imageTesting ? 'Testing...' : 'Test Connection'}
+							</Button>
+							{#if imageTestResult}
+								<span class={imageTestResult.ok ? 'text-success' : 'text-error'}>
+									{imageTestResult.ok ? `Connected (${imageTestResult.latencyMs}ms)` : imageTestResult.error}
+								</span>
+							{/if}
+						</div>
 					{:else}
 						<InfoText>
 							{llmImageProvider === 'ollama' ? 'Ollama' : llmImageProvider || 'This provider'} does not
@@ -449,6 +528,25 @@
 								Selected provider is missing configuration in <code>.env</code>.
 							{/if}
 						</InfoText>
+					{/if}
+					{#if semanticEnabled && semanticProviderConfigured}
+						<div class="flex items-center gap-2">
+							<Button
+								type="button"
+								size="sm"
+								variant="outline"
+								onclick={testEmbeddingConnection}
+								disabled={embeddingTesting || !effectiveSemanticProvider}
+								loading={embeddingTesting}
+							>
+								{embeddingTesting ? 'Testing...' : 'Test Connection'}
+							</Button>
+							{#if embeddingTestResult}
+								<span class={embeddingTestResult.ok ? 'text-success' : 'text-error'}>
+									{embeddingTestResult.ok ? `Connected (${embeddingTestResult.latencyMs}ms)` : embeddingTestResult.error}
+								</span>
+							{/if}
+						</div>
 					{/if}
 					{#if semanticEnabled}
 						<div class="rounded-box border border-base-300 bg-base-200 p-4 mt-2 space-y-2">

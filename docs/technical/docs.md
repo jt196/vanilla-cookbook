@@ -1,5 +1,9 @@
 # Docs Scripts
 
+## Contributing
+
+For contribution workflow, PR release-note expectations, and release-label policy, see [Contributing Guide](contributing.md).
+
 Doc'ing the docs, very meta. This is just a run-through of how to build the documentation.
 
 To generate updated docs from the scripts below, make sure the dev server is running `pnpm dev`, then just run `pnpm docs:build`.

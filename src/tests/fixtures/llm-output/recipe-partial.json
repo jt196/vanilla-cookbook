@@ -1,0 +1,15 @@
+{
+  "name": "Partial Recipe",
+  "author": "",
+  "sourceUrl": "",
+  "imageUrl": "",
+  "description": "",
+  "notes": "",
+  "ingredients": ["Some ingredient"],
+  "instructions": [],
+  "cookTime": "",
+  "prepTime": "",
+  "totalTime": "",
+  "servings": "",
+  "nutrition": {}
+}

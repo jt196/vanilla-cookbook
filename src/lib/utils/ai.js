@@ -215,8 +215,8 @@ const providerLoaders = {
 		importPath: '@langchain/openai',
 		clientName: 'ChatOpenAI',
 		buildConfig: (model, apiKey) => ({
-			modelName: model,
-			openAIApiKey: apiKey,
+			model,
+			apiKey,
 			temperature: 0.3
 		})
 	}),
@@ -264,7 +264,15 @@ async function loadChatClient(provider, model, type) {
 	return loader(model, type)
 }
 
-function parseLLMJsonOutput(rawOutput) {
+/**
+ * Parse and repair JSON output from LLM responses.
+ * Handles common issues: markdown fences, trailing commas, truncation, extra content.
+ *
+ * @param {string} rawOutput - Raw LLM output string
+ * @returns {Object} Parsed JSON object
+ * @throws {SyntaxError} If JSON cannot be parsed or repaired
+ */
+export function parseLLMJsonOutput(rawOutput) {
 	let output = (rawOutput || '').trim()
 
 	// Clean up markdown code fences

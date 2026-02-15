@@ -2,10 +2,24 @@ name: Run Tests
 
 on:
   workflow_call:
+    secrets:
+      OPENAI_API_KEY:
+        required: false
+      ANTHROPIC_API_KEY:
+        required: false
+      GOOGLE_API_KEY:
+        required: false
+      OLLAMA_BASE_URL:
+        required: false
 
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+      OLLAMA_BASE_URL: ${{ secrets.OLLAMA_BASE_URL }}
 
     steps:
       - name: Checkout code
@@ -98,6 +112,11 @@ jobs:
 
       - name: Run Tests
         run: pnpm test
+
+      - name: Run LLM Smoke Tests (optional)
+        if: ${{ env.OPENAI_API_KEY != '' || env.ANTHROPIC_API_KEY != '' || env.GOOGLE_API_KEY != '' || env.OLLAMA_BASE_URL != '' }}
+        continue-on-error: true
+        run: RUN_LLM_SMOKE=true pnpm -s vitest run src/tests/llm.smoke.test.js
 
       - name: Run Playwright E2E
         run: pnpm exec playwright test
