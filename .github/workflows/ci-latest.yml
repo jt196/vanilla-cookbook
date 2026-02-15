@@ -12,6 +12,8 @@ jobs:
   run-tests:
     if: github.repository == 'jt196/vanilla-cookbook'
     uses: ./.github/workflows/run-tests.yml
+    with:
+      run_e2e: ${{ github.event_name == 'push' }}
     secrets:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
