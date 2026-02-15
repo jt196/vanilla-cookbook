@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   run-tests:
@@ -11,7 +14,7 @@ jobs:
     uses: ./.github/workflows/run-tests.yml
 
   docker-build-latest:
-    if: github.repository == 'jt196/vanilla-cookbook'
+    if: github.repository == 'jt196/vanilla-cookbook' && github.event_name == 'push'
     needs: run-tests
     uses: ./.github/workflows/docker-build.yml
     with:
