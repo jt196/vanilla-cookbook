@@ -1,26 +1,14 @@
-# Pull Request
-
-## Summary
-
-- Brief summary of this change.
-
-## Release Notes
-
-Add user-facing release notes bullets here. Keep this short and readable.
+# Release Notes
 
 - Added:
 - Changed:
 - Fixed:
-- Breaking changes (if any):
-- Please refer to any related issues inline e.g. "LangChain v1 update #xxx"
+- Breaking changes:
+- Related issues:
 
-## Testing
-
-- [ ] Scoped local tests passed
-- [ ] Global local tests passed
-
-## Checklist
-
-- [ ] I added/updated tests where needed
-- [ ] I updated docs where needed
-- [ ] I added labels for release categorization
+<!-- Rules:
+- Keep this user-facing and concise.
+- Prefer 3-8 bullets total.
+- Include issue refs inline where relevant (e.g. #347).
+- Do not include internal checklists or implementation-only detail.
+-->

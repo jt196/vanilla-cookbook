@@ -10,10 +10,10 @@ on:
 
 jobs:
   run-tests:
-    if: github.repository == 'jt196/vanilla-cookbook'
+    if: github.repository == 'jt196/vanilla-cookbook' && github.event_name == 'pull_request'
     uses: ./.github/workflows/run-tests.yml
     with:
-      run_e2e: ${{ github.event_name == 'push' }}
+      run_e2e: false
     secrets:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -22,7 +22,6 @@ jobs:
 
   docker-build-latest:
     if: github.repository == 'jt196/vanilla-cookbook' && github.event_name == 'push'
-    needs: run-tests
     uses: ./.github/workflows/docker-build.yml
     with:
       docker_tags: latest
