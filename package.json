@@ -55,7 +55,7 @@
 		"svelte": "^5.0.0",
 		"svelte-check": "^4.1.4",
 		"svelte-preprocess": "^6.0.3",
-		"svelte-virtual-list": "^3.0.1",
+		"@humanspeak/svelte-virtual-list": "^0.3.10",
 		"tailwindcss": "^4.1.18",
 		"ts-node": "^10.9.2",
 		"tslib": "^2.8.1",

@@ -146,6 +146,9 @@ importers:
       '@event-calendar/time-grid':
         specifier: ^3.10.0
         version: 3.10.0
+      '@humanspeak/svelte-virtual-list':
+        specifier: ^0.3.10
+        version: 0.3.10(svelte@5.23.0)
       '@playwright/test':
         specifier: ^1.57.0
         version: 1.57.0
@@ -233,9 +236,6 @@ importers:
       svelte-preprocess:
         specifier: ^6.0.3
         version: 6.0.3(@babel/core@7.26.10)(postcss-load-config@6.0.1(jiti@2.6.1)(postcss@8.5.6)(yaml@2.8.2))(postcss@8.5.6)(sass@1.85.1)(svelte@5.23.0)(typescript@5.8.2)
-      svelte-virtual-list:
-        specifier: ^3.0.1
-        version: 3.0.1
       tailwindcss:
         specifier: ^4.1.18
         version: 4.1.18
@@ -1250,6 +1250,11 @@ packages:
   '@humanfs/node@0.16.6':
     resolution: {integrity: sha512-YuI2ZHQL78Q5HbhDiBA1X4LmYdXCKCMQIfw0pw7piHJwyREFebJUvrQN4cMssyES6x+vfUbx1CIpaQUKYdQZOw==}
     engines: {node: '>=18.18.0'}
+
+  '@humanspeak/svelte-virtual-list@0.3.10':
+    resolution: {integrity: sha512-mcbHfFnHHsNqG0oxN7vU9A3U32MXD3spp6bkiLVYTM645TlULm3BQawLUzhrYriF5WBIHtJXFXfKWU4V4YMshw==}
+    peerDependencies:
+      svelte: ^5.0.0
 
   '@humanwhocodes/module-importer@1.0.1':
     resolution: {integrity: sha512-bxveV4V8v5Yb4ncFTT3rPSgZBOpCkjfK0y4oVVVJwIuDVBRMDXrPyXRL988i5ap9m9bnyEEjWfm5WkBmtffLfA==}
@@ -5001,9 +5006,6 @@ packages:
       typescript:
         optional: true
 
-  svelte-virtual-list@3.0.1:
-    resolution: {integrity: sha512-e7e+jn8VDjmdD8A1oOVBWmUi7jg+uugmiihkK0Cuk35JeeCR8ja40/B6DpCTHJFsQAZg6EVPjetN2ibgr25YCA==}
-
   svelte@4.2.19:
     resolution: {integrity: sha512-IY1rnGr6izd10B0A8LqsBfmlT5OILVuZ7XsI0vdGPEvuonFV7NYEUK4dAkm9Zg2q0Um92kYjTpS1CAP3Nh/KWw==}
     engines: {node: '>=16'}
@@ -6919,6 +6921,11 @@ snapshots:
     dependencies:
       '@humanfs/core': 0.19.1
       '@humanwhocodes/retry': 0.3.1
+
+  '@humanspeak/svelte-virtual-list@0.3.10(svelte@5.23.0)':
+    dependencies:
+      esm-env: 1.2.2
+      svelte: 5.23.0
 
   '@humanwhocodes/module-importer@1.0.1': {}
 
@@ -10887,8 +10894,6 @@ snapshots:
       postcss-load-config: 6.0.1(jiti@2.6.1)(postcss@8.5.6)(yaml@2.8.2)
       sass: 1.85.1
       typescript: 5.8.2
-
-  svelte-virtual-list@3.0.1: {}
 
   svelte@4.2.19:
     dependencies:
