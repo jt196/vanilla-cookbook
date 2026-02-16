@@ -6,6 +6,7 @@
 	import Settings from '$lib/components/svg/Settings.svelte'
 	import Input from '$lib/components/ui/Form/Input.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
+	import Spinner from '$lib/components/ui/Spinner.svelte'
 	import Checkbox from '$lib/components/ui/Form/Checkbox.svelte'
 	import DropdownMenu from '$lib/components/ui/DropdownMenu.svelte'
 	import {
@@ -16,7 +17,14 @@
 		favouriteFilter
 	} from '$lib/stores/recipeFilter'
 
-	let { toggleSidebar, viewOnly, useCats = 'false', username, viewMode = 'owner' } = $props()
+	let {
+		toggleSidebar,
+		viewOnly,
+		useCats = 'false',
+		username,
+		viewMode = 'owner',
+		searchPending = false
+	} = $props()
 
 	const favouriteBtnClasses = $derived(
 		['tooltip', $favouriteFilter ? 'opacity-100 text-error' : 'opacity-60', 'hover:opacity-100']
@@ -54,6 +62,10 @@
 	function hasField(field) {
 		return $searchFields.includes(field)
 	}
+
+	function clearSearch() {
+		$searchString = ''
+	}
 </script>
 
 {#if viewOnly}
@@ -75,7 +87,7 @@
 			</Button>
 		{/if}
 
-		<div class="flex-1 min-w-0">
+		<div class="flex-1 min-w-0 relative">
 			<Input
 				type="text"
 				name="search"
@@ -83,8 +95,31 @@
 				bind:value={$searchString}
 				size="md"
 				color="info"
+				class="pr-10"
 				useLabelAsPlaceholder={false}
 			/>
+			{#if searchPending && $searchString?.trim()}
+				<Spinner
+					visible={true}
+					inline={true}
+					size="xs"
+					color="info"
+					spinnerContent="Searching"
+					inlineClass="absolute right-3 top-1/2 -translate-y-1/2"
+				/>
+			{:else if $searchString?.trim()}
+				<Button
+					type="button"
+					size="xs"
+					style="ghost"
+					color="info"
+					class="btn-circle absolute right-2 top-1/2 -translate-y-1/2"
+					onclick={clearSearch}
+					aria-label="Clear search"
+				>
+					×
+				</Button>
+			{/if}
 		</div>
 
 		<DropdownMenu
