@@ -52,16 +52,20 @@
 		size="sm"
 		color="neutral"
 	>
-		Use teaspoons and tablespoons instead of grams.
+		{user.skipSmallUnits
+			? 'Use teaspoons and tablespoons instead of grams.'
+			: 'Use grams for small measurements.'}
 	</Checkbox>
 	<Checkbox
-		name="Cup Match"
+		name="Volumetric Match Display"
 		bind:checked={user.ingMatch}
 		size="sm"
 		color="neutral"
-		legend="Display Cup Match"
+		legend="Volumetric Match Display"
 	>
-		volumetric ingredients by default when converting to and from US Cups
+		{user.ingMatch
+			? 'Display ingredient matching when converting to and from US Cups.'
+			: 'Hide ingredient matching when converting to and from US Cups.'}
 	</Checkbox>
 	<Checkbox
 		name="Display Original"
@@ -70,7 +74,9 @@
 		color="neutral"
 		legend="Display Original"
 	>
-		ingredient line text instead of parsed text
+		{user.ingOriginal
+			? 'Display original ingredient line text.'
+			: 'Display parsed ingredient text.'}
 	</Checkbox>
 	<Checkbox
 		name="Display Symbols"
@@ -79,7 +85,9 @@
 		color="neutral"
 		legend="Display Symbols"
 	>
-		Display short form instead of long form units. e.g. g vs grams
+		{user.ingSymbol
+			? 'Display short-form units, e.g. g vs grams.'
+			: 'Display long-form units, e.g. grams vs g.'}
 	</Checkbox>
 	<Checkbox
 		name="Display Extra"
@@ -88,7 +96,9 @@
 		color="neutral"
 		legend="Display Extra"
 	>
-		ingredient text, eg after the comma in "1 clove garlic, chopped"
+		{user.ingExtra
+			? 'Display extra ingredient text, e.g. after the comma in "1 clove garlic, chopped".'
+			: 'Hide extra ingredient text.'}
 	</Checkbox>
 	<Checkbox
 		name="Use Categories"
@@ -97,7 +107,7 @@
 		color="neutral"
 		legend="Use Categories"
 	>
-		enables the user to filter by category.
+		{user.useCats ? 'Category filtering is enabled.' : 'Category filtering is disabled.'}
 	</Checkbox>
 	<footer>
 		<Button type="submit">Update</Button>

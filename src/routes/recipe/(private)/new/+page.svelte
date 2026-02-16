@@ -24,8 +24,6 @@
 	 * @property {string} nutritional_info - Nutritional information of the recipe.
 	 */
 
-	let recipe = $state({ ...defaultRecipe })
-
 	let url = $state(null)
 	let sharedText = $state(null)
 	let feedbackMessage = $state('')
@@ -46,9 +44,12 @@
 		aiSelectedProviderConfigured,
 		isAdmin,
 		imageAllowed,
+		userPublicRecipes,
 		userUnits,
 		userLanguage
 	} = $state(data)
+
+	let recipe = $state({ ...defaultRecipe, is_public: !!userPublicRecipes })
 
 	/**
 	 * Handles the scraping event.

@@ -9,7 +9,7 @@
 
 	let importTypes = $state(data.importTypes || [])
 	let selectedType = $state(importTypes[0]?.id || 'paprika')
-	let isPublic = $state(false)
+	let isPublic = $state(!!data?.user?.publicRecipes)
 	let busy = $state(false)
 
 	// Transform importTypes for Dropdown component (id -> value)
@@ -27,23 +27,26 @@
 	method="POST"
 	action="?/importRecipes"
 	class="flex flex-col gap-4 w-full md:w-2/3 lg:w-1/2"
-	enctype="multipart/form-data">
+	enctype="multipart/form-data"
+>
 	<Dropdown
 		name="type"
 		legend="Choose Migration Type"
 		options={dropdownOptions}
 		bind:selected={selectedType}
-		optionalLabel={info} />
+		optionalLabel={info}
+	/>
 
 	<FileInput id="file" name="file" label="File" {accept} required />
 
 	<Checkbox
 		name="isPublic"
 		bind:checked={isPublic}
-		legend="Set as Public"
+		legend="Recipe Privacy"
 		size="sm"
-		color="primary">
-		I want to make these recipes public
+		color="primary"
+	>
+		{isPublic ? 'Imported recipes will be public.' : 'Imported recipes will be private.'}
 	</Checkbox>
 
 	<Button type="submit" class="self-start w-auto" aria-busy={busy} disabled={busy}>Import</Button>

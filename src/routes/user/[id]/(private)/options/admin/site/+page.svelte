@@ -322,7 +322,9 @@
 			size="sm"
 			color="primary"
 		>
-			Turn on site registration</Checkbox
+			{settings.registrationAllowed
+				? 'User registration is enabled.'
+				: 'User registration is disabled.'}</Checkbox
 		>
 		<Checkbox
 			name="requireLogin"
@@ -331,7 +333,9 @@
 			size="sm"
 			color="primary"
 		>
-			Require authentication for all pages (private site mode)</Checkbox
+			{settings.requireLogin
+				? 'Authentication is required for all pages (private site mode).'
+				: 'Public pages are accessible without login.'}</Checkbox
 		>
 		<InfoText>
 			When enabled, all visitors must log in to access any page. Public recipes and profiles will
@@ -345,7 +349,9 @@
 				size="sm"
 				color="primary"
 			>
-				Automatically create accounts for new OIDC users</Checkbox
+				{settings.oidcAutoProvision
+					? 'Automatically create accounts for new OIDC users.'
+					: 'Only existing accounts can sign in via OIDC.'}</Checkbox
 			>
 			<InfoText>
 				When enabled, users signing in via OIDC for the first time will have an account created
@@ -378,7 +384,9 @@
 				size="sm"
 				color="primary"
 			>
-				Enable AI-assisted recipe parsing and image analysis
+				{llmEnabled
+					? 'AI-assisted recipe parsing and image analysis are enabled.'
+					: 'AI-assisted recipe parsing and image analysis are disabled.'}
 			</Checkbox>
 
 			{#if llmEnabled}
@@ -423,7 +431,9 @@
 						</Button>
 						{#if textTestResult}
 							<span class={textTestResult.ok ? 'text-success' : 'text-error'}>
-								{textTestResult.ok ? `Connected (${textTestResult.latencyMs}ms)` : textTestResult.error}
+								{textTestResult.ok
+									? `Connected (${textTestResult.latencyMs}ms)`
+									: textTestResult.error}
 							</span>
 						{/if}
 					</div>
@@ -466,7 +476,9 @@
 							</Button>
 							{#if imageTestResult}
 								<span class={imageTestResult.ok ? 'text-success' : 'text-error'}>
-									{imageTestResult.ok ? `Connected (${imageTestResult.latencyMs}ms)` : imageTestResult.error}
+									{imageTestResult.ok
+										? `Connected (${imageTestResult.latencyMs}ms)`
+										: imageTestResult.error}
 								</span>
 							{/if}
 						</div>
@@ -489,7 +501,9 @@
 						color="primary"
 						disabled={!(llmConfig.semanticAvailableProviders || []).length}
 					>
-						Enable embedding-based recipe search
+						{semanticEnabled
+							? 'Embedding-based recipe search is enabled.'
+							: 'Embedding-based recipe search is disabled.'}
 					</Checkbox>
 					{#if !(llmConfig.semanticAvailableProviders || []).length}
 						<InfoText>
@@ -543,7 +557,9 @@
 							</Button>
 							{#if embeddingTestResult}
 								<span class={embeddingTestResult.ok ? 'text-success' : 'text-error'}>
-									{embeddingTestResult.ok ? `Connected (${embeddingTestResult.latencyMs}ms)` : embeddingTestResult.error}
+									{embeddingTestResult.ok
+										? `Connected (${embeddingTestResult.latencyMs}ms)`
+										: embeddingTestResult.error}
 								</span>
 							{/if}
 						</div>

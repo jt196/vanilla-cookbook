@@ -5,11 +5,21 @@
 	import Checkbox from '$lib/components/ui/Form/Checkbox.svelte'
 	import Input from '$lib/components/ui/Form/Input.svelte'
 	import ValidationMessage from '$lib/components/ui/Form/ValidationMessage.svelte'
+	import ConfirmationDialog from '$lib/components/ui/ConfirmationDialog.svelte'
+	import Table from '$lib/components/ui/Table/Table.svelte'
+	import TableBody from '$lib/components/ui/Table/TableBody.svelte'
+	import TableCell from '$lib/components/ui/Table/TableCell.svelte'
+	import TableRow from '$lib/components/ui/Table/TableRow.svelte'
 
 	/** @type {{data: any}} */
 	let { data } = $props()
-	const { user, dbRecordCount, passwordRequirements, passwordRequirementsDescription } =
-		$state(data)
+	const {
+		user,
+		dbRecordCount,
+		recipeStats,
+		passwordRequirements,
+		passwordRequirementsDescription
+	} = $state(data)
 
 	// Account settings
 	let email = $state(user.email || '')
@@ -23,6 +33,10 @@
 
 	// Privacy settings
 	let privacyFeedback = $state('')
+	let visibilityFeedback = $state('')
+	let setPrivateBusy = $state(false)
+	let confirmVisibilityOpen = $state(false)
+	let visibilityAction = $state(/** @type {'public' | 'private' | null} */ (null))
 
 	// Password validation
 	let passwordsMismatch = $derived(newPass !== newPassConfirm && newPass && newPassConfirm)
@@ -104,6 +118,65 @@
 			privacyFeedback = 'There was a problem updating your privacy settings!'
 		}
 	}
+
+	async function makeAllRecipesPrivate() {
+		setPrivateBusy = true
+		visibilityFeedback = ''
+		try {
+			const response = await fetch(`/api/user/${user.userId}/recipes/privacy`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ isPublic: false })
+			})
+			const payload = await response.json().catch(() => null)
+			if (response.ok) {
+				visibilityFeedback = payload?.message || 'All recipes were set to private.'
+			} else {
+				visibilityFeedback = payload?.error || 'There was a problem updating recipe visibility.'
+			}
+		} finally {
+			setPrivateBusy = false
+		}
+	}
+
+	async function makeAllRecipesPublic() {
+		setPrivateBusy = true
+		visibilityFeedback = ''
+		try {
+			const response = await fetch(`/api/user/${user.userId}/recipes/privacy`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ isPublic: true })
+			})
+			const payload = await response.json().catch(() => null)
+			if (response.ok) {
+				visibilityFeedback = payload?.message || 'All recipes were set to public.'
+			} else {
+				visibilityFeedback = payload?.error || 'There was a problem updating recipe visibility.'
+			}
+		} finally {
+			setPrivateBusy = false
+		}
+	}
+
+	function openVisibilityConfirm(action) {
+		visibilityAction = action
+		confirmVisibilityOpen = true
+	}
+
+	function closeVisibilityConfirm() {
+		confirmVisibilityOpen = false
+		visibilityAction = null
+	}
+
+	async function confirmVisibilityAction() {
+		if (visibilityAction === 'private') {
+			await makeAllRecipesPrivate()
+		} else if (visibilityAction === 'public') {
+			await makeAllRecipesPublic()
+		}
+		closeVisibilityConfirm()
+	}
 </script>
 
 <div class="flex flex-col gap-6 w-full md:w-2/3 lg:w-1/2">
@@ -114,9 +187,34 @@
 
 	<!-- Account Info -->
 	<div class="prose max-w-none">
-		You have {dbRecordCount} recipes in your account.
-		<br />
-		Version: <i>{data.version}</i>
+		<p class="mb-1">Recipe Stats</p>
+		<Table size="sm" bordered={true} containerClass="max-w-sm">
+			<TableBody>
+				<TableRow>
+					<TableCell tag="th" scope="row">Total</TableCell>
+					<TableCell>{recipeStats?.total ?? dbRecordCount}</TableCell>
+				</TableRow>
+				<TableRow>
+					<TableCell tag="th" scope="row">Public</TableCell>
+					<TableCell>{recipeStats?.public ?? 0}</TableCell>
+				</TableRow>
+				<TableRow>
+					<TableCell tag="th" scope="row">Private</TableCell>
+					<TableCell>{recipeStats?.private ?? 0}</TableCell>
+				</TableRow>
+				<TableRow>
+					<TableCell tag="th" scope="row">Cooked</TableCell>
+					<TableCell>{recipeStats?.cooked ?? 0}</TableCell>
+				</TableRow>
+				<TableRow>
+					<TableCell tag="th" scope="row">Favourites</TableCell>
+					<TableCell>{recipeStats?.favourites ?? 0}</TableCell>
+				</TableRow>
+			</TableBody>
+		</Table>
+		<p class="mt-2">
+			Version: <i>{data.version}</i>
+		</p>
 	</div>
 
 	<!-- Account Details -->
@@ -157,7 +255,9 @@
 		<ValidationMessage
 			message={newPasswordValidation?.message}
 			isValid={newPasswordValidation?.isValid} />
-		<ValidationMessage message={passwordsMismatch ? "Passwords don't match!" : null} isError={true} />
+		<ValidationMessage
+			message={passwordsMismatch ? "Passwords don't match!" : null}
+			isError={true} />
 		<footer>
 			<Button type="submit" disabled={isPasswordSubmitDisabled}>Update Password</Button>
 			<FeedbackMessage message={passwordFeedback} />
@@ -165,25 +265,28 @@
 	</form>
 
 	<!-- Privacy -->
+	<h2 class="prose max-w-none mb-2">Privacy</h2>
 	<form onsubmit={updatePrivacy} class="flex flex-col gap-4">
-		<h2 class="prose max-w-none mb-2">Privacy</h2>
 		<div class="flex flex-col gap-2">
 			<Checkbox
-				name="Profile Public"
-				legend="Profile Public"
+				name="Profile Privacy"
+				legend="Profile Privacy"
 				bind:checked={user.publicProfile}
-				label="Profile Public"
 				size="sm"
 				color="primary">
-				Show or hide your profile from other users.
+				{user.publicProfile
+					? 'Your profile is visible to other users.'
+					: 'Your profile is hidden from other users.'}
 			</Checkbox>
 			<Checkbox
-				name="Recipes Public"
+				name="Recipe Privacy"
 				bind:checked={user.publicRecipes}
-				legend="Recipes Public"
+				legend="Recipe Privacy"
 				size="sm"
 				color="primary">
-				Make your recipes public or private by default
+				{user.publicRecipes
+					? 'New recipes are public by default.'
+					: 'New recipes are private by default.'}
 			</Checkbox>
 		</div>
 		<footer>
@@ -191,4 +294,46 @@
 			<FeedbackMessage message={privacyFeedback} />
 		</footer>
 	</form>
+
+	<!-- Recipe Visibility Actions -->
+	<div class="flex flex-col gap-2">
+		<p class="text-sm text-base-content/70">
+			Use this action to make existing recipes private. This does not change your default for new
+			recipes.
+		</p>
+		<div>
+			<Button
+				type="button"
+				color="error"
+				style="outline"
+				loading={setPrivateBusy}
+				onclick={() => openVisibilityConfirm('private')}>Make All Recipes Private</Button>
+			<Button
+				type="button"
+				color="success"
+				style="outline"
+				loading={setPrivateBusy}
+				class="ml-2"
+				onclick={() => openVisibilityConfirm('public')}>Make All Recipes Public</Button>
+		</div>
+		<FeedbackMessage message={visibilityFeedback} />
+	</div>
 </div>
+
+<ConfirmationDialog
+	bind:isOpen={confirmVisibilityOpen}
+	onClose={closeVisibilityConfirm}
+	onConfirm={confirmVisibilityAction}>
+	{#snippet content()}
+		<h3 class="font-bold text-lg">Confirm Visibility Change</h3>
+		{#if visibilityAction === 'public'}
+			<p class="py-4">
+				This will make <strong>all</strong> of your recipes public. Are you sure?
+			</p>
+		{:else if visibilityAction === 'private'}
+			<p class="py-4">
+				This will make <strong>all</strong> of your recipes private. Are you sure?
+			</p>
+		{/if}
+	{/snippet}
+</ConfirmationDialog>
