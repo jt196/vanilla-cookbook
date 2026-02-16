@@ -110,6 +110,21 @@ The parser tags each unit with a system (`metric`, `imperial`, `americanVolumetr
 
 *tldr;* change your default language in the user settings.
 
+Currently Supported:
+
+- English
+- German
+- Italian
+- Spanish
+- French
+- Portuguese
+- Indonesian
+- Hindi
+- Russian
+- Arabic
+- Hungarian
+- Czech
+
 Obviously, different units and even numbers look different depending on your native tongue.
 
 - **1.5** *kilogram* potatoes in German => **1,5** *Kilogramm* Kartoffeln

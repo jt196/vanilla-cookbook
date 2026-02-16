@@ -11,6 +11,7 @@ export const load = async ({ locals }) => {
 		aiSelectedProviderConfigured: ai.selectedProviderConfigured ?? false,
 		isAdmin: locals.user?.isAdmin ?? false,
 		imageAllowed: ai.imageAllowed ?? false,
+		userPublicRecipes: locals.user?.publicRecipes ?? false,
 		userUnits: units,
 		userLanguage: language
 	}

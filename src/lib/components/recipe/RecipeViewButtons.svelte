@@ -21,7 +21,7 @@ import { goto, invalidateAll } from '$app/navigation'
 import Fork from '$lib/components/svg/Fork.svelte'
 import Spinner from '$lib/components/ui/Spinner.svelte'
 
-	/** @type {{recipe: any, updateLogs: any, favRecipe: any, scale?: number, onRestoreScale?: (scale: number) => void, viewerUserId?: string | null}} */
+	/** @type {{recipe: any, updateLogs: any, favRecipe: any, scale?: number, onRestoreScale?: (scale: number) => void, onLogUpdated?: (logId: string, note: string | null, scale: number) => Promise<void>, onLogDeleted?: (logId: string) => Promise<void>, viewerUserId?: string | null}} */
 	let {
 		recipe,
 		updateLogs,
@@ -31,6 +31,8 @@ import Spinner from '$lib/components/ui/Spinner.svelte'
 		viewOnly,
 		scale = 1,
 		onRestoreScale = null,
+		onLogUpdated = null,
+		onLogDeleted = null,
 		viewerUserId = null
 	} = $props()
 	let showDeleteConfirm = $state(false)
@@ -229,7 +231,7 @@ async function confirmDuplicate() {
 
 <CookedLogModal bind:isOpen={showCookedModal} onSubmit={handleLogSubmit} loading={loadingLog} />
 
-<CookedHistoryModal bind:isOpen={showHistoryModal} {logs} {onRestoreScale} />
+<CookedHistoryModal bind:isOpen={showHistoryModal} {logs} {onRestoreScale} {onLogUpdated} {onLogDeleted} />
 
 <ConfirmationDialog
 	bind:isOpen={showCopyConfirm}

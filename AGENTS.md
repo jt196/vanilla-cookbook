@@ -76,6 +76,7 @@ vanilla-cookbook/
 ## Key Features & Implementation Areas
 
 ### 1. Recipe Parsing & Scraping
+
 **Location**: `src/lib/utils/parse/`, `src/routes/api/recipe/scrape/`
 
 - **JSON-LD parsing**: Primary method, extracts schema.org Recipe data from `<script type="application/ld+json">`
@@ -85,11 +86,13 @@ vanilla-cookbook/
 - **Bookmarklet**: Browser bookmarklet for easy recipe capture from any site
 
 **Key files**:
+
 - `recipeParse.js`: Main parsing orchestrator (`parseURL`, `parseHTML`)
 - `parseHelpers.js`: Extraction utilities (JSON-LD, microdata, nutrition, images)
 - `parseHelpersClient.js`: Client-side parsing (`scrapeRecipeFromURL`, `handleParse`, `handleImage`)
 
 ### 2. Ingredient Parsing & Conversion
+
 **Location**: `src/lib/submodules/recipe-ingredient-parser/` (submodule), `src/lib/utils/converter.js`
 
 - **Multi-language parsing**: Supports 10+ languages (English, German, Italian, Spanish, French, Portuguese, Indonesian, Hindi, Russian, Arabic)
@@ -101,6 +104,7 @@ vanilla-cookbook/
 **Important**: The ingredient parser is a **git submodule**. Changes to parsing logic belong in the submodule repo, not here.
 
 ### 3. User Authentication & Privacy
+
 **Location**: `src/lib/server/`, `src/routes/api/user/`, Prisma schema
 
 - **Lucia v2**: Session-based auth with Prisma adapter
@@ -112,6 +116,7 @@ vanilla-cookbook/
 **Prisma models**: `AuthUser`, `AuthSession`, `AuthKey`, `AuthAccount`, `SiteSettings`
 
 ### 4. PWA & Offline Support
+
 **Location**: `src/lib/utils/pwa/`, `static/`
 
 - **Service worker**: Auto-generated with Workbox (`generate-sw.js`)
@@ -123,6 +128,7 @@ vanilla-cookbook/
 **Key commands**: `pnpm generate-sw`, `./scripts/pwa/sw-domain.sh`
 
 ### 5. Shopping List & Cooking Logs
+
 **Location**: `src/routes/api/log/`, Prisma models
 
 - **Shopping list**: Add ingredients from recipes, persist checked items, show/hide purchased
@@ -130,6 +136,7 @@ vanilla-cookbook/
 - **Database**: `ShoppingListItem`, `RecipeLog` models
 
 ### 6. Categories & Organization
+
 **Location**: `src/lib/utils/categories.js`, Prisma `Category` model
 
 - **Hierarchical categories**: Parent-child relationships, unlimited nesting
@@ -137,6 +144,7 @@ vanilla-cookbook/
 - **Optional feature**: Power user feature (hidden by default, `useCats` flag)
 
 ### 7. Image Handling
+
 **Location**: `src/lib/utils/image/`, `src/routes/api/recipe/image/`
 
 - **Sharp processing**: Resize, compress, convert images
@@ -147,6 +155,7 @@ vanilla-cookbook/
 ## Development Workflow
 
 ### Initial Setup
+
 ```bash
 # Clone with submodule
 git clone --recursive https://github.com/jt196/vanilla-cookbook.git
@@ -172,6 +181,7 @@ pnpm dev
 **Driver Adapter Required**: Prisma 7 requires a database driver adapter. For SQLite, we use `@prisma/adapter-libsql`.
 
 **PrismaClient Instantiation Pattern**:
+
 ```javascript
 import PrismaClientPkg from '@prisma/client'
 import { PrismaLibSql } from '@prisma/adapter-libsql'
@@ -180,7 +190,7 @@ const { PrismaClient } = PrismaClientPkg
 
 // Create LibSQL adapter
 const adapter = new PrismaLibSql({
-	url: process.env.DATABASE_URL || 'file:./prisma/db/dev.sqlite'
+ url: process.env.DATABASE_URL || 'file:./prisma/db/dev.sqlite'
 })
 
 // Initialize with adapter
@@ -192,6 +202,7 @@ const prisma = new PrismaClient({ adapter })
 **Manual Generation**: `prisma generate` must be called explicitly - it no longer runs automatically with `migrate` or `db push`.
 
 ### Common Commands
+
 ```bash
 # Development
 pnpm dev                  # Migrate, seed, start dev server
@@ -228,17 +239,20 @@ pnpm start                # Build then serve
 ```
 
 ### Environment Variables (.env)
+
 **Required**:
+
 - `ORIGIN`: Full URL where app is hosted (critical for CORS, auth cookies)
   - Dev: `http://localhost:5173`
   - Docker: `http://localhost:3000`
   - Production: Your actual domain
 
 **Optional** (all have sensible defaults):
+
 - `VITE_SITE_NAME`: Site name in browser tab (default: "Vanilla Cookbook")
 - `BODY_SIZE_LIMIT`: Max upload size in bytes (default: 512kb, recommend 5MB)
 - `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GOOGLE_API_KEY`: LLM providers
-- `OLLAMA_BASE_URL`: For local AI models (default: http://localhost:11434)
+- `OLLAMA_BASE_URL`: For local AI models (default: <http://localhost:11434>)
 - `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`: Google OAuth
 - `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`: GitHub OAuth
 - `OIDC_ISSUER_URL`, `OIDC_CLIENT_ID`, `OIDC_CLIENT_SECRET`: Generic OIDC provider
@@ -250,6 +264,7 @@ pnpm start                # Build then serve
 ## Database Schema (Prisma)
 
 ### Core Models
+
 - **`Recipe`**: Main recipe data (name, ingredients, directions, times, etc.)
   - Relations: `AuthUser`, `RecipeCategory[]`, `RecipePhoto[]`, `RecipeLog[]`, `ShoppingListItem[]`
   - Key fields: `uid` (PK), `userId` (FK), `is_public`, `is_pinned`, `in_trash`, `on_favorites`
@@ -286,6 +301,7 @@ pnpm start                # Build then serve
   - Fields: `version`, `registrationAllowed`
 
 ### Auth Models (Lucia)
+
 - **`AuthSession`**: User sessions
 - **`AuthKey`**: Password hashes
 - **`AuthAccount`**: OAuth accounts
@@ -293,12 +309,14 @@ pnpm start                # Build then serve
 ## Testing
 
 ### Test Structure
+
 - **Location**: `src/lib/utils/parse/recipeParse.test.js` (main parsing tests)
 - **Framework**: Vitest + jsdom + @testing-library/svelte
 - **Mocking**: `parseTesting.js` provides `mockFetchForURL` to test parsing without network requests
 - **Test data**: Saved HTML files in `src/lib/data/recipe_html/`
 
 ### Running Tests
+
 ```bash
 pnpm test              # Run all tests
 pnpm test:watch        # Watch mode
@@ -306,6 +324,7 @@ pnpm coverage          # Coverage report
 ```
 
 ### Adding Parsing Tests
+
 1. Add test URL to `downloadRecipes.js` sites array
 2. Run script to download HTML: `node src/lib/utils/parse/downloadRecipes.js`
 3. Add test case to `recipeParse.test.js`
@@ -314,6 +333,7 @@ pnpm coverage          # Coverage report
 ## Code Style & Conventions
 
 ### General
+
 - **No TypeScript**: Project uses JavaScript with JSDoc types (see `typeDefinitions.js`)
 - **Formatting**: Prettier enforced, 2-space indents, trailing commas
 - **Linting**: ESLint with svelte, jsdoc plugins
@@ -321,6 +341,7 @@ pnpm coverage          # Coverage report
 - **JSDoc**: Document all utility functions (see `docs/technical/*.md` for examples)
 
 ### Svelte Conventions
+
 - **Svelte 5 syntax**: Use runes (`$state`, `$derived`, `$effect`) for reactivity
 - **Component naming**: PascalCase for components, kebab-case for files (e.g., `RecipeCard.svelte`)
 - **Props**: Destructure props in component `<script>` tag
@@ -328,6 +349,7 @@ pnpm coverage          # Coverage report
 - **Styling**: Prefer Tailwind utility classes and DaisyUI components; keep custom CSS minimal
 
 ### Component-First UI Development
+
 - **Default approach**: Reuse existing components before adding new markup or one-off Tailwind class blocks
 - **Primary UI primitives**: Prefer `src/lib/components/ui/` (`Button`, `Card`, `Dialog`, `ConfirmationDialog`, `Spinner`, `Sidebar`, `Badge`, `Container`)
 - **Form controls**: Prefer `src/lib/components/ui/Form/` (`Input`, `Textarea`, `Dropdown`, `Checkbox`, `Toggle`, `Radio`, `FileInput`, `ValidationMessage`)
@@ -337,12 +359,14 @@ pnpm coverage          # Coverage report
 - **New components**: Only create a new component when no existing component fits; place reusable primitives in `ui/` and feature-specific components in their domain folder
 
 ### API Routes
+
 - **Structure**: `src/routes/api/[resource]/[action]/+server.js`
 - **Methods**: Export `GET`, `POST`, `PUT`, `DELETE`, `PATCH` as needed
 - **Responses**: Return `json()` from `@sveltejs/kit`, use HTTP status codes
 - **Error handling**: Try-catch, return `{ error: 'message' }` with 400/500 status
 
 ### Database Operations
+
 - **CRUD utilities**: Use functions from `src/lib/utils/crud.js` where possible
 - **Transactions**: Use Prisma transactions for multi-step operations
 - **Cascades**: Set up in schema (e.g., deleting user cascades to recipes/logs)
@@ -353,21 +377,25 @@ pnpm coverage          # Coverage report
 ## Common Gotchas & Important Notes
 
 ### Submodule Management
+
 - **Ingredient parser is a submodule**: Changes to parsing logic belong in the submodule repo
 - **Sync carefully**: `git submodule update --init --recursive` after pulling
 - **Commit separately**: Submodule commits are independent
 
 ### PWA & Service Worker
+
 - **Regenerate after changes**: Run `pnpm generate-sw` if static assets change
 - **Domain changes**: Run `./scripts/pwa/sw-domain.sh` after changing `ORIGIN` in `.env`
 - **Cache invalidation**: SW version bumps automatically on rebuild
 
 ### Environment & CORS
+
 - **ORIGIN is critical**: If `ORIGIN` doesn't match actual URL, auth cookies will fail
 - **Docker vs local**: Different default ports (3000 vs 5173)
 - **HTTPS in production**: Required for PWA features and secure cookies
 
 ### Database
+
 - **SQLite by default**: Single file at `prisma/db/dev.sqlite`
 - **Prisma 7 driver**: Uses `@prisma/adapter-libsql` with `better-sqlite3`
 - **Configuration**: Database URL in `prisma.config.ts`, not schema
@@ -376,11 +404,13 @@ pnpm coverage          # Coverage report
 - **File uploads**: `uploads/` directory must persist (not gitignored)
 
 ### Image Processing
+
 - **Sharp dependency**: Native module, may need rebuild on platform changes
 - **Upload size limit**: Default 5MB (`BODY_SIZE_LIMIT`)
 - **Multiple formats**: Supports JPEG, PNG, WebP, AVIF
 
 ### AI Features
+
 - **Optional, not required**: All features work without API keys
 - **Fallback gracefully**: If AI parsing fails, return error to user
 - **Cost awareness**: Image parsing uses GPT-4o (more expensive)
@@ -388,6 +418,7 @@ pnpm coverage          # Coverage report
 ## Documentation Generation
 
 ### Prerequisites
+
 ```bash
 # Create Python virtual environment
 virtualenv .venv
@@ -398,6 +429,7 @@ pip install -r docs/scripts/docs-requirements.txt
 ```
 
 ### Running
+
 ```bash
 # Ensure dev server is running
 pnpm dev
@@ -407,6 +439,7 @@ pnpm docs:build  # Generates JSDoc + screenshots
 ```
 
 ### Output
+
 - **JSDoc**: `docs/technical/*.md` (auto-generated from code comments)
 - **Screenshots**: `docs/images/*.png` (captured from running dev server)
 - **Configuration**: `docs/scripts/generate_jsdocs.py`, `docs/scripts/screenshots.py`
@@ -414,18 +447,21 @@ pnpm docs:build  # Generates JSDoc + screenshots
 ## Architecture Patterns
 
 ### Frontend State Management
+
 1. **URL state**: Search params, filters, pagination
 2. **Svelte stores**: Global UI state (theme, user preferences)
 3. **Component state**: Local UI state (`$state` runes)
 4. **Server data**: Loaded via `+page.server.js`, passed as props
 
 ### Backend Data Flow
+
 1. **SvelteKit load functions**: Fetch data server-side, return to page
 2. **API routes**: Handle mutations, called from client via `fetch`
 3. **Prisma**: Single source of truth, migrations versioned
 4. **CRUD utilities**: Reusable functions for common operations
 
 ### Parsing Pipeline
+
 1. **Scrape**: Download HTML from URL
 2. **Extract**: JSON-LD → Microdata → Site config → AI fallback
 3. **Parse ingredients**: Use submodule parser
@@ -433,6 +469,7 @@ pnpm docs:build  # Generates JSDoc + screenshots
 5. **Save**: Store in database with user ID
 
 ### Image Pipeline
+
 1. **Upload/scrape**: Receive file or download from URL
 2. **Validate**: Check file type, size
 3. **Process**: Resize, compress with Sharp
@@ -442,6 +479,7 @@ pnpm docs:build  # Generates JSDoc + screenshots
 ## Key Algorithms & Business Logic
 
 ### Unit Conversion (`converter.js`)
+
 - **Ingredient lookup**: Match ingredient text to density database
 - **Volume to weight**: Multiply volume (cups) by grams-per-cup
 - **Temperature**: Celsius ↔ Fahrenheit inline conversion
@@ -449,34 +487,29 @@ pnpm docs:build  # Generates JSDoc + screenshots
 - **Ranges**: Handle "2-3 cups" (convert both values)
 
 ### Recipe Scaling
+
 - **Parse quantities**: Extract numbers from ingredient lines
 - **Multiply**: Apply scale factor (1.5x, 2x, etc.)
 - **Preserve formatting**: Maintain fractions, ranges after scaling
 
 ### Search & Filtering (`filters.js`)
+
 - **Fuse.js**: Fuzzy search on recipe names, ingredients, descriptions
 - **Category filter**: Hierarchical category matching
 - **Time filter**: Parse ISO durations, filter by prep/cook time
 - **Favorites/pinned**: Boolean flags, sort to top
 
 ### Ingredient Parsing (Submodule)
+
 - **Tokenization**: Split ingredient line into quantity, unit, ingredient, preparation
 - **Unit normalization**: "cup" = "cups" = "c"
 - **Language detection**: Auto-detect or user-specified
 - **Multi-language support**: Different tokenization rules per language
 
-## Roadmap & Future Features
-
-See `docs/roadmap.md` for detailed feature wishlist. Key themes:
-- **Enhanced text parsing**: Detect quantities in directions for scaling
-- **Backup/restore**: Automated database backups
-- **Browser extensions**: Native extensions for Chrome/Firefox
-- **Advanced filtering**: Ingredient-based search, smarter categorization
-- **Stats & analytics**: Top categories, most-cooked recipes
-
 ## Common Tasks for AI Assistants
 
 ### Adding a New API Endpoint
+
 1. Create `src/routes/api/[resource]/[action]/+server.js`
 2. Export HTTP method functions (`GET`, `POST`, etc.)
 3. Import Prisma client, CRUD utilities
@@ -485,6 +518,7 @@ See `docs/roadmap.md` for detailed feature wishlist. Key themes:
 6. Test with Vitest or manual API calls
 
 ### Adding a New Svelte Component
+
 1. Check `src/lib/components/` for an existing component to reuse (especially `ui/`, `ui/Form/`, `ui/Table/`, `svg/`)
 2. If no existing component fits, create `src/lib/components/[domain]/[ComponentName].svelte` (or `ui/` if broadly reusable)
 3. Use Svelte 5 runes for reactivity (`$state`, `$derived`)
@@ -493,6 +527,7 @@ See `docs/roadmap.md` for detailed feature wishlist. Key themes:
 6. Import and use in relevant pages
 
 ### Modifying Database Schema
+
 1. Edit `prisma/schema.prisma`
 2. Run `pnpm prisma migrate dev --name [description]`
 3. Commit migration files in `prisma/migrations/`
@@ -500,6 +535,7 @@ See `docs/roadmap.md` for detailed feature wishlist. Key themes:
 5. Regenerate Prisma client: `pnpm prisma generate`
 
 ### Adding a New Recipe Source
+
 1. Test URL against current parser: `parseURL(url)`
 2. If fails, check for JSON-LD, microdata, or add site config
 3. Add test case to `recipeParse.test.js`
@@ -507,6 +543,7 @@ See `docs/roadmap.md` for detailed feature wishlist. Key themes:
 5. Iterate on `parseHelpers.js` or site configs
 
 ### Improving Unit Conversion
+
 1. Add ingredients to density database (`src/lib/data/`)
 2. Update `converter.js` matching logic
 3. Test with sample recipes containing new ingredients
@@ -528,9 +565,9 @@ See `docs/roadmap.md` for detailed feature wishlist. Key themes:
 
 ## Support & Resources
 
-- **Documentation**: https://vanilla-cookbook.readthedocs.io/
-- **GitHub**: https://github.com/jt196/vanilla-cookbook
-- **Issues**: https://github.com/jt196/vanilla-cookbook/issues
+- **Documentation**: <https://vanilla-cookbook.readthedocs.io/>
+- **GitHub**: <https://github.com/jt196/vanilla-cookbook>
+- **Issues**: <https://github.com/jt196/vanilla-cookbook/issues>
 - **Docker Hub**: jt196/vanilla-cookbook (`:latest`, `:stable` tags)
 
 ## Final Notes for AI Assistants

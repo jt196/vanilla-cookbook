@@ -171,22 +171,42 @@
 		}
 	}
 
-	async function handleNoteUpdated(logId, note) {
+	async function handleLogUpdated(logId, note, scale) {
+		const numericScale = Number(scale) || 1
 		try {
 			const response = await fetch(`/api/log/${logId}`, {
 				method: 'PUT',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ note })
+				body: JSON.stringify({ note, scale: numericScale })
 			})
 			if (response.ok) {
-				logs = logs.map((log) => (log.id === logId ? { ...log, note } : log))
-				recipeFeedback = 'Note updated!'
+				logs = logs.map((log) =>
+					log.id === logId ? { ...log, note, scale: numericScale } : log
+				)
+				recipeFeedback = 'Cooking log updated!'
 			} else {
-				recipeFeedback = 'Failed to update note!'
+				recipeFeedback = 'Failed to update cooking log!'
 			}
 		} catch (err) {
-			console.error('Error updating note:', err)
-			recipeFeedback = 'Failed to update note!'
+			console.error('Error updating cooking log:', err)
+			recipeFeedback = 'Failed to update cooking log!'
+		}
+	}
+
+	async function handleLogDeleted(logId) {
+		try {
+			const response = await fetch(`/api/log/${logId}`, {
+				method: 'DELETE'
+			})
+			if (response.ok) {
+				logs = logs.filter((log) => log.id !== logId)
+				recipeFeedback = 'Cooking log deleted!'
+			} else {
+				recipeFeedback = 'Failed to delete cooking log!'
+			}
+		} catch (err) {
+			console.error('Error deleting cooking log:', err)
+			recipeFeedback = 'Failed to delete cooking log!'
 		}
 	}
 
@@ -299,7 +319,9 @@
 		{viewOnly}
 		{scale}
 		viewerUserId={viewUser?.userId}
-		onRestoreScale={handleScaleChange} />
+		onRestoreScale={handleScaleChange}
+		onLogUpdated={viewOnly ? undefined : handleLogUpdated}
+		onLogDeleted={viewOnly ? undefined : handleLogDeleted} />
 </div>
 
 {#if isLoading}
@@ -359,11 +381,7 @@
 			<RecipeViewDirections {directionLines} {sanitizedDirections} {loadingIngredients} />
 		</div>
 	</div>
-	<RecipeViewNotes
-		{notesLines}
-		{sanitizedNotes}
-		logs={viewOnly ? [] : logs}
-		onNoteUpdated={viewOnly ? undefined : handleNoteUpdated} />
+	<RecipeViewNotes {notesLines} {sanitizedNotes} logs={viewOnly ? [] : logs} />
 {/if}
 
 <RecipeViewOtherPhotos

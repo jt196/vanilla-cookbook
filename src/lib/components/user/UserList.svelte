@@ -1,5 +1,5 @@
 <script>
-	import VirtualList from 'svelte-virtual-list'
+	import VirtualList from '$lib/components/ui/VirtualList.svelte'
 	import UserCard from '$lib/components/user/UserCard.svelte'
 
 	/** @type {{users?: any}} */
@@ -13,8 +13,8 @@
 </script>
 
 <div class="container">
-	<VirtualList items={users} bind:start bind:end>
-		{#snippet children({ item })}
+	<VirtualList items={users} bind:start bind:end itemHeight={120}>
+		{#snippet children(item)}
 			<UserCard {item} />
 		{/snippet}
 	</VirtualList>

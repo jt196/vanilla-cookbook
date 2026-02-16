@@ -44,7 +44,10 @@
 	let copyMessage = $state(null)
 	let semanticScores = $state(new Map())
 	let semanticRuntimeEnabled = $state(!!semanticEnabled)
+	let semanticSearchPending = $state(false)
+	let semanticRequestId = 0
 	let isNavigating = $derived(!!navigating?.to)
+	let searchPending = $derived(isLoading || semanticSearchPending)
 
 	function includesQueryAcrossRecipe(recipe, query) {
 		const q = query?.toLowerCase?.().trim?.()
@@ -350,9 +353,15 @@
 			$searchString.length < 4 ||
 			($searchFields || []).length > 0
 		) {
+			semanticRequestId += 1
+			semanticSearchPending = false
 			semanticScores = new Map()
 			return
 		}
+
+		const requestId = semanticRequestId + 1
+		semanticRequestId = requestId
+		semanticSearchPending = true
 
 		const timeout = setTimeout(async () => {
 			try {
@@ -362,6 +371,7 @@
 
 				if (!response.ok) {
 					semanticScores = new Map()
+					if (requestId === semanticRequestId) semanticSearchPending = false
 					return
 				}
 
@@ -369,6 +379,7 @@
 				if (!data.enabled) {
 					semanticRuntimeEnabled = false
 					semanticScores = new Map()
+					if (requestId === semanticRequestId) semanticSearchPending = false
 					return
 				}
 
@@ -376,6 +387,10 @@
 			} catch (error) {
 				console.error('Semantic search request failed:', error)
 				semanticScores = new Map()
+			} finally {
+				if (requestId === semanticRequestId) {
+					semanticSearchPending = false
+				}
 			}
 		}, 500)
 
@@ -421,11 +436,11 @@
 {/if}
 
 {#if title}
-	<div class="mb-4 prose max-w-none flex justify-center">
+	<div class="mb-2 md:mb-4 prose max-w-none flex justify-center">
 		<h2>{title}</h2>
 	</div>
 {:else if viewMode === 'social' && ownerUsername}
-	<div class="mb-4 prose max-w-none flex justify-center">
+	<div class="mb-2 md:mb-4 prose max-w-none flex justify-center">
 		<h2>{ownerUsername}'s Cookbook</h2>
 	</div>
 {/if}
@@ -435,7 +450,14 @@
 	class:md:ml-64={sidebarOpen && useCats && viewMode === 'owner'}
 	class:max-md:ml-0={sidebarOpen}
 >
-	<RecipeFilter {toggleSidebar} viewOnly={false} {useCats} username={ownerUsername} {viewMode} />
+	<RecipeFilter
+		{toggleSidebar}
+		viewOnly={false}
+		{useCats}
+		username={ownerUsername}
+		{viewMode}
+		{searchPending}
+	/>
 	<Spinner visible={isLoading || isNavigating} spinnerContent="Loading" />
 	<RecipeList
 		{filteredRecipes}

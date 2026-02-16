@@ -1,8 +1,8 @@
 <script>
 	import RecipeViewLogs from './RecipeViewLogs.svelte'
 
-	/** @type {{notesLines?: any, sanitizedNotes?: any, logs?: any, onNoteUpdated?: (logId: string, note: string | null) => void}} */
-	let { notesLines = [], sanitizedNotes = [], logs = [], onNoteUpdated } = $props()
+	/** @type {{notesLines?: any, sanitizedNotes?: any, logs?: any}} */
+	let { notesLines = [], sanitizedNotes = [], logs = [] } = $props()
 
 	const safeLogs = $derived(Array.isArray(logs) ? logs : [])
 </script>
@@ -15,6 +15,6 @@
 				<p>{@html parsedNote}</p>
 			{/each}
 		{/if}
-		<RecipeViewLogs logs={safeLogs} {onNoteUpdated} />
+		<RecipeViewLogs logs={safeLogs} />
 	</div>
 {/if}

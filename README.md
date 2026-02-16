@@ -4,6 +4,8 @@ For a full getting started guide, [read the docs](https://vanilla-cookbook.readt
 
 Contributing: [Technical Contributing Guide](docs/technical/contributing.md)
 
+Roadmap: See our [Project Kanban](https://github.com/users/jt196/projects/2/views/1) for what's being worked on, and what's coming up.
+
 ![Recipe List](docs/images/screen-desktop-list-dracula.png)
 ![Recipe View](docs/images/screen-desktop-first-recipe-dracula.png)
 
@@ -94,14 +96,14 @@ Share URL via browser to scrape a recipe, or select text and share to parse text
 
 ### Shopping List
 
-Simple shopping list section. Add ingredients from your recipe. Checked ingredients persist but hidden, show them to make your next shopping list. [Docs](https://vanilla-cookbook.readthedocs.io/en/latest/manual/apps/#shopping)
+- Simple but useable shopping list. Add from your recipes, list history, stats. [Docs](https://vanilla-cookbook.readthedocs.io/en/latest/manual/apps/#shopping)
 
 ### Cooking Logs
 
 Log when you've cooked a recipe.
 
 - Calendar view
-- recipe view
+- Recipe view
 - Saves log notes and scaling
 - Recook a recipe with previous scaling
 
@@ -135,21 +137,6 @@ Designed to be as easy and stress free to set up as possible. Docker or local no
 ### Multiple Language Ingredient Parsing
 
 Multiple languages supported for ingredient parsing. [Docs](https://vanilla-cookbook.readthedocs.io/en/latest/manual/ingredients/#languages)
-
-Currently:
-
-- English
-- German
-- Italian
-- Spanish
-- French
-- Portuguese
-- Indonesian
-- Hindi
-- Russian
-- Arabic
-- Hungarian
-- Czech
 
 ## Installation
 

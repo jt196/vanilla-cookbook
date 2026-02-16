@@ -9,6 +9,7 @@
 		dashed = false,
 		side = false,
 		imageFull = false,
+		bodyClass = '',
 		figure = undefined,
 		figureClass = '',
 		title = undefined,
@@ -43,7 +44,7 @@
 	{#if figure}
 		<figure class={figureClass}>{@render figure()}</figure>
 	{/if}
-	<div class="card-body">
+	<div class={['card-body', bodyClass].filter(Boolean).join(' ')}>
 		{#if title}
 			<h2 class="card-title">{@render title()}</h2>
 		{/if}
