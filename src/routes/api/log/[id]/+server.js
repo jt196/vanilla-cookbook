@@ -9,7 +9,7 @@ export async function PUT({ locals, request, params }) {
 
 	// Parse the request body to get updated fields
 	const body = await request.json()
-	const { start, end, note } = body
+	const { start, end, note, scale } = body
 
 	const log = await prisma.RecipeLog.findUnique({
 		where: { id }
@@ -22,6 +22,7 @@ export async function PUT({ locals, request, params }) {
 	if (start !== undefined) updateData.cooked = new Date(start)
 	if (end !== undefined) updateData.cookedEnd = end ? new Date(end) : null
 	if (note !== undefined) updateData.note = normalizeString(note)
+	if (scale !== undefined) updateData.scale = scale
 
 	try {
 		const updatedLog = await prisma.RecipeLog.update({
