@@ -62,10 +62,15 @@
 
 <a
 	href="/recipe/{item.uid}/view/"
-	class="flex items-stretch gap-3 mb-3 rounded-lg transition no-underline text-current">
-	<Card class="flex-1 hover:bg-base-200 min-h-36" size="md" side figureClass="w-32 flex-shrink-0">
+	class="flex items-stretch gap-3 mb-2 md:mb-3 rounded-lg transition no-underline text-current">
+	<Card
+		class="flex-1 hover:bg-base-200 min-h-24 md:min-h-36"
+		size="md"
+		side
+		bodyClass="p-2 md:p-6 justify-center"
+		figureClass="w-32 flex-shrink-0">
 		{#snippet figure()}
-			<div class="h-36 w-full overflow-hidden">
+			<div class="h-24 md:h-36 w-full overflow-hidden">
 				{#if item.photos && item.photos.length > 0 && showPrimaryPhoto}
 					<img
 						class="h-full w-full object-cover"
@@ -88,7 +93,9 @@
 
 		{#snippet title()}
 			<div class="flex items-start justify-between gap-2 w-full">
-				<span class="text-base md:text-2xl leading-snug line-clamp-2">{item.name}</span>
+				<span class="text-base md:text-2xl leading-snug line-clamp-2 md:text-left">
+					{item.name}
+				</span>
 				{#if viewerUserId}
 					<div class="flex gap-1 shrink-0">
 						{#if canFavourite}
@@ -119,8 +126,7 @@
 									? `Cooked ${item.log.length} time${item.log.length > 1 ? 's' : ''}`
 									: 'Never cooked'}>
 								{#if item.log?.length > 1}
-									<span
-										class="badge badge-success badge-xs text-success-content font-bold min-w-5"
+									<span class="badge badge-success badge-xs text-success-content font-bold min-w-5"
 										>{item.log.length}</span>
 								{:else}
 									<Check checked={logged} width="16px" height="16px" />
@@ -152,12 +158,14 @@
 
 		{#snippet children()}
 			{#if isOwnerView}
-				<StarRating
-					rating={item.rating}
-					editable={true}
-					ratingChanged={(newRating) => recipeRatingChanged?.(item.uid, newRating)} />
+				<div class="hidden md:block">
+					<StarRating
+						rating={item.rating}
+						editable={true}
+						ratingChanged={(newRating) => recipeRatingChanged?.(item.uid, newRating)} />
+				</div>
 			{:else}
-				<p class="text-sm text-base-content/70">
+				<p class="text-sm text-base-content/70 md:text-left">
 					by
 					{#if viewerUserId && item.userId === viewerUserId}
 						<a href="/user/{viewerUserId}/recipes" class="link link-primary font-medium">Me</a>

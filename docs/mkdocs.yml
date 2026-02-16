@@ -59,7 +59,6 @@ nav:
   - Ingredients: manual/ingredients.md
   - Apps: manual/apps.md
   - Import/Export: manual/import.md
-  - Roadmap: roadmap.md
   - Technical:
       - Authentication: technical/authentication.md
       - General Utils: technical/utils.md

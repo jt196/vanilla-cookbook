@@ -421,11 +421,11 @@
 {/if}
 
 {#if title}
-	<div class="mb-4 prose max-w-none flex justify-center">
+	<div class="mb-2 md:mb-4 prose max-w-none flex justify-center">
 		<h2>{title}</h2>
 	</div>
 {:else if viewMode === 'social' && ownerUsername}
-	<div class="mb-4 prose max-w-none flex justify-center">
+	<div class="mb-2 md:mb-4 prose max-w-none flex justify-center">
 		<h2>{ownerUsername}'s Cookbook</h2>
 	</div>
 {/if}
