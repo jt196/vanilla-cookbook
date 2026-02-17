@@ -61,6 +61,7 @@ nav:
   - Import/Export: manual/import.md
   - Technical:
       - Authentication: technical/authentication.md
+      - Nutrition: technical/nutrition.md
       - General Utils: technical/utils.md
       - Image Utils: technical/utils_image.md
       - Import Utils: technical/utils_import.md

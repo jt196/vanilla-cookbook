@@ -1,18 +1,30 @@
 import { generateRecipeWithLLM } from '$lib/utils/ai'
 import { json } from '@sveltejs/kit'
 import { resolveAIConfig } from '$lib/server/aiHelpers'
+import { parseNutritionInfo, serializeNutritionEntries } from '$lib/utils/nutrition'
+import { getNutritionLocale } from '$lib/utils/nutritionI18n'
 
 export async function POST({ request, locals }) {
 	try {
-		const aiConfig = resolveAIConfig(locals, 'text')
-		if (!aiConfig.ok) {
-			return aiConfig.response
-		}
-
 		const { type, content, userUnits = 'metric', language = 'eng' } = await request.json()
 
 		if (!type || !content) {
 			return json({ error: 'Missing type or content.' }, { status: 400 })
+		}
+
+		const aiConfig = resolveAIConfig(locals, 'text')
+		if (!aiConfig.ok) {
+			if (type === 'nutrition') {
+				const fallback = parseNutritionInfo(content, language)
+				return json({
+					nutrition: fallback,
+					text:
+						serializeNutritionEntries(fallback, language) ||
+						(typeof content === 'string' ? content.trim() : ''),
+					source: 'fallback'
+				})
+			}
+			return aiConfig.response
 		}
 
 		let prompt = ''
@@ -85,6 +97,38 @@ Return format:
 {
   "instructions": ["Step 1", "Step 2"]
 }`
+		} else if (type === 'nutrition') {
+			const locale = getNutritionLocale(language)
+			const perServingPhrase = locale?.perServingPhrases?.[0] || 'Per serving'
+			const perServingOptions =
+				Array.isArray(locale?.perServingPhrases) && locale.perServingPhrases.length > 0
+					? locale.perServingPhrases.join(', ')
+					: perServingPhrase
+			prompt = `You are a nutrition formatting AI.
+
+Normalize the nutrition text into a clean JSON structure.
+
+Rules:
+- Locale/language code: "${language}".
+- Keep only nutrient rows and values.
+- Preserve units exactly where possible (kcal, g, mg, mcg, IU, %).
+- Detect if values are per serving.
+- If per-serving is detected, set "perServing": true.
+- Do not invent missing values.
+- Keep nutrient labels in the same locale as the input text.
+- Preferred per-serving label: "${perServingPhrase}".
+- Acceptable per-serving phrases for this locale: ${perServingOptions}.
+
+Return ONLY this JSON shape:
+{
+  "perServing": true,
+  "entries": [
+    { "name": "Calories", "quantity": 471, "unit": "kcal" }
+  ]
+}
+
+Nutrition text:
+"""${content}"""`
 		} else {
 			return json({ error: 'Invalid cleanup type.' }, { status: 400 })
 		}
@@ -103,6 +147,36 @@ Return format:
 			return json({ ingredients: response.ingredients })
 		} else if (type === 'directions' && response.instructions) {
 			return json({ instructions: response.instructions })
+		} else if (type === 'nutrition') {
+			if (Array.isArray(response.entries)) {
+				const nutrition = {
+					perServing: !!response.perServing,
+					entries: response.entries
+						.map((entry) => ({
+							name: entry?.name || 'Nutrient',
+							canonicalName: null,
+							quantity: Number.isFinite(Number(entry?.quantity)) ? Number(entry.quantity) : null,
+							unit: typeof entry?.unit === 'string' ? entry.unit.trim() : null,
+							note: typeof entry?.note === 'string' ? entry.note.trim() : null,
+							raw: ''
+						}))
+						.filter((entry) => entry.quantity !== null)
+				}
+				return json({
+					nutrition,
+					text: serializeNutritionEntries(nutrition, language),
+					source: 'llm'
+				})
+			}
+
+			const fallback = parseNutritionInfo(content, language)
+			return json({
+				nutrition: fallback,
+				text:
+					serializeNutritionEntries(fallback, language) ||
+					(typeof content === 'string' ? content.trim() : ''),
+				source: 'fallback'
+			})
 		} else {
 			return json({ error: 'Cleanup failed - invalid response format.' }, { status: 422 })
 		}

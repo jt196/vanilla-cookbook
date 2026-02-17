@@ -2,6 +2,7 @@ import { error, redirect } from '@sveltejs/kit'
 
 export const load = async ({ params, locals, fetch, url }) => {
 	const user = locals.user
+	const aiEnabled = locals.site?.ai?.enabled ?? false
 
 	let response = await fetch(`${url.origin}/api/recipe/${params.recipeId}`)
 	if (!response.ok) throw error(response.status, 'Failed to load recipe')
@@ -52,6 +53,7 @@ export const load = async ({ params, locals, fetch, url }) => {
 		categories,
 		viewMode,
 		viewUser,
-		recUser: recUser.userProfile
+		recUser: recUser.userProfile,
+		aiEnabled
 	}
 }

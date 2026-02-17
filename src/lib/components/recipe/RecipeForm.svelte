@@ -54,6 +54,7 @@
 	let imageChecked = $state(false)
 	let cleaningIngredients = $state(false)
 	let cleaningDirections = $state(false)
+	let cleaningNutrition = $state(false)
 	let translatingRecipe = $state(false)
 
 	const providerLabels = {
@@ -108,6 +109,7 @@
 	// Undo state for AI cleanup
 	let ingredientsBeforeClean = $state(null)
 	let directionsBeforeSummarize = $state(null)
+	let nutritionBeforeClean = $state(null)
 
 	async function handleCleanIngredients() {
 		if (!recipe.ingredients || recipe.ingredients.trim() === '') return
@@ -284,6 +286,47 @@
 			alert('Failed to translate recipe. Please try again.')
 		} finally {
 			translatingRecipe = false
+		}
+	}
+
+	async function handleCleanNutrition() {
+		if (!recipe.nutritional_info || recipe.nutritional_info.trim() === '') return
+
+		cleaningNutrition = true
+		nutritionBeforeClean = recipe.nutritional_info
+
+		try {
+			const response = await fetch('/api/recipe/cleanup', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					type: 'nutrition',
+					content: recipe.nutritional_info,
+					language: userLanguage
+				})
+			})
+
+			if (!response.ok) {
+				throw new Error('Cleanup failed')
+			}
+
+			const data = await response.json()
+			if (typeof data.text === 'string' && data.text.trim()) {
+				recipe.nutritional_info = data.text
+			}
+		} catch (err) {
+			console.error('Nutrition cleanup failed:', err)
+			alert('Failed to clean nutrition information. Please try again.')
+			nutritionBeforeClean = null
+		} finally {
+			cleaningNutrition = false
+		}
+	}
+
+	function undoCleanNutrition() {
+		if (nutritionBeforeClean) {
+			recipe.nutritional_info = nutritionBeforeClean
+			nutritionBeforeClean = null
 		}
 	}
 
@@ -598,6 +641,40 @@
 			bind:value={recipe.nutritional_info}
 			label="Nutritional Information"
 		/>
+		{#if aiEnabled}
+			<div class="flex gap-2 mt-2">
+				<Button
+					type="button"
+					size="sm"
+					style="soft"
+					onclick={handleCleanNutrition}
+					disabled={cleaningNutrition ||
+						!recipe.nutritional_info ||
+						recipe.nutritional_info.trim() === ''}
+				>
+					{#if cleaningNutrition}
+						<Spinner visible={true} size="xs" type="dots" />
+						Cleaning...
+					{:else}
+						<Bolt width="16px" height="16px" />
+						Clean Nutrition
+					{/if}
+				</Button>
+				{#if nutritionBeforeClean}
+					<Button
+						type="button"
+						size="sm"
+						style="outline"
+						color="secondary"
+						onclick={undoCleanNutrition}
+					>
+						<Undo width="16px" height="16px" />
+						Undo
+					</Button>
+				{/if}
+			</div>
+			<InfoText class="mt-1">Normalize nutrition into clean nutrient/value lines.</InfoText>
+		{/if}
 		<Button type="submit" size="sm" class="mt-4">{buttonText}</Button>
 		{#if recipeCategories}
 			{#each recipeCategories as categoryUid}

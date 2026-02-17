@@ -11,6 +11,7 @@
 	import RecipeViewAbout from '$lib/components/recipe/RecipeViewAbout.svelte'
 	import RecipeViewDesc from '$lib/components/recipe/RecipeViewDesc.svelte'
 	import RecipeViewIngs from '$lib/components/recipe/RecipeViewIngs.svelte'
+	import RecipeViewNutrition from '$lib/components/recipe/RecipeViewNutrition.svelte'
 	import RecipeViewOtherPhotos from '$lib/components/recipe/RecipeViewOtherPhotos.svelte'
 	import RecipeViewDirections from '$lib/components/recipe/RecipeViewDirections.svelte'
 	import RecipeViewNotes from '$lib/components/recipe/RecipeViewNotes.svelte'
@@ -23,9 +24,9 @@
 	let { data = $bindable() } = $props()
 	let isLoading = $state(true)
 
-	let { recipe, categories, viewUser, logs, recUser } = $state(data)
+	let { recipe, categories, viewUser, logs, recUser, aiEnabled } = $state(data)
 	$effect(() => {
-		({ recipe, categories, viewUser, logs, recUser } = data)
+		;({ recipe, categories, viewUser, logs, recUser, aiEnabled } = data)
 	})
 
 	// Scaling factor for the ingredients
@@ -42,6 +43,7 @@
 	let otherPhotos = $state([])
 
 	let loadingIngredients = $state(true)
+	let cleaningNutrition = $state(false)
 
 	// Toggle for showing original vs summarized directions
 	let showOriginalDirections = $state(false)
@@ -180,9 +182,7 @@
 				body: JSON.stringify({ note, scale: numericScale })
 			})
 			if (response.ok) {
-				logs = logs.map((log) =>
-					log.id === logId ? { ...log, note, scale: numericScale } : log
-				)
+				logs = logs.map((log) => (log.id === logId ? { ...log, note, scale: numericScale } : log))
 				recipeFeedback = 'Cooking log updated!'
 			} else {
 				recipeFeedback = 'Failed to update cooking log!'
@@ -224,6 +224,41 @@
 		const success = await updatePhotos(photosWithFileType)
 		if (!success) {
 			console.error('Failed to set the main photo.')
+		}
+	}
+
+	async function handleCleanNutritionInView() {
+		if (viewOnly || !recipe?.nutritional_info?.trim()) return
+
+		cleaningNutrition = true
+		try {
+			const response = await fetch('/api/recipe/cleanup', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					type: 'nutrition',
+					content: recipe.nutritional_info,
+					language: viewUser.language
+				})
+			})
+
+			if (!response.ok) {
+				throw new Error('Nutrition cleanup failed')
+			}
+
+			const data = await response.json()
+			if (typeof data.text === 'string' && data.text.trim()) {
+				recipe.nutritional_info = data.text
+				recipeFeedback =
+					data.source === 'fallback' ? 'Nutrition cleaned (local parser).' : 'Nutrition cleaned.'
+			} else {
+				recipeFeedback = 'No nutrition changes applied.'
+			}
+		} catch (error) {
+			console.error('Nutrition cleanup failed:', error)
+			recipeFeedback = 'Failed to clean nutrition.'
+		} finally {
+			cleaningNutrition = false
 		}
 	}
 
@@ -321,7 +356,8 @@
 		viewerUserId={viewUser?.userId}
 		onRestoreScale={handleScaleChange}
 		onLogUpdated={viewOnly ? undefined : handleLogUpdated}
-		onLogDeleted={viewOnly ? undefined : handleLogDeleted} />
+		onLogDeleted={viewOnly ? undefined : handleLogDeleted}
+	/>
 </div>
 
 {#if isLoading}
@@ -343,7 +379,8 @@
 				{categories}
 				useCats={viewUser?.useCats}
 				{scaledServings}
-				recipeRatingChanged={handleRecipeRatingChanged} />
+				recipeRatingChanged={handleRecipeRatingChanged}
+			/>
 		</div>
 	</div>
 
@@ -360,7 +397,17 @@
 					{measurementSystem}
 					{selectedSystem}
 					onScaleChange={handleScaleChange}
-					onSelectedSystemChange={handleSelectedSystemChange} />
+					onSelectedSystemChange={handleSelectedSystemChange}
+				/>
+				<RecipeViewNutrition
+					nutritionalInfo={recipe.nutritional_info}
+					{scale}
+					language={viewUser.language}
+					recipeUid={recipe.uid}
+					showCleanupAction={!viewOnly && aiEnabled}
+					cleanupInProgress={cleaningNutrition}
+					onCleanup={viewOnly ? null : handleCleanNutritionInView}
+				/>
 			{:else}
 				<div class="flex justify-center items-center p-8">
 					<span class="loading loading-spinner loading-md text-primary"></span>
@@ -379,13 +426,14 @@
 				</div>
 			{/if}
 			<RecipeViewDirections {directionLines} {sanitizedDirections} {loadingIngredients} />
+			<RecipeViewNotes {notesLines} {sanitizedNotes} logs={viewOnly ? [] : logs} />
 		</div>
 	</div>
-	<RecipeViewNotes {notesLines} {sanitizedNotes} logs={viewOnly ? [] : logs} />
 {/if}
 
 <RecipeViewOtherPhotos
 	{otherPhotos}
 	recipeName={recipe.name}
 	onSetMainPhoto={handleSetMainPhoto}
-	{viewOnly} />
+	{viewOnly}
+/>
