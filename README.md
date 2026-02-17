@@ -57,6 +57,10 @@ Smart conversion from US Volumetric to imperial and metric weight. Thousands of 
 
 Scale your recipe ingredients. No complicated data entry, it's all done for you, and stored in the original text format.
 
+### Nutrition Parsing
+
+Nutrition text is parsed and displayed in a structured table, with per-serving detection and scale-aware values when applicable. [Docs](https://vanilla-cookbook.readthedocs.io/en/latest/manual/usage/#nutrition)
+
 ### Control Your Data
 
 Multiple import formats supported, exports supported. [Docs](https://vanilla-cookbook.readthedocs.io/en/latest/manual/import/)

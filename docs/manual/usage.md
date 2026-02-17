@@ -65,6 +65,20 @@ Click on the ingredient line to mark as "checked" for the duration of the recipe
 
 Hover over and click the shopping basket button to the left of the ingredient to add it to the shopping list.
 
+### Nutrition
+
+Nutrition appears below ingredients in the recipe view as a simple 2-column table:
+
+- `Nutrient`
+- `Amount`
+
+The app parses existing `nutritional_info` text at runtime and shows a status line:
+
+- `Per serving` when per-serving phrases are detected.
+- `Per recipe (scaled)` when values are recipe-level and ingredient scaling is active.
+
+If parsing confidence is low, the raw nutrition text is shown so no information is hidden.
+
 ### Ingredient Buttons
 
 You can set your default options in the settings.
@@ -204,6 +218,17 @@ This feature respects your language settings and preferred unit system (metric/U
   <source src="../../videos/ingredients_tidy_demo.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
+
+#### Clean Nutrition
+
+When adding or editing a recipe, a `Clean Nutrition` button appears below the nutrition field when AI features are enabled.
+
+- Normalizes nutrition text to a consistent newline format.
+- Preserves per-serving context and uses the locale-preferred per-serving label.
+- Keeps units where possible (`kcal`, `g`, `mg`, `mcg`, `IU`, `%`).
+- Updates `nutritional_info` with clean text that is easier to parse and scale.
+
+If AI is unavailable, cleanup controls are hidden and existing nutrition text is left unchanged.
 
 #### Summarize Directions
 

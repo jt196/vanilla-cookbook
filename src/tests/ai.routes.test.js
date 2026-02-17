@@ -14,7 +14,9 @@ vi.mock('$lib/utils/ai', () => ({
 // Mock the aiHelpers module
 vi.mock('$lib/server/aiHelpers', () => ({
 	resolveAIConfig: vi.fn(),
-	jsonError: vi.fn((status, message) => new Response(JSON.stringify({ error: message }), { status }))
+	jsonError: vi.fn(
+		(status, message) => new Response(JSON.stringify({ error: message }), { status })
+	)
 }))
 
 // Mock the llmConnection module
@@ -26,7 +28,9 @@ vi.mock('$lib/utils/llmConnection', () => ({
 // Mock authHelpers for admin checks in /api/llm/test
 vi.mock('$lib/server/authHelpers', () => ({
 	requireAdmin: vi.fn(),
-	jsonError: vi.fn((status, message) => new Response(JSON.stringify({ error: message }), { status }))
+	jsonError: vi.fn(
+		(status, message) => new Response(JSON.stringify({ error: message }), { status })
+	)
 }))
 
 import { extractRecipeWithLLM, generateRecipeWithLLM, translateRecipeWithLLM } from '$lib/utils/ai'
@@ -271,6 +275,66 @@ describe('API Routes - /api/recipe/cleanup', () => {
 			expect(response.status).toBe(200)
 			expect(data.instructions).toHaveLength(3)
 		})
+	})
+
+	describe('nutrition cleanup', () => {
+		it('normalizes nutrition into entries and text', async () => {
+			generateRecipeWithLLM.mockResolvedValue({
+				perServing: true,
+				entries: [
+					{ name: 'Calories', quantity: 471, unit: 'kcal' },
+					{ name: 'Fat', quantity: 14.1, unit: 'g' }
+				]
+			})
+
+			const request = createRequest({
+				type: 'nutrition',
+				content: 'Calories: 471 kcal | Fat: 14.1 g',
+				language: 'eng'
+			})
+			const response = await cleanupPost({ request, locals: {} })
+			const data = await response.json()
+
+			expect(response.status).toBe(200)
+			expect(data.nutrition).toBeDefined()
+			expect(data.nutrition.perServing).toBe(true)
+			expect(data.nutrition.entries).toHaveLength(2)
+			expect(data.text.startsWith('per serving\n\n')).toBe(true)
+			expect(data.text).toContain('Calories')
+		})
+
+		it('returns 422 for malformed nutrition response', async () => {
+			generateRecipeWithLLM.mockResolvedValue({
+				perServing: true
+			})
+
+			const request = createRequest({
+				type: 'nutrition',
+				content: 'Calories: 471 kcal'
+			})
+			const response = await cleanupPost({ request, locals: {} })
+			const data = await response.json()
+
+			expect(response.status).toBe(200)
+			expect(data.source).toBe('fallback')
+			expect(typeof data.text).toBe('string')
+		})
+	})
+
+	it('falls back for nutrition cleanup when AI is disabled', async () => {
+		resolveAIConfig.mockReturnValue(mockAIDisabled)
+
+		const request = createRequest({
+			type: 'nutrition',
+			content: 'Calories: 123 kcal',
+			language: 'eng'
+		})
+		const response = await cleanupPost({ request, locals: {} })
+		const data = await response.json()
+
+		expect(response.status).toBe(200)
+		expect(data.source).toBe('fallback')
+		expect(data.text).toContain('Calories')
 	})
 
 	it('returns 400 when type is missing', async () => {
