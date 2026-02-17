@@ -399,15 +399,17 @@
 					onScaleChange={handleScaleChange}
 					onSelectedSystemChange={handleSelectedSystemChange}
 				/>
-				<RecipeViewNutrition
-					nutritionalInfo={recipe.nutritional_info}
-					{scale}
-					language={viewUser.language}
-					recipeUid={recipe.uid}
-					showCleanupAction={!viewOnly && aiEnabled}
-					cleanupInProgress={cleaningNutrition}
-					onCleanup={viewOnly ? null : handleCleanNutritionInView}
-				/>
+				<div class="hidden md:block">
+					<RecipeViewNutrition
+						nutritionalInfo={recipe.nutritional_info}
+						{scale}
+						language={viewUser.language}
+						recipeUid={recipe.uid}
+						showCleanupAction={!viewOnly && aiEnabled}
+						cleanupInProgress={cleaningNutrition}
+						onCleanup={viewOnly ? null : handleCleanNutritionInView}
+					/>
+				</div>
 			{:else}
 				<div class="flex justify-center items-center p-8">
 					<span class="loading loading-spinner loading-md text-primary"></span>
@@ -428,6 +430,18 @@
 			<RecipeViewDirections {directionLines} {sanitizedDirections} {loadingIngredients} />
 			<RecipeViewNotes {notesLines} {sanitizedNotes} logs={viewOnly ? [] : logs} />
 		</div>
+	</div>
+
+	<div class="md:hidden">
+		<RecipeViewNutrition
+			nutritionalInfo={recipe.nutritional_info}
+			{scale}
+			language={viewUser.language}
+			recipeUid={recipe.uid}
+			showCleanupAction={!viewOnly && aiEnabled}
+			cleanupInProgress={cleaningNutrition}
+			onCleanup={viewOnly ? null : handleCleanNutritionInView}
+		/>
 	</div>
 {/if}
 
