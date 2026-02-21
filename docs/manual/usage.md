@@ -77,6 +77,8 @@ The app parses existing `nutritional_info` text at runtime and shows a status li
 - `Per serving` when per-serving phrases are detected.
 - `Per recipe (scaled)` when values are recipe-level and ingredient scaling is active.
 
+*Note: If nutrition is per serving and being scaled, you'll currently need to add a "Per Serving" string at the top of the nutrition block to override this.*
+
 If parsing confidence is low, the raw nutrition text is shown so no information is hidden.
 
 ### Ingredient Buttons
@@ -298,7 +300,7 @@ In **Options > Site** (admin), use the Semantic Embedding Index action to genera
 
 ### Add it
 
-Complete the recipe form, then click the **Add Recipe** button at the bottom. The Edit page is basically the same as this. If the images are successfully saved, they'll be in the _uploads/images_ folder. Image URLs should grab the image and save it there.
+Complete the recipe form, then click the **Add Recipe** button at the bottom. The Edit page is basically the same as this. If the images are successfully saved, they'll be in the *uploads/images* folder. Image URLs should grab the image and save it there.
 
 ## OAuth / SSO
 
@@ -375,7 +377,7 @@ Account and privacy settings:
 - **Username** - View your username (read-only)
 - **Email** - Update your email address
 - **Change Password** - Update your password
-- **Profile public** - show/hide your profile in the _/users_ view
+- **Profile public** - show/hide your profile in the */users* view
 - **Recipes public** - make your recipe public by default
 
 ### Recipe Settings
