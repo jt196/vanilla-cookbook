@@ -2,7 +2,7 @@ import { generateRecipeWithLLM } from '$lib/utils/ai'
 import { json } from '@sveltejs/kit'
 import { resolveAIConfig } from '$lib/server/aiHelpers'
 import { parseNutritionInfo, serializeNutritionEntries } from '$lib/utils/nutrition'
-import { getNutritionLocale } from '$lib/utils/nutritionI18n'
+import { getNutritionLocale } from '$lib/submodules/recipe-ingredient-parser/src/i18n/nutrition'
 
 export async function POST({ request, locals }) {
 	try {

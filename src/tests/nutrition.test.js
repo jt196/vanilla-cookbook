@@ -34,6 +34,12 @@ describe('nutrition parser', () => {
 		expect(parsed.entries[1].canonicalName).toBe('fat')
 	})
 
+	it('parses dutch nutrient aliases', () => {
+		const parsed = parseNutritionInfo('Calorieën: 250 kcal\nVet: 10 g', 'nld')
+		expect(parsed.entries[0].canonicalName).toBe('calories')
+		expect(parsed.entries[1].canonicalName).toBe('fat')
+	})
+
 	it('keeps confidence low for mostly unstructured text', () => {
 		const parsed = parseNutritionInfo('This recipe is low carb and very healthy.', 'eng')
 		expect(parsed.entries.length).toBe(0)
@@ -44,6 +50,13 @@ describe('nutrition parser', () => {
 		const parsed = parseNutritionInfo('Calories: 323 kcal 16%\nFat: 12 g 18%', 'eng')
 		expect(parsed.entries[0].note).toBe('16%')
 		expect(parsed.entries[1].note).toBe('18%')
+	})
+
+	it('prefers specific fat labels over generic fat', () => {
+		const parsed = parseNutritionInfo('Trans Fats: 1 g\nSaturated Fats: 5 g\nFat: 14 g', 'eng')
+		expect(parsed.entries[0].canonicalName).toBe('transFat')
+		expect(parsed.entries[1].canonicalName).toBe('saturatedFat')
+		expect(parsed.entries[2].canonicalName).toBe('fat')
 	})
 })
 

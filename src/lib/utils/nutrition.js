@@ -1,5 +1,8 @@
 import { i18nMap } from '$lib/submodules/recipe-ingredient-parser/src/i18n'
-import { getNutritionLocale, getNutritionLocalesWithFallback } from '$lib/utils/nutritionI18n'
+import {
+	getNutritionLocale,
+	getNutritionLocalesWithFallback
+} from '$lib/submodules/recipe-ingredient-parser/src/i18n/nutrition'
 
 const splitPattern = /\s*[|;]\s*/
 
@@ -256,7 +259,10 @@ function resolveCanonicalName(label, aliasMap) {
 		return aliasMap.get(normalizedLabel)
 	}
 
-	for (const [alias, canonical] of aliasMap.entries()) {
+	// Prefer longer aliases first so "saturated fat(s)" resolves before generic "fat".
+	const rankedAliases = [...aliasMap.entries()].sort((a, b) => b[0].length - a[0].length)
+
+	for (const [alias, canonical] of rankedAliases) {
 		if (normalizedLabel.includes(alias)) {
 			return canonical
 		}
