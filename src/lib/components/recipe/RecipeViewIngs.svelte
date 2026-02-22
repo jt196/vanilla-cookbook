@@ -59,9 +59,10 @@
 	{/if}
 
 	<ul class="pl-0 mb-4 space-y-1">
-		{#each sanitizedIngredients as ingredient}
+		{#each sanitizedIngredients as ingredient, ingredientIndex}
 			<RecipeViewIng
 				{ingredient}
+				{ingredientIndex}
 				{recipeUid}
 				{scale}
 				{displayExtra}

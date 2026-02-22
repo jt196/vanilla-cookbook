@@ -5,9 +5,10 @@
 	import Badge from '$lib/components/ui/Badge.svelte'
 	import { i18nMap } from '$lib/submodules/recipe-ingredient-parser/src/i18n'
 
-	/** @type {{ingredient: any, scale: any, displayExtra: any, displayDryMatch: any, displayOriginal: any, selectedSystem: any, recipeUid: any}} */
+	/** @type {{ingredient: any, ingredientIndex?: number, scale: any, displayExtra: any, displayDryMatch: any, displayOriginal: any, selectedSystem: any, recipeUid: any}} */
 	let {
 		ingredient,
+		ingredientIndex = 0,
 		scale,
 		displayExtra,
 		displayDryMatch,
@@ -105,6 +106,36 @@
 		const langData = i18nMap[userLanguage] ?? i18nMap.eng
 		return langData.badgeLabels ?? i18nMap.eng.badgeLabels
 	})
+
+	function parseMarkdownHeading(line) {
+		if (typeof line !== 'string') return null
+		const match = line.match(/^\s*(#{1,6})\s+(.+?)\s*$/)
+		if (!match) return null
+
+		return {
+			level: match[1].length,
+			text: match[2]
+		}
+	}
+
+	const markdownHeading = $derived.by(() =>
+		parseMarkdownHeading(ingredient?.originalString ?? ingredient?.ingredient)
+	)
+
+	const headingLevelClasses = {
+		1: 'text-xl font-bold',
+		2: 'text-lg font-semibold',
+		3: 'text-base font-semibold',
+		4: 'text-sm font-semibold',
+		5: 'text-sm font-medium uppercase tracking-wide',
+		6: 'text-xs font-medium uppercase tracking-wide'
+	}
+
+	function getHeadingClasses(level, index) {
+		const sizeClasses = headingLevelClasses[level] ?? headingLevelClasses[3]
+		const spacingClasses = index === 0 ? 'mt-0 mb-1' : 'mt-2 mb-1'
+		return `${spacingClasses} leading-tight ${sizeClasses}`
+	}
 </script>
 
 <div class="ingredient-line" class:highlight={isHighlighted}>
@@ -118,8 +149,14 @@
 				<li class:struck={struckThrough}>
 					{ingredient.originalString}
 				</li>
-			{:else if /<h[1-6]>/.test(ingredient.ingredient)}
-				<div data-heading>{@html ingredient.ingredient}</div>
+			{:else if markdownHeading}
+				<div data-heading>
+					<svelte:element
+						this={`h${markdownHeading.level}`}
+						class={getHeadingClasses(markdownHeading.level, ingredientIndex)}>
+						{markdownHeading.text}
+					</svelte:element>
+				</div>
 			{:else}
 				<li class:struck={struckThrough}>
 					{#if displayOriginal}
