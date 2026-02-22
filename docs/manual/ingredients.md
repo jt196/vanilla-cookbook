@@ -28,6 +28,26 @@ Instructions/states (e.g. “finely chopped”, “lukewarm”, “rinsed”) ar
 
 ![volumetric-conversion-simple](../images/ingredients-volconv-simple.png)
 
+## Ingredient Headings
+
+You can add section headings to ingredients using markdown-style hash prefixes at the start of a line:
+
+- `#` for a large heading
+- `##` for a medium heading
+- `###` (and more hashes) for smaller headings
+
+This is useful for grouping ingredients, for example `## Sauce` or `## Toppings`.
+
+### Heading Input (Markdown)
+
+![ingredient heading markdown input](../images/ingredients-heading-markdown.png)
+
+### Heading Rendered
+
+![ingredient heading rendered](../images/ingredients-heading-rendered.png)
+
+Literal HTML heading tags (for example `<h2>Sauce</h2>`) are no longer supported in ingredient lines. Use markdown hashes instead.
+
 ## Quick pattern summary
 
 *tldr;* Here are the common ingredient patterns the parser recognises.
