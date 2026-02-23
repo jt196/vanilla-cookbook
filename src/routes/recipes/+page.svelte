@@ -13,6 +13,5 @@
 	{viewerUserId}
 	semanticEnabled={semanticAvailable}
 	title="All Recipes"
-	useCats={false}
 	feedKind="all"
 />

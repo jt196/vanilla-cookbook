@@ -2,7 +2,6 @@
 	import SortAscDesc from '$lib/components/svg/SortAscDesc.svelte'
 	import Favourite from '$lib/components/svg/Favourite.svelte'
 	import Check from '$lib/components/svg/Check.svelte'
-	import Burger from '$lib/components/svg/Burger.svelte'
 	import Settings from '$lib/components/svg/Settings.svelte'
 	import Input from '$lib/components/ui/Form/Input.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
@@ -18,9 +17,7 @@
 	} from '$lib/stores/recipeFilter'
 
 	let {
-		toggleSidebar,
 		viewOnly,
-		useCats = 'false',
 		username,
 		viewMode = 'owner',
 		searchPending = false
@@ -75,18 +72,6 @@
 {/if}
 <div class="flex flex-col gap-1 md:gap-3 py-1 md:py-4">
 	<div class="flex flex-wrap md:flex-nowrap items-center gap-1 overflow-visible">
-		{#if useCats}
-			<Button
-				style="ghost"
-				size="md"
-				class="btn-square tooltip shrink-0"
-				data-tip="Display Category Filter"
-				onclick={toggleSidebar}
-			>
-				<Burger width="1.25rem" />
-			</Button>
-		{/if}
-
 		<div class="flex-1 min-w-0 relative">
 			<Input
 				type="text"

@@ -30,7 +30,6 @@ export const load = async ({ params, locals, fetch }) => {
 		ingOriginal: false,
 		ingExtra: false,
 		displayNutrition: true,
-		useCats: false,
 		ingSymbol: true,
 		skipSmallUnits: true
 	}
@@ -43,18 +42,15 @@ export const load = async ({ params, locals, fetch }) => {
 	const viewMode = userId !== recipe.userId
 	const canViewLogs = !!user && (recipe.userId === user.userId || user.isAdmin)
 
-	const recipeCatsResponse = await fetch(`/api/recipe/categories/${params.recipeId}`)
 	const recipeUserResponse = await fetch(`/api/user/${recipe.userId}/public`)
 	const recipeLogsResponse = canViewLogs ? await fetch(`/api/recipe/${params.recipeId}/log`) : null
 
-	const categories = recipeCatsResponse.ok ? await recipeCatsResponse.json() : []
 	const recUser = recipeUserResponse.ok ? await recipeUserResponse.json() : { userProfile: null }
 	const logs = recipeLogsResponse?.ok ? await recipeLogsResponse.json() : []
 
 	return {
 		recipe,
 		logs,
-		categories,
 		viewMode,
 		viewUser,
 		recUser: recUser.userProfile ?? { username: 'Unknown user' },

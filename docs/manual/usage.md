@@ -19,7 +19,7 @@ From left to right:
 
 From left to right
 
-- **Display Category Tree** - Imported Paprika categories will be displayed here (hidden by default)
+- **Display Nutrition** - Show or hide nutrition information on recipe pages
 - **Filter with text string** - Search by multiple methods
 - **Search Fields (cog dropdown)** - Select Name/Ingredients/Source/Notes cumulatively
 - **Filter favourites** - List all your favourite recipes

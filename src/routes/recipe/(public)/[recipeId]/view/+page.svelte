@@ -24,9 +24,9 @@
 	let { data = $bindable() } = $props()
 	let isLoading = $state(true)
 
-	let { recipe, categories, viewUser, logs, recUser, aiEnabled } = $state(data)
+	let { recipe, viewUser, logs, recUser, aiEnabled } = $state(data)
 	$effect(() => {
-		;({ recipe, categories, viewUser, logs, recUser, aiEnabled } = data)
+		;({ recipe, viewUser, logs, recUser, aiEnabled } = data)
 	})
 
 	// Scaling factor for the ingredients
@@ -374,13 +374,11 @@
 			</div>
 		{/if}
 		<div class="w-full {mainPhoto ? 'md:w-2/3' : ''}">
-			<RecipeViewAbout
-				{recipe}
-				{categories}
-				useCats={viewUser?.useCats}
-				{scaledServings}
-				recipeRatingChanged={handleRecipeRatingChanged}
-			/>
+				<RecipeViewAbout
+					{recipe}
+					{scaledServings}
+					recipeRatingChanged={handleRecipeRatingChanged}
+				/>
 		</div>
 	</div>
 

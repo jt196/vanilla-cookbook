@@ -24,7 +24,6 @@ export async function GET({ locals }) {
 				displayNutrition: true,
 				language: true,
 				theme: true,
-				useCats: true,
 				_count: {
 					select: {
 						recipes: true

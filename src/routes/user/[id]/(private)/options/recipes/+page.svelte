@@ -111,15 +111,6 @@
 			? 'Display extra ingredient text, e.g. after the comma in "1 clove garlic, chopped".'
 			: 'Hide extra ingredient text.'}
 	</Checkbox>
-	<Checkbox
-		name="Use Categories"
-		bind:checked={user.useCats}
-		size="sm"
-		color="neutral"
-		legend="Use Categories"
-	>
-		{user.useCats ? 'Category filtering is enabled.' : 'Category filtering is disabled.'}
-	</Checkbox>
 	<footer>
 		<Button type="submit">Update</Button>
 		<FeedbackMessage message={settingsFeedback} />

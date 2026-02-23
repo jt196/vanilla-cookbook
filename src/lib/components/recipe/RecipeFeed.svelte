@@ -4,8 +4,6 @@
 	import { sortByDate, sortByKeyGeneric } from '$lib/utils/sorting'
 	import RecipeFilter from '$lib/components/recipe/RecipeFilter.svelte'
 	import RecipeList from '$lib/components/recipe/RecipeList.svelte'
-	import Sidebar from '$lib/components/ui/Sidebar.svelte'
-	import CategoryTree from '$lib/components/category/CategoryTree.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Spinner from '$lib/components/ui/Spinner.svelte'
 	import CopyRecipeDialog from '$lib/components/recipe/CopyRecipeDialog.svelte'
@@ -18,13 +16,11 @@
 		favouriteFilter
 	} from '$lib/stores/recipeFilter'
 
-	/** @type {{recipes?: any[], categories?: any[], viewMode?: 'owner' | 'social', title?: string | null, useCats?: boolean, viewerUserId?: string | null, ownerUserId?: string | null, ownerUsername?: string | null, feedKind?: 'all' | 'user', semanticEnabled?: boolean}} */
+	/** @type {{recipes?: any[], viewMode?: 'owner' | 'social', title?: string | null, viewerUserId?: string | null, ownerUserId?: string | null, ownerUsername?: string | null, feedKind?: 'all' | 'user', semanticEnabled?: boolean}} */
 	let {
 		recipes = [],
-		categories = [],
 		viewMode = 'owner',
 		title = null,
-		useCats = false,
 		viewerUserId = null,
 		ownerUserId = null,
 		ownerUsername = null,
@@ -32,11 +28,8 @@
 		semanticEnabled = false
 	} = $props()
 
-	let sidebarOpen = $state(false)
 	let filteredRecipes = $state([])
 	let isLoading = $state(true)
-	let selectedCategoryUids = $state([])
-	let useAndLogic = $state(false)
 	let isCopying = $state(false)
 	let copyDialogOpen = $state(false)
 	let copiedRecipe = $state(null)
@@ -120,14 +113,6 @@
 	$effect(() => {
 		semanticRuntimeEnabled = !!semanticEnabled
 	})
-
-	function handleCategoryClick(category) {
-		if (selectedCategoryUids.includes(category.uid)) {
-			selectedCategoryUids = selectedCategoryUids.filter((uid) => uid !== category.uid)
-		} else {
-			selectedCategoryUids = [...selectedCategoryUids, category.uid]
-		}
-	}
 
 	function handleRecipeFavourited(uid, nextState, recipeItem) {
 		if (
@@ -249,22 +234,6 @@
 				)
 
 		let categoryFilteredRecipes = baseRecipes
-
-		if (useCats && selectedCategoryUids.length > 0) {
-			if (useAndLogic) {
-				categoryFilteredRecipes = baseRecipes.filter((recipe) =>
-					selectedCategoryUids.every((uid) =>
-						recipe.categories.some((rc) => rc.category.uid === uid)
-					)
-				)
-			} else {
-				categoryFilteredRecipes = baseRecipes.filter((recipe) =>
-					selectedCategoryUids.some((uid) =>
-						recipe.categories.some((rc) => rc.category.uid === uid)
-					)
-				)
-			}
-		}
 
 		// Filtering by cooked status (owner only)
 		if (viewMode === 'owner' && $cookedFilter) {
@@ -397,43 +366,7 @@
 		return () => clearTimeout(timeout)
 	})
 
-	function toggleSidebar() {
-		sidebarOpen = !sidebarOpen
-	}
-
-	function handleSidebarClose() {
-		sidebarOpen = false
-	}
-
-	function clearCategory() {
-		selectedCategoryUids = []
-	}
 </script>
-
-{#if useCats && viewMode === 'owner'}
-	<Sidebar isOpen={sidebarOpen} onClose={handleSidebarClose} onCategoryClick={handleCategoryClick}>
-		<div class="flex justify-center items-center h-24 gap-4 px-4">
-			{#if selectedCategoryUids}
-				<Button onclick={clearCategory}>Clear</Button>
-			{/if}
-			{#if ownerUserId}
-				<a href="/user/{ownerUserId}/categories" class="btn btn-ghost">Edit</a>
-			{/if}
-		</div>
-		<div class="px-4 mb-4">
-			<label class="label cursor-pointer justify-start gap-2">
-				<input type="checkbox" bind:checked={useAndLogic} class="checkbox checkbox-primary" />
-				<span class="label-text">{useAndLogic ? 'Using AND logic' : 'Using OR logic'}</span>
-			</label>
-		</div>
-		<CategoryTree
-			{categories}
-			onCategoryClick={handleCategoryClick}
-			{selectedCategoryUids}
-			on:clearCategory={clearCategory}
-		/>
-	</Sidebar>
-{/if}
 
 {#if title}
 	<div class="mb-2 md:mb-4 prose max-w-none flex justify-center">
@@ -447,13 +380,9 @@
 
 <div
 	class="transition-all duration-300"
-	class:md:ml-64={sidebarOpen && useCats && viewMode === 'owner'}
-	class:max-md:ml-0={sidebarOpen}
 >
 	<RecipeFilter
-		{toggleSidebar}
 		viewOnly={false}
-		{useCats}
 		username={ownerUsername}
 		{viewMode}
 		{searchPending}

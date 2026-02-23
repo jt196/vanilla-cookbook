@@ -1,13 +1,10 @@
 <script>
 	import { localDateAndTime } from '$lib/utils/dateTime'
-	import { collectSelectedUids } from '$lib/utils/categories'
-
-	import CategoryTree from '$lib/components/category/CategoryTree.svelte'
 	import StarRating from '$lib/components/ui/StarRating.svelte'
 	import InfoText from '$lib/components/ui/InfoText.svelte'
 
-	/** @type {{recipe: any, categories: any}} */
-	let { recipe, categories, recipeRatingChanged, scaledServings, useCats = 'false' } = $props()
+	/** @type {{recipe: any}} */
+	let { recipe, recipeRatingChanged, scaledServings } = $props()
 </script>
 
 <div class="card bg-base-300 shadow-md p-6">
@@ -56,9 +53,4 @@
 		<p class="text-base font-medium my-2">Servings: {scaledServings}</p>
 	{/if}
 
-	{#if useCats}
-		<div class="mt-4">
-			<CategoryTree {categories} selectedCategoryUids={collectSelectedUids(categories)} />
-		</div>
-	{/if}
 </div>

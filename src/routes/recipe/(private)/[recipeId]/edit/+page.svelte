@@ -1,11 +1,7 @@
 <script>
-	import CategoryTree from '$lib/components/category/CategoryTree.svelte'
 	import { deleteRecipeById, updateRecipe } from '$lib/utils/crud'
 	import { goto } from '$app/navigation'
 	import RecipeForm from '$lib/components/recipe/RecipeForm.svelte'
-	import Sidebar from '$lib/components/ui/Sidebar.svelte'
-	import Burger from '$lib/components/svg/Burger.svelte'
-	import Button from '$lib/components/ui/Button.svelte'
 	import ConfirmationDialog from '$lib/components/ui/ConfirmationDialog.svelte'
 	import Spinner from '$lib/components/ui/Spinner.svelte'
 
@@ -19,13 +15,11 @@
 	let recipeCategories = $state([]) // This will store the selected category UIDs for the recipe
 	let selectedFiles = $state([])
 	let saveImageUrl = $state(false)
-	let sidebarOpen = $state(false)
 
 	// /** @type {{data: PageData}} */
 	let { data } = $props()
 
 	let recipe = $state(data?.recipe ?? {})
-	let allCategories = $state(data?.allCategories ?? [])
 	let user = $state(data?.user ?? {})
 	let aiEnabled = $state(data?.aiEnabled ?? false)
 	let aiProvider = $state(data?.aiProvider ?? null)
@@ -41,14 +35,6 @@
 		recipeCategories =
 			recipe && recipe.categories ? recipe.categories.map((cat) => cat.categoryUid) : []
 	})
-
-	function handleCategoryClick(category) {
-		if (recipeCategories.includes(category.uid)) {
-			recipeCategories = recipeCategories.filter((uid) => uid !== category.uid)
-		} else {
-			recipeCategories = [...recipeCategories, category.uid]
-		}
-	}
 
 	async function handleDelete(uid) {
 		if (!uid) return
@@ -91,33 +77,11 @@
 		}
 	}
 
-	function toggleSidebar() {
-		sidebarOpen = !sidebarOpen
-	}
-
-	function handleSidebarClose() {
-		sidebarOpen = false
-	}
-
 	function handleSelectedFilesChange(files) {
 		selectedFiles = files
 	}
 </script>
-
-<Sidebar isOpen={sidebarOpen} onClose={handleSidebarClose}>
-	<CategoryTree
-		categories={allCategories}
-		onCategoryClick={handleCategoryClick}
-		selectedCategoryUids={recipeCategories}
-	/>
-</Sidebar>
-
-<div class="recipe-container" class:sidebar-open={sidebarOpen} onclose={handleSidebarClose}>
-	{#if user.useCats}
-		<Button class="tooltip" data-tip="Display Category Selector" onclick={toggleSidebar}>
-			<Burger width="1.5rem" />
-		</Button>
-	{/if}
+<div class="recipe-container">
 	<RecipeForm
 		bind:recipe
 		editMode={true}
@@ -160,24 +124,8 @@
 
 <style lang="scss">
 	.recipe-container {
-		justify-content: space-between; /* Add space between the form and the category tree */
-		align-items: flex-start; /* Align items to the top */
-		transition: margin-left 0.3s ease;
-		padding: 0; // This is just an example, adjust as needed
-		&.sidebar-open {
-			margin-left: 250px;
-
-			@media (max-width: 1279px) {
-				padding-left: 0; // Remove left padding when the sidebar is open
-				margin-left: 220px;
-			}
-
-			@media (max-width: 768px) {
-				margin-left: 0;
-			}
-		}
-		:global(button) {
-			margin-bottom: 1rem;
-		}
+		justify-content: space-between;
+		align-items: flex-start;
+		padding: 0;
 	}
 </style>
