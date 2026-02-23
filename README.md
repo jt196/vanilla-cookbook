@@ -168,6 +168,22 @@ Docker set up is dead simple. Single container, portable SQLite database.
 2. Check the _.env.template_ and _docker-compose.yml.template_ files haven't been modified. Add any additional fields. The _.env_ is the most likely to change.
 3. From the project directory, run `docker-compose up -d` or `docker compose up -d` depending on how you have it installed on your system.
 
+#### Reverse Proxy Configuration
+
+If you're running Vanilla Cookbook behind a reverse proxy (nginx, Nginx Proxy Manager, Traefik, etc.), you may encounter **502 Bad Gateway** errors on recipe pages. This is because SvelteKit sends many `Link:` preload headers that can exceed default nginx buffer sizes.
+
+**For Nginx / Nginx Proxy Manager**, add these proxy buffer settings:
+
+```nginx
+proxy_buffer_size 128k;
+proxy_buffers 4 256k;
+proxy_busy_buffers_size 256k;
+```
+
+In **Nginx Proxy Manager**: Edit your proxy host → Advanced → Custom Nginx Configuration, and add the lines above.
+
+In **standard Nginx**: Add these to your `location` block or `server` block for the Vanilla Cookbook site.
+
 ### Local Dev
 
 #### Prerequisites: You'll need build tools installed for native module compilation (better-sqlite3)

@@ -276,7 +276,9 @@ export async function GET({ params, locals }) {
 			duplicatedByViewer = !!fork
 		}
 
-		return jsonSuccess({ ...recipe, on_favorites: favourited, duplicatedByViewer })
+		// Exclude embedding fields - they're large and not needed for display
+		const { embedding, embeddingModel, embeddingVersion, ...recipeWithoutEmbedding } = recipe
+		return jsonSuccess({ ...recipeWithoutEmbedding, on_favorites: favourited, duplicatedByViewer })
 	} catch (err) {
 		return jsonError(500, `Failed to fetch recipe: ${err.message}`)
 	}
