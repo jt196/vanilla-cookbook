@@ -19,7 +19,6 @@
 	} = $props()
 
 	let displayExtra = $state(user.ingExtra)
-	let displaySymbol = $state(user.ingSymbol)
 	let displayDryMatch = $state(user.ingMatch)
 	let displayOriginal = $state(user.ingOriginal)
 
@@ -66,7 +65,7 @@
 				{recipeUid}
 				{scale}
 				{displayExtra}
-				{displaySymbol}
+				displaySymbol={user.ingSymbol}
 				{displayDryMatch}
 				{displayOriginal}
 				{selectedSystem}
@@ -172,15 +171,6 @@
 			disabled={displayOriginal || !isVolumetricConversion}
 			onclick={() => (displayDryMatch = !displayDryMatch)}>
 			Match
-		</Button>
-		<Button
-			style={displaySymbol ? 'standard' : 'soft'}
-			color="primary"
-			size="sm"
-			class="flex-1"
-			disabled={displayOriginal}
-			onclick={() => (displaySymbol = !displaySymbol)}>
-			Symbols
 		</Button>
 	</div>
 </div>

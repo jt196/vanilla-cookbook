@@ -98,7 +98,8 @@ Ingredient display has been optimised for easy skimming. We remove some extra st
 - **Original** - Display original ingredient string. I have this turned off by default, but sometimes it's useful to switch it when converting between Vol <-> Weight
 - **Extra** - displays instructions etc - items that go after a comma or are in brackets, e.g. "1 potato, King Edward". I'm often not interested in these extras, but it's handy to just double check what's there.
 - **Match** - display the ingredient match when converting between Vol <-> Weight. We match up with a database of ingredients. Sometimes this fails, it's usually worth checking before you start baking a cake...
-- **Symbols** - tsp instead of teaspoon etc.
+
+Unit symbols (for example `tsp` instead of `teaspoon`) are now controlled from the recipe display options in Settings.
 
 ## Recipe Add
 
