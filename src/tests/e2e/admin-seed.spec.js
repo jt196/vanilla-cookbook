@@ -150,7 +150,6 @@ test('fresh install admin seed, login, and page smoke tests', async ({ page }, t
 		const response = await page.reload({ waitUntil: 'networkidle' })
 		// Check for successful HTTP status (2xx or 304 Not Modified which browsers may return on reload)
 		const status = response?.status() ?? 0
-		console.log(`[${projectName}] SSR refresh status: ${status}`)
 		expect(
 			status >= 200 && status < 400,
 			`Expected ${response?.url()} to return 2xx/3xx, got ${status}`
@@ -202,7 +201,6 @@ test('fresh install admin seed, login, and page smoke tests', async ({ page }, t
 		const response = await page.goto(firstRecipeHref, { waitUntil: 'networkidle' })
 		// Check for successful HTTP status (2xx or 304 Not Modified)
 		const status = response?.status() ?? 0
-		console.log(`[${projectName}] Anonymous SSR goto status: ${status}`)
 		expect(
 			status >= 200 && status < 400,
 			`Expected ${response?.url()} to return 2xx/3xx, got ${status}`
@@ -212,7 +210,6 @@ test('fresh install admin seed, login, and page smoke tests', async ({ page }, t
 		// Reload to test anonymous SSR refresh
 		const reloadResponse = await page.reload({ waitUntil: 'networkidle' })
 		const reloadStatus = reloadResponse?.status() ?? 0
-		console.log(`[${projectName}] Anonymous SSR reload status: ${reloadStatus}`)
 		expect(
 			reloadStatus >= 200 && reloadStatus < 400,
 			`Expected ${reloadResponse?.url()} to return 2xx/3xx on reload, got ${reloadStatus}`
