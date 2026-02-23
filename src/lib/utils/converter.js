@@ -404,17 +404,31 @@ function convertToAmericanVolumetric(
 	let convertedQuantity = quantityInGrams / dryIngredient.gramsPerCup
 	const targetUnit = findSuitableUnit('americanVolumetric', convertedQuantity * 236.588)
 
-	// Adjust the convertedQuantity based on the targetUnit
-	let decimalPlaces = 2 // Default for cups
-	if (targetUnit === 'tablespoon') {
-		convertedQuantity *= 16 // 1 cup = 16 tablespoons
-		decimalPlaces = 1
-	} else if (targetUnit === 'teaspoon') {
-		convertedQuantity *= 48 // 1 cup = 48 teaspoons
-		decimalPlaces = 1
+	const convertCupsToTargetUnit = (cupsValue) => {
+		let value = cupsValue
+		let decimalPlaces = 2 // Default for cups
+		if (targetUnit === 'tablespoon') {
+			value *= 16 // 1 cup = 16 tablespoons
+			decimalPlaces = 1
+		} else if (targetUnit === 'teaspoon') {
+			value *= 48 // 1 cup = 48 teaspoons
+			decimalPlaces = 1
+		}
+		return parseFloat(value.toFixed(decimalPlaces))
 	}
 
-	convertedQuantity = parseFloat(convertedQuantity.toFixed(decimalPlaces))
+	convertedQuantity = convertCupsToTargetUnit(convertedQuantity)
+
+	const minQtyGrams = ingredientObj.minQty ?? ingredientObj.quantity
+	const maxQtyGrams = ingredientObj.maxQty ?? ingredientObj.quantity
+	const convertedMinQty =
+		minQtyGrams !== null && minQtyGrams !== undefined
+			? convertCupsToTargetUnit(Number(minQtyGrams) / dryIngredient.gramsPerCup)
+			: convertedQuantity
+	const convertedMaxQty =
+		maxQtyGrams !== null && maxQtyGrams !== undefined
+			? convertCupsToTargetUnit(Number(maxQtyGrams) / dryIngredient.gramsPerCup)
+			: convertedQuantity
 
 	return {
 		...ingredientObj,
@@ -423,8 +437,8 @@ function convertToAmericanVolumetric(
 		unit: targetUnit,
 		unitPlural: targetUnit + 's',
 		symbol: getSymbol(targetUnit, lang),
-		minQty: convertedQuantity,
-		maxQty: convertedQuantity,
+		minQty: convertedMinQty,
+		maxQty: convertedMaxQty,
 		usedDefaultDensity
 	}
 }
@@ -481,6 +495,27 @@ function convertAmericanVolumetricToMetric(
 
 	convertedQuantityMetric = parseFloat(convertedQuantityMetric.toFixed(1))
 
+	const convertOriginalUnitToMetric = (qtyInOriginal) => {
+		const { quantity: cups } = converter(qtyInOriginal, fromUnit, 'cup')
+		let grams = cups * dryIngredient.gramsPerCup
+		if (targetMetricUnit === 'gram') {
+			return parseFloat(grams.toFixed(1))
+		}
+		const { quantity: converted } = converter(grams, 'gram', targetMetricUnit)
+		return parseFloat(converted.toFixed(1))
+	}
+
+	const minQtyOriginal = ingredientObj.minQty ?? ingredientObj.quantity
+	const maxQtyOriginal = ingredientObj.maxQty ?? ingredientObj.quantity
+	const convertedMinQtyMetric =
+		minQtyOriginal !== null && minQtyOriginal !== undefined
+			? convertOriginalUnitToMetric(Number(minQtyOriginal))
+			: convertedQuantityMetric
+	const convertedMaxQtyMetric =
+		maxQtyOriginal !== null && maxQtyOriginal !== undefined
+			? convertOriginalUnitToMetric(Number(maxQtyOriginal))
+			: convertedQuantityMetric
+
 	return {
 		...ingredientObj,
 		dryIngredient,
@@ -488,8 +523,8 @@ function convertAmericanVolumetricToMetric(
 		unit: targetMetricUnit,
 		unitPlural: targetMetricUnit + 's',
 		symbol: getSymbol(targetMetricUnit, lang),
-		minQty: convertedQuantityMetric,
-		maxQty: convertedQuantityMetric,
+		minQty: convertedMinQtyMetric,
+		maxQty: convertedMaxQtyMetric,
 		usedDefaultDensity
 	}
 }
@@ -535,6 +570,24 @@ function convertAmericanVolumetricToImperial(
 	// Convert to a float
 	convertedQuantityImperial = parseFloat(convertedQuantityImperial.toFixed(1))
 
+	const convertOriginalUnitToImperial = (qtyInOriginal) => {
+		const { quantity: cups } = converter(qtyInOriginal, fromUnit, 'cup')
+		const grams = parseFloat((cups * dryIngredient.gramsPerCup).toFixed(1))
+		const { quantity: converted } = converter(grams, 'gram', targetImperialUnit)
+		return parseFloat(converted.toFixed(1))
+	}
+
+	const minQtyOriginal = ingredientObj.minQty ?? ingredientObj.quantity
+	const maxQtyOriginal = ingredientObj.maxQty ?? ingredientObj.quantity
+	const convertedMinQtyImperial =
+		minQtyOriginal !== null && minQtyOriginal !== undefined
+			? convertOriginalUnitToImperial(Number(minQtyOriginal))
+			: convertedQuantityImperial
+	const convertedMaxQtyImperial =
+		maxQtyOriginal !== null && maxQtyOriginal !== undefined
+			? convertOriginalUnitToImperial(Number(maxQtyOriginal))
+			: convertedQuantityImperial
+
 	return {
 		...ingredientObj,
 		dryIngredient,
@@ -542,8 +595,8 @@ function convertAmericanVolumetricToImperial(
 		unit: targetImperialUnit,
 		unitPlural: targetImperialUnit + 's',
 		symbol: getSymbol(targetImperialUnit, lang),
-		minQty: convertedQuantityImperial,
-		maxQty: convertedQuantityImperial,
+		minQty: convertedMinQtyImperial,
+		maxQty: convertedMaxQtyImperial,
 		usedDefaultDensity
 	}
 }
@@ -591,6 +644,18 @@ export function normalizeIngredient(ingredientObj, options = {}, lang = 'eng') {
 	const { quantity, unit } = ingredientObj
 	const qtyNum =
 		typeof quantity === 'string' ? Number(quantity) : typeof quantity === 'number' ? quantity : null
+	const minQtyNum =
+		typeof ingredientObj.minQty === 'string'
+			? Number(ingredientObj.minQty)
+			: typeof ingredientObj.minQty === 'number'
+				? ingredientObj.minQty
+				: null
+	const maxQtyNum =
+		typeof ingredientObj.maxQty === 'string'
+			? Number(ingredientObj.maxQty)
+			: typeof ingredientObj.maxQty === 'number'
+				? ingredientObj.maxQty
+				: null
 	const unitData = findUnitData(unit, lang)
 
 	// If unit is unknown, return as-is with optional fallback handling
@@ -605,6 +670,14 @@ export function normalizeIngredient(ingredientObj, options = {}, lang = 'eng') {
 		typeof qtyNum === 'number' && !Number.isNaN(qtyNum) && !options.skipRounding
 			? parseFloat(qtyNum.toFixed(decimalPlaces))
 			: qtyNum
+	const roundedMinQty =
+		typeof minQtyNum === 'number' && !Number.isNaN(minQtyNum) && !options.skipRounding
+			? parseFloat(minQtyNum.toFixed(decimalPlaces))
+			: minQtyNum
+	const roundedMaxQty =
+		typeof maxQtyNum === 'number' && !Number.isNaN(maxQtyNum) && !options.skipRounding
+			? parseFloat(maxQtyNum.toFixed(decimalPlaces))
+			: maxQtyNum
 
 	return {
 		...ingredientObj,
@@ -612,8 +685,8 @@ export function normalizeIngredient(ingredientObj, options = {}, lang = 'eng') {
 		unit: normalizedUnit,
 		unitPlural: plural,
 		symbol: symbol,
-		minQty: roundedQuantity ?? ingredientObj.minQty,
-		maxQty: roundedQuantity ?? ingredientObj.maxQty
+		minQty: roundedMinQty ?? roundedQuantity ?? ingredientObj.minQty,
+		maxQty: roundedMaxQty ?? roundedQuantity ?? ingredientObj.maxQty
 	}
 }
 

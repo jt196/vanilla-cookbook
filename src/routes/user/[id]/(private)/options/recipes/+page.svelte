@@ -90,6 +90,17 @@
 			: 'Display long-form units, e.g. grams vs g.'}
 	</Checkbox>
 	<Checkbox
+		name="Display Nutrition"
+		bind:checked={user.displayNutrition}
+		size="sm"
+		color="neutral"
+		legend="Display Nutrition"
+	>
+		{user.displayNutrition
+			? 'Display nutrition information.'
+			: 'Hide nutrition information.'}
+	</Checkbox>
+	<Checkbox
 		name="Display Extra"
 		bind:checked={user.ingExtra}
 		size="sm"
