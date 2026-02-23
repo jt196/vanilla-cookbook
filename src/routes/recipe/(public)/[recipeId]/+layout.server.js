@@ -1,16 +1,25 @@
 import { error, redirect } from '@sveltejs/kit'
 
-export const load = async ({ params, locals, fetch, url }) => {
+export const load = async ({ params, locals, fetch }) => {
+	const startTime = Date.now()
+	console.log(`[SSR] Loading recipe: ${params.recipeId}`)
+
 	const user = locals.user
 	const aiEnabled = locals.site?.ai?.enabled ?? false
 
-	let response = await fetch(`${url.origin}/api/recipe/${params.recipeId}`)
-	if (!response.ok) throw error(response.status, 'Failed to load recipe')
-	const recipe = await response.json()
+	console.log(`[SSR] User: ${user?.userId ?? 'anonymous'}`)
 
+	const response = await fetch(`/api/recipe/${params.recipeId}`)
+	console.log(`[SSR] Recipe fetch status: ${response.status} (${Date.now() - startTime}ms)`)
 	if (response.status === 403) {
+		console.log(`[SSR] Recipe ${params.recipeId}: 403 - redirecting to /`)
 		throw redirect(302, '/')
 	}
+	if (!response.ok) {
+		console.log(`[SSR] Recipe ${params.recipeId}: Failed with status ${response.status}`)
+		throw error(response.status, 'Failed to load recipe')
+	}
+	const recipe = await response.json()
 
 	if (!recipe.is_public) {
 		if (!user || (recipe.userId !== user.userId && !user.isAdmin)) {
@@ -39,13 +48,22 @@ export const load = async ({ params, locals, fetch, url }) => {
 	// Optional chaining to safely access userId
 	const userId = user?.userId
 	const viewMode = userId !== recipe.userId
+	const canViewLogs = !!user && (recipe.userId === user.userId || user.isAdmin)
 
-	let recipeCatsResponse = await fetch(`${url.origin}/api/recipe/categories/${params.recipeId}`)
-	let recipeLogsResponse = await fetch(`${url.origin}/api/recipe/${params.recipeId}/log`)
-	let recipeUserResponse = await fetch(`${url.origin}/api/user/${recipe.userId}/public`)
-	const categories = await recipeCatsResponse.json()
-	const recUser = await recipeUserResponse.json()
-	const logs = await recipeLogsResponse.json()
+	const recipeCatsResponse = await fetch(`/api/recipe/categories/${params.recipeId}`)
+	console.log(`[SSR] Categories fetch status: ${recipeCatsResponse.status} (${Date.now() - startTime}ms)`)
+
+	const recipeUserResponse = await fetch(`/api/user/${recipe.userId}/public`)
+	console.log(`[SSR] RecUser fetch status: ${recipeUserResponse.status} (${Date.now() - startTime}ms)`)
+
+	const recipeLogsResponse = canViewLogs ? await fetch(`/api/recipe/${params.recipeId}/log`) : null
+	console.log(`[SSR] Logs fetch: ${canViewLogs ? `status ${recipeLogsResponse?.status}` : 'skipped (not owner/admin)'} (${Date.now() - startTime}ms)`)
+
+	const categories = recipeCatsResponse.ok ? await recipeCatsResponse.json() : []
+	const recUser = recipeUserResponse.ok ? await recipeUserResponse.json() : { userProfile: null }
+	const logs = recipeLogsResponse?.ok ? await recipeLogsResponse.json() : []
+
+	console.log(`[SSR] Recipe ${params.recipeId} loaded successfully in ${Date.now() - startTime}ms`)
 
 	return {
 		recipe,
@@ -53,7 +71,7 @@ export const load = async ({ params, locals, fetch, url }) => {
 		categories,
 		viewMode,
 		viewUser,
-		recUser: recUser.userProfile,
+		recUser: recUser.userProfile ?? { username: 'Unknown user' },
 		aiEnabled
 	}
 }

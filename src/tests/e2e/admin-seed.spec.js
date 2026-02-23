@@ -48,7 +48,11 @@ test('fresh install admin seed, login, and page smoke tests', async ({ page }, t
 	page.on('console', (msg) => {
 		const type = msg.type()
 		const text = msg.text()
-		if (text.includes('Wake Lock error')) {
+		// Ignore known benign errors
+		if (
+			text.includes('Wake Lock error') ||
+			text.includes('Load failed') // Happens when requests are cancelled during navigation
+		) {
 			return
 		}
 		if (type === 'error' || type === 'warning') {
@@ -60,8 +64,13 @@ test('fresh install admin seed, login, and page smoke tests', async ({ page }, t
 		const url = request.url()
 		const method = request.method()
 		const failure = request.failure()?.errorText || 'request failed'
-		// Ignore aborted requests (happen during navigation, not real errors)
-		if (failure === 'NS_BINDING_ABORTED' || failure === 'net::ERR_ABORTED') {
+		// Ignore aborted/cancelled requests (happen during navigation, not real errors)
+		if (
+			failure === 'NS_BINDING_ABORTED' ||
+			failure === 'net::ERR_ABORTED' ||
+			failure === 'cancelled' ||
+			failure === 'Load failed'
+		) {
 			return
 		}
 		failures.push(`requestfailed: ${method} ${url} - ${failure}`)
@@ -133,6 +142,23 @@ test('fresh install admin seed, login, and page smoke tests', async ({ page }, t
 
 	await assertPage(page, firstRecipeHref, { heading: seededRecipes[0] }, projectName)
 
+	// Test SSR refresh - catches issues where direct page load/refresh fails but client navigation works
+	// This specifically tests the SSR code path in +layout.server.js
+	await test.step(`[${projectName}] SSR refresh recipe page`, async () => {
+		// We're already on the recipe page from assertPage above
+		// Now reload to trigger a full SSR render (simulates browser refresh or direct URL access)
+		const response = await page.reload({ waitUntil: 'networkidle' })
+		// Check for successful HTTP status (2xx or 304 Not Modified which browsers may return on reload)
+		const status = response?.status() ?? 0
+		console.log(`[${projectName}] SSR refresh status: ${status}`)
+		expect(
+			status >= 200 && status < 400,
+			`Expected ${response?.url()} to return 2xx/3xx, got ${status}`
+		).toBeTruthy()
+		await expect(page.getByRole('heading', { name: seededRecipes[0] })).toBeVisible({ timeout: 15000 })
+	})
+	console.log(`[${projectName}] PASS SSR refresh recipe page`)
+
 	// Test recipe edit flow - this catches issues like extra fields breaking Prisma updates
 	await test.step(`[${projectName}] edit recipe`, async () => {
 		// Navigate to first recipe view page
@@ -163,6 +189,37 @@ test('fresh install admin seed, login, and page smoke tests', async ({ page }, t
 		await expect(page.getByRole('heading', { name: seededRecipes[0] })).toBeVisible({ timeout: 15000 })
 	})
 	console.log(`[${projectName}] PASS edit recipe`)
+
+	// Test anonymous SSR access to public recipe (no auth session)
+	// This catches issues where SSR fails for logged-out users
+	await test.step(`[${projectName}] anonymous SSR access to public recipe`, async () => {
+		// Brief wait to let any in-flight requests from previous test settle
+		await page.waitForTimeout(500)
+		// Clear auth session to simulate logged-out user
+		await page.context().clearCookies()
+
+		// Direct navigation to public recipe (firstRecipeHref is Kewpie-Style Mayonnaise which is_public: true)
+		const response = await page.goto(firstRecipeHref, { waitUntil: 'networkidle' })
+		// Check for successful HTTP status (2xx or 304 Not Modified)
+		const status = response?.status() ?? 0
+		console.log(`[${projectName}] Anonymous SSR goto status: ${status}`)
+		expect(
+			status >= 200 && status < 400,
+			`Expected ${response?.url()} to return 2xx/3xx, got ${status}`
+		).toBeTruthy()
+		await expect(page.getByRole('heading', { name: seededRecipes[0] })).toBeVisible({ timeout: 15000 })
+
+		// Reload to test anonymous SSR refresh
+		const reloadResponse = await page.reload({ waitUntil: 'networkidle' })
+		const reloadStatus = reloadResponse?.status() ?? 0
+		console.log(`[${projectName}] Anonymous SSR reload status: ${reloadStatus}`)
+		expect(
+			reloadStatus >= 200 && reloadStatus < 400,
+			`Expected ${reloadResponse?.url()} to return 2xx/3xx on reload, got ${reloadStatus}`
+		).toBeTruthy()
+		await expect(page.getByRole('heading', { name: seededRecipes[0] })).toBeVisible({ timeout: 15000 })
+	})
+	console.log(`[${projectName}] PASS anonymous SSR access to public recipe`)
 
 	if (failures.length > 0) {
 		throw new Error(`Runtime errors detected:\\n${failures.join('\\n')}`)
