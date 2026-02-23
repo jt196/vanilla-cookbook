@@ -15,17 +15,14 @@ import { requireOwnership } from '$lib/server/authHelpers'
 export const load = async ({ url, params, locals, fetch }) => {
 	const user = requireUser(locals)
 
-	let recipeData = await fetch(`${url.origin}/api/recipe/${params.recipeId}`)
+	let recipeData = await fetch(`/api/recipe/${params.recipeId}`)
 	const recipe = await recipeData.json()
 
 	// Check if the user is logged in and if the recipe belongs to the user
 	requireOwnership(user, recipe)
 
-	const hierarchicalCategories = await fetch(`${url.origin}/api/user/${user.userId}/categories`)
-	const categories = await hierarchicalCategories.json()
-
 	return {
 		recipe,
-		allCategories: categories
+		allCategories: []
 	}
 }

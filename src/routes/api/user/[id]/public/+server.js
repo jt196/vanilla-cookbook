@@ -10,8 +10,7 @@ export async function GET({ params }) {
 			select: {
 				username: true,
 				id: true,
-				publicProfile: true,
-				useCats: true
+				publicProfile: true
 			}
 		})
 

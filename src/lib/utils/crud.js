@@ -296,29 +296,6 @@ export async function uploadPaprikaFile(formData) {
 }
 
 /**
- * Fetches the count of categories from the database for a given user.
- *
- * @param {string|number} userId - The unique identifier of the user whose categories are being counted.
- * @returns {Promise<number>} A promise that resolves to the number of categories in the user's database.
- *   If an error occurs during the fetch operation, it returns 0.
- */
-export async function dbCatCount(userId) {
-	let dbCategoryCount = 0
-	try {
-		console.log('dbCatCount!')
-		const response = await fetch(`/api/user/${userId}/categories/count`)
-		const data = await response.json()
-
-		if (data && data.count) {
-			dbCategoryCount = data.count
-		}
-	} catch (err) {
-		console.error('Error fetching category db count:', err)
-	}
-	return dbCategoryCount
-}
-
-/**
  * Fetches the count of recipes from the database for a given user.
  *
  * @param {string|number} userId - The unique identifier of the user whose recipes are being counted.
@@ -336,27 +313,6 @@ export async function dbRecCount(userId) {
 		console.error('Error fetching recipe db count:', err)
 	}
 	return dbRecCount
-}
-
-/**
- * Retrieves the file category count by making an asynchronous request to the
- * specified API endpoint. If successful, it returns the file category count;
- * otherwise, it logs an error message and returns 0.
- *
- * @return {number} The file category count
- */
-export async function fileCatCount() {
-	let fileCategoryCount = 0
-	try {
-		const response = await fetch(`/api/import/paprika/categories`)
-		const data = await response.json()
-		if (data && data.fileCount) {
-			fileCategoryCount = data.fileCount
-		}
-	} catch (err) {
-		console.error('Error fetching category file count:', err)
-	}
-	return fileCategoryCount
 }
 
 /**
