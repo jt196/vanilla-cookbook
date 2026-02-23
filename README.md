@@ -170,15 +170,24 @@ Docker set up is dead simple. Single container, portable SQLite database.
 
 #### Reverse Proxy Configuration
 
-If you're running Vanilla Cookbook behind a reverse proxy (nginx, Nginx Proxy Manager, Traefik, etc.), you may encounter **502 Bad Gateway** errors on recipe pages. This is because SvelteKit sends many `Link:` preload headers that can exceed default nginx buffer sizes.
+If you're running Vanilla Cookbook behind a reverse proxy (nginx, Nginx Proxy Manager, Traefik, etc.), you may need to adjust some settings.
 
-**For Nginx / Nginx Proxy Manager**, add these proxy buffer settings:
+**For Nginx / Nginx Proxy Manager**, add these settings:
 
 ```nginx
+# Required for saving recipes with images (default 1MB is too small)
+client_max_body_size 10M;
+
+# Required to prevent 502 errors (SvelteKit sends many preload headers)
 proxy_buffer_size 128k;
 proxy_buffers 4 256k;
 proxy_busy_buffers_size 256k;
 ```
+
+**Common issues these settings fix:**
+
+- **Recipes fail to save** (spinner never stops, no error): `client_max_body_size` too small
+- **502 Bad Gateway** on recipe pages: Proxy buffer settings too small
 
 In **Nginx Proxy Manager**: Edit your proxy host → Advanced → Custom Nginx Configuration, and add the lines above.
 

@@ -94,11 +94,24 @@ export function parseRecipe(html, url) {
  * Downloads the HTML content of a given URL.
  *
  * @param {string} url - The URL to fetch.
+ * @param {number} [timeoutMs=15000] - Timeout in milliseconds.
  * @returns {Promise<string>} A promise that resolves with the HTML content.
+ * @throws {Error} If the request times out or fails.
  */
-export async function downloadHTML(url) {
-	const response = await fetch(url)
-	return response.text()
+export async function downloadHTML(url, timeoutMs = 15000) {
+	const controller = new AbortController()
+	const timeoutId = setTimeout(() => controller.abort(), timeoutMs)
+	try {
+		const response = await fetch(url, { signal: controller.signal })
+		return response.text()
+	} catch (error) {
+		if (error?.name === 'AbortError') {
+			throw new Error(`Request timed out after ${timeoutMs}ms`)
+		}
+		throw error
+	} finally {
+		clearTimeout(timeoutId)
+	}
 }
 
 /**

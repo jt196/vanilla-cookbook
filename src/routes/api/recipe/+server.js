@@ -14,6 +14,30 @@ import { regenerateRecipeEmbedding } from '$lib/server/semanticEmbedding'
 
 export async function POST({ request, locals, url }) {
 	const user = requireAuth(locals)
+	const reqId = crypto.randomUUID().slice(0, 8)
+	const startedAt = Date.now()
+	const log = (message, extra = {}) =>
+		console.log(`[recipe:create:${reqId}] ${message}`, { userId: user?.userId, ...extra })
+	const warn = (message, extra = {}) =>
+		console.warn(`[recipe:create:${reqId}] ${message}`, { userId: user?.userId, ...extra })
+	const errorLog = (message, extra = {}) =>
+		console.error(`[recipe:create:${reqId}] ${message}`, { userId: user?.userId, ...extra })
+
+	const withTimeout = async (promiseFactory, ms, label) => {
+		let timeoutId
+		try {
+			return await Promise.race([
+				promiseFactory(),
+				new Promise((_, reject) => {
+					timeoutId = setTimeout(() => reject(new Error(`${label} timed out after ${ms}ms`)), ms)
+				})
+			])
+		} finally {
+			clearTimeout(timeoutId)
+		}
+	}
+
+	log('start')
 
 	const formData = await request.formData()
 	let recipeData
@@ -21,10 +45,7 @@ export async function POST({ request, locals, url }) {
 		const rawRecipe = formData.get('recipe')
 		recipeData = JSON.parse(rawRecipe)
 	} catch (err) {
-		console.error('Failed to parse recipe payload', {
-			userId: user?.userId,
-			error: err?.message
-		})
+		errorLog('Failed to parse recipe payload', { error: err?.message })
 		return jsonError(400, 'Invalid recipe payload')
 	}
 	const imageData = formData.getAll('images')
@@ -70,36 +91,58 @@ export async function POST({ request, locals, url }) {
 			}
 		})
 	} catch (err) {
-		console.error('Failed to create recipe', {
-			userId: user?.userId,
-			name,
-			source,
-			source_url,
-			error: err?.message
-		})
+		errorLog('Failed to create recipe', { name, source, source_url, error: err?.message })
 		return jsonError(500, `Failed to create recipe: ${err.message}`)
 	}
+	log('recipe row created', { recipeUid: recipe.uid, ms: Date.now() - startedAt })
 
 	// Process remote image_url if it exists and user opted to save
-	if (saveImageUrl && (await checkImageExistence(image_url, url.origin))) {
-		console.log('Image exists, processing!')
-		const contentType = await getContentTypeFromUrl(image_url)
-		const { extension } = mapContentTypeToFileTypeAndExtension(contentType)
-
-		let photoEntry
+	if (saveImageUrl && image_url) {
 		try {
-			photoEntry = await createRecipePhotoEntry(recipe.uid, image_url, extension, true)
-			await processImage(image_url, photoEntry.id, extension)
+			const remoteImageExists = await withTimeout(
+				() => checkImageExistence(image_url, url.origin),
+				8000,
+				'remote image existence check'
+			)
+			log('remote image existence check finished', {
+				recipeUid: recipe.uid,
+				image_url,
+				exists: !!remoteImageExists
+			})
+			if (remoteImageExists) {
+				const contentType = await withTimeout(
+					() => getContentTypeFromUrl(image_url),
+					8000,
+					'remote image content-type fetch'
+				)
+				const { extension } = mapContentTypeToFileTypeAndExtension(contentType)
+
+				let photoEntry
+				try {
+					photoEntry = await createRecipePhotoEntry(recipe.uid, image_url, extension, true)
+					await withTimeout(
+						() => processImage(image_url, photoEntry.id, extension),
+						15000,
+						'remote image processing'
+					)
+					log('remote image processed', { recipeUid: recipe.uid, photoId: photoEntry.id })
+				} catch (error) {
+					errorLog('Failed to process remote image', {
+						recipeUid: recipe?.uid,
+						image_url,
+						error: error?.message
+					})
+					if (photoEntry) {
+						await removeRecipePhotoEntry(photoEntry.id)
+					}
+				}
+			}
 		} catch (error) {
-			console.error('Failed to process remote image', {
-				userId: user?.userId,
-				recipeUid: recipe?.uid,
+			warn('Remote image step skipped', {
+				recipeUid: recipe.uid,
 				image_url,
 				error: error?.message
 			})
-			if (photoEntry) {
-				await removeRecipePhotoEntry(photoEntry.id)
-			}
 		}
 	}
 
@@ -120,8 +163,7 @@ export async function POST({ request, locals, url }) {
 			const fullFilename = `${photoEntry.id}.${extension}`
 			await saveFile(photoBuffer, fullFilename, directory)
 		} catch (err) {
-			console.error('Error saving photo, deleting photo entry', {
-				userId: user?.userId,
+			errorLog('Error saving uploaded photo, deleting photo entry', {
 				recipeUid: recipe?.uid,
 				error: err?.message
 			})
@@ -144,5 +186,6 @@ export async function POST({ request, locals, url }) {
 		})
 	}
 
+	log('success response', { recipeUid: recipe.uid, totalMs: Date.now() - startedAt })
 	return jsonSuccess({ uid: recipe.uid })
 }

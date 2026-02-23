@@ -72,17 +72,25 @@
 		if (url) {
 			url = decodeURIComponent(url)
 			initialMode = 'url'
+			console.log('[recipe:new] Starting scrape for:', url)
 			try {
 				feedbackMessage = 'Scraping URL...'
 				feedbackType = 'info'
 				const scrapedData = await handleScrape(null, url)
+				console.log('[recipe:new] Scrape completed, status:', scrapedData?._status)
 				if (scrapedData) {
 					recipe = { ...recipe, ...scrapedData }
-					feedbackMessage = scrapedData._status === 'complete' ? 'URL scraped successfully.' : ''
+					if (scrapedData._status === 'complete') {
+						feedbackMessage = 'URL scraped successfully.'
+						feedbackType = 'success'
+					} else {
+						feedbackMessage = 'URL only partially scraped. Please review before saving.'
+						feedbackType = 'warning'
+					}
 				}
 			} catch (error) {
-				console.error('Error during scrape:', error)
-				feedbackMessage = 'Error scraping URL.'
+				console.error('[recipe:new] Scrape failed:', error)
+				feedbackMessage = typeof error === 'string' ? error : 'Error scraping URL.'
 				feedbackType = 'error'
 			}
 		} else if (sharedText && apiKeyPresent && aiEnabled) {
@@ -96,6 +104,7 @@
 	async function handleCreateRecipe(event) {
 		event.preventDefault()
 		saving = true
+		console.log('[recipe:new] Starting save, recipe name:', recipe?.name)
 
 		const formData = new FormData()
 		formData.append('recipe', JSON.stringify({ ...recipe, saveImageUrl }))
@@ -105,12 +114,20 @@
 		}
 
 		try {
+			console.log('[recipe:new] Calling createRecipe API')
 			const result = await createRecipe(formData)
+			console.log('[recipe:new] createRecipe returned, success:', result.success)
 			if (result.success) {
 				await goto(`/recipe/${result.data.uid}/view/`)
 			} else {
-				console.error('Error:', result.error)
+				console.error('[recipe:new] Save failed:', result.error)
+				feedbackMessage = result.error || 'Failed to save recipe.'
+				feedbackType = 'error'
 			}
+		} catch (error) {
+			console.error('[recipe:new] Unexpected create error:', error)
+			feedbackMessage = 'Failed to save recipe.'
+			feedbackType = 'error'
 		} finally {
 			saving = false
 		}
