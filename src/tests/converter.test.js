@@ -448,6 +448,21 @@ describe('manipulateIngredient function', () => {
 		expect(parseFloat(result.quantity)).toBeCloseTo(240, 0) // 2 cups × 120 g/cup = 240g
 	})
 
+	it('should preserve ranges when converting americanVolumetric cups to metric grams', () => {
+		const ingredient = {
+			quantity: 1,
+			minQty: 1,
+			maxQty: 2,
+			unit: 'cup',
+			ingredient: 'flour'
+		}
+		const result = manipulateIngredient(ingredient, 'americanVolumetric', 'metric', mockFuse, 'eng')
+		expect(result.unit).toBe('gram')
+		expect(result.quantity).toBeCloseTo(120, 0)
+		expect(result.minQty).toBeCloseTo(120, 0)
+		expect(result.maxQty).toBeCloseTo(240, 0)
+	})
+
 	it('should convert americanVolumetric to metric with exact match (score < 0.3)', () => {
 		const ingredient = {
 			quantity: 1,
@@ -497,6 +512,21 @@ describe('manipulateIngredient function', () => {
 		const result = manipulateIngredient(ingredient, 'metric', 'imperial', mockFuse, 'eng')
 		expect(result.unit).toBe('ounce')
 		expect(parseFloat(result.quantity)).toBeCloseTo(3.53, 1) // 100g ≈ 3.53 oz
+	})
+
+	it('should preserve ranges when converting metric grams to americanVolumetric cups', () => {
+		const ingredient = {
+			quantity: 120,
+			minQty: 120,
+			maxQty: 240,
+			unit: 'gram',
+			ingredient: 'flour'
+		}
+		const result = manipulateIngredient(ingredient, 'metric', 'americanVolumetric', mockFuse, 'eng')
+		expect(result.unit).toBe('cup')
+		expect(result.quantity).toBeCloseTo(1, 2)
+		expect(result.minQty).toBeCloseTo(1, 2)
+		expect(result.maxQty).toBeCloseTo(2, 2)
 	})
 
 	it('should convert metric kilograms to imperial pounds', () => {
