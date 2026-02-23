@@ -151,6 +151,7 @@ model AuthUser {
   ingMatch              Boolean            @default(false)
   ingOriginal           Boolean            @default(false)
   ingExtra              Boolean            @default(false)
+  displayNutrition      Boolean            @default(true)
   isAdmin               Boolean            @default(false)
   isRoot                Boolean            @default(false)
   useCats               Boolean            @default(false)

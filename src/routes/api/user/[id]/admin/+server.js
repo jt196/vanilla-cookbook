@@ -79,6 +79,10 @@ export async function PUT({ request, locals, params }) {
 				ingOriginal: 'ingOriginal' in userData ? userData.ingOriginal : updatingUser.ingOriginal,
 				ingExtra: 'ingExtra' in userData ? userData.ingExtra : updatingUser.ingExtra,
 				ingSymbol: 'ingSymbol' in userData ? userData.ingSymbol : updatingUser.ingSymbol,
+				displayNutrition:
+					'displayNutrition' in userData
+						? userData.displayNutrition
+						: updatingUser.displayNutrition,
 				language: 'language' in userData ? userData.language : updatingUser.language,
 				theme: 'theme' in userData ? userData.theme : updatingUser.theme,
 				useCats: 'useCats' in userData ? userData.useCats : updatingUser.useCats

@@ -29,6 +29,7 @@ export const load = async ({ params, locals, fetch }) => {
 		ingMatch: false,
 		ingOriginal: false,
 		ingExtra: false,
+		displayNutrition: true,
 		useCats: false,
 		ingSymbol: true,
 		skipSmallUnits: true

@@ -23,6 +23,7 @@ export async function PUT({ request, locals, params }) {
 		'ingOriginal',
 		'ingExtra',
 		'ingSymbol',
+		'displayNutrition',
 		'about',
 		'useCats'
 	]

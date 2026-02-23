@@ -21,6 +21,7 @@ export async function GET({ locals }) {
 				ingOriginal: true,
 				ingExtra: true,
 				ingSymbol: true,
+				displayNutrition: true,
 				language: true,
 				theme: true,
 				useCats: true,

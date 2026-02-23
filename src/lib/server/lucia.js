@@ -29,6 +29,7 @@ export const auth = lucia({
 		ingMatch: u.ingMatch,
 		ingOriginal: u.ingOriginal,
 		ingExtra: u.ingExtra,
+		displayNutrition: u.displayNutrition,
 		useCats: u.useCats,
 		ingSymbol: u.ingSymbol,
 		language: u.language,
