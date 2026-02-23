@@ -10,18 +10,34 @@ import { durationToText } from '$lib/utils/parse/parseHelpers'
  *   If unsuccessful, the object contains an error message under the `error` property.
  */
 export async function scrapeRecipeFromURL(url) {
+	const controller = new AbortController()
+	const timeoutMs = 30000
+	const timeoutId = setTimeout(() => controller.abort(), timeoutMs)
 	try {
-		const response = await fetch(`/api/recipe/scrape/${encodeURIComponent(url)}`)
+		const response = await fetch(`/api/recipe/scrape/${encodeURIComponent(url)}`, {
+			signal: controller.signal
+		})
 		if (response.ok) {
 			const data = await response.json()
 			return { success: true, data }
 		} else {
-			const errorData = await response.json()
+			let errorData = {}
+			try {
+				errorData = await response.json()
+			} catch {
+				// Non-JSON error response
+			}
 			throw new Error(errorData.message || 'Error scraping recipe')
 		}
 	} catch (error) {
+		if (error?.name === 'AbortError') {
+			console.error(`Scrape request timed out after ${timeoutMs}ms`)
+			return { success: false, error: 'Request timed out. The site may be slow or unreachable.' }
+		}
 		console.error('Error scraping recipe:', error.message)
 		return { success: false, error: error.message }
+	} finally {
+		clearTimeout(timeoutId)
 	}
 }
 

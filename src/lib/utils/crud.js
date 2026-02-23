@@ -171,22 +171,43 @@ export async function updateRecipe(formData, recipeId) {
  *   If unsuccessful, the object contains an error message under the `error` property.
  */
 export async function createRecipe(formData) {
+	const controller = new AbortController()
+	const timeoutMs = 30000
+	const timeoutId = setTimeout(() => controller.abort(), timeoutMs)
+	console.log('[createRecipe] Starting request')
 	try {
 		const response = await fetch(`/api/recipe`, {
 			method: 'POST',
-			body: formData
+			body: formData,
+			signal: controller.signal
 		})
+		console.log('[createRecipe] Response received', { status: response.status, ok: response.ok })
 
 		if (response.ok) {
 			const newRecipe = await response.json()
 			return { success: true, data: newRecipe }
 		} else {
-			const errorData = await response.json()
+			let errorData = {}
+			try {
+				errorData = await response.json()
+			} catch {
+				// Non-JSON error response
+			}
 			throw new Error(errorData.message || 'Error creating recipe')
 		}
 	} catch (error) {
-		console.error('Error creating recipe:', error.message)
+		if (error?.name === 'AbortError') {
+			console.error('[createRecipe] Request timed out after', timeoutMs, 'ms')
+			return {
+				success: false,
+				error:
+					'Saving the recipe timed out. The server may still be processing a remote image. Try saving again with image download disabled.'
+			}
+		}
+		console.error('[createRecipe] Request failed:', error?.name, error?.message)
 		return { success: false, error: error.message }
+	} finally {
+		clearTimeout(timeoutId)
 	}
 }
 
