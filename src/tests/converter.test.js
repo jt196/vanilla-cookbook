@@ -351,6 +351,45 @@ describe('normalizeIngredient function', () => {
 		expect(result.quantity).toBe(1.23) // Kilograms use 2 decimal places
 		expect(result.unit).toBe('kilogram')
 	})
+
+	it('should preserve quantity ranges in minQty and maxQty', () => {
+		const ingredient = {
+			quantity: 90,
+			minQty: 90,
+			maxQty: 120,
+			unit: 'gram',
+			ingredient: 'oats'
+		}
+		const result = normalizeIngredient(ingredient, {}, 'eng')
+		expect(result.quantity).toBe(90)
+		expect(result.minQty).toBe(90)
+		expect(result.maxQty).toBe(120)
+	})
+
+	it('should round minQty and maxQty independently for ranged quantities', () => {
+		const ingredient = {
+			quantity: 1.234,
+			minQty: 1.234,
+			maxQty: 2.345,
+			unit: 'cup',
+			ingredient: 'stock'
+		}
+		const result = normalizeIngredient(ingredient, {}, 'eng')
+		expect(result.quantity).toBe(1.23)
+		expect(result.minQty).toBe(1.23)
+		expect(result.maxQty).toBe(2.35)
+	})
+
+	it('should return unitless placeholder quantities unchanged', () => {
+		const ingredient = {
+			quantity: 0,
+			minQty: 0,
+			maxQty: 0,
+			ingredient: 'lemon zest'
+		}
+		const result = normalizeIngredient(ingredient, {}, 'eng')
+		expect(result).toEqual(ingredient)
+	})
 })
 
 describe('manipulateIngredient function', () => {

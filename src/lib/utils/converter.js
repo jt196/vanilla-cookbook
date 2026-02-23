@@ -591,6 +591,18 @@ export function normalizeIngredient(ingredientObj, options = {}, lang = 'eng') {
 	const { quantity, unit } = ingredientObj
 	const qtyNum =
 		typeof quantity === 'string' ? Number(quantity) : typeof quantity === 'number' ? quantity : null
+	const minQtyNum =
+		typeof ingredientObj.minQty === 'string'
+			? Number(ingredientObj.minQty)
+			: typeof ingredientObj.minQty === 'number'
+				? ingredientObj.minQty
+				: null
+	const maxQtyNum =
+		typeof ingredientObj.maxQty === 'string'
+			? Number(ingredientObj.maxQty)
+			: typeof ingredientObj.maxQty === 'number'
+				? ingredientObj.maxQty
+				: null
 	const unitData = findUnitData(unit, lang)
 
 	// If unit is unknown, return as-is with optional fallback handling
@@ -605,6 +617,14 @@ export function normalizeIngredient(ingredientObj, options = {}, lang = 'eng') {
 		typeof qtyNum === 'number' && !Number.isNaN(qtyNum) && !options.skipRounding
 			? parseFloat(qtyNum.toFixed(decimalPlaces))
 			: qtyNum
+	const roundedMinQty =
+		typeof minQtyNum === 'number' && !Number.isNaN(minQtyNum) && !options.skipRounding
+			? parseFloat(minQtyNum.toFixed(decimalPlaces))
+			: minQtyNum
+	const roundedMaxQty =
+		typeof maxQtyNum === 'number' && !Number.isNaN(maxQtyNum) && !options.skipRounding
+			? parseFloat(maxQtyNum.toFixed(decimalPlaces))
+			: maxQtyNum
 
 	return {
 		...ingredientObj,
@@ -612,8 +632,8 @@ export function normalizeIngredient(ingredientObj, options = {}, lang = 'eng') {
 		unit: normalizedUnit,
 		unitPlural: plural,
 		symbol: symbol,
-		minQty: roundedQuantity ?? ingredientObj.minQty,
-		maxQty: roundedQuantity ?? ingredientObj.maxQty
+		minQty: roundedMinQty ?? roundedQuantity ?? ingredientObj.minQty,
+		maxQty: roundedMaxQty ?? roundedQuantity ?? ingredientObj.maxQty
 	}
 }
 

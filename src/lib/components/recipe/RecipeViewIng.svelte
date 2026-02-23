@@ -55,16 +55,28 @@
 		scaleIng = handleScale(scale)
 	})
 
-	const formatQuantity = (qty, min, max) => {
-		if (!qty) return ''
-		if (min !== undefined && max !== undefined && min !== max) {
+	const formatQuantity = (qty, min, max, unit = null) => {
+		const hasQty = qty !== null && qty !== undefined && qty !== ''
+		const hasRangeValues = min !== null && min !== undefined && max !== null && max !== undefined
+		const isNoUnitZeroPlaceholder =
+			!unit &&
+			(hasQty || hasRangeValues) &&
+			Number(qty ?? 0) === 0 &&
+			Number(min ?? 0) === 0 &&
+			Number(max ?? 0) === 0
+		if (isNoUnitZeroPlaceholder) return ''
+		const hasMeaningfulRange = hasRangeValues && !(!hasQty && Number(min) === 0 && Number(max) === 0)
+		if (!hasQty && !hasMeaningfulRange) return ''
+		if (hasMeaningfulRange && min !== max) {
 			return selectedSystem === 'metric'
 				? `${roundIngredientQuantity(min * scaleIng)}-${roundIngredientQuantity(max * scaleIng)}`
 				: `${decimalToFraction(min * scaleIng)}-${decimalToFraction(max * scaleIng)}`
 		}
+		const baseQty = hasQty ? qty : hasMeaningfulRange ? min : null
+		if (baseQty === null) return ''
 		return selectedSystem === 'metric'
-			? roundIngredientQuantity(qty * scaleIng)
-			: decimalToFraction(qty * scaleIng)
+			? roundIngredientQuantity(baseQty * scaleIng)
+			: decimalToFraction(baseQty * scaleIng)
 	}
 
 	const renderUnit = (entry, qtyScaled) => {
@@ -136,6 +148,21 @@
 		const spacingClasses = index === 0 ? 'mt-0 mb-1' : 'mt-2 mb-1'
 		return `${spacingClasses} leading-tight ${sizeClasses}`
 	}
+
+	const displayQuantityText = $derived(
+		formatQuantity(ingredient.quantity, ingredient.minQty, ingredient.maxQty, ingredient.unit)
+	)
+	const displayQuantityForPlural = $derived.by(() => {
+		if (ingredient.quantity !== null && ingredient.quantity !== undefined) return ingredient.quantity * scaleIng
+		if (
+			ingredient.maxQty !== null &&
+			ingredient.maxQty !== undefined &&
+			!(Number(ingredient.maxQty) === 0 && Number(ingredient.minQty) === 0)
+		) {
+			return ingredient.maxQty * scaleIng
+		}
+		return 0
+	})
 </script>
 
 <div class="ingredient-line" class:highlight={isHighlighted}>
@@ -163,30 +190,14 @@
 						<i>{ingredient.originalString}</i>
 					{:else}
 						<strong>
-							{#if ingredient.minQty == ingredient.maxQty && ingredient.quantity}
-								{#if selectedSystem === 'metric'}
-									{roundIngredientQuantity(ingredient.quantity * scaleIng)}
-								{:else}
-									{decimalToFraction(ingredient.quantity * scaleIng)}
-								{/if}
-							{:else if ingredient.minQty != ingredient.maxQty && ingredient.quantity}
-								{#if selectedSystem === 'metric'}
-									{roundIngredientQuantity(ingredient.minQty * scaleIng)}-{roundIngredientQuantity(
-										ingredient.maxQty * scaleIng
-									)}
-								{:else}
-									{decimalToFraction(ingredient.minQty * scaleIng)}-{decimalToFraction(
-										ingredient.maxQty * scaleIng
-									)}
-								{/if}
-							{/if}
+							{displayQuantityText}
 						</strong>
 						<i>
 							{#if ingredient.unit && ingredient.unit !== 'q.b.'}
 								{#if displaySymbol && ingredient.symbol}
 									{ingredient.symbol}
 								{:else}
-									{ingredient.quantity * scaleIng > 1 && ingredient.unitPlural
+									{displayQuantityForPlural > 1 && ingredient.unitPlural
 										? ingredient.unitPlural
 										: ingredient.unit}
 								{/if}
@@ -220,7 +231,8 @@
 									{formatQuantity(
 										ingredient.perItemQuantity,
 										ingredient.perItemMinQty,
-										ingredient.perItemMaxQty
+										ingredient.perItemMaxQty,
+										ingredient.unit
 									)}
 									{#if ingredient.unit}
 										{' '}
@@ -278,9 +290,9 @@
 			{#each panelAlternatives as alt}
 				{#if alt}
 					<li>
-						{#if alt.quantity}
+						{#if alt.quantity !== null && alt.quantity !== undefined}
 							<strong>
-								{formatQuantity(alt.quantity, alt.minQty, alt.maxQty)}
+								{formatQuantity(alt.quantity, alt.minQty, alt.maxQty, alt.unit)}
 							</strong>
 						{/if}
 						{#if alt.unit}
