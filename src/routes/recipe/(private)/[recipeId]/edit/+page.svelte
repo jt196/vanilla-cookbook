@@ -2,6 +2,7 @@
 	import { deleteRecipeById, updateRecipe } from '$lib/utils/crud'
 	import { goto } from '$app/navigation'
 	import RecipeForm from '$lib/components/recipe/RecipeForm.svelte'
+	import FeedbackMessage from '$lib/components/ui/FeedbackMessage.svelte'
 	import ConfirmationDialog from '$lib/components/ui/ConfirmationDialog.svelte'
 	import Spinner from '$lib/components/ui/Spinner.svelte'
 
@@ -30,6 +31,8 @@
 	let userLanguage = $state(data?.userLanguage ?? 'eng')
 	let showDeleteConfirm = $state(false)
 	let saving = $state(false)
+	let feedbackMessage = $state('')
+	let feedbackType = $state('info')
 
 	$effect(() => {
 		recipeCategories =
@@ -44,6 +47,7 @@
 	async function handleSubmit(event) {
 		event.preventDefault()
 		saving = true
+		feedbackMessage = ''
 
 		const recipeWithCategories = {
 			...recipe,
@@ -69,9 +73,13 @@
 				goto(`/recipe/${recipe.uid}/view/`)
 			} else {
 				console.error('Error:', result.error)
+				feedbackMessage = result.error || 'Failed to save recipe.'
+				feedbackType = 'error'
 			}
 		} catch (error) {
 			console.error('Error:', error)
+			feedbackMessage = 'Failed to save recipe.'
+			feedbackType = 'error'
 		} finally {
 			saving = false
 		}
@@ -102,6 +110,10 @@
 		onSubmit={handleSubmit}
 	/>
 </div>
+
+{#if feedbackMessage}
+	<FeedbackMessage message={feedbackMessage} type={feedbackType} timeout={5000} />
+{/if}
 
 <ConfirmationDialog
 	bind:isOpen={showDeleteConfirm}

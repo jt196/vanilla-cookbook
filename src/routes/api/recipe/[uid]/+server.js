@@ -50,6 +50,41 @@ export async function DELETE({ params, locals }) {
 
 export async function PUT({ request, locals, params, url }) {
 	const user = requireAuth(locals)
+	const reqId = crypto.randomUUID().slice(0, 8)
+	const startedAt = Date.now()
+	const log = (message, extra = {}) =>
+		console.log(`[recipe:update:${reqId}] ${message}`, {
+			userId: user?.userId,
+			recipeUid: params?.uid,
+			...extra
+		})
+	const warn = (message, extra = {}) =>
+		console.warn(`[recipe:update:${reqId}] ${message}`, {
+			userId: user?.userId,
+			recipeUid: params?.uid,
+			...extra
+		})
+	const errorLog = (message, extra = {}) =>
+		console.error(`[recipe:update:${reqId}] ${message}`, {
+			userId: user?.userId,
+			recipeUid: params?.uid,
+			...extra
+		})
+	const withTimeout = async (promiseFactory, ms, label) => {
+		let timeoutId
+		try {
+			return await Promise.race([
+				promiseFactory(),
+				new Promise((_, reject) => {
+					timeoutId = setTimeout(() => reject(new Error(`${label} timed out after ${ms}ms`)), ms)
+				})
+			])
+		} finally {
+			clearTimeout(timeoutId)
+		}
+	}
+
+	log('start')
 	const formData = await request.formData()
 	const recipeData = JSON.parse(formData.get('recipe'))
 	const imageData = formData.getAll('images')
@@ -115,6 +150,7 @@ export async function PUT({ request, locals, params, url }) {
 			where: { uid },
 			data: updates
 		})
+		log('recipe row updated', { ms: Date.now() - startedAt })
 
 		let photoEntry
 
@@ -139,38 +175,68 @@ export async function PUT({ request, locals, params, url }) {
 				// Call the saveFile function to save the image
 				await saveFile(photoBuffer, fullFilename, directory)
 			} catch (err) {
-				console.log('Error Saving Photo! Deleting Photo Entry!', err)
-				removeRecipePhotoEntry(photoEntry.id)
+				errorLog('Error saving uploaded photo, deleting photo entry', { error: err?.message })
+				if (photoEntry?.id) removeRecipePhotoEntry(photoEntry.id)
 			}
 		}
 
 		// Process remote image_url if user opted to save
 		if (saveImageUrl && recipeData.image_url) {
-			const existingPhoto = await prisma.recipePhoto.findFirst({
-				where: { recipeUid: uid, url: recipeData.image_url }
-			})
-			if (!existingPhoto && (await checkImageExistence(recipeData.image_url, url.origin))) {
-				// Only set as main if there's no existing main photo
-				const hasMainPhoto = await prisma.recipePhoto.findFirst({
-					where: { recipeUid: uid, isMain: true }
+			try {
+				const existingPhoto = await prisma.recipePhoto.findFirst({
+					where: { recipeUid: uid, url: recipeData.image_url }
 				})
-				const contentType = await getContentTypeFromUrl(recipeData.image_url)
-				const { extension } = mapContentTypeToFileTypeAndExtension(contentType)
-				let remotePhotoEntry
-				try {
-					remotePhotoEntry = await createRecipePhotoEntry(
-						uid,
-						recipeData.image_url,
-						extension,
-						!hasMainPhoto
+				if (!existingPhoto) {
+					const remoteImageExists = await withTimeout(
+						() => checkImageExistence(recipeData.image_url, url.origin),
+						8000,
+						'remote image existence check'
 					)
-					await processImage(recipeData.image_url, remotePhotoEntry.id, extension)
-				} catch (error) {
-					console.error('Error saving remote image:', error)
-					if (remotePhotoEntry) {
-						await removeRecipePhotoEntry(remotePhotoEntry.id)
+					log('remote image existence check finished', {
+						image_url: recipeData.image_url,
+						exists: !!remoteImageExists
+					})
+					if (remoteImageExists) {
+						// Only set as main if there's no existing main photo
+						const hasMainPhoto = await prisma.recipePhoto.findFirst({
+							where: { recipeUid: uid, isMain: true }
+						})
+						const contentType = await withTimeout(
+							() => getContentTypeFromUrl(recipeData.image_url),
+							8000,
+							'remote image content-type fetch'
+						)
+						const { extension } = mapContentTypeToFileTypeAndExtension(contentType)
+						let remotePhotoEntry
+						try {
+							remotePhotoEntry = await createRecipePhotoEntry(
+								uid,
+								recipeData.image_url,
+								extension,
+								!hasMainPhoto
+							)
+							await withTimeout(
+								() => processImage(recipeData.image_url, remotePhotoEntry.id, extension),
+								15000,
+								'remote image processing'
+							)
+							log('remote image processed', { photoId: remotePhotoEntry.id })
+						} catch (error) {
+							errorLog('Error saving remote image', {
+								image_url: recipeData.image_url,
+								error: error?.message
+							})
+							if (remotePhotoEntry) {
+								await removeRecipePhotoEntry(remotePhotoEntry.id)
+							}
+						}
 					}
 				}
+			} catch (error) {
+				warn('Remote image step skipped', {
+					image_url: recipeData.image_url,
+					error: error?.message
+				})
 			}
 		}
 
@@ -204,10 +270,11 @@ export async function PUT({ request, locals, params, url }) {
 			})
 		}
 
+		log('success response', { totalMs: Date.now() - startedAt })
 		return jsonSuccess({ message: 'Recipe updated successfully' })
 	} catch (err) {
 		if (err.status) throw err
-		console.error('Error updating recipe:', err)
+		errorLog('Error updating recipe', { error: err?.message })
 		return jsonError(500, `Failed to update recipe: ${err.message}`)
 	}
 }
