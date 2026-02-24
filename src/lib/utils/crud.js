@@ -142,22 +142,40 @@ export async function recipeRatingChange(newRating, uid) {
  *   If unsuccessful, the object contains an error message under the `error` property.
  */
 export async function updateRecipe(formData, recipeId) {
+	const controller = new AbortController()
+	const timeoutMs = 30000
+	const timeoutId = setTimeout(() => controller.abort(), timeoutMs)
 	try {
 		const response = await fetch(`/api/recipe/${recipeId}`, {
 			method: 'PUT',
-			body: formData // Use the FormData object directly
+			body: formData, // Use the FormData object directly
+			signal: controller.signal
 		})
 
 		if (response.ok) {
 			const updatedRecipe = await response.json()
 			return { success: true, data: updatedRecipe }
 		} else {
-			const errorData = await response.json()
+			let errorData = {}
+			try {
+				errorData = await response.json()
+			} catch {
+				// Non-JSON error response
+			}
 			throw new Error(errorData.message || 'Error updating recipe')
 		}
 	} catch (error) {
+		if (error?.name === 'AbortError') {
+			console.error(`Error updating recipe: request timed out after ${timeoutMs}ms`)
+			return {
+				success: false,
+				error: 'Saving the recipe timed out.'
+			}
+		}
 		console.error('Error updating recipe:', error.message)
 		return { success: false, error: error.message }
+	} finally {
+		clearTimeout(timeoutId)
 	}
 }
 
