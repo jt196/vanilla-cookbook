@@ -15,6 +15,10 @@ Vanilla Cookbook is a self hosted recipe manager. It is designed with complexity
 
 Most of the web's recipes are written without much thought to a consistent language or structure. Many self-hosted apps go down the structuring route, automating, or asking the user to organise their data. This can lead to cluttered and complex interfaces, meaning you have to work more, just to get cooking. The philosophy behind Vanilla is to do most of that work for the user. You should be able to get cooking with a few clicks.
 
+## Development
+
+Vanilla is built with the assistance of AI tools but it is **not vibe coded**. I'm a dev with 5+ years experience, and *mostly* know what I'm doing. All the basic architecture has been hand built, and every change that is made is reviewed and tested before release. As this is a spare time project, I honestly don't have the time to build it without the use of AI tools.
+
 ### Smart Ingredient Display
 
 All based on text string parsing, little or no work to do for the user.
@@ -148,16 +152,16 @@ Docker set up is dead simple. Single container, portable SQLite database.
 
 ### Docker
 
-1. In your project directory, create the _.env_ and _docker-compose.yml_ files using the respective _.template_ files in the repo root:
+1. In your project directory, create the *.env* and *docker-compose.yml* files using the respective *.template* files in the repo root:
 
    ```bash
    curl -o .env https://raw.githubusercontent.com/jt196/vanilla-cookbook/main/.env.template
    curl -o docker-compose.yml https://raw.githubusercontent.com/jt196/vanilla-cookbook/main/docker-compose.yml.template
    ```
 
-2. In the _.env_ file
-   - Change the _ORIGIN_ to the URL it's going to be hosted on. If you get any login CORS messages, this not being set correctly will be the reason. The default `ORIGIN=http://localhost:3000` should work with the default _docker-compose.yml_ file unless you have anything else on that port.
-3. Create _db_ and _uploads_ folders for persistence in your docker folder, make sure the share paths are correct in the docker-compose file: `mkdir -p ./db ./uploads`
+2. In the *.env* file
+   - Change the *ORIGIN* to the URL it's going to be hosted on. If you get any login CORS messages, this not being set correctly will be the reason. The default `ORIGIN=http://localhost:3000` should work with the default *docker-compose.yml* file unless you have anything else on that port.
+3. Create *db* and *uploads* folders for persistence in your docker folder, make sure the share paths are correct in the docker-compose file: `mkdir -p ./db ./uploads`
 4. Use `:latest` tags for bleedin' edge, `:stable` for stable release.
 5. Run `docker-compose up -d`
 6. On first run, you'll be prompted to enter Admin user details.
@@ -165,7 +169,7 @@ Docker set up is dead simple. Single container, portable SQLite database.
 #### Upgrade
 
 1. Grab the latest image: `docker pull jt196/vanilla-cookbook`
-2. Check the _.env.template_ and _docker-compose.yml.template_ files haven't been modified. Add any additional fields. The _.env_ is the most likely to change.
+2. Check the *.env.template* and *docker-compose.yml.template* files haven't been modified. Add any additional fields. The *.env* is the most likely to change.
 3. From the project directory, run `docker-compose up -d` or `docker compose up -d` depending on how you have it installed on your system.
 
 #### Reverse Proxy Configuration
@@ -205,7 +209,7 @@ In **standard Nginx**: Add these to your `location` block or `server` block for 
 
 1. Clone the repo and the recipe-ingredient-parser submodule: `git clone --recursive https://github.com/jt196/vanilla-cookbook.git`
 2. At the root of the project, create the .env file: `cp .env.template .env`
-3. In the _.env_ file
+3. In the *.env* file
    1. Set `ORIGIN` to `http://localhost:5173` (dev).
 4. Run it
    - `pnpm i` (node packages install)
