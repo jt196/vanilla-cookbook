@@ -107,7 +107,7 @@ describe('RecipeFilter component', () => {
 			activeButton: 'created',
 			sortState: mockSortState
 		})
-		const dateButton = getByText('Date')
+		const dateButton = getByText('Added')
 	})
 
 	it('updates sort state correctly on date button click', async () => {
@@ -115,9 +115,9 @@ describe('RecipeFilter component', () => {
 		const { getByText } = render(RecipeFilter)
 
 		// Find the button by its text
-		const dateButton = getByText('Date')
+		const dateButton = getByText('Added')
 
-		// Click the 'Date' button
+		// Click the 'Added' button
 		await fireEvent.click(dateButton)
 
 		// Get the current value of the sortState store

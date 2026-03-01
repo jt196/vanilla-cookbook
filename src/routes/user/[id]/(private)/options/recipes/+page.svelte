@@ -7,7 +7,7 @@
 
 	/** @type {{data: any}} */
 	let { data } = $props()
-	const { user } = $state(data)
+	const { user, semanticEnabled } = $state(data)
 	let settingsFeedback = $state('')
 
 	async function updateSettings(event) {
@@ -111,6 +111,24 @@
 			? 'Display extra ingredient text, e.g. after the comma in "1 clove garlic, chopped".'
 			: 'Hide extra ingredient text.'}
 	</Checkbox>
+	<div class={!semanticEnabled ? 'opacity-50' : ''}>
+		<Checkbox
+			name="showSimilarRecipes"
+			bind:checked={user.showSimilarRecipes}
+			size="sm"
+			color="neutral"
+			legend="Similar Recipes"
+			disabled={!semanticEnabled}
+		>
+			{#if !semanticEnabled}
+				Show similar recipes on recipe pages. <em>(Embeddings are disabled for this site.)</em>
+			{:else if user.showSimilarRecipes}
+				Show similar recipes at the bottom of each recipe page.
+			{:else}
+				Hide similar recipes.
+			{/if}
+		</Checkbox>
+	</div>
 	<footer>
 		<Button type="submit">Update</Button>
 		<FeedbackMessage message={settingsFeedback} />

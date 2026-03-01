@@ -17,6 +17,9 @@
 	import RecipeViewNotes from '$lib/components/recipe/RecipeViewNotes.svelte'
 	import FeedbackMessage from '$lib/components/ui/FeedbackMessage.svelte'
 	import Toggle from '$lib/components/ui/Form/Toggle.svelte'
+	import Carousel from '$lib/components/ui/Carousel.svelte'
+	import CarouselItem from '$lib/components/ui/CarouselItem.svelte'
+	import RecipePhotoCard from '$lib/components/recipe/RecipePhotoCard.svelte'
 	import { sortByDate } from '$lib/utils/sorting.js'
 	import { recipeRatingChange, updatePhotos } from '$lib/utils/crud.js'
 
@@ -24,10 +27,16 @@
 	let { data = $bindable() } = $props()
 	let isLoading = $state(true)
 
-	let { recipe, viewUser, logs, recUser, aiEnabled } = $state(data)
+	let { recipe, viewUser, logs, recUser, aiEnabled, semanticEnabled } = $state(data)
 	$effect(() => {
-		;({ recipe, viewUser, logs, recUser, aiEnabled } = data)
+		;({ recipe, viewUser, logs, recUser, aiEnabled, semanticEnabled } = data)
 	})
+
+	let similarRecipes = $state(/** @type {Array<{uid:string,name:string,photos:Array<{id:string}>,image_url?:string}>} */ ([]))
+
+	const showSimilarStrip = $derived(
+		semanticEnabled && (viewUser?.showSimilarRecipes ?? true)
+	)
 
 	// Scaling factor for the ingredients
 	let scale = $state(1)
@@ -137,8 +146,19 @@
 
 	let isMounted = $state(false)
 
-	onMount(() => {
+	onMount(async () => {
 		isMounted = true
+		if (showSimilarStrip) {
+			try {
+				const res = await fetch(`/api/recipe/${recipe.uid}/similar?limit=6`)
+				if (res.ok) {
+					const body = await res.json()
+					similarRecipes = body.results ?? []
+				}
+			} catch (err) {
+				console.error('Failed to load similar recipes:', err)
+			}
+		}
 	})
 
 	function updateLogs(newLog, response) {
@@ -453,3 +473,16 @@
 	onSetMainPhoto={handleSetMainPhoto}
 	{viewOnly}
 />
+
+{#if showSimilarStrip && similarRecipes.length > 0}
+	<div class="mt-8">
+		<h3 class="text-lg font-semibold mb-3">Similar Recipes</h3>
+		<Carousel>
+			{#each similarRecipes as r (r.uid)}
+				<CarouselItem>
+					<RecipePhotoCard recipe={r} />
+				</CarouselItem>
+			{/each}
+		</Carousel>
+	</div>
+{/if}

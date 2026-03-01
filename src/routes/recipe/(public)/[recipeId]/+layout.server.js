@@ -3,6 +3,7 @@ import { error, redirect } from '@sveltejs/kit'
 export const load = async ({ params, locals, fetch }) => {
 	const user = locals.user
 	const aiEnabled = locals.site?.ai?.enabled ?? false
+	const semanticEnabled = locals.site?.semantic?.enabled ?? false
 
 	const response = await fetch(`/api/recipe/${params.recipeId}`)
 	if (response.status === 403) {
@@ -31,7 +32,8 @@ export const load = async ({ params, locals, fetch }) => {
 		ingExtra: false,
 		displayNutrition: true,
 		ingSymbol: true,
-		skipSmallUnits: true
+		skipSmallUnits: true,
+		showSimilarRecipes: true
 	}
 
 	// Using nullish coalescing operator to assign user or nullUser to viewUser
@@ -54,6 +56,7 @@ export const load = async ({ params, locals, fetch }) => {
 		viewMode,
 		viewUser,
 		recUser: recUser.userProfile ?? { username: 'Unknown user' },
-		aiEnabled
+		aiEnabled,
+		semanticEnabled
 	}
 }

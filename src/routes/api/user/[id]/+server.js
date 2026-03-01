@@ -24,6 +24,7 @@ export async function PUT({ request, locals, params }) {
 		'ingExtra',
 		'ingSymbol',
 		'displayNutrition',
+		'showSimilarRecipes',
 		'about',
 	]
 

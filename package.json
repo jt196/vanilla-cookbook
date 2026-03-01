@@ -21,11 +21,7 @@
 		"start": "pnpm build && pnpm serve"
 	},
 	"devDependencies": {
-		"@event-calendar/core": "^3.10.0",
-		"@event-calendar/day-grid": "^3.10.0",
-		"@event-calendar/interaction": "^3.10.0",
-		"@event-calendar/list": "^3.10.0",
-		"@event-calendar/time-grid": "^3.10.0",
+		"@humanspeak/svelte-virtual-list": "^0.3.10",
 		"@playwright/test": "^1.57.0",
 		"@sveltejs/adapter-auto": "^4.0.0",
 		"@sveltejs/adapter-node": "^5.2.12",
@@ -55,7 +51,6 @@
 		"svelte": "^5.0.0",
 		"svelte-check": "^4.1.4",
 		"svelte-preprocess": "^6.0.3",
-		"@humanspeak/svelte-virtual-list": "^0.3.10",
 		"tailwindcss": "^4.1.18",
 		"ts-node": "^10.9.2",
 		"tslib": "^2.8.1",

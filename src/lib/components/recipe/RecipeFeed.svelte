@@ -4,7 +4,6 @@
 	import { sortByDate, sortByKeyGeneric } from '$lib/utils/sorting'
 	import RecipeFilter from '$lib/components/recipe/RecipeFilter.svelte'
 	import RecipeList from '$lib/components/recipe/RecipeList.svelte'
-	import Button from '$lib/components/ui/Button.svelte'
 	import Spinner from '$lib/components/ui/Spinner.svelte'
 	import CopyRecipeDialog from '$lib/components/recipe/CopyRecipeDialog.svelte'
 	import { duplicateRecipe } from '$lib/utils/crud'
@@ -64,6 +63,17 @@
 	function applyManualSort(recipeList, key, direction) {
 		if (!key || !direction) return recipeList
 		if (key === 'created') return sortByDate(recipeList, 'created', direction)
+		if (key === 'lastCooked') {
+			return [...recipeList].sort((a, b) => {
+				const aMax = a.log?.length
+					? Math.max(...a.log.map((l) => new Date(l.cooked).getTime()))
+					: -Infinity
+				const bMax = b.log?.length
+					? Math.max(...b.log.map((l) => new Date(l.cooked).getTime()))
+					: -Infinity
+				return direction === 'desc' ? bMax - aMax : aMax - bMax
+			})
+		}
 		return sortByKeyGeneric(recipeList, key, direction)
 	}
 
@@ -365,7 +375,6 @@
 
 		return () => clearTimeout(timeout)
 	})
-
 </script>
 
 {#if title}
@@ -378,15 +387,8 @@
 	</div>
 {/if}
 
-<div
-	class="transition-all duration-300"
->
-	<RecipeFilter
-		viewOnly={false}
-		username={ownerUsername}
-		{viewMode}
-		{searchPending}
-	/>
+<div class="transition-all duration-300">
+	<RecipeFilter viewOnly={false} username={ownerUsername} {viewMode} {searchPending} />
 	<Spinner visible={isLoading || isNavigating} spinnerContent="Loading" />
 	<RecipeList
 		{filteredRecipes}
@@ -394,8 +396,7 @@
 		{viewerUserId}
 		recipeFavourited={handleRecipeFavourited}
 		recipeRatingChanged={handleRecipeRatingChanged}
-		onDuplicate={handleDuplicateRequested}
-	/>
+		onDuplicate={handleDuplicateRequested} />
 </div>
 
 <CopyRecipeDialog
@@ -404,7 +405,6 @@
 	onStay={() => runDuplicate('stay')}
 	onView={() => runDuplicate('view')}
 	viewDisabled={false}
-	message={copyMessage}
-/>
+	message={copyMessage} />
 
 <Spinner visible={isCopying} spinnerContent="Copying Recipe" />

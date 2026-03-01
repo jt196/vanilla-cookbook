@@ -22,6 +22,11 @@
 
 	let logged = $derived(item.log?.length > 0)
 	let favourite = $derived(item?.on_favorites)
+	const lastCookedDate = $derived(
+		item.log?.length
+			? new Date(Math.max(...item.log.map((l) => new Date(l.cooked).getTime())))
+			: null
+	)
 	let loadingFav = $state(false)
 	const isOwnerView = $derived(viewMode === 'owner' && item.userId === viewerUserId)
 	const canFavourite = $derived(!!viewerUserId)
@@ -34,8 +39,8 @@
 
 	// Reset image visibility when the recipe changes
 	$effect(() => {
-		const _primaryId = item.photos?.[0]?.id
-		const _imageUrl = item.image_url
+		void item.photos?.[0]?.id
+		void item.image_url
 		showPrimaryPhoto = true
 		showImageUrl = true
 	})
@@ -164,6 +169,11 @@
 						editable={true}
 						ratingChanged={(newRating) => recipeRatingChanged?.(item.uid, newRating)} />
 				</div>
+				{#if lastCookedDate}
+					<p class="text-xs text-base-content/50 hidden md:block">
+						Last cooked: {lastCookedDate.toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}
+					</p>
+				{/if}
 			{:else}
 				<p class="text-sm text-base-content/70 md:text-left">
 					by

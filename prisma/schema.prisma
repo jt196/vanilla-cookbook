@@ -152,6 +152,7 @@ model AuthUser {
   ingOriginal           Boolean            @default(false)
   ingExtra              Boolean            @default(false)
   displayNutrition      Boolean            @default(true)
+  showSimilarRecipes    Boolean            @default(true)
   isAdmin               Boolean            @default(false)
   isRoot                Boolean            @default(false)
   useCats               Boolean            @default(false)
