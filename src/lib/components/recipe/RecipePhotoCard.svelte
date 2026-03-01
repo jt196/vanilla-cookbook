@@ -6,8 +6,9 @@
 	let { recipe, width = 'w-36 md:w-48' } = $props()
 
 	$effect(() => {
-		const _id = recipe?.photos?.[0]?.id
-		const _url = recipe?.image_url
+		// Reset fallback state whenever the recipe's image sources change
+		void recipe?.photos?.[0]?.id
+		void recipe?.image_url
 		showPrimaryPhoto = true
 		showImageUrl = true
 	})

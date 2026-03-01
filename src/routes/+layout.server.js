@@ -8,8 +8,8 @@ import {
 
 export const load = async ({ locals, url }) => {
 	const { dbSeeded } = locals.site
-	if (!dbSeeded && url.pathname !== '/') {
-		throw redirect(302, '/')
+	if (!dbSeeded && !url.pathname.startsWith('/setup')) {
+		throw redirect(302, '/setup')
 	}
 
 	return {

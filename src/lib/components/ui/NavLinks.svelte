@@ -5,6 +5,7 @@
 	import New from '$lib/components/svg/New.svelte'
 	import Theme from '$lib/components/svg/Theme.svelte'
 	import Settings from '$lib/components/svg/Settings.svelte'
+	import List from '$lib/components/svg/List.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 
 	/** @type {{user: any, settings: any, theme: string, onToggleTheme: () => void, mobile?: boolean}} */
@@ -33,6 +34,7 @@
 			<li><a href="/register" class="flex items-center gap-2"><span>Register</span></a></li>
 		{/if}
 	{:else}
+		<li><a href={`/user/${user.userId}/recipes`} class="flex items-center gap-2 text-primary"><List width="20px" /><span>My Recipes</span></a></li>
 		<li><a href="/recipe/new" class="flex items-center gap-2 text-primary"><New width="20px" /><span>New Recipe</span></a></li>
 		<li><a href={`/user/${user.userId}/shopping`} class="flex items-center gap-2 text-primary"><Shopping width="20px" /><span>Shopping</span></a></li>
 		<li><a href={`/user/${user.userId}/calendar`} class="flex items-center gap-2 text-primary"><Calendar width="20px" /><span>Calendar</span></a></li>
@@ -60,6 +62,9 @@
 				<a href="/register" class="btn btn-ghost">Register</a>
 			{/if}
 		{:else}
+			<a href={`/user/${user.userId}/recipes`} class="btn btn-ghost btn-circle text-primary" aria-label="My recipes">
+				<List width="25px" />
+			</a>
 			<a href="/recipe/new" class="btn btn-ghost btn-circle text-primary" aria-label="New recipe">
 				<New width="25px" />
 			</a>
