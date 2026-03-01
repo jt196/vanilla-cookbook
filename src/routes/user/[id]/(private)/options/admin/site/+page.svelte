@@ -490,20 +490,18 @@
 					{/if}
 				</div>
 
-				<h4>Semantic Search</h4>
-				<InfoText>Used for embedding-based relevance ranking in search results.</InfoText>
+				<h4>Embeddings</h4>
+				<InfoText>Powers semantic search, similar recipes, and other smart features.</InfoText>
 				<div class="flex flex-col gap-2">
 					<Checkbox
 						name="semanticEnabled"
 						bind:checked={semanticEnabled}
-						legend="Enable Semantic Search"
+						legend="Enable Embeddings"
 						size="sm"
 						color="primary"
 						disabled={!(llmConfig.semanticAvailableProviders || []).length}
 					>
-						{semanticEnabled
-							? 'Embedding-based recipe search is enabled.'
-							: 'Embedding-based recipe search is disabled.'}
+						{semanticEnabled ? 'Embeddings are enabled.' : 'Embeddings are disabled.'}
 					</Checkbox>
 					{#if !(llmConfig.semanticAvailableProviders || []).length}
 						<InfoText>

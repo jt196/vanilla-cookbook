@@ -318,6 +318,7 @@
 		</div>
 		<FeedbackMessage message={visibilityFeedback} />
 	</div>
+
 </div>
 
 <ConfirmationDialog

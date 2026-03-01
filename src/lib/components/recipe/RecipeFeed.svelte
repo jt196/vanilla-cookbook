@@ -4,7 +4,6 @@
 	import { sortByDate, sortByKeyGeneric } from '$lib/utils/sorting'
 	import RecipeFilter from '$lib/components/recipe/RecipeFilter.svelte'
 	import RecipeList from '$lib/components/recipe/RecipeList.svelte'
-	import Button from '$lib/components/ui/Button.svelte'
 	import Spinner from '$lib/components/ui/Spinner.svelte'
 	import CopyRecipeDialog from '$lib/components/recipe/CopyRecipeDialog.svelte'
 	import { duplicateRecipe } from '$lib/utils/crud'
@@ -365,7 +364,6 @@
 
 		return () => clearTimeout(timeout)
 	})
-
 </script>
 
 {#if title}
@@ -378,15 +376,8 @@
 	</div>
 {/if}
 
-<div
-	class="transition-all duration-300"
->
-	<RecipeFilter
-		viewOnly={false}
-		username={ownerUsername}
-		{viewMode}
-		{searchPending}
-	/>
+<div class="transition-all duration-300">
+	<RecipeFilter viewOnly={false} username={ownerUsername} {viewMode} {searchPending} />
 	<Spinner visible={isLoading || isNavigating} spinnerContent="Loading" />
 	<RecipeList
 		{filteredRecipes}
@@ -394,8 +385,7 @@
 		{viewerUserId}
 		recipeFavourited={handleRecipeFavourited}
 		recipeRatingChanged={handleRecipeRatingChanged}
-		onDuplicate={handleDuplicateRequested}
-	/>
+		onDuplicate={handleDuplicateRequested} />
 </div>
 
 <CopyRecipeDialog
@@ -404,7 +394,6 @@
 	onStay={() => runDuplicate('stay')}
 	onView={() => runDuplicate('view')}
 	viewDisabled={false}
-	message={copyMessage}
-/>
+	message={copyMessage} />
 
 <Spinner visible={isCopying} spinnerContent="Copying Recipe" />

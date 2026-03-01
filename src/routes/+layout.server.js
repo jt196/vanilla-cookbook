@@ -16,6 +16,7 @@ export const load = async ({ locals, url }) => {
 		user: locals.user,
 		settings: locals.site.settings,
 		dbSeed: dbSeeded,
+		semanticEnabled: locals.site?.semantic?.enabled ?? false,
 		passwordRequirements: getPasswordRequirements(env),
 		passwordRequirementsDescription: getPasswordRequirementsDescription(env)
 	}
