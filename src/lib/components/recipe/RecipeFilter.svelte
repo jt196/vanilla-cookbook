@@ -207,7 +207,7 @@
 					color="info"
 					onclick={() => updateSort('created')}
 				>
-					Date
+					Added
 					<SortAscDesc sort={$sortState.key === 'created' ? $sortState.direction : null} />
 				</Button>
 				<Button
@@ -232,6 +232,19 @@
 					>
 						Rating
 						<SortAscDesc sort={$sortState.key === 'rating' ? $sortState.direction : null} />
+					</Button>
+					<Button
+						type="button"
+						style={$sortState.key === 'lastCooked' && !!$sortState.direction
+							? 'standard'
+							: 'ghost'}
+						class="justify-between"
+						size="sm"
+						color="info"
+						onclick={() => updateSort('lastCooked')}
+					>
+						Cooked
+						<SortAscDesc sort={$sortState.key === 'lastCooked' ? $sortState.direction : null} />
 					</Button>
 				{/if}
 			{/snippet}

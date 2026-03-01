@@ -63,6 +63,17 @@
 	function applyManualSort(recipeList, key, direction) {
 		if (!key || !direction) return recipeList
 		if (key === 'created') return sortByDate(recipeList, 'created', direction)
+		if (key === 'lastCooked') {
+			return [...recipeList].sort((a, b) => {
+				const aMax = a.log?.length
+					? Math.max(...a.log.map((l) => new Date(l.cooked).getTime()))
+					: -Infinity
+				const bMax = b.log?.length
+					? Math.max(...b.log.map((l) => new Date(l.cooked).getTime()))
+					: -Infinity
+				return direction === 'desc' ? bMax - aMax : aMax - bMax
+			})
+		}
 		return sortByKeyGeneric(recipeList, key, direction)
 	}
 
