@@ -39,8 +39,8 @@
 
 	// Reset image visibility when the recipe changes
 	$effect(() => {
-		const _primaryId = item.photos?.[0]?.id
-		const _imageUrl = item.image_url
+		void item.photos?.[0]?.id
+		void item.image_url
 		showPrimaryPhoto = true
 		showImageUrl = true
 	})
