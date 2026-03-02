@@ -34,10 +34,11 @@ print(f"  ORIGIN: {ORIGIN}")
 print(f"  ONLY_RECIPE: {ONLY_RECIPE}")
 
 LOGIN_URL = f"{ORIGIN}/login"
-RECIPE_LIST = re.compile(fr"{re.escape(ORIGIN)}/user/.+/recipes")
+HOME_URL = re.compile(re.escape(ORIGIN) + r"/?$")
 
 PAGES_TO_CAPTURE = [
     {"name": "login", "route": "/login"},
+    {"name": "login", "route": "/"},
     {"name": "new", "route": "/recipe/new"},
     {"name": "recipes", "route": "/recipes"},
     {"name": "shopping", "route": "/user/{ID}/shopping"},
@@ -104,11 +105,14 @@ def run_capture(context, prefix):
     page.fill('input[name="identifier"]', USERNAME)
     page.fill('input[name="password"]', PASSWORD)
     page.click('button[type="submit"]')
-    page.wait_for_url(RECIPE_LIST)
+    page.wait_for_url(HOME_URL)
     page.wait_for_load_state("networkidle")
 
-    # Recipe list
-    capture_both_themes(page, page.url, f"{prefix}-list")
+    # Home page (carousels)
+    capture_both_themes(page, page.url, f"{prefix}-home")
+
+    # User recipe list
+    capture_both_themes(page, f"{ORIGIN}/user/{ID}/recipes", f"{prefix}-list")
 
     # First recipe
     first_link = page.query_selector('a[href*="/recipe/"][href*="/view/"]')
