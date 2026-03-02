@@ -34,7 +34,7 @@
 	}
 </script>
 
-<div class="prose max-w-none mb-6">
+<div class="prose max-w-none mb-6 flex justify-center">
 	<h2>Cooking History</h2>
 </div>
 

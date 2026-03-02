@@ -22,7 +22,7 @@ export const load = async ({ locals }) => {
 		name: true,
 		image_url: true,
 		photos: {
-			where: { isMain: true },
+			orderBy: [{ isMain: 'desc' }, { id: 'asc' }],
 			select: { id: true },
 			take: 1
 		}

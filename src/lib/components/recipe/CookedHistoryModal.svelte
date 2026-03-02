@@ -86,38 +86,40 @@
 					<tr
 						class={onLogUpdated ? 'cursor-pointer hover:bg-base-200' : ''}
 						onclick={() => openEditDialog(log)}>
-						<td class="whitespace-nowrap">{localDateAndTime(log.cooked)}</td>
+						<td>{localDateAndTime(log.cooked)}</td>
 						<td class="text-base-content/70">{log.note || '-'}</td>
 						<td>
-							{log.scale ?? 1}x
-							{#if onRestoreScale}
-								<Button
-									size="xs"
-									style="soft"
-									color="primary"
-									onclick={(e) => {
-										e.stopPropagation()
-										handleRestoreScale(log.scale ?? 1)
-									}}
-									class="ml-2 tooltip"
-									data-tip="Use this scale">
-									Use
-								</Button>
-							{/if}
-							{#if onLogDeleted}
-								<Button
-									size="xs"
-									style="soft"
-									color="error"
-									onclick={(e) => {
-										e.stopPropagation()
-										handleDelete(log.id)
-									}}
-									class="ml-1 tooltip"
-									data-tip="Delete log">
-									<Delete width="14px" height="14px" />
-								</Button>
-							{/if}
+							<div class="flex items-center gap-1 flex-nowrap">
+								<span class="whitespace-nowrap">{log.scale ?? 1}x</span>
+								{#if onRestoreScale}
+									<Button
+										size="xs"
+										style="soft"
+										color="primary"
+										onclick={(e) => {
+											e.stopPropagation()
+											handleRestoreScale(log.scale ?? 1)
+										}}
+										class="tooltip"
+										data-tip="Use this scale">
+										Use
+									</Button>
+								{/if}
+								{#if onLogDeleted}
+									<Button
+										size="xs"
+										style="soft"
+										color="error"
+										onclick={(e) => {
+											e.stopPropagation()
+											handleDelete(log.id)
+										}}
+										class="tooltip"
+										data-tip="Delete log">
+										<Delete width="14px" height="14px" />
+									</Button>
+								{/if}
+							</div>
 						</td>
 					</tr>
 				{/each}
