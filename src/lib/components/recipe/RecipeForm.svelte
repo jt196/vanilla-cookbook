@@ -54,6 +54,7 @@
 	let imageChecked = $state(false)
 	let cleaningIngredients = $state(false)
 	let cleaningDirections = $state(false)
+	let addingTips = $state(false)
 	let cleaningNutrition = $state(false)
 	let translatingRecipe = $state(false)
 
@@ -109,6 +110,7 @@
 	// Undo state for AI cleanup
 	let ingredientsBeforeClean = $state(null)
 	let directionsBeforeSummarize = $state(null)
+	let notesBeforeTips = $state(null)
 	let nutritionBeforeClean = $state(null)
 
 	async function handleCleanIngredients() {
@@ -130,6 +132,9 @@
 				})
 			})
 
+			if (response.status === 429) {
+				throw new Error('Rate limit reached. Please wait a moment before trying again.')
+			}
 			if (!response.ok) {
 				throw new Error('Cleanup failed')
 			}
@@ -144,7 +149,7 @@
 			}
 		} catch (err) {
 			console.error('Ingredient cleanup failed:', err)
-			alert('Failed to clean ingredients. Please try again.')
+			alert(err.message || 'Failed to clean ingredients. Please try again.')
 			ingredientsBeforeClean = null // Clear on failure
 		} finally {
 			cleaningIngredients = false
@@ -184,6 +189,9 @@
 				})
 			})
 
+			if (response.status === 429) {
+				throw new Error('Rate limit reached. Please wait a moment before trying again.')
+			}
 			if (!response.ok) {
 				throw new Error('Cleanup failed')
 			}
@@ -198,7 +206,7 @@
 			}
 		} catch (err) {
 			console.error('Direction summarization failed:', err)
-			alert('Failed to summarize directions. Please try again.')
+			alert(err.message || 'Failed to summarize directions. Please try again.')
 			directionsBeforeSummarize = null // Clear on failure
 		} finally {
 			cleaningDirections = false
@@ -306,6 +314,9 @@
 				})
 			})
 
+			if (response.status === 429) {
+				throw new Error('Rate limit reached. Please wait a moment before trying again.')
+			}
 			if (!response.ok) {
 				throw new Error('Cleanup failed')
 			}
@@ -316,7 +327,7 @@
 			}
 		} catch (err) {
 			console.error('Nutrition cleanup failed:', err)
-			alert('Failed to clean nutrition information. Please try again.')
+			alert(err.message || 'Failed to clean nutrition information. Please try again.')
 			nutritionBeforeClean = null
 		} finally {
 			cleaningNutrition = false
@@ -334,6 +345,44 @@
 		if (directionsBeforeSummarize) {
 			recipe.directions = directionsBeforeSummarize
 			directionsBeforeSummarize = null
+		}
+	}
+
+	async function handleAddTips() {
+		addingTips = true
+		notesBeforeTips = recipe.notes || ''
+
+		try {
+			const content = `Recipe: ${recipe.name || ''}\n\nIngredients:\n${recipe.ingredients || ''}\n\nDirections:\n${recipe.directions || ''}`
+			const response = await fetch('/api/recipe/cleanup', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ type: 'suggestions', content })
+			})
+
+			if (response.status === 429) throw new Error('Rate limit reached. Please wait a moment before trying again.')
+		if (!response.ok) throw new Error('Tips generation failed')
+
+			const data = await response.json()
+			if (data.text) {
+				recipe.notes =
+					recipe.notes && recipe.notes.trim()
+						? recipe.notes.trimEnd() + '\n\n' + data.text
+						: data.text
+			}
+		} catch (err) {
+			console.error('Tips generation failed:', err)
+			alert(err.message || 'Failed to generate tips. Please try again.')
+			notesBeforeTips = null
+		} finally {
+			addingTips = false
+		}
+	}
+
+	function undoAddTips() {
+		if (notesBeforeTips !== null) {
+			recipe.notes = notesBeforeTips
+			notesBeforeTips = null
 		}
 	}
 
@@ -362,7 +411,7 @@
 
 <InfoText class="my-4">
 	<a target="_blank" href="https://www.markdownguide.org/basic-syntax/">Markdown</a> is supported for
-	ingredients, directions and notes.
+	directions and notes, headers work in ingredients.
 </InfoText>
 
 <form onsubmit={onSubmit} class="flex flex-col gap-5">
@@ -377,8 +426,8 @@
 				<a href={cancelHref} class="btn btn-soft btn-secondary btn-sm">Cancel</a>
 			{/if}
 			{#if onDelete}
-				<Button type="button" size="sm" style="soft" color="error" onclick={onDelete}>Delete</Button
-				>
+				<Button type="button" size="sm" style="soft" color="error" onclick={onDelete}
+					>Delete</Button>
 			{/if}
 			<Button type="submit" size="sm">{buttonText}</Button>
 		</div>
@@ -392,8 +441,7 @@
 					size="sm"
 					style="soft"
 					onclick={handleTranslateRecipe}
-					disabled={translatingRecipe}
-				>
+					disabled={translatingRecipe}>
 					{#if translatingRecipe}
 						<Spinner visible={true} size="xs" type="dots" />
 						Translating...
@@ -421,8 +469,7 @@
 					name="name"
 					bind:value={recipe.name}
 					label="Name"
-					placeholder="Pasta alla Norma"
-				/>
+					placeholder="Pasta alla Norma" />
 
 				<Input
 					type="text"
@@ -430,24 +477,21 @@
 					name="source"
 					bind:value={recipe.source}
 					label="Source"
-					placeholder="Mia nonna"
-				/>
+					placeholder="Mia nonna" />
 				<Input
 					type="text"
 					id="source_url"
 					name="source_url"
 					placeholder="https://grannysrecipes.com"
 					bind:value={recipe.source_url}
-					label="Source URL"
-				/>
+					label="Source URL" />
 				<Input
 					type="text"
 					id="image_url"
 					placeholder="https://grannysrecipes.com/norma.jpg"
 					name="image_url"
 					bind:value={recipe.image_url}
-					label="Image URL"
-				/>
+					label="Image URL" />
 			</div>
 
 			<div class="form-col">
@@ -457,32 +501,28 @@
 					name="prep_time"
 					placeholder="1 hour"
 					bind:value={recipe.prep_time}
-					label="Prep Time"
-				/>
+					label="Prep Time" />
 				<Input
 					type="text"
 					id="cook_time"
 					name="cook_time"
 					placeholder="30 minutes"
 					bind:value={recipe.cook_time}
-					label="Cook Time"
-				/>
+					label="Cook Time" />
 				<Input
 					type="text"
 					id="total_time"
 					name="total_time"
 					placeholder="1.5 hours"
 					bind:value={recipe.total_time}
-					label="Total Time"
-				/>
+					label="Total Time" />
 				<Input
 					type="text"
 					id="servings"
 					placeholder="4 main course"
 					name="servings"
 					bind:value={recipe.servings}
-					label="Servings"
-				/>
+					label="Servings" />
 			</div>
 		</div>
 
@@ -493,8 +533,7 @@
 			{imageChecked}
 			{selectedFiles}
 			{onSelectedFilesChange}
-			bind:saveImageUrl
-		/>
+			bind:saveImageUrl />
 		<!-- Full-width large text fields -->
 		<div>
 			<Textarea
@@ -503,8 +542,7 @@
 				rows="7"
 				placeholder="500g of pasta..."
 				bind:value={recipe.ingredients}
-				label="Ingredients"
-			/>
+				label="Ingredients" />
 			{#if aiEnabled}
 				<div class="flex gap-2 mt-2">
 					{#if recipe.ingredients_original}
@@ -513,8 +551,7 @@
 							size="sm"
 							style="outline"
 							color="warning"
-							onclick={restoreOriginalIngredients}
-						>
+							onclick={restoreOriginalIngredients}>
 							<Undo width="16px" height="16px" />
 							Restore Original
 						</Button>
@@ -526,8 +563,7 @@
 							onclick={handleCleanIngredients}
 							disabled={cleaningIngredients ||
 								!recipe.ingredients ||
-								recipe.ingredients.trim() === ''}
-						>
+								recipe.ingredients.trim() === ''}>
 							{#if cleaningIngredients}
 								<Spinner visible={true} size="xs" type="dots" />
 								Cleaning...
@@ -542,8 +578,7 @@
 								size="sm"
 								style="outline"
 								color="secondary"
-								onclick={undoCleanIngredients}
-							>
+								onclick={undoCleanIngredients}>
 								<Undo width="16px" height="16px" />
 								Undo
 							</Button>
@@ -554,8 +589,7 @@
 					<InfoText class="mt-1">Restore the original uncleaned ingredients.</InfoText>
 				{:else}
 					<InfoText class="mt-1"
-						>Simplify complex ingredients for more accurate conversion results.</InfoText
-					>
+						>Simplify complex ingredients for more accurate conversion results.</InfoText>
 				{/if}
 			{/if}
 		</div>
@@ -565,8 +599,7 @@
 			rows="3"
 			placeholder="This pasta was a favourite of my Nonna's"
 			bind:value={recipe.description}
-			label="Description"
-		/>
+			label="Description" />
 		<div>
 			<Textarea
 				id="directions"
@@ -574,8 +607,7 @@
 				rows="7"
 				name="directions"
 				bind:value={recipe.directions}
-				label="Directions"
-			/>
+				label="Directions" />
 			{#if aiEnabled}
 				<div class="flex gap-2 mt-2">
 					{#if recipe.directions_original}
@@ -584,8 +616,7 @@
 							size="sm"
 							style="outline"
 							color="warning"
-							onclick={restoreOriginalDirections}
-						>
+							onclick={restoreOriginalDirections}>
 							<Undo width="16px" height="16px" />
 							Restore Original
 						</Button>
@@ -595,8 +626,9 @@
 							size="sm"
 							style="soft"
 							onclick={handleSummarizeDirections}
-							disabled={cleaningDirections || !recipe.directions || recipe.directions.trim() === ''}
-						>
+							disabled={cleaningDirections ||
+								!recipe.directions ||
+								recipe.directions.trim() === ''}>
 							{#if cleaningDirections}
 								<Spinner visible={true} size="xs" type="dots" />
 								Summarizing...
@@ -611,8 +643,7 @@
 								size="sm"
 								style="outline"
 								color="secondary"
-								onclick={undoSummarizeDirections}
-							>
+								onclick={undoSummarizeDirections}>
 								<Undo width="16px" height="16px" />
 								Undo
 							</Button>
@@ -632,15 +663,43 @@
 			rows="3"
 			placeholder="Don't overcook the pasta or she'll come back to haunt you"
 			bind:value={recipe.notes}
-			label="Notes"
-		/>
+			label="Notes" />
+		{#if aiEnabled}
+			<div class="flex gap-2 mt-2">
+				<Button
+					type="button"
+					size="sm"
+					style="soft"
+					onclick={handleAddTips}
+					disabled={addingTips || (!recipe.ingredients && !recipe.directions)}>
+					{#if addingTips}
+						<Spinner visible={true} size="xs" type="dots" />
+						Adding Tips...
+					{:else}
+						<Bolt width="16px" height="16px" />
+						Add Tips
+					{/if}
+				</Button>
+				{#if notesBeforeTips !== null}
+					<Button
+						type="button"
+						size="sm"
+						style="outline"
+						color="secondary"
+						onclick={undoAddTips}>
+						<Undo width="16px" height="16px" />
+						Undo
+					</Button>
+				{/if}
+			</div>
+			<InfoText class="mt-1">Suggest substitutions and additions based on the recipe.</InfoText>
+		{/if}
 		<Textarea
 			id="nutritional_info"
 			name="nutritional_info"
 			rows="3"
 			bind:value={recipe.nutritional_info}
-			label="Nutritional Information"
-		/>
+			label="Nutritional Information" />
 		{#if aiEnabled}
 			<div class="flex gap-2 mt-2">
 				<Button
@@ -650,8 +709,7 @@
 					onclick={handleCleanNutrition}
 					disabled={cleaningNutrition ||
 						!recipe.nutritional_info ||
-						recipe.nutritional_info.trim() === ''}
-				>
+						recipe.nutritional_info.trim() === ''}>
 					{#if cleaningNutrition}
 						<Spinner visible={true} size="xs" type="dots" />
 						Cleaning...
@@ -666,8 +724,7 @@
 						size="sm"
 						style="outline"
 						color="secondary"
-						onclick={undoCleanNutrition}
-					>
+						onclick={undoCleanNutrition}>
 						<Undo width="16px" height="16px" />
 						Undo
 					</Button>

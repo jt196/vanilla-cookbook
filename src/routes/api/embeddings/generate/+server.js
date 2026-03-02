@@ -6,6 +6,7 @@ import { regenerateRecipeEmbedding } from '$lib/server/semanticEmbedding'
 
 export async function POST({ request, locals }) {
 	requireAdmin(locals)
+	const configuredProvider = locals.site?.semantic?.selectedProvider || null
 	const preferredEmbeddingProvider = locals.site?.semantic?.provider || null
 	const preferredEmbeddingModel = locals.site?.semantic?.model || null
 
@@ -13,6 +14,21 @@ export async function POST({ request, locals }) {
 		!locals.site?.semantic?.enabled ||
 		!semanticEmbeddingJobsEnabled(preferredEmbeddingProvider)
 	) {
+		// If a provider was explicitly configured but isn't available (missing API key), say so clearly.
+		if (configuredProvider && !preferredEmbeddingProvider) {
+			console.warn(
+				`[semantic] configured embedding provider '${configuredProvider}' is not available — check that the API key is set on the server`
+			)
+			return json(
+				{
+					processed: 0,
+					failed: 0,
+					remaining: 0,
+					error: `Embedding provider '${configuredProvider}' is configured but not available. Ensure the API key for '${configuredProvider}' is set as a server environment variable.`
+				},
+				{ status: 503 }
+			)
+		}
 		return json(
 			{
 				processed: 0,
@@ -23,6 +39,8 @@ export async function POST({ request, locals }) {
 			{ status: 503 }
 		)
 	}
+
+	console.info(`[semantic] embedding batch using provider=${preferredEmbeddingProvider}`)
 
 	const body = await request.json().catch(() => ({}))
 	const requestedBatchSize = Number(body?.batchSize || 10)
@@ -41,6 +59,7 @@ export async function POST({ request, locals }) {
 
 	let processed = 0
 	let failed = 0
+	let rateLimited = false
 
 	for (const recipe of recipes) {
 		try {
@@ -54,6 +73,11 @@ export async function POST({ request, locals }) {
 		} catch (error) {
 			console.error('Failed embedding generation for recipe:', recipe.uid, error)
 			failed++
+			if (error.message?.includes('429') || error.message?.includes('insufficient_quota')) {
+				console.warn('[semantic] rate limit / quota error — stopping batch early')
+				rateLimited = true
+				break
+			}
 		}
 
 		const done = processed + failed
@@ -70,13 +94,14 @@ export async function POST({ request, locals }) {
 	})
 
 	console.info(
-		`[semantic] embedding batch complete processed=${processed} failed=${failed} remaining=${remaining}`
+		`[semantic] embedding batch complete processed=${processed} failed=${failed} remaining=${remaining} rateLimited=${rateLimited}`
 	)
 
 	return json({
 		processed,
 		failed,
-		remaining
+		remaining,
+		rateLimited
 	})
 }
 

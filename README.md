@@ -6,6 +6,7 @@ Contributing: [Technical Contributing Guide](docs/technical/contributing.md)
 
 Roadmap: See our [Project Kanban](https://github.com/users/jt196/projects/2/views/1) for what's being worked on, and what's coming up.
 
+![Recipe Home](docs/images/screen-desktop-home-dracula.png)
 ![Recipe List](docs/images/screen-desktop-list-dracula.png)
 ![Recipe View](docs/images/screen-desktop-first-recipe-dracula.png)
 

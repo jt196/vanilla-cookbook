@@ -67,7 +67,7 @@ export async function GET({ params, url, locals }) {
 				image_url: true,
 				embedding: true,
 				photos: {
-					where: { isMain: true },
+					orderBy: [{ isMain: 'desc' }, { id: 'asc' }],
 					select: { id: true },
 					take: 1
 				}
