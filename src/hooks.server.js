@@ -149,7 +149,7 @@ export const handle = async ({ event, resolve }) => {
 		// - site setting controls runtime enablement
 		// - provider availability controls whether semantic can run
 		const semanticProviderOptions = getAvailableEmbeddingProviders(env)
-		const preferredSemanticProvider = s?.semanticEmbeddingProvider || llmProvider || null
+		const preferredSemanticProvider = s?.semanticEmbeddingProvider || null
 		const semanticProvider = resolveEmbeddingProvider(preferredSemanticProvider, env)
 		const semanticProviderAvailable = !!semanticProvider
 		const semanticEnabledBySite = s?.semanticEnabled ?? false

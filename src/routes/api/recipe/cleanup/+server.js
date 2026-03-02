@@ -129,6 +129,30 @@ Return ONLY this JSON shape:
 
 Nutrition text:
 """${content}"""`
+		} else if (type === 'suggestions') {
+			prompt = `You are a culinary assistant helping to suggest substitutions and additions for recipes.
+
+Given the recipe below, generate two optional sections:
+1. Substitutions – ingredient swaps (dietary alternatives, flavour variations, availability substitutes)
+2. Additions – optional ingredients or tweaks that could enhance the dish
+
+Rules:
+- Only include a section if you have genuinely useful suggestions for this specific recipe
+- If substitutions don't make sense for this recipe, omit the Substitutions section entirely
+- If additions don't make sense, omit the Additions section entirely
+- Write in plain, conversational prose
+- Keep it concise — 2–4 suggestions per section at most
+- Each section heading must be a markdown H1 (# Substitutions, # Additions), followed by a blank line
+
+Return ONLY a JSON object with a "text" field containing the markdown string.
+
+Recipe:
+"""${content}"""
+
+Return format:
+{
+  "text": "# Substitutions\\n\\n...\\n\\n# Additions\\n\\n..."
+}`
 		} else {
 			return json({ error: 'Invalid cleanup type.' }, { status: 400 })
 		}
@@ -147,6 +171,8 @@ Nutrition text:
 			return json({ ingredients: response.ingredients })
 		} else if (type === 'directions' && response.instructions) {
 			return json({ instructions: response.instructions })
+		} else if (type === 'suggestions' && response.text) {
+			return json({ text: response.text })
 		} else if (type === 'nutrition') {
 			if (Array.isArray(response.entries)) {
 				const nutrition = {
@@ -182,6 +208,10 @@ Nutrition text:
 		}
 	} catch (err) {
 		console.error('Cleanup API failed:', err)
+		const msg = err.message || ''
+		if (msg.includes('429') || msg.includes('quota') || msg.includes('rate')) {
+			return json({ error: 'Rate limit reached. Please wait a moment before trying again.' }, { status: 429 })
+		}
 		return json({ error: 'Failed to clean up content.' }, { status: 500 })
 	}
 }

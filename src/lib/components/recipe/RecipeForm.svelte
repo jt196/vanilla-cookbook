@@ -54,6 +54,7 @@
 	let imageChecked = $state(false)
 	let cleaningIngredients = $state(false)
 	let cleaningDirections = $state(false)
+	let addingTips = $state(false)
 	let cleaningNutrition = $state(false)
 	let translatingRecipe = $state(false)
 
@@ -109,6 +110,7 @@
 	// Undo state for AI cleanup
 	let ingredientsBeforeClean = $state(null)
 	let directionsBeforeSummarize = $state(null)
+	let notesBeforeTips = $state(null)
 	let nutritionBeforeClean = $state(null)
 
 	async function handleCleanIngredients() {
@@ -130,6 +132,9 @@
 				})
 			})
 
+			if (response.status === 429) {
+				throw new Error('Rate limit reached. Please wait a moment before trying again.')
+			}
 			if (!response.ok) {
 				throw new Error('Cleanup failed')
 			}
@@ -144,7 +149,7 @@
 			}
 		} catch (err) {
 			console.error('Ingredient cleanup failed:', err)
-			alert('Failed to clean ingredients. Please try again.')
+			alert(err.message || 'Failed to clean ingredients. Please try again.')
 			ingredientsBeforeClean = null // Clear on failure
 		} finally {
 			cleaningIngredients = false
@@ -184,6 +189,9 @@
 				})
 			})
 
+			if (response.status === 429) {
+				throw new Error('Rate limit reached. Please wait a moment before trying again.')
+			}
 			if (!response.ok) {
 				throw new Error('Cleanup failed')
 			}
@@ -198,7 +206,7 @@
 			}
 		} catch (err) {
 			console.error('Direction summarization failed:', err)
-			alert('Failed to summarize directions. Please try again.')
+			alert(err.message || 'Failed to summarize directions. Please try again.')
 			directionsBeforeSummarize = null // Clear on failure
 		} finally {
 			cleaningDirections = false
@@ -306,6 +314,9 @@
 				})
 			})
 
+			if (response.status === 429) {
+				throw new Error('Rate limit reached. Please wait a moment before trying again.')
+			}
 			if (!response.ok) {
 				throw new Error('Cleanup failed')
 			}
@@ -316,7 +327,7 @@
 			}
 		} catch (err) {
 			console.error('Nutrition cleanup failed:', err)
-			alert('Failed to clean nutrition information. Please try again.')
+			alert(err.message || 'Failed to clean nutrition information. Please try again.')
 			nutritionBeforeClean = null
 		} finally {
 			cleaningNutrition = false
@@ -334,6 +345,44 @@
 		if (directionsBeforeSummarize) {
 			recipe.directions = directionsBeforeSummarize
 			directionsBeforeSummarize = null
+		}
+	}
+
+	async function handleAddTips() {
+		addingTips = true
+		notesBeforeTips = recipe.notes || ''
+
+		try {
+			const content = `Recipe: ${recipe.name || ''}\n\nIngredients:\n${recipe.ingredients || ''}\n\nDirections:\n${recipe.directions || ''}`
+			const response = await fetch('/api/recipe/cleanup', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ type: 'suggestions', content })
+			})
+
+			if (response.status === 429) throw new Error('Rate limit reached. Please wait a moment before trying again.')
+		if (!response.ok) throw new Error('Tips generation failed')
+
+			const data = await response.json()
+			if (data.text) {
+				recipe.notes =
+					recipe.notes && recipe.notes.trim()
+						? recipe.notes.trimEnd() + '\n\n' + data.text
+						: data.text
+			}
+		} catch (err) {
+			console.error('Tips generation failed:', err)
+			alert(err.message || 'Failed to generate tips. Please try again.')
+			notesBeforeTips = null
+		} finally {
+			addingTips = false
+		}
+	}
+
+	function undoAddTips() {
+		if (notesBeforeTips !== null) {
+			recipe.notes = notesBeforeTips
+			notesBeforeTips = null
 		}
 	}
 
@@ -615,6 +664,36 @@
 			placeholder="Don't overcook the pasta or she'll come back to haunt you"
 			bind:value={recipe.notes}
 			label="Notes" />
+		{#if aiEnabled}
+			<div class="flex gap-2 mt-2">
+				<Button
+					type="button"
+					size="sm"
+					style="soft"
+					onclick={handleAddTips}
+					disabled={addingTips || (!recipe.ingredients && !recipe.directions)}>
+					{#if addingTips}
+						<Spinner visible={true} size="xs" type="dots" />
+						Adding Tips...
+					{:else}
+						<Bolt width="16px" height="16px" />
+						Add Tips
+					{/if}
+				</Button>
+				{#if notesBeforeTips !== null}
+					<Button
+						type="button"
+						size="sm"
+						style="outline"
+						color="secondary"
+						onclick={undoAddTips}>
+						<Undo width="16px" height="16px" />
+						Undo
+					</Button>
+				{/if}
+			</div>
+			<InfoText class="mt-1">Suggest substitutions and additions based on the recipe.</InfoText>
+		{/if}
 		<Textarea
 			id="nutritional_info"
 			name="nutritional_info"
