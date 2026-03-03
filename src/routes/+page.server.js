@@ -4,6 +4,15 @@ import { prisma } from '$lib/server/prisma'
 const MIN_ROW = 3
 const ROW_SIZE = 12
 
+function shuffleArray(items) {
+	for (let i = items.length - 1; i > 0; i -= 1) {
+		const j = Math.floor(Math.random() * (i + 1))
+		;[items[i], items[j]] = [items[j], items[i]]
+	}
+
+	return items
+}
+
 /** @type {import('./$types').PageServerLoad} */
 export const load = async ({ locals }) => {
 	if (!locals.site.dbSeeded) {
@@ -31,16 +40,11 @@ export const load = async ({ locals }) => {
 	const baseWhere = { userId, in_trash: false }
 
 	// Run independent queries in parallel
-	const [recentlyAdded, favourites, mostCookedLogs, recentlyCookedLogs, allUids] =
+	const [recentlyAdded, mostCookedLogs, recentlyCookedLogs, recipeRows] =
 		await Promise.all([
 			prisma.recipe.findMany({
 				where: baseWhere,
 				orderBy: { created: 'desc' },
-				take: ROW_SIZE,
-				select: photoSelect
-			}),
-			prisma.recipe.findMany({
-				where: { ...baseWhere, on_favorites: true },
 				take: ROW_SIZE,
 				select: photoSelect
 			}),
@@ -60,7 +64,7 @@ export const load = async ({ locals }) => {
 			}),
 			prisma.recipe.findMany({
 				where: baseWhere,
-				select: { uid: true }
+				select: { uid: true, on_favorites: true }
 			})
 		])
 
@@ -94,15 +98,34 @@ export const load = async ({ locals }) => {
 		.filter(Boolean)
 		.slice(0, ROW_SIZE)
 
-	// Random sample — shuffle all uids in JS, then fetch details
-	const shuffled = allUids.sort(() => Math.random() - 0.5).slice(0, ROW_SIZE)
-	const random =
-		shuffled.length >= MIN_ROW
-			? await prisma.recipe.findMany({
-					where: { uid: { in: shuffled.map((r) => r.uid) } },
+	// Random sample and favourites use the same recipe scan to avoid duplicate lookups.
+	const randomUids = shuffleArray([...recipeRows]).slice(0, ROW_SIZE).map((recipe) => recipe.uid)
+	const favouriteUids = shuffleArray(
+		recipeRows.filter((recipe) => recipe.on_favorites).map((recipe) => recipe.uid)
+	).slice(0, ROW_SIZE)
+
+	const [randomRecipes, favouriteRecipes] = await Promise.all([
+		randomUids.length >= MIN_ROW
+			? prisma.recipe.findMany({
+					where: { uid: { in: randomUids } },
+					select: photoSelect
+				})
+			: [],
+		favouriteUids.length >= MIN_ROW
+			? prisma.recipe.findMany({
+					where: { uid: { in: favouriteUids } },
 					select: photoSelect
 				})
 			: []
+	])
+
+	const random = randomUids
+		.map((uid) => randomRecipes.find((recipe) => recipe.uid === uid))
+		.filter(Boolean)
+
+	const favourites = favouriteUids
+		.map((uid) => favouriteRecipes.find((recipe) => recipe.uid === uid))
+		.filter(Boolean)
 
 	// Apply minimum threshold — hide rows with too few recipes
 	const highlights = {
