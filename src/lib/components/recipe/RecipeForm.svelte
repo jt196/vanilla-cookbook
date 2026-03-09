@@ -64,6 +64,7 @@
 
 	const DEFAULT_IMAGE_STYLE_DESCRIPTION =
 		'Photo realistic plated dish, natural lighting, shallow depth of field, no text or watermark.'
+	let errorMessage = $state('')
 
 	const providerLabels = {
 		openai: 'OpenAI',
@@ -163,7 +164,7 @@
 			}
 		} catch (err) {
 			console.error('Ingredient cleanup failed:', err)
-			alert(err.message || 'Failed to clean ingredients. Please try again.')
+			errorMessage = err.message || 'Failed to clean ingredients. Please try again.'
 			ingredientsBeforeClean = null // Clear on failure
 		} finally {
 			cleaningIngredients = false
@@ -220,7 +221,7 @@
 			}
 		} catch (err) {
 			console.error('Direction summarization failed:', err)
-			alert(err.message || 'Failed to summarize directions. Please try again.')
+			errorMessage = err.message || 'Failed to summarize directions. Please try again.'
 			directionsBeforeSummarize = null // Clear on failure
 		} finally {
 			cleaningDirections = false
@@ -305,7 +306,7 @@
 			}
 		} catch (err) {
 			console.error('Recipe translation failed:', err)
-			alert('Failed to translate recipe. Please try again.')
+			errorMessage = 'Failed to translate recipe. Please try again.'
 		} finally {
 			translatingRecipe = false
 		}
@@ -381,7 +382,7 @@
 			}
 		} catch (err) {
 			console.error('Nutrition cleanup failed:', err)
-			alert(err.message || 'Failed to clean nutrition information. Please try again.')
+			errorMessage = err.message || 'Failed to clean nutrition information. Please try again.'
 			nutritionBeforeClean = null
 		} finally {
 			cleaningNutrition = false
@@ -427,7 +428,7 @@
 			}
 		} catch (err) {
 			console.error('Tips generation failed:', err)
-			alert(err.message || 'Failed to generate tips. Please try again.')
+			errorMessage = err.message || 'Failed to generate tips. Please try again.'
 			notesBeforeTips = null
 		} finally {
 			addingTips = false
@@ -468,6 +469,8 @@
 	<a target="_blank" href="https://www.markdownguide.org/basic-syntax/">Markdown</a> is supported for
 	directions and notes, headers work in ingredients.
 </InfoText>
+
+<FeedbackMessage message={errorMessage} type="error" timeout={5000} />
 
 <form onsubmit={onSubmit} class="flex flex-col gap-5">
 	<div>
