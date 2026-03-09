@@ -17,7 +17,9 @@ export const providerMeta = [
 
 // Derived lists for convenience
 export const providerNames = providerMeta.map((p) => p.value)
-export const embeddingProviderNames = providerMeta.filter((p) => p.supportsEmbedding).map((p) => p.value)
+export const embeddingProviderNames = providerMeta
+	.filter((p) => p.supportsEmbedding)
+	.map((p) => p.value)
 
 // Backwards compatibility alias
 export const embeddingProviderMeta = providerMeta.filter((p) => p.supportsEmbedding)
@@ -85,6 +87,26 @@ export const imageModels = {
 		{ value: 'gemini-1.5-pro', label: 'Gemini 1.5 Pro (Higher quality)' }
 	],
 	ollama: [] // Ollama vision support is inconsistent
+}
+
+// Image generation models by provider (for recipe image generation)
+export const imageGenerationModels = {
+	openai: [
+		{ value: 'gpt-image-1', label: 'GPT Image 1 (Recommended)' },
+		{ value: 'dall-e-3', label: 'DALL-E 3' }
+	],
+	anthropic: [],
+	google: [
+		{
+			value: 'gemini-2.5-flash-image',
+			label: 'Gemini 2.5 Flash Image (Recommended)'
+		},
+		{
+			value: 'gemini-3-pro-image-preview',
+			label: 'Gemini 3 Pro Image Preview'
+		}
+	],
+	ollama: []
 }
 
 /**
@@ -231,6 +253,18 @@ export function getTextModelsForProvider(provider) {
 export function getImageModelsForProvider(provider) {
 	const models = imageModels[provider] || []
 	if (models.length === 0) return []
+	return [...models, { value: 'custom', label: 'Custom...' }]
+}
+
+/**
+ * Get image generation models for a provider, with Custom option appended.
+ * Providers without defaults can still use Custom.
+ *
+ * @param {string} provider
+ * @returns {Array<{value: string, label: string}>}
+ */
+export function getImageGenerationModelsForProvider(provider) {
+	const models = imageGenerationModels[provider] || []
 	return [...models, { value: 'custom', label: 'Custom...' }]
 }
 

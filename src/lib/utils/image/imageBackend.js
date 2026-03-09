@@ -4,6 +4,7 @@ import { readFile } from 'fs/promises'
 import path from 'path'
 import { fileTypeFromBuffer } from 'file-type'
 import { saveFile, validImageTypes } from '$lib/utils/import/importHelpers'
+import { RECIPE_IMAGE_MAX_DIMENSION } from '$lib/utils/image/imageConfig'
 
 /**
  * Deletes a single photo file from the filesystem.
@@ -101,7 +102,7 @@ export async function processImage(imageUrl, uid, fileExtension) {
 		// 3. Save buffer to file
 		await saveFile(buffer, filename, imagePath)
 
-		await resizeImage(imageFullPath, tempImagePath, 1024)
+		await resizeImage(imageFullPath, tempImagePath, RECIPE_IMAGE_MAX_DIMENSION)
 
 		// Replace the original image with the resized version
 		await fsPromises.rename(tempImagePath, imageFullPath)
@@ -140,7 +141,7 @@ async function downloadImageAsBuffer(url) {
  * @param {number} maxSize - Max width or height (e.g. 1024)
  * @returns {Promise<Buffer>} Resized image buffer
  */
-export async function resizeImageBuffer(buffer, maxSize = 1024) {
+export async function resizeImageBuffer(buffer, maxSize = RECIPE_IMAGE_MAX_DIMENSION) {
 	const image = sharp(buffer)
 	const metadata = await image.metadata()
 
@@ -162,7 +163,10 @@ export async function resizeImageBuffer(buffer, maxSize = 1024) {
  * @param {number} [options.maxWidth=1200] - Max width to normalize images to
  * @returns {Promise<Buffer>} Combined image buffer (PNG)
  */
-export async function stitchImages(buffers, { padding = 12, background = '#ffffff', maxWidth = 1200 } = {}) {
+export async function stitchImages(
+	buffers,
+	{ padding = 12, background = '#ffffff', maxWidth = 1200 } = {}
+) {
 	if (!Array.isArray(buffers) || buffers.length === 0) {
 		throw new Error('No images provided to stitch')
 	}
@@ -173,9 +177,15 @@ export async function stitchImages(buffers, { padding = 12, background = '#fffff
 		const img = sharp(buf)
 		const meta = await img.metadata()
 		const targetWidth = Math.min(maxWidth, meta.width || maxWidth)
-		const resized = await img.resize({ width: targetWidth, fit: 'inside', withoutEnlargement: true }).toBuffer()
+		const resized = await img
+			.resize({ width: targetWidth, fit: 'inside', withoutEnlargement: true })
+			.toBuffer()
 		const resizedMeta = await sharp(resized).metadata()
-		normalized.push({ buffer: resized, width: resizedMeta.width || targetWidth, height: resizedMeta.height || 0 })
+		normalized.push({
+			buffer: resized,
+			width: resizedMeta.width || targetWidth,
+			height: resizedMeta.height || 0
+		})
 	}
 
 	const width = Math.max(...normalized.map((n) => n.width))

@@ -5,6 +5,7 @@ import {
 	embeddingModels,
 	getDefaultModelsForProvider
 } from '$lib/utils/llmModels'
+import { RECIPE_IMAGE_GENERATION_SIZE } from '$lib/utils/image/imageConfig'
 
 /**
  * API connection configs for each provider.
@@ -39,6 +40,22 @@ const apiConfigs = {
 				body: JSON.stringify({ model, input: 'test connection' })
 			}),
 			extractEmbedding: (data) => data?.data?.[0]?.embedding
+		},
+		imageGeneration: {
+			url: 'https://api.openai.com/v1/images/generations',
+			buildRequest: (apiKey, model) => ({
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${apiKey}`
+				},
+				body: JSON.stringify({
+					model,
+					prompt: 'A simple test image of a bowl of pasta on a table',
+					size: RECIPE_IMAGE_GENERATION_SIZE
+				})
+			}),
+			extractImage: (data) => data?.data?.[0]?.b64_json
 		}
 	},
 	anthropic: {
@@ -58,6 +75,9 @@ const apiConfigs = {
 				})
 			}),
 			extractContent: (data) => data?.content?.[0]?.text
+		},
+		imageGeneration: {
+			unsupported: true
 		}
 	},
 	google: {
@@ -85,6 +105,23 @@ const apiConfigs = {
 				body: JSON.stringify({ content: { parts: [{ text: 'test connection' }] } })
 			}),
 			extractEmbedding: (data) => data?.embedding?.values
+		},
+		imageGeneration: {
+			buildUrl: (apiKey, model) =>
+				`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+			buildRequest: () => ({
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					contents: [{ parts: [{ text: 'Generate a simple photo of pasta on a plate.' }] }],
+					generationConfig: {
+						responseModalities: ['TEXT', 'IMAGE']
+					}
+				})
+			}),
+			extractImage: (data) =>
+				data?.candidates?.[0]?.content?.parts?.find((part) => part?.inlineData?.data)?.inlineData
+					?.data
 		}
 	},
 	ollama: {
@@ -110,6 +147,19 @@ const apiConfigs = {
 				body: JSON.stringify({ model, prompt: 'test connection' })
 			}),
 			extractEmbedding: (data) => data?.embedding
+		},
+		imageGeneration: {
+			buildUrl: (baseUrl) => `${baseUrl}/v1/images/generations`,
+			buildRequest: (_, model) => ({
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					model,
+					prompt: 'A simple test image of a bowl of pasta on a table',
+					size: RECIPE_IMAGE_GENERATION_SIZE
+				})
+			}),
+			extractImage: (data) => data?.data?.[0]?.b64_json
 		}
 	}
 }
@@ -119,7 +169,7 @@ const apiConfigs = {
  *
  * @param {string} provider - Provider name
  * @param {string} [model] - Model to use (defaults to provider's recommended model)
- * @param {'chat' | 'embedding'} [type='chat'] - Type of connection to test
+ * @param {'chat' | 'embedding' | 'imageGeneration'} [type='chat'] - Type of connection to test
  * @returns {Promise<{ ok: boolean, latencyMs: number, error?: string, model?: string }>}
  */
 export async function testProviderConnection(provider, model, type = 'chat') {
@@ -152,6 +202,10 @@ export async function testProviderConnection(provider, model, type = 'chat') {
 			return testEmbedding(provider, config.embedding, envValue, model, start, timeout)
 		}
 
+		if (type === 'imageGeneration') {
+			return testImageGeneration(provider, config.imageGeneration, envValue, model, start, timeout)
+		}
+
 		return testChat(provider, config.chat, envValue, model, start, timeout)
 	} catch (err) {
 		return {
@@ -159,6 +213,58 @@ export async function testProviderConnection(provider, model, type = 'chat') {
 			latencyMs: Date.now() - start,
 			error: err instanceof Error ? err.message : String(err)
 		}
+	}
+}
+
+async function testImageGeneration(provider, apiConfig, envValue, model, start, timeout) {
+	if (!apiConfig || apiConfig.unsupported) {
+		return { ok: false, latencyMs: 0, error: `${provider} does not support image generation` }
+	}
+
+	const defaults = getDefaultModelsForProvider(provider)
+	const fallbackModel =
+		provider === 'openai'
+			? 'gpt-image-1'
+			: provider === 'google'
+				? 'gemini-2.5-flash-image'
+				: provider === 'ollama'
+					? 'sdxl'
+					: defaults.image || defaults.text
+	const effectiveModel = model || fallbackModel
+
+	const controller = new AbortController()
+	const timeoutId = setTimeout(() => controller.abort(), timeout)
+
+	try {
+		const url = apiConfig.buildUrl ? apiConfig.buildUrl(envValue, effectiveModel) : apiConfig.url
+		const request = {
+			...apiConfig.buildRequest(envValue, effectiveModel),
+			signal: controller.signal
+		}
+
+		const response = await fetch(url, request)
+		clearTimeout(timeoutId)
+
+		if (!response.ok) {
+			const body = await response.text()
+			return {
+				ok: false,
+				latencyMs: Date.now() - start,
+				error: `API error: ${response.status} ${body.substring(0, 200)}`,
+				model: effectiveModel
+			}
+		}
+
+		const data = await response.json()
+		const imageData = apiConfig.extractImage(data)
+
+		return {
+			ok: !!imageData,
+			latencyMs: Date.now() - start,
+			model: effectiveModel
+		}
+	} finally {
+		clearTimeout(timeoutId)
 	}
 }
 

@@ -129,6 +129,28 @@ export const handle = async ({ event, resolve }) => {
 		const imageModel = usingPreferredImageProvider
 			? s?.llmImageModel || env.LLM_IMAGE_MODEL || null
 			: null
+		const preferredImageGenerationProvider = s?.llmImageGenerationProvider || preferredProvider
+		const {
+			provider: llmImageGenerationProvider,
+			selectedProvider: selectedImageGenerationProvider,
+			selectedProviderConfigured: selectedImageGenerationProviderConfigured
+		} = resolveProviderSelection(preferredImageGenerationProvider, availableProviders)
+		if (selectedImageGenerationProvider && !selectedImageGenerationProviderConfigured) {
+			if (llmImageGenerationProvider) {
+				console.warn(
+					`AI image generation provider "${selectedImageGenerationProvider}" is selected but not configured in environment. Falling back to "${llmImageGenerationProvider}".`
+				)
+			} else {
+				console.warn(
+					`AI image generation provider "${selectedImageGenerationProvider}" is selected but not configured in environment, and no fallback provider is available.`
+				)
+			}
+		}
+		const usingPreferredImageGenerationProvider =
+			llmImageGenerationProvider && llmImageGenerationProvider === preferredImageGenerationProvider
+		const imageGenerationModel = usingPreferredImageGenerationProvider
+			? s?.llmImageGenerationModel || env.LLM_IMAGE_GENERATION_MODEL || null
+			: null
 
 		ai = {
 			enabled: llmEnabled,
@@ -138,10 +160,10 @@ export const handle = async ({ event, resolve }) => {
 			selectedProvider,
 			selectedProviderConfigured,
 			imageProvider: llmImageProvider,
-			selectedImageProvider,
-			selectedImageProviderConfigured,
 			textModel,
 			imageModel,
+			imageGenerationProvider: llmImageGenerationProvider,
+			imageGenerationModel,
 			imageAllowed: !!llmImageProvider && llmImageProvider !== 'ollama'
 		}
 
@@ -181,10 +203,10 @@ export const handle = async ({ event, resolve }) => {
 			selectedProvider: null,
 			selectedProviderConfigured: false,
 			imageProvider: null,
-			selectedImageProvider: null,
-			selectedImageProviderConfigured: false,
 			textModel: null,
 			imageModel: null,
+			imageGenerationProvider: null,
+			imageGenerationModel: null,
 			imageAllowed: false
 		}
 		semantic = {
