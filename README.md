@@ -131,7 +131,7 @@ Docker installations include automatic backups to protect your recipe data:
 - **Retention management**: Configure how many scheduled backups to keep with `BACKUP_RETENTION_COUNT` in `.env` (default: 6).
 - **Accessible backups**: All backups are stored in your mounted `./db` folder alongside your active database:
   - `scheduled-backup-YYYYMMDD-HHMMSS.sqlite` - Regular scheduled backups (auto-cleaned)
-  - `auto-backup-YYYYMMDD-HHMMSS.sqlite` - Pre-migration backups (preserved)
+  - `migration-YYYYMMDD-HHMMSS.sqlite` - Pre-migration backups (preserved)
 
 After changing backup settings, restart the container: `docker-compose restart`
 
@@ -166,12 +166,60 @@ Docker set up is dead simple. Single container, portable SQLite database.
 4. Use `:latest` tags for bleedin' edge, `:stable` for stable release.
 5. Run `docker-compose up -d`
 6. On first run, you'll be prompted to enter Admin user details.
+7. Optional: set `PUID` and `PGID` (in your shell or `.env`) if you want container file ownership to match a specific host user. Defaults are `1000:1000`.
 
 #### Upgrade
 
 1. Grab the latest image: `docker pull jt196/vanilla-cookbook`
 2. Check the *.env.template* and *docker-compose.yml.template* files haven't been modified. Add any additional fields. The *.env* is the most likely to change.
-3. From the project directory, run `docker-compose up -d` or `docker compose up -d` depending on how you have it installed on your system.
+3. If upgrading from an older image that wrote files as root, run the migration guide below before restarting.
+4. From the project directory, run `docker-compose up -d` or `docker compose up -d` depending on how you have it installed on your system.
+
+#### Docker Non-Root Migration Guide
+
+Vanilla Cookbook now runs the app process as a non-root user in the container. Existing installs may need a one-time ownership fix on mounted volumes.
+
+1. Stop the container:
+   - `docker compose down`
+2. Back up your DB folder:
+   - `cp -r ./db ./db-backup-$(date +%Y%m%d-%H%M%S)`
+3. Start the updated container:
+   - `docker compose up -d`
+4. Validate:
+   - `docker compose logs -f app` and confirm no writable-permission errors
+   - create/edit a recipe
+   - upload an image
+5. Only if permission errors remain, run a manual ownership fix:
+   - `PUID=${PUID:-1000} PGID=${PGID:-1000} sudo chown -R "${PUID}:${PGID}" ./db ./uploads`
+   - then restart: `docker compose up -d`
+6. Optional: set `PUID`/`PGID` if you want a specific host-user mapping:
+   - `export PUID=$(id -u)`
+   - `export PGID=$(id -g)`
+
+#### Local Docker Testing (No Docker Hub Push Required)
+
+Use this before testing on a remote host.
+
+1. In `docker-compose.yml`, switch from `image:` to:
+
+   ```yaml
+   build:
+     context: .
+   ```
+
+2. Build locally:
+   - `docker compose build --no-cache`
+3. Run:
+   - `docker compose up -d`
+4. Optional user-mapping test:
+   - `PUID=$(id -u) PGID=$(id -g) docker compose up -d`
+5. Verify the runtime user and permissions:
+   - `docker compose exec app id`
+   - `docker compose exec app sh -lc 'touch /app/uploads/images/perm-test && rm /app/uploads/images/perm-test'`
+6. Validate upgrade path locally:
+   - temporarily create root-owned files in `./db` or `./uploads`
+   - start the container and check logs for permission warnings
+   - run the migration guide `chown` step and confirm the warnings are gone
 
 #### Reverse Proxy Configuration
 

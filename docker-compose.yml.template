@@ -7,5 +7,9 @@ services:
     volumes:
       - ./db:/app/prisma/db
       - ./uploads:/app/uploads
+    environment:
+      # Optional: override to match your host user/group. Defaults to 1000:1000.
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
     env_file:
       - .env
