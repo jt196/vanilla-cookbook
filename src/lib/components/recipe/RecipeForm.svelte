@@ -346,7 +346,7 @@
 			}
 		} catch (err) {
 			console.error('Recipe image generation failed:', err)
-			alert(err.message || 'Failed to generate recipe image. Please try again.')
+			errorMessage = err.message || 'Failed to generate recipe image. Please try again.'
 		} finally {
 			generatingRecipeImage = false
 		}
