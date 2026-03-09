@@ -137,34 +137,34 @@ model PurchaseLog {
 }
 
 model AuthUser {
-  id                    String             @id @default(uuid())
-  username              String             @unique
-  email                 String?            @unique
-  about                 String?
-  units                 String?            @default("metric")
-  language              String             @default("eng")
-  theme                 String             @default("dracula")
-  publicProfile         Boolean            @default(false)
-  publicRecipes         Boolean            @default(false)
-  skipSmallUnits        Boolean            @default(true)
-  ingSymbol             Boolean            @default(true)
-  ingMatch              Boolean            @default(false)
-  ingOriginal           Boolean            @default(false)
-  ingExtra              Boolean            @default(false)
-  displayNutrition      Boolean            @default(true)
-  showSimilarRecipes    Boolean            @default(true)
-  isAdmin               Boolean            @default(false)
-  isRoot                Boolean            @default(false)
-  useCats               Boolean            @default(false)
-  recipes               Recipe[]
-  recipe_logs           RecipeLog[]
-  categories            Category[]
-  auth_session          AuthSession[]
-  auth_key              AuthKey[]
-  auth_account          AuthAccount[]
-  shopping_list_item    ShoppingListItem[]
-  purchase_logs         PurchaseLog[]
-  recipe_favorites      RecipeFavorite[]
+  id                 String             @id @default(uuid())
+  username           String             @unique
+  email              String?            @unique
+  about              String?
+  units              String?            @default("metric")
+  language           String             @default("eng")
+  theme              String             @default("dracula")
+  publicProfile      Boolean            @default(false)
+  publicRecipes      Boolean            @default(false)
+  skipSmallUnits     Boolean            @default(true)
+  ingSymbol          Boolean            @default(true)
+  ingMatch           Boolean            @default(false)
+  ingOriginal        Boolean            @default(false)
+  ingExtra           Boolean            @default(false)
+  displayNutrition   Boolean            @default(true)
+  showSimilarRecipes Boolean            @default(true)
+  isAdmin            Boolean            @default(false)
+  isRoot             Boolean            @default(false)
+  useCats            Boolean            @default(false)
+  recipes            Recipe[]
+  recipe_logs        RecipeLog[]
+  categories         Category[]
+  auth_session       AuthSession[]
+  auth_key           AuthKey[]
+  auth_account       AuthAccount[]
+  shopping_list_item ShoppingListItem[]
+  purchase_logs      PurchaseLog[]
+  recipe_favorites   RecipeFavorite[]
 
   @@map("auth_user")
 }
@@ -203,21 +203,23 @@ model AuthAccount {
 }
 
 model SiteSettings {
-  id                  Int     @id @default(autoincrement())
-  version             Float   @default(0)
-  registrationAllowed Boolean @default(false)
-  oidcAutoProvision   Boolean @default(true) // Auto-create users on first OIDC login
+  id                         Int     @id @default(autoincrement())
+  version                    Float   @default(0)
+  registrationAllowed        Boolean @default(false)
+  oidcAutoProvision          Boolean @default(true) // Auto-create users on first OIDC login
   // Site Access
-  requireLogin        Boolean @default(false) // If true, all pages require authentication
+  requireLogin               Boolean @default(false) // If true, all pages require authentication
   // LLM Configuration
-  llmEnabled          Boolean @default(false)
-  llmProvider         String? // Default provider: 'openai' | 'anthropic' | 'google' | 'ollama'
-  llmImageProvider    String? // Optional separate provider for image parsing
-  llmTextModel        String? // Model for text parsing
-  llmImageModel       String? // Model for image parsing
-  semanticEnabled     Boolean @default(false)
-  semanticEmbeddingProvider String? // Embedding provider: 'openai' | 'google' | 'ollama'
-  semanticEmbeddingModel String? // Embedding model override
+  llmEnabled                 Boolean @default(false)
+  llmProvider                String? // Default provider: 'openai' | 'anthropic' | 'google' | 'ollama'
+  llmImageProvider           String? // Optional separate provider for image parsing
+  llmImageGenerationProvider String? // Optional separate provider for recipe image generation
+  llmTextModel               String? // Model for text parsing
+  llmImageModel              String? // Model for image parsing
+  llmImageGenerationModel    String? // Model for recipe image generation
+  semanticEnabled            Boolean @default(false)
+  semanticEmbeddingProvider  String? // Embedding provider: 'openai' | 'google' | 'ollama'
+  semanticEmbeddingModel     String? // Embedding model override
 }
 
 model Ingredient {

@@ -12,8 +12,10 @@ export const load = async ({ parent, locals }) => {
 		availableProviders: [],
 		provider: null,
 		imageProvider: null,
+		imageGenerationProvider: null,
 		textModel: null,
 		imageModel: null,
+		imageGenerationModel: null,
 		imageAllowed: false
 	}
 	const semantic = locals.site?.semantic ?? {
@@ -35,15 +37,19 @@ export const load = async ({ parent, locals }) => {
 		availableProviders: ai.availableProviders,
 		provider: ai.provider,
 		imageProvider: ai.imageProvider,
+		imageGenerationProvider: ai.imageGenerationProvider,
 		textModel: ai.textModel,
 		imageModel: ai.imageModel,
+		imageGenerationModel: ai.imageGenerationModel,
 		imageAllowed: ai.imageAllowed,
 		// DB values for form binding
 		dbEnabled: dbSettings.llmEnabled ?? false,
 		dbProvider: dbSettings.llmProvider ?? null,
 		dbImageProvider: dbSettings.llmImageProvider ?? null,
+		dbImageGenerationProvider: dbSettings.llmImageGenerationProvider ?? null,
 		dbTextModel: dbSettings.llmTextModel ?? null,
 		dbImageModel: dbSettings.llmImageModel ?? null,
+		dbImageGenerationModel: dbSettings.llmImageGenerationModel ?? null,
 		dbSemanticEnabled: dbSettings.semanticEnabled ?? false,
 		dbSemanticEmbeddingProvider: dbSettings.semanticEmbeddingProvider ?? null,
 		dbSemanticEmbeddingModel: dbSettings.semanticEmbeddingModel ?? null,

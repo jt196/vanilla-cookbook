@@ -6,7 +6,8 @@
 		getEmbeddingProviderOptionsWithAvailability,
 		getEmbeddingModelsForProvider,
 		getTextModelsForProvider,
-		getImageModelsForProvider
+		getImageModelsForProvider,
+		getImageGenerationModelsForProvider
 	} from '$lib/utils/llmModels.js'
 	import FeedbackMessage from '$lib/components/ui/FeedbackMessage.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
@@ -20,6 +21,7 @@
 	import TableRow from '$lib/components/ui/Table/TableRow.svelte'
 	import TableCell from '$lib/components/ui/Table/TableCell.svelte'
 	import InfoText from '$lib/components/ui/InfoText.svelte'
+	import Dialog from '$lib/components/ui/Dialog.svelte'
 
 	/** @type {{data: any}} */
 	let { data } = $props()
@@ -46,12 +48,9 @@
 	)
 
 	// Connection test state
-	let textTestResult = $state(null)
-	let textTesting = $state(false)
-	let imageTestResult = $state(null)
-	let imageTesting = $state(false)
-	let embeddingTestResult = $state(null)
-	let embeddingTesting = $state(false)
+	let providerTestDialogOpen = $state(false)
+	let providerTestsRunning = $state(false)
+	let providerTestResults = $state([])
 
 	// LLM form state
 	let llmEnabled = $state(llmConfig.dbEnabled)
@@ -65,60 +64,82 @@
 	const initialTextProvider = llmConfig.dbProvider || llmConfig.availableProviders[0] || ''
 	const initialImageProvider =
 		llmConfig.dbImageProvider || llmConfig.imageProvider || initialTextProvider
+	const initialImageGenerationProvider =
+		llmConfig.dbImageGenerationProvider || llmConfig.imageGenerationProvider || initialTextProvider
 	let llmProvider = $state(initialTextProvider)
 	let llmImageProvider = $state(initialImageProvider)
+	let llmImageGenerationProvider = $state(initialImageGenerationProvider)
 
 	// Check if current model is in the list or custom
-	function getModelSelection(currentModel, provider, isImage = false) {
-		const modelList = isImage
-			? getImageModelsForProvider(provider)
-			: getTextModelsForProvider(provider)
+	function getModelSelection(currentModel, modelList) {
 		if (!currentModel) return modelList[0]?.value || ''
 		const found = modelList.find((m) => m.value === currentModel)
 		return found ? currentModel : 'custom'
 	}
 
 	// Compute initial selections based on DB values and initial provider
-	const initialTextSelection = getModelSelection(llmConfig.dbTextModel, initialTextProvider, false)
+	const initialTextSelection = getModelSelection(
+		llmConfig.dbTextModel,
+		getTextModelsForProvider(initialTextProvider)
+	)
 	const initialImageSelection = getModelSelection(
 		llmConfig.dbImageModel,
-		initialImageProvider,
-		true
+		getImageModelsForProvider(initialImageProvider)
+	)
+	const initialImageGenerationSelection = getModelSelection(
+		llmConfig.dbImageGenerationModel,
+		getImageGenerationModelsForProvider(initialImageGenerationProvider)
 	)
 
 	let textModelSelection = $state(initialTextSelection)
 	let imageModelSelection = $state(initialImageSelection)
+	let imageGenerationModelSelection = $state(initialImageGenerationSelection)
 	let customTextModel = $state(initialTextSelection === 'custom' ? llmConfig.dbTextModel || '' : '')
 	let customImageModel = $state(
 		initialImageSelection === 'custom' ? llmConfig.dbImageModel || '' : ''
 	)
+	let customImageGenerationModel = $state(
+		initialImageGenerationSelection === 'custom' ? llmConfig.dbImageGenerationModel || '' : ''
+	)
 
 	let textModelList = $derived(getTextModelsForProvider(llmProvider))
 	let imageModelList = $derived(getImageModelsForProvider(llmImageProvider))
+	let imageGenerationModelList = $derived(
+		getImageGenerationModelsForProvider(llmImageGenerationProvider)
+	)
 
 	// Track provider changes to reset model selections
 	let previousProvider = initialTextProvider
 	let previousImageProvider = initialImageProvider
+	let previousImageGenerationProvider = initialImageGenerationProvider
 	$effect(() => {
 		if (llmProvider !== previousProvider) {
 			previousProvider = llmProvider
-			const newTextModels = getTextModelsForProvider(llmProvider)
-			textModelSelection = newTextModels[0]?.value || ''
+			textModelSelection = getTextModelsForProvider(llmProvider)[0]?.value || ''
 			customTextModel = ''
 		}
 	})
 	$effect(() => {
 		if (llmImageProvider !== previousImageProvider) {
 			previousImageProvider = llmImageProvider
-			const newImageModels = getImageModelsForProvider(llmImageProvider)
-			imageModelSelection = newImageModels[0]?.value || ''
+			imageModelSelection = getImageModelsForProvider(llmImageProvider)[0]?.value || ''
 			customImageModel = ''
+		}
+	})
+	$effect(() => {
+		if (llmImageGenerationProvider !== previousImageGenerationProvider) {
+			previousImageGenerationProvider = llmImageGenerationProvider
+			imageGenerationModelSelection =
+				getImageGenerationModelsForProvider(llmImageGenerationProvider)[0]?.value || ''
+			customImageGenerationModel = ''
 		}
 	})
 
 	let showCustomTextInput = $derived(textModelSelection === 'custom')
 	let showCustomImageInput = $derived(imageModelSelection === 'custom')
+	let showCustomImageGenerationInput = $derived(imageGenerationModelSelection === 'custom')
 	let supportsImages = $derived(imageModelList.length > 0)
+	let supportsImageGeneration = $derived(imageGenerationModelList.length > 0)
 	let semanticProviderOptions = $derived(
 		getEmbeddingProviderOptionsWithAvailability(llmConfig.semanticAvailableProviders)
 	)
@@ -148,6 +169,11 @@
 	)
 	let effectiveImageModel = $derived(
 		imageModelSelection === 'custom' ? customImageModel : imageModelSelection
+	)
+	let effectiveImageGenerationModel = $derived(
+		imageGenerationModelSelection === 'custom'
+			? customImageGenerationModel
+			: imageGenerationModelSelection
 	)
 
 	let availableProviderOptions = $derived(
@@ -183,8 +209,10 @@
 				semanticEnabled,
 				llmProvider,
 				llmImageProvider,
+				llmImageGenerationProvider,
 				llmTextModel: effectiveTextModel || null,
 				llmImageModel: supportsImages ? effectiveImageModel || null : null,
+				llmImageGenerationModel: effectiveImageGenerationModel || null,
 				semanticEmbeddingProvider: semanticEmbeddingProvider || null,
 				semanticEmbeddingModel: semanticEmbeddingModel || null
 			})
@@ -286,28 +314,85 @@
 		}
 	}
 
-	async function testTextConnection() {
-		textTesting = true
-		textTestResult = null
-		const model = effectiveTextModel || undefined
-		textTestResult = await testConnection(llmProvider, model, 'chat')
-		textTesting = false
+	function getEnabledProviderChecks() {
+		/** @type {Array<{key: string, label: string, provider: string, model: string | undefined, type: 'chat' | 'embedding' | 'imageGeneration'}>} */
+		const checks = []
+
+		if (llmEnabled && llmProvider) {
+			checks.push({
+				key: 'text',
+				label: 'Text',
+				provider: llmProvider,
+				model: effectiveTextModel || undefined,
+				type: 'chat'
+			})
+		}
+
+		if (llmEnabled && llmImageProvider) {
+			checks.push({
+				key: 'image-ocr',
+				label: 'Image OCR',
+				provider: llmImageProvider,
+				model: effectiveImageModel || undefined,
+				type: 'chat'
+			})
+		}
+
+		if (llmEnabled && llmImageGenerationProvider) {
+			checks.push({
+				key: 'image-generation',
+				label: 'Image Generation',
+				provider: llmImageGenerationProvider,
+				model: effectiveImageGenerationModel || undefined,
+				type: 'imageGeneration'
+			})
+		}
+
+		if (semanticEnabled && semanticProviderConfigured && effectiveSemanticProvider) {
+			checks.push({
+				key: 'embeddings',
+				label: 'Embeddings',
+				provider: effectiveSemanticProvider,
+				model: semanticEmbeddingModel || undefined,
+				type: 'embedding'
+			})
+		}
+
+		return checks
 	}
 
-	async function testImageConnection() {
-		imageTesting = true
-		imageTestResult = null
-		const model = effectiveImageModel || undefined
-		imageTestResult = await testConnection(llmImageProvider, model, 'chat')
-		imageTesting = false
-	}
+	async function runEnabledProviderTests() {
+		const checks = getEnabledProviderChecks()
+		providerTestDialogOpen = true
+		providerTestResults = checks.map((check) => ({
+			...check,
+			status: 'pending',
+			latencyMs: null,
+			error: ''
+		}))
 
-	async function testEmbeddingConnection() {
-		embeddingTesting = true
-		embeddingTestResult = null
-		const model = semanticEmbeddingModel || undefined
-		embeddingTestResult = await testConnection(effectiveSemanticProvider, model, 'embedding')
-		embeddingTesting = false
+		if (!checks.length) {
+			return
+		}
+
+		providerTestsRunning = true
+		try {
+			for (const [index, check] of checks.entries()) {
+				const result = await testConnection(check.provider, check.model, check.type)
+				providerTestResults = providerTestResults.map((row, rowIndex) =>
+					rowIndex === index
+						? {
+								...row,
+								status: result.ok ? 'success' : 'error',
+								latencyMs: result?.latencyMs ?? null,
+								error: result?.error || ''
+							}
+						: row
+				)
+			}
+		} finally {
+			providerTestsRunning = false
+		}
 	}
 </script>
 
@@ -317,25 +402,30 @@
 		method="POST"
 		action="?/updateAdminSettings"
 		onsubmit={updateAdminSettings}
-		class="flex flex-col gap-3">
+		class="flex flex-col gap-3"
+	>
 		<Checkbox
 			name="registrationAllowed"
 			bind:checked={settings.registrationAllowed}
 			legend="Allow Registrations"
 			size="sm"
-			color="primary">
+			color="primary"
+		>
 			{settings.registrationAllowed
 				? 'User registration is enabled.'
-				: 'User registration is disabled.'}</Checkbox>
+				: 'User registration is disabled.'}</Checkbox
+		>
 		<Checkbox
 			name="requireLogin"
 			bind:checked={settings.requireLogin}
 			legend="Require Login"
 			size="sm"
-			color="primary">
+			color="primary"
+		>
 			{settings.requireLogin
 				? 'Authentication is required for all pages (private site mode).'
-				: 'Public pages are accessible without login.'}</Checkbox>
+				: 'Public pages are accessible without login.'}</Checkbox
+		>
 		<InfoText>
 			When enabled, all visitors must log in to access any page. Public recipes and profiles will
 			still be hidden from unauthenticated users.
@@ -346,10 +436,12 @@
 				bind:checked={settings.oidcAutoProvision}
 				legend="OIDC Auto-Provisioning"
 				size="sm"
-				color="primary">
+				color="primary"
+			>
 				{settings.oidcAutoProvision
 					? 'Automatically create accounts for new OIDC users.'
-					: 'Only existing accounts can sign in via OIDC.'}</Checkbox>
+					: 'Only existing accounts can sign in via OIDC.'}</Checkbox
+			>
 			<InfoText>
 				When enabled, users signing in via OIDC for the first time will have an account created
 				automatically. When disabled, only existing users can sign in via OIDC.
@@ -379,100 +471,127 @@
 				bind:checked={llmEnabled}
 				legend="Enable LLM Features"
 				size="sm"
-				color="primary">
+				color="primary"
+			>
 				{llmEnabled
-					? 'AI-assisted recipe parsing and image analysis are enabled.'
-					: 'AI-assisted recipe parsing and image analysis are disabled.'}
+					? 'AI-assisted recipe parsing, OCR, and image generation are enabled.'
+					: 'AI-assisted recipe parsing, OCR, and image generation are disabled.'}
 			</Checkbox>
 
 			{#if llmEnabled}
+				<div class="rounded-box border border-base-300 bg-base-200 p-3">
+					<div class="flex items-center gap-2">
+						<Button
+							type="button"
+							size="sm"
+							variant="outline"
+							onclick={runEnabledProviderTests}
+							disabled={providerTestsRunning}
+							loading={providerTestsRunning}
+						>
+							{providerTestsRunning ? 'Testing Enabled Providers...' : 'Test Enabled Providers'}
+						</Button>
+					</div>
+					<InfoText class="mt-2">
+						Runs connection checks for currently enabled sections (Text, Image OCR, Image
+						Generation, Embeddings).
+					</InfoText>
+				</div>
+
 				<h4>Text</h4>
 				<InfoText
 					>Used for recipe fallback parsing/translation/generation, ingredient cleanup, and
-					direction summarising.</InfoText>
+					direction summarising.</InfoText
+				>
 				<Dropdown
 					name="llmProvider"
 					options={availableProviderOptions}
 					bind:selected={llmProvider}
-					legend="Provider" />
+					legend="Provider"
+				/>
 
 				<div class="flex flex-col gap-2">
 					<Dropdown
 						name="textModel"
 						options={textModelList}
 						bind:selected={textModelSelection}
-						legend="Model" />
+						legend="Model"
+					/>
 					{#if showCustomTextInput}
 						<Input
 							type="text"
 							id="customTextModel"
 							label="Custom Model"
 							placeholder="e.g. gpt-4o-2024-08-06"
-							bind:value={customTextModel} />
+							bind:value={customTextModel}
+						/>
 					{/if}
-					<div class="flex items-center gap-2">
-						<Button
-							type="button"
-							size="sm"
-							variant="outline"
-							onclick={testTextConnection}
-							disabled={textTesting || !llmProvider}
-							loading={textTesting}>
-							{textTesting ? 'Testing...' : 'Test Connection'}
-						</Button>
-						{#if textTestResult}
-							<span class={textTestResult.ok ? 'text-success' : 'text-error'}>
-								{textTestResult.ok
-									? `Connected (${textTestResult.latencyMs}ms)`
-									: textTestResult.error}
-							</span>
-						{/if}
-					</div>
 				</div>
-				<h4>Image</h4>
-				<InfoText>Used for recipe extraction from uploaded images.</InfoText>
+				<h4>Image OCR</h4>
+				<InfoText>Used for recipe extraction from uploaded photos/images.</InfoText>
 				<div class="flex flex-col gap-2">
 					<Dropdown
 						name="imageProvider"
 						options={availableProviderOptions}
 						bind:selected={llmImageProvider}
-						legend="Provider" />
+						legend="Provider"
+					/>
 					{#if supportsImages}
 						<Dropdown
 							name="imageModel"
 							options={imageModelList}
 							bind:selected={imageModelSelection}
-							legend="Model" />
+							legend="Model"
+						/>
 						{#if showCustomImageInput}
 							<Input
 								type="text"
 								id="customImageModel"
 								label="Custom Model"
 								placeholder="e.g. claude-3-5-sonnet-20241022"
-								bind:value={customImageModel} />
+								bind:value={customImageModel}
+							/>
 						{/if}
-						<div class="flex items-center gap-2">
-							<Button
-								type="button"
-								size="sm"
-								variant="outline"
-								onclick={testImageConnection}
-								disabled={imageTesting || !llmImageProvider}
-								loading={imageTesting}>
-								{imageTesting ? 'Testing...' : 'Test Connection'}
-							</Button>
-							{#if imageTestResult}
-								<span class={imageTestResult.ok ? 'text-success' : 'text-error'}>
-									{imageTestResult.ok
-										? `Connected (${imageTestResult.latencyMs}ms)`
-										: imageTestResult.error}
-								</span>
-							{/if}
-						</div>
 					{:else}
 						<InfoText>
 							{llmImageProvider === 'ollama' ? 'Ollama' : llmImageProvider || 'This provider'} does not
 							support image analysis.
+						</InfoText>
+					{/if}
+				</div>
+
+				<h4>Image Generation</h4>
+				<InfoText>
+					Used for the “Generate Recipe Image” action in recipe edit mode. Separate from image OCR.
+				</InfoText>
+				<div class="flex flex-col gap-2">
+					<Dropdown
+						name="imageGenerationProvider"
+						options={availableProviderOptions}
+						bind:selected={llmImageGenerationProvider}
+						legend="Provider"
+					/>
+					{#if supportsImageGeneration}
+						<Dropdown
+							name="imageGenerationModel"
+							options={imageGenerationModelList}
+							bind:selected={imageGenerationModelSelection}
+							legend="Model"
+						/>
+						{#if showCustomImageGenerationInput}
+							<Input
+								type="text"
+								id="customImageGenerationModel"
+								label="Custom Model"
+								placeholder="e.g. gpt-image-1"
+								bind:value={customImageGenerationModel}
+							/>
+						{/if}
+					{:else}
+						<InfoText>
+							{llmImageGenerationProvider === 'ollama'
+								? 'Ollama'
+								: llmImageGenerationProvider || 'This provider'} does not support image generation.
 						</InfoText>
 					{/if}
 				</div>
@@ -486,7 +605,8 @@
 						legend="Enable Embeddings"
 						size="sm"
 						color="primary"
-						disabled={!(llmConfig.semanticAvailableProviders || []).length}>
+						disabled={!(llmConfig.semanticAvailableProviders || []).length}
+					>
 						{semanticEnabled ? 'Embeddings are enabled.' : 'Embeddings are disabled.'}
 					</Checkbox>
 					{#if !(llmConfig.semanticAvailableProviders || []).length}
@@ -501,14 +621,16 @@
 						options={semanticProviderOptions}
 						bind:selected={semanticEmbeddingProvider}
 						legend="Provider"
-						disabled={!semanticEnabled} />
+						disabled={!semanticEnabled}
+					/>
 					{#if semanticModelOptions.length > 0}
 						<Dropdown
 							name="semanticEmbeddingModel"
 							options={semanticModelOptions}
 							bind:selected={semanticEmbeddingModel}
 							legend="Model"
-							disabled={!semanticEnabled || !semanticProviderConfigured} />
+							disabled={!semanticEnabled || !semanticProviderConfigured}
+						/>
 					{:else}
 						<InfoText>Select an embedding provider to choose a model.</InfoText>
 					{/if}
@@ -525,26 +647,6 @@
 							{/if}
 						</InfoText>
 					{/if}
-					{#if semanticEnabled && semanticProviderConfigured}
-						<div class="flex items-center gap-2">
-							<Button
-								type="button"
-								size="sm"
-								variant="outline"
-								onclick={testEmbeddingConnection}
-								disabled={embeddingTesting || !effectiveSemanticProvider}
-								loading={embeddingTesting}>
-								{embeddingTesting ? 'Testing...' : 'Test Connection'}
-							</Button>
-							{#if embeddingTestResult}
-								<span class={embeddingTestResult.ok ? 'text-success' : 'text-error'}>
-									{embeddingTestResult.ok
-										? `Connected (${embeddingTestResult.latencyMs}ms)`
-										: embeddingTestResult.error}
-								</span>
-							{/if}
-						</div>
-					{/if}
 					{#if semanticEnabled}
 						<div class="rounded-box border border-base-300 bg-base-200 p-4 mt-2 space-y-2">
 							<p class="text-sm">
@@ -555,13 +657,15 @@
 								class="progress progress-info w-full"
 								value={embeddingPercent}
 								max="100"
-								aria-label="Embedding generation progress"></progress>
+								aria-label="Embedding generation progress"
+							></progress>
 							<p class="text-xs text-base-content/70">{embeddingPercent}% complete</p>
 							<Button
 								type="button"
 								class="self-start w-auto"
 								onclick={generateEmbeddingBatch}
-								disabled={embeddingInProgress || !canGenerateEmbeddings}>
+								disabled={embeddingInProgress || !canGenerateEmbeddings}
+							>
 								{embeddingInProgress ? 'Generating Embeddings...' : 'Generate Embeddings'}
 							</Button>
 							{#if embeddingBatchResult}
@@ -631,7 +735,8 @@
 				onclick={createManualBackup}
 				disabled={backupInProgress}
 				class="self-start w-auto"
-				loading={backupInProgress}>
+				loading={backupInProgress}
+			>
 				{backupInProgress ? 'Creating Backup...' : 'Backup Now'}
 			</Button>
 			<FeedbackMessage message={backupFeedback} inline />
@@ -676,6 +781,61 @@
 		<p>Loading backup information...</p>
 	{/if}
 </div>
+
+<Dialog bind:isOpen={providerTestDialogOpen} onClose={() => (providerTestDialogOpen = false)}>
+	<h3 class="font-bold text-lg mb-4">Enabled Provider Checks</h3>
+	<InfoText class="mb-3">
+		These tests make real provider API calls and may consume a small amount of credits/tokens.
+		Image generation checks are the most expensive.
+	</InfoText>
+	{#if providerTestResults.length === 0}
+		<InfoText>No enabled provider sections to test.</InfoText>
+	{:else}
+		<div class="flex flex-col gap-2">
+			{#each providerTestResults as result}
+				<div class="rounded-box border border-base-300 p-3 flex flex-col gap-1">
+					<div class="flex items-center gap-2">
+						<span class="font-semibold">{result.label}</span>
+						<span class="text-sm opacity-70">({result.provider})</span>
+						{#if result.status === 'pending'}
+							<Badge color="warning" size="sm">Pending</Badge>
+						{:else if result.status === 'success'}
+							<Badge color="success" size="sm">Connected</Badge>
+						{:else}
+							<Badge color="error" size="sm">Failed</Badge>
+						{/if}
+					</div>
+					<p class="text-sm opacity-80">
+						Type: {result.type}{result.model ? `, Model: ${result.model}` : ''}
+					</p>
+					{#if result.status === 'success' && result.latencyMs !== null}
+						<p class="text-sm text-success">Latency: {result.latencyMs}ms</p>
+					{:else if result.status === 'error'}
+						<p class="text-sm text-error">{result.error || 'Connection failed'}</p>
+					{/if}
+				</div>
+			{/each}
+		</div>
+	{/if}
+	<div class="modal-action">
+		<Button
+			type="button"
+			style="outline"
+			color="secondary"
+			onclick={() => (providerTestDialogOpen = false)}
+		>
+			Close
+		</Button>
+		<Button
+			type="button"
+			onclick={runEnabledProviderTests}
+			disabled={providerTestsRunning}
+			loading={providerTestsRunning}
+		>
+			{providerTestsRunning ? 'Testing...' : 'Re-run Tests'}
+		</Button>
+	</div>
+</Dialog>
 
 <style lang="scss">
 	footer {

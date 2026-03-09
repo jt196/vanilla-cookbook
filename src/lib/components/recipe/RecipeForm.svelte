@@ -11,6 +11,7 @@
 	import Input from '$lib/components/ui/Form/Input.svelte'
 	import Textarea from '$lib/components/ui/Form/Textarea.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
+	import Dialog from '$lib/components/ui/Dialog.svelte'
 	import FeedbackMessage from '$lib/components/ui/FeedbackMessage.svelte'
 	import InfoText from '$lib/components/ui/InfoText.svelte'
 	import Spinner from '$lib/components/ui/Spinner.svelte'
@@ -57,6 +58,12 @@
 	let addingTips = $state(false)
 	let cleaningNutrition = $state(false)
 	let translatingRecipe = $state(false)
+	let generatingRecipeImage = $state(false)
+	let imagePromptDialogOpen = $state(false)
+	let imagePromptOverride = $state('')
+
+	const DEFAULT_IMAGE_STYLE_DESCRIPTION =
+		'Photo realistic plated dish, natural lighting, shallow depth of field, no text or watermark.'
 	let errorMessage = $state('')
 
 	const providerLabels = {
@@ -107,6 +114,13 @@
 	})
 
 	const showTranslate = $derived(detectedLang && detectedLang.normalized !== userLanguage)
+	const canGenerateImage = $derived(
+		editMode &&
+			recipe?.uid &&
+			((recipe?.name && recipe.name.trim() !== '') ||
+				(recipe?.ingredients && recipe.ingredients.trim() !== '') ||
+				(recipe?.directions && recipe.directions.trim() !== ''))
+	)
 
 	// Undo state for AI cleanup
 	let ingredientsBeforeClean = $state(null)
@@ -298,6 +312,46 @@
 		}
 	}
 
+	async function handleGenerateRecipeImage() {
+		if (!canGenerateImage) return
+
+		generatingRecipeImage = true
+		try {
+			const response = await fetch(`/api/recipe/${recipe.uid}/image/generate`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					styleDescription: imagePromptOverride
+				})
+			})
+
+			if (response.status === 429) {
+				throw new Error('Rate limit reached. Please wait a moment before trying again.')
+			}
+			if (!response.ok) {
+				const err = await response.json().catch(() => ({}))
+				throw new Error(err.error || 'Image generation failed')
+			}
+
+			const data = await response.json()
+			if (data?.photo?.id) {
+				const currentPhotos = Array.isArray(recipe.photos) ? recipe.photos : []
+				const mainExists = currentPhotos.some((photo) => photo?.isMain)
+				const newPhoto = {
+					...data.photo,
+					isMain: mainExists ? false : true
+				}
+				recipe.photos = [newPhoto, ...currentPhotos]
+				imagePromptDialogOpen = false
+			}
+		} catch (err) {
+			console.error('Recipe image generation failed:', err)
+			errorMessage = err.message || 'Failed to generate recipe image. Please try again.'
+		} finally {
+			generatingRecipeImage = false
+		}
+	}
+
 	async function handleCleanNutrition() {
 		if (!recipe.nutritional_info || recipe.nutritional_info.trim() === '') return
 
@@ -361,8 +415,9 @@
 				body: JSON.stringify({ type: 'suggestions', content })
 			})
 
-			if (response.status === 429) throw new Error('Rate limit reached. Please wait a moment before trying again.')
-		if (!response.ok) throw new Error('Tips generation failed')
+			if (response.status === 429)
+				throw new Error('Rate limit reached. Please wait a moment before trying again.')
+			if (!response.ok) throw new Error('Tips generation failed')
 
 			const data = await response.json()
 			if (data.text) {
@@ -429,8 +484,8 @@
 				<a href={cancelHref} class="btn btn-soft btn-secondary btn-sm">Cancel</a>
 			{/if}
 			{#if onDelete}
-				<Button type="button" size="sm" style="soft" color="error" onclick={onDelete}
-					>Delete</Button>
+				<Button type="button" size="sm" style="soft" color="error" onclick={onDelete}>Delete</Button
+				>
 			{/if}
 			<Button type="submit" size="sm">{buttonText}</Button>
 		</div>
@@ -444,7 +499,8 @@
 					size="sm"
 					style="soft"
 					onclick={handleTranslateRecipe}
-					disabled={translatingRecipe}>
+					disabled={translatingRecipe}
+				>
 					{#if translatingRecipe}
 						<Spinner visible={true} size="xs" type="dots" />
 						Translating...
@@ -472,7 +528,8 @@
 					name="name"
 					bind:value={recipe.name}
 					label="Name"
-					placeholder="Pasta alla Norma" />
+					placeholder="Pasta alla Norma"
+				/>
 
 				<Input
 					type="text"
@@ -480,21 +537,24 @@
 					name="source"
 					bind:value={recipe.source}
 					label="Source"
-					placeholder="Mia nonna" />
+					placeholder="Mia nonna"
+				/>
 				<Input
 					type="text"
 					id="source_url"
 					name="source_url"
 					placeholder="https://grannysrecipes.com"
 					bind:value={recipe.source_url}
-					label="Source URL" />
+					label="Source URL"
+				/>
 				<Input
 					type="text"
 					id="image_url"
 					placeholder="https://grannysrecipes.com/norma.jpg"
 					name="image_url"
 					bind:value={recipe.image_url}
-					label="Image URL" />
+					label="Image URL"
+				/>
 			</div>
 
 			<div class="form-col">
@@ -504,28 +564,32 @@
 					name="prep_time"
 					placeholder="1 hour"
 					bind:value={recipe.prep_time}
-					label="Prep Time" />
+					label="Prep Time"
+				/>
 				<Input
 					type="text"
 					id="cook_time"
 					name="cook_time"
 					placeholder="30 minutes"
 					bind:value={recipe.cook_time}
-					label="Cook Time" />
+					label="Cook Time"
+				/>
 				<Input
 					type="text"
 					id="total_time"
 					name="total_time"
 					placeholder="1.5 hours"
 					bind:value={recipe.total_time}
-					label="Total Time" />
+					label="Total Time"
+				/>
 				<Input
 					type="text"
 					id="servings"
 					placeholder="4 main course"
 					name="servings"
 					bind:value={recipe.servings}
-					label="Servings" />
+					label="Servings"
+				/>
 			</div>
 		</div>
 
@@ -536,7 +600,34 @@
 			{imageChecked}
 			{selectedFiles}
 			{onSelectedFilesChange}
-			bind:saveImageUrl />
+			bind:saveImageUrl
+		/>
+		{#if aiEnabled}
+			<div class="mt-2">
+				<Button
+					type="button"
+					size="sm"
+					style="soft"
+					onclick={() => (imagePromptDialogOpen = true)}
+					disabled={generatingRecipeImage || !canGenerateImage}
+				>
+					{#if generatingRecipeImage}
+						<Spinner visible={true} size="xs" type="dots" />
+						Generating image...
+					{:else}
+						<Bolt width="16px" height="16px" />
+						Generate Recipe Image
+					{/if}
+				</Button>
+				{#if !editMode}
+					<InfoText class="mt-1">Save the recipe first, then generate an image.</InfoText>
+				{:else if !canGenerateImage}
+					<InfoText class="mt-1">
+						Add a name, ingredients, or directions before generating an image.
+					</InfoText>
+				{/if}
+			</div>
+		{/if}
 		<!-- Full-width large text fields -->
 		<div>
 			<Textarea
@@ -545,7 +636,8 @@
 				rows="7"
 				placeholder="500g of pasta..."
 				bind:value={recipe.ingredients}
-				label="Ingredients" />
+				label="Ingredients"
+			/>
 			{#if aiEnabled}
 				<div class="flex gap-2 mt-2">
 					{#if recipe.ingredients_original}
@@ -554,7 +646,8 @@
 							size="sm"
 							style="outline"
 							color="warning"
-							onclick={restoreOriginalIngredients}>
+							onclick={restoreOriginalIngredients}
+						>
 							<Undo width="16px" height="16px" />
 							Restore Original
 						</Button>
@@ -566,7 +659,8 @@
 							onclick={handleCleanIngredients}
 							disabled={cleaningIngredients ||
 								!recipe.ingredients ||
-								recipe.ingredients.trim() === ''}>
+								recipe.ingredients.trim() === ''}
+						>
 							{#if cleaningIngredients}
 								<Spinner visible={true} size="xs" type="dots" />
 								Cleaning...
@@ -581,7 +675,8 @@
 								size="sm"
 								style="outline"
 								color="secondary"
-								onclick={undoCleanIngredients}>
+								onclick={undoCleanIngredients}
+							>
 								<Undo width="16px" height="16px" />
 								Undo
 							</Button>
@@ -592,7 +687,8 @@
 					<InfoText class="mt-1">Restore the original uncleaned ingredients.</InfoText>
 				{:else}
 					<InfoText class="mt-1"
-						>Simplify complex ingredients for more accurate conversion results.</InfoText>
+						>Simplify complex ingredients for more accurate conversion results.</InfoText
+					>
 				{/if}
 			{/if}
 		</div>
@@ -602,7 +698,8 @@
 			rows="3"
 			placeholder="This pasta was a favourite of my Nonna's"
 			bind:value={recipe.description}
-			label="Description" />
+			label="Description"
+		/>
 		<div>
 			<Textarea
 				id="directions"
@@ -610,7 +707,8 @@
 				rows="7"
 				name="directions"
 				bind:value={recipe.directions}
-				label="Directions" />
+				label="Directions"
+			/>
 			{#if aiEnabled}
 				<div class="flex gap-2 mt-2">
 					{#if recipe.directions_original}
@@ -619,7 +717,8 @@
 							size="sm"
 							style="outline"
 							color="warning"
-							onclick={restoreOriginalDirections}>
+							onclick={restoreOriginalDirections}
+						>
 							<Undo width="16px" height="16px" />
 							Restore Original
 						</Button>
@@ -629,9 +728,8 @@
 							size="sm"
 							style="soft"
 							onclick={handleSummarizeDirections}
-							disabled={cleaningDirections ||
-								!recipe.directions ||
-								recipe.directions.trim() === ''}>
+							disabled={cleaningDirections || !recipe.directions || recipe.directions.trim() === ''}
+						>
 							{#if cleaningDirections}
 								<Spinner visible={true} size="xs" type="dots" />
 								Summarizing...
@@ -646,7 +744,8 @@
 								size="sm"
 								style="outline"
 								color="secondary"
-								onclick={undoSummarizeDirections}>
+								onclick={undoSummarizeDirections}
+							>
 								<Undo width="16px" height="16px" />
 								Undo
 							</Button>
@@ -666,7 +765,8 @@
 			rows="3"
 			placeholder="Don't overcook the pasta or she'll come back to haunt you"
 			bind:value={recipe.notes}
-			label="Notes" />
+			label="Notes"
+		/>
 		{#if aiEnabled}
 			<div class="flex gap-2 mt-2">
 				<Button
@@ -674,7 +774,8 @@
 					size="sm"
 					style="soft"
 					onclick={handleAddTips}
-					disabled={addingTips || (!recipe.ingredients && !recipe.directions)}>
+					disabled={addingTips || (!recipe.ingredients && !recipe.directions)}
+				>
 					{#if addingTips}
 						<Spinner visible={true} size="xs" type="dots" />
 						Adding Tips...
@@ -684,12 +785,7 @@
 					{/if}
 				</Button>
 				{#if notesBeforeTips !== null}
-					<Button
-						type="button"
-						size="sm"
-						style="outline"
-						color="secondary"
-						onclick={undoAddTips}>
+					<Button type="button" size="sm" style="outline" color="secondary" onclick={undoAddTips}>
 						<Undo width="16px" height="16px" />
 						Undo
 					</Button>
@@ -702,7 +798,8 @@
 			name="nutritional_info"
 			rows="3"
 			bind:value={recipe.nutritional_info}
-			label="Nutritional Information" />
+			label="Nutritional Information"
+		/>
 		{#if aiEnabled}
 			<div class="flex gap-2 mt-2">
 				<Button
@@ -712,7 +809,8 @@
 					onclick={handleCleanNutrition}
 					disabled={cleaningNutrition ||
 						!recipe.nutritional_info ||
-						recipe.nutritional_info.trim() === ''}>
+						recipe.nutritional_info.trim() === ''}
+				>
 					{#if cleaningNutrition}
 						<Spinner visible={true} size="xs" type="dots" />
 						Cleaning...
@@ -727,7 +825,8 @@
 						size="sm"
 						style="outline"
 						color="secondary"
-						onclick={undoCleanNutrition}>
+						onclick={undoCleanNutrition}
+					>
 						<Undo width="16px" height="16px" />
 						Undo
 					</Button>
@@ -743,6 +842,45 @@
 		{/if}
 	</div>
 </form>
+
+<Dialog bind:isOpen={imagePromptDialogOpen} onClose={() => (imagePromptDialogOpen = false)}>
+	<h3 class="font-bold text-lg mb-4">Generate Recipe Image</h3>
+	<div class="flex flex-col gap-3">
+		<Textarea
+			label="Style override (optional)"
+			rows={3}
+			placeholder={DEFAULT_IMAGE_STYLE_DESCRIPTION}
+			bind:value={imagePromptOverride}
+			disabled={generatingRecipeImage}
+		/>
+		<InfoText>
+			Only describe how the image should look. The recipe name and ingredients are always included.
+		</InfoText>
+	</div>
+	<div class="modal-action">
+		<Button
+			type="button"
+			style="outline"
+			color="secondary"
+			onclick={() => (imagePromptDialogOpen = false)}
+			disabled={generatingRecipeImage}
+		>
+			Cancel
+		</Button>
+		<Button
+			type="button"
+			onclick={handleGenerateRecipeImage}
+			disabled={generatingRecipeImage || !canGenerateImage}
+		>
+			{#if generatingRecipeImage}
+				<Spinner visible={true} size="xs" type="dots" />
+				Generating...
+			{:else}
+				Generate
+			{/if}
+		</Button>
+	</div>
+</Dialog>
 
 <style lang="scss">
 	.form-grid {

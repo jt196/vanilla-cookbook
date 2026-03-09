@@ -2,6 +2,7 @@ import { extractRecipeWithLLM } from '$lib/utils/ai'
 import { fileTypeFromBuffer } from 'file-type'
 import { json } from '@sveltejs/kit'
 import { resizeImageBuffer, stitchImages } from '$lib/utils/image/imageBackend'
+import { RECIPE_IMAGE_MAX_DIMENSION } from '$lib/utils/image/imageConfig'
 import { resolveAIConfig } from '$lib/server/aiHelpers'
 
 export async function POST({ request, locals }) {
@@ -23,7 +24,7 @@ export async function POST({ request, locals }) {
 
 		for (const file of limitedFiles) {
 			const buffer = Buffer.from(await file.arrayBuffer())
-			const resizedBuffer = await resizeImageBuffer(buffer, 1024)
+			const resizedBuffer = await resizeImageBuffer(buffer, RECIPE_IMAGE_MAX_DIMENSION)
 
 			const fileType = await fileTypeFromBuffer(resizedBuffer)
 			if (!fileType || !fileType.mime.startsWith('image/')) {

@@ -6,7 +6,7 @@ import { testProviderConnection, getConfiguredProviders } from '$lib/utils/llmCo
  * Test LLM provider connection.
  *
  * POST /api/llm/test
- * Body: { provider: string, model?: string, type?: 'chat' | 'embedding' }
+ * Body: { provider: string, model?: string, type?: 'chat' | 'embedding' | 'imageGeneration' }
  * Response: { ok: boolean, latencyMs: number, error?: string, model?: string }
  */
 export async function POST({ request, locals }) {
@@ -25,7 +25,7 @@ export async function POST({ request, locals }) {
 			return json({ ok: false, error: `Invalid provider: ${provider}` }, { status: 400 })
 		}
 
-		const validTypes = ['chat', 'embedding']
+		const validTypes = ['chat', 'embedding', 'imageGeneration']
 		if (!validTypes.includes(type)) {
 			return json({ ok: false, error: `Invalid type: ${type}` }, { status: 400 })
 		}

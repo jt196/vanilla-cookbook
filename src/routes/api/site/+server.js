@@ -29,8 +29,12 @@ export async function POST({ request, locals }) {
 				llmEnabled: normalizeBoolean(siteData.llmEnabled) ?? settings.llmEnabled,
 				llmProvider: siteData.llmProvider ?? settings.llmProvider,
 				llmImageProvider: siteData.llmImageProvider ?? settings.llmImageProvider,
+				llmImageGenerationProvider:
+					siteData.llmImageGenerationProvider ?? settings.llmImageGenerationProvider,
 				llmTextModel: siteData.llmTextModel ?? settings.llmTextModel,
 				llmImageModel: siteData.llmImageModel ?? settings.llmImageModel,
+				llmImageGenerationModel:
+					siteData.llmImageGenerationModel ?? settings.llmImageGenerationModel,
 				semanticEnabled: normalizeBoolean(siteData.semanticEnabled) ?? settings.semanticEnabled,
 				semanticEmbeddingProvider:
 					siteData.semanticEmbeddingProvider ?? settings.semanticEmbeddingProvider,
@@ -44,9 +48,11 @@ export async function POST({ request, locals }) {
 			fields: Object.keys(siteData || {}),
 			llmProvider: siteData?.llmProvider ?? null,
 			llmImageProvider: siteData?.llmImageProvider ?? null,
+			llmImageGenerationProvider: siteData?.llmImageGenerationProvider ?? null,
 			semanticEmbeddingProvider: siteData?.semanticEmbeddingProvider ?? null,
 			hasLlmTextModel: !!siteData?.llmTextModel,
 			hasLlmImageModel: !!siteData?.llmImageModel,
+			hasLlmImageGenerationModel: !!siteData?.llmImageGenerationModel,
 			hasSemanticEmbeddingModel: !!siteData?.semanticEmbeddingModel,
 			error: err?.message
 		})
