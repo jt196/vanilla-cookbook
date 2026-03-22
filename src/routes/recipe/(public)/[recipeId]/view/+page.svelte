@@ -32,11 +32,12 @@
 		;({ recipe, viewUser, logs, recUser, aiEnabled, semanticEnabled } = data)
 	})
 
-	let similarRecipes = $state(/** @type {Array<{uid:string,name:string,photos:Array<{id:string}>,image_url?:string}>} */ ([]))
-
-	const showSimilarStrip = $derived(
-		semanticEnabled && (viewUser?.showSimilarRecipes ?? true)
+	let similarRecipes = $state(
+		/** @type {Array<{uid:string,name:string,photos:Array<{id:string}>,image_url?:string}>} */ ([])
 	)
+
+	const showSimilarStrip = $derived(semanticEnabled && (viewUser?.showSimilarRecipes ?? true))
+	const showNotesDescription = $derived(viewUser?.showNotesDescription ?? false)
 
 	// Scaling factor for the ingredients
 	let scale = $state(1)
@@ -394,11 +395,7 @@
 			</div>
 		{/if}
 		<div class="w-full {mainPhoto ? 'md:w-2/3' : ''}">
-				<RecipeViewAbout
-					{recipe}
-					{scaledServings}
-					recipeRatingChanged={handleRecipeRatingChanged}
-				/>
+			<RecipeViewAbout {recipe} {scaledServings} recipeRatingChanged={handleRecipeRatingChanged} />
 		</div>
 	</div>
 
@@ -439,7 +436,7 @@
 		</div>
 
 		<div class="w-full md:w-2/3">
-			<RecipeViewDesc {recipe} />
+			<RecipeViewDesc {recipe} open={showNotesDescription} />
 			{#if recipe.directions_original}
 				<div class="flex items-center gap-2 mt-6 mb-2">
 					<span class="text-sm">Summarized</span>
@@ -448,7 +445,12 @@
 				</div>
 			{/if}
 			<RecipeViewDirections {directionLines} {sanitizedDirections} {loadingIngredients} />
-			<RecipeViewNotes {notesLines} {sanitizedNotes} logs={viewOnly ? [] : logs} />
+			<RecipeViewNotes
+				{notesLines}
+				{sanitizedNotes}
+				logs={viewOnly ? [] : logs}
+				open={showNotesDescription}
+			/>
 		</div>
 	</div>
 

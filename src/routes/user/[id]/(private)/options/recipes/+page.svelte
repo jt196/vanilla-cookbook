@@ -10,6 +10,12 @@
 	const { user, semanticEnabled } = $state(data)
 	let settingsFeedback = $state('')
 
+	$effect(() => {
+		if (user && user.showNotesDescription === undefined) {
+			user.showNotesDescription = false
+		}
+	})
+
 	async function updateSettings(event) {
 		event.preventDefault()
 		const response = await fetch(`/api/user/${user.userId}`, {
@@ -96,20 +102,7 @@
 		color="neutral"
 		legend="Display Nutrition"
 	>
-		{user.displayNutrition
-			? 'Display nutrition information.'
-			: 'Hide nutrition information.'}
-	</Checkbox>
-	<Checkbox
-		name="Display Extra"
-		bind:checked={user.ingExtra}
-		size="sm"
-		color="neutral"
-		legend="Display Extra"
-	>
-		{user.ingExtra
-			? 'Display extra ingredient text, e.g. after the comma in "1 clove garlic, chopped".'
-			: 'Hide extra ingredient text.'}
+		{user.displayNutrition ? 'Display nutrition information.' : 'Hide nutrition information.'}
 	</Checkbox>
 	<div class={!semanticEnabled ? 'opacity-50' : ''}>
 		<Checkbox
@@ -129,6 +122,28 @@
 			{/if}
 		</Checkbox>
 	</div>
+	<Checkbox
+		name="showNotesDescription"
+		bind:checked={user.showNotesDescription}
+		size="sm"
+		color="neutral"
+		legend="Show Notes & Description"
+	>
+		{user.showNotesDescription
+			? 'Show recipe notes and description expanded by default.'
+			: 'Hide recipe notes and description behind collapsed sections by default.'}
+	</Checkbox>
+	<Checkbox
+		name="Display Extra"
+		bind:checked={user.ingExtra}
+		size="sm"
+		color="neutral"
+		legend="Display Extra"
+	>
+		{user.ingExtra
+			? 'Display extra ingredient text, e.g. after the comma in "1 clove garlic, chopped".'
+			: 'Hide extra ingredient text.'}
+	</Checkbox>
 	<footer>
 		<Button type="submit">Update</Button>
 		<FeedbackMessage message={settingsFeedback} />
