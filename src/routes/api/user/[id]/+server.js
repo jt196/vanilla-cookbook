@@ -25,7 +25,8 @@ export async function PUT({ request, locals, params }) {
 		'ingSymbol',
 		'displayNutrition',
 		'showSimilarRecipes',
-		'about',
+		'showNotesDescription',
+		'about'
 	]
 
 	const updates = Object.fromEntries(

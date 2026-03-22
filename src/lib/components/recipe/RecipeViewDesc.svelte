@@ -1,9 +1,9 @@
 <script>
 	import { getSanitizedHTML } from '$lib/utils/render'
 	import CollapseSection from '$lib/components/ui/CollapseSection.svelte'
-	
-	/** @type {{recipe: any}} */
-	let { recipe } = $props();
+
+	/** @type {{recipe: any, open?: boolean}} */
+	let { recipe, open = false } = $props()
 
 	let descriptionLines = []
 	let sanitisedDescription = $state([])
@@ -22,11 +22,11 @@
 		if (recipe.description) {
 			loadSanitizedDescription()
 		}
-	});
+	})
 </script>
 
 {#if sanitisedDescription.length > 0}
-	<CollapseSection title="Description" className="mt-2">
+	<CollapseSection title="Description" className="mt-2" {open}>
 		<div class="prose max-w-none">
 			{#each sanitisedDescription as parsedDescription}
 				<p>{@html parsedDescription}</p>
