@@ -12,7 +12,7 @@
 
 	$effect(() => {
 		if (user && user.showNotesDescription === undefined) {
-			user.showNotesDescription = false
+			user.showNotesDescription = true
 		}
 	})
 
