@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Vanilla Cookbook</title>
+		<style>
+			*,
+			*::before,
+			*::after {
+				box-sizing: border-box;
+				margin: 0;
+				padding: 0;
+			}
+
+			:root {
+				--bg: #12171e;
+				--surface: #1e2530;
+				--border: #2e3a4a;
+				--accent: #0072ac;
+				--accent-hover: #0088cc;
+				--text: #e2e8f0;
+				--text-muted: #94a3b8;
+				--error: #f87171;
+				--radius: 8px;
+			}
+
+			body {
+				background: var(--bg);
+				color: var(--text);
+				font-family:
+					system-ui,
+					-apple-system,
+					sans-serif;
+				min-height: 100dvh;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				padding: 1.5rem;
+			}
+
+			.card {
+				background: var(--surface);
+				border: 1px solid var(--border);
+				border-radius: var(--radius);
+				padding: 2rem;
+				width: 100%;
+				max-width: 380px;
+			}
+
+			.logo {
+				display: flex;
+				align-items: center;
+				gap: 0.75rem;
+				margin-bottom: 1.75rem;
+			}
+
+			.logo svg {
+				width: 36px;
+				height: 36px;
+				flex-shrink: 0;
+			}
+
+			.logo h1 {
+				font-size: 1.25rem;
+				font-weight: 600;
+			}
+
+			label {
+				display: block;
+				font-size: 0.875rem;
+				font-weight: 500;
+				margin-bottom: 0.5rem;
+				color: var(--text-muted);
+			}
+
+			input[type='url'] {
+				width: 100%;
+				background: var(--bg);
+				border: 1px solid var(--border);
+				border-radius: var(--radius);
+				color: var(--text);
+				font-size: 1rem;
+				padding: 0.625rem 0.875rem;
+				outline: none;
+				transition: border-color 0.15s;
+			}
+
+			input[type='url']:focus {
+				border-color: var(--accent);
+			}
+
+			.hint {
+				font-size: 0.75rem;
+				color: var(--text-muted);
+				margin-top: 0.375rem;
+			}
+
+			button {
+				width: 100%;
+				background: var(--accent);
+				color: #fff;
+				border: none;
+				border-radius: var(--radius);
+				font-size: 1rem;
+				font-weight: 500;
+				padding: 0.7rem 1rem;
+				margin-top: 1.25rem;
+				cursor: pointer;
+				transition: background 0.15s;
+			}
+
+			button:hover {
+				background: var(--accent-hover);
+			}
+
+			button:disabled {
+				opacity: 0.5;
+				cursor: not-allowed;
+			}
+
+			.error {
+				color: var(--error);
+				font-size: 0.8rem;
+				margin-top: 0.5rem;
+				display: none;
+			}
+
+			.error.visible {
+				display: block;
+			}
+
+			.loading {
+				text-align: center;
+				color: var(--text-muted);
+				font-size: 0.9rem;
+			}
+
+			.spinner {
+				display: inline-block;
+				width: 1.25rem;
+				height: 1.25rem;
+				border: 2px solid var(--border);
+				border-top-color: var(--accent);
+				border-radius: 50%;
+				animation: spin 0.7s linear infinite;
+				vertical-align: middle;
+				margin-right: 0.5rem;
+			}
+
+			@keyframes spin {
+				to {
+					transform: rotate(360deg);
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div class="card" id="setup" style="display:none">
+			<div class="logo">
+				<svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+					<rect width="36" height="36" rx="8" fill="#0072ac" />
+					<text x="18" y="25" text-anchor="middle" font-size="20" fill="white">🍋</text>
+				</svg>
+				<h1>Vanilla Cookbook</h1>
+			</div>
+			<label for="server-url">Server URL</label>
+			<input
+				type="url"
+				id="server-url"
+				placeholder="https://cookbook.example.com"
+				autocomplete="url"
+				inputmode="url"
+			/>
+			<p class="hint">Enter the address of your self-hosted Vanilla Cookbook instance.</p>
+			<p class="error" id="error-msg"></p>
+			<button id="connect-btn">Connect</button>
+		</div>
+		<div class="loading" id="loading">
+			<span class="spinner"></span>
+			Connecting…
+		</div>
+
+		<script>
+			const PREFS_GROUP = 'CapacitorStorage'
+			const KEY_SERVER = 'serverUrl'
+			const KEY_PENDING_SHARE = 'pendingShare'
+
+			const setupEl = document.getElementById('setup')
+			const loadingEl = document.getElementById('loading')
+			const input = document.getElementById('server-url')
+			const btn = document.getElementById('connect-btn')
+			const errorMsg = document.getElementById('error-msg')
+
+			function showError(msg) {
+				errorMsg.textContent = msg
+				errorMsg.classList.add('visible')
+			}
+
+			function clearError() {
+				errorMsg.classList.remove('visible')
+			}
+
+			function normaliseUrl(raw) {
+				let url = raw.trim().replace(/\/$/, '')
+				if (!url) return null
+				if (!/^https?:\/\//i.test(url)) url = 'https://' + url
+				try {
+					new URL(url)
+					return url
+				} catch {
+					return null
+				}
+			}
+
+			function navigateToServer(serverUrl, pendingShare) {
+				let dest = serverUrl
+				if (pendingShare) {
+					const isUrl = /^https?:\/\//i.test(pendingShare)
+					const param = isUrl ? 'url' : 'text'
+					dest = `${serverUrl}/recipe/new?${param}=${encodeURIComponent(pendingShare)}`
+				}
+				window.location.href = dest
+			}
+
+			async function getPreference(key) {
+				try {
+					const result = await window.Capacitor.Plugins.Preferences.get({ key })
+					return result?.value ?? null
+				} catch {
+					return null
+				}
+			}
+
+			async function setPreference(key, value) {
+				await window.Capacitor.Plugins.Preferences.set({ key, value })
+			}
+
+			async function removePreference(key) {
+				await window.Capacitor.Plugins.Preferences.remove({ key })
+			}
+
+			async function init() {
+				// Wait for Capacitor bridge
+				if (!window.Capacitor?.isNativePlatform()) {
+					// Not running in native app — show a plain error
+					loadingEl.textContent = 'Open this in the Vanilla Cookbook Android app.'
+					return
+				}
+
+				const [serverUrl, pendingShare] = await Promise.all([
+					getPreference(KEY_SERVER),
+					getPreference(KEY_PENDING_SHARE)
+				])
+
+				if (pendingShare) {
+					await removePreference(KEY_PENDING_SHARE)
+				}
+
+				if (serverUrl) {
+					navigateToServer(serverUrl, pendingShare)
+					return
+				}
+
+				// No server configured — show setup form
+				loadingEl.style.display = 'none'
+				setupEl.style.display = 'block'
+				if (pendingShare) {
+					// Pre-fill the hint so the user knows a share is waiting
+					input.placeholder = 'Enter your server URL to add the shared recipe'
+				}
+				input.focus()
+
+				// Store pending share temporarily in sessionStorage until they connect
+				if (pendingShare) sessionStorage.setItem('pendingShare', pendingShare)
+
+				btn.addEventListener('click', async () => {
+					clearError()
+					const url = normaliseUrl(input.value)
+					if (!url) {
+						showError('Please enter a valid URL.')
+						input.focus()
+						return
+					}
+					btn.disabled = true
+					btn.textContent = 'Connecting…'
+					await setPreference(KEY_SERVER, url)
+					const pending = sessionStorage.getItem('pendingShare')
+					sessionStorage.removeItem('pendingShare')
+					navigateToServer(url, pending)
+				})
+
+				input.addEventListener('keydown', (e) => {
+					if (e.key === 'Enter') btn.click()
+				})
+			}
+
+			document.addEventListener('DOMContentLoaded', init)
+		</script>
+	</body>
+</html>
