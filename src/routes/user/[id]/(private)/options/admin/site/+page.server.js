@@ -1,5 +1,6 @@
 import { getBackupInfo } from '$lib/server/backups'
 import { prisma } from '$lib/server/prisma'
+import { resolveEmbeddingModel } from '$lib/utils/llmModels'
 
 export const load = async ({ parent, locals }) => {
 	// Get parent data (settings, user)
@@ -60,13 +61,22 @@ export const load = async ({ parent, locals }) => {
 		semanticModel: semantic.model ?? null
 	}
 
+	const resolvedModel = resolveEmbeddingModel(semantic.provider, semantic.model)
+
 	try {
-		const [backupInfo, embeddingRemaining, embeddingTotal] = await Promise.all([
+		const [backupInfo, embeddingRemaining, embeddingMismatched, embeddingTotal] = await Promise.all([
 			getBackupInfo(),
 			prisma.recipe.count({
 				where: {
 					embedding: null,
 					in_trash: false
+				}
+			}),
+			prisma.recipe.count({
+				where: {
+					in_trash: false,
+					embedding: { not: null },
+					embeddingModel: { not: resolvedModel }
 				}
 			}),
 			prisma.recipe.count({
@@ -78,7 +88,8 @@ export const load = async ({ parent, locals }) => {
 		const embeddingIndex = {
 			total: embeddingTotal,
 			remaining: embeddingRemaining,
-			completed: Math.max(embeddingTotal - embeddingRemaining, 0)
+			mismatched: embeddingMismatched,
+			completed: Math.max(embeddingTotal - embeddingRemaining - embeddingMismatched, 0)
 		}
 		return {
 			...parentData,
@@ -93,7 +104,7 @@ export const load = async ({ parent, locals }) => {
 			...parentData,
 			backupInfo: null,
 			backupError: `Failed to load backup information: ${error.message}`,
-			embeddingIndex: { total: 0, remaining: 0, completed: 0 },
+			embeddingIndex: { total: 0, remaining: 0, mismatched: 0, completed: 0 },
 			llmConfig,
 			oauth
 		}

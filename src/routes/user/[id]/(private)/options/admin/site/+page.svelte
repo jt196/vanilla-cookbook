@@ -40,7 +40,9 @@
 	let embeddingInProgress = $state(false)
 	let embeddingFeedback = $state('')
 	let embeddingBatchResult = $state(null)
-	let embeddingIndex = $state(data.embeddingIndex || { total: 0, remaining: 0, completed: 0 })
+	let embeddingIndex = $state(
+		data.embeddingIndex || { total: 0, remaining: 0, mismatched: 0, completed: 0 }
+	)
 	let embeddingPercent = $derived(
 		embeddingIndex.total > 0
 			? Math.round((Math.max(embeddingIndex.completed, 0) / embeddingIndex.total) * 100)
@@ -162,6 +164,12 @@
 			!!effectiveSemanticProvider &&
 			embeddingIndex.remaining > 0
 	)
+	let canRegenerateMismatched = $derived(
+		semanticEnabled &&
+			semanticProviderConfigured &&
+			!!effectiveSemanticProvider &&
+			(embeddingIndex.mismatched || 0) > 0
+	)
 
 	// Get the actual model value to save
 	let effectiveTextModel = $derived(
@@ -249,7 +257,7 @@
 		}
 	}
 
-	async function generateEmbeddingBatch() {
+	async function generateEmbeddingBatch(force = false) {
 		embeddingInProgress = true
 		embeddingFeedback = ''
 		embeddingBatchResult = null
@@ -261,7 +269,7 @@
 				const response = await fetch('/api/embeddings/generate', {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({ batchSize: 25 })
+					body: JSON.stringify({ batchSize: 25, force })
 				})
 				const data = await response.json().catch(() => ({}))
 				if (!response.ok) {
@@ -274,8 +282,14 @@
 				embeddingBatchResult = data
 				embeddingIndex = {
 					total: embeddingIndex.total,
-					remaining: data.remaining ?? embeddingIndex.remaining,
-					completed: Math.max((embeddingIndex.total || 0) - (data.remaining || 0), 0)
+					remaining: force ? embeddingIndex.remaining : (data.remaining ?? embeddingIndex.remaining),
+					mismatched: force ? (data.remaining ?? embeddingIndex.mismatched) : embeddingIndex.mismatched,
+					completed: Math.max(
+						(embeddingIndex.total || 0) -
+							(force ? embeddingIndex.remaining : (data.remaining || 0)) -
+							(force ? (data.remaining || 0) : embeddingIndex.mismatched),
+						0
+					)
 				}
 
 				if (data.remaining === 0) break
@@ -286,7 +300,7 @@
 				if ((data.processed || 0) === 0) break
 			}
 
-			embeddingFeedback = `Embedding run complete: ${processedTotal} processed, ${failedTotal} failed, ${embeddingIndex.remaining} remaining.`
+			embeddingFeedback = `Embedding run complete: ${processedTotal} processed, ${failedTotal} failed.`
 		} catch (error) {
 			embeddingFeedback = `Error generating embeddings: ${error.message}`
 		} finally {
@@ -298,7 +312,7 @@
 	$effect(() => {
 		backupInfo = data.backupInfo
 		backupError = data.backupError || ''
-		embeddingIndex = data.embeddingIndex || { total: 0, remaining: 0, completed: 0 }
+		embeddingIndex = data.embeddingIndex || { total: 0, remaining: 0, mismatched: 0, completed: 0 }
 	})
 
 	async function testConnection(provider, model, type) {
@@ -660,14 +674,31 @@
 								aria-label="Embedding generation progress"
 							></progress>
 							<p class="text-xs text-base-content/70">{embeddingPercent}% complete</p>
-							<Button
-								type="button"
-								class="self-start w-auto"
-								onclick={generateEmbeddingBatch}
-								disabled={embeddingInProgress || !canGenerateEmbeddings}
-							>
-								{embeddingInProgress ? 'Generating Embeddings...' : 'Generate Embeddings'}
-							</Button>
+							{#if (embeddingIndex.mismatched || 0) > 0}
+								<p class="text-sm text-warning">
+									{embeddingIndex.mismatched} recipe{embeddingIndex.mismatched === 1 ? '' : 's'} indexed with a different model — use "Regenerate Mismatched" to update them.
+								</p>
+							{/if}
+							<div class="flex flex-wrap gap-2">
+								<Button
+									type="button"
+									class="self-start w-auto"
+									onclick={() => generateEmbeddingBatch(false)}
+									disabled={embeddingInProgress || !canGenerateEmbeddings}
+								>
+									{embeddingInProgress ? 'Generating Embeddings...' : 'Generate Embeddings'}
+								</Button>
+								{#if (embeddingIndex.mismatched || 0) > 0}
+									<Button
+										type="button"
+										class="self-start w-auto"
+										onclick={() => generateEmbeddingBatch(true)}
+										disabled={embeddingInProgress || !canRegenerateMismatched}
+									>
+										Regenerate Mismatched
+									</Button>
+								{/if}
+							</div>
 							{#if embeddingBatchResult}
 								<p class="text-sm">
 									Processed: {embeddingBatchResult.processed}, Failed: {embeddingBatchResult.failed},
