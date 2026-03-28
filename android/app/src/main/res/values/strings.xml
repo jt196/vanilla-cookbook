@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Vanilla Cookbook</string>
+    <string name="title_activity_main">Vanilla Cookbook</string>
+    <string name="package_name">com.vanillacookbook.app</string>
+    <string name="custom_url_scheme">com.vanillacookbook.app</string>
+</resources>

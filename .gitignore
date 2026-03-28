@@ -38,6 +38,12 @@ playwright-report/
 # ───── Docker & local infra ─────────────────────────
 docker-compose.yml
 
+# ───── Android / Capacitor ───────────────────────────
+android/app/build/
+android/.gradle/
+android/build/
+android/local.properties
+
 # ───── Development plans ─────────────────────────────────
 /plans/
 
