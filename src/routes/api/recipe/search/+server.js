@@ -89,6 +89,7 @@ export async function GET({ url, locals }) {
 		for (const candidate of candidates) {
 			if (!candidate.embedding) continue
 			const embedding = deserializeEmbedding(candidate.embedding)
+			if (embedding.length !== queryEmbedding.length) continue
 			const score = cosineSimilarity(queryEmbedding, embedding)
 			if (score >= threshold) {
 				results.push({ uid: candidate.uid, score })

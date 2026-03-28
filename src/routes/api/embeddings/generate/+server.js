@@ -3,6 +3,7 @@ import { prisma } from '$lib/server/prisma'
 import { requireAdmin } from '$lib/server/authHelpers'
 import { semanticEmbeddingJobsEnabled } from '$lib/server/semanticHelpers'
 import { regenerateRecipeEmbedding } from '$lib/server/semanticEmbedding'
+import { resolveEmbeddingModel } from '$lib/utils/llmModels'
 
 export async function POST({ request, locals }) {
 	requireAdmin(locals)
@@ -45,13 +46,16 @@ export async function POST({ request, locals }) {
 	const body = await request.json().catch(() => ({}))
 	const requestedBatchSize = Number(body?.batchSize || 10)
 	const batchSize = Math.min(Math.max(requestedBatchSize, 1), 100)
-	console.info(`[semantic] embedding batch start (batchSize=${batchSize})`)
+	const force = !!body?.force
+	console.info(`[semantic] embedding batch start (batchSize=${batchSize}, force=${force})`)
+
+	const resolvedModel = resolveEmbeddingModel(preferredEmbeddingProvider, preferredEmbeddingModel)
+	const whereClause = force
+		? { in_trash: false, OR: [{ embedding: null }, { embeddingModel: { not: resolvedModel } }] }
+		: { embedding: null, in_trash: false }
 
 	const recipes = await prisma.recipe.findMany({
-		where: {
-			embedding: null,
-			in_trash: false
-		},
+		where: whereClause,
 		select: { uid: true },
 		take: batchSize,
 		orderBy: { created: 'desc' }
@@ -87,10 +91,9 @@ export async function POST({ request, locals }) {
 	}
 
 	const remaining = await prisma.recipe.count({
-		where: {
-			embedding: null,
-			in_trash: false
-		}
+		where: force
+			? { in_trash: false, OR: [{ embedding: null }, { embeddingModel: { not: resolvedModel } }] }
+			: { embedding: null, in_trash: false }
 	})
 
 	console.info(
@@ -108,11 +111,22 @@ export async function POST({ request, locals }) {
 export async function GET({ locals }) {
 	requireAdmin(locals)
 
-	const [remaining, total] = await Promise.all([
+	const preferredEmbeddingProvider = locals.site?.semantic?.provider || null
+	const preferredEmbeddingModel = locals.site?.semantic?.model || null
+	const resolvedModel = resolveEmbeddingModel(preferredEmbeddingProvider, preferredEmbeddingModel)
+
+	const [remaining, mismatched, total] = await Promise.all([
 		prisma.recipe.count({
 			where: {
 				embedding: null,
 				in_trash: false
+			}
+		}),
+		prisma.recipe.count({
+			where: {
+				in_trash: false,
+				embedding: { not: null },
+				embeddingModel: { not: resolvedModel }
 			}
 		}),
 		prisma.recipe.count({
@@ -125,6 +139,7 @@ export async function GET({ locals }) {
 	return json({
 		total,
 		remaining,
-		completed: Math.max(total - remaining, 0)
+		mismatched,
+		completed: Math.max(total - remaining - mismatched, 0)
 	})
 }
