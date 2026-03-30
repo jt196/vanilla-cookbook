@@ -25,11 +25,13 @@
 	let feedbackType = $state('info')
 	let loading = $state(false)
 	let maxImages = 3
+	let textParsingAvailable = $derived(aiEnabled && apiKeyPresent)
 
 	// Tab state
 	let selectedMode = $state(initialMode)
 	let isPromptMode = $state(false)
 	let imageFiles = $state([])
+	let lastAppliedInitialMode = $state(initialMode)
 
 	// Derive textMode from isPromptMode for cleaner reactivity
 	let textMode = $derived(isPromptMode ? 'prompt' : 'parse')
@@ -42,6 +44,13 @@
 	$effect(() => {
 		if (!imageAllowed && selectedMode === 'image') {
 			selectedMode = 'url'
+		}
+	})
+
+	$effect(() => {
+		if (initialMode && initialMode !== lastAppliedInitialMode) {
+			selectedMode = initialMode
+			lastAppliedInitialMode = initialMode
 		}
 	})
 
@@ -67,6 +76,13 @@
 					feedbackType = 'warning'
 				}
 			} else if (selectedMode === 'text') {
+				if (!textParsingAvailable) {
+					feedbackMessage =
+						'Captured page text is available here, but AI text parsing is not enabled for this account.'
+					feedbackType = 'warning'
+					return
+				}
+
 				feedbackMessage = textMode === 'prompt' ? 'Generating recipe...' : 'Parsing text...'
 				const parsedData = await handleParse(event, sharedText, {
 					mode: textMode,
@@ -102,7 +118,7 @@
 			}
 		} catch (err) {
 			console.error(err)
-			feedbackMessage = 'Something went wrong.'
+			feedbackMessage = err?.message || (typeof err === 'string' ? err : 'Something went wrong.')
 			feedbackType = 'error'
 		} finally {
 			loading = false
@@ -126,7 +142,7 @@
 			<Button type="submit" class="w-auto self-start mt-2" disabled={isUrlEmpty}>Scrape URL</Button>
 		</div>
 
-		{#if aiEnabled && apiKeyPresent}
+		{#if textParsingAvailable || sharedText}
 			<input
 				type="radio"
 				name="scrape_tabs"
@@ -136,23 +152,32 @@
 				bind:group={selectedMode}
 				checked={selectedMode === 'text'} />
 			<div class="tab-content bg-base-100 border-base-300 p-2 ml-0 mr-0">
-				<div class="flex items-center gap-2 mb-2">
-					<span class="text-sm">Text</span>
-					<Toggle bind:checked={isPromptMode} size="sm" />
-					<span class="text-sm">Prompt</span>
-				</div>
+				{#if textParsingAvailable}
+					<div class="flex items-center gap-2 mb-2">
+						<span class="text-sm">Text</span>
+						<Toggle bind:checked={isPromptMode} size="sm" />
+						<span class="text-sm">Prompt</span>
+					</div>
+				{/if}
 				<Textarea
 					rows={8}
 					placeholder={textMode === 'prompt'
 						? 'Describe the recipe you want...'
 						: 'Paste recipe text...'}
 					bind:value={sharedText} />
-				<Button type="submit" class="w-auto self-start  mt-2" disabled={isTextEmpty}>
-					{textMode === 'prompt' ? 'Generate Recipe' : 'Parse Text'}
+				<Button
+					type="submit"
+					class="w-auto self-start  mt-2"
+					disabled={isTextEmpty || !textParsingAvailable}>
+					{textParsingAvailable
+						? textMode === 'prompt'
+							? 'Generate Recipe'
+							: 'Parse Text'
+						: 'AI Not Enabled'}
 				</Button>
 			</div>
 
-			{#if imageAllowed}
+			{#if textParsingAvailable && imageAllowed}
 				<input
 					type="radio"
 					name="scrape_tabs"

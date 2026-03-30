@@ -31,6 +31,7 @@ uploads/**/*
 
 # ───── Tests, patches, coverage ────────────────────────────────────────────────
 *.diff
+src/lib/data/compatibility/recipe-scrapers.diff.json
 coverage/
 test-results/
 playwright-report/

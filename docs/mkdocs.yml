@@ -67,6 +67,8 @@ nav:
       - Import Utils: technical/utils_import.md
       - Paprika Utils: technical/utils_paprika.md
       - Parse Utils: technical/utils_parse.md
+      - Scraping Flow: technical/scraping.md
+      - Scrape Compatibility: technical/scrape-compatibility.md
       - PWA Utils: technical/utils_pwa.md
       - Prisma Utils: technical/utils_prisma.md
       - Documentation: technical/docs.md

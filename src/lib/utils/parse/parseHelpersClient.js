@@ -27,7 +27,7 @@ export async function scrapeRecipeFromURL(url) {
 			} catch {
 				// Non-JSON error response
 			}
-			throw new Error(errorData.message || 'Error scraping recipe')
+			throw new Error(normalizeScrapeErrorMessage(errorData.message || 'Error scraping recipe'))
 		}
 	} catch (error) {
 		if (error?.name === 'AbortError') {
@@ -35,7 +35,7 @@ export async function scrapeRecipeFromURL(url) {
 			return { success: false, error: 'Request timed out. The site may be slow or unreachable.' }
 		}
 		console.error('Error scraping recipe:', error.message)
-		return { success: false, error: error.message }
+		return { success: false, error: normalizeScrapeErrorMessage(error.message) }
 	} finally {
 		clearTimeout(timeoutId)
 	}
@@ -68,8 +68,43 @@ export async function handleScrape(event = null, url) {
 		}
 	} else {
 		console.error('Error:', result.error)
-		throw result.error
+		throw new Error(normalizeScrapeErrorMessage(result.error))
 	}
+}
+
+/**
+ * Normalize scraper failures into user-facing messages.
+ *
+ * @param {string} message
+ * @returns {string}
+ */
+export function normalizeScrapeErrorMessage(message) {
+	if (!message) return 'Error scraping recipe.'
+
+	if (message.includes('Upstream site returned HTTP 402')) {
+		return 'This site blocked the server-side scrape request. Try the bookmarklet from the recipe page in your browser, paste the recipe text manually, or use AI parse if enabled.'
+	}
+
+	if (message.includes('Upstream site returned HTTP 403')) {
+		return 'This site denied the scrape request. Try the bookmarklet from the recipe page in your browser or paste the recipe text manually.'
+	}
+
+	return message
+}
+
+/**
+ * Whether a scrape error indicates the remote site blocked server-side fetching.
+ *
+ * @param {string} message
+ * @returns {boolean}
+ */
+export function isBlockedScrapeErrorMessage(message) {
+	return (
+		typeof message === 'string' &&
+		(message.includes('server-side scrape request') ||
+			message.includes('Upstream site returned HTTP 402') ||
+			message.includes('Upstream site returned HTTP 403'))
+	)
 }
 
 /**

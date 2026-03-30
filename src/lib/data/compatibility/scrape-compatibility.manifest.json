@@ -1,0 +1,1754 @@
+[
+  {
+    "site": "101cookbooks.com",
+    "url": "https://www.101cookbooks.com/raw-tuscan-kale-salad/",
+    "expected_fixture_filename": "101cookbooks_com_raw_tuscan_kale_salad_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "15gram.be",
+    "url": "https://15gram.be/recepten/limoen-blondies",
+    "expected_fixture_filename": "15gram_be_recepten_limoen_blondies.html",
+    "status_class": "legacy_reference",
+    "has_site_config": false,
+    "notes": "Imported from recipe-scrapers diff. Replaced non-recipe article URL."
+  },
+  {
+    "site": "177milkstreet.com",
+    "url": "https://www.177milkstreet.com/recipes/iced-buttermilk-sugar-cookies",
+    "expected_fixture_filename": "177milkstreet_com_recipes_iced_buttermilk_sugar_cookies.html",
+    "status_class": "known_unscrapable",
+    "has_site_config": false,
+    "notes": "Imported from recipe-scrapers diff. Member-only recipe URL."
+  },
+  {
+    "site": "24kitchen.nl",
+    "url": "https://www.24kitchen.nl/recepten/klassieke-appeltaart",
+    "expected_fixture_filename": "24kitchen_nl_recepten_klassieke_appeltaart.html",
+    "status_class": "active",
+    "has_site_config": false,
+    "notes": "Promoted to active regression URL."
+  },
+  {
+    "site": "365daysofbakingandmore.com",
+    "url": "https://www.365daysofbakingandmore.com/spinach-and-ricotta-stuffed-shells/",
+    "expected_fixture_filename": "365daysofbakingandmore_com_spinach_and_ricotta_stuffed_shells_.html",
+    "status_class": "legacy_reference",
+    "has_site_config": false,
+    "notes": "Imported from recipe-scrapers diff."
+  },
+  {
+    "site": "40aprons.com",
+    "url": "https://40aprons.com/tomato-bisque/",
+    "expected_fixture_filename": "40aprons_com_tomato_bisque_.html",
+    "status_class": "active",
+    "has_site_config": false,
+    "notes": "Promoted to active regression URL."
+  },
+  {
+    "site": "750g.com",
+    "url": "https://www.750g.com/gateau-au-yaourt-leger-et-moelleux-r60818.htm",
+    "expected_fixture_filename": "750g_com_gateau_au_yaourt_leger_et_moelleux_r60818_htm.html",
+    "status_class": "active",
+    "notes": "Active regression URL.",
+    "has_site_config": false
+  },
+  {
+    "site": "abeautifulmess.com",
+    "url": "https://abeautifulmess.com/brown-butter-chocolate-chip-cookies/",
+    "expected_fixture_filename": "abeautifulmess_com_brown_butter_chocolate_chip_cookies_.html",
+    "status_class": "legacy_reference",
+    "has_site_config": false,
+    "notes": "Imported from recipe-scrapers diff."
+  },
+  {
+    "site": "aberlehome.com",
+    "url": "https://aberlehome.com/cacao-hot-chocolate/",
+    "expected_fixture_filename": "aberlehome_com_cacao_hot_chocolate_.html",
+    "status_class": "legacy_reference",
+    "has_site_config": false,
+    "notes": "Imported from recipe-scrapers diff."
+  },
+  {
+    "site": "abuelascounter.com",
+    "url": "https://abuelascounter.com/strawberry-merenguito-trifle/",
+    "expected_fixture_filename": "abuelascounter_com_strawberry_merenguito_trifle_.html",
+    "status_class": "legacy_reference",
+    "has_site_config": false,
+    "notes": "Imported from recipe-scrapers diff."
+  },
+  {
+    "site": "acouplecooks.com",
+    "url": "https://www.acouplecooks.com/oatmeal-recipe/",
+    "expected_fixture_filename": "acouplecooks_com_oatmeal_recipe_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "acozykitchen.com",
+    "url": "https://www.acozykitchen.com/greek-lemon-potatoes",
+    "expected_fixture_filename": "acozykitchen_com_greek_lemon_potatoes.html",
+    "status_class": "active",
+    "has_site_config": false,
+    "notes": "Promoted to active regression URL."
+  },
+  {
+    "site": "addapinch.com",
+    "url": "https://addapinch.com/skillet-lasagna-recipe/",
+    "expected_fixture_filename": "addapinch_com_skillet_lasagna_recipe_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "adrianasbestrecipes.com",
+    "url": "https://www.adrianasbestrecipes.com/easiest-buttermilk-biscuits-with-fresh-cranberries/",
+    "expected_fixture_filename": "adrianasbestrecipes_com_easiest_buttermilk_biscuits_with_fresh_cranberries_.html",
+    "status_class": "legacy_reference",
+    "has_site_config": false,
+    "notes": "Imported from recipe-scrapers diff."
+  },
+  {
+    "site": "afghankitchenrecipes.com",
+    "url": "https://www.afghankitchenrecipes.com/recipe/kishmish-panir-cheese-and-raisins/",
+    "expected_fixture_filename": "afghankitchenrecipes_com_recipe_kishmish_panir_cheese_and_raisins_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": true
+  },
+  {
+    "site": "ah.nl",
+    "url": "https://www.ah.nl/allerhande/recept/R-R1195141/beef-chimichurri",
+    "expected_fixture_filename": "ah_nl_allerhande_recept_R_R1195141_beef_chimichurri.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "allrecipes.com",
+    "url": "https://www.allrecipes.com/recipe/239541/chef-johns-fresh-salmon-cakes/",
+    "expected_fixture_filename": "allrecipes_com_recipe_239541_chef_johns_fresh_salmon_cakes_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": true
+  },
+  {
+    "site": "alltommat.expressen.se",
+    "url": "https://alltommat.expressen.se/recept/lemon-posset-sotsyrlig-citrondessert/",
+    "expected_fixture_filename": "alltommat_expressen_se_recept_lemon_posset_sotsyrlig_citrondessert_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "altonbrown.com",
+    "url": "https://altonbrown.com/recipes/cottage-cheese-cheesecakes/",
+    "expected_fixture_filename": "altonbrown_com_recipes_cottage_cheese_cheesecakes_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "amazingribs.com",
+    "url": "https://amazingribs.com/best-barbecue-ribs-recipe/",
+    "expected_fixture_filename": "amazingribs_com_best_barbecue_ribs_recipe_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "ambitiouskitchen.com",
+    "url": "https://www.ambitiouskitchen.com/chickpea-apple-broccoli-salad-with-honey-dijon-dressing/",
+    "expected_fixture_filename": "ambitiouskitchen_com_chickpea_apple_broccoli_salad_with_honey_dijon_dressing_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "archanaskitchen.com",
+    "url": "https://www.archanaskitchen.com/mangalorean-style-lobia-gazzi-recipe-black-eyed-peas-in-coconut-curry-recipe",
+    "expected_fixture_filename": "archanaskitchen_com_mangalorean_style_lobia_gazzi_recipe_black_eyed_peas_in_coconut_curry_recipe.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "arla.se",
+    "url": "https://www.arla.se/recept/ranchdressing/",
+    "expected_fixture_filename": "arla_se_recept_ranchdressing_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "atelierdeschefs.fr",
+    "url": "https://www.atelierdeschefs.fr/recettes/21192/aubergines-farcies-a-la-mozzarella/",
+    "expected_fixture_filename": "atelierdeschefs_fr_recettes_21192_aubergines_farcies_a_la_mozzarella_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "averiecooks.com",
+    "url": "https://www.averiecooks.com/thai-chicken-coconut-curry/",
+    "expected_fixture_filename": "averiecooks_com_thai_chicken_coconut_curry_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "baking-sense.com",
+    "url": "https://www.baking-sense.com/2023/08/31/sourdough-banana-bread/",
+    "expected_fixture_filename": "baking_sense_com_2023_08_31_sourdough_banana_bread_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "bakingmischief.com",
+    "url": "https://bakingmischief.com/penne-alla-vodka-for-one/",
+    "expected_fixture_filename": "bakingmischief_com_penne_alla_vodka_for_one_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "bbc.co.uk",
+    "url": "https://www.bbc.co.uk/food/recipes/meatballs_tomato_burrata_82300",
+    "expected_fixture_filename": "bbc_co_uk_food_recipes_meatballs_tomato_burrata_82300.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "bbcgoodfood.com",
+    "url": "https://www.bbcgoodfood.com/recipes/super-smoky-bacon-tomato-spaghetti",
+    "expected_fixture_filename": "bbcgoodfood_com_recipes_super_smoky_bacon_tomato_spaghetti.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "bettybossi.ch",
+    "url": "https://www.bettybossi.ch/de/Rezept/ShowRezept/BB_BBZG190815_0003A-40-de?title=Caponata-mit-Burrata",
+    "expected_fixture_filename": "bettybossi_ch_de_Rezept_ShowRezept_BB_BBZG190815_0003A_40_de_title=Caponata_mit_Burrata.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "bettycrocker.com",
+    "url": "https://www.bettycrocker.com/recipes/impossibly-easy-lasagna-pie/63877762-d0cb-4e42-ba7e-c64616f96dab",
+    "expected_fixture_filename": "bettycrocker_com_recipes_impossibly_easy_lasagna_pie_63877762_d0cb_4e42_ba7e_c64616f96dab.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "biancazapatka.com",
+    "url": "https://biancazapatka.com/en/vegan-blueberry-cake/",
+    "expected_fixture_filename": "biancazapatka_com_en_vegan_blueberry_cake_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "bigoven.com",
+    "url": "https://www.bigoven.com/recipe/blackberry-brie-grilled-cheese/3032640",
+    "expected_fixture_filename": "bigoven_com_recipe_blackberry_brie_grilled_cheese_3032640.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "blueapron.com",
+    "url": "https://www.blueapron.com/recipes/glazed-pork-belly-ramen-noodles-with-corn-soft-boiled-eggs-miso-butter-sauce",
+    "expected_fixture_filename": "blueapron_com_recipes_glazed_pork_belly_ramen_noodles_with_corn_soft_boiled_eggs_miso_butter_sauce.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "bluejeanchef.com",
+    "url": "https://bluejeanchef.com/recipes/drunken-noodles/",
+    "expected_fixture_filename": "bluejeanchef_com_recipes_drunken_noodles_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "bodybuilding.com",
+    "url": "https://www.bodybuilding.com/content/spiced-pear-cookie-butter-proats.html",
+    "expected_fixture_filename": "bodybuilding_com_content_spiced_pear_cookie_butter_proats_html.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "bonappetit.com",
+    "url": "https://www.bonappetit.com/recipe/mac-n-cheese",
+    "expected_fixture_filename": "bonappetit_com_recipe_mac_n_cheese.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "bongeats.com",
+    "url": "https://www.bongeats.com/recipe/taaler-luchi",
+    "expected_fixture_filename": "bongeats_com_recipe_taaler_luchi.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "bowlofdelicious.com",
+    "url": "https://www.bowlofdelicious.com/green-goddess-pasta-salad/",
+    "expected_fixture_filename": "bowlofdelicious_com_green_goddess_pasta_salad_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "budgetbytes.com",
+    "url": "https://www.budgetbytes.com/chicken-noodle-soup/",
+    "expected_fixture_filename": "budgetbytes_com_chicken_noodle_soup_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "castironketo.net",
+    "url": "https://www.castironketo.net/blog/keto-stuffed-peppers/",
+    "expected_fixture_filename": "castironketo_net_blog_keto_stuffed_peppers_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "cdkitchen.com",
+    "url": "https://www.cdkitchen.com/recipes/recs/41/Spinach_Quiche2898.shtml",
+    "expected_fixture_filename": "cdkitchen_com_recipes_recs_41_Spinach_Quiche2898_shtml.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "chefkoch.de",
+    "url": "https://www.chefkoch.de/rezepte/1932021314618818/Spaetzle-Frittata-mit-Baerlauch.html",
+    "expected_fixture_filename": "chefkoch_de_rezepte_1932021314618818_Spaetzle_Frittata_mit_Baerlauch_html.html",
+    "status_class": "active",
+    "notes": "Active regression URL.",
+    "has_site_config": false
+  },
+  {
+    "site": "chefkoch.de",
+    "url": "https://www.chefkoch.de/rezepte/92981036508577/Tomatensuppe-mit-Fleischkloesschen.html",
+    "expected_fixture_filename": "chefkoch_de_rezepte_92981036508577_Tomatensuppe_mit_Fleischkloesschen_html.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "chefnini.com",
+    "url": "https://www.chefnini.com/salade-de-pasteque-grillee-tomates-cerises-et-asperges-vertes/",
+    "expected_fixture_filename": "chefnini_com_salade_de_pasteque_grillee_tomates_cerises_et_asperges_vertes_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "chefsavvy.com",
+    "url": "https://chefsavvy.com/thai-peanut-zucchini-noodles/",
+    "expected_fixture_filename": "chefsavvy_com_thai_peanut_zucchini_noodles_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "claudia.abril.com.br",
+    "url": "https://claudia.abril.com.br/receitas/canudinho-de-mousse-de-cocada-preta/",
+    "expected_fixture_filename": "claudia_abril_com_br_receitas_canudinho_de_mousse_de_cocada_preta_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "closetcooking.com",
+    "url": "https://www.closetcooking.com/buffalo-coleslaw/",
+    "expected_fixture_filename": "closetcooking_com_buffalo_coleslaw_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "comidinhasdochef.com",
+    "url": "https://comidinhasdochef.com/torta-de-atum-fofinha-e-macia/",
+    "expected_fixture_filename": "comidinhasdochef_com_torta_de_atum_fofinha_e_macia_.html",
+    "status_class": "known_blocked",
+    "notes": "Imported from legacy siteErrors list.",
+    "has_site_config": false
+  },
+  {
+    "site": "cookeatshare.com",
+    "url": "https://cookeatshare.com/recipes/grilled-blue-marlin-with-lemon-butter-sauce-677197",
+    "expected_fixture_filename": "cookeatshare_com_recipes_grilled_blue_marlin_with_lemon_butter_sauce_677197.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "cookieandkate.com",
+    "url": "https://cookieandkate.com/crispy-apple-kohlrabi-salad-recipe/",
+    "expected_fixture_filename": "cookieandkate_com_crispy_apple_kohlrabi_salad_recipe_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "cooking.nytimes.com",
+    "url": "https://cooking.nytimes.com/recipes/1024544-cold-sesame-noodles-with-cucumber-corn-and-basil",
+    "expected_fixture_filename": "cooking_nytimes_com_recipes_1024544_cold_sesame_noodles_with_cucumber_corn_and_basil.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "cookpad.com",
+    "url": "https://cookpad.com/uk/recipes/17000197-red-cabbage-salad-with-sesame-dressing",
+    "expected_fixture_filename": "cookpad_com_uk_recipes_17000197_red_cabbage_salad_with_sesame_dressing.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "coop.se",
+    "url": "https://www.coop.se/recept/pasta-carbonara-klassiskt-recept/",
+    "expected_fixture_filename": "coop_se_recept_pasta_carbonara_klassiskt_recept_.html",
+    "status_class": "known_unscrapable",
+    "notes": "Imported from legacy sitesCantFix list.",
+    "has_site_config": false
+  },
+  {
+    "site": "copykat.com",
+    "url": "https://copykat.com/olive-garden-cappellini-pomodoro/",
+    "expected_fixture_filename": "copykat_com_olive_garden_cappellini_pomodoro_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "countryliving.com",
+    "url": "https://www.countryliving.com/food-drinks/a43668000/lasagna-soup-recipe/",
+    "expected_fixture_filename": "countryliving_com_food_drinks_a43668000_lasagna_soup_recipe_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "creativecanning.com",
+    "url": "https://creativecanning.com/canning-beef-pot-pie-filling/",
+    "expected_fixture_filename": "creativecanning_com_canning_beef_pot_pie_filling_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "creativecanning.com",
+    "url": "https://creativecanning.com/elderberry-jelly/",
+    "expected_fixture_filename": "creativecanning_com_elderberry_jelly_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "cucchiaio.it",
+    "url": "https://www.cucchiaio.it/ricetta/ricetta-penne-pesto-zucchine/",
+    "expected_fixture_filename": "cucchiaio_it_ricetta_ricetta_penne_pesto_zucchine_.html",
+    "status_class": "known_blocked",
+    "notes": "Imported from legacy siteErrors list.",
+    "has_site_config": false
+  },
+  {
+    "site": "cuisineaz.com",
+    "url": "https://www.cuisineaz.com/recettes/tarte-fine-aux-figues-de-cyril-lignac-116607.aspx",
+    "expected_fixture_filename": "cuisineaz_com_recettes_tarte_fine_aux_figues_de_cyril_lignac_116607_aspx.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "cybercook.com.br",
+    "url": "https://cybercook.com.br/receitas/legumes/receita-de-couve-flor-assada-vegana-122859",
+    "expected_fixture_filename": "cybercook_com_br_receitas_legumes_receita_de_couve_flor_assada_vegana_122859.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "davidlebovitz.com",
+    "url": "https://www.davidlebovitz.com/summer-fruit-tart-berries-almond-cream/",
+    "expected_fixture_filename": "davidlebovitz_com_summer_fruit_tart_berries_almond_cream_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "delish.com",
+    "url": "https://www.delish.com/cooking/recipe-ideas/recipes/a49383/apple-crisp-cookie-cups-recipe/",
+    "expected_fixture_filename": "delish_com_cooking_recipe_ideas_recipes_a49383_apple_crisp_cookie_cups_recipe_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "ditchthecarbs.com",
+    "url": "https://www.ditchthecarbs.com/garlic-keto-naan-bread-almond-flour/",
+    "expected_fixture_filename": "ditchthecarbs_com_garlic_keto_naan_bread_almond_flour_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "domesticate-me.com",
+    "url": "https://domesticate-me.com/stovetop-stuffing-with-sausage-apple-and-onion/",
+    "expected_fixture_filename": "domesticate_me_com_stovetop_stuffing_with_sausage_apple_and_onion_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "eatingbirdfood.com",
+    "url": "https://www.eatingbirdfood.com/baked-turkey-meatballs/",
+    "expected_fixture_filename": "eatingbirdfood_com_baked_turkey_meatballs_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "eatingwell.com",
+    "url": "https://www.eatingwell.com/recipe/8069828/vegetarian-stuffed-onions/",
+    "expected_fixture_filename": "eatingwell_com_recipe_8069828_vegetarian_stuffed_onions_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "eatsmarter.com",
+    "url": "https://eatsmarter.com/recipes/grilled-vegetables-with-miso-dressing",
+    "expected_fixture_filename": "eatsmarter_com_recipes_grilled_vegetables_with_miso_dressing.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "eatwhattonight.com",
+    "url": "https://eatwhattonight.com/2022/06/steamed-tofu-with-century-egg-and-meat-floss/",
+    "expected_fixture_filename": "eatwhattonight_com_2022_06_steamed_tofu_with_century_egg_and_meat_floss_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "emmikochteinfach.de",
+    "url": "https://emmikochteinfach.de/original-bruschetta-rezept-mit-tomaten/",
+    "expected_fixture_filename": "emmikochteinfach_de_original_bruschetta_rezept_mit_tomaten_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "en.wikibooks.org",
+    "url": "https://en.wikibooks.org/wiki/Cookbook:Cr%C3%A8me_Anglaise",
+    "expected_fixture_filename": "en_wikibooks_org_wiki_Cookbook_Cr%C3%A8me_Anglaise.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": true
+  },
+  {
+    "site": "epicurious.com",
+    "url": "https://www.epicurious.com/recipes/food/views/stovetop-apple-crisp",
+    "expected_fixture_filename": "epicurious_com_recipes_food_views_stovetop_apple_crisp.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "ethanchlebowski.com",
+    "url": "https://www.ethanchlebowski.com/cooking-techniques-recipes/steak-amp-corn-salsa-tostada",
+    "expected_fixture_filename": "ethanchlebowski_com_cooking_techniques_recipes_steak_amp_corn_salsa_tostada.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": true
+  },
+  {
+    "site": "fifteenspatulas.com",
+    "url": "https://www.fifteenspatulas.com/thomas-kellers-buttermilk-fried-chicken/",
+    "expected_fixture_filename": "fifteenspatulas_com_thomas_kellers_buttermilk_fried_chicken_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "finedininglovers.com",
+    "url": "https://www.finedininglovers.com/recipes/appetizer/green-salad-seaweed-red-prawns",
+    "expected_fixture_filename": "finedininglovers_com_recipes_appetizer_green_salad_seaweed_red_prawns.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "food.com",
+    "url": "https://www.food.com/recipe/lebanese-lentil-salad-47961",
+    "expected_fixture_filename": "food_com_recipe_lebanese_lentil_salad_47961.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "food52.com",
+    "url": "https://food52.com/recipes/89440-best-grilled-spatchcocked-chicken",
+    "expected_fixture_filename": "food52_com_recipes_89440_best_grilled_spatchcocked_chicken.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "foodnetwork.co.uk",
+    "url": "https://foodnetwork.co.uk/recipes/tom-kerridges-spinach-and-mint-raita",
+    "expected_fixture_filename": "foodnetwork_co_uk_recipes_tom_kerridges_spinach_and_mint_raita.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "foodrepublic.com",
+    "url": "https://www.foodrepublic.com/1366849/grilled-chilean-sea-bass-with-garlic-butter-recipe/",
+    "expected_fixture_filename": "foodrepublic_com_1366849_grilled_chilean_sea_bass_with_garlic_butter_recipe_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "forksoverknives.com",
+    "url": "https://www.forksoverknives.com/recipes/vegan-pasta-noodles/butternut-mac-and-cheese-broccoli/",
+    "expected_fixture_filename": "forksoverknives_com_recipes_vegan_pasta_noodles_butternut_mac_and_cheese_broccoli_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "forktospoon.com",
+    "url": "https://forktospoon.com/blackstone-tilapia/",
+    "expected_fixture_filename": "forktospoon_com_blackstone_tilapia_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "fredriksfika.allas.se",
+    "url": "https://fredriksfika.allas.se/fredriks-middagstips/pesto-med-pistage/",
+    "expected_fixture_filename": "fredriksfika_allas_se_fredriks_middagstips_pesto_med_pistage_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "gimmesomeoven.com",
+    "url": "https://www.gimmesomeoven.com/grilled-peaches-bourbon-caramel-sauce/",
+    "expected_fixture_filename": "gimmesomeoven_com_grilled_peaches_bourbon_caramel_sauce_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "godt.no",
+    "url": "https://www.godt.no/oppskrifter/kaker/frukt-og-baerkaker/9826/enkel-og-saftig-eplekake",
+    "expected_fixture_filename": "godt_no_oppskrifter_kaker_frukt_og_baerkaker_9826_enkel_og_saftig_eplekake.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "gonnawantseconds.com",
+    "url": "https://www.gonnawantseconds.com/alton-brown-meatloaf-recipe/",
+    "expected_fixture_filename": "gonnawantseconds_com_alton_brown_meatloaf_recipe_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "goodfooddiscoveries.com",
+    "url": "https://goodfooddiscoveries.com/shrimp-scampi-garlic-bread/",
+    "expected_fixture_filename": "goodfooddiscoveries_com_shrimp_scampi_garlic_bread_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "greatbritishchefs.com",
+    "url": "https://www.greatbritishchefs.com/recipes/beef-bibimbap-recipe",
+    "expected_fixture_filename": "greatbritishchefs_com_recipes_beef_bibimbap_recipe.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "halfbakedharvest.com",
+    "url": "https://www.halfbakedharvest.com/broccoli-cheddar-chicken/",
+    "expected_fixture_filename": "halfbakedharvest_com_broccoli_cheddar_chicken_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "handletheheat.com",
+    "url": "https://handletheheat.com/pumpkin-bars-with-brown-sugar-frosting/",
+    "expected_fixture_filename": "handletheheat_com_pumpkin_bars_with_brown_sugar_frosting_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "hassanchef.com",
+    "url": "https://www.hassanchef.com/2021/09/banjara-kebab.html",
+    "expected_fixture_filename": "hassanchef_com_2021_09_banjara_kebab_html.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "headbangerskitchen.com",
+    "url": "https://headbangerskitchen.com/steak-creamed-spinach/",
+    "expected_fixture_filename": "headbangerskitchen_com_steak_creamed_spinach_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "healthyeating.nhlbi.nih.gov",
+    "url": "https://healthyeating.nhlbi.nih.gov/recipedetail.aspx?linkId=11&cId=1&rId=4",
+    "expected_fixture_filename": "healthyeating_nhlbi_nih_gov_recipedetail_aspx_linkId=11&cId=1&rId=4.html",
+    "status_class": "known_blocked",
+    "notes": "Imported from legacy siteErrors list.",
+    "has_site_config": false
+  },
+  {
+    "site": "heb.com",
+    "url": "https://www.heb.com/recipe/recipe-item/grilled-asparagus/1392765670705",
+    "expected_fixture_filename": "heb_com_recipe_recipe_item_grilled_asparagus_1392765670705.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "hellofresh.co.uk",
+    "url": "https://www.hellofresh.co.uk/recipes/market/serrano-ham-fig-jam-and-mozzarella-salad-64cc52602864fe111ef99af9",
+    "expected_fixture_filename": "hellofresh_co_uk_recipes_market_serrano_ham_fig_jam_and_mozzarella_salad_64cc52602864fe111ef99af9.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "hostthetoast.com",
+    "url": "https://hostthetoast.com/20-minute-corn-carbonara/",
+    "expected_fixture_filename": "hostthetoast_com_20_minute_corn_carbonara_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "ica.se",
+    "url": "https://www.ica.se/recept/billig-vegolasagne-729889/",
+    "expected_fixture_filename": "ica_se_recept_billig_vegolasagne_729889_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "im-worthy.com",
+    "url": "https://im-worthy.com/best-watermelon-cucumber-salad-recipe/",
+    "expected_fixture_filename": "im_worthy_com_best_watermelon_cucumber_salad_recipe_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "indianhealthyrecipes.com",
+    "url": "https://www.indianhealthyrecipes.com/lauki-sabzi/",
+    "expected_fixture_filename": "indianhealthyrecipes_com_lauki_sabzi_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "insanelygoodrecipes.com",
+    "url": "https://insanelygoodrecipes.com/sweet-potato-fries/",
+    "expected_fixture_filename": "insanelygoodrecipes_com_sweet_potato_fries_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "inspiralized.com",
+    "url": "https://inspiralized.com/carrot-and-potato-chickpea-curry-with-lentils/",
+    "expected_fixture_filename": "inspiralized_com_carrot_and_potato_chickpea_curry_with_lentils_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "izzycooking.com",
+    "url": "https://izzycooking.com/sous-vide-chuck-roast/",
+    "expected_fixture_filename": "izzycooking_com_sous_vide_chuck_roast_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "jamieoliver.com",
+    "url": "https://www.jamieoliver.com/recipes/chicken-recipes/chicken-goujons/",
+    "expected_fixture_filename": "jamieoliver_com_recipes_chicken_recipes_chicken_goujons_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "jimcooksfoodgood.com",
+    "url": "https://jimcooksfoodgood.com/greek-chicken-and-orzo/",
+    "expected_fixture_filename": "jimcooksfoodgood_com_greek_chicken_and_orzo_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "joyfoodsunshine.com",
+    "url": "https://joyfoodsunshine.com/the-most-amazing-chocolate-chip-cookies/",
+    "expected_fixture_filename": "joyfoodsunshine_com_the_most_amazing_chocolate_chip_cookies_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "justataste.com",
+    "url": "https://www.justataste.com/frankenstein-rice-krispie-treats-recipe/",
+    "expected_fixture_filename": "justataste_com_frankenstein_rice_krispie_treats_recipe_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "justonecookbook.com",
+    "url": "https://www.justonecookbook.com/zucchini-corn-stir-fry/",
+    "expected_fixture_filename": "justonecookbook_com_zucchini_corn_stir_fry_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "kennymcgovern.com",
+    "url": "https://kennymcgovern.com/scottish-square-sausage",
+    "expected_fixture_filename": "kennymcgovern_com_scottish_square_sausage.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "kingarthurbaking.com",
+    "url": "https://www.kingarthurbaking.com/recipes/grilled-flatbread-recipe",
+    "expected_fixture_filename": "kingarthurbaking_com_recipes_grilled_flatbread_recipe.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "kitchenstories.com",
+    "url": "https://www.kitchenstories.com/de/rezepte/gegrillter-lachs",
+    "expected_fixture_filename": "kitchenstories_com_de_rezepte_gegrillter_lachs.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "kochbar.de",
+    "url": "https://www.kochbar.de/rezept/547756/Omelette-mit-Pilzen-und-Garnelen.html",
+    "expected_fixture_filename": "kochbar_de_rezept_547756_Omelette_mit_Pilzen_und_Garnelen_html.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "koket.se",
+    "url": "https://www.koket.se/pasta-med-kramig-svampsas",
+    "expected_fixture_filename": "koket_se_pasta_med_kramig_svampsas.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "kuchnia-domowa.pl",
+    "url": "https://kuchnia-domowa.pl/przepisy/dodatki-do-dan/621-fasolka-szparagowa-w-migdalach",
+    "expected_fixture_filename": "kuchnia_domowa_pl_przepisy_dodatki_do_dan_621_fasolka_szparagowa_w_migdalach.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "leanandgreenrecipes.net",
+    "url": "https://leanandgreenrecipes.net/recipes/american/spaghetti-squash-bolognese/",
+    "expected_fixture_filename": "leanandgreenrecipes_net_recipes_american_spaghetti_squash_bolognese_.html",
+    "status_class": "known_blocked",
+    "notes": "Imported from legacy siteErrors list.",
+    "has_site_config": false
+  },
+  {
+    "site": "lecker.de",
+    "url": "https://www.lecker.de/bauernfruehstueck-rueckenwind-77094.html",
+    "expected_fixture_filename": "lecker_de_bauernfruehstueck_rueckenwind_77094_html.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "lecremedelacrumb.com",
+    "url": "https://www.lecremedelacrumb.com/cilantro-lime-grilled-chicken-thighs/",
+    "expected_fixture_filename": "lecremedelacrumb_com_cilantro_lime_grilled_chicken_thighs_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "lekkerensimpel.com",
+    "url": "https://www.lekkerensimpel.com/tortellini-met-tomatensaus/",
+    "expected_fixture_filename": "lekkerensimpel_com_tortellini_met_tomatensaus_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "littlespicejar.com",
+    "url": "https://littlespicejar.com/mexican-shrimp-cocktail-stuffed-avocados/",
+    "expected_fixture_filename": "littlespicejar_com_mexican_shrimp_cocktail_stuffed_avocados_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "livelytable.com",
+    "url": "https://livelytable.com/spanish-potato-and-chorizo-soup/",
+    "expected_fixture_filename": "livelytable_com_spanish_potato_and_chorizo_soup_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "lovingitvegan.com",
+    "url": "https://lovingitvegan.com/vegan-brownies/",
+    "expected_fixture_filename": "lovingitvegan_com_vegan_brownies_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "maangchi.com",
+    "url": "https://www.maangchi.com/recipe/dwaeji-kimchi-duruchigi",
+    "expected_fixture_filename": "maangchi_com_recipe_dwaeji_kimchi_duruchigi.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "madensverden.dk",
+    "url": "https://madensverden.dk/kalkun-i-paprikasauce/",
+    "expected_fixture_filename": "madensverden_dk_kalkun_i_paprikasauce_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "madewithlau.com",
+    "url": "https://www.madewithlau.com/recipes/sesame-chicken",
+    "expected_fixture_filename": "madewithlau_com_recipes_sesame_chicken.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "madsvin.com",
+    "url": "https://madsvin.com/surdejspizza/",
+    "expected_fixture_filename": "madsvin_com_surdejspizza_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "marmiton.org",
+    "url": "https://www.marmiton.org/recettes/recette_salade-estivale-mozzarella-basilic-melon-et-tomate_338438.aspx",
+    "expected_fixture_filename": "marmiton_org_recettes_recette_salade_estivale_mozzarella_basilic_melon_et_tomate_338438_aspx.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "marthastewart.com",
+    "url": "https://www.marthastewart.com/1545904/wild-salmon-and-romanesco-pilaf",
+    "expected_fixture_filename": "marthastewart_com_1545904_wild_salmon_and_romanesco_pilaf.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "matprat.no",
+    "url": "https://www.matprat.no/oppskrifter/rask/grove-pannekaker/",
+    "expected_fixture_filename": "matprat_no_oppskrifter_rask_grove_pannekaker_.html",
+    "status_class": "known_blocked",
+    "notes": "Imported from legacy siteErrors list.",
+    "has_site_config": false
+  },
+  {
+    "site": "melskitchencafe.com",
+    "url": "https://www.melskitchencafe.com/oatmeal-chocolate-chip-peanut-butter-toffee-cookies/",
+    "expected_fixture_filename": "melskitchencafe_com_oatmeal_chocolate_chip_peanut_butter_toffee_cookies_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "mindmegette.hu",
+    "url": "https://www.mindmegette.hu/paradicsomos-kaposzta-vi.recept/",
+    "expected_fixture_filename": "mindmegette_hu_paradicsomos_kaposzta_vi_recept_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "minimalistbaker.com",
+    "url": "https://minimalistbaker.com/easy-vegan-stuffed-shells/",
+    "expected_fixture_filename": "minimalistbaker_com_easy_vegan_stuffed_shells_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "ministryofcurry.com",
+    "url": "https://ministryofcurry.com/overnight-oats-with-chia-seeds/",
+    "expected_fixture_filename": "ministryofcurry_com_overnight_oats_with_chia_seeds_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "misya.info",
+    "url": "https://www.misya.info/ricetta/borek-di-carne.htm",
+    "expected_fixture_filename": "misya_info_ricetta_borek_di_carne_htm.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "mob.co.uk",
+    "url": "https://www.mob.co.uk/recipes/high-protein-chopped-broccoli-salad",
+    "expected_fixture_filename": "mob_co_uk_recipes_high_protein_chopped_broccoli_salad.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "momswithcrockpots.com",
+    "url": "https://momswithcrockpots.com/crockpot-stuffed-pepper-soup/",
+    "expected_fixture_filename": "momswithcrockpots_com_crockpot_stuffed_pepper_soup_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "motherthyme.com",
+    "url": "https://www.motherthyme.com/2018/01/pork-egg-roll-bowl.html",
+    "expected_fixture_filename": "motherthyme_com_2018_01_pork_egg_roll_bowl_html.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "mybakingaddiction.com",
+    "url": "https://www.mybakingaddiction.com/raspberry-lemon-cookies/",
+    "expected_fixture_filename": "mybakingaddiction_com_raspberry_lemon_cookies_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "mykitchen101.com",
+    "url": "https://mykitchen101.com/%e6%9d%be%e8%bd%af%e9%a6%99%e5%96%b7%e5%96%b7%e7%9a%84%e7%83%a4%e5%92%96%e5%95%a1%e9%b8%a1%e8%9b%8b%e7%b3%95/",
+    "expected_fixture_filename": "mykitchen101_com_%e6%9d%be%e8%bd%af%e9%a6%99%e5%96%b7%e5%96%b7%e7%9a%84%e7%83%a4%e5%92%96%e5%95%a1%e9%b8%a1%e8%9b%8b%e7%b3%95_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "mykitchen101en.com",
+    "url": "https://mykitchen101en.com/eggless-lemon-peach-baked-cheesecake/",
+    "expected_fixture_filename": "mykitchen101en_com_eggless_lemon_peach_baked_cheesecake_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "myrecipes.com",
+    "url": "https://www.myrecipes.com/recipe/grilled-bone-in-chicken-thighs",
+    "expected_fixture_filename": "myrecipes_com_recipe_grilled_bone_in_chicken_thighs.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "ninjatestkitchen.eu",
+    "url": "https://ninjatestkitchen.eu/recipe/raspberry-white-chocolate-blondies/",
+    "expected_fixture_filename": "ninjatestkitchen_eu_recipe_raspberry_white_chocolate_blondies_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "nosalty.hu",
+    "url": "https://www.nosalty.hu/recept/szaftos-brassoi-apropecsenye",
+    "expected_fixture_filename": "nosalty_hu_recept_szaftos_brassoi_apropecsenye.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "nourishedbynutrition.com",
+    "url": "https://nourishedbynutrition.com/healthy-tuna-salad-no-mayo/",
+    "expected_fixture_filename": "nourishedbynutrition_com_healthy_tuna_salad_no_mayo_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "number-2-pencil.com",
+    "url": "https://www.number-2-pencil.com/honey-chipotle-shredded-beef-tacos/",
+    "expected_fixture_filename": "number_2_pencil_com_honey_chipotle_shredded_beef_tacos_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "ohsheglows.com",
+    "url": "https://ohsheglows.com/2011/01/31/15-minute-creamy-avocado-pasta/",
+    "expected_fixture_filename": "ohsheglows_com_2011_01_31_15_minute_creamy_avocado_pasta_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "omnivorescookbook.com",
+    "url": "https://omnivorescookbook.com/black-pepper-chicken/",
+    "expected_fixture_filename": "omnivorescookbook_com_black_pepper_chicken_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "paleorunningmomma.com",
+    "url": "https://www.paleorunningmomma.com/paleo-chicken-cutlets-whole30/",
+    "expected_fixture_filename": "paleorunningmomma_com_paleo_chicken_cutlets_whole30_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "panelinha.com.br",
+    "url": "https://panelinha.com.br/receita/caponata-de-forno",
+    "expected_fixture_filename": "panelinha_com_br_receita_caponata_de_forno.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "persnicketyplates.com",
+    "url": "https://www.persnicketyplates.com/crock-pot-honey-bourbon-chicken/",
+    "expected_fixture_filename": "persnicketyplates_com_crock_pot_honey_bourbon_chicken_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "pickuplimes.com",
+    "url": "https://www.pickuplimes.com/recipe/berries-cream-instant-oatmeal-1025",
+    "expected_fixture_filename": "pickuplimes_com_recipe_berries_cream_instant_oatmeal_1025.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "pingodoce.pt",
+    "url": "https://www.pingodoce.pt/receitas/panquecas-japonesas/",
+    "expected_fixture_filename": "pingodoce_pt_receitas_panquecas_japonesas_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "pinkowlkitchen.com",
+    "url": "https://pinkowlkitchen.com/southern-candied-yams-old-fashioned-soul-food-recipe/",
+    "expected_fixture_filename": "pinkowlkitchen_com_southern_candied_yams_old_fashioned_soul_food_recipe_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "platingpixels.com",
+    "url": "https://www.platingpixels.com/slow-cooker-shredded-chicken/",
+    "expected_fixture_filename": "platingpixels_com_slow_cooker_shredded_chicken_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "pressureluckcooking.com",
+    "url": "https://pressureluckcooking.com/instant-pot-pasta-bolognese/",
+    "expected_fixture_filename": "pressureluckcooking_com_instant_pot_pasta_bolognese_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "primaledgehealth.com",
+    "url": "https://www.primaledgehealth.com/cheese-ball-recipe-no-nuts/",
+    "expected_fixture_filename": "primaledgehealth_com_cheese_ball_recipe_no_nuts_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "przepisy.pl",
+    "url": "https://www.przepisy.pl/przepis/gulasz-wegierski-z-ziemniakami",
+    "expected_fixture_filename": "przepisy_pl_przepis_gulasz_wegierski_z_ziemniakami.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "rainbowplantlife.com",
+    "url": "https://rainbowplantlife.com/the-best-vegan-crunchwrap-supreme/",
+    "expected_fixture_filename": "rainbowplantlife_com_the_best_vegan_crunchwrap_supreme_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "realfood.tesco.com",
+    "url": "https://realfood.tesco.com/recipes/jamies-rogue-ratatouille-risotto.html",
+    "expected_fixture_filename": "realfood_tesco_com_recipes_jamies_rogue_ratatouille_risotto_html.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "realsimple.com",
+    "url": "https://www.realsimple.com/grilled-swordfish-with-couscous-and-tomatoes-7963013",
+    "expected_fixture_filename": "realsimple_com_grilled_swordfish_with_couscous_and_tomatoes_7963013.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "receitasnestle.com.br",
+    "url": "https://www.receitasnestle.com.br/receitas/receita-de-crumble-de-pera",
+    "expected_fixture_filename": "receitasnestle_com_br_receitas_receita_de_crumble_de_pera.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "reciperunner.com",
+    "url": "https://reciperunner.com/chicken-blt-salad/",
+    "expected_fixture_filename": "reciperunner_com_chicken_blt_salad_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "recipes.timesofindia.com",
+    "url": "https://recipes.timesofindia.com/recipes/khasta-kachodi/rs55415543.cms",
+    "expected_fixture_filename": "recipes_timesofindia_com_recipes_khasta_kachodi_rs55415543_cms.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "recipetineats.com",
+    "url": "https://www.recipetineats.com/one-pot-baked-greek-chicken-orzo-risoni/",
+    "expected_fixture_filename": "recipetineats_com_one_pot_baked_greek_chicken_orzo_risoni_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "redhousespice.com",
+    "url": "https://redhousespice.com/peking-duck/",
+    "expected_fixture_filename": "redhousespice_com_peking_duck_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "rezeptwelt.de",
+    "url": "https://www.rezeptwelt.de/brot-broetchen-rezepte/croissant-xl-hoernchen/5g5qz9pu-d6d98-490713-cfcd2-n3rrs0lq",
+    "expected_fixture_filename": "rezeptwelt_de_brot_broetchen_rezepte_croissant_xl_hoernchen_5g5qz9pu_d6d98_490713_cfcd2_n3rrs0lq.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "ricetta.it",
+    "url": "https://ricetta.it/torta-frangipane-alla-ricotta-e-fichi",
+    "expected_fixture_filename": "ricetta_it_torta_frangipane_alla_ricotta_e_fichi.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "ricette.giallozafferano.it",
+    "url": "https://ricette.giallozafferano.it/Parmigiana-di-melanzane.html",
+    "expected_fixture_filename": "ricette_giallozafferano_it_Parmigiana_di_melanzane_html.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "rutgerbakt.nl",
+    "url": "https://rutgerbakt.nl/taart-recepten/slof/sloffentaart-met-zwitserse-room-en-zomerfruit/",
+    "expected_fixture_filename": "rutgerbakt_nl_taart_recepten_slof_sloffentaart_met_zwitserse_room_en_zomerfruit_.html",
+    "status_class": "known_blocked",
+    "notes": "Imported from legacy siteErrors list.",
+    "has_site_config": false
+  },
+  {
+    "site": "sallysbakingaddiction.com",
+    "url": "https://sallysbakingaddiction.com/cinnamon-swirl-quick-bread/",
+    "expected_fixture_filename": "sallysbakingaddiction_com_cinnamon_swirl_quick_bread_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "saltpepperskillet.com",
+    "url": "https://saltpepperskillet.com/recipes/pulled-pork/#wprm-recipe-container-13727",
+    "expected_fixture_filename": "saltpepperskillet_com_recipes_pulled_pork_#wprm_recipe_container_13727.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "saveur.com",
+    "url": "https://www.saveur.com/recipes/brockton-villa-french-toast/",
+    "expected_fixture_filename": "saveur_com_recipes_brockton_villa_french_toast_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "seriouseats.com",
+    "url": "https://www.seriouseats.com/fingerling-potato-salad-with-chorizo-onion-and-arugula",
+    "expected_fixture_filename": "seriouseats_com_fingerling_potato_salad_with_chorizo_onion_and_arugula.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "simple-veganista.com",
+    "url": "https://simple-veganista.com/vegan-banana-tea-bread/",
+    "expected_fixture_filename": "simple_veganista_com_vegan_banana_tea_bread_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "simply-cookit.com",
+    "url": "https://www.simply-cookit.com/de/rezepte/granita",
+    "expected_fixture_filename": "simply_cookit_com_de_rezepte_granita.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "simplyquinoa.com",
+    "url": "https://www.simplyquinoa.com/breakfast-potatoes/",
+    "expected_fixture_filename": "simplyquinoa_com_breakfast_potatoes_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "simplywhisked.com",
+    "url": "https://www.simplywhisked.com/key-lime-pie/",
+    "expected_fixture_filename": "simplywhisked_com_key_lime_pie_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "skinnytaste.com",
+    "url": "https://www.skinnytaste.com/orange-chicken-makeover/",
+    "expected_fixture_filename": "skinnytaste_com_orange_chicken_makeover_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "sobors.hu",
+    "url": "https://sobors.hu/receptek/cikoriasalata-recept/",
+    "expected_fixture_filename": "sobors_hu_receptek_cikoriasalata_recept_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "southerncastiron.com",
+    "url": "https://southerncastiron.com/herb-and-cheese-drop-biscuits/",
+    "expected_fixture_filename": "southerncastiron_com_herb_and_cheese_drop_biscuits_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "southernliving.com",
+    "url": "https://www.southernliving.com/recipes/strawberry-swirl-cream-cheese-pound-cake-recipe",
+    "expected_fixture_filename": "southernliving_com_recipes_strawberry_swirl_cream_cheese_pound_cake_recipe.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "spendwithpennies.com",
+    "url": "https://www.spendwithpennies.com/egg-noodles/",
+    "expected_fixture_filename": "spendwithpennies_com_egg_noodles_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "springlane.de",
+    "url": "https://www.springlane.de/magazin/rezeptideen/walnussmus/",
+    "expected_fixture_filename": "springlane_de_magazin_rezeptideen_walnussmus_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "staysnatched.com",
+    "url": "https://www.staysnatched.com/smoked-queso-dip/",
+    "expected_fixture_filename": "staysnatched_com_smoked_queso_dip_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "steamykitchen.com",
+    "url": "https://steamykitchen.com/208514-chipotle-lime-shrimp-bowl-with-cilantro-jalapeno-yogurt-sauce-recipe.html",
+    "expected_fixture_filename": "steamykitchen_com_208514_chipotle_lime_shrimp_bowl_with_cilantro_jalapeno_yogurt_sauce_recipe_html.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "sundpaabudget.dk",
+    "url": "https://sundpaabudget.dk/shawarma-bowl/",
+    "expected_fixture_filename": "sundpaabudget_dk_shawarma_bowl_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "sunset.com",
+    "url": "https://www.sunset.com/recipe/miang-pla-lettuce-wraps-with-whole-fried-pompano",
+    "expected_fixture_filename": "sunset_com_recipe_miang_pla_lettuce_wraps_with_whole_fried_pompano.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "sweetcsdesigns.com",
+    "url": "https://sweetcsdesigns.com/the-best-easy-air-fryer-cornish-game-hens-recipe/",
+    "expected_fixture_filename": "sweetcsdesigns_com_the_best_easy_air_fryer_cornish_game_hens_recipe_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "sweetpeasandsaffron.com",
+    "url": "https://sweetpeasandsaffron.com/ultra-crispy-air-fryer-tofu/",
+    "expected_fixture_filename": "sweetpeasandsaffron_com_ultra_crispy_air_fryer_tofu_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "taste.com.au",
+    "url": "https://www.taste.com.au/recipes/roast-butter-chicken-smashed-potatoes-recipe/4ottk54j",
+    "expected_fixture_filename": "taste_com_au_recipes_roast_butter_chicken_smashed_potatoes_recipe_4ottk54j.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "tasteofhome.com",
+    "url": "https://www.tasteofhome.com/recipes/crispy-fried-chicken/",
+    "expected_fixture_filename": "tasteofhome_com_recipes_crispy_fried_chicken_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "tastesbetterfromscratch.com",
+    "url": "https://tastesbetterfromscratch.com/chicken-and-dumplings/",
+    "expected_fixture_filename": "tastesbetterfromscratch_com_chicken_and_dumplings_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "tastesoflizzyt.com",
+    "url": "https://www.tastesoflizzyt.com/easy-strawberry-cake-recipe/",
+    "expected_fixture_filename": "tastesoflizzyt_com_easy_strawberry_cake_recipe_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "tasty.co",
+    "url": "https://tasty.co/recipe/taco-spiced-crispy-potato-skins",
+    "expected_fixture_filename": "tasty_co_recipe_taco_spiced_crispy_potato_skins.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "tastykitchen.com",
+    "url": "https://tastykitchen.com/recipes/special-dietary-needs/vegetarian/crunchy-cashew-thai-quinoa-salad-with-ginger-peanut-dressing/",
+    "expected_fixture_filename": "tastykitchen_com_recipes_special_dietary_needs_vegetarian_crunchy_cashew_thai_quinoa_salad_with_ginger_peanut_dressing_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "theclevercarrot.com",
+    "url": "https://www.theclevercarrot.com/2023/08/easy-ground-pork-meat-filling-for-ravioli/",
+    "expected_fixture_filename": "theclevercarrot_com_2023_08_easy_ground_pork_meat_filling_for_ravioli_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "theexpertguides.com",
+    "url": "https://theexpertguides.com/recipes/banana-bread-recipe/",
+    "expected_fixture_filename": "theexpertguides_com_recipes_banana_bread_recipe_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "thehappyfoodie.co.uk",
+    "url": "https://thehappyfoodie.co.uk/recipes/jamie-olivers-herby-steak-and-crispy-potatoes/",
+    "expected_fixture_filename": "thehappyfoodie_co_uk_recipes_jamie_olivers_herby_steak_and_crispy_potatoes_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "thekitchencommunity.org",
+    "url": "https://thekitchencommunity.org/rice-side-dishes-for-salmon/",
+    "expected_fixture_filename": "thekitchencommunity_org_rice_side_dishes_for_salmon_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "thekitchenmagpie.com",
+    "url": "https://www.thekitchenmagpie.com/smoky-bacon-deviled-eggs/",
+    "expected_fixture_filename": "thekitchenmagpie_com_smoky_bacon_deviled_eggs_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "thekitchn.com",
+    "url": "https://www.thekitchn.com/french-onion-chicken-thighs-recipe-23562341",
+    "expected_fixture_filename": "thekitchn_com_french_onion_chicken_thighs_recipe_23562341.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "themodernproper.com",
+    "url": "https://themodernproper.com/crispy-chicken-tacos",
+    "expected_fixture_filename": "themodernproper_com_crispy_chicken_tacos.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "thepioneerwoman.com",
+    "url": "https://www.thepioneerwoman.com/food-cooking/recipes/a43991626/peanut-noodles-recipe/",
+    "expected_fixture_filename": "thepioneerwoman_com_food_cooking_recipes_a43991626_peanut_noodles_recipe_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "therecipecritic.com",
+    "url": "https://therecipecritic.com/sheet-pan-pancakes/",
+    "expected_fixture_filename": "therecipecritic_com_sheet_pan_pancakes_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "thespruceeats.com",
+    "url": "https://www.thespruceeats.com/rice-stuffed-tofu-pockets-2118773",
+    "expected_fixture_filename": "thespruceeats_com_rice_stuffed_tofu_pockets_2118773.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "thevintagemixer.com",
+    "url": "https://www.thevintagemixer.com/vegan-kale-caesar-salad-recipe-with-crispy-quinoa/",
+    "expected_fixture_filename": "thevintagemixer_com_vegan_kale_caesar_salad_recipe_with_crispy_quinoa_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "thewoksoflife.com",
+    "url": "https://thewoksoflife.com/cantonese-salt-pepper-pork-chops/",
+    "expected_fixture_filename": "thewoksoflife_com_cantonese_salt_pepper_pork_chops_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "tudogostoso.com.br",
+    "url": "https://www.tudogostoso.com.br/receita/187825-hamburguer-caseiro.html",
+    "expected_fixture_filename": "tudogostoso_com_br_receita_187825_hamburguer_caseiro_html.html",
+    "status_class": "known_blocked",
+    "notes": "Imported from legacy siteErrors list.",
+    "has_site_config": false
+  },
+  {
+    "site": "twopeasandtheirpod.com",
+    "url": "https://www.twopeasandtheirpod.com/caprese-orzo-salad/",
+    "expected_fixture_filename": "twopeasandtheirpod_com_caprese_orzo_salad_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "usapears.org",
+    "url": "https://usapears.org/recipe/spring-greens-and-berry-pear-layered-smoothie/",
+    "expected_fixture_filename": "usapears_org_recipe_spring_greens_and_berry_pear_layered_smoothie_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "valdemarsro.dk",
+    "url": "https://www.valdemarsro.dk/sproed-mexi-torsk-med-mangosalsa/",
+    "expected_fixture_filename": "valdemarsro_dk_sproed_mexi_torsk_med_mangosalsa_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "vanillaandbean.com",
+    "url": "https://vanillaandbean.com/roasted-red-bell-pepper-heirloom-tomato-soup/",
+    "expected_fixture_filename": "vanillaandbean_com_roasted_red_bell_pepper_heirloom_tomato_soup_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "vegetarbloggen.no",
+    "url": "https://www.vegetarbloggen.no/2023/07/15/peanottkake/",
+    "expected_fixture_filename": "vegetarbloggen_no_2023_07_15_peanottkake_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "vegolosi.it",
+    "url": "https://www.vegolosi.it/ricette-vegane/mini-peperoni-colorati-ripieni-di-formaggio-vegan-affumicato/",
+    "expected_fixture_filename": "vegolosi_it_ricette_vegane_mini_peperoni_colorati_ripieni_di_formaggio_vegan_affumicato_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "vegrecipesofindia.com",
+    "url": "https://www.vegrecipesofindia.com/sambhar-recipe-a-method-made-easy/",
+    "expected_fixture_filename": "vegrecipesofindia_com_sambhar_recipe_a_method_made_easy_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "watchwhatueat.com",
+    "url": "https://www.watchwhatueat.com/instant-pot-broccoli-cheddar-soup/",
+    "expected_fixture_filename": "watchwhatueat_com_instant_pot_broccoli_cheddar_soup_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "weightwatchers.com",
+    "url": "https://www.weightwatchers.com/us/recipe/pepperoni-flatbread-pizza/646d12d61a843705da13cb7f",
+    "expected_fixture_filename": "weightwatchers_com_us_recipe_pepperoni_flatbread_pizza_646d12d61a843705da13cb7f.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "wellplated.com",
+    "url": "https://www.wellplated.com/sweet-potato-cornbread/",
+    "expected_fixture_filename": "wellplated_com_sweet_potato_cornbread_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "whatsgabycooking.com",
+    "url": "https://whatsgabycooking.com/caprese-orzo-pasta-salad/",
+    "expected_fixture_filename": "whatsgabycooking_com_caprese_orzo_pasta_salad_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  },
+  {
+    "site": "woolworths.com.au",
+    "url": "https://www.woolworths.com.au/shop/recipes/slow-cooker-lamb-shanks-with-rosemary-and-thyme",
+    "expected_fixture_filename": "woolworths_com_au_shop_recipes_slow_cooker_lamb_shanks_with_rosemary_and_thyme.html",
+    "status_class": "known_unscrapable",
+    "notes": "Imported from legacy sitesCantFix list.",
+    "has_site_config": false
+  },
+  {
+    "site": "yemek.com",
+    "url": "https://yemek.com/tarif/jalepeno-biber-tursusu/",
+    "expected_fixture_filename": "yemek_com_tarif_jalepeno_biber_tursusu_.html",
+    "status_class": "known_unscrapable",
+    "notes": "Imported from legacy sitesCantFix list.",
+    "has_site_config": false
+  },
+  {
+    "site": "zenbelly.com",
+    "url": "https://www.zenbelly.com/sticky-sesame-tofu/",
+    "expected_fixture_filename": "zenbelly_com_sticky_sesame_tofu_.html",
+    "status_class": "legacy_reference",
+    "notes": "Imported from legacy sitePasses list.",
+    "has_site_config": false
+  }
+]

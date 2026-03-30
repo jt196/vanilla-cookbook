@@ -1,4 +1,14 @@
 export const siteConfigurations = {
+	'allrecipes.com': {
+		nameSelector: 'h1',
+		descriptionSelector: 'meta[name="description"]',
+		ingredientsSelector: '.mntl-structured-ingredients__list-item',
+		instructionsSelector: '.recipe__steps-content .mntl-sc-block-group--LI > .mntl-sc-block-html'
+	},
+	'aberlehome.com': {
+		ingredientsSelector: '.mv-create-ingredient-list li',
+		instructionsSelector: '.mv-create-instructions li'
+	},
 	'afghankitchenrecipes.com': {
 		servingsSelector: 'li.servings .value',
 		prepTimeSelector: 'li.prep-time .value',

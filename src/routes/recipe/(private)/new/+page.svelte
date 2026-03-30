@@ -2,12 +2,17 @@
 	import { onMount } from 'svelte'
 	import { goto } from '$app/navigation'
 	import { createRecipe } from '$lib/utils/crud'
-	import { handleScrape } from '$lib/utils/parse/parseHelpersClient'
+	import {
+		handleParse,
+		handleScrape,
+		isBlockedScrapeErrorMessage
+	} from '$lib/utils/parse/parseHelpersClient'
 	import RecipeForm from '$lib/components/recipe/RecipeForm.svelte'
 	import FeedbackMessage from '$lib/components/ui/FeedbackMessage.svelte'
 	import { defaultRecipe } from '$lib/utils/config'
 	import RecipeNewScrape from '$lib/components/recipe/RecipeNewScrape.svelte'
 	import Spinner from '$lib/components/ui/Spinner.svelte'
+	import { readBookmarkletPayload } from '$lib/utils/bookmarklet'
 
 	/**
 	 * The scraped recipe object.
@@ -59,8 +64,17 @@
 
 	onMount(async () => {
 		const urlParams = new URLSearchParams(window.location.search)
+		const bookmarkletPayload = readBookmarkletPayload(window)
 		let rawUrl = urlParams.get('url')
 		let text = urlParams.get('text')
+
+		if (!rawUrl && bookmarkletPayload?.url) {
+			rawUrl = bookmarkletPayload.url
+		}
+
+		if (!text && bookmarkletPayload?.text) {
+			text = bookmarkletPayload.text
+		}
 
 		if (!rawUrl && text && /^https?:\/\//.test(text)) {
 			rawUrl = text
@@ -90,8 +104,42 @@
 				}
 			} catch (error) {
 				console.error('[recipe:new] Scrape failed:', error)
-				feedbackMessage = typeof error === 'string' ? error : 'Error scraping URL.'
-				feedbackType = 'error'
+				const message = error?.message || (typeof error === 'string' ? error : 'Error scraping URL.')
+				if (isBlockedScrapeErrorMessage(message) && sharedText) {
+					initialMode = 'text'
+
+					if (apiKeyPresent && aiEnabled) {
+						try {
+							feedbackMessage = 'Site blocked direct scraping. Parsing captured page text...'
+							feedbackType = 'info'
+
+							const parsedData = await handleParse(null, sharedText, {
+								mode: 'parse',
+								unitsPreference: userUnits,
+								language: userLanguage
+							})
+
+							recipe = { ...recipe, ...parsedData }
+							feedbackMessage =
+								parsedData._status === 'complete'
+									? 'Site blocked scraping, but captured page text was parsed successfully.'
+									: 'Site blocked scraping. Captured page text was only partially parsed.'
+							feedbackType = parsedData._status === 'complete' ? 'success' : 'warning'
+						} catch (parseError) {
+							console.error('[recipe:new] Bookmarklet text parse failed:', parseError)
+							feedbackMessage =
+								'Site blocked direct scraping. Captured page text has been loaded into Text mode.'
+							feedbackType = 'warning'
+						}
+					} else {
+						feedbackMessage =
+							'Site blocked direct scraping. Captured page text has been loaded into Text mode.'
+						feedbackType = 'warning'
+					}
+				} else {
+					feedbackMessage = message
+					feedbackType = 'error'
+				}
 			}
 		} else if (sharedText && apiKeyPresent && aiEnabled) {
 			initialMode = 'text'
