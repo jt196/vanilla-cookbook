@@ -103,10 +103,17 @@ test('fresh install admin seed, login, and page smoke tests', async ({ page }, t
 		await loginField.fill(admin.username)
 		await page.getByLabel('Password').fill(admin.password)
 		await page.getByRole('button', { name: 'Login' }).click()
-		await page.waitForURL('**/user/**')
+		await page.waitForURL('/')
 	}
 
-	const userId = new URL(page.url()).pathname.split('/')[2]
+	// Extract userId from the nav "My Recipes" link (works whether we arrived via setup or login)
+	let userId = new URL(page.url()).pathname.split('/')[2]
+	if (!userId) {
+		const myRecipesLink = page.locator('a[href*="/user/"][href*="/recipes"]').first()
+		await expect(myRecipesLink).toBeVisible({ timeout: 15000 })
+		const href = await myRecipesLink.getAttribute('href')
+		userId = href?.split('/')[2]
+	}
 	await page.goto(`/user/${userId}/recipes`, { waitUntil: 'networkidle' })
 
 	for (const name of seededRecipes) {
