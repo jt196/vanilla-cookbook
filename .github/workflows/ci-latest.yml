@@ -14,6 +14,7 @@ jobs:
     uses: ./.github/workflows/run-tests.yml
     with:
       run_e2e: false
+      run_llm_smoke: false
     secrets:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}

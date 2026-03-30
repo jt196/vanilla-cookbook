@@ -2,6 +2,7 @@
 	"name": "sk-prisma-quickstart",
 	"version": "0.0.1",
 	"private": true,
+	"packageManager": "pnpm@10.15.0",
 	"scripts": {
 		"dev": "pnpm prisma generate && pnpm prisma migrate deploy && pnpm seed && vite dev",
 		"seed": "node --loader ./scripts/alias-loader.mjs ./src/lib/utils/seed/seed.js",
