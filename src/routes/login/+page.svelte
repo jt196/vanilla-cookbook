@@ -4,6 +4,7 @@
 	import Button from '$lib/components/ui/Button.svelte'
 	import Oauth from '$lib/components/auth/Oauth.svelte'
 	import { onMount } from 'svelte'
+	import { enhance } from '$app/forms'
 
 	/** @type {{data: any}} */
 	let { data, form } = $props()
@@ -22,6 +23,8 @@
 	let actionMessage = $derived(form?.message) // from action fail(...)
 	let errorMessage = $derived(actionMessage ?? flashMessage ?? null)
 
+	let submitting = $state(false)
+
 	onMount(() => {
 		// strip the query param if we had a flash message
 		if (flashMessage) {
@@ -36,7 +39,16 @@
 			<h2 class="card-title text-3xl">Login</h2>
 			<p class="text-base-content/70 mb-4">Welcome back!</p>
 
-			<form method="POST" class="space-y-4">
+			<form
+				method="POST"
+				class="space-y-4"
+				use:enhance={() => {
+					submitting = true
+					return async ({ update }) => {
+						await update()
+						submitting = false
+					}
+				}}>
 				<Input
 					type="text"
 					id="identifier"
@@ -53,7 +65,8 @@
 					required />
 
 				<div class="card-actions justify-end mt-6">
-					<Button type="submit" class="w-full">Login</Button>
+					<Button type="submit" class="w-full" loading={submitting} disabled={submitting}
+						>Login</Button>
 				</div>
 			</form>
 
