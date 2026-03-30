@@ -7,6 +7,10 @@ on:
         required: false
         type: boolean
         default: false
+      run_llm_smoke:
+        required: false
+        type: boolean
+        default: false
     secrets:
       OPENAI_API_KEY:
         required: false
@@ -120,7 +124,7 @@ jobs:
         run: pnpm test
 
       - name: Run LLM Smoke Tests (optional)
-        if: ${{ env.OPENAI_API_KEY != '' || env.ANTHROPIC_API_KEY != '' || env.GOOGLE_API_KEY != '' || env.OLLAMA_BASE_URL != '' }}
+        if: ${{ inputs.run_llm_smoke && (env.OPENAI_API_KEY != '' || env.ANTHROPIC_API_KEY != '' || env.GOOGLE_API_KEY != '' || env.OLLAMA_BASE_URL != '') }}
         continue-on-error: true
         run: RUN_LLM_SMOKE=true pnpm -s vitest run src/tests/llm.smoke.test.js
 

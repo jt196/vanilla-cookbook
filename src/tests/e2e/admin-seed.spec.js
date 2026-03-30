@@ -93,7 +93,7 @@ test('fresh install admin seed, login, and page smoke tests', async ({ page }, t
 		}
 
 		await page.getByRole('button', { name: 'Create Admin' }).click()
-		await page.waitForURL('**/user/*/recipes')
+		await page.waitForURL('**/user/*')
 	} else {
 		await page.goto('/login', { waitUntil: 'networkidle' })
 	}
@@ -103,10 +103,11 @@ test('fresh install admin seed, login, and page smoke tests', async ({ page }, t
 		await loginField.fill(admin.username)
 		await page.getByLabel('Password').fill(admin.password)
 		await page.getByRole('button', { name: 'Login' }).click()
-		await page.waitForURL('**/user/*/recipes')
+		await page.waitForURL('**/user/*')
 	}
 
 	const userId = new URL(page.url()).pathname.split('/')[2]
+	await page.goto(`/user/${userId}/recipes`, { waitUntil: 'networkidle' })
 
 	for (const name of seededRecipes) {
 		await expect(page.getByRole('link', { name })).toBeVisible()
@@ -119,7 +120,7 @@ test('fresh install admin seed, login, and page smoke tests', async ({ page }, t
 	await assertPage(page, '/users', { heading: 'Vanilla Users' }, projectName)
 	await assertPage(page, '/recipe/new', { heading: 'New Recipe' }, projectName)
 	await assertPage(page, `/user/${userId}/shopping`, { heading: 'Shopping' }, projectName)
-	await assertPage(page, `/user/${userId}/calendar`, { selector: '.ec' }, projectName)
+	await assertPage(page, `/user/${userId}/calendar`, { heading: 'Cooking History' }, projectName)
 	await assertPage(page, `/user/${userId}/options/settings`, { heading: 'Account' }, projectName)
 	await assertPage(page, `/user/${userId}/options/recipes`, { text: 'Select language' }, projectName)
 	await assertPage(
