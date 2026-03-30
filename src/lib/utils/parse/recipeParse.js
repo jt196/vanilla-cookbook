@@ -1,4 +1,4 @@
-import { ERRORS } from './parseErrors'
+import { ERRORS } from './parseErrors.js'
 import {
 	getAuthor,
 	getImage,
@@ -11,9 +11,47 @@ import {
 	getDomainFromUrl,
 	parseUsingSiteConfig,
 	extractMicrodata
-} from './parseHelpers'
+} from './parseHelpers.js'
 import { parse } from 'node-html-parser'
-import { siteConfigurations } from './siteConfigurations'
+import { siteConfigurations } from './siteConfigurations.js'
+
+export const SCRAPE_REQUEST_HEADERS = {
+	accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+	'accept-language': 'en-US,en;q=0.9',
+	'user-agent':
+		'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+}
+
+function hasValue(value) {
+	if (Array.isArray(value)) return value.length > 0
+	return value !== undefined && value !== null && value !== ''
+}
+
+function hasRecipeData(recipeRaw) {
+	if (!recipeRaw || typeof recipeRaw !== 'object') return false
+
+	return Boolean(
+		hasValue(recipeRaw.name) ||
+			hasValue(recipeRaw.recipeIngredient) ||
+			hasValue(recipeRaw.recipeInstructions) ||
+			hasValue(recipeRaw.description)
+	)
+}
+
+function mergeRecipeData(primary = null, fallback = null) {
+	if (!fallback || typeof fallback !== 'object') return primary
+	if (!primary || typeof primary !== 'object') return fallback
+
+	const merged = { ...primary }
+
+	for (const [key, fallbackValue] of Object.entries(fallback)) {
+		if (!hasValue(merged[key]) && hasValue(fallbackValue)) {
+			merged[key] = fallbackValue
+		}
+	}
+
+	return merged
+}
 
 /**
  * Parses a given HTML string to extract recipe details.
@@ -28,21 +66,24 @@ export function parseRecipe(html, url) {
 
 		let recipeRaw = parseJSONLD(root)
 		const domain = getDomainFromUrl(url)
+		const siteConfig = siteConfigurations[domain]
 
-		if (!recipeRaw || !recipeRaw.recipeIngredient) {
-			const siteConfig = siteConfigurations[domain]
+		if (!hasValue(recipeRaw?.recipeIngredient) || !hasValue(recipeRaw?.recipeInstructions)) {
 			if (siteConfig) {
-				console.log('Extracting using site config')
-				recipeRaw = parseUsingSiteConfig(root, siteConfig)
-			} else {
-				console.log('Extracting using microdata')
-				recipeRaw = extractMicrodata(root)
+				console.log('Augmenting structured data using site config')
+				recipeRaw = mergeRecipeData(recipeRaw, parseUsingSiteConfig(root, siteConfig))
+			}
+
+			if (!hasValue(recipeRaw?.recipeIngredient) || !hasValue(recipeRaw?.recipeInstructions)) {
+				console.log('Augmenting structured data using microdata')
+				recipeRaw = mergeRecipeData(recipeRaw, extractMicrodata(root))
 			}
 		}
-		if (!recipeRaw.recipeIngredient) throw ERRORS.MISSING_DATA
+
+		if (!hasRecipeData(recipeRaw)) throw ERRORS.MISSING_DATA
 
 		const author = recipeRaw.author ? getAuthor(recipeRaw.author) : domain
-		const sourceUrl = url
+		const sourceUrl = recipeRaw.sourceUrl || url
 		const description = recipeRaw.description
 		const cookTime = recipeRaw.cookTime
 		const imageUrl = getImage(recipeRaw.image)
@@ -86,7 +127,7 @@ export function parseRecipe(html, url) {
 		}
 	} catch (error) {
 		console.log('Error:', error)
-		return typeof error === 'string' ? error : 'Unknown error'
+		return typeof error === 'string' ? error : error?.message || 'Unknown error'
 	}
 }
 
@@ -99,11 +140,36 @@ export function parseRecipe(html, url) {
  * @throws {Error} If the request times out or fails.
  */
 export async function downloadHTML(url, timeoutMs = 15000) {
+	const response = await fetchHTMLResponse(url, timeoutMs)
+	if (!response.ok) {
+		const error = new Error(
+			`Upstream site returned HTTP ${response.status} ${response.statusText}`.trim()
+		)
+		error.html = response.html
+		error.status = response.status
+		throw error
+	}
+	return response.html
+}
+
+export async function fetchHTMLResponse(url, timeoutMs = 15000) {
 	const controller = new AbortController()
 	const timeoutId = setTimeout(() => controller.abort(), timeoutMs)
 	try {
-		const response = await fetch(url, { signal: controller.signal })
-		return response.text()
+		const response = await fetch(url, {
+			signal: controller.signal,
+			redirect: 'follow',
+			headers: SCRAPE_REQUEST_HEADERS
+		})
+		const html = await response.text()
+		return {
+			ok: response.ok,
+			status: response.status,
+			statusText: response.statusText,
+			contentType: response.headers?.get?.('content-type') || '',
+			finalUrl: response.url || url,
+			html
+		}
 	} catch (error) {
 		if (error?.name === 'AbortError') {
 			throw new Error(`Request timed out after ${timeoutMs}ms`)

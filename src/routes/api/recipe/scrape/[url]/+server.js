@@ -8,6 +8,7 @@ export async function GET({ params, locals }) {
 	const startedAt = Date.now()
 	let scrapedRecipe = null
 	let html = ''
+	let scrapeError = null
 	console.log(`[scrape:${reqId}] start`, { url })
 
 	try {
@@ -36,6 +37,8 @@ export async function GET({ params, locals }) {
 			ingredients: scrapedRecipe?.ingredients?.length ?? 0
 		})
 	} catch (err) {
+		scrapeError = err instanceof Error ? err : new Error(String(err))
+		html = typeof err?.html === 'string' ? err.html : html
 		console.error(`[scrape:${reqId}] Regular scrape failed:`, err)
 	}
 
@@ -86,7 +89,7 @@ export async function GET({ params, locals }) {
 	}
 
 	// Return partial scrape if possible
-	if (scrapedRecipe) {
+	if (isRecipeObject(scrapedRecipe) && hasRecipeFields(scrapedRecipe)) {
 		console.log(`[scrape:${reqId}] Returning partial scrape`, {
 			ms: Date.now() - startedAt,
 			hasName: !!scrapedRecipe?.name,
@@ -99,9 +102,14 @@ export async function GET({ params, locals }) {
 	// Total fail
 	console.error(`[scrape:${reqId}] Total failure - no data extracted`, {
 		ms: Date.now() - startedAt,
-		aiSkipReason
+		aiSkipReason,
+		scrapeError: scrapeError?.message
 	})
-	return jsonResponse({ message: 'Could not scrape the recipe.' }, 500)
+	const status = scrapeError?.message?.includes('Upstream site returned HTTP') ? 502 : 500
+	return jsonResponse(
+		{ message: scrapeError?.message || 'Could not scrape the recipe.' },
+		status
+	)
 }
 
 function jsonResponse(data, status) {
@@ -109,4 +117,12 @@ function jsonResponse(data, status) {
 		status,
 		headers: { 'Content-Type': 'application/json' }
 	})
+}
+
+function isRecipeObject(value) {
+	return Boolean(value && typeof value === 'object' && !Array.isArray(value))
+}
+
+function hasRecipeFields(recipe) {
+	return Boolean(recipe?.name || recipe?.ingredients?.length || recipe?.instructions?.length)
 }

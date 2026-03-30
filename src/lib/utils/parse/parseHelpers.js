@@ -60,24 +60,44 @@ export function durationToText(duration) {
 export function parseInstructions(instructions) {
 	if (!instructions) return []
 
-	// If instructions is an array of objects
-	if (Array.isArray(instructions) && instructions[0] && typeof instructions[0] === 'object') {
-		return instructions.map((v) => cleanString(v.text || v.name || ''))
-	}
-
-	// If instructions is an array of strings
-	if (Array.isArray(instructions) && typeof instructions[0] === 'string') {
-		return instructions.map(cleanString)
-	}
-
-	// If instructions is a string
 	if (typeof instructions === 'string') {
-		// Return it as a single-item array
 		return [cleanString(instructions)]
 	}
 
-	// Handle other types as needed
+	if (Array.isArray(instructions)) {
+		return instructions.flatMap(flattenInstructionNode).filter(Boolean)
+	}
+
+	if (typeof instructions === 'object') {
+		return flattenInstructionNode(instructions).filter(Boolean)
+	}
+
 	return []
+}
+
+function flattenInstructionNode(node) {
+	if (!node) return []
+
+	if (typeof node === 'string') {
+		const cleaned = cleanString(node)
+		return cleaned ? [cleaned] : []
+	}
+
+	if (Array.isArray(node)) {
+		return node.flatMap(flattenInstructionNode)
+	}
+
+	if (typeof node !== 'object') return []
+
+	const directText = cleanString(node.text || node.name || '')
+	if (directText && !Array.isArray(node.itemListElement)) {
+		return [directText]
+	}
+
+	const nestedSteps = flattenInstructionNode(node.itemListElement || node.itemList || [])
+	if (nestedSteps.length) return nestedSteps
+
+	return directText ? [directText] : []
 }
 
 /**
@@ -108,7 +128,8 @@ export function cleanString(str) {
 	if (typeof str !== 'string') {
 		return '' // or return some default value if desired
 	}
-	return str
+	return he
+		.decode(str)
 		.split('\n')
 		.map((line) => line.trim())
 		.filter((line) => line.length > 0)
@@ -159,6 +180,7 @@ export function parseVideo(video) {
 	if (!video) return {}
 	if (typeof video === 'string') return { videoUrl: video }
 	if (Array.isArray(video)) {
+		if (!video.length || !video[0]) return {}
 		return {
 			videoUrl: video[0].url || video[0].embedUrl,
 			videoThumbnail: video[0].thumbnailUrl,
@@ -189,35 +211,32 @@ export function getNutrition(nutrition) {
  * @returns {Object} An object containing extracted recipe data.
  */
 export function parseUsingSiteConfig(root, config) {
+	const getNodeValue = (selector, { multiple = false } = {}) => {
+		if (!selector) return multiple ? [] : null
+
+		const elements = [...(root.querySelectorAll(selector) ?? [])]
+		const values = elements
+			.map((el) => {
+				if (el.getAttribute('content')) return el.getAttribute('content')?.trim()
+				if (el.getAttribute('data-src')) return el.getAttribute('data-src')?.trim()
+				return el.text?.trim()
+			})
+			.filter(Boolean)
+
+		return multiple ? values : values[0] ?? null
+	}
+
 	return {
-		recipeYield: config.servingsSelector
-			? root.querySelector(config.servingsSelector)?.text.trim()
-			: null,
-		prepTime: config.prepTimeSelector
-			? root.querySelector(config.prepTimeSelector)?.text.trim()
-			: null,
-		cookTime: config.cookTimeSelector
-			? root.querySelector(config.cookTimeSelector)?.text.trim()
-			: null,
-		totalTime: config.totalTimeSelector
-			? root.querySelector(config.totalTimeSelector)?.text.trim()
-			: null,
-		recipeIngredient: config.ingredientsSelector
-			? [...root.querySelectorAll(config.ingredientsSelector)].map((el) => el.text.trim())
-			: [],
-		recipeInstructions: config.instructionsSelector
-			? [...root.querySelectorAll(config.instructionsSelector)].map((el) => el.text.trim())
-			: [],
-		recipeCategory: config.categorySelector
-			? [...root.querySelectorAll(config.categorySelector)].map((el) => {
-					return el.text.trim()
-				})
-			: [],
-		description: config.descriptionSelector
-			? root.querySelector(config.descriptionSelector)?.text.trim()
-			: null,
-		notes: config.notesSelector ? root.querySelector(config.notesSelector)?.text.trim() : null,
-		name: config.nameSelector ? root.querySelector(config.nameSelector)?.text.trim() : null
+		recipeYield: getNodeValue(config.servingsSelector),
+		prepTime: getNodeValue(config.prepTimeSelector),
+		cookTime: getNodeValue(config.cookTimeSelector),
+		totalTime: getNodeValue(config.totalTimeSelector),
+		recipeIngredient: getNodeValue(config.ingredientsSelector, { multiple: true }),
+		recipeInstructions: getNodeValue(config.instructionsSelector, { multiple: true }),
+		recipeCategory: getNodeValue(config.categorySelector, { multiple: true }),
+		description: getNodeValue(config.descriptionSelector),
+		notes: getNodeValue(config.notesSelector),
+		name: getNodeValue(config.nameSelector)
 	}
 }
 
@@ -227,8 +246,17 @@ export function parseUsingSiteConfig(root, config) {
  * @returns {string} The extracted domain.
  */
 export function getDomainFromUrl(url) {
-	const domain = new URL(url).hostname
-	return domain.replace('www.', '') // Remove 'www.' if it exists
+	if (typeof url !== 'string') return ''
+
+	const trimmedUrl = url.trim()
+	if (!/^https?:\/\//i.test(trimmedUrl)) return ''
+
+	try {
+		const domain = new URL(trimmedUrl).hostname
+		return domain.replace('www.', '')
+	} catch {
+		return ''
+	}
 }
 
 /**
@@ -433,8 +461,7 @@ export function extractIngredientText(item) {
  * @returns {string} The cleaned JSON string.
  */
 export function cleanJsonString(jsonString) {
-	// Decode HTML entities
-	let cleanedString = he.decode(jsonString)
+	let cleanedString = jsonString
 
 	// Remove tab characters
 	cleanedString = cleanedString.replace(/\t/g, '')
@@ -501,7 +528,9 @@ export function parseJSONLD(root) {
 
 	for (let jsonLD of jsonLDs) {
 		// Clean the JSON string
-		const cleanedJson = cleanJsonString(jsonLD.textContent || jsonLD.innerText)
+		const cleanedJson = cleanJsonString(
+			jsonLD.innerHTML || jsonLD.rawText || jsonLD.textContent || jsonLD.innerText
+		)
 
 		try {
 			recipeRaw = parseRecipeToJSON(cleanedJson)

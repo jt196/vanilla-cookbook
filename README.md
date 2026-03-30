@@ -74,6 +74,8 @@ Multiple import formats supported, exports supported. [Docs](https://vanilla-coo
 
 Scrape recipes using a browser bookmarklet or simply paste a URL in. Hundreds of sites supported. [Docs](https://vanilla-cookbook.readthedocs.io/en/latest/manual/usage/#recipe-add)
 
+For developer-facing scraping internals and the current compatibility matrix, see [Scraping Flow](docs/technical/scraping.md) and [Scrape Compatibility](docs/technical/scrape-compatibility.md).
+
 ### LLM Assist
 
 Add an LLM API key to activate these features. Google, OpenAI, Anthropic and Ollama currently supported.

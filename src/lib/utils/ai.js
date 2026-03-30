@@ -1,6 +1,11 @@
 import { HumanMessage, SystemMessage } from '@langchain/core/messages'
 import { env } from '$env/dynamic/private'
 import { languageLabels } from '$lib/submodules/recipe-ingredient-parser/src/i18n'
+import {
+	buildRecipeExtractionPrompt,
+	parseRecipeJsonOutput,
+	RECIPE_JSON_SHAPE
+} from '$lib/utils/aiShared'
 import { getDefaultModelsForProvider } from '$lib/utils/llmModels'
 
 /**
@@ -16,8 +21,6 @@ const unitsMap = {
  * Map of language codes to full language names for AI prompts
  * Matches the i18n language codes from recipe-ingredient-parser
  */
-const languageMap = languageLabels
-
 /**
  * Converts a Buffer to a base64 encoded image data URI.
  * @param {Buffer} buffer - Input buffer
@@ -52,52 +55,8 @@ function bufferToBase64ImageDataURI(buffer, mimeType) {
  * @param {string} [language='eng'] - Language code for output (eng, deu, ita, etc.)
  * @returns {string} The generated prompt.
  */
-const RECIPE_JSON_SHAPE = `{
-  "name": "",
-  "author": "",
-  "sourceUrl": "",
-  "imageUrl": "",
-  "description": "",
-  "notes": "",
-  "ingredients": ["ingredient 1", "ingredient 2"],
-  "instructions": ["Step 1", "Step 2"],
-  "cookTime": "",
-  "prepTime": "",
-  "totalTime": "",
-  "servings": "",
-  "nutrition": {}
-}`
-
 function buildRecipePrompt(inputLabel = 'Text', content = '', url = '', language = 'eng') {
-	const blockType = inputLabel
-	const urlLine = inputLabel.toLowerCase() === 'html' && url ? `\nURL: ${url}` : ''
-	const trimmedContent = content?.substring(0, 40000) || ''
-	const languageName = languageMap[language] || 'English'
-
-	return `
-You are a recipe extraction AI. Extract recipe data from the ${blockType} below and return it as a JSON object.
-
-Instructions:
-1. If the content is HTML, check for structured data like Schema.org Recipe JSON-LD.
-2. Otherwise, parse it like user-pasted recipe text or OCR from an image.
-3. Populate all fields that exist. Use empty strings or arrays if data is missing.
-4. Never guess or fabricate values.
-5. Return raw JSON only, no Markdown or code formatting.
-6. Return ingredients and instructions/directions as arrays of strings.
-7. Each ingredient to be a separate array element.
-8. Each instruction paragraph to be a separate array element.
-9. Format ingredients following these rules:
-   - Use decimal numbers (1.5 kg) instead of fractions (1 1/2 kg)
-   - Avoid prepositions like "of" (write "1.5 kg flour" not "1.5 kg of flour")
-   - Place extra preparation information after a comma (e.g., "1.5 kg flour, sifted")
-   - Avoid using "or" for alternative ingredients (pick one ingredient instead of "1.5 kg strong flour or all-purpose flour")
-10. If the content language is ${languageName}, preserve ingredient and instruction text in that language.
-
-Expected format:
-${RECIPE_JSON_SHAPE}
-
-${blockType}:
-"""${trimmedContent}"""${urlLine}`
+	return buildRecipeExtractionPrompt({ inputLabel, content, url, language })
 }
 
 /**
@@ -111,7 +70,7 @@ ${blockType}:
 function buildRecipeFromPrompt(userPrompt = '', preferredUnits = 'metric', language = 'eng') {
 	const trimmedPrompt = userPrompt?.substring(0, 4000) || ''
 	const unitsDescription = unitsMap[preferredUnits] || unitsMap.metric
-	const languageName = languageMap[language] || 'English'
+	const languageName = languageLabels[language] || 'English'
 
 	return `
 You are a recipe creation AI. Using the user prompt below, create a complete, plausible recipe and return it as JSON.
@@ -150,7 +109,7 @@ User prompt:
  */
 function buildRecipeTranslatePrompt(recipe, language = 'eng', fromLanguage = null) {
 	const languageName = languageMap[language] || 'English'
-	const fromLanguageName = fromLanguage ? languageMap[fromLanguage] || fromLanguage : null
+	const fromLanguageName = fromLanguage ? languageLabels[fromLanguage] || fromLanguage : null
 	const recipeJson = JSON.stringify(recipe, null, 2)
 
 	return `
@@ -273,59 +232,13 @@ async function loadChatClient(provider, model, type) {
  * @throws {SyntaxError} If JSON cannot be parsed or repaired
  */
 export function parseLLMJsonOutput(rawOutput) {
-	let output = (rawOutput || '').trim()
-
-	// Clean up markdown code fences
-	if (output.startsWith('```')) {
-		output = output.replace(/```json\s*|\s*```/g, '')
-	}
-	// Remove trailing commas
-	output = output.replace(/,\s*([\]}])/g, '$1')
-
-	// Try to extract JSON if there's extra content
-	const jsonMatch = output.match(/\{[\s\S]*\}/)
-	if (jsonMatch) {
-		output = jsonMatch[0]
-	}
-
 	try {
-		return JSON.parse(output)
+		return parseRecipeJsonOutput(rawOutput)
 	} catch (parseErr) {
 		// Log the problematic output for debugging
+		const output = (rawOutput || '').trim()
 		console.error('JSON parse error. Raw LLM output (first 500 chars):', output.substring(0, 500))
 		console.error('Parse error:', parseErr.message)
-
-		// Attempt to fix common truncation issues
-		const openBraces = (output.match(/\{/g) || []).length
-		const closeBraces = (output.match(/\}/g) || []).length
-		const openBrackets = (output.match(/\[/g) || []).length
-		const closeBrackets = (output.match(/\]/g) || []).length
-
-		// If truncated, try to close it
-		if (openBraces > closeBraces || openBrackets > closeBrackets) {
-			console.log('Attempting to repair truncated JSON...')
-
-			const lastCompleteMatch = output.match(
-				/^([\s\S]*(?:"\s*,|"\s*$|\]\s*,|\]\s*$|\d\s*,|\d\s*$|true\s*,|true\s*$|false\s*,|false\s*$|null\s*,|null\s*$))/
-			)
-
-			if (lastCompleteMatch) {
-				output = lastCompleteMatch[1].trim()
-				output = output.replace(/,\s*$/, '')
-			}
-
-			const newOpenBrackets = (output.match(/\[/g) || []).length
-			const newCloseBrackets = (output.match(/\]/g) || []).length
-			const newOpenBraces = (output.match(/\{/g) || []).length
-			const newCloseBraces = (output.match(/\}/g) || []).length
-
-			for (let i = 0; i < newOpenBrackets - newCloseBrackets; i++) output += ']'
-			for (let i = 0; i < newOpenBraces - newCloseBraces; i++) output += '}'
-
-			console.log('Repaired JSON (first 500 chars):', output.substring(0, 500))
-			return JSON.parse(output)
-		}
-
 		throw parseErr
 	}
 }

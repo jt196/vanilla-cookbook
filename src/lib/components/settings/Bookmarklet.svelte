@@ -1,5 +1,6 @@
 <script>
 	import Bookmark from '$lib/components/svg/Bookmark.svelte'
+	import { buildBookmarkletCode } from '$lib/utils/bookmarklet'
 	import { onMount } from 'svelte'
 
 	let bookmarkletCode
@@ -8,11 +9,7 @@
 	onMount(() => {
 		// Set the base URL and generate the bookmarklet code
 		baseUrl = window.location.origin
-		bookmarkletCode = `javascript:(function() {
-            var currentUrl = encodeURIComponent(window.location.href);
-            var newUrl = '${baseUrl}/recipe/new?url=' + currentUrl;
-            window.open(newUrl, '_blank');
-        })();`
+		bookmarkletCode = buildBookmarkletCode(baseUrl)
 	})
 </script>
 
@@ -26,7 +23,7 @@
 	</p>
 	<p>
 		3. When you're on a website, click on the bookmark, and it'll bring you to the new recipe page,
-		hopefully with the data loaded and ready to save.
+		with the source URL and captured page text ready for scraping or fallback parsing.
 	</p>
 </div>
 
