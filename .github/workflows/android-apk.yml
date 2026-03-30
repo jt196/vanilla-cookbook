@@ -53,7 +53,15 @@ jobs:
         env:
           BUILD_TOOLS_VERSION: "34.0.0"
 
+      - name: Rename signed APK for release asset
+        id: apk_asset
+        run: |
+          TAG_NAME="${{ github.event.release.tag_name || github.ref_name }}"
+          OUTPUT_FILE="vanilla-cookbook-${TAG_NAME}.apk"
+          cp "${{ steps.sign.outputs.signedReleaseFile }}" "$OUTPUT_FILE"
+          echo "file=$OUTPUT_FILE" >> "$GITHUB_OUTPUT"
+
       - name: Upload APK to release
         uses: softprops/action-gh-release@v2
         with:
-          files: ${{ steps.sign.outputs.signedReleaseFile }}
+          files: ${{ steps.apk_asset.outputs.file }}
