@@ -246,8 +246,17 @@ export function parseUsingSiteConfig(root, config) {
  * @returns {string} The extracted domain.
  */
 export function getDomainFromUrl(url) {
-	const domain = new URL(url).hostname
-	return domain.replace('www.', '') // Remove 'www.' if it exists
+	if (typeof url !== 'string') return ''
+
+	const trimmedUrl = url.trim()
+	if (!/^https?:\/\//i.test(trimmedUrl)) return ''
+
+	try {
+		const domain = new URL(trimmedUrl).hostname
+		return domain.replace('www.', '')
+	} catch {
+		return ''
+	}
 }
 
 /**

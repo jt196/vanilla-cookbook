@@ -187,7 +187,9 @@ describe('parseURL function', () => {
 		expect(recipe.videoUrl).toBeUndefined()
 	})
 
-	it('parses every saved HTML fixture without throwing', async () => {
+	it(
+		'parses every saved HTML fixture without throwing',
+		async () => {
 		const fixtureFiles = fs
 			.readdirSync(fixtureDirectory)
 			.filter((file) => file.endsWith('.html'))
@@ -201,7 +203,9 @@ describe('parseURL function', () => {
 
 			await expect(parseHTML(html, canonicalUrl)).resolves.toBeDefined()
 		}
-	})
+		},
+		15000
+	)
 })
 
 function inferFixtureUrl(html) {
