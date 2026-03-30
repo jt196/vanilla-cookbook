@@ -93,7 +93,7 @@ test('fresh install admin seed, login, and page smoke tests', async ({ page }, t
 		}
 
 		await page.getByRole('button', { name: 'Create Admin' }).click()
-		await page.waitForURL('**/user/*')
+		await page.waitForURL('**/user/**')
 	} else {
 		await page.goto('/login', { waitUntil: 'networkidle' })
 	}
@@ -103,7 +103,7 @@ test('fresh install admin seed, login, and page smoke tests', async ({ page }, t
 		await loginField.fill(admin.username)
 		await page.getByLabel('Password').fill(admin.password)
 		await page.getByRole('button', { name: 'Login' }).click()
-		await page.waitForURL('**/user/*')
+		await page.waitForURL('**/user/**')
 	}
 
 	const userId = new URL(page.url()).pathname.split('/')[2]
