@@ -179,7 +179,7 @@ test('fresh install admin seed, login, and page smoke tests', async ({ page }, t
 		await page.waitForURL('**/edit**', { timeout: 15000 })
 
 		// Wait for the form to be ready
-		const submitButton = page.getByRole('button', { name: 'Update Recipe' }).first()
+		const submitButton = page.getByRole('button', { name: 'Update' }).first()
 		await expect(submitButton).toBeVisible({ timeout: 15000 })
 
 		// Make a small change to the notes field
