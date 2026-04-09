@@ -5,6 +5,23 @@ import { createRecipePhotoEntry } from '$lib/utils/api.js'
 import { processImage } from '$lib/utils/image/imageBackend'
 import { recipes } from '$lib/data/import/paprikaRecipes'
 
+function resolveSqlitePath() {
+	const databaseUrl = process.env.DATABASE_URL || 'file:./prisma/db/dev.sqlite'
+
+	if (!databaseUrl.startsWith('file:')) {
+		return null
+	}
+
+	const filePath = databaseUrl.slice('file:'.length)
+	if (!filePath) return null
+
+	if (path.isAbsolute(filePath)) {
+		return filePath
+	}
+
+	return path.resolve(process.cwd(), filePath.replace(/^\.\//, ''))
+}
+
 /**
  * Checks if the SQLite database file exists in the specified path.
  *
@@ -13,7 +30,8 @@ import { recipes } from '$lib/data/import/paprikaRecipes'
  * @returns {Promise<boolean>} A promise that resolves to true if the database file exists, otherwise false.
  */
 export async function dbExists() {
-	const dbPath = path.join(process.cwd(), 'prisma', 'db', 'dev.sqlite')
+	const dbPath = resolveSqlitePath()
+	if (!dbPath) return false
 	let dbExists = false
 	try {
 		await fsPromise.access(dbPath)
