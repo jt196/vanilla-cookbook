@@ -2,24 +2,27 @@
 	import Carousel from '$lib/components/ui/Carousel.svelte'
 	import CarouselItem from '$lib/components/ui/CarouselItem.svelte'
 	import RecipePhotoCard from '$lib/components/recipe/RecipePhotoCard.svelte'
+	import { t } from '$lib/stores/locale.js'
 
 	/** @type {{data: any}} */
 	let { data } = $props()
 	const { highlights } = data
 
-	const rows = [
-		{ label: 'Recently Added', recipes: highlights.recentlyAdded },
-		{ label: 'Recently Cooked', recipes: highlights.recentlyCooked },
-		{ label: 'Most Cooked', recipes: highlights.mostCooked },
-		{ label: 'Favourites', recipes: highlights.favourites },
-		{ label: 'Random Picks', recipes: highlights.random }
-	].filter((row) => row.recipes.length > 0)
+	const rows = $derived(
+		[
+			{ label: $t('home.recentlyAdded'), recipes: highlights.recentlyAdded },
+			{ label: $t('home.recentlyCooked'), recipes: highlights.recentlyCooked },
+			{ label: $t('home.mostCooked'), recipes: highlights.mostCooked },
+			{ label: $t('home.favourites'), recipes: highlights.favourites },
+			{ label: $t('home.randomPicks'), recipes: highlights.random }
+		].filter((row) => row.recipes.length > 0)
+	)
 </script>
 
 {#if rows.length === 0}
 	<div class="flex flex-col items-center justify-center min-h-[60vh] gap-4 text-base-content/50">
-		<p class="text-xl">Nothing here yet — add some recipes to get started!</p>
-		<a href="/recipe/new" class="btn btn-primary">Add your first recipe</a>
+		<p class="text-xl">{$t('home.empty')}</p>
+		<a href="/recipe/new" class="btn btn-primary">{$t('home.addFirst')}</a>
 	</div>
 {:else}
 	<div class="flex flex-col gap-10">

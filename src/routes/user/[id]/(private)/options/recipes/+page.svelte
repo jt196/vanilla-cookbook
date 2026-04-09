@@ -1,14 +1,17 @@
 <script>
 	import { systems, languages } from '$lib/utils/config.js'
+	import { invalidateAll } from '$app/navigation'
 	import FeedbackMessage from '$lib/components/ui/FeedbackMessage.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Checkbox from '$lib/components/ui/Form/Checkbox.svelte'
 	import Dropdown from '$lib/components/ui/Form/Dropdown.svelte'
+	import { t } from '$lib/stores/locale.js'
 
 	/** @type {{data: any}} */
 	let { data } = $props()
 	const { user, semanticEnabled } = $state(data)
 	let settingsFeedback = $state('')
+	let savedLanguage = $state(user.language)
 
 	$effect(() => {
 		if (user && user.showNotesDescription === undefined) {
@@ -18,6 +21,7 @@
 
 	async function updateSettings(event) {
 		event.preventDefault()
+		const languageChanged = user.language !== savedLanguage
 		const response = await fetch(`/api/user/${user.userId}`, {
 			method: 'PUT',
 			headers: {
@@ -26,9 +30,14 @@
 			body: JSON.stringify(user)
 		})
 		if (response.ok) {
-			settingsFeedback = 'Recipe settings updated successfully!'
+			settingsFeedback = 'recipePrefs.msg.updated'
+			savedLanguage = user.language
+			if (languageChanged) {
+				await invalidateAll()
+				window.location.reload()
+			}
 		} else {
-			settingsFeedback = 'There was a problem updating your settings!'
+			settingsFeedback = 'recipePrefs.msg.updateFail'
 		}
 	}
 </script>
@@ -43,66 +52,60 @@
 		name="language"
 		options={languages}
 		bind:selected={user.language}
-		legend="Select language"
+		legend={$t('recipePrefs.language')}
 	/>
 	<Dropdown
 		name="system"
 		options={systems}
 		bind:selected={user.units}
-		legend="Select measurement system"
+		legend={$t('recipePrefs.system')}
 	/>
 	<Checkbox
 		name="Skip Small"
 		bind:checked={user.skipSmallUnits}
-		legend="Skip Small Units"
+		legend={$t('recipePrefs.skipSmallUnits')}
 		size="sm"
 		color="neutral"
 	>
-		{user.skipSmallUnits
-			? 'Use teaspoons and tablespoons instead of grams.'
-			: 'Use grams for small measurements.'}
+		{user.skipSmallUnits ? $t('recipePrefs.skipSmallUnitsOn') : $t('recipePrefs.skipSmallUnitsOff')}
 	</Checkbox>
 	<Checkbox
 		name="Volumetric Match Display"
 		bind:checked={user.ingMatch}
 		size="sm"
 		color="neutral"
-		legend="Volumetric Match Display"
+		legend={$t('recipePrefs.volumetricMatch')}
 	>
-		{user.ingMatch
-			? 'Display ingredient matching when converting to and from US Cups.'
-			: 'Hide ingredient matching when converting to and from US Cups.'}
+		{user.ingMatch ? $t('recipePrefs.volumetricMatchOn') : $t('recipePrefs.volumetricMatchOff')}
 	</Checkbox>
 	<Checkbox
 		name="Display Original"
 		bind:checked={user.ingOriginal}
 		size="sm"
 		color="neutral"
-		legend="Display Original"
+		legend={$t('recipePrefs.displayOriginal')}
 	>
-		{user.ingOriginal
-			? 'Display original ingredient line text.'
-			: 'Display parsed ingredient text.'}
+		{user.ingOriginal ? $t('recipePrefs.displayOriginalOn') : $t('recipePrefs.displayOriginalOff')}
 	</Checkbox>
 	<Checkbox
 		name="Display Symbols"
 		bind:checked={user.ingSymbol}
 		size="sm"
 		color="neutral"
-		legend="Display Symbols"
+		legend={$t('recipePrefs.displaySymbols')}
 	>
-		{user.ingSymbol
-			? 'Display short-form units, e.g. g vs grams.'
-			: 'Display long-form units, e.g. grams vs g.'}
+		{user.ingSymbol ? $t('recipePrefs.displaySymbolsOn') : $t('recipePrefs.displaySymbolsOff')}
 	</Checkbox>
 	<Checkbox
 		name="Display Nutrition"
 		bind:checked={user.displayNutrition}
 		size="sm"
 		color="neutral"
-		legend="Display Nutrition"
+		legend={$t('recipePrefs.displayNutrition')}
 	>
-		{user.displayNutrition ? 'Display nutrition information.' : 'Hide nutrition information.'}
+		{user.displayNutrition
+			? $t('recipePrefs.displayNutritionOn')
+			: $t('recipePrefs.displayNutritionOff')}
 	</Checkbox>
 	<div class={!semanticEnabled ? 'opacity-50' : ''}>
 		<Checkbox
@@ -110,15 +113,15 @@
 			bind:checked={user.showSimilarRecipes}
 			size="sm"
 			color="neutral"
-			legend="Similar Recipes"
+			legend={$t('recipePrefs.similarRecipes')}
 			disabled={!semanticEnabled}
 		>
 			{#if !semanticEnabled}
-				Show similar recipes on recipe pages. <em>(Embeddings are disabled for this site.)</em>
+				{$t('recipePrefs.similarRecipesDisabled')}
 			{:else if user.showSimilarRecipes}
-				Show similar recipes at the bottom of each recipe page.
+				{$t('recipePrefs.similarRecipesOn')}
 			{:else}
-				Hide similar recipes.
+				{$t('recipePrefs.similarRecipesOff')}
 			{/if}
 		</Checkbox>
 	</div>
@@ -127,25 +130,23 @@
 		bind:checked={user.showNotesDescription}
 		size="sm"
 		color="neutral"
-		legend="Show Notes & Description"
+		legend={$t('recipePrefs.showNotesDescription')}
 	>
 		{user.showNotesDescription
-			? 'Show recipe notes and description expanded by default.'
-			: 'Hide recipe notes and description behind collapsed sections by default.'}
+			? $t('recipePrefs.showNotesDescriptionOn')
+			: $t('recipePrefs.showNotesDescriptionOff')}
 	</Checkbox>
 	<Checkbox
 		name="Display Extra"
 		bind:checked={user.ingExtra}
 		size="sm"
 		color="neutral"
-		legend="Display Extra"
+		legend={$t('recipePrefs.displayExtra')}
 	>
-		{user.ingExtra
-			? 'Display extra ingredient text, e.g. after the comma in "1 clove garlic, chopped".'
-			: 'Hide extra ingredient text.'}
+		{user.ingExtra ? $t('recipePrefs.displayExtraOn') : $t('recipePrefs.displayExtraOff')}
 	</Checkbox>
 	<footer>
-		<Button type="submit">Update</Button>
-		<FeedbackMessage message={settingsFeedback} />
+		<Button type="submit">{$t('common.update')}</Button>
+		<FeedbackMessage message={settingsFeedback ? $t(settingsFeedback) : ''} />
 	</footer>
 </form>

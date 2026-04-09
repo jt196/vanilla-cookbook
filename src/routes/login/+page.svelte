@@ -5,6 +5,7 @@
 	import Oauth from '$lib/components/auth/Oauth.svelte'
 	import { onMount } from 'svelte'
 	import { enhance } from '$app/forms'
+	import { t } from '$lib/stores/locale.js'
 
 	/** @type {{data: any}} */
 	let { data, form } = $props()
@@ -19,15 +20,16 @@
 	let oidcName = $derived(oauth.oidcName ?? 'OIDC')
 
 	// messages
-	let flashMessage = $derived(data.message) // from URL (?message=...)
-	let actionMessage = $derived(form?.message) // from action fail(...)
-	let errorMessage = $derived(actionMessage ?? flashMessage ?? null)
+	let flashMessageCode = $derived(data.messageCode)
+	let actionMessageCode = $derived(form?.messageCode)
+	let actionMessage = $derived(form?.message)
+	let errorMessageCode = $derived(actionMessageCode ?? flashMessageCode)
 
 	let submitting = $state(false)
 
 	onMount(() => {
 		// strip the query param if we had a flash message
-		if (flashMessage) {
+		if (flashMessageCode) {
 			history.replaceState({}, '', '/login')
 		}
 	})
@@ -36,8 +38,8 @@
 <div class="flex justify-center items-start min-h-[80vh] pt-8">
 	<div class="card w-full max-w-md bg-base-200 shadow-xl">
 		<div class="card-body">
-			<h2 class="card-title text-3xl">Login</h2>
-			<p class="text-base-content/70 mb-4">Welcome back!</p>
+			<h2 class="card-title text-3xl">{$t('nav.login')}</h2>
+			<p class="text-base-content/70 mb-4">{$t('auth.welcomeBack')}</p>
 
 			<form
 				method="POST"
@@ -48,35 +50,45 @@
 						await update()
 						submitting = false
 					}
-				}}>
+				}}
+			>
 				<Input
 					type="text"
 					id="identifier"
 					placeholder="jgcooks or griggers@cooksmail.com"
 					name="identifier"
-					label="Username or email"
-					required />
+					label={$t('auth.usernameOrEmail')}
+					required
+				/>
 				<Input
 					type="password"
 					id="password"
 					placeholder="123grigsyruleZ"
 					name="password"
-					label="Password"
-					required />
+					label={$t('auth.password')}
+					required
+				/>
 
 				<div class="card-actions justify-end mt-6">
 					<Button type="submit" class="w-full" loading={submitting} disabled={submitting}
-						>Login</Button>
+						>{$t('auth.loginBtn')}</Button
+					>
 				</div>
 			</form>
 
-			<FeedbackMessage message={errorMessage} type="error" inline={true} />
+			<FeedbackMessage
+				message={actionMessage}
+				messageCode={errorMessageCode}
+				type="error"
+				inline={true}
+			/>
 
 			<div class="divider"></div>
 
 			{#if registrationAllowed}
 				<p class="text-center">
-					Don't have an account? <a href="/register" class="link link-primary">Register</a>
+					{$t('auth.noAccount')}
+					<a href="/register" class="link link-primary">{$t('nav.register')}</a>
 				</p>
 			{/if}
 
@@ -84,7 +96,7 @@
 				<Oauth {googleEnabled} {githubEnabled} {oidcEnabled} {oidcName} layout="column" />
 				{#if !registrationAllowed}
 					<p class="text-sm text-base-content/60 text-center mt-4">
-						New account sign-ups are disabled. You can still sign in with an existing account.
+						{$t('auth.registrationDisabled')}
 					</p>
 				{/if}
 			{/if}

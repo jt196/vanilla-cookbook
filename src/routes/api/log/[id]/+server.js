@@ -32,7 +32,10 @@ export async function PUT({ locals, request, params }) {
 		return jsonSuccess({ updatedLog })
 	} catch (err) {
 		console.error('Error updating recipe log:', err)
-		return jsonError(500, `Failed to update recipe log: ${err.message}`)
+		return jsonError(500, {
+			error: `Failed to update recipe log: ${err.message}`,
+			code: 'recipe.msg.logUpdateFail'
+		})
 	}
 }
 
@@ -54,6 +57,9 @@ export async function DELETE({ locals, params }) {
 		return jsonSuccess({ deleted: id })
 	} catch (err) {
 		console.error('Error deleting recipe log:', err)
-		return jsonError(500, `Failed to delete recipe log: ${err.message}`)
+		return jsonError(500, {
+			error: `Failed to delete recipe log: ${err.message}`,
+			code: 'recipe.msg.logDeleteFail'
+		})
 	}
 }

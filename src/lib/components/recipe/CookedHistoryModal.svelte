@@ -7,6 +7,7 @@
 	import InfoText from '$lib/components/ui/InfoText.svelte'
 	import Delete from '$lib/components/svg/Delete.svelte'
 	import { localDateAndTime } from '$lib/utils/dateTime'
+	import { t } from '$lib/stores/locale.js'
 
 	let {
 		/** @type {boolean} */
@@ -68,24 +69,25 @@
 </script>
 
 <Dialog bind:isOpen onClose={handleClose} class="max-w-2xl">
-	<h3 class="font-bold text-lg mb-4">Cooking History</h3>
+	<h3 class="font-bold text-lg mb-4">{$t('cookedLog.historyTitle')}</h3>
 	{#if logs.length > 0}
 		{#if onLogUpdated}
-			<InfoText class="mb-2">Click on a row to edit the note or scale.</InfoText>
+			<InfoText class="mb-2">{$t('cookedLog.historyHint')}</InfoText>
 		{/if}
 		<Table size="sm" zebra bordered>
 			<thead>
 				<tr>
-					<th>Date</th>
-					<th>Note</th>
-					<th>Scale</th>
+					<th>{$t('cookedLog.date')}</th>
+					<th>{$t('cookedLog.note')}</th>
+					<th>{$t('cookedLog.scale')}</th>
 				</tr>
 			</thead>
 			<tbody>
 				{#each logs as log}
 					<tr
 						class={onLogUpdated ? 'cursor-pointer hover:bg-base-200' : ''}
-						onclick={() => openEditDialog(log)}>
+						onclick={() => openEditDialog(log)}
+					>
 						<td>{localDateAndTime(log.cooked)}</td>
 						<td class="text-base-content/70">{log.note || '-'}</td>
 						<td>
@@ -101,8 +103,9 @@
 											handleRestoreScale(log.scale ?? 1)
 										}}
 										class="tooltip"
-										data-tip="Use this scale">
-										Use
+										data-tip={$t('cookedLog.useScale')}
+									>
+										{$t('common.use')}
 									</Button>
 								{/if}
 								{#if onLogDeleted}
@@ -115,7 +118,8 @@
 											handleDelete(log.id)
 										}}
 										class="tooltip"
-										data-tip="Delete log">
+										data-tip={$t('cookedLog.deleteLog')}
+									>
 										<Delete width="14px" height="14px" />
 									</Button>
 								{/if}
@@ -126,38 +130,40 @@
 			</tbody>
 		</Table>
 	{:else}
-		<p class="text-base-content/60">No cooking history yet.</p>
+		<p class="text-base-content/60">{$t('cookedLog.empty')}</p>
 	{/if}
 	<div class="modal-action">
-		<Button class="btn-ghost" onclick={handleClose}>Close</Button>
+		<Button class="btn-ghost" onclick={handleClose}>{$t('common.close')}</Button>
 	</div>
 </Dialog>
 
 <Dialog bind:isOpen={editDialogOpen} onClose={closeEditDialog}>
-	<h3 class="font-bold text-lg mb-4">Edit Cooking Log</h3>
+	<h3 class="font-bold text-lg mb-4">{$t('cookedLog.editTitle')}</h3>
 	<form
 		onsubmit={(e) => {
 			e.preventDefault()
 			handleSaveLog()
-		}}>
+		}}
+	>
 		<Textarea
-			label="Note"
+			label={$t('cookedLog.note')}
 			bind:value={editNote}
 			rows={3}
-			placeholder="How did it turn out? Any tweaks you made?"
-			disabled={saving} />
+			placeholder={$t('cookedLog.noteHint')}
+			disabled={saving}
+		/>
 		<div class="mt-4">
-			<Input label="Scale" type="number" bind:value={editScale} disabled={saving} />
+			<Input label={$t('cookedLog.scale')} type="number" bind:value={editScale} disabled={saving} />
 		</div>
 		<div class="modal-action">
 			<Button type="button" class="btn-ghost" onclick={closeEditDialog} disabled={saving}>
-				Cancel
+				{$t('common.cancel')}
 			</Button>
 			<Button type="submit" class="btn-primary" disabled={saving}>
 				{#if saving}
 					<span class="loading loading-spinner loading-sm"></span>
 				{/if}
-				Save
+				{$t('common.save')}
 			</Button>
 		</div>
 	</form>

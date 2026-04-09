@@ -1,6 +1,10 @@
 import { nutritionProcess } from '$lib/utils/filters'
 import { durationToText } from '$lib/utils/parse/parseHelpers'
 
+function makeCodedError(message, code = null) {
+	return Object.assign(new Error(message), { code })
+}
+
 /**
  * Scrapes recipe data from a given URL.
  *
@@ -27,12 +31,22 @@ export async function scrapeRecipeFromURL(url) {
 			} catch {
 				// Non-JSON error response
 			}
-			throw new Error(normalizeScrapeErrorMessage(errorData.message || 'Error scraping recipe'))
+			throw makeCodedError(
+				normalizeScrapeErrorMessage(errorData.message || 'Error scraping recipe'),
+				errorData.code || null
+			)
 		}
 	} catch (error) {
 		if (error?.name === 'AbortError') {
 			console.error(`Scrape request timed out after ${timeoutMs}ms`)
-			return { success: false, error: 'Request timed out. The site may be slow or unreachable.' }
+			return {
+				success: false,
+				error: 'Request timed out. The site may be slow or unreachable.',
+				code: 'recipeNew.msg.scrapeTimeout'
+			}
+		}
+		if (error?.code) {
+			return { success: false, error: normalizeScrapeErrorMessage(error.message), code: error.code }
 		}
 		console.error('Error scraping recipe:', error.message)
 		return { success: false, error: normalizeScrapeErrorMessage(error.message) }
@@ -68,7 +82,7 @@ export async function handleScrape(event = null, url) {
 		}
 	} else {
 		console.error('Error:', result.error)
-		throw new Error(normalizeScrapeErrorMessage(result.error))
+		throw makeCodedError(normalizeScrapeErrorMessage(result.error), result.code || null)
 	}
 }
 
@@ -139,7 +153,7 @@ export async function handleParse(
 
 		if (!response.ok) {
 			const error = await response.json()
-			throw new Error(error?.error || 'Failed to parse text.')
+			throw makeCodedError(error?.error || 'Failed to parse text.', error?.code || null)
 		}
 
 		const raw = await response.json()
@@ -172,7 +186,7 @@ export async function handleImage(event = null, imageInput, language = 'eng') {
 		const files = Array.isArray(imageInput) ? imageInput : imageInput ? [imageInput] : []
 
 		if (!files.length) {
-			throw new Error('No image provided')
+			throw makeCodedError('No image provided', 'recipeNew.msg.noImage')
 		}
 
 		const formData = new FormData()
@@ -186,7 +200,7 @@ export async function handleImage(event = null, imageInput, language = 'eng') {
 
 		if (!response.ok) {
 			const error = await response.json()
-			throw new Error(error?.error || 'Failed to parse image.')
+			throw makeCodedError(error?.error || 'Failed to parse image.', error?.code || null)
 		}
 
 		const raw = await response.json()

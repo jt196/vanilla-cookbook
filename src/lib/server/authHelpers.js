@@ -175,7 +175,7 @@ export function jsonSuccess(data, status = 200) {
  * when you need to return a Response object directly.
  *
  * @param {number} status - HTTP status code
- * @param {string} message - Error message
+ * @param {string | Record<string, any>} message - Error message or structured error payload
  * @returns {Response} JSON error response
  *
  * @example
@@ -183,7 +183,7 @@ export function jsonSuccess(data, status = 200) {
  * return jsonError(404, 'Recipe not found')
  */
 export function jsonError(status, message) {
-	return json({ error: message }, { status })
+	return json(typeof message === 'string' ? { error: message } : message, { status })
 }
 
 /**

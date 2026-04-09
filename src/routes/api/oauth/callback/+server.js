@@ -16,7 +16,7 @@ function clearOauthCookies(cookies) {
 }
 function bounce(cookies, msg, status = 303) {
 	clearOauthCookies(cookies)
-	throw redirect(status, `/login?message=${encodeURIComponent(msg)}`)
+	throw redirect(status, `/login?messageCode=${encodeURIComponent(msg)}`)
 }
 
 // GitHub email fetch (when not present on profile)
@@ -97,7 +97,7 @@ async function handleOidcCallback(url, cookies, locals) {
 	const codeVerifier = cookies.get('oauth_code_verifier')
 
 	if (!storedState || !codeVerifier) {
-		return bounce(cookies, 'Invalid OIDC state. Please try again.')
+		return bounce(cookies, 'auth.msg.invalidOidcState')
 	}
 
 	let oidcUser
@@ -105,8 +105,7 @@ async function handleOidcCallback(url, cookies, locals) {
 		oidcUser = await validateOidcCallback(url, storedState, codeVerifier)
 	} catch (err) {
 		console.error('[OIDC] Token exchange failed:', err)
-		const detail = dev ? `: ${err.message}` : ''
-		return bounce(cookies, `OIDC authentication failed${detail}. Please try again.`)
+		return bounce(cookies, 'auth.msg.oidcAuthFailed')
 	}
 
 	const { email, username: oidcUsername, sub, emailVerified } = oidcUser
@@ -120,7 +119,7 @@ async function handleOidcCallback(url, cookies, locals) {
 		// Already linked — just log in
 		const dbUser = await prisma.authUser.findUnique({ where: { id: existingAccount.user_id } })
 		if (!dbUser) {
-			return bounce(cookies, 'Account no longer exists. Please contact an administrator.')
+			return bounce(cookies, 'auth.msg.accountMissing')
 		}
 		const user = auth.transformDatabaseUser(dbUser)
 		const session = await auth.createSession({ userId: user.userId, attributes: {} })
@@ -146,10 +145,7 @@ async function handleOidcCallback(url, cookies, locals) {
 	// 3) No existing user — check auto-provisioning (separate from registration toggle)
 	const oidcAutoProvision = locals.site?.settings?.oidcAutoProvision ?? true
 	if (!oidcAutoProvision) {
-		return bounce(
-			cookies,
-			'Automatic account creation via OIDC is disabled. Please ask an administrator to create your account first.'
-		)
+		return bounce(cookies, 'auth.msg.oidcAutoProvisionDisabled')
 	}
 
 	// 4) Create a new user
@@ -176,7 +172,7 @@ async function handleLegacyOauthCallback(provider, url, cookies, locals) {
 		const verifier = cookies.get('oauth_code_verifier') || null
 		pa = await googleAuth.validateCallback(code, verifier)
 	} else {
-		return bounce(cookies, 'Unsupported provider.')
+		return bounce(cookies, 'auth.msg.unsupportedProvider')
 	}
 
 	const registrationAllowed = !!locals.site?.settings?.registrationAllowed
@@ -215,7 +211,7 @@ async function handleLegacyOauthCallback(provider, url, cookies, locals) {
 
 	// 4) still no user & sign-ups OFF → bounce to login with message
 	if (!user && !registrationAllowed) {
-		return bounce(cookies, 'Sign-ups are disabled. Use an existing account.')
+		return bounce(cookies, 'auth.msg.signupsDisabledUseExisting')
 	}
 
 	// 5) still no user & sign-ups ON → create
@@ -257,7 +253,7 @@ export async function GET({ url, cookies, locals }) {
 	const code = url.searchParams.get('code')
 
 	if (!provider || !storedState || !state || storedState !== state || !code) {
-		return bounce(cookies, 'Invalid OAuth state. Please try again.')
+		return bounce(cookies, 'auth.msg.invalidOauthState')
 	}
 
 	try {
@@ -272,12 +268,12 @@ export async function GET({ url, cookies, locals }) {
 
 		// expected OAuth failures → bounce to login with a friendly message
 		if (e instanceof OAuthRequestError) {
-			return bounce(cookies, dev ? `OAuth failed: ${e.message}` : 'OAuth failed. Please try again.')
+			return bounce(cookies, 'auth.msg.oauthFailed')
 		}
 
 		// Handle OIDC-specific errors
 		if (e?.code === 'ERR_JWT_CLAIM_VALIDATION_FAILED' || e?.code === 'ERR_JWT_EXPIRED') {
-			return bounce(cookies, 'OIDC token validation failed. Please try again.')
+			return bounce(cookies, 'auth.msg.oidcTokenValidationFailed')
 		}
 
 		// (optionally) handle HTTP-ish errors with a message
@@ -287,6 +283,6 @@ export async function GET({ url, cookies, locals }) {
 
 		// unexpected → still keep the user in UI with a generic message
 		console.error('OAuth callback error:', e)
-		return bounce(cookies, 'Something went wrong during sign-in. Please try again.')
+		return bounce(cookies, 'auth.msg.signInUnexpected')
 	}
 }

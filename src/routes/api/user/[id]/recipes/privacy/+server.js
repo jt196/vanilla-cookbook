@@ -37,9 +37,21 @@ export async function POST({ request, locals, params }) {
 			message: `Set ${result.count} recipe${result.count === 1 ? '' : 's'} to ${
 				isPublic ? 'public' : 'private'
 			}.`,
+			code:
+				result.count === 1
+					? isPublic
+						? 'settings.msg.allPublic_one'
+						: 'settings.msg.allPrivate_one'
+					: isPublic
+						? 'settings.msg.allPublic_other'
+						: 'settings.msg.allPrivate_other',
+			vars: { count: result.count },
 			updatedCount: result.count
 		})
 	} catch (err) {
-		return jsonError(500, `Failed to update recipe visibility: ${err.message}`)
+		return jsonError(500, {
+			error: `Failed to update recipe visibility: ${err.message}`,
+			code: 'settings.msg.visibilityFail'
+		})
 	}
 }

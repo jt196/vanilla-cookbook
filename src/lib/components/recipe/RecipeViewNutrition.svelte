@@ -5,6 +5,7 @@
 	import TableRow from '$lib/components/ui/Table/TableRow.svelte'
 	import TableCell from '$lib/components/ui/Table/TableCell.svelte'
 	import { parseNutritionInfo, scaleNutrition } from '$lib/utils/nutrition'
+	import { t } from '$lib/stores/locale.js'
 
 	/** @type {{ nutritionalInfo?: string, scale?: number, language?: string }} */
 	let {
@@ -25,26 +26,26 @@
 	const hasNotes = $derived(displayNutrition.entries.some((entry) => !!entry.note))
 	const statusText = $derived(
 		displayNutrition.perServing
-			? 'Per serving'
+			? $t('nutritionView.perServing')
 			: scale !== 1
-				? `Per recipe (scaled ${scale}x)`
-				: 'Per recipe'
+				? $t('nutritionView.perRecipeScaled', { scale })
+				: $t('nutritionView.perRecipe')
 	)
 </script>
 
 {#if nutritionalInfo && nutritionalInfo.trim()}
 	<div class="mt-6">
-		<h3 class="text-2xl font-bold mb-2">Nutrition</h3>
+		<h3 class="text-2xl font-bold mb-2">{$t('nutritionView.title')}</h3>
 		<p class="text-sm text-base-content/70 mb-3">{statusText}</p>
 
 		{#if canShowTable}
 			<Table size="sm" bordered containerClass="max-w-full">
 				<TableHead>
 					<TableRow>
-						<TableCell tag="th" scope="col">Nutrient</TableCell>
-						<TableCell tag="th" scope="col">Amount</TableCell>
+						<TableCell tag="th" scope="col">{$t('nutritionView.nutrient')}</TableCell>
+						<TableCell tag="th" scope="col">{$t('nutritionView.amount')}</TableCell>
 						{#if hasNotes}
-							<TableCell tag="th" scope="col">Note</TableCell>
+							<TableCell tag="th" scope="col">{$t('nutritionView.note')}</TableCell>
 						{/if}
 					</TableRow>
 				</TableHead>
@@ -55,7 +56,8 @@
 							<TableCell
 								>{typeof entry.quantity === 'number'
 									? `${entry.quantity}${entry.unit ? ` ${entry.unit}` : ''}`
-									: entry.raw}</TableCell>
+									: entry.raw}</TableCell
+							>
 							{#if hasNotes}
 								<TableCell>{entry.note || '-'}</TableCell>
 							{/if}
@@ -71,12 +73,13 @@
 							type="button"
 							class="btn btn-soft btn-secondary btn-xs"
 							onclick={onCleanup}
-							disabled={cleanupInProgress}>
-							{cleanupInProgress ? 'Cleaning...' : 'Clean Nutrition'}
+							disabled={cleanupInProgress}
+						>
+							{cleanupInProgress ? $t('recipeForm.cleaning') : $t('recipeForm.cleanNutrition')}
 						</button>
 					{:else if recipeUid}
 						<a href={`/recipe/${recipeUid}/edit/`} class="btn btn-soft btn-secondary btn-xs">
-							Clean Nutrition in Edit
+							{$t('nutritionView.cleanInEdit')}
 						</a>
 					{/if}
 				</div>

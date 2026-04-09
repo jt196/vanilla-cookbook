@@ -41,6 +41,9 @@ export async function GET({ locals }) {
 		})
 		return jsonSuccess(users)
 	} catch (error) {
-		return jsonError(500, `Failed to fetch users: ${error.message}`)
+		return jsonError(500, {
+			error: `Failed to fetch users: ${error.message}`,
+			code: 'admin.users.msg.loadFail'
+		})
 	}
 }

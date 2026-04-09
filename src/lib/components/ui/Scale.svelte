@@ -1,6 +1,7 @@
 <script>
 	import Button from '$lib/components/ui/Button.svelte'
 	import Input from '$lib/components/ui/Form/Input.svelte'
+	import { t } from '$lib/stores/locale.js'
 
 	/**
 	 * @typedef {number} Scale
@@ -32,20 +33,27 @@
 		onclick={() => adjust(-BIG_STEP)}
 		style="soft"
 		color="secondary"
-		aria-label="Decrease by 1">-1</Button>
+		aria-label={$t('scaleControl.decreaseOne')}>-1</Button
+	>
 	<Button
 		onclick={() => adjust(-SMALL_STEP)}
 		style="soft"
 		color="secondary"
-		aria-label="Decrease by 0.1">-0.1</Button>
+		aria-label={$t('scaleControl.decreaseTenth')}>-0.1</Button
+	>
 	<Input type="number" value={scale} min="0.1" step="0.1" oninput={handleInput} />
 	<Button
 		onclick={() => adjust(SMALL_STEP)}
 		style="soft"
 		color="secondary"
-		aria-label="Increase by 0.1">+0.1</Button>
-	<Button onclick={() => adjust(BIG_STEP)} style="soft" color="secondary" aria-label="Increase by 1"
-		>+1</Button>
+		aria-label={$t('scaleControl.increaseTenth')}>+0.1</Button
+	>
+	<Button
+		onclick={() => adjust(BIG_STEP)}
+		style="soft"
+		color="secondary"
+		aria-label={$t('scaleControl.increaseOne')}>+1</Button
+	>
 </div>
 
 <style lang="scss">

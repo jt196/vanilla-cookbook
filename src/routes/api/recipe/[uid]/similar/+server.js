@@ -104,6 +104,9 @@ export async function GET({ params, url, locals }) {
 		return json({ enabled: true, results })
 	} catch (error) {
 		console.error('Similar recipes lookup failed:', error)
-		return json({ error: 'Failed to load similar recipes.' }, { status: 500 })
+		return json(
+			{ error: 'Failed to load similar recipes.', code: 'recipe.msg.similarLoadFail' },
+			{ status: 500 }
+		)
 	}
 }

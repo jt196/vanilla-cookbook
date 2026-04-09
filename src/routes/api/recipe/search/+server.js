@@ -21,14 +21,20 @@ export async function GET({ url, locals }) {
 	const threshold = Number.isFinite(parsedThreshold) ? parsedThreshold : 0.2
 
 	if (!query) {
-		return json({ error: 'Query required.' }, { status: 400 })
+		return json(
+			{ error: 'Query required.', code: 'recipe.msg.searchQueryRequired' },
+			{ status: 400 }
+		)
 	}
 	if (query.length < 2) {
 		return json({ enabled: true, mode, results: [] })
 	}
 
 	if (!['semantic', 'hybrid', 'keyword'].includes(mode)) {
-		return json({ error: 'Invalid search mode.' }, { status: 400 })
+		return json(
+			{ error: 'Invalid search mode.', code: 'recipe.msg.searchInvalidMode' },
+			{ status: 400 }
+		)
 	}
 	if (mode === 'keyword') {
 		return json({ enabled: true, mode, results: [] })
@@ -40,7 +46,8 @@ export async function GET({ url, locals }) {
 			enabled: false,
 			mode,
 			results: [],
-			reason: semanticAvailability.reason
+			reason: semanticAvailability.reason,
+			reasonCode: semanticAvailability.code
 		})
 	}
 
@@ -81,7 +88,8 @@ export async function GET({ url, locals }) {
 				enabled: true,
 				mode,
 				results: [],
-				reason: 'No embedding provider configured.'
+				reason: 'No embedding provider configured.',
+				reasonCode: 'recipe.msg.searchNoEmbeddingProvider'
 			})
 		}
 
@@ -105,6 +113,9 @@ export async function GET({ url, locals }) {
 		})
 	} catch (error) {
 		console.error('Semantic recipe search failed:', error)
-		return json({ error: 'Semantic search failed.' }, { status: 500 })
+		return json(
+			{ error: 'Semantic search failed.', code: 'recipe.msg.searchFailed' },
+			{ status: 500 }
+		)
 	}
 }

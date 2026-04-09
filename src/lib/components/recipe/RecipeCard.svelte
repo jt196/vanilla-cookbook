@@ -7,6 +7,7 @@
 	import { changeRecipeFavourite } from '$lib/utils/crud'
 	import Card from '$lib/components/ui/Card.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
+	import { t } from '$lib/stores/locale.js'
 	let showPrimaryPhoto = $state(true)
 	let showImageUrl = $state(true)
 
@@ -81,14 +82,14 @@
 						class="h-full w-full object-cover"
 						loading="lazy"
 						src="/api/recipe/image/{item.photos[0].id}"
-						alt="{item.name} thumbnail"
+						alt={$t('recipeCard.thumbnail', { name: item.name })}
 						onerror={() => (showPrimaryPhoto = false)} />
 				{:else if item.image_url && showImageUrl}
 					<img
 						class="h-full w-full object-cover"
 						loading="lazy"
 						src={item.image_url}
-						alt="{item.name} thumbnail"
+						alt={$t('recipeCard.thumbnail', { name: item.name })}
 						onerror={() => (showImageUrl = false)} />
 				{:else}
 					<div class="h-full w-full bg-base-300" aria-hidden="true"></div>
@@ -112,7 +113,7 @@
 								class="btn-circle tooltip hover:opacity-100 {favourite
 									? 'text-error opacity-100'
 									: ''}"
-								data-tip="Favourite Recipe">
+								data-tip={$t('recipeCard.favouriteRecipe')}>
 								{#if loadingFav}
 									<span class="loading loading-spinner loading-xs"></span>
 								{:else}
@@ -128,8 +129,8 @@
 									? 'text-success opacity-100'
 									: ''}"
 								data-tip={item.log?.length > 0
-									? `Cooked ${item.log.length} time${item.log.length > 1 ? 's' : ''}`
-									: 'Never cooked'}>
+									? $t(item.log.length === 1 ? 'recipe.cookedTimes_one' : 'recipe.cookedTimes_other', { count: item.log.length })
+									: $t('recipe.neverCooked')}>
 								{#if item.log?.length > 1}
 									<span class="badge badge-success badge-xs text-success-content font-bold min-w-5"
 										>{item.log.length}</span>
@@ -142,7 +143,7 @@
 								style="ghost"
 								size="xs"
 								class="btn-circle tooltip hover:opacity-100"
-								data-tip="Fork Recipe"
+								data-tip={$t('recipeCard.forkRecipe')}
 								onclick={(event) => handleDuplicate(item?.uid, event)}>
 								<Fork width="16px" height="16px" />
 							</Button>
@@ -152,7 +153,7 @@
 								size="xs"
 								disabled={true}
 								class="btn-circle tooltip opacity-40"
-								data-tip="Already forked">
+								data-tip={$t('recipeCard.alreadyForked')}>
 								<Fork width="16px" height="16px" />
 							</Button>
 						{/if}
@@ -171,14 +172,14 @@
 				</div>
 				{#if lastCookedDate}
 					<p class="text-xs text-base-content/50 hidden md:block">
-						Last cooked: {lastCookedDate.toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}
+						{$t('recipe.lastCooked')} {lastCookedDate.toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}
 					</p>
 				{/if}
 			{:else}
 				<p class="text-sm text-base-content/70 md:text-left">
-					by
+					{$t('common.by')}
 					{#if viewerUserId && item.userId === viewerUserId}
-						<a href="/user/{viewerUserId}/recipes" class="link link-primary font-medium">Me</a>
+						<a href="/user/{viewerUserId}/recipes" class="link link-primary font-medium">{$t('common.me')}</a>
 					{:else}
 						<a href="/user/{item.userId}/recipes" class="link link-primary">
 							{item.auth_user?.username ?? 'Unknown'}

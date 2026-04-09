@@ -55,3 +55,46 @@ RUN_LLM_SMOKE=true pnpm -s vitest run src/tests/llm.smoke.test.js
 ```bash
 pnpm -s dlx markdownlint-cli docs/technical/contributing.md
 ```
+
+## UI Translations
+
+UI copy lives in `src/lib/i18n/en.js`. This English file is the source of truth for all other locale files in `src/lib/i18n/`.
+
+The app language selector options come from `src/lib/utils/config.js`, which in turn derives from `languageLabels` in the ingredient parser submodule. The locale registry used by the UI translator lives in `src/lib/i18n/index.js`.
+
+When you add or rename UI keys:
+
+1. Update `src/lib/i18n/en.js`.
+2. Regenerate locale files with the incremental generator:
+
+```bash
+pnpm i18n:generate --provider=google
+```
+
+Useful flags:
+
+- `--langs=deu,ita,...` limits generation to specific languages.
+- `--namespaces=common,nav,...` limits generation to specific top-level namespaces.
+- `--overwrite` forces regeneration even when a namespace already looks current.
+
+Generator behavior:
+
+- It only submits missing, stale, shape-mismatched, or still-English namespaces.
+- It validates key shape and placeholder tokens such as `{count}` and `{name}`.
+- It retries automatically when the model returns invalid JSON or drops placeholders.
+
+After generation:
+
+1. Spot-check the changed locale files for obviously bad output.
+2. Run:
+
+```bash
+pnpm exec svelte-check --fail-on-warnings
+```
+
+If you are adding support for a brand new language rather than updating existing locale files:
+
+1. Add the language to the ingredient parser language metadata so it appears in `languageLabels`.
+2. Add the matching locale module in `src/lib/i18n/`.
+3. Register it in `src/lib/i18n/index.js`.
+4. Confirm it appears in the settings language dropdown via `src/lib/utils/config.js`.

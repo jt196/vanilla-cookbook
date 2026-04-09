@@ -9,6 +9,7 @@
 		"build": "pnpm prisma generate && pnpm generate-sw && vite build",
 		"serve": "pnpm prisma migrate deploy && ./scripts/pwa/sw-domain.sh && pnpm seed && node -r dotenv/config build/index.js",
 		"generate-sw": "node src/lib/utils/pwa/generate-sw.js",
+		"i18n:generate": "node scripts/i18n/generate-locales.mjs",
 		"compatibility:manifest": "node --loader ./scripts/alias-loader.mjs ./src/lib/utils/parse/compatibility/cli.js --bootstrap-manifest",
 		"compatibility:scrape": "node --loader ./scripts/alias-loader.mjs ./src/lib/utils/parse/compatibility/cli.js",
 		"compatibility:track": "node --loader ./scripts/alias-loader.mjs ./src/lib/utils/parse/compatibility/cli.js --add-url --refresh-fixtures --status all",

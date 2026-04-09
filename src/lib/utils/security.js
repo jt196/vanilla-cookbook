@@ -45,8 +45,14 @@ const DEFAULT_REQUIREMENTS = {
 export function getPasswordRequirements(env = {}) {
 	return {
 		minLength: Number(env.PASSWORD_MIN_LENGTH) || DEFAULT_REQUIREMENTS.minLength,
-		requireUppercase: envBool(env.PASSWORD_REQUIRE_UPPERCASE, DEFAULT_REQUIREMENTS.requireUppercase),
-		requireLowercase: envBool(env.PASSWORD_REQUIRE_LOWERCASE, DEFAULT_REQUIREMENTS.requireLowercase),
+		requireUppercase: envBool(
+			env.PASSWORD_REQUIRE_UPPERCASE,
+			DEFAULT_REQUIREMENTS.requireUppercase
+		),
+		requireLowercase: envBool(
+			env.PASSWORD_REQUIRE_LOWERCASE,
+			DEFAULT_REQUIREMENTS.requireLowercase
+		),
 		requireDigit: envBool(env.PASSWORD_REQUIRE_DIGIT, DEFAULT_REQUIREMENTS.requireDigit),
 		requireSpecial: envBool(env.PASSWORD_REQUIRE_SPECIAL, DEFAULT_REQUIREMENTS.requireSpecial)
 	}
@@ -91,7 +97,7 @@ export function getPasswordRequirementsDescription(env = {}) {
  *
  * @param {string} password - The password to validate.
  * @param {Record<string, string>} [env] - Environment object (for server-side use)
- * @returns {{ isValid: boolean, message: string }} An object indicating whether the password is valid and a message explaining the validation result.
+ * @returns {{ isValid: boolean, message: string, messageCode: string, messageVars?: Record<string, string|number> }} An object indicating whether the password is valid and a message explaining the validation result.
  *
  * @example
  * // Client-side (uses defaults)
@@ -103,21 +109,50 @@ export function getPasswordRequirementsDescription(env = {}) {
  */
 export function validatePassword(password, env = {}) {
 	if (!password || typeof password !== 'string')
-		return { isValid: false, message: 'Password is required.' }
+		return {
+			isValid: false,
+			message: 'Password is required.',
+			messageCode: 'validation.passwordRequired'
+		}
 
 	const reqs = getPasswordRequirements(env)
 
 	if (password.length < reqs.minLength)
-		return { isValid: false, message: `Password should be at least ${reqs.minLength} characters long.` }
+		return {
+			isValid: false,
+			message: `Password should be at least ${reqs.minLength} characters long.`,
+			messageCode: 'validation.passwordMinLength',
+			messageVars: { minLength: reqs.minLength }
+		}
 	if (reqs.requireUppercase && !/[A-Z]/.test(password))
-		return { isValid: false, message: 'Password should contain at least one uppercase letter.' }
+		return {
+			isValid: false,
+			message: 'Password should contain at least one uppercase letter.',
+			messageCode: 'validation.passwordUppercase'
+		}
 	if (reqs.requireLowercase && !/[a-z]/.test(password))
-		return { isValid: false, message: 'Password should contain at least one lowercase letter.' }
+		return {
+			isValid: false,
+			message: 'Password should contain at least one lowercase letter.',
+			messageCode: 'validation.passwordLowercase'
+		}
 	if (reqs.requireDigit && !/[0-9]/.test(password))
-		return { isValid: false, message: 'Password should contain at least one number.' }
+		return {
+			isValid: false,
+			message: 'Password should contain at least one number.',
+			messageCode: 'validation.passwordNumber'
+		}
 	if (reqs.requireSpecial && !/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]+/.test(password))
-		return { isValid: false, message: 'Password should contain at least one special character.' }
-	return { isValid: true, message: 'Password looks good!' }
+		return {
+			isValid: false,
+			message: 'Password should contain at least one special character.',
+			messageCode: 'validation.passwordSpecial'
+		}
+	return {
+		isValid: true,
+		message: 'Password looks good!',
+		messageCode: 'validation.passwordOk'
+	}
 }
 
 /**
@@ -132,12 +167,16 @@ export function validatePassword(password, env = {}) {
  * @param {string} password
  * @param {string} confirmPassword
  * @param {Record<string, string>} [env] - Environment object (for server-side use)
- * @returns {{ isValid: boolean, message: string|null }}
+ * @returns {{ isValid: boolean, message: string|null, messageCode: string|null, messageVars?: Record<string, string|number> }}
  */
 export function validatePasswords(password, confirmPassword, env = {}) {
 	// Handle missing confirmation
 	if (!confirmPassword) {
-		return { isValid: false, message: 'Confirm Password' }
+		return {
+			isValid: false,
+			message: 'Confirm Password',
+			messageCode: 'validation.confirmPassword'
+		}
 	}
 
 	// Validate the base password requirements
@@ -148,10 +187,14 @@ export function validatePasswords(password, confirmPassword, env = {}) {
 
 	// Check match
 	if (password !== confirmPassword) {
-		return { isValid: false, message: "Passwords don't match!" }
+		return {
+			isValid: false,
+			message: "Passwords don't match!",
+			messageCode: 'validation.passwordMismatch'
+		}
 	}
 
-	return { isValid: true, message: null }
+	return { isValid: true, message: null, messageCode: null }
 }
 
 /**
@@ -175,16 +218,24 @@ export function buildPasswordEnv(requirements) {
  * Validates a single email address with a basic regex.
  *
  * @param {string} email
- * @returns {{ isValid: boolean, message: string|null }}
+ * @returns {{ isValid: boolean, message: string|null, messageCode: string|null }}
  */
 export function validateEmail(email) {
 	if (!email) {
-		return { isValid: false, message: 'Email is required.' }
+		return {
+			isValid: false,
+			message: 'Email is required.',
+			messageCode: 'validation.emailRequired'
+		}
 	}
 	// Simple but effective email regex
 	const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 	if (!emailRegex.test(email)) {
-		return { isValid: false, message: 'Please enter a valid email address.' }
+		return {
+			isValid: false,
+			message: 'Please enter a valid email address.',
+			messageCode: 'validation.emailInvalid'
+		}
 	}
-	return { isValid: true, message: null }
+	return { isValid: true, message: null, messageCode: null }
 }

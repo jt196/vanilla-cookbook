@@ -7,6 +7,7 @@
 	import Spinner from '$lib/components/ui/Spinner.svelte'
 	import CopyRecipeDialog from '$lib/components/recipe/CopyRecipeDialog.svelte'
 	import { duplicateRecipe } from '$lib/utils/crud'
+	import { t } from '$lib/stores/locale.js'
 	import {
 		sortState,
 		searchString,
@@ -34,6 +35,7 @@
 	let copiedRecipe = $state(null)
 	let pendingCopyUid = $state(null)
 	let copyMessage = $state(null)
+	let copyMessageCode = $state(null)
 	let semanticScores = $state(new Map())
 	let semanticRuntimeEnabled = $state(!!semanticEnabled)
 	let semanticSearchPending = $state(false)
@@ -152,6 +154,7 @@
 		pendingCopyUid = uid
 		copiedRecipe = null
 		copyMessage = null
+		copyMessageCode = null
 		copyDialogOpen = true
 	}
 
@@ -161,18 +164,19 @@
 
 		copyDialogOpen = false
 		isCopying = true
-		const newUid = await duplicateRecipe(pendingCopyUid)
-		if (!newUid) {
+		const result = await duplicateRecipe(pendingCopyUid)
+		if (!result.success || !result.uid) {
 			isCopying = false
 			pendingCopyUid = null
-			copyMessage = 'Recipe already copied.'
+			copyMessage = result.error || null
+			copyMessageCode = result.code || 'recipe.msg.duplicateFail'
 			copyDialogOpen = true
 			return
 		}
 		await invalidateAll()
 
 		try {
-			const response = await fetch(`/api/recipe/${newUid}`)
+			const response = await fetch(`/api/recipe/${result.uid}`)
 			if (response.ok) {
 				copiedRecipe = await response.json()
 			}
@@ -182,6 +186,7 @@
 
 		isCopying = false
 		pendingCopyUid = null
+		copyMessageCode = null
 
 		if (action === 'view') {
 			handleCopyView()
@@ -196,6 +201,7 @@
 		pendingCopyUid = null
 		copiedRecipe = null
 		copyMessage = null
+		copyMessageCode = null
 	}
 
 	function handleCopyStay() {
@@ -205,6 +211,7 @@
 		}
 		copiedRecipe = null
 		copyMessage = null
+		copyMessageCode = null
 	}
 
 	function handleCopyView() {
@@ -214,6 +221,7 @@
 		pendingCopyUid = null
 		copiedRecipe = null
 		copyMessage = null
+		copyMessageCode = null
 		invalidateAll().then(() => goto(`/recipe/${targetUid}/view/`))
 	}
 
@@ -383,20 +391,21 @@
 	</div>
 {:else if viewMode === 'social' && ownerUsername}
 	<div class="mb-2 md:mb-4 prose max-w-none flex justify-center">
-		<h2>{ownerUsername}'s Cookbook</h2>
+		<h2>{$t('nav.cookbook', { username: ownerUsername })}</h2>
 	</div>
 {/if}
 
 <div class="transition-all duration-300">
 	<RecipeFilter viewOnly={false} username={ownerUsername} {viewMode} {searchPending} />
-	<Spinner visible={isLoading || isNavigating} spinnerContent="Loading" />
+	<Spinner visible={isLoading || isNavigating} spinnerContent={$t('common.loading')} />
 	<RecipeList
 		{filteredRecipes}
 		{viewMode}
 		{viewerUserId}
 		recipeFavourited={handleRecipeFavourited}
 		recipeRatingChanged={handleRecipeRatingChanged}
-		onDuplicate={handleDuplicateRequested} />
+		onDuplicate={handleDuplicateRequested}
+	/>
 </div>
 
 <CopyRecipeDialog
@@ -405,6 +414,8 @@
 	onStay={() => runDuplicate('stay')}
 	onView={() => runDuplicate('view')}
 	viewDisabled={false}
-	message={copyMessage} />
+	message={copyMessage}
+	messageCode={copyMessageCode}
+/>
 
-<Spinner visible={isCopying} spinnerContent="Copying Recipe" />
+<Spinner visible={isCopying} spinnerContent={$t('copyDialog.copying')} />

@@ -1,8 +1,8 @@
-import { error } from '@sveltejs/kit'
+import { error, json } from '@sveltejs/kit'
 import { auth } from '$lib/server/lucia'
 import { prisma } from '$lib/server/prisma'
 import { validatePassword } from '$lib/utils/security.js'
-import { requireAuth, jsonSuccess, jsonError } from '$lib/server/authHelpers'
+import { requireAuth, jsonSuccess } from '$lib/server/authHelpers'
 import { env } from '$env/dynamic/private'
 
 export async function POST({ request, locals, params }) {
@@ -22,28 +22,47 @@ export async function POST({ request, locals, params }) {
 	const username = updatingUser.username
 
 	if (newPass !== newPassConfirm) {
-		return jsonError(400, 'Passwords do not match!')
+		return json(
+			{ error: 'Passwords do not match!', code: 'settings.msg.passwordMismatch' },
+			{ status: 400 }
+		)
 	}
 
 	try {
 		await auth.useKey('username', username, oldPass)
 	} catch (err) {
-		return jsonError(401, 'Old password is incorrect!')
+		return json(
+			{ error: 'Old password is incorrect!', code: 'settings.msg.passwordIncorrect' },
+			{ status: 401 }
+		)
 	}
 
 	const passwordValidation = validatePassword(newPass, env)
 	if (!passwordValidation.isValid) {
-		return jsonError(400, passwordValidation.message)
+		return json(
+			{
+				error: passwordValidation.message,
+				code: passwordValidation.messageCode,
+				vars: passwordValidation.messageVars
+			},
+			{ status: 400 }
+		)
 	}
 
 	try {
 		await auth.updateKeyPassword('username', username, newPass)
-		return jsonSuccess({ message: 'Password updated successfully' })
+		return jsonSuccess({
+			message: 'Password updated successfully',
+			code: 'settings.msg.passwordUpdated'
+		})
 	} catch (e) {
 		console.log('Error: ' + e)
 		if (e.name === 'LuciaError') {
 			console.log('LuciaError: ' + e.message)
 		}
-		return jsonError(500, 'An unexpected error occurred.')
+		return json(
+			{ error: 'An unexpected error occurred.', code: 'settings.msg.passwordUpdateFail' },
+			{ status: 500 }
+		)
 	}
 }

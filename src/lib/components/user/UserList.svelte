@@ -1,6 +1,7 @@
 <script>
 	import VirtualList from '$lib/components/ui/VirtualList.svelte'
 	import UserCard from '$lib/components/user/UserCard.svelte'
+	import { t } from '$lib/stores/locale.js'
 
 	/** @type {{users?: any}} */
 	let { users = [] } = $props()
@@ -19,7 +20,7 @@
 		{/snippet}
 	</VirtualList>
 	<span class="list-indicator">
-		<p>showing items {start}-{end}</p>
+		<p>{$t('users.showingItems', { start, end })}</p>
 	</span>
 </div>
 

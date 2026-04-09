@@ -5,27 +5,18 @@
 	import Check from '$lib/components/svg/Check.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Checkbox from '$lib/components/ui/Form/Checkbox.svelte'
+	import { t } from '$lib/stores/locale.js'
 
 	let {
-		/**
-		 * @type {any}
-		 */
+		/** @type {any} */
 		item,
-		/**
-		 * @type {(item: any, event: Event) => void}
-		 */
+		/** @type {(item: any, event: Event) => void} */
 		onCheckboxChange,
-		/**
-		 * @type {(item: any) => void}
-		 */
+		/** @type {(item: any) => void} */
 		onEdit,
-		/**
-		 * @type {(item: any) => void}
-		 */
+		/** @type {(item: any) => void} */
 		onTogglePurchase,
-		/**
-		 * @type {boolean}
-		 */
+		/** @type {boolean} */
 		purchaseLoading = false
 	} = $props()
 
@@ -39,7 +30,8 @@
 		color="accent"
 		size="xl"
 		onchange={(checked) => onCheckboxChange(item, { target: { checked } })}
-		class="self-center" />
+		class="self-center"
+	/>
 
 	<div class="flex flex-col gap-1 flex-1 min-w-0">
 		<div class="flex items-center gap-2">
@@ -50,7 +42,8 @@
 				<a
 					href="/recipe/{item.recipeUid}/view"
 					class="btn btn-ghost btn-circle btn-xs text-base-content"
-					title={item.recipe?.name ?? 'View recipe'}>
+					title={item.recipe?.name ?? $t('shopping.viewRecipe')}
+				>
 					<Link width="18px" />
 				</a>
 			{/if}
@@ -71,8 +64,12 @@
 			class={`btn btn-soft btn-primary btn-sm tooltip ${purchaseCount > 0 ? 'text-success' : ''}`}
 			disabled={purchaseLoading}
 			data-tip={purchaseCount > 0
-				? `Purchased ${purchaseCount} time${purchaseCount > 1 ? 's' : ''}`
-				: 'Mark Item Purchased'}>
+				? $t(
+						purchaseCount === 1 ? 'shopping.purchasedTimes_one' : 'shopping.purchasedTimes_other',
+						{ count: purchaseCount }
+					)
+				: $t('shopping.markItemPurchased')}
+		>
 			{#if purchaseLoading}
 				<span class="loading loading-spinner loading-sm"></span>
 			{:else if purchaseCount > 1}
@@ -86,9 +83,10 @@
 		<Button
 			onclick={() => onEdit(item)}
 			class="btn btn-soft btn-primary btn-sm tooltip"
-			data-tip="Edit item"
+			data-tip={$t('shopping.editItem')}
 			id="edit-item"
-			aria-label="Edit item">
+			aria-label={$t('shopping.editItem')}
+		>
 			<Edit width="18px" height="18px" fill="currentColor" />
 		</Button>
 	</div>

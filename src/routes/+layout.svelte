@@ -11,6 +11,7 @@
 	import CookBook from '$lib/components/svg/CookBook.svelte'
 	import NavLinks from '$lib/components/ui/NavLinks.svelte'
 	import Spinner from '$lib/components/ui/Spinner.svelte'
+	import { langStore, isRtl, t } from '$lib/stores/locale.js'
 
 	/** @type {{data: PageData, children?: import('svelte').Snippet}} */
 	let { data, children } = $props()
@@ -18,6 +19,18 @@
 	let settings = $derived(data.settings)
 	let dbSeed = $derived(data.dbSeed)
 	let isNavigating = $derived(!!navigating.to)
+
+	// Keep lang store in sync with server-resolved language
+	$effect(() => {
+		langStore.set(data.lang ?? 'eng')
+	})
+
+	// Apply RTL direction for Arabic
+	$effect(() => {
+		if (browser) {
+			document.documentElement.setAttribute('dir', $isRtl ? 'rtl' : 'ltr')
+		}
+	})
 
 	const siteName = import.meta.env.VITE_SITE_NAME || 'Vanilla Cookbook'
 	const LIGHT_THEME = 'light'
@@ -112,22 +125,30 @@
 
 				<!-- Mobile Hamburger Menu -->
 				<div class="dropdown dropdown-end lg:hidden">
-					<div tabindex="0" role="button" class="btn btn-ghost btn-circle" aria-label="Menu">
+					<div
+						tabindex="0"
+						role="button"
+						class="btn btn-ghost btn-circle"
+						aria-label={$t('nav.menu')}
+					>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							class="h-6 w-6"
 							fill="none"
 							viewBox="0 0 24 24"
-							stroke="currentColor">
+							stroke="currentColor"
+						>
 							<path
 								stroke-linecap="round"
 								stroke-linejoin="round"
 								stroke-width="2"
-								d="M4 6h16M4 12h16M4 18h16" />
+								d="M4 6h16M4 12h16M4 18h16"
+							/>
 						</svg>
 					</div>
 					<ul
-						class="dropdown-content menu bg-base-100 rounded-box z-50 mt-3 w-52 p-2 shadow-lg border border-base-300">
+						class="dropdown-content menu bg-base-100 rounded-box z-50 mt-3 w-52 p-2 shadow-lg border border-base-300"
+					>
 						<NavLinks {user} {settings} {theme} onToggleTheme={toggleTheme} mobile={true} />
 					</ul>
 				</div>
@@ -136,7 +157,7 @@
 	</div>
 </div>
 
-<Spinner visible={isNavigating} spinnerContent="Loading..." />
+<Spinner visible={isNavigating} spinnerContent={$t('common.loading')} />
 
 <div class="min-h-screen bg-base-200">
 	<div class="container mx-auto px-4 py-6">

@@ -1,5 +1,5 @@
 import { prisma } from '$lib/server/prisma'
-import { requireAuth, jsonError } from '$lib/server/authHelpers'
+import { requireAuth, jsonError, jsonSuccess } from '$lib/server/authHelpers'
 
 export async function DELETE({ locals, params }) {
 	requireAuth(locals)
@@ -10,9 +10,12 @@ export async function DELETE({ locals, params }) {
 			where: { uid }
 		})
 
-		return new Response(null, { status: 204 })
+		return jsonSuccess({ success: true, code: 'shopping.msg.itemDeleted' })
 	} catch (error) {
 		console.error('Failed to delete shopping list item:', error)
-		return jsonError(500, 'Failed to delete shopping list item')
+		return jsonError(500, {
+			error: 'Failed to delete shopping list item',
+			code: 'shopping.msg.itemDeleteFail'
+		})
 	}
 }

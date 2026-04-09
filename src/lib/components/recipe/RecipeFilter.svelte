@@ -15,6 +15,7 @@
 		cookedFilter,
 		favouriteFilter
 	} from '$lib/stores/recipeFilter'
+	import { t } from '$lib/stores/locale.js'
 
 	let {
 		viewOnly,
@@ -67,7 +68,7 @@
 
 {#if viewOnly}
 	<div class="mb-2 md:mb-4 prose max-w-none flex justify-center">
-		<h2>{username}'s Cookbook</h2>
+		<h2>{$t('nav.cookbook', { username })}</h2>
 	</div>
 {/if}
 <div class="flex flex-col gap-1 md:gap-3 py-1 md:py-4">
@@ -76,7 +77,7 @@
 			<Input
 				type="text"
 				name="search"
-				placeholder="Search recipes by..."
+				placeholder={$t('filter.placeholder')}
 				bind:value={$searchString}
 				size="md"
 				color="info"
@@ -89,7 +90,7 @@
 					inline={true}
 					size="xs"
 					color="info"
-					spinnerContent="Searching"
+					spinnerContent={$t('filter.searching')}
 					inlineClass="absolute right-3 top-1/2 -translate-y-1/2"
 				/>
 			{:else if $searchString?.trim()}
@@ -100,7 +101,7 @@
 					color="info"
 					class="btn-circle absolute right-2 top-1/2 -translate-y-1/2"
 					onclick={clearSearch}
-					aria-label="Clear search"
+					aria-label={$t('filter.clearSearch')}
 				>
 					×
 				</Button>
@@ -110,7 +111,7 @@
 		<DropdownMenu
 			align="end"
 			summaryClass="btn btn-md btn-outline btn-info shrink-0"
-			summaryAriaLabel="Search fields"
+			summaryAriaLabel={$t('filter.searchFields')}
 			contentClass="menu dropdown-content bg-base-100 rounded-box z-50 w-56 p-3 shadow-sm"
 		>
 			{#snippet trigger()}
@@ -128,7 +129,7 @@
 					class="mb-1"
 					fullWidth={false}
 				>
-					Name
+					{$t('filter.fieldName')}
 				</Checkbox>
 				<Checkbox
 					checked={hasField('ingredients')}
@@ -138,7 +139,7 @@
 					class="mb-1"
 					fullWidth={false}
 				>
-					Ingredients
+					{$t('filter.fieldIngredients')}
 				</Checkbox>
 				<Checkbox
 					checked={hasField('source')}
@@ -148,7 +149,7 @@
 					class="mb-1"
 					fullWidth={false}
 				>
-					Source
+					{$t('filter.fieldSource')}
 				</Checkbox>
 				<Checkbox
 					checked={hasField('notes')}
@@ -157,7 +158,7 @@
 					size="sm"
 					fullWidth={false}
 				>
-					Notes
+					{$t('filter.fieldNotes')}
 				</Checkbox>
 			{/snippet}
 		</DropdownMenu>
@@ -168,7 +169,7 @@
 			color="secondary"
 			onclick={() => ($favouriteFilter = !$favouriteFilter)}
 			class={`btn-square shrink-0 ${favouriteBtnClasses}`}
-			data-tip="Filter by Favourites"
+			data-tip={$t('filter.filterFavourites')}
 		>
 			<Favourite favourite={$favouriteFilter} width="20px" height="20px" fill="currentColor" />
 		</Button>
@@ -180,7 +181,7 @@
 				color="success"
 				onclick={() => ($cookedFilter = !$cookedFilter)}
 				class={`btn-square shrink-0 ${cookedBtnClasses}`}
-				data-tip="Filter by Cooked"
+				data-tip={$t('filter.filterCooked')}
 			>
 				<Check checked={$cookedFilter} width="20px" height="20px" fill="currentColor" />
 			</Button>
@@ -189,7 +190,7 @@
 		<DropdownMenu
 			align="end"
 			summaryClass="btn btn-md btn-outline btn-info shrink-0"
-			summaryAriaLabel="Sort options"
+			summaryAriaLabel={$t('filter.sortOptions')}
 			contentClass="menu dropdown-content bg-base-100 rounded-box z-50 w-48 p-2 shadow-sm"
 		>
 			{#snippet trigger()}
@@ -207,7 +208,7 @@
 					color="info"
 					onclick={() => updateSort('created')}
 				>
-					Added
+					{$t('filter.sortAdded')}
 					<SortAscDesc sort={$sortState.key === 'created' ? $sortState.direction : null} />
 				</Button>
 				<Button
@@ -218,7 +219,7 @@
 					color="info"
 					onclick={() => updateSort('name')}
 				>
-					Title
+					{$t('filter.sortTitle')}
 					<SortAscDesc sort={$sortState.key === 'name' ? $sortState.direction : null} />
 				</Button>
 				{#if viewMode === 'owner'}
@@ -230,7 +231,7 @@
 						color="info"
 						onclick={() => updateSort('rating')}
 					>
-						Rating
+						{$t('filter.sortRating')}
 						<SortAscDesc sort={$sortState.key === 'rating' ? $sortState.direction : null} />
 					</Button>
 					<Button
@@ -243,7 +244,7 @@
 						color="info"
 						onclick={() => updateSort('lastCooked')}
 					>
-						Cooked
+						{$t('filter.sortCooked')}
 						<SortAscDesc sort={$sortState.key === 'lastCooked' ? $sortState.direction : null} />
 					</Button>
 				{/if}

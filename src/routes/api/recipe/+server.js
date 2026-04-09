@@ -46,7 +46,10 @@ export async function POST({ request, locals, url }) {
 		recipeData = JSON.parse(rawRecipe)
 	} catch (err) {
 		errorLog('Failed to parse recipe payload', { error: err?.message })
-		return jsonError(400, 'Invalid recipe payload')
+		return jsonError(400, {
+			error: 'Invalid recipe payload',
+			code: 'recipe.msg.invalidPayload'
+		})
 	}
 	const imageData = formData.getAll('images')
 
@@ -92,7 +95,10 @@ export async function POST({ request, locals, url }) {
 		})
 	} catch (err) {
 		errorLog('Failed to create recipe', { name, source, source_url, error: err?.message })
-		return jsonError(500, `Failed to create recipe: ${err.message}`)
+		return jsonError(500, {
+			error: `Failed to create recipe: ${err.message}`,
+			code: 'recipe.msg.createFail'
+		})
 	}
 	log('recipe row created', { recipeUid: recipe.uid, ms: Date.now() - startedAt })
 

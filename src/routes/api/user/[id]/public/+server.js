@@ -17,6 +17,9 @@ export async function GET({ params }) {
 		return jsonSuccess({ userProfile })
 	} catch (err) {
 		console.error('Error fetching user profile:', err)
-		return jsonError(500, 'Internal server error.')
+		return jsonError(500, {
+			error: 'Internal server error.',
+			code: 'users.msg.profileLoadFail'
+		})
 	}
 }

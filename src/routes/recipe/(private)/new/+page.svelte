@@ -13,6 +13,8 @@
 	import RecipeNewScrape from '$lib/components/recipe/RecipeNewScrape.svelte'
 	import Spinner from '$lib/components/ui/Spinner.svelte'
 	import { readBookmarkletPayload } from '$lib/utils/bookmarklet'
+	import { get } from 'svelte/store'
+	import { t } from '$lib/stores/locale.js'
 
 	/**
 	 * The scraped recipe object.
@@ -32,6 +34,7 @@
 	let url = $state(null)
 	let sharedText = $state(null)
 	let feedbackMessage = $state('')
+	let feedbackCode = $state(null)
 	let feedbackType = $state('info')
 	let selectedFiles = $state([])
 	let saveImageUrl = $state(true)
@@ -67,6 +70,7 @@
 		const bookmarkletPayload = readBookmarkletPayload(window)
 		let rawUrl = urlParams.get('url')
 		let text = urlParams.get('text')
+		const tFn = get(t)
 
 		if (!rawUrl && bookmarkletPayload?.url) {
 			rawUrl = bookmarkletPayload.url
@@ -88,29 +92,30 @@
 			initialMode = 'url'
 			console.log('[recipe:new] Starting scrape for:', url)
 			try {
-				feedbackMessage = 'Scraping URL...'
+				feedbackMessage = tFn('recipeNew.msg.scraping')
 				feedbackType = 'info'
 				const scrapedData = await handleScrape(null, url)
 				console.log('[recipe:new] Scrape completed, status:', scrapedData?._status)
 				if (scrapedData) {
 					recipe = { ...recipe, ...scrapedData }
 					if (scrapedData._status === 'complete') {
-						feedbackMessage = 'URL scraped successfully.'
+						feedbackMessage = tFn('recipeNew.msg.scrapeSuccess')
 						feedbackType = 'success'
 					} else {
-						feedbackMessage = 'URL only partially scraped. Please review before saving.'
+						feedbackMessage = tFn('recipeNew.msg.scrapePartial')
 						feedbackType = 'warning'
 					}
 				}
 			} catch (error) {
 				console.error('[recipe:new] Scrape failed:', error)
-				const message = error?.message || (typeof error === 'string' ? error : 'Error scraping URL.')
+				const message =
+					error?.message || (typeof error === 'string' ? error : tFn('recipeNew.msg.scrapeError'))
 				if (isBlockedScrapeErrorMessage(message) && sharedText) {
 					initialMode = 'text'
 
 					if (apiKeyPresent && aiEnabled) {
 						try {
-							feedbackMessage = 'Site blocked direct scraping. Parsing captured page text...'
+							feedbackMessage = tFn('recipeNew.msg.scrapeBlocked')
 							feedbackType = 'info'
 
 							const parsedData = await handleParse(null, sharedText, {
@@ -122,18 +127,16 @@
 							recipe = { ...recipe, ...parsedData }
 							feedbackMessage =
 								parsedData._status === 'complete'
-									? 'Site blocked scraping, but captured page text was parsed successfully.'
-									: 'Site blocked scraping. Captured page text was only partially parsed.'
+									? tFn('recipeNew.msg.scrapeBlockedSuccess')
+									: tFn('recipeNew.msg.scrapeBlockedPartial')
 							feedbackType = parsedData._status === 'complete' ? 'success' : 'warning'
 						} catch (parseError) {
 							console.error('[recipe:new] Bookmarklet text parse failed:', parseError)
-							feedbackMessage =
-								'Site blocked direct scraping. Captured page text has been loaded into Text mode.'
+							feedbackMessage = tFn('recipeNew.msg.scrapeBlockedText')
 							feedbackType = 'warning'
 						}
 					} else {
-						feedbackMessage =
-							'Site blocked direct scraping. Captured page text has been loaded into Text mode.'
+						feedbackMessage = tFn('recipeNew.msg.scrapeBlockedText')
 						feedbackType = 'warning'
 					}
 				} else {
@@ -145,7 +148,7 @@
 			initialMode = 'text'
 		} else if (sharedText && (!apiKeyPresent || !aiEnabled)) {
 			initialMode = 'text'
-			feedbackMessage = 'AI not enabled!'
+			feedbackMessage = tFn('recipeNew.msg.aiNotEnabled')
 		}
 	})
 
@@ -153,6 +156,7 @@
 		event.preventDefault()
 		saving = true
 		console.log('[recipe:new] Starting save, recipe name:', recipe?.name)
+		const tFn = get(t)
 
 		const formData = new FormData()
 		formData.append('recipe', JSON.stringify({ ...recipe, saveImageUrl }))
@@ -169,12 +173,14 @@
 				await goto(`/recipe/${result.data.uid}/view/`)
 			} else {
 				console.error('[recipe:new] Save failed:', result.error)
-				feedbackMessage = result.error || 'Failed to save recipe.'
+				feedbackMessage = result.error || ''
+				feedbackCode = result.code || 'recipeNew.msg.saveFail'
 				feedbackType = 'error'
 			}
 		} catch (error) {
 			console.error('[recipe:new] Unexpected create error:', error)
-			feedbackMessage = 'Failed to save recipe.'
+			feedbackMessage = ''
+			feedbackCode = 'recipeNew.msg.saveFail'
 			feedbackType = 'error'
 		} finally {
 			saving = false
@@ -215,7 +221,12 @@
 />
 
 {#if feedbackMessage}
-	<FeedbackMessage message={feedbackMessage} type={feedbackType} timeout={4000} />
+	<FeedbackMessage
+		message={feedbackMessage}
+		messageCode={feedbackCode}
+		type={feedbackType}
+		timeout={4000}
+	/>
 {/if}
 
-<Spinner visible={saving} spinnerContent="Saving recipe..." />
+<Spinner visible={saving} spinnerContent={$t('recipeNew.saving')} />

@@ -1,4 +1,5 @@
 <script>
+	import { t } from '$lib/stores/locale.js'
 	/** @type {{mainPhoto: any, recipe: any}} */
 	let { mainPhoto, recipe } = $props()
 
@@ -11,28 +12,31 @@
 
 <div>
 	{#if mainPhoto}
-		<div
+		<button
+			type="button"
 			class="cover-container"
-			role="img"
-			aria-label="{recipe.name} photo"
+			aria-label={$t('photos.photoAlt', { name: recipe.name })}
 			onmouseenter={() => (showOverlay = true)}
 			onmouseleave={() => (showOverlay = false)}
-			onclick={toggleOverlay}>
+			onclick={toggleOverlay}
+		>
 			<img
 				src="/api/recipe/image/{mainPhoto.id}"
-				alt="{recipe.name} photo"
-				class="w-full h-auto max-h-[400px] md:max-h-[400px] max-md:max-h-[250px] object-cover block rounded-2xl" />
+				alt={$t('photos.photoAlt', { name: recipe.name })}
+				class="w-full h-auto max-h-[400px] md:max-h-[400px] max-md:max-h-[250px] object-cover block rounded-2xl"
+			/>
 			{#if mainPhoto.notes}
 				<div class="cover-overlay" class:visible={showOverlay}>
 					<p class="cover-notes">{mainPhoto.notes}</p>
 				</div>
 			{/if}
-		</div>
+		</button>
 	{:else if recipe.image_url}
 		<img
 			src={recipe.image_url}
-			alt="{recipe.name} photo"
-			class="w-full h-auto max-h-[400px] md:max-h-[400px] max-md:max-h-[250px] object-cover block rounded-2xl" />
+			alt={$t('photos.photoAlt', { name: recipe.name })}
+			class="w-full h-auto max-h-[400px] md:max-h-[400px] max-md:max-h-[250px] object-cover block rounded-2xl"
+		/>
 	{/if}
 </div>
 
@@ -40,6 +44,11 @@
 	.cover-container {
 		position: relative;
 		cursor: pointer;
+		display: block;
+		width: 100%;
+		padding: 0;
+		border: 0;
+		background: transparent;
 	}
 
 	.cover-overlay {

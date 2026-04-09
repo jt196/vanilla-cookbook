@@ -2,7 +2,7 @@
 	import Images from '$lib/components/svg/Images.svelte'
 	import Delete from '$lib/components/svg/Delete.svelte'
 	import Edit from '$lib/components/svg/Edit.svelte'
-import { goto, invalidateAll } from '$app/navigation'
+	import { goto, invalidateAll } from '$app/navigation'
 	import {
 		addRecipeLog,
 		changeRecipeFavourite,
@@ -18,8 +18,9 @@ import { goto, invalidateAll } from '$app/navigation'
 	import CookedLogModal from '$lib/components/recipe/CookedLogModal.svelte'
 	import CookedHistoryModal from '$lib/components/recipe/CookedHistoryModal.svelte'
 	import Calendar from '$lib/components/svg/Calendar.svelte'
-import Fork from '$lib/components/svg/Fork.svelte'
-import Spinner from '$lib/components/ui/Spinner.svelte'
+	import Fork from '$lib/components/svg/Fork.svelte'
+	import Spinner from '$lib/components/ui/Spinner.svelte'
+	import { t } from '$lib/stores/locale.js'
 
 	/** @type {{recipe: any, updateLogs: any, favRecipe: any, scale?: number, onRestoreScale?: (scale: number) => void, onLogUpdated?: (logId: string, note: string | null, scale: number) => Promise<void>, onLogDeleted?: (logId: string) => Promise<void>, viewerUserId?: string | null}} */
 	let {
@@ -42,8 +43,8 @@ import Spinner from '$lib/components/ui/Spinner.svelte'
 	let loadingLog = $state(false)
 	let showCookedModal = $state(false)
 	let showHistoryModal = $state(false)
-let isCopying = $state(false)
-let showCopyConfirm = $state(false)
+	let isCopying = $state(false)
+	let showCopyConfirm = $state(false)
 
 	const canDuplicate =
 		!!viewerUserId &&
@@ -88,26 +89,26 @@ let showCopyConfirm = $state(false)
 		}
 	}
 
-function handleDuplicate() {
-	if (!canDuplicate) return
-	showCopyConfirm = true
-}
+	function handleDuplicate() {
+		if (!canDuplicate) return
+		showCopyConfirm = true
+	}
 
-async function confirmDuplicate() {
-	showCopyConfirm = false
-	isCopying = true
-	const newUid = await duplicateRecipe(recipe?.uid)
-	isCopying = false
-	if (!newUid) return
-	await invalidateAll()
-	goto(`/recipe/${newUid}/view/`)
-}
+	async function confirmDuplicate() {
+		showCopyConfirm = false
+		isCopying = true
+		const result = await duplicateRecipe(recipe?.uid)
+		isCopying = false
+		if (!result.success || !result.uid) return
+		await invalidateAll()
+		goto(`/recipe/${result.uid}/view/`)
+	}
 </script>
 
 {#if !viewOnly || recipe.is_public}
 	<RecipeShareButton name={recipe.name} isPublic={recipe.is_public} uid={recipe.uid} {pubRecipe} />
 {:else}
-	<button class="btn btn-outline btn-sm tooltip" data-tip="Private Recipe">
+	<button class="btn btn-outline btn-sm tooltip" data-tip={$t('recipe.privateLabel')}>
 		<Public isPublic={recipe.is_public} width="20px" height="20px" fill="currentColor" />
 	</button>
 {/if}
@@ -115,15 +116,17 @@ async function confirmDuplicate() {
 	<a
 		href="/recipe/{recipe?.uid}/edit/"
 		class="btn btn-soft btn-primary btn-sm tooltip"
-		data-tip="Edit Recipe"
-		data-testid="edit-button">
+		data-tip={$t('recipe.editRecipe')}
+		data-testid="edit-button"
+	>
 		<Edit width="20px" height="20px" fill="currentColor" />
 	</a>
 	<a
 		href="/recipe/{recipe?.uid}/images/"
 		class="btn btn-soft btn-primary btn-sm tooltip"
-		data-tip="Edit Recipe Images"
-		data-testid="edit-button">
+		data-tip={$t('recipe.editImages')}
+		data-testid="edit-button"
+	>
 		<Images width="20px" height="20px" fill="currentColor" />
 	</a>
 	<button
@@ -131,7 +134,8 @@ async function confirmDuplicate() {
 		class="btn btn-soft btn-primary btn-sm tooltip"
 		class:btn-success={recipe?.is_public}
 		disabled={loadingPub}
-		data-tip={recipe?.is_public ? 'Private Recipe?' : 'Public Recipe?'}>
+		data-tip={recipe?.is_public ? $t('recipe.makePrivate') : $t('recipe.makePublic')}
+	>
 		{#if loadingPub}
 			<span class="loading loading-spinner loading-sm"></span>
 		{:else}
@@ -143,7 +147,8 @@ async function confirmDuplicate() {
 		class="btn btn-soft btn-primary btn-sm tooltip"
 		class:text-error={recipe?.on_favorites}
 		disabled={loadingFav}
-		data-tip={recipe?.on_favorites ? 'Unfavourite Recipe' : 'Favourite Recipe'}>
+		data-tip={recipe?.on_favorites ? $t('recipe.unfavouriteRecipe') : $t('recipe.favouriteRecipe')}
+	>
 		{#if loadingFav}
 			<span class="loading loading-spinner loading-sm"></span>
 		{:else}
@@ -155,12 +160,16 @@ async function confirmDuplicate() {
 		class="btn btn-soft btn-primary btn-sm tooltip"
 		class:text-success={logs?.length > 0}
 		data-tip={logs?.length > 0
-			? `Cooked ${logs.length} time${logs.length > 1 ? 's' : ''}`
-			: 'Mark Recipe Cooked'}
-		data-testid="check-button">
+			? $t(logs.length === 1 ? 'recipe.cookedTimes_one' : 'recipe.cookedTimes_other', {
+					count: logs.length
+				})
+			: $t('recipe.markCooked')}
+		data-testid="check-button"
+	>
 		{#if logs?.length > 1}
 			<span class="badge badge-success badge-sm text-success-content font-bold min-w-5"
-				>{logs.length}</span>
+				>{logs.length}</span
+			>
 		{:else}
 			<Check checked={logs?.length > 0} width="20px" height="20px" fill="currentColor" />
 		{/if}
@@ -169,7 +178,8 @@ async function confirmDuplicate() {
 		<button
 			onclick={() => (showHistoryModal = true)}
 			class="btn btn-soft btn-primary btn-sm tooltip"
-			data-tip="View Cooking History">
+			data-tip={$t('recipe.viewHistory')}
+		>
 			<Calendar width="20px" height="20px" fill="currentColor" />
 		</button>
 	{/if}
@@ -177,38 +187,40 @@ async function confirmDuplicate() {
 		onclick={() => handleDelete(recipe?.uid)}
 		data-testid="delete-button"
 		class="btn btn-soft btn-primary btn-sm tooltip"
-		data-tip="Delete Recipe">
+		data-tip={$t('recipe.deleteRecipe')}
+	>
 		<Delete width="20px" height="20px" fill="currentColor" />
 	</button>
-{:else}
-	{#if viewerUserId}
-		<button
-			onclick={() => handleFavourite(recipe?.uid)}
-			class="btn btn-soft btn-primary btn-sm tooltip"
-			class:text-error={recipe?.on_favorites}
-			disabled={loadingFav}
-			data-tip={recipe?.on_favorites ? 'Unfavourite Recipe' : 'Favourite Recipe'}>
-			{#if loadingFav}
-				<span class="loading loading-spinner loading-sm"></span>
-			{:else}
-				<Favourite favourite={recipe?.on_favorites} width="20px" height="20px" fill="currentColor" />
-			{/if}
-		</button>
-		{#if canDuplicate}
-			<button
-				onclick={handleDuplicate}
-				class="btn btn-soft btn-primary btn-sm tooltip"
-				data-tip="Fork Recipe">
-				<Fork width="20px" height="20px" fill="currentColor" />
-			</button>
-		{:else if recipe?.userId !== viewerUserId}
-			<button
-				class="btn btn-soft btn-primary btn-sm tooltip opacity-40"
-				disabled={true}
-				data-tip="Already copied">
-				<Fork width="20px" height="20px" fill="currentColor" />
-			</button>
+{:else if viewerUserId}
+	<button
+		onclick={() => handleFavourite(recipe?.uid)}
+		class="btn btn-soft btn-primary btn-sm tooltip"
+		class:text-error={recipe?.on_favorites}
+		disabled={loadingFav}
+		data-tip={recipe?.on_favorites ? $t('recipe.unfavouriteRecipe') : $t('recipe.favouriteRecipe')}
+	>
+		{#if loadingFav}
+			<span class="loading loading-spinner loading-sm"></span>
+		{:else}
+			<Favourite favourite={recipe?.on_favorites} width="20px" height="20px" fill="currentColor" />
 		{/if}
+	</button>
+	{#if canDuplicate}
+		<button
+			onclick={handleDuplicate}
+			class="btn btn-soft btn-primary btn-sm tooltip"
+			data-tip={$t('recipe.forkRecipe')}
+		>
+			<Fork width="20px" height="20px" fill="currentColor" />
+		</button>
+	{:else if recipe?.userId !== viewerUserId}
+		<button
+			class="btn btn-soft btn-primary btn-sm tooltip opacity-40"
+			disabled={true}
+			data-tip={$t('recipeCard.alreadyForked')}
+		>
+			<Fork width="20px" height="20px" fill="currentColor" />
+		</button>
 	{/if}
 {/if}
 
@@ -222,25 +234,33 @@ async function confirmDuplicate() {
 		if (success) {
 			goto('/')
 		}
-	}}>
+	}}
+>
 	{#snippet content()}
-		<h3 class="font-bold text-lg">Delete Recipe</h3>
-		<p class="py-4">Are you sure you want to delete this recipe?</p>
+		<h3 class="font-bold text-lg">{$t('recipe.deleteRecipe')}</h3>
+		<p class="py-4">{$t('recipe.confirmDelete')}</p>
 	{/snippet}
 </ConfirmationDialog>
 
 <CookedLogModal bind:isOpen={showCookedModal} onSubmit={handleLogSubmit} loading={loadingLog} />
 
-<CookedHistoryModal bind:isOpen={showHistoryModal} {logs} {onRestoreScale} {onLogUpdated} {onLogDeleted} />
+<CookedHistoryModal
+	bind:isOpen={showHistoryModal}
+	{logs}
+	{onRestoreScale}
+	{onLogUpdated}
+	{onLogDeleted}
+/>
 
 <ConfirmationDialog
 	bind:isOpen={showCopyConfirm}
 	onClose={() => (showCopyConfirm = false)}
-	onConfirm={confirmDuplicate}>
+	onConfirm={confirmDuplicate}
+>
 	{#snippet content()}
-		<h3 class="font-bold text-lg">Copy Recipe</h3>
-		<p class="py-4">Fork this recipe into your account?</p>
+		<h3 class="font-bold text-lg">{$t('recipe.copyRecipe')}</h3>
+		<p class="py-4">{$t('recipe.confirmFork')}</p>
 	{/snippet}
 </ConfirmationDialog>
 
-<Spinner visible={isCopying} spinnerContent="Copying Recipe" />
+<Spinner visible={isCopying} spinnerContent={$t('copyDialog.copying')} />

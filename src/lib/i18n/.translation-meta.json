@@ -1,0 +1,348 @@
+{
+  "langs": {
+    "ara": {
+      "common": {
+        "sourceHash": "1574bff6df1a9c36a710825ad02b3e0b6dc9a95e2e1dea4c42a61f32f5ce6ce9"
+      },
+      "nav": {
+        "sourceHash": "ee92c6c9f460926ac996b02d13b3ae2a9c56d5f90e3fc8b725a66791d0247bcb"
+      },
+      "auth": {
+        "sourceHash": "d32e961ae61e8c8e90b33060f9b06e398ad695666e9e6faae41fafc9302ae096"
+      },
+      "validation": {
+        "sourceHash": "e32380c4a71f43540010ce45e276bcd5697589c183e7bdc6ddb235b85937cfc9"
+      },
+      "setup": {
+        "sourceHash": "5fd0b2bbf72466661dc5eee3ea79bb2e61fb39de1532f9400f72227123affbad"
+      },
+      "filter": {
+        "sourceHash": "dec7742a3706a430b0159bbe02104d5ba8ab4a9bacd5f8017df948a7b0c53c76"
+      },
+      "home": {
+        "sourceHash": "cd311d7184c369a2003d47f041251b6fe55df5f3eeecbff60483776fd38154a8"
+      },
+      "recipe": {
+        "sourceHash": "b09502d57d88ab33eea16a7c7c8712222e81c954346ab148b88d6db30392ee12"
+      },
+      "recipeCard": {
+        "sourceHash": "b3572b97ce9f48ddbf06fff3a566b220d19d6b670d4e2155b4bea7c9089cf4a4"
+      },
+      "recipeForm": {
+        "sourceHash": "dd3cfa4d7f8e5d5d0ecca323f4961fe45a893e4314759fd40ccb508c797b4b29"
+      },
+      "recipeNew": {
+        "sourceHash": "168f56e37c2964ed9a37a827e9c2ae8f24ae6a5da4e09df2e8121f0f0efabf24"
+      },
+      "cookedLog": {
+        "sourceHash": "f6f027034a0fc281df3d835fa53a804e43d6eb0be2386614ce8a5fa4fd78e893"
+      },
+      "calendar": {
+        "sourceHash": "e4972ab23ebd1c56bdbd43247a5d68a37c6b23f61872b3e784ed0c0f530245ab"
+      },
+      "copyDialog": {
+        "sourceHash": "379d6b664a60474f88315dd109ac18d1abed0d41d905f128fdb0a4abcc38dca3"
+      },
+      "settings": {
+        "sourceHash": "48d0cb2dbd9cbb8b724872dbde4d0425d1bcebff7a22f4f2ea47de13e00d1c29"
+      },
+      "admin": {
+        "sourceHash": "242a17ab87eb2e363293c8c92ed34befea85d62aa351f8dc9cff89a3682cecdd"
+      },
+      "options": {
+        "sourceHash": "a2d733dd49481861f4dec69a98c6254a98c8535443088a101278869619b3eb73"
+      },
+      "exportPage": {
+        "sourceHash": "7e475ffe97334d07c962d26924f1579463c7ed675068619fb4928e359161a803"
+      },
+      "importPage": {
+        "sourceHash": "76ba9f2ffdfbfb17bc4726afe1af33054ad95d6bf9518db9d0a9402a439af574"
+      },
+      "bookmarklet": {
+        "sourceHash": "119e3dcf60eeff23744a2aafe8bbdcfafae2aaa16dde475e74bbfaee0904b0de"
+      },
+      "photos": {
+        "sourceHash": "5a94bfe5c9efe05514c67b66095c95f7b53174e527a4c9df2725f64e766736e1"
+      },
+      "recipePrefs": {
+        "sourceHash": "3a78abef6d2833ee94da96c6a25d88ff0704dbca7e0d354a5db4d31208be706a"
+      },
+      "recipeView": {
+        "sourceHash": "bbcae06f5d8fd868ad7454258b658558712d92ca22c378f069cd5511892b9d02"
+      },
+      "nutritionView": {
+        "sourceHash": "886083fe773b158b146b8e49508717c494703082d09e95278b976c5c2a72d694"
+      },
+      "scaleControl": {
+        "sourceHash": "3b41d3f443aeaf8f916ab15ae1c96cbdcbf8dd1e23e26e5185ba1b43f851bedc"
+      },
+      "dialog": {
+        "sourceHash": "cd69c6d38f13117db8a1eef628f4e47ed96a622bcf8115e847c0cc8318b1d7a2"
+      },
+      "shopping": {
+        "sourceHash": "20d8258974372e7236b3f5d5c6482b9ee04d4245b02df89e9f084d4dd00ee887"
+      },
+      "users": {
+        "sourceHash": "c765681479815f7cf6ff7eb78767dfdcae28544c8f37f0de873af7b258e9556b"
+      }
+    },
+    "hun": {
+      "common": {
+        "sourceHash": "1574bff6df1a9c36a710825ad02b3e0b6dc9a95e2e1dea4c42a61f32f5ce6ce9"
+      },
+      "nav": {
+        "sourceHash": "ee92c6c9f460926ac996b02d13b3ae2a9c56d5f90e3fc8b725a66791d0247bcb"
+      },
+      "auth": {
+        "sourceHash": "d32e961ae61e8c8e90b33060f9b06e398ad695666e9e6faae41fafc9302ae096"
+      },
+      "validation": {
+        "sourceHash": "e32380c4a71f43540010ce45e276bcd5697589c183e7bdc6ddb235b85937cfc9"
+      },
+      "setup": {
+        "sourceHash": "5fd0b2bbf72466661dc5eee3ea79bb2e61fb39de1532f9400f72227123affbad"
+      },
+      "filter": {
+        "sourceHash": "dec7742a3706a430b0159bbe02104d5ba8ab4a9bacd5f8017df948a7b0c53c76"
+      },
+      "home": {
+        "sourceHash": "cd311d7184c369a2003d47f041251b6fe55df5f3eeecbff60483776fd38154a8"
+      },
+      "recipe": {
+        "sourceHash": "b09502d57d88ab33eea16a7c7c8712222e81c954346ab148b88d6db30392ee12"
+      },
+      "recipeCard": {
+        "sourceHash": "b3572b97ce9f48ddbf06fff3a566b220d19d6b670d4e2155b4bea7c9089cf4a4"
+      },
+      "recipeForm": {
+        "sourceHash": "dd3cfa4d7f8e5d5d0ecca323f4961fe45a893e4314759fd40ccb508c797b4b29"
+      },
+      "recipeNew": {
+        "sourceHash": "168f56e37c2964ed9a37a827e9c2ae8f24ae6a5da4e09df2e8121f0f0efabf24"
+      },
+      "cookedLog": {
+        "sourceHash": "f6f027034a0fc281df3d835fa53a804e43d6eb0be2386614ce8a5fa4fd78e893"
+      },
+      "calendar": {
+        "sourceHash": "e4972ab23ebd1c56bdbd43247a5d68a37c6b23f61872b3e784ed0c0f530245ab"
+      },
+      "copyDialog": {
+        "sourceHash": "379d6b664a60474f88315dd109ac18d1abed0d41d905f128fdb0a4abcc38dca3"
+      },
+      "settings": {
+        "sourceHash": "48d0cb2dbd9cbb8b724872dbde4d0425d1bcebff7a22f4f2ea47de13e00d1c29"
+      },
+      "admin": {
+        "sourceHash": "242a17ab87eb2e363293c8c92ed34befea85d62aa351f8dc9cff89a3682cecdd"
+      },
+      "options": {
+        "sourceHash": "a2d733dd49481861f4dec69a98c6254a98c8535443088a101278869619b3eb73"
+      },
+      "exportPage": {
+        "sourceHash": "7e475ffe97334d07c962d26924f1579463c7ed675068619fb4928e359161a803"
+      },
+      "importPage": {
+        "sourceHash": "76ba9f2ffdfbfb17bc4726afe1af33054ad95d6bf9518db9d0a9402a439af574"
+      },
+      "bookmarklet": {
+        "sourceHash": "119e3dcf60eeff23744a2aafe8bbdcfafae2aaa16dde475e74bbfaee0904b0de"
+      },
+      "photos": {
+        "sourceHash": "5a94bfe5c9efe05514c67b66095c95f7b53174e527a4c9df2725f64e766736e1"
+      },
+      "recipePrefs": {
+        "sourceHash": "3a78abef6d2833ee94da96c6a25d88ff0704dbca7e0d354a5db4d31208be706a"
+      },
+      "recipeView": {
+        "sourceHash": "bbcae06f5d8fd868ad7454258b658558712d92ca22c378f069cd5511892b9d02"
+      },
+      "nutritionView": {
+        "sourceHash": "886083fe773b158b146b8e49508717c494703082d09e95278b976c5c2a72d694"
+      },
+      "scaleControl": {
+        "sourceHash": "3b41d3f443aeaf8f916ab15ae1c96cbdcbf8dd1e23e26e5185ba1b43f851bedc"
+      },
+      "dialog": {
+        "sourceHash": "cd69c6d38f13117db8a1eef628f4e47ed96a622bcf8115e847c0cc8318b1d7a2"
+      },
+      "shopping": {
+        "sourceHash": "20d8258974372e7236b3f5d5c6482b9ee04d4245b02df89e9f084d4dd00ee887"
+      },
+      "users": {
+        "sourceHash": "c765681479815f7cf6ff7eb78767dfdcae28544c8f37f0de873af7b258e9556b"
+      }
+    },
+    "ces": {
+      "common": {
+        "sourceHash": "1574bff6df1a9c36a710825ad02b3e0b6dc9a95e2e1dea4c42a61f32f5ce6ce9"
+      },
+      "nav": {
+        "sourceHash": "ee92c6c9f460926ac996b02d13b3ae2a9c56d5f90e3fc8b725a66791d0247bcb"
+      },
+      "auth": {
+        "sourceHash": "d32e961ae61e8c8e90b33060f9b06e398ad695666e9e6faae41fafc9302ae096"
+      },
+      "validation": {
+        "sourceHash": "e32380c4a71f43540010ce45e276bcd5697589c183e7bdc6ddb235b85937cfc9"
+      },
+      "setup": {
+        "sourceHash": "5fd0b2bbf72466661dc5eee3ea79bb2e61fb39de1532f9400f72227123affbad"
+      },
+      "filter": {
+        "sourceHash": "dec7742a3706a430b0159bbe02104d5ba8ab4a9bacd5f8017df948a7b0c53c76"
+      },
+      "home": {
+        "sourceHash": "cd311d7184c369a2003d47f041251b6fe55df5f3eeecbff60483776fd38154a8"
+      },
+      "recipe": {
+        "sourceHash": "b09502d57d88ab33eea16a7c7c8712222e81c954346ab148b88d6db30392ee12"
+      },
+      "recipeCard": {
+        "sourceHash": "b3572b97ce9f48ddbf06fff3a566b220d19d6b670d4e2155b4bea7c9089cf4a4"
+      },
+      "recipeForm": {
+        "sourceHash": "dd3cfa4d7f8e5d5d0ecca323f4961fe45a893e4314759fd40ccb508c797b4b29"
+      },
+      "recipeNew": {
+        "sourceHash": "168f56e37c2964ed9a37a827e9c2ae8f24ae6a5da4e09df2e8121f0f0efabf24"
+      },
+      "cookedLog": {
+        "sourceHash": "f6f027034a0fc281df3d835fa53a804e43d6eb0be2386614ce8a5fa4fd78e893"
+      },
+      "calendar": {
+        "sourceHash": "e4972ab23ebd1c56bdbd43247a5d68a37c6b23f61872b3e784ed0c0f530245ab"
+      },
+      "copyDialog": {
+        "sourceHash": "379d6b664a60474f88315dd109ac18d1abed0d41d905f128fdb0a4abcc38dca3"
+      },
+      "settings": {
+        "sourceHash": "48d0cb2dbd9cbb8b724872dbde4d0425d1bcebff7a22f4f2ea47de13e00d1c29"
+      },
+      "admin": {
+        "sourceHash": "242a17ab87eb2e363293c8c92ed34befea85d62aa351f8dc9cff89a3682cecdd"
+      },
+      "options": {
+        "sourceHash": "a2d733dd49481861f4dec69a98c6254a98c8535443088a101278869619b3eb73"
+      },
+      "exportPage": {
+        "sourceHash": "7e475ffe97334d07c962d26924f1579463c7ed675068619fb4928e359161a803"
+      },
+      "importPage": {
+        "sourceHash": "76ba9f2ffdfbfb17bc4726afe1af33054ad95d6bf9518db9d0a9402a439af574"
+      },
+      "bookmarklet": {
+        "sourceHash": "119e3dcf60eeff23744a2aafe8bbdcfafae2aaa16dde475e74bbfaee0904b0de"
+      },
+      "photos": {
+        "sourceHash": "5a94bfe5c9efe05514c67b66095c95f7b53174e527a4c9df2725f64e766736e1"
+      },
+      "recipePrefs": {
+        "sourceHash": "3a78abef6d2833ee94da96c6a25d88ff0704dbca7e0d354a5db4d31208be706a"
+      },
+      "recipeView": {
+        "sourceHash": "bbcae06f5d8fd868ad7454258b658558712d92ca22c378f069cd5511892b9d02"
+      },
+      "nutritionView": {
+        "sourceHash": "886083fe773b158b146b8e49508717c494703082d09e95278b976c5c2a72d694"
+      },
+      "scaleControl": {
+        "sourceHash": "3b41d3f443aeaf8f916ab15ae1c96cbdcbf8dd1e23e26e5185ba1b43f851bedc"
+      },
+      "dialog": {
+        "sourceHash": "cd69c6d38f13117db8a1eef628f4e47ed96a622bcf8115e847c0cc8318b1d7a2"
+      },
+      "shopping": {
+        "sourceHash": "20d8258974372e7236b3f5d5c6482b9ee04d4245b02df89e9f084d4dd00ee887"
+      },
+      "users": {
+        "sourceHash": "c765681479815f7cf6ff7eb78767dfdcae28544c8f37f0de873af7b258e9556b"
+      }
+    },
+    "nld": {
+      "common": {
+        "sourceHash": "1574bff6df1a9c36a710825ad02b3e0b6dc9a95e2e1dea4c42a61f32f5ce6ce9"
+      },
+      "nav": {
+        "sourceHash": "ee92c6c9f460926ac996b02d13b3ae2a9c56d5f90e3fc8b725a66791d0247bcb"
+      },
+      "auth": {
+        "sourceHash": "d32e961ae61e8c8e90b33060f9b06e398ad695666e9e6faae41fafc9302ae096"
+      },
+      "validation": {
+        "sourceHash": "e32380c4a71f43540010ce45e276bcd5697589c183e7bdc6ddb235b85937cfc9"
+      },
+      "setup": {
+        "sourceHash": "5fd0b2bbf72466661dc5eee3ea79bb2e61fb39de1532f9400f72227123affbad"
+      },
+      "filter": {
+        "sourceHash": "dec7742a3706a430b0159bbe02104d5ba8ab4a9bacd5f8017df948a7b0c53c76"
+      },
+      "home": {
+        "sourceHash": "cd311d7184c369a2003d47f041251b6fe55df5f3eeecbff60483776fd38154a8"
+      },
+      "recipe": {
+        "sourceHash": "b09502d57d88ab33eea16a7c7c8712222e81c954346ab148b88d6db30392ee12"
+      },
+      "recipeCard": {
+        "sourceHash": "b3572b97ce9f48ddbf06fff3a566b220d19d6b670d4e2155b4bea7c9089cf4a4"
+      },
+      "recipeForm": {
+        "sourceHash": "dd3cfa4d7f8e5d5d0ecca323f4961fe45a893e4314759fd40ccb508c797b4b29"
+      },
+      "recipeNew": {
+        "sourceHash": "168f56e37c2964ed9a37a827e9c2ae8f24ae6a5da4e09df2e8121f0f0efabf24"
+      },
+      "cookedLog": {
+        "sourceHash": "f6f027034a0fc281df3d835fa53a804e43d6eb0be2386614ce8a5fa4fd78e893"
+      },
+      "calendar": {
+        "sourceHash": "e4972ab23ebd1c56bdbd43247a5d68a37c6b23f61872b3e784ed0c0f530245ab"
+      },
+      "copyDialog": {
+        "sourceHash": "379d6b664a60474f88315dd109ac18d1abed0d41d905f128fdb0a4abcc38dca3"
+      },
+      "settings": {
+        "sourceHash": "48d0cb2dbd9cbb8b724872dbde4d0425d1bcebff7a22f4f2ea47de13e00d1c29"
+      },
+      "admin": {
+        "sourceHash": "242a17ab87eb2e363293c8c92ed34befea85d62aa351f8dc9cff89a3682cecdd"
+      },
+      "options": {
+        "sourceHash": "a2d733dd49481861f4dec69a98c6254a98c8535443088a101278869619b3eb73"
+      },
+      "exportPage": {
+        "sourceHash": "7e475ffe97334d07c962d26924f1579463c7ed675068619fb4928e359161a803"
+      },
+      "importPage": {
+        "sourceHash": "76ba9f2ffdfbfb17bc4726afe1af33054ad95d6bf9518db9d0a9402a439af574"
+      },
+      "bookmarklet": {
+        "sourceHash": "119e3dcf60eeff23744a2aafe8bbdcfafae2aaa16dde475e74bbfaee0904b0de"
+      },
+      "photos": {
+        "sourceHash": "5a94bfe5c9efe05514c67b66095c95f7b53174e527a4c9df2725f64e766736e1"
+      },
+      "recipePrefs": {
+        "sourceHash": "3a78abef6d2833ee94da96c6a25d88ff0704dbca7e0d354a5db4d31208be706a"
+      },
+      "recipeView": {
+        "sourceHash": "bbcae06f5d8fd868ad7454258b658558712d92ca22c378f069cd5511892b9d02"
+      },
+      "nutritionView": {
+        "sourceHash": "886083fe773b158b146b8e49508717c494703082d09e95278b976c5c2a72d694"
+      },
+      "scaleControl": {
+        "sourceHash": "3b41d3f443aeaf8f916ab15ae1c96cbdcbf8dd1e23e26e5185ba1b43f851bedc"
+      },
+      "dialog": {
+        "sourceHash": "cd69c6d38f13117db8a1eef628f4e47ed96a622bcf8115e847c0cc8318b1d7a2"
+      },
+      "shopping": {
+        "sourceHash": "20d8258974372e7236b3f5d5c6482b9ee04d4245b02df89e9f084d4dd00ee887"
+      },
+      "users": {
+        "sourceHash": "c765681479815f7cf6ff7eb78767dfdcae28544c8f37f0de873af7b258e9556b"
+      }
+    }
+  }
+}

@@ -4,6 +4,7 @@
 	import Shopping from '$lib/components/svg/Shopping.svelte'
 	import Badge from '$lib/components/ui/Badge.svelte'
 	import { i18nMap } from '$lib/submodules/recipe-ingredient-parser/src/i18n'
+	import { t } from '$lib/stores/locale.js'
 
 	/** @type {{ingredient: any, ingredientIndex?: number, scale: any, displayExtra: any, displayDryMatch: any, displayOriginal: any, selectedSystem: any, recipeUid: any}} */
 	let {
@@ -65,7 +66,8 @@
 			Number(min ?? 0) === 0 &&
 			Number(max ?? 0) === 0
 		if (isNoUnitZeroPlaceholder) return ''
-		const hasMeaningfulRange = hasRangeValues && !(!hasQty && Number(min) === 0 && Number(max) === 0)
+		const hasMeaningfulRange =
+			hasRangeValues && !(!hasQty && Number(min) === 0 && Number(max) === 0)
 		if (!hasQty && !hasMeaningfulRange) return ''
 		if (hasMeaningfulRange && min !== max) {
 			return selectedSystem === 'metric'
@@ -153,7 +155,8 @@
 		formatQuantity(ingredient.quantity, ingredient.minQty, ingredient.maxQty, ingredient.unit)
 	)
 	const displayQuantityForPlural = $derived.by(() => {
-		if (ingredient.quantity !== null && ingredient.quantity !== undefined) return ingredient.quantity * scaleIng
+		if (ingredient.quantity !== null && ingredient.quantity !== undefined)
+			return ingredient.quantity * scaleIng
 		if (
 			ingredient.maxQty !== null &&
 			ingredient.maxQty !== undefined &&
@@ -167,7 +170,8 @@
 
 <div class="ingredient-line" class:highlight={isHighlighted}>
 	<button class="add-btn" onclick={() => handleAddToShoppingList(ingredient)}
-		><Shopping width="10px" fill="white" /></button>
+		><Shopping width="10px" fill="white" /></button
+	>
 	<!-- svelte-ignore a11y_click_events_have_key_events -->
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<div onclick={handleClick}>
@@ -180,7 +184,8 @@
 				<div data-heading>
 					<svelte:element
 						this={`h${markdownHeading.level}`}
-						class={getHeadingClasses(markdownHeading.level, ingredientIndex)}>
+						class={getHeadingClasses(markdownHeading.level, ingredientIndex)}
+					>
 						{markdownHeading.text}
 					</svelte:element>
 				</div>
@@ -215,7 +220,8 @@
 							{/if}
 							{#if displayDryMatch && ingredient.dryIngredient}
 								<i>
-									| {ingredient.dryIngredient.name} ({ingredient.dryIngredient.gramsPerCup} g/cup)</i>
+									| {ingredient.dryIngredient.name} ({ingredient.dryIngredient.gramsPerCup} g/cup)</i
+								>
 							{/if}
 							{#if ingredient.usedDefaultDensity === true}
 								*
@@ -248,12 +254,13 @@
 								<button
 									class="alt-toggle"
 									type="button"
-									aria-label="Toggle alternatives"
+									aria-label={$t('recipeView.toggleAlternatives')}
 									aria-expanded={showAlternatives}
 									onclick={(event) => {
 										event.stopPropagation()
 										showAlternatives = !showAlternatives
-									}}>
+									}}
+								>
 									<span class="chevron" aria-hidden="true">▸</span>
 								</button>
 							{/if}
@@ -311,10 +318,10 @@
 						{/if}
 						<span class="alt-badges">
 							{#if alt.unit || (alt.quantity !== null && alt.quantity !== undefined)}
-								<Badge color="primary" style="outline">unit</Badge>
+								<Badge color="primary" style="outline">{$t('recipeView.altUnit')}</Badge>
 							{/if}
 							{#if alt.ingredient}
-								<Badge color="primary" style="outline">ing</Badge>
+								<Badge color="primary" style="outline">{$t('recipeView.altIngredient')}</Badge>
 							{/if}
 						</span>
 					</li>

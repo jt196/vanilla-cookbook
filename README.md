@@ -149,6 +149,10 @@ Designed to be as easy and stress free to set up as possible. Docker or local no
 
 Multiple languages supported for ingredient parsing. [Docs](https://vanilla-cookbook.readthedocs.io/en/latest/manual/ingredients/#languages)
 
+### Localized UI
+
+The app UI now ships with locale files for the same language set as the ingredient parser, with English fallback if a translation key is missing. User language can be changed in recipe settings and the app refreshes into the selected locale immediately after save.
+
 ## Installation
 
 Docker set up is dead simple. Single container, portable SQLite database.

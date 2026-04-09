@@ -9,7 +9,10 @@ export async function POST({ request, locals }) {
 		const { type, content, userUnits = 'metric', language = 'eng' } = await request.json()
 
 		if (!type || !content) {
-			return json({ error: 'Missing type or content.' }, { status: 400 })
+			return json(
+				{ error: 'Missing type or content.', code: 'recipeForm.msg.cleanupMissingContent' },
+				{ status: 400 }
+			)
 		}
 
 		const aiConfig = resolveAIConfig(locals, 'text')
@@ -154,7 +157,10 @@ Return format:
   "text": "# Substitutions\\n\\n...\\n\\n# Additions\\n\\n..."
 }`
 		} else {
-			return json({ error: 'Invalid cleanup type.' }, { status: 400 })
+			return json(
+				{ error: 'Invalid cleanup type.', code: 'recipeForm.msg.cleanupInvalidType' },
+				{ status: 400 }
+			)
 		}
 
 		// Use generateRecipeWithLLM for cleanup task
@@ -204,14 +210,29 @@ Return format:
 				source: 'fallback'
 			})
 		} else {
-			return json({ error: 'Cleanup failed - invalid response format.' }, { status: 422 })
+			return json(
+				{
+					error: 'Cleanup failed - invalid response format.',
+					code: 'recipeForm.msg.cleanupInvalidResponse'
+				},
+				{ status: 422 }
+			)
 		}
 	} catch (err) {
 		console.error('Cleanup API failed:', err)
 		const msg = err.message || ''
 		if (msg.includes('429') || msg.includes('quota') || msg.includes('rate')) {
-			return json({ error: 'Rate limit reached. Please wait a moment before trying again.' }, { status: 429 })
+			return json(
+				{
+					error: 'Rate limit reached. Please wait a moment before trying again.',
+					code: 'recipeForm.msg.rateLimit'
+				},
+				{ status: 429 }
+			)
 		}
-		return json({ error: 'Failed to clean up content.' }, { status: 500 })
+		return json(
+			{ error: 'Failed to clean up content.', code: 'recipeForm.msg.cleanupFailed' },
+			{ status: 500 }
+		)
 	}
 }

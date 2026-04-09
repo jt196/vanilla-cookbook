@@ -5,6 +5,8 @@ import { seedIngredients } from '$lib/utils/seed/seedIng'
 import { execSync } from 'child_process'
 import { prisma as client } from '$lib/server/prisma'
 import { auth } from '$lib/server/lucia'
+import { validatePassword } from '$lib/utils/security.js'
+import { env } from '$env/dynamic/private'
 
 /**
  * POST /api/site/seed
@@ -23,16 +25,37 @@ import { auth } from '$lib/server/lucia'
 export async function POST({ request, locals }) {
 	try {
 		const { adminUser } = await request.json()
-		const { adminUsername, adminEmail, adminPassword, adminUnits, adminLanguage, recipeSeed } = adminUser
+		const { adminUsername, adminEmail, adminPassword, adminUnits, adminLanguage, recipeSeed } =
+			adminUser
 
 		// Basic validation
 		if (!adminUsername || !adminEmail || !adminPassword) {
-			return new Response(JSON.stringify({ error: 'All fields are required.' }), {
-				status: 400,
-				headers: {
-					'Content-Type': 'application/json'
+			return new Response(
+				JSON.stringify({ error: 'All fields are required.', code: 'setup.msg.allFieldsRequired' }),
+				{
+					status: 400,
+					headers: {
+						'Content-Type': 'application/json'
+					}
 				}
-			})
+			)
+		}
+
+		const passwordValidation = validatePassword(adminPassword, env)
+		if (!passwordValidation.isValid) {
+			return new Response(
+				JSON.stringify({
+					error: passwordValidation.message,
+					code: passwordValidation.messageCode,
+					vars: passwordValidation.messageVars
+				}),
+				{
+					status: 400,
+					headers: {
+						'Content-Type': 'application/json'
+					}
+				}
+			)
 		}
 
 		// Check if the database file exists. If not, run migrations.
@@ -63,12 +86,15 @@ export async function POST({ request, locals }) {
 			where: { username: adminUsername }
 		})
 		if (!newUser) {
-			return new Response(JSON.stringify({ error: 'Admin User not created.' }), {
-				status: 400,
-				headers: {
-					'Content-Type': 'application/json'
+			return new Response(
+				JSON.stringify({ error: 'Admin User not created.', code: 'setup.msg.adminNotCreated' }),
+				{
+					status: 400,
+					headers: {
+						'Content-Type': 'application/json'
+					}
 				}
-			})
+			)
 		}
 
 		// Run the seeding functions.
@@ -87,7 +113,8 @@ export async function POST({ request, locals }) {
 			JSON.stringify({
 				success: true,
 				id: newUser.id,
-				message: 'Database seeded successfully.'
+				message: 'Database seeded successfully.',
+				code: 'setup.msg.seeded'
 			}),
 			{
 				status: 200,
@@ -98,11 +125,17 @@ export async function POST({ request, locals }) {
 		)
 	} catch (error) {
 		console.error('Error seeding DB:', error)
-		return new Response(JSON.stringify({ error: `Failed to seed DB: ${error.message}` }), {
-			status: 500,
-			headers: {
-				'Content-Type': 'application/json'
+		return new Response(
+			JSON.stringify({
+				error: `Failed to seed DB: ${error.message}`,
+				code: 'setup.msg.seedFailed'
+			}),
+			{
+				status: 500,
+				headers: {
+					'Content-Type': 'application/json'
+				}
 			}
-		})
+		)
 	}
 }

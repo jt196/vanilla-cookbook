@@ -21,15 +21,21 @@ export async function POST({ locals, params }) {
 		})
 
 		if (!recipe) {
-			return jsonError(404, 'Recipe not found')
+			return jsonError(404, { error: 'Recipe not found', code: 'recipe.msg.notFound' })
 		}
 
 		if (recipe.userId === user.userId) {
-			return jsonError(400, 'Cannot duplicate your own recipe')
+			return jsonError(400, {
+				error: 'Cannot duplicate your own recipe',
+				code: 'recipe.msg.duplicateOwn'
+			})
 		}
 
 		if (!recipe.is_public && recipe.userId !== user.userId && !user.isAdmin) {
-			return jsonError(403, 'Access denied: this recipe is private')
+			return jsonError(403, {
+				error: 'Access denied: this recipe is private',
+				code: 'recipe.msg.privateAccessDenied'
+			})
 		}
 
 		const existingFork = await prisma.recipe.findFirst({
@@ -40,7 +46,10 @@ export async function POST({ locals, params }) {
 			select: { uid: true }
 		})
 		if (existingFork) {
-			return jsonError(409, 'You have already copied this recipe')
+			return jsonError(409, {
+				error: 'You have already copied this recipe',
+				code: 'recipe.msg.duplicateExists'
+			})
 		}
 
 		const newRecipe = await prisma.recipe.create({
@@ -86,9 +95,12 @@ export async function POST({ locals, params }) {
 			})
 		}
 
-		return jsonSuccess({ uid: newRecipe.uid })
+		return jsonSuccess({ uid: newRecipe.uid, code: 'recipe.msg.duplicated' })
 	} catch (err) {
 		console.error('Error duplicating recipe:', err)
-		return jsonError(500, `Failed to duplicate recipe: ${err.message}`)
+		return jsonError(500, {
+			error: `Failed to duplicate recipe: ${err.message}`,
+			code: 'recipe.msg.duplicateFail'
+		})
 	}
 }

@@ -12,8 +12,15 @@ export async function PUT({ request, locals, params }) {
 			data: { rating }
 		})
 
-		return jsonSuccess({ message: 'Rating updated', recipe: updatedRecipe })
+		return jsonSuccess({
+			message: 'Rating updated',
+			code: 'recipe.msg.ratingUpdated',
+			recipe: updatedRecipe
+		})
 	} catch (err) {
-		return jsonError(500, `Failed to update rating: ${err.message}`)
+		return jsonError(500, {
+			error: `Failed to update rating: ${err.message}`,
+			code: 'recipe.msg.ratingUpdateFail'
+		})
 	}
 }

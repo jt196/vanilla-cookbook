@@ -1,9 +1,10 @@
 <script>
 	import { fade } from 'svelte/transition'
+	import { t } from '$lib/stores/locale.js'
 
 	let {
 		visible = false,
-		spinnerContent = 'Loading',
+		spinnerContent = '',
 		transitionTime = 300,
 		inline = false,
 		inlineClass = '',
@@ -27,12 +28,14 @@
 	const typeClass = $derived(`loading-${type}`)
 	const sizeClass = $derived(`loading-${size}`)
 	const colorClass = $derived(`text-${color}`)
+	const resolvedSpinnerContent = $derived(spinnerContent || $t('common.loading'))
 </script>
 
 {#if visible}
 	{#if inline}
 		<div class={`inline-flex items-center justify-center ${inlineClass}`.trim()} aria-busy="true">
-			<span class="loading {typeClass} {sizeClass} {colorClass}" aria-label={spinnerContent}></span>
+			<span class="loading {typeClass} {sizeClass} {colorClass}" aria-label={resolvedSpinnerContent}
+			></span>
 		</div>
 	{:else}
 		<div
@@ -42,7 +45,7 @@
 		>
 			<div class="flex flex-col items-center gap-4 bg-base-100 p-8 rounded-lg shadow-xl">
 				<span class="loading {typeClass} {sizeClass} {colorClass}"></span>
-				<p class="text-lg text-base-content">{spinnerContent}</p>
+				<p class="text-lg text-base-content">{resolvedSpinnerContent}</p>
 			</div>
 		</div>
 	{/if}

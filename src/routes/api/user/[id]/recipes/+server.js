@@ -76,10 +76,7 @@ export async function GET({ params, locals }) {
 				},
 				log: true,
 				photos: {
-					orderBy: [
-						{ isMain: 'desc' },
-						{ id: 'asc' }
-					],
+					orderBy: [{ isMain: 'desc' }, { id: 'asc' }],
 					select: {
 						id: true,
 						fileType: true
@@ -128,6 +125,9 @@ export async function GET({ params, locals }) {
 		return jsonSuccess(updatedRecipes)
 	} catch (err) {
 		console.error('Error fetching recipes:', err)
-		return jsonError(500, `Failed to fetch recipes: ${err.message}`)
+		return jsonError(500, {
+			error: `Failed to fetch recipes: ${err.message}`,
+			code: 'users.msg.recipesLoadFail'
+		})
 	}
 }

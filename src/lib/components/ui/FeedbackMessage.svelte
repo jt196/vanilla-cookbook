@@ -1,9 +1,12 @@
 <script>
 	import { fade } from 'svelte/transition'
+	import { t } from '$lib/stores/locale.js'
 
-	/** @type {{message?: string, type?: 'success' | 'error' | 'info' | 'warning', timeout?: number, inline?: boolean, style?: 'standard' | 'outline' | 'soft' | 'dash', direction?: 'vertical' | 'horizontal', showIcon?: boolean, children?: import('svelte').Snippet}} */
+	/** @type {{message?: string, messageCode?: string | null, messageVars?: Record<string, string|number>, type?: 'success' | 'error' | 'info' | 'warning', timeout?: number, inline?: boolean, style?: 'standard' | 'outline' | 'soft' | 'dash', direction?: 'vertical' | 'horizontal', showIcon?: boolean, children?: import('svelte').Snippet}} */
 	let {
 		message = '',
+		messageCode = null,
+		messageVars = {},
 		timeout = 3000,
 		type = 'info',
 		inline = false,
@@ -41,31 +44,34 @@
 		error: `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`
 	}
 
+	const resolvedMessage = $derived(messageCode ? $t(messageCode, messageVars) : message)
+
 	$effect(() => {
-		if (message && !inline) {
+		if (resolvedMessage && !inline) {
 			clearTimeout(timeoutId) // Prevent overlapping timeouts
 			timeoutId = setTimeout(() => {
 				message = ''
+				messageCode = null
+				messageVars = {}
 			}, timeout)
 		}
 	})
 </script>
 
-{#if message}
+{#if resolvedMessage}
 	<div
 		transition:fade
 		class={`alert ${alertClasses[type]} ${styleClasses[styleVariant]} ${directionClasses[direction]} ${
-			inline
-				? 'mt-2 w-full'
-				: 'fixed top-20 left-1/2 -translate-x-1/2 z-50 w-[90vw] max-w-md px-4'
-		}`}>
+			inline ? 'mt-2 w-full' : 'fixed top-20 left-1/2 -translate-x-1/2 z-50 w-[90vw] max-w-md px-4'
+		}`}
+	>
 		{#if showIcon}
 			{@html icons[type]}
 		{/if}
 		{#if children}
 			{@render children()}
 		{:else}
-			<span>{message}</span>
+			<span>{resolvedMessage}</span>
 		{/if}
 	</div>
 {/if}

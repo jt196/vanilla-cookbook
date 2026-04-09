@@ -15,7 +15,10 @@ export async function DELETE({ locals }) {
 		return new Response(null, { status: 204 })
 	} catch (error) {
 		console.error('Failed to hide purchased items:', error)
-		return jsonError(500, 'Failed to delete purchased items')
+		return jsonError(500, {
+			error: 'Failed to delete purchased items',
+			code: 'shopping.msg.deletedPurchasedFail'
+		})
 	}
 }
 
@@ -33,9 +36,21 @@ export async function PATCH({ locals }) {
 			}
 		})
 
-		return jsonSuccess({ updatedCount: updatedItems.count })
+		return jsonSuccess({
+			updatedCount: updatedItems.count,
+			code:
+				updatedItems.count === 0
+					? 'shopping.msg.noneToMark'
+					: updatedItems.count === 1
+						? 'shopping.msg.markedPurchased_one'
+						: 'shopping.msg.markedPurchased_other',
+			vars: { count: updatedItems.count }
+		})
 	} catch (error) {
 		console.error('Failed to bulk update shopping list items:', error)
-		return jsonError(500, 'Failed to bulk update shopping list items')
+		return jsonError(500, {
+			error: 'Failed to bulk update shopping list items',
+			code: 'shopping.msg.updateError'
+		})
 	}
 }

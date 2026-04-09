@@ -1,4 +1,6 @@
 <script>
+	import { t } from '$lib/stores/locale.js'
+
 	/** @type {{data: any, children?: import('svelte').Snippet}} */
 	let { data, children } = $props()
 
@@ -11,35 +13,35 @@
 		class="tab"
 		class:tab-active={data.pathname === `/user/${user.userId}/options/settings`}
 		href={`/user/${user.userId}/options/settings`}>
-		Settings
+		{$t('options.settings')}
 	</a>
 	<a
 		role="tab"
 		class="tab"
 		class:tab-active={data.pathname === `/user/${user.userId}/options/recipes`}
 		href={`/user/${user.userId}/options/recipes`}>
-		Recipes
+		{$t('options.recipes')}
 	</a>
 	<a
 		role="tab"
 		class="tab"
 		class:tab-active={data.pathname === `/user/${user.userId}/options/bookmark`}
 		href={`/user/${user.userId}/options/bookmark`}>
-		Bookmark
+		{$t('options.bookmark')}
 	</a>
 	<a
 		role="tab"
 		class="tab"
 		class:tab-active={data.pathname === `/user/${user.userId}/options/import`}
 		href={`/user/${user.userId}/options/import`}>
-		Import
+		{$t('options.import')}
 	</a>
 	<a
 		role="tab"
 		class="tab"
 		class:tab-active={data.pathname === `/user/${user.userId}/options/export`}
 		href={`/user/${user.userId}/options/export`}>
-		Export
+		{$t('options.export')}
 	</a>
 	{#if data.user.isAdmin}
 		<a
@@ -47,14 +49,14 @@
 			class="tab"
 			class:tab-active={data.pathname === `/user/${user.userId}/options/admin/users`}
 			href={`/user/${user.userId}/options/admin/users`}>
-			Users
+			{$t('options.users')}
 		</a>
 		<a
 			role="tab"
 			class="tab"
 			class:tab-active={data.pathname === `/user/${user.userId}/options/admin/site`}
 			href={`/user/${user.userId}/options/admin/site`}>
-			Site
+			{$t('options.site')}
 		</a>
 	{/if}
 </div>

@@ -15,12 +15,12 @@ export const load = async ({ locals, url }) => {
 		throw redirect(302, '/')
 	}
 	// Capture form failure messages from query parameters (SSR safe)
-	const message = url.searchParams.get('message') ?? null
+	const messageCode = url.searchParams.get('messageCode') ?? null
 
 	return {
 		settings,
 		oauth,
-		message
+		messageCode
 	}
 }
 
@@ -36,14 +36,14 @@ export const actions = {
 		const password = (form.password ?? '').toString()
 
 		if (!identifier || !password) {
-			return fail(400, { message: 'Missing username/email or password.' })
+			return fail(400, { messageCode: 'auth.msg.loginMissingFields' })
 		}
 
 		const ipHit = locals.limiter.loginByIp(locals.clientIp || 'unknown')
-		if (!ipHit.ok) return fail(429, { message: 'Too many attempts. Try again soon.' })
+		if (!ipHit.ok) return fail(429, { messageCode: 'auth.msg.loginRateLimitIp' })
 
 		const idHit = locals.limiter.loginById(identifier.toLowerCase())
-		if (!idHit.ok) return fail(429, { message: 'Too many attempts for this account.' })
+		if (!idHit.ok) return fail(429, { messageCode: 'auth.msg.loginRateLimitAccount' })
 
 		try {
 			let key
@@ -77,9 +77,9 @@ export const actions = {
 
 			// Optional: avoid user enumeration by using the same message for both cases
 			if (err?.message === 'AUTH_INVALID_PASSWORD' || err?.message === 'AUTH_INVALID_KEY_ID') {
-				return fail(400, { message: 'Invalid credentials.' })
+				return fail(400, { messageCode: 'auth.msg.invalidCredentials' })
 			}
-			return fail(400, { message: 'Could not login user.' })
+			return fail(400, { messageCode: 'auth.msg.loginFailed' })
 		}
 	}
 }

@@ -5,6 +5,7 @@
 	import FeedbackMessage from '$lib/components/ui/FeedbackMessage.svelte'
 	import ConfirmationDialog from '$lib/components/ui/ConfirmationDialog.svelte'
 	import Spinner from '$lib/components/ui/Spinner.svelte'
+	import { t } from '$lib/stores/locale.js'
 
 	/**
 	 * The page data type.
@@ -32,6 +33,7 @@
 	let showDeleteConfirm = $state(false)
 	let saving = $state(false)
 	let feedbackMessage = $state('')
+	let feedbackCode = $state(null)
 	let feedbackType = $state('info')
 
 	$effect(() => {
@@ -48,6 +50,7 @@
 		event.preventDefault()
 		saving = true
 		feedbackMessage = ''
+		feedbackCode = null
 
 		const recipeWithCategories = {
 			...recipe,
@@ -73,12 +76,14 @@
 				goto(`/recipe/${recipe.uid}/view/`)
 			} else {
 				console.error('Error:', result.error)
-				feedbackMessage = result.error || 'Failed to save recipe.'
+				feedbackMessage = result.error || ''
+				feedbackCode = result.code || 'recipeNew.msg.saveFail'
 				feedbackType = 'error'
 			}
 		} catch (error) {
 			console.error('Error:', error)
-			feedbackMessage = 'Failed to save recipe.'
+			feedbackMessage = ''
+			feedbackCode = 'recipeNew.msg.saveFail'
 			feedbackType = 'error'
 		} finally {
 			saving = false
@@ -89,6 +94,7 @@
 		selectedFiles = files
 	}
 </script>
+
 <div class="recipe-container">
 	<RecipeForm
 		bind:recipe
@@ -103,7 +109,7 @@
 		{isAdmin}
 		{userUnits}
 		{userLanguage}
-		buttonText="Update Recipe"
+		buttonText={$t('common.update')}
 		cancelHref="/recipe/{recipe?.uid}/view/"
 		onDelete={() => handleDelete(recipe?.uid)}
 		onSelectedFilesChange={handleSelectedFilesChange}
@@ -112,7 +118,12 @@
 </div>
 
 {#if feedbackMessage}
-	<FeedbackMessage message={feedbackMessage} type={feedbackType} timeout={5000} />
+	<FeedbackMessage
+		message={feedbackMessage}
+		messageCode={feedbackCode}
+		type={feedbackType}
+		timeout={5000}
+	/>
 {/if}
 
 <ConfirmationDialog
@@ -127,12 +138,12 @@
 	}}
 >
 	{#snippet content()}
-		<h3 class="font-bold text-lg">Delete Recipe</h3>
-		<p class="py-4">Are you sure you want to delete this recipe?</p>
+		<h3 class="font-bold text-lg">{$t('recipe.deleteRecipe')}</h3>
+		<p class="py-4">{$t('recipe.confirmDelete')}</p>
 	{/snippet}
 </ConfirmationDialog>
 
-<Spinner visible={saving} spinnerContent="Saving recipe..." />
+<Spinner visible={saving} spinnerContent={$t('recipeNew.saving')} />
 
 <style lang="scss">
 	.recipe-container {

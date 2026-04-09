@@ -2,6 +2,7 @@
 	import { deletePhotoById, updatePhotos } from '$lib/utils/crud'
 	import FileInput from '$lib/components/ui/Form/FileInput.svelte'
 	import ConfirmationDialog from '$lib/components/ui/ConfirmationDialog.svelte'
+	import { t } from '$lib/stores/locale.js'
 
 	/** @type {{recipe: any, selectedFiles?: File[], onSelectedFilesChange?: (files: File[]) => void, imageExists?: boolean, imageChecked?: boolean, saveImageUrl?: boolean}} */
 	let {
@@ -103,22 +104,25 @@
 	<!-- 1. External Image URL -->
 	{#if recipe.image_url}
 		<div class="mb-4 mt-4">
-			<h4 class="text-sm font-semibold mb-2">Source URL Image</h4>
+			<h4 class="text-sm font-semibold mb-2">{$t('photos.sourceUrlImage')}</h4>
 			{#if imageExists}
 				{#if imageBroken}
 					<div
-						class="w-32 h-24 rounded-lg shadow-md mb-2 bg-base-300 flex items-center justify-center">
+						class="w-32 h-24 rounded-lg shadow-md mb-2 bg-base-300 flex items-center justify-center"
+					>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							class="h-8 w-8 opacity-40"
 							fill="none"
 							viewBox="0 0 24 24"
-							stroke="currentColor">
+							stroke="currentColor"
+						>
 							<path
 								stroke-linecap="round"
 								stroke-linejoin="round"
 								stroke-width="1.5"
-								d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+								d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+							/>
 						</svg>
 					</div>
 				{:else}
@@ -127,7 +131,8 @@
 						loading="lazy"
 						src={recipe.image_url}
 						alt=""
-						onerror={() => (imageBroken = true)} />
+						onerror={() => (imageBroken = true)}
+					/>
 				{/if}
 			{/if}
 			{#if !imageExists && imageChecked}
@@ -137,28 +142,31 @@
 						class="h-4 w-4 shrink-0"
 						fill="none"
 						viewBox="0 0 24 24"
-						stroke="currentColor">
+						stroke="currentColor"
+					>
 						<path
 							stroke-linecap="round"
 							stroke-linejoin="round"
 							stroke-width="2"
-							d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+							d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"
+						/>
 					</svg>
 					<div>
-						<p class="font-semibold">Image unreachable</p>
+						<p class="font-semibold">{$t('photos.imageUnreachable')}</p>
 						<p class="text-xs break-all opacity-70">{recipe.image_url}</p>
 					</div>
 				</div>
 			{/if}
 			{#if imageAlreadySaved}
-				<span class="badge badge-success badge-sm">Already saved</span>
+				<span class="badge badge-success badge-sm">{$t('photos.alreadySaved')}</span>
 			{:else if imageExists}
 				<label class="label cursor-pointer justify-start gap-2 mt-1">
 					<input
 						type="checkbox"
 						class="checkbox checkbox-sm checkbox-primary"
-						bind:checked={saveImageUrl} />
-					<span class="label-text text-sm">Save to recipe</span>
+						bind:checked={saveImageUrl}
+					/>
+					<span class="label-text text-sm">{$t('photos.saveToRecipe')}</span>
 				</label>
 			{/if}
 		</div>
@@ -166,22 +174,24 @@
 
 	<!-- 2. Upload Images -->
 	<div class="mb-4">
-		<h4 class="text-sm font-semibold mb-2">Image Upload</h4>
+		<h4 class="text-sm font-semibold mb-2">{$t('photos.imageUpload')}</h4>
 		<FileInput
 			id="file"
 			name="images"
 			accept="image/*"
 			fullWidth="false"
 			multiple={true}
-			onchange={handleFilesChange} />
+			onchange={handleFilesChange}
+		/>
 
 		{#if previewUrls?.length}
 			<div class="flex flex-wrap gap-3 mt-3">
 				{#each previewUrls as previewUrl, index}
 					<img
 						src={previewUrl}
-						alt={`Selected image ${index + 1}`}
-						class="w-32 h-auto object-cover rounded-lg shadow-md" />
+						alt={$t('photos.selectedImage', { index: index + 1 })}
+						class="w-32 h-auto object-cover rounded-lg shadow-md"
+					/>
 				{/each}
 			</div>
 		{/if}
@@ -190,7 +200,7 @@
 	<!-- 3. Saved Images -->
 	{#if filteredPhotos.length > 0}
 		<div class="mb-4">
-			<h4 class="text-sm font-semibold mb-2">Recipe Images</h4>
+			<h4 class="text-sm font-semibold mb-2">{$t('photos.recipeImages')}</h4>
 			<div class="flex flex-wrap gap-3">
 				{#each filteredPhotos as photo}
 					<div class="indicator">
@@ -199,28 +209,32 @@
 							onclick={() => handleDeletePhoto(photo.id)}
 							role="button"
 							tabindex="0"
-							onkeydown={(e) => e.key === 'Enter' && handleDeletePhoto(photo.id)}>✕</span>
+							onkeydown={(e) => e.key === 'Enter' && handleDeletePhoto(photo.id)}>✕</span
+						>
 						{#if photo.isMain}
 							<img
 								src="/api/recipe/image/{photo.id}"
-								alt="{recipe.name} photo"
-								class="max-h-40 rounded-lg shadow-md ring-4 ring-primary" />
+								alt={$t('photos.photoAlt', { name: recipe.name })}
+								class="max-h-40 rounded-lg shadow-md ring-4 ring-primary"
+							/>
 						{:else}
 							<button
 								type="button"
 								class="btn btn-ghost p-0 h-auto min-h-0"
-								onclick={() => handleSetMainPhoto(photo.id)}>
+								onclick={() => handleSetMainPhoto(photo.id)}
+							>
 								<img
 									src="/api/recipe/image/{photo.id}"
-									alt="{recipe.name} photo - click to set as main"
-									class="max-h-40 rounded-lg shadow-md opacity-80 hover:opacity-100 transition-opacity" />
+									alt={$t('photos.setMainAlt', { name: recipe.name })}
+									class="max-h-40 rounded-lg shadow-md opacity-80 hover:opacity-100 transition-opacity"
+								/>
 							</button>
 						{/if}
 					</div>
 				{/each}
 			</div>
 			<span class="label block whitespace-normal wrap-break-word text-sm leading-snug max-w-full">
-				Click on an image to set main.
+				{$t('photos.clickSetMain')}
 			</span>
 		</div>
 	{/if}
@@ -229,9 +243,10 @@
 <ConfirmationDialog
 	bind:isOpen={showDeleteConfirm}
 	onClose={() => (showDeleteConfirm = false)}
-	onConfirm={confirmDelete}>
+	onConfirm={confirmDelete}
+>
 	{#snippet content()}
-		<h3 class="font-bold text-lg">Delete Photo</h3>
-		<p class="py-4">Are you sure you want to delete this photo?</p>
+		<h3 class="font-bold text-lg">{$t('photos.deleteTitle')}</h3>
+		<p class="py-4">{$t('photos.deleteConfirm')}</p>
 	{/snippet}
 </ConfirmationDialog>

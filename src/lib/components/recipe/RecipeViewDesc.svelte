@@ -1,6 +1,7 @@
 <script>
 	import { getSanitizedHTML } from '$lib/utils/render'
 	import CollapseSection from '$lib/components/ui/CollapseSection.svelte'
+	import { t } from '$lib/stores/locale.js'
 
 	/** @type {{recipe: any, open?: boolean}} */
 	let { recipe, open = false } = $props()
@@ -26,7 +27,7 @@
 </script>
 
 {#if sanitisedDescription.length > 0}
-	<CollapseSection title="Description" className="mt-2" {open}>
+	<CollapseSection title={$t('recipeView.description')} className="mt-2" {open}>
 		<div class="prose max-w-none">
 			{#each sanitisedDescription as parsedDescription}
 				<p>{@html parsedDescription}</p>
