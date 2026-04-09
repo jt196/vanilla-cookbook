@@ -75,11 +75,11 @@ jobs:
       - name: Build Project
         run: pnpm build
 
-      - name: Test seed script imports
-        run: pnpm seed
-
       - name: Run Prisma Migrations
         run: pnpm prisma migrate deploy
+
+      - name: Seed ingredient data
+        run: pnpm seed
 
       - name: Start Node Server
         run: node build/index.js > server.log 2>&1 &
