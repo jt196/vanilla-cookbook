@@ -11,7 +11,10 @@ export async function POST({ request, locals }) {
 	)
 	const normalizedRegistrationAllowed = normalizeBoolean(siteData.registrationAllowed)
 	if (hasRegistrationAllowed && normalizedRegistrationAllowed === null) {
-		return jsonError(400, 'Invalid input data: registrationAllowed must be boolean.')
+		return jsonError(400, {
+			error: 'Invalid input data: registrationAllowed must be boolean.',
+			code: 'admin.site.msg.invalidRegistrationAllowed'
+		})
 	}
 
 	try {
@@ -56,6 +59,9 @@ export async function POST({ request, locals }) {
 			hasSemanticEmbeddingModel: !!siteData?.semanticEmbeddingModel,
 			error: err?.message
 		})
-		return jsonError(500, `Failed to update site settings: ${err.message}`)
+		return jsonError(500, {
+			error: `Failed to update site settings: ${err.message}`,
+			code: 'admin.site.msg.settingsUpdateFail'
+		})
 	}
 }

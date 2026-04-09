@@ -24,13 +24,13 @@ export const actions = {
 	importRecipes: async ({ request, locals }) => {
 		const session = await locals.auth.validate()
 		const user = session?.user
-		if (!user) return fail(401, { error: 'Not authenticated.' })
+		if (!user) return fail(401, { messageCode: 'importPage.msg.notAuthenticated' })
 
 		// ✅ Guard: only parse FormData if it's actually multipart
 		const ct = request.headers.get('content-type') || ''
 		if (!ct.toLowerCase().includes('multipart/form-data')) {
 			return fail(415, {
-				error: 'Expected multipart/form-data (did the form include enctype="multipart/form-data"?).'
+				messageCode: 'importPage.msg.expectedMultipart'
 			})
 		}
 
@@ -39,14 +39,17 @@ export const actions = {
 		const isPublic = !!form.get('isPublic')
 		const file = form.get('file')
 
-		if (!type || !importers[type]) return fail(400, { error: 'Unknown import type.' })
+		if (!type || !importers[type]) return fail(400, { messageCode: 'importPage.msg.unknownType' })
 		if (!(file && typeof file.arrayBuffer === 'function'))
-			return fail(400, { error: 'No file uploaded.' })
+			return fail(400, { messageCode: 'importPage.msg.noFile' })
 
 		const ext = '.' + (file.name?.split('.').pop() || '').toLowerCase()
 		const accepts = importers[type].accepts || []
 		if (accepts.length && !accepts.includes(ext)) {
-			return fail(400, { error: `File extension not allowed for ${importers[type].label}.` })
+			return fail(400, {
+				messageCode: 'importPage.msg.extensionNotAllowed',
+				messageVars: { type: importers[type].label }
+			})
 		}
 
 		const buffer = Buffer.from(await file.arrayBuffer())
@@ -57,11 +60,14 @@ export const actions = {
 			if (typeof impl.magicOk === 'function') {
 				const kind = await fileTypeFromBuffer(buffer) // { ext, mime } or null
 				const ok = await impl.magicOk(kind)
-				if (!ok) return fail(400, { error: 'File type not recognized/allowed.' })
+				if (!ok) return fail(400, { messageCode: 'importPage.msg.fileTypeNotAllowed' })
 			}
 
 			if (typeof impl.run !== 'function') {
-				return fail(500, { error: `Importer "${type}" has no run() function.` })
+				return fail(500, {
+					messageCode: 'importPage.msg.importerMissingRun',
+					messageVars: { type }
+				})
 			}
 
 			const result = await impl.run({
@@ -71,15 +77,36 @@ export const actions = {
 				isPublic
 			})
 
+			if (result.messageCode) {
+				return {
+					messageCode: result.messageCode,
+					messageVars: result.messageVars
+				}
+			}
+
+			const messageCode = result.message
+				? null
+				: result.skipped
+					? result.inserted === 1
+						? 'importPage.msg.importedSummaryWithSkipped_one'
+						: 'importPage.msg.importedSummaryWithSkipped_other'
+					: result.inserted === 1
+						? 'importPage.msg.importedSummary_one'
+						: 'importPage.msg.importedSummary_other'
+
 			return {
-				message:
-					result.message ||
-					`Imported ${result.inserted} recipe(s)` +
-						(result.skipped ? `, skipped ${result.skipped}.` : '.')
+				message: result.message,
+				messageCode,
+				messageVars: result.message
+					? undefined
+					: { inserted: result.inserted, skipped: result.skipped || 0 }
 			}
 		} catch (e) {
 			console.error(e)
-			return fail(500, { error: e.message || 'Failed to import file.' })
+			return fail(500, {
+				message: e.message,
+				messageCode: e.message ? null : 'importPage.msg.importFailed'
+			})
 		}
 	}
 }

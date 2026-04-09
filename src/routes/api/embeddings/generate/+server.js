@@ -25,7 +25,8 @@ export async function POST({ request, locals }) {
 					processed: 0,
 					failed: 0,
 					remaining: 0,
-					error: `Embedding provider '${configuredProvider}' is configured but not available. Ensure the API key for '${configuredProvider}' is set as a server environment variable.`
+					error: `Embedding provider '${configuredProvider}' is configured but not available. Ensure the API key for '${configuredProvider}' is set as a server environment variable.`,
+					code: 'admin.site.msg.embeddingProviderUnavailable'
 				},
 				{ status: 503 }
 			)
@@ -35,7 +36,8 @@ export async function POST({ request, locals }) {
 				processed: 0,
 				failed: 0,
 				remaining: 0,
-				reason: 'Semantic embedding jobs are disabled.'
+				reason: 'Semantic embedding jobs are disabled.',
+				reasonCode: 'admin.site.msg.embeddingJobsDisabled'
 			},
 			{ status: 503 }
 		)

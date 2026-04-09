@@ -17,6 +17,7 @@
 	import TableRow from '$lib/components/ui/Table/TableRow.svelte'
 	import TableCell from '$lib/components/ui/Table/TableCell.svelte'
 	import ConfirmationDialog from '$lib/components/ui/ConfirmationDialog.svelte'
+	import { t } from '$lib/stores/locale.js'
 
 	/** @type {{data: any}} */
 	let { data } = $props()
@@ -29,6 +30,8 @@
 	let password = $state('')
 	let passwordConfirm = $state('')
 	let userFeedback = $state('')
+	let userFeedbackCode = $state(null)
+	let userFeedbackType = $state('error')
 
 	let editingUser = $state({
 		id: null,
@@ -48,6 +51,8 @@
 		isEditMode = false
 		password = ''
 		passwordConfirm = ''
+		userFeedback = ''
+		userFeedbackCode = null
 		editingUser = {
 			id: null,
 			username: '',
@@ -69,6 +74,8 @@
 
 	function openEditDialog(user) {
 		isEditMode = true
+		userFeedback = ''
+		userFeedbackCode = null
 		// Use a deep clone to avoid unintentional two-way binding
 		editingUser = JSON.parse(JSON.stringify(user))
 		isDialogOpen = true
@@ -79,14 +86,18 @@
 		const method = isEditMode ? 'PUT' : 'POST'
 		// Require password on create; optional on edit
 		if (!isEditMode && !password) {
-			userFeedback = 'Password is required.'
+			userFeedback = ''
+			userFeedbackCode = 'admin.users.msg.passwordRequired'
+			userFeedbackType = 'error'
 			return
 		}
 
 		// Validate password if provided
 		if (password) {
 			if (!passwordValidation?.isValid) {
-				userFeedback = passwordValidation?.message ?? 'Invalid password.'
+				userFeedback = passwordValidation?.message ?? ''
+				userFeedbackCode = passwordValidation?.messageCode ?? 'admin.users.msg.passwordInvalid'
+				userFeedbackType = 'error'
 				return
 			}
 			editingUser = { ...editingUser, password }
@@ -108,6 +119,10 @@
 			const updatedUsers = users.map((u) => (u.id === editingUser.id ? editingUser : u))
 			users = updatedUsers
 			isDialogOpen = false
+			userFeedback = ''
+			userFeedbackCode =
+				data.code || (isEditMode ? 'admin.users.msg.updated' : 'admin.users.msg.created')
+			userFeedbackType = 'success'
 			if (currentAdminUserId === editingUser.id && editingUser.isAdmin === false) {
 				await fetch('/logout', { method: 'POST' })
 				setTimeout(() => {
@@ -118,15 +133,10 @@
 			}
 		} else {
 			console.error('Error updating user:', data.error)
-			// Optionally, tailor error messages based on content
-			if (data.error && data.error.toLowerCase().includes('username already taken')) {
-				userFeedback = 'Username already taken!'
-			} else if (data.error && data.error.toLowerCase().includes('email already taken')) {
-				userFeedback = 'Email already taken!'
-			} else {
-				console.log('An unknown error occurred:', data.error)
-				userFeedback = 'There was an error updating the user!'
-			}
+			userFeedback = data.error || ''
+			userFeedbackCode =
+				data.code || (isEditMode ? 'admin.users.msg.updateFail' : 'admin.users.msg.createFail')
+			userFeedbackType = 'error'
 		}
 	}
 	async function deleteUser(id) {
@@ -148,11 +158,22 @@
 
 			if (!response.ok) {
 				const errorData = await response.json()
-				throw new Error(errorData.message || 'Error deleting user')
+				throw Object.assign(
+					new Error(errorData.error || errorData.message || 'Error deleting user'),
+					{
+						code: errorData.code || null
+					}
+				)
 			}
+			userFeedback = ''
+			userFeedbackCode = 'admin.users.msg.deleted'
+			userFeedbackType = 'success'
 			await fetchData()
 		} catch (error) {
 			console.error('Error deleting user:', error.message)
+			userFeedback = error.message
+			userFeedbackCode = error.code || 'admin.users.msg.deleteFail'
+			userFeedbackType = 'error'
 		}
 	}
 	let adminCount = $derived(users.filter((user) => user.isAdmin).length)
@@ -173,20 +194,28 @@
 	let isSubmitDisabled = $derived(!(usernameOk && emailOk && passwordOk))
 </script>
 
-<Button class="tooltip mb-3" data-tip="New User" onclick={openCreateDialog}>
+<Button class="tooltip mb-3" data-tip={$t('admin.users.newUser')} onclick={openCreateDialog}>
 	<New width="30px" height="30px" fill="currentColor" />
 </Button>
 
 <Table zebra size="sm" bordered>
 	<TableHead>
 		<TableRow>
-			<TableCell tag="th" scope="col">Username</TableCell>
-			<TableCell tag="th" scope="col" class="hidden sm:table-cell">Email</TableCell>
-			<TableCell tag="th" scope="col" class="hidden sm:table-cell">Recipes</TableCell>
-			<TableCell tag="th" scope="col" class="hidden sm:table-cell">Admin</TableCell>
-			<TableCell tag="th" scope="col" class="hidden sm:table-cell">Root</TableCell>
-			<TableCell tag="th" scope="col">Edit</TableCell>
-			<TableCell tag="th" scope="col">Del</TableCell>
+			<TableCell tag="th" scope="col">{$t('admin.users.username')}</TableCell>
+			<TableCell tag="th" scope="col" class="hidden sm:table-cell"
+				>{$t('admin.users.email')}</TableCell
+			>
+			<TableCell tag="th" scope="col" class="hidden sm:table-cell"
+				>{$t('admin.users.recipes')}</TableCell
+			>
+			<TableCell tag="th" scope="col" class="hidden sm:table-cell"
+				>{$t('admin.users.adminCol')}</TableCell
+			>
+			<TableCell tag="th" scope="col" class="hidden sm:table-cell"
+				>{$t('admin.users.rootCol')}</TableCell
+			>
+			<TableCell tag="th" scope="col">{$t('admin.users.editCol')}</TableCell>
+			<TableCell tag="th" scope="col">{$t('admin.users.deleteCol')}</TableCell>
 		</TableRow>
 	</TableHead>
 	<TableBody>
@@ -195,7 +224,7 @@
 				<TableCell tag="th" scope="row"
 					>{user.username}
 					{#if user.id === currentAdminUserId}
-						<span class="you-label">(You)</span>
+						<span class="you-label">{$t('admin.users.youLabel')}</span>
 					{/if}</TableCell
 				>
 				<TableCell class="hidden sm:table-cell">{user.email}</TableCell>
@@ -236,29 +265,44 @@
 	</TableBody>
 </Table>
 
-<FeedbackMessage message={userFeedback} type="error" />
+<FeedbackMessage message={userFeedback} messageCode={userFeedbackCode} type={userFeedbackType} />
 
 <Dialog bind:isOpen={isDialogOpen}>
 	<div class="flex flex-col gap-4 w-full">
-		<h3 class="font-bold text-lg mb-4">{isEditMode ? 'Edit User' : 'Create User'}</h3>
+		<h3 class="font-bold text-lg mb-4">
+			{isEditMode ? $t('admin.users.editTitle') : $t('admin.users.createTitle')}
+		</h3>
 		<Input
 			type="text"
 			id="username"
 			name="username"
-			label="Username"
+			label={$t('admin.users.username')}
 			class="tooltip"
-			data-tip="Username is not editable"
+			data-tip={$t('admin.users.usernameNotEditable')}
 			disabled={isEditMode}
 			bind:value={editingUser.username}
 		/>
-		<Input type="email" id="email" name="email" label="Email" bind:value={editingUser.email} />
+		<Input
+			type="email"
+			id="email"
+			name="email"
+			label={$t('admin.users.email')}
+			bind:value={editingUser.email}
+		/>
 		<ValidationMessage
 			message={emailValidation?.message}
+			messageCode={emailValidation?.messageCode}
 			isValid={emailValidation?.isValid}
 			isError={!emailValidation?.isValid}
 			hidden={!emailValidation?.message}
 		/>
-		<Input type="password" id="password" name="password" label="Password" bind:value={password} />
+		<Input
+			type="password"
+			id="password"
+			name="password"
+			label={$t('auth.password')}
+			bind:value={password}
+		/>
 		{#if passwordRequirementsDescription}
 			<p class="text-sm text-base-content/70">{passwordRequirementsDescription}</p>
 		{/if}
@@ -266,11 +310,13 @@
 			type="password"
 			id="passwordConfirm"
 			name="passwordConfirm"
-			label="Confirm Password"
+			label={$t('auth.confirmPassword')}
 			bind:value={passwordConfirm}
 		/>
 		<ValidationMessage
 			message={passwordValidation?.message}
+			messageCode={passwordValidation?.messageCode}
+			messageVars={passwordValidation?.messageVars}
 			isValid={passwordValidation?.isValid}
 			isError={!passwordValidation?.isValid}
 			hidden={!passwordValidation?.message}
@@ -279,29 +325,28 @@
 			<Checkbox
 				name="Admin"
 				bind:checked={editingUser.isAdmin}
-				legend="Admin"
+				legend={$t('admin.users.adminCol')}
 				size="sm"
 				color="primary"
 			>
-				{editingUser.isAdmin ? 'User has admin rights.' : 'User has standard rights.'}
+				{editingUser.isAdmin ? $t('admin.users.adminRights') : $t('admin.users.standardRights')}
 			</Checkbox>
 		{/if}
 		{#if !isEditMode}
 			<Checkbox
 				name="Seed Recipes"
 				bind:checked={editingUser.userSeed}
-				legend="Seed Recipes"
+				legend={$t('admin.users.seedRecipes')}
 				size="sm"
 				color="neutral"
-				>{editingUser.userSeed
-					? 'Add three sample recipes to this account.'
-					: 'Do not add sample recipes.'}</Checkbox
 			>
+				{editingUser.userSeed ? $t('admin.users.seedYes') : $t('admin.users.seedNo')}
+			</Checkbox>
 		{/if}
 		<div class="modal-action">
-			<Button onclick={() => (isDialogOpen = false)} style="outline">Cancel</Button>
+			<Button onclick={() => (isDialogOpen = false)} style="outline">{$t('common.cancel')}</Button>
 			<Button onclick={handleSubmit} disabled={isSubmitDisabled}>
-				{isEditMode ? 'Update' : 'Create'}
+				{isEditMode ? $t('common.update') : $t('common.create')}
 			</Button>
 		</div>
 	</div>
@@ -313,8 +358,8 @@
 	onConfirm={confirmDeleteUser}
 >
 	{#snippet content()}
-		<h3 class="font-bold text-lg">Delete User</h3>
-		<p class="py-4">Are you sure you want to delete this user?</p>
+		<h3 class="font-bold text-lg">{$t('admin.users.deleteTitle')}</h3>
+		<p class="py-4">{$t('admin.users.confirmDelete')}</p>
 	{/snippet}
 </ConfirmationDialog>
 

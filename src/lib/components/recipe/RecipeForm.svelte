@@ -17,12 +17,13 @@
 	import Spinner from '$lib/components/ui/Spinner.svelte'
 	import Bolt from '$lib/components/svg/Bolt.svelte'
 	import Undo from '$lib/components/svg/Undo.svelte'
+	import { t } from '$lib/stores/locale.js'
 
 	/** @type {{recipe: any, onSubmit: any, buttonText?: string, selectedFiles?: any, onSelectedFilesChange?: any, baseUrl?: string, editMode?: boolean, recipeCategories?: any, aiEnabled?: boolean, aiProvider?: string | null, aiSelectedProvider?: string | null, aiSelectedProviderConfigured?: boolean, isAdmin?: boolean, userUnits?: string, userLanguage?: string, cancelHref?: string, onDelete?: (() => void) | null, saveImageUrl?: boolean}} */
 	let {
 		recipe = $bindable(),
 		onSubmit,
-		buttonText = 'Add Recipe',
+		buttonText = '',
 		selectedFiles = $bindable([]),
 		onSelectedFilesChange,
 		baseUrl = '',
@@ -65,6 +66,7 @@
 	const DEFAULT_IMAGE_STYLE_DESCRIPTION =
 		'Photo realistic plated dish, natural lighting, shallow depth of field, no text or watermark.'
 	let errorMessage = $state('')
+	let errorCode = $state(null)
 
 	const providerLabels = {
 		openai: 'OpenAI',
@@ -86,6 +88,10 @@
 
 	const aiWarningType = $derived(
 		isAdmin && aiSelectedProvider && !aiSelectedProviderConfigured ? 'warning' : 'info'
+	)
+
+	const resolvedButtonText = $derived(
+		buttonText || (editMode ? $t('common.update') : $t('recipeForm.submitNew'))
 	)
 
 	const detectLanguage = (text) => {
@@ -136,6 +142,8 @@
 		ingredientsBeforeClean = recipe.ingredients
 
 		try {
+			errorMessage = ''
+			errorCode = null
 			const response = await fetch('/api/recipe/cleanup', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
@@ -147,11 +155,9 @@
 				})
 			})
 
-			if (response.status === 429) {
-				throw new Error('Rate limit reached. Please wait a moment before trying again.')
-			}
 			if (!response.ok) {
-				throw new Error('Cleanup failed')
+				const err = await response.json().catch(() => ({}))
+				throw Object.assign(new Error(err.error || 'Cleanup failed'), { code: err.code || null })
 			}
 
 			const data = await response.json()
@@ -164,7 +170,8 @@
 			}
 		} catch (err) {
 			console.error('Ingredient cleanup failed:', err)
-			errorMessage = err.message || 'Failed to clean ingredients. Please try again.'
+			errorMessage = err.message || ''
+			errorCode = err.code || 'recipeForm.msg.cleanIngredientsFailed'
 			ingredientsBeforeClean = null // Clear on failure
 		} finally {
 			cleaningIngredients = false
@@ -193,6 +200,8 @@
 		directionsBeforeSummarize = recipe.directions
 
 		try {
+			errorMessage = ''
+			errorCode = null
 			const response = await fetch('/api/recipe/cleanup', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
@@ -204,11 +213,9 @@
 				})
 			})
 
-			if (response.status === 429) {
-				throw new Error('Rate limit reached. Please wait a moment before trying again.')
-			}
 			if (!response.ok) {
-				throw new Error('Cleanup failed')
+				const err = await response.json().catch(() => ({}))
+				throw Object.assign(new Error(err.error || 'Cleanup failed'), { code: err.code || null })
 			}
 
 			const data = await response.json()
@@ -221,7 +228,8 @@
 			}
 		} catch (err) {
 			console.error('Direction summarization failed:', err)
-			errorMessage = err.message || 'Failed to summarize directions. Please try again.'
+			errorMessage = err.message || ''
+			errorCode = err.code || 'recipeForm.msg.summarizeDirectionsFailed'
 			directionsBeforeSummarize = null // Clear on failure
 		} finally {
 			cleaningDirections = false
@@ -242,6 +250,8 @@
 		translatingRecipe = true
 
 		try {
+			errorMessage = ''
+			errorCode = null
 			const payload = {
 				recipe: {
 					name: recipe.name || '',
@@ -279,13 +289,18 @@
 			})
 
 			if (!response.ok) {
-				throw new Error('Translation failed')
+				const err = await response.json().catch(() => ({}))
+				throw Object.assign(new Error(err.error || 'Translation failed'), {
+					code: err.code || null
+				})
 			}
 
 			const data = await response.json()
 			const translated = data?.recipe
 			if (!translated) {
-				throw new Error('Translation failed - invalid response')
+				throw Object.assign(new Error('Translation failed - invalid response'), {
+					code: 'recipeForm.msg.translateInvalidResponse'
+				})
 			}
 
 			if (translated.name) recipe.name = translated.name
@@ -306,7 +321,8 @@
 			}
 		} catch (err) {
 			console.error('Recipe translation failed:', err)
-			errorMessage = 'Failed to translate recipe. Please try again.'
+			errorMessage = err.message || ''
+			errorCode = err.code || 'recipeForm.msg.translateFailed'
 		} finally {
 			translatingRecipe = false
 		}
@@ -317,6 +333,8 @@
 
 		generatingRecipeImage = true
 		try {
+			errorMessage = ''
+			errorCode = null
 			const response = await fetch(`/api/recipe/${recipe.uid}/image/generate`, {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
@@ -325,12 +343,11 @@
 				})
 			})
 
-			if (response.status === 429) {
-				throw new Error('Rate limit reached. Please wait a moment before trying again.')
-			}
 			if (!response.ok) {
 				const err = await response.json().catch(() => ({}))
-				throw new Error(err.error || 'Image generation failed')
+				throw Object.assign(new Error(err.error || 'Image generation failed'), {
+					code: err.code || null
+				})
 			}
 
 			const data = await response.json()
@@ -346,7 +363,8 @@
 			}
 		} catch (err) {
 			console.error('Recipe image generation failed:', err)
-			errorMessage = err.message || 'Failed to generate recipe image. Please try again.'
+			errorMessage = err.message || ''
+			errorCode = err.code || 'recipeForm.msg.imageGenerateFailed'
 		} finally {
 			generatingRecipeImage = false
 		}
@@ -359,6 +377,8 @@
 		nutritionBeforeClean = recipe.nutritional_info
 
 		try {
+			errorMessage = ''
+			errorCode = null
 			const response = await fetch('/api/recipe/cleanup', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
@@ -369,11 +389,9 @@
 				})
 			})
 
-			if (response.status === 429) {
-				throw new Error('Rate limit reached. Please wait a moment before trying again.')
-			}
 			if (!response.ok) {
-				throw new Error('Cleanup failed')
+				const err = await response.json().catch(() => ({}))
+				throw Object.assign(new Error(err.error || 'Cleanup failed'), { code: err.code || null })
 			}
 
 			const data = await response.json()
@@ -382,7 +400,8 @@
 			}
 		} catch (err) {
 			console.error('Nutrition cleanup failed:', err)
-			errorMessage = err.message || 'Failed to clean nutrition information. Please try again.'
+			errorMessage = err.message || ''
+			errorCode = err.code || 'recipeForm.msg.cleanNutritionFailed'
 			nutritionBeforeClean = null
 		} finally {
 			cleaningNutrition = false
@@ -408,6 +427,8 @@
 		notesBeforeTips = recipe.notes || ''
 
 		try {
+			errorMessage = ''
+			errorCode = null
 			const content = `Recipe: ${recipe.name || ''}\n\nIngredients:\n${recipe.ingredients || ''}\n\nDirections:\n${recipe.directions || ''}`
 			const response = await fetch('/api/recipe/cleanup', {
 				method: 'POST',
@@ -415,9 +436,12 @@
 				body: JSON.stringify({ type: 'suggestions', content })
 			})
 
-			if (response.status === 429)
-				throw new Error('Rate limit reached. Please wait a moment before trying again.')
-			if (!response.ok) throw new Error('Tips generation failed')
+			if (!response.ok) {
+				const err = await response.json().catch(() => ({}))
+				throw Object.assign(new Error(err.error || 'Tips generation failed'), {
+					code: err.code || null
+				})
+			}
 
 			const data = await response.json()
 			if (data.text) {
@@ -428,7 +452,8 @@
 			}
 		} catch (err) {
 			console.error('Tips generation failed:', err)
-			errorMessage = err.message || 'Failed to generate tips. Please try again.'
+			errorMessage = err.message || ''
+			errorCode = err.code || 'recipeForm.msg.addTipsFailed'
 			notesBeforeTips = null
 		} finally {
 			addingTips = false
@@ -466,28 +491,29 @@
 </script>
 
 <InfoText class="my-4">
-	<a target="_blank" href="https://www.markdownguide.org/basic-syntax/">Markdown</a> is supported for
-	directions and notes, headers work in ingredients.
+	<a target="_blank" href="https://www.markdownguide.org/basic-syntax/">Markdown</a>
+	{$t('recipeForm.markdownNote')}
 </InfoText>
 
-<FeedbackMessage message={errorMessage} type="error" timeout={5000} />
+<FeedbackMessage message={errorMessage} messageCode={errorCode} type="error" timeout={5000} />
 
 <form onsubmit={onSubmit} class="flex flex-col gap-5">
 	<div>
 		{#if !editMode}
-			<h3>New Recipe</h3>
+			<h3>{$t('recipeForm.titleNew')}</h3>
 		{:else}
-			<h3>Editing: {recipe.name}</h3>
+			<h3>{$t('recipeForm.titleEdit', { name: recipe.name })}</h3>
 		{/if}
 		<div class="flex gap-2 mt-2">
 			{#if cancelHref}
-				<a href={cancelHref} class="btn btn-soft btn-secondary btn-sm">Cancel</a>
+				<a href={cancelHref} class="btn btn-soft btn-secondary btn-sm">{$t('common.cancel')}</a>
 			{/if}
 			{#if onDelete}
-				<Button type="button" size="sm" style="soft" color="error" onclick={onDelete}>Delete</Button
+				<Button type="button" size="sm" style="soft" color="error" onclick={onDelete}
+					>{$t('recipeForm.delete')}</Button
 				>
 			{/if}
-			<Button type="submit" size="sm">{buttonText}</Button>
+			<Button type="submit" size="sm">{resolvedButtonText}</Button>
 		</div>
 		{#if aiWarningMessage}
 			<FeedbackMessage message={aiWarningMessage} type={aiWarningType} inline={true} timeout={0} />
@@ -506,13 +532,15 @@
 						Translating...
 					{:else}
 						<Bolt width="16px" height="16px" />
-						Translate
+						{$t('recipeForm.translate')}
 					{/if}
 				</Button>
 				{#if detectedLang && detectedLang.normalized !== userLanguage}
 					<InfoText class="mt-1">
-						Detected {getLanguageDisplayName(detectedLang.raw, userLanguage)}. Translate to{' '}
-						{getLanguageDisplayName(userLanguage, userLanguage)}.
+						{$t('recipeForm.translateDetected', {
+							detected: getLanguageDisplayName(detectedLang.raw, userLanguage),
+							target: getLanguageDisplayName(userLanguage, userLanguage)
+						})}
 					</InfoText>
 				{/if}
 			</div>
@@ -527,8 +555,8 @@
 					id="name"
 					name="name"
 					bind:value={recipe.name}
-					label="Name"
-					placeholder="Pasta alla Norma"
+					label={$t('recipeForm.name')}
+					placeholder={$t('recipeForm.namePlaceholder')}
 				/>
 
 				<Input
@@ -536,8 +564,8 @@
 					id="source"
 					name="source"
 					bind:value={recipe.source}
-					label="Source"
-					placeholder="Mia nonna"
+					label={$t('recipeForm.source')}
+					placeholder={$t('recipeForm.sourcePlaceholder')}
 				/>
 				<Input
 					type="text"
@@ -545,7 +573,7 @@
 					name="source_url"
 					placeholder="https://grannysrecipes.com"
 					bind:value={recipe.source_url}
-					label="Source URL"
+					label={$t('recipeForm.sourceUrl')}
 				/>
 				<Input
 					type="text"
@@ -553,7 +581,7 @@
 					placeholder="https://grannysrecipes.com/norma.jpg"
 					name="image_url"
 					bind:value={recipe.image_url}
-					label="Image URL"
+					label={$t('recipeForm.imageUrl')}
 				/>
 			</div>
 
@@ -562,33 +590,33 @@
 					type="text"
 					id="prep_time"
 					name="prep_time"
-					placeholder="1 hour"
+					placeholder={$t('recipeForm.prepTimePlaceholder')}
 					bind:value={recipe.prep_time}
-					label="Prep Time"
+					label={$t('recipeForm.prepTime')}
 				/>
 				<Input
 					type="text"
 					id="cook_time"
 					name="cook_time"
-					placeholder="30 minutes"
+					placeholder={$t('recipeForm.cookTimePlaceholder')}
 					bind:value={recipe.cook_time}
-					label="Cook Time"
+					label={$t('recipeForm.cookTime')}
 				/>
 				<Input
 					type="text"
 					id="total_time"
 					name="total_time"
-					placeholder="1.5 hours"
+					placeholder={$t('recipeForm.totalTimePlaceholder')}
 					bind:value={recipe.total_time}
-					label="Total Time"
+					label={$t('recipeForm.totalTime')}
 				/>
 				<Input
 					type="text"
 					id="servings"
-					placeholder="4 main course"
+					placeholder={$t('recipeForm.servingsPlaceholder')}
 					name="servings"
 					bind:value={recipe.servings}
-					label="Servings"
+					label={$t('recipeForm.servings')}
 				/>
 			</div>
 		</div>
@@ -613,18 +641,16 @@
 				>
 					{#if generatingRecipeImage}
 						<Spinner visible={true} size="xs" type="dots" />
-						Generating image...
+						{$t('recipeForm.generatingImage')}
 					{:else}
 						<Bolt width="16px" height="16px" />
-						Generate Recipe Image
+						{$t('recipeForm.generateImage')}
 					{/if}
 				</Button>
 				{#if !editMode}
-					<InfoText class="mt-1">Save the recipe first, then generate an image.</InfoText>
+					<InfoText class="mt-1">{$t('recipeForm.generateImageSaveFirst')}</InfoText>
 				{:else if !canGenerateImage}
-					<InfoText class="mt-1">
-						Add a name, ingredients, or directions before generating an image.
-					</InfoText>
+					<InfoText class="mt-1">{$t('recipeForm.generateImageNeedContent')}</InfoText>
 				{/if}
 			</div>
 		{/if}
@@ -634,9 +660,9 @@
 				id="ingredients"
 				name="ingredients"
 				rows="7"
-				placeholder="500g of pasta..."
+				placeholder={$t('recipeForm.ingredientsPlaceholder')}
 				bind:value={recipe.ingredients}
-				label="Ingredients"
+				label={$t('recipeForm.ingredients')}
 			/>
 			{#if aiEnabled}
 				<div class="flex gap-2 mt-2">
@@ -649,7 +675,7 @@
 							onclick={restoreOriginalIngredients}
 						>
 							<Undo width="16px" height="16px" />
-							Restore Original
+							{$t('recipeForm.restoreOriginal')}
 						</Button>
 					{:else}
 						<Button
@@ -663,10 +689,10 @@
 						>
 							{#if cleaningIngredients}
 								<Spinner visible={true} size="xs" type="dots" />
-								Cleaning...
+								{$t('recipeForm.cleaning')}
 							{:else}
 								<Bolt width="16px" height="16px" />
-								Clean Ingredients
+								{$t('recipeForm.cleanIngredients')}
 							{/if}
 						</Button>
 						{#if ingredientsBeforeClean}
@@ -678,17 +704,15 @@
 								onclick={undoCleanIngredients}
 							>
 								<Undo width="16px" height="16px" />
-								Undo
+								{$t('common.undo')}
 							</Button>
 						{/if}
 					{/if}
 				</div>
 				{#if recipe.ingredients_original}
-					<InfoText class="mt-1">Restore the original uncleaned ingredients.</InfoText>
+					<InfoText class="mt-1">{$t('recipeForm.restoreIngredientsTip')}</InfoText>
 				{:else}
-					<InfoText class="mt-1"
-						>Simplify complex ingredients for more accurate conversion results.</InfoText
-					>
+					<InfoText class="mt-1">{$t('recipeForm.cleanIngredientsTip')}</InfoText>
 				{/if}
 			{/if}
 		</div>
@@ -696,18 +720,18 @@
 			id="description"
 			name="description"
 			rows="3"
-			placeholder="This pasta was a favourite of my Nonna's"
+			placeholder={$t('recipeForm.descriptionPlaceholder')}
 			bind:value={recipe.description}
-			label="Description"
+			label={$t('recipeForm.description')}
 		/>
 		<div>
 			<Textarea
 				id="directions"
-				placeholder="Boil the pasta according to instructions..."
+				placeholder={$t('recipeForm.directionsPlaceholder')}
 				rows="7"
 				name="directions"
 				bind:value={recipe.directions}
-				label="Directions"
+				label={$t('recipeForm.directions')}
 			/>
 			{#if aiEnabled}
 				<div class="flex gap-2 mt-2">
@@ -720,7 +744,7 @@
 							onclick={restoreOriginalDirections}
 						>
 							<Undo width="16px" height="16px" />
-							Restore Original
+							{$t('recipeForm.restoreOriginal')}
 						</Button>
 					{:else}
 						<Button
@@ -732,10 +756,10 @@
 						>
 							{#if cleaningDirections}
 								<Spinner visible={true} size="xs" type="dots" />
-								Summarizing...
+								{$t('recipeForm.summarizing')}
 							{:else}
 								<Bolt width="16px" height="16px" />
-								Summarize Directions
+								{$t('recipeForm.summarizeDirections')}
 							{/if}
 						</Button>
 						{#if directionsBeforeSummarize}
@@ -747,15 +771,15 @@
 								onclick={undoSummarizeDirections}
 							>
 								<Undo width="16px" height="16px" />
-								Undo
+								{$t('common.undo')}
 							</Button>
 						{/if}
 					{/if}
 				</div>
 				{#if recipe.directions_original}
-					<InfoText class="mt-1">Restore the original unsummarized directions.</InfoText>
+					<InfoText class="mt-1">{$t('recipeForm.restoreDirectionsTip')}</InfoText>
 				{:else}
-					<InfoText class="mt-1">Condense lengthy directions into clear, concise steps.</InfoText>
+					<InfoText class="mt-1">{$t('recipeForm.summarizeDirectionsTip')}</InfoText>
 				{/if}
 			{/if}
 		</div>
@@ -763,9 +787,9 @@
 			id="notes"
 			name="notes"
 			rows="3"
-			placeholder="Don't overcook the pasta or she'll come back to haunt you"
+			placeholder={$t('recipeForm.notesPlaceholder')}
 			bind:value={recipe.notes}
-			label="Notes"
+			label={$t('recipeForm.notes')}
 		/>
 		{#if aiEnabled}
 			<div class="flex gap-2 mt-2">
@@ -778,27 +802,27 @@
 				>
 					{#if addingTips}
 						<Spinner visible={true} size="xs" type="dots" />
-						Adding Tips...
+						{$t('recipeForm.addingTips')}
 					{:else}
 						<Bolt width="16px" height="16px" />
-						Add Tips
+						{$t('recipeForm.addTips')}
 					{/if}
 				</Button>
 				{#if notesBeforeTips !== null}
 					<Button type="button" size="sm" style="outline" color="secondary" onclick={undoAddTips}>
 						<Undo width="16px" height="16px" />
-						Undo
+						{$t('common.undo')}
 					</Button>
 				{/if}
 			</div>
-			<InfoText class="mt-1">Suggest substitutions and additions based on the recipe.</InfoText>
+			<InfoText class="mt-1">{$t('recipeForm.addTipsTip')}</InfoText>
 		{/if}
 		<Textarea
 			id="nutritional_info"
 			name="nutritional_info"
 			rows="3"
 			bind:value={recipe.nutritional_info}
-			label="Nutritional Information"
+			label={$t('recipeForm.nutritionalInfo')}
 		/>
 		{#if aiEnabled}
 			<div class="flex gap-2 mt-2">
@@ -813,10 +837,10 @@
 				>
 					{#if cleaningNutrition}
 						<Spinner visible={true} size="xs" type="dots" />
-						Cleaning...
+						{$t('recipeForm.cleaning')}
 					{:else}
 						<Bolt width="16px" height="16px" />
-						Clean Nutrition
+						{$t('recipeForm.cleanNutrition')}
 					{/if}
 				</Button>
 				{#if nutritionBeforeClean}
@@ -828,13 +852,13 @@
 						onclick={undoCleanNutrition}
 					>
 						<Undo width="16px" height="16px" />
-						Undo
+						{$t('common.undo')}
 					</Button>
 				{/if}
 			</div>
-			<InfoText class="mt-1">Normalize nutrition into clean nutrient/value lines.</InfoText>
+			<InfoText class="mt-1">{$t('recipeForm.cleanNutritionTip')}</InfoText>
 		{/if}
-		<Button type="submit" size="sm" class="mt-4">{buttonText}</Button>
+		<Button type="submit" size="sm" class="mt-4">{resolvedButtonText}</Button>
 		{#if recipeCategories}
 			{#each recipeCategories as categoryUid}
 				<input type="hidden" name="categories[]" value={categoryUid} />
@@ -844,17 +868,17 @@
 </form>
 
 <Dialog bind:isOpen={imagePromptDialogOpen} onClose={() => (imagePromptDialogOpen = false)}>
-	<h3 class="font-bold text-lg mb-4">Generate Recipe Image</h3>
+	<h3 class="font-bold text-lg mb-4">{$t('recipeForm.generateImage')}</h3>
 	<div class="flex flex-col gap-3">
 		<Textarea
-			label="Style override (optional)"
+			label={$t('recipeForm.styleOverride')}
 			rows={3}
 			placeholder={DEFAULT_IMAGE_STYLE_DESCRIPTION}
 			bind:value={imagePromptOverride}
 			disabled={generatingRecipeImage}
 		/>
 		<InfoText>
-			Only describe how the image should look. The recipe name and ingredients are always included.
+			{$t('recipeForm.styleOverrideHint')}
 		</InfoText>
 	</div>
 	<div class="modal-action">
@@ -865,7 +889,7 @@
 			onclick={() => (imagePromptDialogOpen = false)}
 			disabled={generatingRecipeImage}
 		>
-			Cancel
+			{$t('common.cancel')}
 		</Button>
 		<Button
 			type="button"
@@ -874,9 +898,9 @@
 		>
 			{#if generatingRecipeImage}
 				<Spinner visible={true} size="xs" type="dots" />
-				Generating...
+				{$t('recipeForm.generating')}
 			{:else}
-				Generate
+				{$t('recipeForm.generate')}
 			{/if}
 		</Button>
 	</div>

@@ -4,6 +4,7 @@
 	import Checkbox from '$lib/components/ui/Form/Checkbox.svelte'
 	import Dropdown from '$lib/components/ui/Form/Dropdown.svelte'
 	import FileInput from '$lib/components/ui/Form/FileInput.svelte'
+	import { t } from '$lib/stores/locale.js'
 
 	let { data, form } = $props()
 
@@ -21,7 +22,7 @@
 </script>
 
 <div class="prose max-w-none w-full">
-	<h2>Import Recipes</h2>
+	<h2>{$t('importPage.title')}</h2>
 </div>
 <form
 	method="POST"
@@ -31,25 +32,32 @@
 >
 	<Dropdown
 		name="type"
-		legend="Choose Migration Type"
+		legend={$t('importPage.migrationType')}
 		options={dropdownOptions}
 		bind:selected={selectedType}
 		optionalLabel={info}
 	/>
 
-	<FileInput id="file" name="file" label="File" {accept} required />
+	<FileInput id="file" name="file" label={$t('importPage.file')} {accept} required />
 
 	<Checkbox
 		name="isPublic"
 		bind:checked={isPublic}
-		legend="Recipe Privacy"
+		legend={$t('importPage.recipePrivacy')}
 		size="sm"
 		color="primary"
 	>
-		{isPublic ? 'Imported recipes will be public.' : 'Imported recipes will be private.'}
+		{isPublic ? $t('importPage.importPublic') : $t('importPage.importPrivate')}
 	</Checkbox>
 
-	<Button type="submit" class="self-start w-auto" aria-busy={busy} disabled={busy}>Import</Button>
+	<Button type="submit" class="self-start w-auto" aria-busy={busy} disabled={busy}
+		>{$t('importPage.importAction')}</Button
+	>
 </form>
 
-<FeedbackMessage message={form?.message || form?.error || ''} inline />
+<FeedbackMessage
+	message={form?.message || form?.error || ''}
+	messageCode={form?.messageCode}
+	messageVars={form?.messageVars}
+	inline
+/>

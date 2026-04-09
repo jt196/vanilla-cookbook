@@ -16,14 +16,18 @@ export async function PUT({ request, locals, params }) {
 			where: { id }
 		})
 		if (!updatingUser) {
-			return jsonError(404, 'User not found!')
+			return jsonError(404, { error: 'User not found!', code: 'admin.users.msg.userNotFound' })
 		}
 
 		// Update the user's password
 		if (userData.password) {
 			const passwordValidation = validatePassword(userData.password, env)
 			if (!passwordValidation.isValid) {
-				return jsonError(400, passwordValidation.message)
+				return jsonError(400, {
+					error: passwordValidation.message,
+					code: passwordValidation.messageCode,
+					vars: passwordValidation.messageVars
+				})
 			}
 
 			try {
@@ -37,14 +41,23 @@ export async function PUT({ request, locals, params }) {
 							attributes: {}
 						})
 						locals.auth.setSession(newSession)
-						return jsonSuccess({ message: 'Password updated successfully' })
+						return jsonSuccess({
+							message: 'Password updated successfully',
+							code: 'admin.users.msg.passwordUpdated'
+						})
 					} catch (e) {
 						if (e.name === 'LuciaError' && e.message === 'AUTH_INVALID_USER_ID') {
 							console.error('Invalid user id:', id)
-							return jsonError(400, 'Invalid user id.')
+							return jsonError(400, {
+								error: 'Invalid user id.',
+								code: 'admin.users.msg.invalidUserId'
+							})
 						}
 						console.error('Unexpected error while creating session:', e)
-						return jsonError(500, 'Unexpected error.')
+						return jsonError(500, {
+							error: 'Unexpected error.',
+							code: 'admin.users.msg.updateFail'
+						})
 					}
 				}
 			} catch (e) {
@@ -58,7 +71,10 @@ export async function PUT({ request, locals, params }) {
 				where: { isAdmin: true }
 			})
 			if (adminCount === 1 && !userData.isAdmin) {
-				return jsonError(400, "The only admin user can't make themselves non-admin.")
+				return jsonError(400, {
+					error: "The only admin user can't make themselves non-admin.",
+					code: 'admin.users.msg.onlyAdminMustRemain'
+				})
 			}
 		}
 
@@ -84,7 +100,7 @@ export async function PUT({ request, locals, params }) {
 						? userData.displayNutrition
 						: updatingUser.displayNutrition,
 				language: 'language' in userData ? userData.language : updatingUser.language,
-				theme: 'theme' in userData ? userData.theme : updatingUser.theme,
+				theme: 'theme' in userData ? userData.theme : updatingUser.theme
 			}
 		})
 
@@ -95,20 +111,32 @@ export async function PUT({ request, locals, params }) {
 				attributes: {}
 			})
 			locals.auth.setSession(newSession)
-			return jsonSuccess({ message: 'Role updated successfully. Please log in again.' })
+			return jsonSuccess({
+				message: 'Role updated successfully. Please log in again.',
+				code: 'admin.users.msg.roleUpdated'
+			})
 		} else {
 			await auth.invalidateAllUserSessions(id)
-			return jsonSuccess(updatedUser)
+			return jsonSuccess({ ...updatedUser, code: 'admin.users.msg.updated' })
 		}
 	} catch (err) {
 		if (err.code === 'P2002') {
 			if (err.meta?.target?.includes('username')) {
-				return jsonError(400, 'Username already taken!')
+				return jsonError(400, {
+					error: 'Username already taken!',
+					code: 'admin.users.msg.usernameTaken'
+				})
 			} else if (err.meta?.target?.includes('email')) {
-				return jsonError(400, 'Email already taken!')
+				return jsonError(400, {
+					error: 'Email already taken!',
+					code: 'admin.users.msg.emailTaken'
+				})
 			}
 		}
-		return jsonError(500, `Failed to update user: ${err.message}`)
+		return jsonError(500, {
+			error: `Failed to update user: ${err.message}`,
+			code: 'admin.users.msg.updateFail'
+		})
 	}
 }
 
@@ -121,25 +149,34 @@ export async function DELETE({ params, locals }) {
 	})
 
 	if (!deletingUser) {
-		return jsonError(404, 'User not found!')
+		return jsonError(404, { error: 'User not found!', code: 'admin.users.msg.userNotFound' })
 	}
 
 	if (user.userId === id) {
-		return jsonError(400, 'Cannot delete yourself!')
+		return jsonError(400, {
+			error: 'Cannot delete yourself!',
+			code: 'admin.users.msg.cannotDeleteSelf'
+		})
 	}
 
 	if (deletingUser.isRoot) {
-		return jsonError(403, 'Cannot delete root user!')
+		return jsonError(403, {
+			error: 'Cannot delete root user!',
+			code: 'admin.users.msg.cannotDeleteRoot'
+		})
 	}
 
 	try {
 		await auth.deleteUser(id)
-		return jsonSuccess({ message: 'User successfully deleted!' })
+		return jsonSuccess({ message: 'User successfully deleted!', code: 'admin.users.msg.deleted' })
 	} catch (e) {
 		console.log('Error: ' + e)
 		if (e.name === 'LuciaError') {
 			console.log('LuciaError: ' + e.message)
 		}
-		return jsonError(500, 'An unexpected error occurred.')
+		return jsonError(500, {
+			error: 'An unexpected error occurred.',
+			code: 'admin.users.msg.deleteFail'
+		})
 	}
 }

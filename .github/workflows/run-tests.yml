@@ -25,6 +25,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     env:
+      DATABASE_URL: file:./prisma/db/ci-test.sqlite
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
       GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
@@ -55,6 +56,7 @@ jobs:
       - name: Set environment variables
         run: |
           echo "ORIGIN=http://127.0.0.1:3000" >> .env
+          echo "DATABASE_URL=file:./prisma/db/ci-test.sqlite" >> .env
           echo "ADMIN_USER=admin" >> .env
           echo "ADMIN_PASSWORD=password" >> .env
           echo "ADMIN_EMAIL=email@example.com" >> .env
@@ -66,20 +68,18 @@ jobs:
 
       - name: Create Directories
         run: |
-          mkdir -p app/prisma/db
+          mkdir -p prisma/db
           mkdir -p app/uploads/imports
           mkdir -p app/uploads/images
 
       - name: Build Project
         run: pnpm build
 
-      - name: Test seed script imports
-        run: pnpm seed
-        env:
-          DATABASE_URL: file:./prisma/db/ci-test.sqlite
-
       - name: Run Prisma Migrations
         run: pnpm prisma migrate deploy
+
+      - name: Seed ingredient data
+        run: pnpm seed
 
       - name: Start Node Server
         run: node build/index.js > server.log 2>&1 &

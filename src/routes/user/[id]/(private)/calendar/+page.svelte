@@ -1,6 +1,7 @@
 <script>
 	import Timeline from '$lib/components/ui/Timeline.svelte'
 	import TimelineItem from '$lib/components/ui/TimelineItem.svelte'
+	import { t } from '$lib/stores/locale.js'
 
 	/** @type {{data: any}} */
 	let { data } = $props()
@@ -35,13 +36,11 @@
 </script>
 
 <div class="prose max-w-none mb-6 flex justify-center">
-	<h2>Cooking History</h2>
+	<h2>{$t('calendar.title')}</h2>
 </div>
 
 {#if logs.length === 0}
-	<p class="text-base-content/60">
-		No cooking history yet. Mark a recipe as cooked to see it here.
-	</p>
+	<p class="text-base-content/60">{$t('calendar.empty')}</p>
 {:else}
 	<Timeline>
 		{#each logs as log, i}

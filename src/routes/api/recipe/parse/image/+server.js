@@ -15,7 +15,9 @@ export async function POST({ request, locals }) {
 	const files = formData.getAll('image')
 	const language = formData.get('language') || 'eng'
 
-	if (!files || files.length === 0) return json({ error: 'No image provided' }, { status: 400 })
+	if (!files || files.length === 0) {
+		return json({ error: 'No image provided', code: 'recipeNew.msg.noImage' }, { status: 400 })
+	}
 
 	const limitedFiles = files.slice(0, 3)
 
@@ -35,7 +37,10 @@ export async function POST({ request, locals }) {
 		}
 
 		if (processedBuffers.length === 0) {
-			return json({ error: 'Invalid image type' }, { status: 400 })
+			return json(
+				{ error: 'Invalid image type', code: 'recipeNew.msg.invalidImageType' },
+				{ status: 400 }
+			)
 		}
 
 		const stitchedBuffer =
@@ -53,12 +58,18 @@ export async function POST({ request, locals }) {
 		})
 
 		if (!recipe || !recipe.name || !recipe.ingredients?.length) {
-			return json({ error: 'Incomplete recipe result.' }, { status: 422 })
+			return json(
+				{ error: 'Incomplete recipe result.', code: 'recipeNew.msg.imageParseIncomplete' },
+				{ status: 422 }
+			)
 		}
 
 		return json({ ...recipe, _source: 'AI', _status: 'complete' })
 	} catch (err) {
 		console.error('Image parsing failed:', err)
-		return json({ error: 'Image parsing failed' }, { status: 500 })
+		return json(
+			{ error: 'Image parsing failed', code: 'recipeNew.msg.imageParseFailed' },
+			{ status: 500 }
+		)
 	}
 }

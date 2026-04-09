@@ -4,6 +4,8 @@
 	import { changeRecipePublic } from '$lib/utils/crud'
 	import { onMount } from 'svelte'
 	import Share from '$lib/components/svg/Share.svelte'
+	import { get } from 'svelte/store'
+	import { t } from '$lib/stores/locale.js'
 
 	let { name, isPublic = true, uid, pubRecipe } = $props()
 
@@ -29,10 +31,13 @@
 	}
 
 	async function doShare() {
+		const tFn = get(t)
 		if (shareSupported) {
 			try {
 				await navigator.share({
-					title: `Vanilla Cookbook recipe: ${name}`,
+					title: tFn('recipe.msg.linkCopied').includes('clipboard')
+						? `Vanilla Cookbook recipe: ${name}`
+						: `Vanilla Cookbook recipe: ${name}`,
 					text: `Check out this Vanilla Cookbook share:\n\n${name}`,
 					url
 				})
@@ -43,16 +48,17 @@
 			try {
 				await navigator.clipboard.writeText(`Vanilla Recipe share:\n\n${name}\n\n${url}`)
 				showConfirmDialog = false
-				feedback = 'Link copied to clipboard!'
+				feedback = tFn('recipe.msg.linkCopied')
 			} catch (err) {
 				console.error('Clipboard copy failed:', err)
 				showConfirmDialog = false
-				feedback = 'Failed to copy link.'
+				feedback = tFn('recipe.msg.linkCopyFail')
 			}
 		}
 	}
 
 	async function confirmMakePublic() {
+		const tFn = get(t)
 		const success = await changeRecipePublic(uid)
 
 		if (success) {
@@ -60,7 +66,7 @@
 			showConfirmDialog = false
 			await doShare()
 		} else {
-			feedback = 'Failed to make recipe public.'
+			feedback = tFn('recipe.msg.makePublicFail')
 			showConfirmDialog = false
 		}
 	}
@@ -70,19 +76,17 @@
 	}
 </script>
 
-<button onclick={share} class="btn btn-soft btn-sm tooltip btn-primary" data-tip="Share Recipe">
+<button onclick={share} class="btn btn-soft btn-sm tooltip btn-primary" data-tip={$t('recipe.shareRecipe')}>
 	<Share width="20px" height="20px" fill="currentColor" />
 </button>
 
 <FeedbackMessage message={feedback} type="info" />
 
 <Dialog bind:isOpen={showConfirmDialog}>
-	<h3 class="font-bold text-lg">Make Recipe Public?</h3>
-	<p class="py-4">
-		This recipe is currently private. Would you like to make it public so it can be shared?
-	</p>
+	<h3 class="font-bold text-lg">{$t('recipe.makePublicTitle')}</h3>
+	<p class="py-4">{$t('recipe.makePublicDesc')}</p>
 	<div class="modal-action">
-		<button class="btn btn-outline" onclick={cancelShare}>Cancel</button>
-		<button class="btn btn-primary" onclick={confirmMakePublic}>Make Public & Share</button>
+		<button class="btn btn-outline" onclick={cancelShare}>{$t('common.cancel')}</button>
+		<button class="btn btn-primary" onclick={confirmMakePublic}>{$t('recipe.makePublicShare')}</button>
 	</div>
 </Dialog>

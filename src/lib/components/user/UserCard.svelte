@@ -1,5 +1,6 @@
 <script>
 	import Card from '$lib/components/ui/Card.svelte'
+	import { t } from '$lib/stores/locale.js'
 
 	/** @type {{item: any}} */
 	let { item } = $props()
@@ -12,7 +13,7 @@
 		{/snippet}
 		{#snippet children()}
 			<p class="text-sm opacity-80">
-				Public Recipes: <i>{item.publicRecipesCount}/{item.totalRecipesCount}</i>
+				{$t('users.publicRecipes')} <i>{item.publicRecipesCount}/{item.totalRecipesCount}</i>
 			</p>
 		{/snippet}
 	</Card>

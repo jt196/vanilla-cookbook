@@ -18,6 +18,9 @@ export async function GET({ params, locals }) {
 		return jsonSuccess({ count })
 	} catch (err) {
 		console.error('Error counting recipes:', err)
-		return jsonError(500, 'Internal server error.')
+		return jsonError(500, {
+			error: 'Internal server error.',
+			code: 'users.msg.countLoadFail'
+		})
 	}
 }

@@ -110,6 +110,9 @@ export async function GET({ locals }) {
 		return jsonSuccess(updatedRecipes)
 	} catch (err) {
 		console.error('Error fetching recipes:', err)
-		return jsonError(500, `Failed to fetch recipes: ${err.message}`)
+		return jsonError(500, {
+			error: `Failed to fetch recipes: ${err.message}`,
+			code: 'recipe.msg.listLoadFail'
+		})
 	}
 }

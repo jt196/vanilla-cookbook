@@ -20,7 +20,7 @@ export function semanticEmbeddingJobsEnabled(preferredProvider = null) {
  * 2. Site-level setting allows it
  *
  * @param {import('@sveltejs/kit').RequestEvent['locals']} locals
- * @returns {{ enabled: true } | { enabled: false, reason: string, response: Response }}
+ * @returns {{ enabled: true } | { enabled: false, reason: string, code: string, response: Response }}
  */
 export function resolveSemanticAvailability(locals) {
 	const semantic = locals?.site?.semantic
@@ -28,7 +28,11 @@ export function resolveSemanticAvailability(locals) {
 		return {
 			enabled: false,
 			reason: 'Semantic search is disabled.',
-			response: jsonError(503, 'Semantic search is disabled.')
+			code: 'recipe.msg.semanticDisabled',
+			response: jsonError(503, {
+				error: 'Semantic search is disabled.',
+				code: 'recipe.msg.semanticDisabled'
+			})
 		}
 	}
 

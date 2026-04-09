@@ -12,7 +12,10 @@ export async function POST({ request, locals }) {
 		const { recipe, language = 'eng', fromLanguage = null } = await request.json()
 
 		if (!recipe || typeof recipe !== 'object') {
-			return json({ error: 'Missing recipe.' }, { status: 400 })
+			return json(
+				{ error: 'Missing recipe.', code: 'recipeForm.msg.translateMissingRecipe' },
+				{ status: 400 }
+			)
 		}
 
 		const response = await translateRecipeWithLLM({
@@ -24,12 +27,21 @@ export async function POST({ request, locals }) {
 		})
 
 		if (!response || typeof response !== 'object') {
-			return json({ error: 'Translation failed - invalid response format.' }, { status: 422 })
+			return json(
+				{
+					error: 'Translation failed - invalid response format.',
+					code: 'recipeForm.msg.translateInvalidResponse'
+				},
+				{ status: 422 }
+			)
 		}
 
 		return json({ recipe: response })
 	} catch (err) {
 		console.error('Translate API failed:', err)
-		return json({ error: 'Failed to translate recipe.' }, { status: 500 })
+		return json(
+			{ error: 'Failed to translate recipe.', code: 'recipeForm.msg.translateFailed' },
+			{ status: 500 }
+		)
 	}
 }

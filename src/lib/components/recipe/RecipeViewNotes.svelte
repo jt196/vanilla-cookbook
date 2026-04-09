@@ -1,6 +1,7 @@
 <script>
 	import RecipeViewLogs from './RecipeViewLogs.svelte'
 	import CollapseSection from '$lib/components/ui/CollapseSection.svelte'
+	import { t } from '$lib/stores/locale.js'
 
 	/** @type {{notesLines?: any, sanitizedNotes?: any, logs?: any, open?: boolean}} */
 	let { notesLines = [], sanitizedNotes = [], logs = [], open = false } = $props()
@@ -9,7 +10,7 @@
 </script>
 
 {#if notesLines.length > 0 || safeLogs.some((log) => log.note)}
-	<CollapseSection title="Notes" className="mt-6" {open}>
+	<CollapseSection title={$t('recipeView.notes')} className="mt-6" {open}>
 		<div class="prose max-w-none">
 			{#if notesLines.length > 0 || safeLogs.length > 0}
 				{#each sanitizedNotes as parsedNote}

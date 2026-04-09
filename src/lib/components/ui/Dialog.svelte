@@ -1,4 +1,5 @@
 <script>
+	import { t } from '$lib/stores/locale.js'
 	/**
 	 * DaisyUI Modal/Dialog Component
 	 * Uses native HTML dialog element with DaisyUI styling
@@ -73,14 +74,21 @@
 		if (!closeOnEscape) {
 			e.preventDefault()
 		}
-	}}>
+	}}
+>
 	<div class="modal-box {className}">
 		{@render children()}
 	</div>
 	{#if closeOnBackdrop}
 		<!-- Using div instead of form to avoid nested form issues -->
-		<div class="modal-backdrop" role="button" tabindex="-1" onclick={handleBackdropClick} onkeydown={(e) => e.key === 'Enter' && handleBackdropClick()}>
-			<span class="sr-only">close</span>
+		<div
+			class="modal-backdrop"
+			role="button"
+			tabindex="-1"
+			onclick={handleBackdropClick}
+			onkeydown={(e) => e.key === 'Enter' && handleBackdropClick()}
+		>
+			<span class="sr-only">{$t('dialog.close')}</span>
 		</div>
 	{/if}
 </dialog>

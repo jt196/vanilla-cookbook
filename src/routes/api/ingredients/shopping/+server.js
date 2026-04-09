@@ -12,11 +12,17 @@ export async function POST({ request, locals }) {
 	const unit = normalizeString(pickFirst(ingredient?.unitPlural, ingredient?.unit))
 
 	if (!name) {
-		return jsonError(400, 'Invalid ingredient name')
+		return jsonError(400, {
+			error: 'Invalid ingredient name',
+			code: 'shopping.msg.invalidName'
+		})
 	}
 
 	if (!quantityValid) {
-		return jsonError(400, 'Invalid quantity value')
+		return jsonError(400, {
+			error: 'Invalid quantity value',
+			code: 'shopping.msg.invalidQuantity'
+		})
 	}
 
 	try {
@@ -30,10 +36,13 @@ export async function POST({ request, locals }) {
 			}
 		})
 
-		return jsonSuccess(newItem)
+		return jsonSuccess({ ...newItem, code: 'shopping.msg.itemAdded' })
 	} catch (error) {
 		console.error('Failed to add ingredient to shopping list:', error)
-		return jsonError(500, 'Failed to add ingredient to shopping list')
+		return jsonError(500, {
+			error: 'Failed to add ingredient to shopping list',
+			code: 'shopping.msg.itemAddFail'
+		})
 	}
 }
 
@@ -71,7 +80,10 @@ export async function GET({ locals }) {
 		return jsonSuccess(shoppingListWithCounts)
 	} catch (error) {
 		console.error(error)
-		return jsonError(500, 'Failed to fetch shopping list.')
+		return jsonError(500, {
+			error: 'Failed to fetch shopping list.',
+			code: 'shopping.msg.loadFail'
+		})
 	}
 }
 
@@ -92,7 +104,10 @@ export async function PATCH({ request, locals }) {
 	if (quantity !== undefined) {
 		const { value: normalizedQty, valid } = normalizeNumber(quantity)
 		if (!valid) {
-			return jsonError(400, 'Invalid quantity value')
+			return jsonError(400, {
+				error: 'Invalid quantity value',
+				code: 'shopping.msg.invalidQuantity'
+			})
 		}
 		updateData.quantity = normalizedQty
 	}
@@ -102,7 +117,10 @@ export async function PATCH({ request, locals }) {
 	}
 
 	if (Object.keys(updateData).length === 0) {
-		return jsonError(400, 'No fields to update')
+		return jsonError(400, {
+			error: 'No fields to update',
+			code: 'shopping.msg.noFieldsToUpdate'
+		})
 	}
 
 	try {
@@ -111,7 +129,10 @@ export async function PATCH({ request, locals }) {
 		})
 
 		if (!currentItem || currentItem.userId !== user.userId) {
-			return jsonError(404, 'Shopping list item not found')
+			return jsonError(404, {
+				error: 'Shopping list item not found',
+				code: 'shopping.msg.itemNotFound'
+			})
 		}
 
 		const updatedItem = await prisma.shoppingListItem.update({
@@ -143,9 +164,12 @@ export async function PATCH({ request, locals }) {
 			where: { shoppingItemUid: uid }
 		})
 
-		return jsonSuccess({ ...updatedItem, purchaseCount })
+		return jsonSuccess({ ...updatedItem, purchaseCount, code: 'shopping.msg.itemUpdated' })
 	} catch (error) {
 		console.error('Failed to update shopping list item:', error)
-		return jsonError(500, 'Failed to update shopping list item')
+		return jsonError(500, {
+			error: 'Failed to update shopping list item',
+			code: 'shopping.msg.itemUpdateFail'
+		})
 	}
 }

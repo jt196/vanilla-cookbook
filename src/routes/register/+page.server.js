@@ -34,24 +34,27 @@ export const actions = {
 		const shouldSeedRecipes = formData.get('seedRecipes') === 'on'
 
 		if (!username || !email || !password || !passwordConfirm) {
-			return fail(400, { message: 'Please fill all required fields.' })
+			return fail(400, { messageCode: 'auth.msg.registerMissingFields' })
 		}
 
 		// Validate email format
 		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 		if (!emailRegex.test(email)) {
-			return fail(400, { message: 'Please enter a valid email address.' })
+			return fail(400, { messageCode: 'auth.msg.registerInvalidEmail' })
 		}
 
 		// Validate password
 		const passwordValidation = validatePassword(password, env)
 		if (!passwordValidation.isValid) {
-			return fail(400, { message: passwordValidation.message })
+			return fail(400, {
+				messageCode: passwordValidation.messageCode,
+				messageVars: passwordValidation.messageVars
+			})
 		}
 
 		// Check passwords match
 		if (password !== passwordConfirm) {
-			return fail(400, { message: "Passwords don't match!" })
+			return fail(400, { messageCode: 'auth.msg.registerPasswordMismatch' })
 		}
 
 		try {
@@ -76,14 +79,15 @@ export const actions = {
 
 			console.error(err)
 			if (err?.message === 'AUTH_DUPLICATE_KEY_ID') {
-				return fail(400, { message: 'Username already taken!' })
+				return fail(400, { messageCode: 'auth.msg.registerUsernameTaken' })
 			}
 			if (err?.code === 'P2002') {
 				const t = err.meta?.target || []
-				if (t.includes('email')) return fail(400, { message: 'Email already taken!' })
-				if (t.includes('username')) return fail(400, { message: 'Username already taken!' })
+				if (t.includes('email')) return fail(400, { messageCode: 'auth.msg.registerEmailTaken' })
+				if (t.includes('username'))
+					return fail(400, { messageCode: 'auth.msg.registerUsernameTaken' })
 			}
-			return fail(400, { message: 'Could not register user.' })
+			return fail(400, { messageCode: 'auth.msg.registerFailed' })
 		}
 	}
 }

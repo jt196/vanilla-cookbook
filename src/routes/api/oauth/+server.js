@@ -35,10 +35,10 @@ export async function GET({ url, cookies }) {
 			return new Response(null, { status: 302, headers: { Location: authUrl.toString() } })
 		} catch (err) {
 			console.error('[OIDC] Authorization URL generation failed:', err)
-			const msg = encodeURIComponent('OIDC provider is not available. Please try again later.')
+			const msg = encodeURIComponent('auth.msg.oidcUnavailable')
 			return new Response(null, {
 				status: 302,
-				headers: { Location: `/login?message=${msg}` }
+				headers: { Location: `/login?messageCode=${msg}` }
 			})
 		}
 	}

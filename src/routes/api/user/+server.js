@@ -30,7 +30,11 @@ export async function POST({ request, locals }) {
 	const passwordValidation = validatePassword(userData.password, env)
 
 	if (!passwordValidation.isValid) {
-		return jsonError(400, passwordValidation.message)
+		return jsonError(400, {
+			error: passwordValidation.message,
+			code: passwordValidation.messageCode,
+			vars: passwordValidation.messageVars
+		})
 	}
 
 	try {
@@ -40,7 +44,7 @@ export async function POST({ request, locals }) {
 				providerUserId: userData.username,
 				password: userData.password
 			},
-		attributes: {
+			attributes: {
 				username: userData.username,
 				about: userData.about,
 				email: userData.email,
@@ -53,6 +57,20 @@ export async function POST({ request, locals }) {
 		return jsonSuccess(newUser)
 	} catch (err) {
 		console.error(err)
-		return jsonError(500, 'Failed to create user')
+		if (err?.code === 'P2002') {
+			if (err.meta?.target?.includes('username')) {
+				return jsonError(400, {
+					error: 'Username already taken!',
+					code: 'admin.users.msg.usernameTaken'
+				})
+			}
+			if (err.meta?.target?.includes('email')) {
+				return jsonError(400, {
+					error: 'Email already taken!',
+					code: 'admin.users.msg.emailTaken'
+				})
+			}
+		}
+		return jsonError(500, { error: 'Failed to create user', code: 'admin.users.msg.createFail' })
 	}
 }

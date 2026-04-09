@@ -15,6 +15,7 @@
 	import ShoppingItemInput from '$lib/components/shopping/ShoppingItemInput.svelte'
 	import ShoppingListItem from '$lib/components/shopping/ShoppingListItem.svelte'
 	import ShoppingEditDialog from '$lib/components/shopping/ShoppingEditDialog.svelte'
+	import { t } from '$lib/stores/locale.js'
 
 	/** @type {{data: any}} */
 	let { data } = $props()
@@ -24,6 +25,8 @@
 	let isDeleteDialogOpen = $state(false)
 	let isCheckAllDialogOpen = $state(false)
 	let shoppingFeedback = $state('')
+	let shoppingFeedbackCode = $state(null)
+	let shoppingFeedbackVars = $state({})
 	let newIngredient = $state('')
 	let showHidden = $state(false)
 	let isEditDialogOpen = $state(false)
@@ -64,18 +67,23 @@
 
 	async function handleDelete() {
 		shoppingFeedback = ''
+		shoppingFeedbackCode = null
+		shoppingFeedbackVars = {}
 		try {
-			// Filter out purchased items from the local data
-			shoppingList = shoppingList.filter((item) => !item.purchased)
 			const response = await deletePurchasedItems()
 			if (response.success) {
-				shoppingFeedback = 'Successfully deleted purchased items!'
+				shoppingList = shoppingList.filter((item) => !item.purchased)
+				shoppingFeedback = ''
+				shoppingFeedbackCode = 'shopping.msg.deletedPurchased'
+				shoppingFeedbackVars = {}
 			} else {
-				shoppingFeedback = 'There was a problem deleting purchased items!'
+				shoppingFeedback = response.error || ''
+				shoppingFeedbackCode = response.code || 'shopping.msg.deletedPurchasedFail'
 			}
 		} catch (error) {
 			console.error('Error deleting purchased items:', error.message)
-			shoppingFeedback = 'There was a problem deleting purchased items!'
+			shoppingFeedback = error.message || ''
+			shoppingFeedbackCode = error.code || 'shopping.msg.deletedPurchasedFail'
 		}
 		isDeleteDialogOpen = false
 	}
@@ -95,13 +103,18 @@
 				const newItem = response.data
 				shoppingList = [...shoppingList, newItem] // Add the new item to the local state
 				newIngredient = '' // Clear the input field
+				shoppingFeedback = ''
+				shoppingFeedbackCode = response.data?.code || 'shopping.msg.itemAdded'
+				shoppingFeedbackVars = {}
 			} else {
-				// Handle errors or show an error message to the user
-				console.error('Error adding ingredient:', response.statusText)
+				console.error('Error adding ingredient:', response.error)
+				shoppingFeedback = response.error || ''
+				shoppingFeedbackCode = response.code || 'shopping.msg.itemAddFail'
 			}
 		} catch (error) {
 			console.error('Error adding ingredient:', error.message)
-			// Handle network errors or other exceptions
+			shoppingFeedback = error.message || ''
+			shoppingFeedbackCode = error.code || 'shopping.msg.itemAddFail'
 		}
 	}
 
@@ -131,22 +144,31 @@
 
 	async function handleCheckAll() {
 		shoppingFeedback = '' // Reset or clear the feedback message before starting the updates
+		shoppingFeedbackCode = null
+		shoppingFeedbackVars = {}
 		try {
 			const result = await markPurchasedItems() // Call the bulk update function
 
 			if (result && result.updatedCount > 0) {
 				// If items were successfully updated, reflect these changes locally
 				shoppingList = shoppingList.map((item) => ({ ...item, purchased: true }))
-				shoppingFeedback = `${result.updatedCount} item(s) have been marked as purchased!` // Inform the user about the number of items updated
+				shoppingFeedback = ''
+				shoppingFeedbackCode =
+					result.code ||
+					(result.updatedCount === 1
+						? 'shopping.msg.markedPurchased_one'
+						: 'shopping.msg.markedPurchased_other')
+				shoppingFeedbackVars = result.vars || { count: result.updatedCount }
 			} else if (result && result.updatedCount === 0) {
-				// If no items were updated, inform the user accordingly
-				shoppingFeedback = 'No items needed to be marked as purchased.'
+				shoppingFeedback = ''
+				shoppingFeedbackCode = result.code || 'shopping.msg.noneToMark'
 			} else {
-				// Handle unexpected outcomes
-				shoppingFeedback = 'An unexpected error occurred while updating items.'
+				shoppingFeedback = result?.error || ''
+				shoppingFeedbackCode = result?.code || 'shopping.msg.updateError'
 			}
 		} catch (error) {
-			shoppingFeedback = 'An error occurred while updating items.' // Set an error message for catch block errors
+			shoppingFeedback = error.message || ''
+			shoppingFeedbackCode = error.code || 'shopping.msg.updateErrorGeneric'
 			console.error('Error updating shopping list items:', error.message)
 		}
 		isCheckAllDialogOpen = false
@@ -160,7 +182,6 @@
 	// Function to handle saving the edited item
 	async function handleSaveEdit(event) {
 		event.preventDefault()
-		// Validate the edited item's data here (if necessary)
 
 		try {
 			// 🔧 Call backend to update item, assign result
@@ -176,15 +197,20 @@
 			})
 
 			isEditDialogOpen = false // Close the edit modal
-			shoppingFeedback = 'Item updated successfully!' // Optional: Show success feedback
+			shoppingFeedback = ''
+			shoppingFeedbackCode = updatedItem?.code || 'shopping.msg.itemUpdated'
+			shoppingFeedbackVars = updatedItem?.vars || {}
 		} catch (error) {
 			console.error('Error updating item:', error)
-			shoppingFeedback = 'Failed to update item. Please try again.'
+			shoppingFeedback = error.message || ''
+			shoppingFeedbackCode = error.code || 'shopping.msg.itemUpdateFail'
 		}
 	}
 
 	async function handleDeleteItem(uid) {
 		shoppingFeedback = ''
+		shoppingFeedbackCode = null
+		shoppingFeedbackVars = {}
 		try {
 			const response = await deleteShoppingListItem(uid)
 			if (response.success) {
@@ -196,13 +222,16 @@
 					isEditDialogOpen = false
 					editingItem = { ...emptyEditingItem }
 				}
-				shoppingFeedback = 'Item deleted successfully!'
+				shoppingFeedback = ''
+				shoppingFeedbackCode = response.code || 'shopping.msg.itemDeleted'
 			} else {
-				shoppingFeedback = 'Failed to delete the item. Please try again.'
+				shoppingFeedback = response.error || ''
+				shoppingFeedbackCode = response.code || 'shopping.msg.itemDeleteFail'
 			}
 		} catch (error) {
 			console.error('Error deleting item:', error)
-			shoppingFeedback = 'Failed to delete item. Please try again.'
+			shoppingFeedback = error.message || ''
+			shoppingFeedbackCode = error.code || 'shopping.msg.itemDeleteFail'
 		}
 	}
 
@@ -242,7 +271,7 @@
 </script>
 
 <div class="prose mb-2 max-w-none flex gap-2 justify-center">
-	<h2>Shopping</h2>
+	<h2>{$t('shopping.title')}</h2>
 </div>
 <div class="mb-2 max-w-none flex gap-2 justify-center">
 	<ShoppingToolbar
@@ -253,20 +282,26 @@
 		onToggleHidden={toggleHidden}
 		onTogglePurchasedSort={togglePurchasedSort}
 		onCheckAll={() => (isCheckAllDialogOpen = true)}
-		onDeletePurchased={() => (isDeleteDialogOpen = true)} />
+		onDeletePurchased={() => (isDeleteDialogOpen = true)}
+	/>
 </div>
 {#if shoppingList.length === 0}
-	<InfoText class="my-2">Add something to your shopping list</InfoText>
+	<InfoText class="my-2">{$t('shopping.empty')}</InfoText>
 {/if}
 
 <ShoppingItemInput
 	bind:value={newIngredient}
 	onAdd={handleAddIngredient}
-	onKeyPress={handleKeyPressIngredient} />
-<FeedbackMessage message={shoppingFeedback} />
+	onKeyPress={handleKeyPressIngredient}
+/>
+<FeedbackMessage
+	message={shoppingFeedback}
+	messageCode={shoppingFeedbackCode}
+	messageVars={shoppingFeedbackVars}
+/>
 
 {#if sortedUncheckedItems.length > 0}
-	<h3 class="mt-2 mb-2">To buy</h3>
+	<h3 class="mt-2 mb-2">{$t('shopping.toBuy')}</h3>
 {/if}
 <ul class="list bg-base-100 rounded-box shadow-md divide-y divide-base-300">
 	{#each sortedUncheckedItems as item (item.uid)}
@@ -275,13 +310,14 @@
 			onCheckboxChange={handleCheckboxChange}
 			onEdit={openEditModal}
 			onTogglePurchase={(targetItem) => handlePurchaseToggle(targetItem, !targetItem.purchased)}
-			purchaseLoading={purchaseLoadingByUid[item.uid] ?? false} />
+			purchaseLoading={purchaseLoadingByUid[item.uid] ?? false}
+		/>
 	{/each}
 </ul>
 
 {#if showHidden}
-	<h3 class="mt-4 mb-2">Purchased</h3>
-	<InfoText class="my-2">Uncheck to add to shopping list</InfoText>
+	<h3 class="mt-4 mb-2">{$t('shopping.purchased')}</h3>
+	<InfoText class="my-2">{$t('shopping.uncheckToAdd')}</InfoText>
 	<ul class="list bg-base-100 rounded-box shadow-md divide-y divide-base-300">
 		{#each sortedPurchasedItems as item (item.uid)}
 			<ShoppingListItem
@@ -289,13 +325,14 @@
 				onCheckboxChange={handleCheckboxChange}
 				onEdit={openEditModal}
 				onTogglePurchase={(targetItem) => handlePurchaseToggle(targetItem, !targetItem.purchased)}
-				purchaseLoading={purchaseLoadingByUid[item.uid] ?? false} />
+				purchaseLoading={purchaseLoadingByUid[item.uid] ?? false}
+			/>
 		{/each}
 	</ul>
 {/if}
 {#if hiddenMatches.length > 0}
 	<p class="prose text-xs mt-3 mb-2 flex justify-center max-w-none">
-		Matches from previously bought items - uncheck to add
+		{$t('shopping.previouslyBought')}
 	</p>
 	<ul class="list bg-base-100 rounded-box shadow-md divide-y divide-base-300">
 		{#each hiddenMatches as item (item.uid)}
@@ -304,7 +341,8 @@
 				onCheckboxChange={handleCheckboxChange}
 				onEdit={openEditModal}
 				onTogglePurchase={(targetItem) => handlePurchaseToggle(targetItem, !targetItem.purchased)}
-				purchaseLoading={purchaseLoadingByUid[item.uid] ?? false} />
+				purchaseLoading={purchaseLoadingByUid[item.uid] ?? false}
+			/>
 		{/each}
 	</ul>
 {/if}
@@ -312,11 +350,12 @@
 <ConfirmationDialog
 	isOpen={isDeleteDialogOpen}
 	onConfirm={handleDelete}
-	onClose={() => (isDeleteDialogOpen = false)}>
+	onClose={() => (isDeleteDialogOpen = false)}
+>
 	{#snippet content()}
 		<div>
-			<h2>Delete Your Purchased Items?</h2>
-			<p>This will permanently delete all purchased items from your shopping list.</p>
+			<h2>{$t('shopping.confirmDeleteTitle')}</h2>
+			<p>{$t('shopping.confirmDeleteDesc')}</p>
 		</div>
 	{/snippet}
 </ConfirmationDialog>
@@ -324,11 +363,12 @@
 <ConfirmationDialog
 	isOpen={isCheckAllDialogOpen}
 	onConfirm={handleCheckAll}
-	onClose={() => (isCheckAllDialogOpen = false)}>
+	onClose={() => (isCheckAllDialogOpen = false)}
+>
 	{#snippet content()}
 		<div>
-			<h2>Check all items as purchased?</h2>
-			<p>This will mark all your shopping as purchased.</p>
+			<h2>{$t('shopping.confirmPurchaseAllTitle')}</h2>
+			<p>{$t('shopping.confirmPurchaseAllDesc')}</p>
 		</div>
 	{/snippet}
 </ConfirmationDialog>
@@ -337,4 +377,5 @@
 	bind:isOpen={isEditDialogOpen}
 	bind:item={editingItem}
 	onSave={handleSaveEdit}
-	onDelete={handleDeleteItem} />
+	onDelete={handleDeleteItem}
+/>

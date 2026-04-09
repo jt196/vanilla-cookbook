@@ -170,7 +170,7 @@ const apiConfigs = {
  * @param {string} provider - Provider name
  * @param {string} [model] - Model to use (defaults to provider's recommended model)
  * @param {'chat' | 'embedding' | 'imageGeneration'} [type='chat'] - Type of connection to test
- * @returns {Promise<{ ok: boolean, latencyMs: number, error?: string, model?: string }>}
+ * @returns {Promise<{ ok: boolean, latencyMs: number, error?: string, code?: string, model?: string }>}
  */
 export async function testProviderConnection(provider, model, type = 'chat') {
 	const start = Date.now()
@@ -180,24 +180,44 @@ export async function testProviderConnection(provider, model, type = 'chat') {
 		// Get provider metadata
 		const meta = providerMeta.find((p) => p.value === provider)
 		if (!meta) {
-			return { ok: false, latencyMs: 0, error: `Unknown provider: ${provider}` }
+			return {
+				ok: false,
+				latencyMs: 0,
+				error: `Unknown provider: ${provider}`,
+				code: 'admin.site.msg.connectionFailed'
+			}
 		}
 
 		// Get API key/URL from env
 		const envValue = env[meta.envVar]
 		if (!envValue) {
-			return { ok: false, latencyMs: 0, error: `${meta.envVar} not configured` }
+			return {
+				ok: false,
+				latencyMs: 0,
+				error: `${meta.envVar} not configured`,
+				code: 'admin.site.msg.connectionFailed'
+			}
 		}
 
 		// Get API config
 		const config = apiConfigs[provider]
 		if (!config) {
-			return { ok: false, latencyMs: 0, error: `No API config for provider: ${provider}` }
+			return {
+				ok: false,
+				latencyMs: 0,
+				error: `No API config for provider: ${provider}`,
+				code: 'admin.site.msg.connectionFailed'
+			}
 		}
 
 		if (type === 'embedding') {
 			if (!embeddingProviderNames.includes(provider)) {
-				return { ok: false, latencyMs: 0, error: `${provider} does not support embeddings` }
+				return {
+					ok: false,
+					latencyMs: 0,
+					error: `${provider} does not support embeddings`,
+					code: 'admin.site.msg.connectionFailed'
+				}
 			}
 			return testEmbedding(provider, config.embedding, envValue, model, start, timeout)
 		}
@@ -211,14 +231,20 @@ export async function testProviderConnection(provider, model, type = 'chat') {
 		return {
 			ok: false,
 			latencyMs: Date.now() - start,
-			error: err instanceof Error ? err.message : String(err)
+			error: err instanceof Error ? err.message : String(err),
+			code: 'admin.site.msg.connectionFailed'
 		}
 	}
 }
 
 async function testImageGeneration(provider, apiConfig, envValue, model, start, timeout) {
 	if (!apiConfig || apiConfig.unsupported) {
-		return { ok: false, latencyMs: 0, error: `${provider} does not support image generation` }
+		return {
+			ok: false,
+			latencyMs: 0,
+			error: `${provider} does not support image generation`,
+			code: 'admin.site.msg.connectionFailed'
+		}
 	}
 
 	const defaults = getDefaultModelsForProvider(provider)
@@ -251,6 +277,7 @@ async function testImageGeneration(provider, apiConfig, envValue, model, start, 
 				ok: false,
 				latencyMs: Date.now() - start,
 				error: `API error: ${response.status} ${body.substring(0, 200)}`,
+				code: 'admin.site.msg.connectionFailed',
 				model: effectiveModel
 			}
 		}
@@ -290,6 +317,7 @@ async function testChat(provider, apiConfig, envValue, model, start, timeout) {
 				ok: false,
 				latencyMs: Date.now() - start,
 				error: `API error: ${response.status} ${body.substring(0, 200)}`,
+				code: 'admin.site.msg.connectionFailed',
 				model: effectiveModel
 			}
 		}
@@ -311,7 +339,12 @@ async function testEmbedding(provider, apiConfig, envValue, model, start, timeou
 	const effectiveModel = model || embeddingModels[provider]?.[0]?.value
 
 	if (!effectiveModel) {
-		return { ok: false, latencyMs: 0, error: `No embedding model for ${provider}` }
+		return {
+			ok: false,
+			latencyMs: 0,
+			error: `No embedding model for ${provider}`,
+			code: 'admin.site.msg.connectionFailed'
+		}
 	}
 
 	const controller = new AbortController()
@@ -333,6 +366,7 @@ async function testEmbedding(provider, apiConfig, envValue, model, start, timeou
 				ok: false,
 				latencyMs: Date.now() - start,
 				error: `API error: ${response.status} ${body.substring(0, 200)}`,
+				code: 'admin.site.msg.connectionFailed',
 				model: effectiveModel
 			}
 		}

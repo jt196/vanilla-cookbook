@@ -64,27 +64,29 @@ export const load = async ({ parent, locals }) => {
 	const resolvedModel = resolveEmbeddingModel(semantic.provider, semantic.model)
 
 	try {
-		const [backupInfo, embeddingRemaining, embeddingMismatched, embeddingTotal] = await Promise.all([
-			getBackupInfo(),
-			prisma.recipe.count({
-				where: {
-					embedding: null,
-					in_trash: false
-				}
-			}),
-			prisma.recipe.count({
-				where: {
-					in_trash: false,
-					embedding: { not: null },
-					embeddingModel: { not: resolvedModel }
-				}
-			}),
-			prisma.recipe.count({
-				where: {
-					in_trash: false
-				}
-			})
-		])
+		const [backupInfo, embeddingRemaining, embeddingMismatched, embeddingTotal] = await Promise.all(
+			[
+				getBackupInfo(),
+				prisma.recipe.count({
+					where: {
+						embedding: null,
+						in_trash: false
+					}
+				}),
+				prisma.recipe.count({
+					where: {
+						in_trash: false,
+						embedding: { not: null },
+						embeddingModel: { not: resolvedModel }
+					}
+				}),
+				prisma.recipe.count({
+					where: {
+						in_trash: false
+					}
+				})
+			]
+		)
 		const embeddingIndex = {
 			total: embeddingTotal,
 			remaining: embeddingRemaining,
@@ -104,6 +106,7 @@ export const load = async ({ parent, locals }) => {
 			...parentData,
 			backupInfo: null,
 			backupError: `Failed to load backup information: ${error.message}`,
+			backupErrorCode: 'admin.site.msg.backupInfoLoadFail',
 			embeddingIndex: { total: 0, remaining: 0, mismatched: 0, completed: 0 },
 			llmConfig,
 			oauth

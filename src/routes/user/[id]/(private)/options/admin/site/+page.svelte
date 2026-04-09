@@ -22,6 +22,8 @@
 	import TableCell from '$lib/components/ui/Table/TableCell.svelte'
 	import InfoText from '$lib/components/ui/InfoText.svelte'
 	import Dialog from '$lib/components/ui/Dialog.svelte'
+	import { t } from '$lib/stores/locale.js'
+	import { get } from 'svelte/store'
 
 	/** @type {{data: any}} */
 	let { data } = $props()
@@ -32,11 +34,15 @@
 	let oidcEnabled = $derived(oauth?.oidcEnabled ?? false)
 
 	let settingsFeedback = $state('')
+	let settingsFeedbackCode = $state(null)
 	let llmFeedback = $state('')
+	let llmFeedbackCode = $state(null)
 	let backupInfo = $state(data.backupInfo)
 	let backupError = $state(data.backupError || '')
+	let backupErrorCode = $state(data.backupErrorCode || null)
 	let backupInProgress = $state(false)
 	let backupFeedback = $state('')
+	let backupFeedbackCode = $state(null)
 	let embeddingInProgress = $state(false)
 	let embeddingFeedback = $state('')
 	let embeddingBatchResult = $state(null)
@@ -198,11 +204,12 @@
 			body: JSON.stringify(settings)
 		})
 		if (response.ok) {
-			settingsFeedback = 'Settings updated successfully!'
+			settingsFeedback = get(t)('admin.site.msg.settingsUpdated')
+			settingsFeedbackCode = null
 		} else {
 			const error = await response.json().catch(() => ({}))
-			settingsFeedback =
-				error.error || error.message || 'There was a problem updating your settings!'
+			settingsFeedback = error.error || error.message || ''
+			settingsFeedbackCode = error.code || 'admin.site.msg.settingsUpdateFail'
 		}
 	}
 
@@ -226,11 +233,13 @@
 			})
 		})
 		if (response.ok) {
-			llmFeedback = 'LLM settings updated successfully!'
+			llmFeedback = get(t)('admin.site.msg.llmUpdated')
+			llmFeedbackCode = null
 			await invalidateAll()
 		} else {
 			const error = await response.json().catch(() => ({}))
-			llmFeedback = error.error || error.message || 'There was a problem updating LLM settings!'
+			llmFeedback = error.error || error.message || ''
+			llmFeedbackCode = error.code || 'admin.site.msg.llmUpdateFail'
 		}
 	}
 
@@ -243,15 +252,18 @@
 			})
 			if (response.ok) {
 				const result = await response.json()
-				backupFeedback = result.message
+				backupFeedback = result.message || ''
+				backupFeedbackCode = result.code || null
 				// Refresh the data from server
 				await invalidateAll()
 			} else {
 				const error = await response.json()
-				backupFeedback = error.error || 'Failed to create backup'
+				backupFeedback = error.error || ''
+				backupFeedbackCode = error.code || 'admin.site.msg.backupFail'
 			}
 		} catch (error) {
-			backupFeedback = 'Error creating backup: ' + error.message
+			backupFeedback = error.message
+			backupFeedbackCode = 'admin.site.msg.backupError'
 		} finally {
 			backupInProgress = false
 		}
@@ -273,7 +285,7 @@
 				})
 				const data = await response.json().catch(() => ({}))
 				if (!response.ok) {
-					embeddingFeedback = data.error || data.reason || 'Failed to generate embeddings.'
+					embeddingFeedback = data.error || data.reason || get(t)('admin.site.msg.embeddingError')
 					return
 				}
 
@@ -282,27 +294,36 @@
 				embeddingBatchResult = data
 				embeddingIndex = {
 					total: embeddingIndex.total,
-					remaining: force ? embeddingIndex.remaining : (data.remaining ?? embeddingIndex.remaining),
-					mismatched: force ? (data.remaining ?? embeddingIndex.mismatched) : embeddingIndex.mismatched,
+					remaining: force
+						? embeddingIndex.remaining
+						: (data.remaining ?? embeddingIndex.remaining),
+					mismatched: force
+						? (data.remaining ?? embeddingIndex.mismatched)
+						: embeddingIndex.mismatched,
 					completed: Math.max(
 						(embeddingIndex.total || 0) -
-							(force ? embeddingIndex.remaining : (data.remaining || 0)) -
-							(force ? (data.remaining || 0) : embeddingIndex.mismatched),
+							(force ? embeddingIndex.remaining : data.remaining || 0) -
+							(force ? data.remaining || 0 : embeddingIndex.mismatched),
 						0
 					)
 				}
 
 				if (data.remaining === 0) break
 				if (data.rateLimited) {
-					embeddingFeedback = `Rate limit or quota reached after ${processedTotal} processed. Top up credits or wait and try again later.`
+					embeddingFeedback = get(t)('admin.site.msg.embeddingRateLimit', {
+						count: processedTotal
+					})
 					return
 				}
 				if ((data.processed || 0) === 0) break
 			}
 
-			embeddingFeedback = `Embedding run complete: ${processedTotal} processed, ${failedTotal} failed.`
+			embeddingFeedback = get(t)('admin.site.msg.embeddingComplete', {
+				processed: processedTotal,
+				failed: failedTotal
+			})
 		} catch (error) {
-			embeddingFeedback = `Error generating embeddings: ${error.message}`
+			embeddingFeedback = `${get(t)('admin.site.msg.embeddingError')} ${error.message}`
 		} finally {
 			embeddingInProgress = false
 		}
@@ -312,6 +333,7 @@
 	$effect(() => {
 		backupInfo = data.backupInfo
 		backupError = data.backupError || ''
+		backupErrorCode = data.backupErrorCode || null
 		embeddingIndex = data.embeddingIndex || { total: 0, remaining: 0, mismatched: 0, completed: 0 }
 	})
 
@@ -324,7 +346,11 @@
 			})
 			return await response.json()
 		} catch (err) {
-			return { ok: false, error: err.message || 'Connection failed' }
+			return {
+				ok: false,
+				error: err.message || get(t)('admin.site.connectionFailed'),
+				code: 'admin.site.msg.connectionFailed'
+			}
 		}
 	}
 
@@ -335,7 +361,7 @@
 		if (llmEnabled && llmProvider) {
 			checks.push({
 				key: 'text',
-				label: 'Text',
+				label: get(t)('admin.site.textSection'),
 				provider: llmProvider,
 				model: effectiveTextModel || undefined,
 				type: 'chat'
@@ -345,7 +371,7 @@
 		if (llmEnabled && llmImageProvider) {
 			checks.push({
 				key: 'image-ocr',
-				label: 'Image OCR',
+				label: get(t)('admin.site.imageOcr'),
 				provider: llmImageProvider,
 				model: effectiveImageModel || undefined,
 				type: 'chat'
@@ -355,7 +381,7 @@
 		if (llmEnabled && llmImageGenerationProvider) {
 			checks.push({
 				key: 'image-generation',
-				label: 'Image Generation',
+				label: get(t)('admin.site.imageGen'),
 				provider: llmImageGenerationProvider,
 				model: effectiveImageGenerationModel || undefined,
 				type: 'imageGeneration'
@@ -365,7 +391,7 @@
 		if (semanticEnabled && semanticProviderConfigured && effectiveSemanticProvider) {
 			checks.push({
 				key: 'embeddings',
-				label: 'Embeddings',
+				label: get(t)('admin.site.embeddings'),
 				provider: effectiveSemanticProvider,
 				model: semanticEmbeddingModel || undefined,
 				type: 'embedding'
@@ -382,7 +408,8 @@
 			...check,
 			status: 'pending',
 			latencyMs: null,
-			error: ''
+			error: '',
+			errorCode: null
 		}))
 
 		if (!checks.length) {
@@ -399,7 +426,8 @@
 								...row,
 								status: result.ok ? 'success' : 'error',
 								latencyMs: result?.latencyMs ?? null,
-								error: result?.error || ''
+								error: result?.error || '',
+								errorCode: result?.code || null
 							}
 						: row
 				)
@@ -410,7 +438,7 @@
 	}
 </script>
 
-<h3>Update Site Settings</h3>
+<h3>{$t('admin.site.updateSiteSettings')}</h3>
 <div class="w-full md:w-3/4 lg:w-2/3 space-y-4 mb-3">
 	<form
 		method="POST"
@@ -421,75 +449,63 @@
 		<Checkbox
 			name="registrationAllowed"
 			bind:checked={settings.registrationAllowed}
-			legend="Allow Registrations"
+			legend={$t('admin.site.allowRegistrations')}
 			size="sm"
 			color="primary"
 		>
 			{settings.registrationAllowed
-				? 'User registration is enabled.'
-				: 'User registration is disabled.'}</Checkbox
+				? $t('admin.site.registrationEnabled')
+				: $t('admin.site.registrationDisabled')}</Checkbox
 		>
 		<Checkbox
 			name="requireLogin"
 			bind:checked={settings.requireLogin}
-			legend="Require Login"
+			legend={$t('admin.site.requireLogin')}
 			size="sm"
 			color="primary"
 		>
 			{settings.requireLogin
-				? 'Authentication is required for all pages (private site mode).'
-				: 'Public pages are accessible without login.'}</Checkbox
+				? $t('admin.site.requireLoginEnabled')
+				: $t('admin.site.requireLoginDisabled')}</Checkbox
 		>
-		<InfoText>
-			When enabled, all visitors must log in to access any page. Public recipes and profiles will
-			still be hidden from unauthenticated users.
-		</InfoText>
+		<InfoText>{$t('admin.site.requireLoginHint')}</InfoText>
 		{#if oidcEnabled}
 			<Checkbox
 				name="oidcAutoProvision"
 				bind:checked={settings.oidcAutoProvision}
-				legend="OIDC Auto-Provisioning"
+				legend={$t('admin.site.oidcAutoProvision')}
 				size="sm"
 				color="primary"
 			>
 				{settings.oidcAutoProvision
-					? 'Automatically create accounts for new OIDC users.'
-					: 'Only existing accounts can sign in via OIDC.'}</Checkbox
+					? $t('admin.site.oidcEnabled')
+					: $t('admin.site.oidcDisabled')}</Checkbox
 			>
-			<InfoText>
-				When enabled, users signing in via OIDC for the first time will have an account created
-				automatically. When disabled, only existing users can sign in via OIDC.
-			</InfoText>
+			<InfoText>{$t('admin.site.oidcHint')}</InfoText>
 		{/if}
 		<footer class="flex flex-col gap-2">
-			<Button type="submit" class="self-start w-auto">Update</Button>
-			<FeedbackMessage message={settingsFeedback} inline />
+			<Button type="submit" class="self-start w-auto">{$t('admin.site.update')}</Button>
+			<FeedbackMessage message={settingsFeedback} messageCode={settingsFeedbackCode} inline />
 		</footer>
 	</form>
 </div>
 
 <div class="w-full md:w-3/4 lg:w-2/3 space-y-2 mb-3">
-	<h3>LLM Configuration</h3>
+	<h3>{$t('admin.site.llmConfig')}</h3>
 	{#if !llmConfig.hasAnyApiKey}
 		<div class="rounded-box border border-base-300 bg-base-200 p-4">
-			<InfoText>
-				No API keys configured. Add API keys to your .env file to enable LLM features:
-				<code>OPENAI_API_KEY</code>, <code>ANTHROPIC_API_KEY</code>, <code>GOOGLE_API_KEY</code>, or
-				configure <code>OLLAMA_BASE_URL</code> for local models.
-			</InfoText>
+			<InfoText>{$t('admin.site.llmNoKeys')}</InfoText>
 		</div>
 	{:else}
 		<form onsubmit={updateLlmSettings} class="flex flex-col gap-4">
 			<Checkbox
 				name="llmEnabled"
 				bind:checked={llmEnabled}
-				legend="Enable LLM Features"
+				legend={$t('admin.site.enableLlm')}
 				size="sm"
 				color="primary"
 			>
-				{llmEnabled
-					? 'AI-assisted recipe parsing, OCR, and image generation are enabled.'
-					: 'AI-assisted recipe parsing, OCR, and image generation are disabled.'}
+				{llmEnabled ? $t('admin.site.llmEnabled') : $t('admin.site.llmDisabled')}
 			</Checkbox>
 
 			{#if llmEnabled}
@@ -503,25 +519,21 @@
 							disabled={providerTestsRunning}
 							loading={providerTestsRunning}
 						>
-							{providerTestsRunning ? 'Testing Enabled Providers...' : 'Test Enabled Providers'}
+							{providerTestsRunning
+								? $t('admin.site.testingProviders')
+								: $t('admin.site.testProviders')}
 						</Button>
 					</div>
-					<InfoText class="mt-2">
-						Runs connection checks for currently enabled sections (Text, Image OCR, Image
-						Generation, Embeddings).
-					</InfoText>
+					<InfoText class="mt-2">{$t('admin.site.testProvidersHint')}</InfoText>
 				</div>
 
-				<h4>Text</h4>
-				<InfoText
-					>Used for recipe fallback parsing/translation/generation, ingredient cleanup, and
-					direction summarising.</InfoText
-				>
+				<h4>{$t('admin.site.textSection')}</h4>
+				<InfoText>{$t('admin.site.textHint')}</InfoText>
 				<Dropdown
 					name="llmProvider"
 					options={availableProviderOptions}
 					bind:selected={llmProvider}
-					legend="Provider"
+					legend={$t('admin.site.provider')}
 				/>
 
 				<div class="flex flex-col gap-2">
@@ -529,74 +541,74 @@
 						name="textModel"
 						options={textModelList}
 						bind:selected={textModelSelection}
-						legend="Model"
+						legend={$t('admin.site.model')}
 					/>
 					{#if showCustomTextInput}
 						<Input
 							type="text"
 							id="customTextModel"
-							label="Custom Model"
+							label={$t('admin.site.customModel')}
 							placeholder="e.g. gpt-4o-2024-08-06"
 							bind:value={customTextModel}
 						/>
 					{/if}
 				</div>
-				<h4>Image OCR</h4>
-				<InfoText>Used for recipe extraction from uploaded photos/images.</InfoText>
+				<h4>{$t('admin.site.imageOcr')}</h4>
+				<InfoText>{$t('admin.site.imageOcrHint')}</InfoText>
 				<div class="flex flex-col gap-2">
 					<Dropdown
 						name="imageProvider"
 						options={availableProviderOptions}
 						bind:selected={llmImageProvider}
-						legend="Provider"
+						legend={$t('admin.site.provider')}
 					/>
 					{#if supportsImages}
 						<Dropdown
 							name="imageModel"
 							options={imageModelList}
 							bind:selected={imageModelSelection}
-							legend="Model"
+							legend={$t('admin.site.model')}
 						/>
 						{#if showCustomImageInput}
 							<Input
 								type="text"
 								id="customImageModel"
-								label="Custom Model"
+								label={$t('admin.site.customModel')}
 								placeholder="e.g. claude-3-5-sonnet-20241022"
 								bind:value={customImageModel}
 							/>
 						{/if}
 					{:else}
 						<InfoText>
-							{llmImageProvider === 'ollama' ? 'Ollama' : llmImageProvider || 'This provider'} does not
-							support image analysis.
+							{llmImageProvider === 'ollama'
+								? 'Ollama'
+								: llmImageProvider || $t('common.thisProvider')}
+							{$t('admin.site.noImageAnalysis')}
 						</InfoText>
 					{/if}
 				</div>
 
-				<h4>Image Generation</h4>
-				<InfoText>
-					Used for the “Generate Recipe Image” action in recipe edit mode. Separate from image OCR.
-				</InfoText>
+				<h4>{$t('admin.site.imageGen')}</h4>
+				<InfoText>{$t('admin.site.imageGenHint')}</InfoText>
 				<div class="flex flex-col gap-2">
 					<Dropdown
 						name="imageGenerationProvider"
 						options={availableProviderOptions}
 						bind:selected={llmImageGenerationProvider}
-						legend="Provider"
+						legend={$t('admin.site.provider')}
 					/>
 					{#if supportsImageGeneration}
 						<Dropdown
 							name="imageGenerationModel"
 							options={imageGenerationModelList}
 							bind:selected={imageGenerationModelSelection}
-							legend="Model"
+							legend={$t('admin.site.model')}
 						/>
 						{#if showCustomImageGenerationInput}
 							<Input
 								type="text"
 								id="customImageGenerationModel"
-								label="Custom Model"
+								label={$t('admin.site.customModel')}
 								placeholder="e.g. gpt-image-1"
 								bind:value={customImageGenerationModel}
 							/>
@@ -605,36 +617,35 @@
 						<InfoText>
 							{llmImageGenerationProvider === 'ollama'
 								? 'Ollama'
-								: llmImageGenerationProvider || 'This provider'} does not support image generation.
+								: llmImageGenerationProvider || $t('common.thisProvider')}
+							{$t('admin.site.noImageGen')}
 						</InfoText>
 					{/if}
 				</div>
 
-				<h4>Embeddings</h4>
-				<InfoText>Powers semantic search, similar recipes, and other smart features.</InfoText>
+				<h4>{$t('admin.site.embeddings')}</h4>
+				<InfoText>{$t('admin.site.embeddingsHint')}</InfoText>
 				<div class="flex flex-col gap-2">
 					<Checkbox
 						name="semanticEnabled"
 						bind:checked={semanticEnabled}
-						legend="Enable Embeddings"
+						legend={$t('admin.site.enableEmbeddings')}
 						size="sm"
 						color="primary"
 						disabled={!(llmConfig.semanticAvailableProviders || []).length}
 					>
-						{semanticEnabled ? 'Embeddings are enabled.' : 'Embeddings are disabled.'}
+						{semanticEnabled
+							? $t('admin.site.embeddingsEnabled')
+							: $t('admin.site.embeddingsDisabled')}
 					</Checkbox>
 					{#if !(llmConfig.semanticAvailableProviders || []).length}
-						<InfoText>
-							No embedding providers configured. Add <code>OPENAI_API_KEY</code>,
-							<code>GOOGLE_API_KEY</code> and/or <code>OLLAMA_BASE_URL</code> in
-							<code>.env</code>.
-						</InfoText>
+						<InfoText>{$t('admin.site.noEmbeddingProviders')}</InfoText>
 					{/if}
 					<Dropdown
 						name="semanticEmbeddingProvider"
 						options={semanticProviderOptions}
 						bind:selected={semanticEmbeddingProvider}
-						legend="Provider"
+						legend={$t('admin.site.provider')}
 						disabled={!semanticEnabled}
 					/>
 					{#if semanticModelOptions.length > 0}
@@ -642,41 +653,52 @@
 							name="semanticEmbeddingModel"
 							options={semanticModelOptions}
 							bind:selected={semanticEmbeddingModel}
-							legend="Model"
+							legend={$t('admin.site.model')}
 							disabled={!semanticEnabled || !semanticProviderConfigured}
 						/>
 					{:else}
-						<InfoText>Select an embedding provider to choose a model.</InfoText>
+						<InfoText>{$t('admin.site.selectProviderFirst')}</InfoText>
 					{/if}
 					{#if semanticEmbeddingProvider && !semanticProviderConfigured}
 						<InfoText>
 							{#if semanticEmbeddingProvider === 'ollama'}
-								Please add <code>OLLAMA_BASE_URL</code> to <code>.env</code>.
+								{$t('admin.site.missingOllama')}
 							{:else if semanticEmbeddingProvider === 'google'}
-								Please add <code>GOOGLE_API_KEY</code> to <code>.env</code>.
+								{$t('admin.site.missingGoogle')}
 							{:else if semanticEmbeddingProvider === 'openai'}
-								Please add <code>OPENAI_API_KEY</code> to <code>.env</code>.
+								{$t('admin.site.missingOpenai')}
 							{:else}
-								Selected provider is missing configuration in <code>.env</code>.
+								{$t('admin.site.missingProviderConfig')}
 							{/if}
 						</InfoText>
 					{/if}
 					{#if semanticEnabled}
 						<div class="rounded-box border border-base-300 bg-base-200 p-4 mt-2 space-y-2">
 							<p class="text-sm">
-								Indexed: {embeddingIndex.completed} / {embeddingIndex.total} ({embeddingIndex.remaining}
-								remaining)
+								{$t('admin.site.indexed', {
+									completed: embeddingIndex.completed,
+									total: embeddingIndex.total
+								})}
+								({$t('admin.site.remainingInline', { count: embeddingIndex.remaining })})
 							</p>
 							<progress
 								class="progress progress-info w-full"
 								value={embeddingPercent}
 								max="100"
-								aria-label="Embedding generation progress"
+								aria-label={$t('admin.site.embeddingProgressAria')}
 							></progress>
-							<p class="text-xs text-base-content/70">{embeddingPercent}% complete</p>
+							<p class="text-xs text-base-content/70">
+								{embeddingPercent}{$t('admin.site.percentComplete')}
+							</p>
 							{#if (embeddingIndex.mismatched || 0) > 0}
 								<p class="text-sm text-warning">
-									{embeddingIndex.mismatched} recipe{embeddingIndex.mismatched === 1 ? '' : 's'} indexed with a different model — use "Regenerate Mismatched" to update them.
+									{embeddingIndex.mismatched}
+									{$t(
+										embeddingIndex.mismatched === 1
+											? 'admin.site.recipe_one'
+											: 'admin.site.recipe_other'
+									)}
+									{$t('admin.site.mismatchedNote')}
 								</p>
 							{/if}
 							<div class="flex flex-wrap gap-2">
@@ -686,7 +708,9 @@
 									onclick={() => generateEmbeddingBatch(false)}
 									disabled={embeddingInProgress || !canGenerateEmbeddings}
 								>
-									{embeddingInProgress ? 'Generating Embeddings...' : 'Generate Embeddings'}
+									{embeddingInProgress
+										? $t('admin.site.generatingEmbeddings')
+										: $t('admin.site.generateEmbeddings')}
 								</Button>
 								{#if (embeddingIndex.mismatched || 0) > 0}
 									<Button
@@ -695,14 +719,18 @@
 										onclick={() => generateEmbeddingBatch(true)}
 										disabled={embeddingInProgress || !canRegenerateMismatched}
 									>
-										Regenerate Mismatched
+										{$t('admin.site.regenerateMismatched')}
 									</Button>
 								{/if}
 							</div>
 							{#if embeddingBatchResult}
 								<p class="text-sm">
-									Processed: {embeddingBatchResult.processed}, Failed: {embeddingBatchResult.failed},
-									Remaining: {embeddingBatchResult.remaining}
+									{$t('admin.site.processed')}
+									{embeddingBatchResult.processed},
+									{$t('admin.site.failed')}
+									{embeddingBatchResult.failed},
+									{$t('admin.site.remaining')}
+									{embeddingBatchResult.remaining}
 								</p>
 							{/if}
 							<FeedbackMessage message={embeddingFeedback} inline />
@@ -712,54 +740,58 @@
 			{/if}
 
 			<footer class="flex flex-col gap-2">
-				<Button type="submit" class="self-start w-auto">Update LLM Settings</Button>
-				<FeedbackMessage message={llmFeedback} inline />
+				<Button type="submit" class="self-start w-auto">{$t('admin.site.updateLlmSettings')}</Button
+				>
+				<FeedbackMessage message={llmFeedback} messageCode={llmFeedbackCode} inline />
 			</footer>
 		</form>
 	{/if}
 </div>
 
 <div class="w-full md:w-3/4 lg:w-2/3 space-y-2 mb-3">
-	<h3>Password Requirements</h3>
+	<h3>{$t('admin.site.passwordRequirements')}</h3>
 	<div class="rounded-box border border-base-300 bg-base-200 p-4 mt-4 space-y-1">
 		<p>
-			<strong>Summary:</strong>
-			{passwordRequirementsDescription || 'Using default password requirements.'}
+			<strong>{$t('admin.site.passwordSummary')}</strong>
+			{passwordRequirementsDescription || $t('admin.site.passwordDefault')}
 		</p>
 		{#if passwordRequirements}
-			<p><strong>Minimum Length:</strong> {passwordRequirements.minLength}</p>
+			<p><strong>{$t('admin.site.passwordMinLength')}</strong> {passwordRequirements.minLength}</p>
 			<p>
-				<strong>Uppercase:</strong>
-				{passwordRequirements.requireUppercase ? 'Required' : 'Not required'}
+				<strong>{$t('admin.site.passwordUppercase')}</strong>
+				{passwordRequirements.requireUppercase ? $t('common.required') : $t('common.notRequired')}
 			</p>
 			<p>
-				<strong>Lowercase:</strong>
-				{passwordRequirements.requireLowercase ? 'Required' : 'Not required'}
+				<strong>{$t('admin.site.passwordLowercase')}</strong>
+				{passwordRequirements.requireLowercase ? $t('common.required') : $t('common.notRequired')}
 			</p>
 			<p>
-				<strong>Digits:</strong>
-				{passwordRequirements.requireDigit ? 'Required' : 'Not required'}
+				<strong>{$t('admin.site.passwordDigits')}</strong>
+				{passwordRequirements.requireDigit ? $t('common.required') : $t('common.notRequired')}
 			</p>
 			<p>
-				<strong>Special Characters:</strong>
-				{passwordRequirements.requireSpecial ? 'Required' : 'Not required'}
+				<strong>{$t('admin.site.passwordSpecial')}</strong>
+				{passwordRequirements.requireSpecial ? $t('common.required') : $t('common.notRequired')}
 			</p>
 		{/if}
-		<InfoText class="my-4">Update values in your .env file to change password rules.</InfoText>
+		<InfoText class="my-4">{$t('admin.site.passwordEnvNote')}</InfoText>
 	</div>
 </div>
 
 <div class="w-full md:w-3/4 lg:w-2/3 space-y-4 mb-3">
-	<h3>Database Backups</h3>
+	<h3>{$t('admin.site.databaseBackups')}</h3>
 	{#if backupError}
-		<p class="error">{backupError}</p>
+		<FeedbackMessage message={backupError} messageCode={backupErrorCode} inline type="error" />
 	{:else if backupInfo}
 		<div class="backup-config rounded-box border border-base-300 bg-base-200 p-4 space-y-2">
-			<p><strong>Schedule:</strong> {backupInfo.cronPlainEnglish}</p>
+			<p><strong>{$t('admin.site.backupSchedule')}</strong> {backupInfo.cronPlainEnglish}</p>
 			<p>
-				<strong>Retention:</strong> Keep {backupInfo.retentionCount} most recent scheduled backups
+				<strong>{$t('admin.site.backupRetention')}</strong>
+				{$t('admin.site.backupKeep')}
+				{backupInfo.retentionCount}
+				{$t('admin.site.backupMostRecent')}
 			</p>
-			<InfoText class="my-4">Please edit your .env file to change these</InfoText>
+			<InfoText class="my-4">{$t('admin.site.backupEnvNote')}</InfoText>
 		</div>
 		<div class="backup-actions">
 			<Button
@@ -768,20 +800,24 @@
 				class="self-start w-auto"
 				loading={backupInProgress}
 			>
-				{backupInProgress ? 'Creating Backup...' : 'Backup Now'}
+				{backupInProgress ? $t('admin.site.creatingBackup') : $t('admin.site.backupNow')}
 			</Button>
-			<FeedbackMessage message={backupFeedback} inline />
+			<FeedbackMessage message={backupFeedback} messageCode={backupFeedbackCode} inline />
 		</div>
 
 		{#if backupInfo.backups.length > 0}
-			<h4>Available Backups ({backupInfo.backups.length})</h4>
+			<h4>{$t('admin.site.availableBackups')} ({backupInfo.backups.length})</h4>
 			<Table zebra size="sm" bordered>
 				<TableHead>
 					<TableRow>
-						<TableCell tag="th">Type</TableCell>
-						<TableCell tag="th">Created</TableCell>
-						<TableCell tag="th" class="hidden sm:table-cell">Size</TableCell>
-						<TableCell tag="th" class="hidden sm:table-cell">Filename</TableCell>
+						<TableCell tag="th">{$t('admin.site.backupType')}</TableCell>
+						<TableCell tag="th">{$t('admin.site.backupCreated')}</TableCell>
+						<TableCell tag="th" class="hidden sm:table-cell"
+							>{$t('admin.site.backupSize')}</TableCell
+						>
+						<TableCell tag="th" class="hidden sm:table-cell"
+							>{$t('admin.site.backupFilename')}</TableCell
+						>
 					</TableRow>
 				</TableHead>
 				<TableBody>
@@ -790,11 +826,11 @@
 							<TableCell>
 								<Badge variant={backup.type}>
 									{#if backup.type === 'pre-migration'}
-										Migration
+										{$t('admin.site.backupTypeMigration')}
 									{:else if backup.type === 'manual'}
-										Manual
+										{$t('admin.site.backupTypeManual')}
 									{:else}
-										Scheduled
+										{$t('admin.site.backupTypeScheduled')}
 									{/if}
 								</Badge>
 							</TableCell>
@@ -806,21 +842,18 @@
 				</TableBody>
 			</Table>
 		{:else}
-			<p>No backups found.</p>
+			<p>{$t('admin.site.noBackups')}</p>
 		{/if}
 	{:else}
-		<p>Loading backup information...</p>
+		<p>{$t('admin.site.loadingBackups')}</p>
 	{/if}
 </div>
 
 <Dialog bind:isOpen={providerTestDialogOpen} onClose={() => (providerTestDialogOpen = false)}>
-	<h3 class="font-bold text-lg mb-4">Enabled Provider Checks</h3>
-	<InfoText class="mb-3">
-		These tests make real provider API calls and may consume a small amount of credits/tokens.
-		Image generation checks are the most expensive.
-	</InfoText>
+	<h3 class="font-bold text-lg mb-4">{$t('admin.site.enabledProviderChecks')}</h3>
+	<InfoText class="mb-3">{$t('admin.site.providerTestWarning')}</InfoText>
 	{#if providerTestResults.length === 0}
-		<InfoText>No enabled provider sections to test.</InfoText>
+		<InfoText>{$t('admin.site.noProvidersToTest')}</InfoText>
 	{:else}
 		<div class="flex flex-col gap-2">
 			{#each providerTestResults as result}
@@ -829,20 +862,25 @@
 						<span class="font-semibold">{result.label}</span>
 						<span class="text-sm opacity-70">({result.provider})</span>
 						{#if result.status === 'pending'}
-							<Badge color="warning" size="sm">Pending</Badge>
+							<Badge color="warning" size="sm">{$t('admin.site.statusPending')}</Badge>
 						{:else if result.status === 'success'}
-							<Badge color="success" size="sm">Connected</Badge>
+							<Badge color="success" size="sm">{$t('admin.site.statusConnected')}</Badge>
 						{:else}
-							<Badge color="error" size="sm">Failed</Badge>
+							<Badge color="error" size="sm">{$t('admin.site.statusFailed')}</Badge>
 						{/if}
 					</div>
 					<p class="text-sm opacity-80">
-						Type: {result.type}{result.model ? `, Model: ${result.model}` : ''}
+						{$t('admin.site.testType')}
+						{result.type}{result.model ? `, ${$t('admin.site.testModel')} ${result.model}` : ''}
 					</p>
 					{#if result.status === 'success' && result.latencyMs !== null}
-						<p class="text-sm text-success">Latency: {result.latencyMs}ms</p>
+						<p class="text-sm text-success">{$t('admin.site.testLatency')} {result.latencyMs}ms</p>
 					{:else if result.status === 'error'}
-						<p class="text-sm text-error">{result.error || 'Connection failed'}</p>
+						<p class="text-sm text-error">
+							{result.errorCode
+								? $t(result.errorCode)
+								: result.error || $t('admin.site.connectionFailed')}
+						</p>
 					{/if}
 				</div>
 			{/each}
@@ -855,7 +893,7 @@
 			color="secondary"
 			onclick={() => (providerTestDialogOpen = false)}
 		>
-			Close
+			{$t('common.close')}
 		</Button>
 		<Button
 			type="button"
@@ -863,7 +901,7 @@
 			disabled={providerTestsRunning}
 			loading={providerTestsRunning}
 		>
-			{providerTestsRunning ? 'Testing...' : 'Re-run Tests'}
+			{providerTestsRunning ? $t('admin.site.testing') : $t('admin.site.rerunTests')}
 		</Button>
 	</div>
 </Dialog>
@@ -880,10 +918,6 @@
 		display: flex;
 		flex-direction: column;
 		gap: 0.5rem;
-	}
-
-	.error {
-		color: var(--pico-del-color);
 	}
 
 	:global(.filename) {

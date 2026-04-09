@@ -10,7 +10,10 @@ export async function GET({ locals }) {
 		const backupInfo = await getBackupInfo()
 		return jsonSuccess(backupInfo)
 	} catch (err) {
-		return jsonError(500, `Failed to read backup information: ${err.message}`)
+		return jsonError(500, {
+			error: `Failed to read backup information: ${err.message}`,
+			code: 'admin.site.msg.backupInfoLoadFail'
+		})
 	}
 }
 
@@ -24,7 +27,10 @@ export async function POST({ locals }) {
 		try {
 			await stat(dbFile)
 		} catch {
-			return jsonError(404, 'Database file not found')
+			return jsonError(404, {
+				error: 'Database file not found',
+				code: 'admin.site.msg.backupDbFileMissing'
+			})
 		}
 
 		const timestamp = new Date()
@@ -43,6 +49,7 @@ export async function POST({ locals }) {
 			{
 				success: true,
 				message: 'Manual backup created successfully',
+				code: 'admin.site.msg.backupCreated',
 				backup: {
 					name: `manual-${timestamp}.sqlite`,
 					size: `${sizeMB} MB`,
@@ -54,6 +61,9 @@ export async function POST({ locals }) {
 			201
 		)
 	} catch (err) {
-		return jsonError(500, `Failed to create backup: ${err.message}`)
+		return jsonError(500, {
+			error: `Failed to create backup: ${err.message}`,
+			code: 'admin.site.msg.backupFail'
+		})
 	}
 }

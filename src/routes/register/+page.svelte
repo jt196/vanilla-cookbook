@@ -7,6 +7,7 @@
 	import Checkbox from '$lib/components/ui/Form/Checkbox.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Oauth from '$lib/components/auth/Oauth.svelte'
+	import { t } from '$lib/stores/locale.js'
 
 	let { data, form } = $props()
 
@@ -14,8 +15,6 @@
 
 	let { oauthEnabled, googleEnabled, githubEnabled, oidcEnabled } = $state(oauth)
 	let oidcName = $state(oauth.oidcName ?? 'OIDC')
-
-	let errorMessage = $derived(form?.message)
 
 	let username = $state('')
 	let email = $state('')
@@ -47,8 +46,7 @@
 <div class="flex justify-center items-start min-h-[80vh] pt-8">
 	<div class="card w-full max-w-md bg-base-200 shadow-xl">
 		<div class="card-body">
-			<h2 class="card-title text-3xl">Register</h2>
-			<p class="text-base-content/70 mb-4">To post articles, you'll need an account.</p>
+			<h2 class="card-title text-3xl">{$t('auth.registerBtn')}</h2>
 
 			<form
 				method="POST"
@@ -57,15 +55,17 @@
 					return async ({ update }) => {
 						await update()
 					}
-				}}>
+				}}
+			>
 				<Input
 					type="text"
 					id="username"
 					placeholder="jgcooks"
 					name="username"
 					bind:value={username}
-					label="Username"
-					required />
+					label={$t('auth.username')}
+					required
+				/>
 
 				<div>
 					<Input
@@ -74,13 +74,16 @@
 						placeholder="griggers@cooksmail.com"
 						name="email"
 						bind:value={email}
-						label="Email"
-						required />
+						label={$t('auth.email')}
+						required
+					/>
 					<ValidationMessage
 						message={emailValidation?.message}
+						messageCode={emailValidation?.messageCode}
 						isValid={emailValidation?.isValid}
 						isError={!emailValidation?.isValid}
-						hidden={!emailValidation?.message} />
+						hidden={!emailValidation?.message}
+					/>
 				</div>
 
 				<div>
@@ -93,8 +96,9 @@
 						placeholder=""
 						name="password"
 						bind:value={password}
-						label="Password"
-						required />
+						label={$t('auth.password')}
+						required
+					/>
 				</div>
 
 				<div>
@@ -103,34 +107,48 @@
 						id="passwordConfirm"
 						name="passwordConfirm"
 						bind:value={passwordConfirm}
-						label="Confirm Password"
-						required />
+						label={$t('auth.confirmPassword')}
+						required
+					/>
 					<ValidationMessage
 						message={passwordValidation?.message}
+						messageCode={passwordValidation?.messageCode}
+						messageVars={passwordValidation?.messageVars}
 						isError={!passwordValidation?.isValid}
 						isValid={passwordValidation?.isValid}
-						hidden={!passwordValidation?.message} />
+						hidden={!passwordValidation?.message}
+					/>
 				</div>
 
 				<Checkbox
 					name="seedRecipes"
 					bind:checked={seedRecipes}
-					legend="Seed Recipes"
+					legend={$t('admin.users.seedRecipes')}
 					size="sm"
-					color="primary">
-					Seed my account with 3 example recipes</Checkbox>
+					color="primary"
+				>
+					{$t('auth.seedAccount')}</Checkbox
+				>
 
 				<div class="card-actions justify-end mt-6">
-					<Button type="submit" disabled={isSubmitDisabled} class="w-full">Register</Button>
+					<Button type="submit" disabled={isSubmitDisabled} class="w-full"
+						>{$t('auth.registerBtn')}</Button
+					>
 				</div>
 			</form>
 
-			<FeedbackMessage message={errorMessage} type="error" inline={true} />
+			<FeedbackMessage
+				message={form?.message}
+				messageCode={form?.messageCode}
+				messageVars={form?.messageVars}
+				type="error"
+				inline={true}
+			/>
 
 			<div class="divider"></div>
 
 			<p class="text-center">
-				Already have an account? <a href="/login" class="link link-primary">Login</a>
+				{$t('auth.haveAccount')} <a href="/login" class="link link-primary">{$t('nav.login')}</a>
 			</p>
 
 			{#if oauthEnabled}

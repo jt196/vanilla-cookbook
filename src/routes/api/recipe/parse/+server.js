@@ -12,7 +12,10 @@ export async function POST({ request, locals }) {
 		const { text, mode = 'parse', unitsPreference, language = 'eng' } = await request.json()
 
 		if (!text || typeof text !== 'string') {
-			return json({ error: 'Invalid or missing text field.' }, { status: 400 })
+			return json(
+				{ error: 'Invalid or missing text field.', code: 'recipeNew.msg.parseInvalidText' },
+				{ status: 400 }
+			)
 		}
 
 		const recipe =
@@ -33,12 +36,18 @@ export async function POST({ request, locals }) {
 					})
 
 		if (!recipe || !recipe.name || !recipe.ingredients?.length) {
-			return json({ error: 'Recipe parsing incomplete.' }, { status: 422 })
+			return json(
+				{ error: 'Recipe parsing incomplete.', code: 'recipeNew.msg.parseIncomplete' },
+				{ status: 422 }
+			)
 		}
 
 		return json({ ...recipe, _source: 'AI', _status: 'complete' })
 	} catch (err) {
 		console.error('Text parse API failed:', err)
-		return json({ error: 'Failed to parse recipe.' }, { status: 500 })
+		return json(
+			{ error: 'Failed to parse recipe.', code: 'recipeNew.msg.parseFailed' },
+			{ status: 500 }
+		)
 	}
 }

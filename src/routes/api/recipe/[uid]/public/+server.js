@@ -19,9 +19,16 @@ export async function PUT({ locals, params }) {
 			}
 		})
 
-		return jsonSuccess({ message: 'Recipe visibility toggled!' })
+		return jsonSuccess({
+			message: 'Recipe visibility toggled!',
+			code: recipe.is_public ? 'recipe.msg.madePrivate' : 'recipe.msg.madePublic',
+			isPublic: !recipe.is_public
+		})
 	} catch (err) {
 		if (err.status) throw err
-		return jsonError(500, `Failed to update recipe visibility: ${err.message}`)
+		return jsonError(500, {
+			error: `Failed to update recipe visibility: ${err.message}`,
+			code: 'recipe.msg.visibilityFail'
+		})
 	}
 }

@@ -1,5 +1,6 @@
 <!-- Sidebar.svelte -->
 <script>
+	import { t } from '$lib/stores/locale.js'
 	/** @type {{isOpen?: boolean, onClose?: () => void, children?: import('svelte').Snippet}} */
 	let { isOpen = false, onClose, children } = $props()
 
@@ -13,11 +14,13 @@
 	class:-translate-x-full={!isOpen}
 	class:max-md:translate-y-full={!isOpen}
 	class:translate-x-0={isOpen}
-	class:max-md:translate-y-0={isOpen}>
+	class:max-md:translate-y-0={isOpen}
+>
 	<button
 		onclick={closeSidebar}
 		class="btn btn-sm btn-circle btn-ghost absolute top-2 right-2"
-		aria-label="Close sidebar">
+		aria-label={$t('dialog.closeSidebar')}
+	>
 		X
 	</button>
 	{@render children?.()}

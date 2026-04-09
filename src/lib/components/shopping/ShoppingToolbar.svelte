@@ -5,42 +5,26 @@
 	import CheckAll from '$lib/components/svg/CheckAll.svelte'
 	import Check from '$lib/components/svg/Check.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
+	import { t } from '$lib/stores/locale.js'
 
 	let {
-		/**
-		 * @type {boolean}
-		 */
+		/** @type {boolean} */
 		showHidden = false,
-		/**
-		 * @type {number}
-		 */
+		/** @type {number} */
 		uncheckedItemCount = 0,
-		/**
-		 * @type {number}
-		 */
+		/** @type {number} */
 		purchasedItemCount = 0,
-		/**
-		 * @type {boolean}
-		 */
+		/** @type {boolean} */
 		sortByPurchased = false,
-		/**
-		 * @type {() => void}
-		 */
+		/** @type {() => void} */
 		onToggleHidden,
-		/**
-		 * @type {() => void}
-		 */
+		/** @type {() => void} */
 		onCheckAll,
-		/**
-		 * @type {() => void}
-		 */
+		/** @type {() => void} */
 		onDeletePurchased,
-		/**
-		 * @type {() => void}
-		 */
+		/** @type {() => void} */
 		onTogglePurchasedSort
 	} = $props()
-
 </script>
 
 <div class="shopping-buttons">
@@ -48,7 +32,7 @@
 		disabled={purchasedItemCount === 0}
 		onclick={onToggleHidden}
 		class="tooltip"
-		data-tip={showHidden ? 'Show Unpurchased Items' : 'Show Purchased Items'}>
+		data-tip={showHidden ? $t('shopping.showUnpurchased') : $t('shopping.showPurchased')}>
 		{#if showHidden}
 			<View width="20px" height="20px" fill="white" />
 		{:else}
@@ -59,7 +43,7 @@
 	<Button
 		onclick={onTogglePurchasedSort}
 		class="tooltip"
-		data-tip="Sort by Purchase Count">
+		data-tip={$t('shopping.sortByCount')}>
 		<Check checked={sortByPurchased} width="20px" height="20px" fill={sortByPurchased ? '#4ade80' : 'white'} />
 	</Button>
 
@@ -67,7 +51,7 @@
 		disabled={uncheckedItemCount === 0}
 		onclick={onCheckAll}
 		class="tooltip"
-		data-tip="Mark all items as purchased">
+		data-tip={$t('shopping.markAllPurchased')}>
 		<CheckAll width="20px" height="20px" fill="white" />
 	</Button>
 
@@ -75,7 +59,7 @@
 		disabled={purchasedItemCount === 0}
 		onclick={onDeletePurchased}
 		class="tooltip"
-		data-tip="Delete all purchased items">
+		data-tip={$t('shopping.deleteAllPurchased')}>
 		<Delete width="20px" height="20px" fill="white" />
 	</Button>
 </div>

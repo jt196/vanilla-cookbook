@@ -3,15 +3,10 @@
 	import Delete from '$lib/components/svg/Delete.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Input from '$lib/components/ui/Form/Input.svelte'
+	import { t } from '$lib/stores/locale.js'
 
 	/** @type {{photo: any, recipeName?: string, onSetMainPhoto: any, onDeletePhoto: any, onSaveEditedNotes: any}} */
-	let {
-		photo,
-		recipeName = '',
-		onSetMainPhoto,
-		onDeletePhoto,
-		onSaveEditedNotes
-	} = $props();
+	let { photo, recipeName = '', onSetMainPhoto, onDeletePhoto, onSaveEditedNotes } = $props()
 
 	let editingPhotoId = $state(null)
 	let editingPhotoNotes = $state(photo.notes || '')
@@ -32,20 +27,28 @@
 </script>
 
 {#if photo.isMain}
-	<img src="/api/recipe/image/{photo.id}" alt="{recipeName} photo" class="main-photo" />
+	<img
+		src="/api/recipe/image/{photo.id}"
+		alt={$t('photos.photoAlt', { name: recipeName })}
+		class="main-photo"
+	/>
 {:else}
 	<button type="button" class="promote-btn" onclick={() => onSetMainPhoto(photo.id)}>
-		<img src="/api/recipe/image/{photo.id}" alt="{recipeName} photo - click to set as main" class="promotable-photo" />
+		<img
+			src="/api/recipe/image/{photo.id}"
+			alt={$t('photos.setMainAlt', { name: recipeName })}
+			class="promotable-photo"
+		/>
 	</button>
 {/if}
 <div class="photo-note">
 	{#if editingPhotoId === photo.id}
-		<Input bind:value={editingPhotoNotes} type="text" placeholder="Enter notes..." />
-		<Button onclick={saveNotes}>Save</Button>
-		<Button onclick={cancelEditing}>Cancel</Button>
+		<Input bind:value={editingPhotoNotes} type="text" placeholder={$t('photos.enterNotes')} />
+		<Button onclick={saveNotes}>{$t('photos.save')}</Button>
+		<Button onclick={cancelEditing}>{$t('photos.cancel')}</Button>
 	{:else}
-		{photo.notes || 'No notes for this photo.'}
-		<Button onclick={startEditing}>Edit</Button>
+		{photo.notes || $t('photos.noNotesPhoto')}
+		<Button onclick={startEditing}>{$t('photos.edit')}</Button>
 	{/if}
 </div>
 <div class="photo-actions">
@@ -53,7 +56,7 @@
 		<Delete width="30px" height="30px" fill="var(--pico-del-color)" />
 	</Button>
 	{#if !photo.isMain}
-		<div class="tooltip" data-tip="Promote to Main Photo">
+		<div class="tooltip" data-tip={$t('photos.promoteMain')}>
 			<Button class="outline secondary" type="button" onclick={() => onSetMainPhoto(photo.id)}>
 				<UpArrow width="30px" height="30px" fill="var(--pico-primary)" />
 			</Button>

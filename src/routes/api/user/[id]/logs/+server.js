@@ -32,6 +32,9 @@ export async function GET({ params, locals }) {
 		return jsonSuccess(recipeLogs)
 	} catch (err) {
 		console.error(err)
-		return jsonError(500, 'Failed to fetch recipe logs.')
+		return jsonError(500, {
+			error: 'Failed to fetch recipe logs.',
+			code: 'users.msg.logsLoadFail'
+		})
 	}
 }

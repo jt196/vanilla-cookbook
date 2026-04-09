@@ -41,6 +41,9 @@ export async function GET({ locals }) {
 
 		return jsonSuccess(mergedUsers)
 	} catch (err) {
-		return jsonError(500, `Failed to fetch users: ${err.message}`)
+		return jsonError(500, {
+			error: `Failed to fetch users: ${err.message}`,
+			code: 'users.msg.loadFail'
+		})
 	}
 }

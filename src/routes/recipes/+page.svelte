@@ -1,5 +1,6 @@
 <script>
 	import RecipeFeed from '$lib/components/recipe/RecipeFeed.svelte'
+	import { t } from '$lib/stores/locale.js'
 
 	/** @type {{data: any}} */
 	let { data } = $props()
@@ -12,6 +13,6 @@
 	viewMode="social"
 	{viewerUserId}
 	semanticEnabled={semanticAvailable}
-	title="All Recipes"
+	title={$t('recipe.allRecipes')}
 	feedKind="all"
 />

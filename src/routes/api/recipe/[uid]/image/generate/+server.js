@@ -72,7 +72,10 @@ export async function POST({ request, locals, params }) {
 
 		if (!recipe.name?.trim() && !recipe.ingredients?.trim() && !recipe.directions?.trim()) {
 			return json(
-				{ error: 'Recipe needs a name, ingredients, or directions before image generation.' },
+				{
+					error: 'Recipe needs a name, ingredients, or directions before image generation.',
+					code: 'recipeForm.generateImageNeedContent'
+				},
 				{ status: 400 }
 			)
 		}
@@ -115,10 +118,13 @@ export async function POST({ request, locals, params }) {
 		const message = err?.message || 'Failed to generate recipe image.'
 		if (message.includes('429') || message.toLowerCase().includes('rate')) {
 			return json(
-				{ error: 'Rate limit reached. Please wait a moment before trying again.' },
+				{
+					error: 'Rate limit reached. Please wait a moment before trying again.',
+					code: 'recipeForm.msg.rateLimit'
+				},
 				{ status: 429 }
 			)
 		}
-		return json({ error: message }, { status: 500 })
+		return json({ error: message, code: 'recipeForm.msg.imageGenerateFailed' }, { status: 500 })
 	}
 }

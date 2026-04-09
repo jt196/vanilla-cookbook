@@ -3,6 +3,7 @@
 	import Button from '$lib/components/ui/Button.svelte'
 	import Delete from '$lib/components/svg/Delete.svelte'
 	import Input from '$lib/components/ui/Form/Input.svelte'
+	import { t } from '$lib/stores/locale.js'
 
 	let {
 		/**
@@ -35,29 +36,45 @@
 
 <Dialog bind:isOpen {onClose}>
 	<form onsubmit={onSave}>
-		<h3 class="font-bold text-lg mb-4">Edit Shopping Item</h3>
+		<h3 class="font-bold text-lg mb-4">{$t('shopping.editDialogTitle')}</h3>
 
-		<Input class="mb-2" id="edit-name" label="Name:" type="text" bind:value={item.name} />
+		<Input
+			class="mb-2"
+			id="edit-name"
+			label={$t('shopping.name')}
+			type="text"
+			bind:value={item.name}
+		/>
 		<Input
 			class="mb-2"
 			id="edit-quantity"
-			label="Quantity:"
+			label={$t('shopping.quantity')}
 			type="number"
-			bind:value={item.quantity} />
-		<Input class="mb-2" id="edit-unit" label="Unit:" type="text" bind:value={item.unit} />
+			bind:value={item.quantity}
+		/>
+		<Input
+			class="mb-2"
+			id="edit-unit"
+			label={$t('shopping.unit')}
+			type="text"
+			bind:value={item.unit}
+		/>
 
 		<div class="modal-action justify-between">
-			<Button type="button" color="error" onclick={() => (isOpen = false)}>Cancel</Button>
+			<Button type="button" color="error" onclick={() => (isOpen = false)}
+				>{$t('common.cancel')}</Button
+			>
 			<div class="flex gap-2">
 				<Button
 					type="button"
 					style="outline"
 					color="error"
 					id="delete-item"
-					onclick={() => onDelete(item.uid)}>
+					onclick={() => onDelete(item.uid)}
+				>
 					<Delete width="15px" height="15px" fill="currentColor" />
 				</Button>
-				<Button type="submit">Save</Button>
+				<Button type="submit">{$t('common.save')}</Button>
 			</div>
 		</div>
 	</form>

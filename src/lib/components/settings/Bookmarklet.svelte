@@ -2,6 +2,7 @@
 	import Bookmark from '$lib/components/svg/Bookmark.svelte'
 	import { buildBookmarkletCode } from '$lib/utils/bookmarklet'
 	import { onMount } from 'svelte'
+	import { t } from '$lib/stores/locale.js'
 
 	let bookmarkletCode
 	let baseUrl
@@ -14,16 +15,15 @@
 </script>
 
 <div class="bookmarklet-button prose max-w-none w-full md:w-2/3 lg:w-1/2">
-	<p>1. Drag This Bookmark to Your Browser Toolbar</p>
-	<a href={bookmarkletCode} class="btn btn-primary" role="button"><Bookmark width="25px" /></a
-	><br />
+	<p>{$t('bookmarklet.step1')}</p>
+	<a href={bookmarkletCode} class="btn btn-primary" role="button"><Bookmark width="25px" /></a><br
+	/>
 	<p>
-		2. Rename to something convenient and easy to remember, like <strong>Vanilla Import</strong>.
-		Usually, right click on it and <italic>Edit Bookmark</italic>.
+		{$t('bookmarklet.renamePrefix')} <strong>{$t('bookmarklet.renameExample')}</strong>.
+		{$t('bookmarklet.renameSuffix')} <italic>{$t('bookmarklet.editBookmark')}</italic>.
 	</p>
 	<p>
-		3. When you're on a website, click on the bookmark, and it'll bring you to the new recipe page,
-		with the source URL and captured page text ready for scraping or fallback parsing.
+		{$t('bookmarklet.step3')}
 	</p>
 </div>
 

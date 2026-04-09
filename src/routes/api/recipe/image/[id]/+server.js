@@ -67,9 +67,16 @@ export async function DELETE({ params, locals }) {
 			where: { id }
 		})
 
-		return jsonSuccess({ message: 'Photo deleted successfully', uid: id })
+		return jsonSuccess({
+			message: 'Photo deleted successfully',
+			code: 'photos.msg.deleted',
+			uid: id
+		})
 	} catch (err) {
 		if (err.status) throw err
-		return jsonError(500, `Failed to delete photo: ${err.message}`)
+		return jsonError(500, {
+			error: `Failed to delete photo: ${err.message}`,
+			code: 'photos.msg.deleteFail'
+		})
 	}
 }

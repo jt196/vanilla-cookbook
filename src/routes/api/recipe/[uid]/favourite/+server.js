@@ -16,11 +16,14 @@ export async function PUT({ locals, params }) {
 		})
 
 		if (!recipe) {
-			return jsonError(404, 'Recipe not found')
+			return jsonError(404, { error: 'Recipe not found', code: 'recipe.msg.notFound' })
 		}
 
 		if (!recipe.is_public && recipe.userId !== user.userId && !user.isAdmin) {
-			return jsonError(403, 'Access denied: this recipe is private')
+			return jsonError(403, {
+				error: 'Access denied: this recipe is private',
+				code: 'recipe.msg.privateAccessDenied'
+			})
 		}
 
 		const existing = await prisma.recipeFavorite.findUnique({
@@ -36,7 +39,11 @@ export async function PUT({ locals, params }) {
 			await prisma.recipeFavorite.delete({
 				where: { id: existing.id }
 			})
-			return jsonSuccess({ message: 'Recipe unfavourited!', favourited: false })
+			return jsonSuccess({
+				message: 'Recipe unfavourited!',
+				code: 'recipe.msg.unfavourited',
+				favourited: false
+			})
 		}
 
 		await prisma.recipeFavorite.create({
@@ -46,9 +53,16 @@ export async function PUT({ locals, params }) {
 			}
 		})
 
-		return jsonSuccess({ message: 'Recipe favourited!', favourited: true })
+		return jsonSuccess({
+			message: 'Recipe favourited!',
+			code: 'recipe.msg.favourited',
+			favourited: true
+		})
 	} catch (err) {
 		if (err.status) throw err // Re-throw SvelteKit errors
-		return jsonError(500, `Failed to add recipe to favourites: ${err.message}`)
+		return jsonError(500, {
+			error: `Failed to add recipe to favourites: ${err.message}`,
+			code: 'recipe.msg.favouriteFail'
+		})
 	}
 }

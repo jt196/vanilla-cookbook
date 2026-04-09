@@ -1,6 +1,7 @@
 <script>
 	import Export from '$lib/components/svg/Export.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
+	import { t } from '$lib/stores/locale.js'
 
 	async function handleExport() {
 		const response = await fetch('/api/recipe/export', {
@@ -27,10 +28,10 @@
 </script>
 
 <div class="prose mb-3">
-	<h2>Export Recipes</h2>
-	<p>Click this to download all your recipes in Paprika format.</p>
+	<h2>{$t('exportPage.title')}</h2>
+	<p>{$t('exportPage.description')}</p>
 </div>
 
-<Button class="tooltip" data-tip="Export Filtered Recipes" onclick={handleExport}>
+<Button class="tooltip" data-tip={$t('exportPage.exportFiltered')} onclick={handleExport}>
 	<Export width="30px" height="30px" />
 </Button>

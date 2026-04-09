@@ -4,6 +4,7 @@
 	import Button from '$lib/components/ui/Button.svelte'
 	import Badge from '$lib/components/ui/Badge.svelte'
 	import { i18nMap } from '$lib/submodules/recipe-ingredient-parser/src/i18n'
+	import { t } from '$lib/stores/locale.js'
 
 	/** @type {{ingredients: any, sanitizedIngredients: any, scale: any, scaledServings: any, selectedSystem: any, measurementSystem: any, recipeUid: any }} */
 	let {
@@ -45,7 +46,7 @@
 </script>
 
 <div>
-	<h3 class="text-2xl font-bold mb-4">Ingredients</h3>
+	<h3 class="text-2xl font-bold mb-4">{$t('recipeView.ingredients')}</h3>
 
 	{#if ingredients.length > 0}
 		{#if sanitizedIngredients.some((item) => item.ingredient)}
@@ -54,7 +55,7 @@
 			</div>
 		{/if}
 	{:else}
-		<p class="text-base-content/70">Loading...</p>
+		<p class="text-base-content/70">{$t('recipeView.loading')}</p>
 	{/if}
 
 	<ul class="pl-0 mb-4 space-y-1">
@@ -69,12 +70,13 @@
 				{displayDryMatch}
 				{displayOriginal}
 				{selectedSystem}
-				userLanguage={user?.language || 'eng'} />
+				userLanguage={user?.language || 'eng'}
+			/>
 		{/each}
 	</ul>
 
 	{#if hasDefaultDensity}
-		<p class="text-sm italic text-base-content/60 my-2">* Converted using default water density</p>
+		<p class="text-sm italic text-base-content/60 my-2">{$t('recipeView.defaultDensity')}</p>
 	{/if}
 
 	{#if hasApprox || hasOptional || hasToServe || hasToTaste}
@@ -121,24 +123,27 @@
 				color="primary"
 				size="sm"
 				class={originalSystem === 'metric' ? 'ring-2 ring-primary' : ''}
-				onclick={() => onSelectedSystemChange('metric')}>
-				Metric
+				onclick={() => onSelectedSystemChange('metric')}
+			>
+				{$t('recipeView.systemMetric')}
 			</Button>
 			<Button
 				style={selectedSystem === 'americanVolumetric' ? 'standard' : 'soft'}
 				color="primary"
 				size="sm"
 				class={originalSystem === 'americanVolumetric' ? 'ring-2 ring-primary' : ''}
-				onclick={() => onSelectedSystemChange('americanVolumetric')}>
-				US Vol
+				onclick={() => onSelectedSystemChange('americanVolumetric')}
+			>
+				{$t('recipeView.systemUsVol')}
 			</Button>
 			<Button
 				style={selectedSystem === 'imperial' ? 'standard' : 'soft'}
 				color="primary"
 				size="sm"
 				class={originalSystem === 'imperial' ? 'ring-2 ring-primary' : ''}
-				onclick={() => onSelectedSystemChange('imperial')}>
-				Imperial
+				onclick={() => onSelectedSystemChange('imperial')}
+			>
+				{$t('recipeView.systemImperial')}
 			</Button>
 		</div>
 	</div>
@@ -149,8 +154,9 @@
 			color="primary"
 			size="sm"
 			class="flex-1"
-			onclick={() => (displayOriginal = !displayOriginal)}>
-			Original
+			onclick={() => (displayOriginal = !displayOriginal)}
+		>
+			{$t('recipeView.toggleOriginal')}
 		</Button>
 		{#if sanitizedIngredients.some((item) => item.additional)}
 			<Button
@@ -159,8 +165,9 @@
 				size="sm"
 				class="flex-1"
 				disabled={displayOriginal}
-				onclick={() => (displayExtra = !displayExtra)}>
-				Extra
+				onclick={() => (displayExtra = !displayExtra)}
+			>
+				{$t('recipeView.toggleExtra')}
 			</Button>
 		{/if}
 		<Button
@@ -169,8 +176,9 @@
 			size="sm"
 			class="flex-1"
 			disabled={displayOriginal || !isVolumetricConversion}
-			onclick={() => (displayDryMatch = !displayDryMatch)}>
-			Match
+			onclick={() => (displayDryMatch = !displayDryMatch)}
+		>
+			{$t('recipeView.toggleMatch')}
 		</Button>
 	</div>
 </div>

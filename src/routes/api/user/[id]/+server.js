@@ -34,7 +34,10 @@ export async function PUT({ request, locals, params }) {
 	)
 
 	if (Object.keys(updates).length === 0) {
-		return jsonError(400, 'No valid fields to update.')
+		return jsonError(400, {
+			error: 'No valid fields to update.',
+			code: 'settings.msg.noValidFields'
+		})
 	}
 
 	const updatedUser = await prisma.authUser.update({

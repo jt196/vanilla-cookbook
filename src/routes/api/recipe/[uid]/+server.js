@@ -41,10 +41,13 @@ export async function DELETE({ params, locals }) {
 			where: { uid }
 		})
 
-		return jsonSuccess({ message: 'Recipe deleted successfully', uid })
+		return jsonSuccess({ message: 'Recipe deleted successfully', code: 'recipe.msg.deleted', uid })
 	} catch (err) {
 		if (err.status) throw err
-		return jsonError(500, `Failed to delete recipe: ${err.message}`)
+		return jsonError(500, {
+			error: `Failed to delete recipe: ${err.message}`,
+			code: 'recipe.msg.deleteFail'
+		})
 	}
 }
 
@@ -261,21 +264,22 @@ export async function PUT({ request, locals, params, url }) {
 		if (locals.site?.semantic?.enabled) {
 			const preferredEmbeddingProvider = locals.site?.semantic?.provider || null
 			const preferredEmbeddingModel = locals.site?.semantic?.model || null
-			regenerateRecipeEmbedding(
-				uid,
-				preferredEmbeddingProvider,
-				preferredEmbeddingModel
-			).catch((error) => {
-				console.error('Failed background embedding update after recipe update:', uid, error)
-			})
+			regenerateRecipeEmbedding(uid, preferredEmbeddingProvider, preferredEmbeddingModel).catch(
+				(error) => {
+					console.error('Failed background embedding update after recipe update:', uid, error)
+				}
+			)
 		}
 
 		log('success response', { totalMs: Date.now() - startedAt })
-		return jsonSuccess({ message: 'Recipe updated successfully' })
+		return jsonSuccess({ message: 'Recipe updated successfully', code: 'recipe.msg.updated' })
 	} catch (err) {
 		if (err.status) throw err
 		errorLog('Error updating recipe', { error: err?.message })
-		return jsonError(500, `Failed to update recipe: ${err.message}`)
+		return jsonError(500, {
+			error: `Failed to update recipe: ${err.message}`,
+			code: 'recipe.msg.updateFail'
+		})
 	}
 }
 
@@ -307,16 +311,22 @@ export async function GET({ params, locals }) {
 		})
 
 		if (!recipe) {
-			return jsonError(404, 'Recipe not found!')
+			return jsonError(404, { error: 'Recipe not found!', code: 'recipe.msg.notFound' })
 		}
 
 		// Check access: public recipes are accessible to all, private only to owner/admin
 		if (!recipe.is_public) {
 			if (!user) {
-				return jsonError(401, 'User not authenticated and recipe private.')
+				return jsonError(401, {
+					error: 'User not authenticated and recipe private.',
+					code: 'recipe.msg.authRequiredForPrivate'
+				})
 			}
 			if (recipe.userId !== user.userId && !user.isAdmin) {
-				return jsonError(403, 'Unauthorised!')
+				return jsonError(403, {
+					error: 'Unauthorised!',
+					code: 'recipe.msg.privateAccessDenied'
+				})
 			}
 		}
 
@@ -347,6 +357,9 @@ export async function GET({ params, locals }) {
 		const { embedding, embeddingModel, embeddingVersion, ...recipeWithoutEmbedding } = recipe
 		return jsonSuccess({ ...recipeWithoutEmbedding, on_favorites: favourited, duplicatedByViewer })
 	} catch (err) {
-		return jsonError(500, `Failed to fetch recipe: ${err.message}`)
+		return jsonError(500, {
+			error: `Failed to fetch recipe: ${err.message}`,
+			code: 'recipe.msg.loadFail'
+		})
 	}
 }

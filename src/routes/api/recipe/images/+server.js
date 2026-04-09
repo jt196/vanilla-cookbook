@@ -25,9 +25,12 @@ export async function PUT({ request, locals }) {
 			})
 		}
 
-		return jsonSuccess({ message: 'Photos updated successfully' })
+		return jsonSuccess({ message: 'Photos updated successfully', code: 'photos.msg.updated' })
 	} catch (err) {
 		if (err.status) throw err
-		return jsonError(500, `Failed to update photos: ${err.message}`)
+		return jsonError(500, {
+			error: `Failed to update photos: ${err.message}`,
+			code: 'photos.msg.updateFail'
+		})
 	}
 }

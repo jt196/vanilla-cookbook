@@ -392,7 +392,7 @@ Configure how ingredients are displayed. See also [ingredients docs](./ingredien
 - **Display Original** - set as default
 - **Display Extra** - set as default
 - **Selected System** - Choose your preferred measurement system
-- **Selected Language** - Choose your language
+- **Selected Language** - Choose your language for the app UI, ingredient parsing defaults, and recipe translation target
 
 Here's a demo of the language and **Display Original** setting working.
 

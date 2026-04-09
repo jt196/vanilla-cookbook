@@ -33,7 +33,10 @@ export async function POST({ locals, params, request }) {
 		return jsonSuccess({ recipeLog })
 	} catch (err) {
 		console.log('Error: ' + err)
-		return jsonError(500, `Failed to add recipe log: ${err.message}`)
+		return jsonError(500, {
+			error: `Failed to add recipe log: ${err.message}`,
+			code: 'recipe.msg.cookedFail'
+		})
 	}
 }
 
@@ -56,6 +59,9 @@ export async function GET({ params, locals }) {
 		return jsonSuccess(recipeLogs)
 	} catch (err) {
 		if (err.status) throw err
-		return jsonError(500, `Failed to fetch recipe logs: ${err.message}`)
+		return jsonError(500, {
+			error: `Failed to fetch recipe logs: ${err.message}`,
+			code: 'recipe.msg.logLoadFail'
+		})
 	}
 }

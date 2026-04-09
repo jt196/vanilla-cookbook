@@ -2,6 +2,7 @@
 	import New from '$lib/components/svg/New.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Input from '$lib/components/ui/Form/Input.svelte'
+	import { t } from '$lib/stores/locale.js'
 
 	let {
 		/**
@@ -22,12 +23,13 @@
 <div class="add-ingredient">
 	<Input
 		type="text"
-		placeholder="Enter ingredient..."
+		placeholder={$t('shopping.inputPlaceholder')}
 		bind:value
 		useLabelAsPlaceholder={false}
 		size="lg"
-		onkeydown={onKeyPress} />
-	<Button onclick={onAdd} size="lg" aria-label="Add ingredient">
+		onkeydown={onKeyPress}
+	/>
+	<Button onclick={onAdd} size="lg" aria-label={$t('shopping.addIngredient')}>
 		<New width="20px" fill="white" />
 	</Button>
 </div>

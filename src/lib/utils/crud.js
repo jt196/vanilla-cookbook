@@ -1,5 +1,13 @@
 // deleteHelper.js
 
+function getApiErrorMessage(payload, fallback) {
+	return payload?.error || payload?.message || fallback
+}
+
+function getApiErrorCode(payload, fallbackCode = null) {
+	return payload?.code || fallbackCode
+}
+
 /**
  * Deletes a recipe by its unique identifier.
  *
@@ -17,7 +25,9 @@ export async function deleteRecipeById(uid) {
 
 		if (!response.ok) {
 			const errorData = await response.json()
-			throw new Error(errorData.message || 'Error deleting recipe')
+			throw Object.assign(new Error(getApiErrorMessage(errorData, 'Error deleting recipe')), {
+				code: getApiErrorCode(errorData)
+			})
 		}
 
 		return true
@@ -44,7 +54,9 @@ export async function changeRecipeFavourite(uid) {
 
 		if (!response.ok) {
 			const errorData = await response.json()
-			throw new Error(errorData.message || 'Error favouriting recipe')
+			throw Object.assign(new Error(getApiErrorMessage(errorData, 'Error favouriting recipe')), {
+				code: getApiErrorCode(errorData)
+			})
 		}
 
 		return true
@@ -71,7 +83,10 @@ export async function changeRecipePublic(uid) {
 
 		if (!response.ok) {
 			const errorData = await response.json()
-			throw new Error(errorData.message || 'Error changing recipe public status')
+			throw Object.assign(
+				new Error(getApiErrorMessage(errorData, 'Error changing recipe public status')),
+				{ code: getApiErrorCode(errorData) }
+			)
 		}
 
 		return true
@@ -85,7 +100,7 @@ export async function changeRecipePublic(uid) {
  * Duplicates a recipe into the current user's account.
  *
  * @param {number|string} uid - Unique identifier for the recipe to duplicate.
- * @returns {Promise<string|null>} New recipe uid if successful, otherwise null.
+ * @returns {Promise<{success: boolean, uid: string|null, error?: string, code?: string|null}>}
  */
 export async function duplicateRecipe(uid) {
 	try {
@@ -98,14 +113,16 @@ export async function duplicateRecipe(uid) {
 
 		if (!response.ok) {
 			const errorData = await response.json()
-			throw new Error(errorData.message || 'Error duplicating recipe')
+			throw Object.assign(new Error(getApiErrorMessage(errorData, 'Error duplicating recipe')), {
+				code: getApiErrorCode(errorData)
+			})
 		}
 
 		const result = await response.json()
-		return result.uid || null
+		return { success: true, uid: result.uid || null, code: result.code || null }
 	} catch (error) {
 		console.error('Error duplicating recipe:', error.message)
-		return null
+		return { success: false, uid: null, error: error.message, code: error.code || null }
 	}
 }
 
@@ -162,18 +179,21 @@ export async function updateRecipe(formData, recipeId) {
 			} catch {
 				// Non-JSON error response
 			}
-			throw new Error(errorData.message || 'Error updating recipe')
+			throw Object.assign(new Error(getApiErrorMessage(errorData, 'Error updating recipe')), {
+				code: getApiErrorCode(errorData)
+			})
 		}
 	} catch (error) {
 		if (error?.name === 'AbortError') {
 			console.error(`Error updating recipe: request timed out after ${timeoutMs}ms`)
 			return {
 				success: false,
-				error: 'Saving the recipe timed out.'
+				error: 'Saving the recipe timed out.',
+				code: 'recipe.msg.saveTimeout'
 			}
 		}
 		console.error('Error updating recipe:', error.message)
-		return { success: false, error: error.message }
+		return { success: false, error: error.message, code: error.code || null }
 	} finally {
 		clearTimeout(timeoutId)
 	}
@@ -211,7 +231,9 @@ export async function createRecipe(formData) {
 			} catch {
 				// Non-JSON error response
 			}
-			throw new Error(errorData.message || 'Error creating recipe')
+			throw Object.assign(new Error(getApiErrorMessage(errorData, 'Error creating recipe')), {
+				code: getApiErrorCode(errorData)
+			})
 		}
 	} catch (error) {
 		if (error?.name === 'AbortError') {
@@ -219,11 +241,12 @@ export async function createRecipe(formData) {
 			return {
 				success: false,
 				error:
-					'Saving the recipe timed out. The server may still be processing a remote image. Try saving again with image download disabled.'
+					'Saving the recipe timed out. The server may still be processing a remote image. Try saving again with image download disabled.',
+				code: 'recipe.msg.createTimeout'
 			}
 		}
 		console.error('[createRecipe] Request failed:', error?.name, error?.message)
-		return { success: false, error: error.message }
+		return { success: false, error: error.message, code: error.code || null }
 	} finally {
 		clearTimeout(timeoutId)
 	}
@@ -245,7 +268,9 @@ export async function deletePhotoById(id) {
 
 		if (!response.ok) {
 			const errorData = await response.json()
-			throw new Error(errorData.message || 'Error deleting photo')
+			throw Object.assign(new Error(getApiErrorMessage(errorData, 'Error deleting photo')), {
+				code: getApiErrorCode(errorData)
+			})
 		}
 
 		return true
@@ -277,7 +302,9 @@ export async function updatePhotos(photos) {
 
 		if (!response.ok) {
 			const errorData = await response.json()
-			throw new Error(errorData.message || 'Error updating photos')
+			throw Object.assign(new Error(getApiErrorMessage(errorData, 'Error updating photos')), {
+				code: getApiErrorCode(errorData)
+			})
 		}
 
 		return true
@@ -401,11 +428,14 @@ export async function addIngredientToShoppingList(ingredient) {
 			return { success: true, data: newShoppingListItem }
 		} else {
 			const errorData = await response.json()
-			throw new Error(errorData.message || 'Error creating shopping list item')
+			throw Object.assign(
+				new Error(getApiErrorMessage(errorData, 'Error creating shopping list item')),
+				{ code: getApiErrorCode(errorData) }
+			)
 		}
 	} catch (error) {
 		console.error('Error creating shopping list item:', error.message)
-		return { success: false, error: error.message }
+		return { success: false, error: error.message, code: error.code || null }
 	}
 }
 
@@ -432,7 +462,10 @@ export async function updateShoppingListItem(item) {
 		})
 		if (!response.ok) {
 			const errorData = await response.json()
-			throw new Error(errorData.message || 'Error updating shopping list item')
+			throw Object.assign(
+				new Error(getApiErrorMessage(errorData, 'Error updating shopping list item')),
+				{ code: getApiErrorCode(errorData) }
+			)
 		}
 		return await response.json()
 	} catch (error) {
@@ -464,7 +497,10 @@ export async function deletePurchasedItems() {
 			// If the response is not OK and not 204, attempt to read and parse the response body
 			if (response.status !== 204 && response.headers.get('Content-Length') !== '0') {
 				const errorData = await response.json()
-				throw new Error(errorData.message || 'Error deleting purchased items')
+				throw Object.assign(
+					new Error(getApiErrorMessage(errorData, 'Error deleting purchased items')),
+					{ code: getApiErrorCode(errorData) }
+				)
 			} else {
 				// Handle other error scenarios appropriately
 				throw new Error('Error deleting purchased items: No response body')
@@ -510,7 +546,10 @@ export async function markPurchasedItems() {
 			// If the response is not OK and not 204, attempt to read and parse the response body
 			if (response.status !== 204 && response.headers.get('Content-Length') !== '0') {
 				const errorData = await response.json()
-				throw new Error(errorData.message || 'Error marking items purchased')
+				throw Object.assign(
+					new Error(getApiErrorMessage(errorData, 'Error marking items purchased')),
+					{ code: getApiErrorCode(errorData) }
+				)
 			} else {
 				// Handle other error scenarios appropriately
 				throw new Error('Error marking items purchased: No response body')
@@ -557,7 +596,10 @@ export async function deleteShoppingListItem(uid) {
 			// If the response is not OK and not 204, attempt to read and parse the response body
 			if (response.status !== 204 && response.headers.get('Content-Length') !== '0') {
 				const errorData = await response.json()
-				throw new Error(errorData.message || 'Error deleting shopping list item')
+				throw Object.assign(
+					new Error(getApiErrorMessage(errorData, 'Error deleting shopping list item')),
+					{ code: getApiErrorCode(errorData) }
+				)
 			} else {
 				// Handle other error scenarios appropriately
 				throw new Error('Error deleting shopping list item: No response body')
@@ -609,11 +651,13 @@ export async function addRecipeLog(recipeUid, note = null, scale = 1) {
 			return { success: true, data: newRecipeLog }
 		} else {
 			const errorData = await response.json()
-			throw new Error(errorData.message || 'Error creating recipe log')
+			throw Object.assign(new Error(getApiErrorMessage(errorData, 'Error creating recipe log')), {
+				code: getApiErrorCode(errorData)
+			})
 		}
 	} catch (error) {
 		console.error('Error creating recipe log:', error.message)
-		return { success: false, error: error.message }
+		return { success: false, error: error.message, code: error.code || null }
 	}
 }
 

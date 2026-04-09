@@ -22,6 +22,8 @@
 	import RecipePhotoCard from '$lib/components/recipe/RecipePhotoCard.svelte'
 	import { sortByDate } from '$lib/utils/sorting.js'
 	import { recipeRatingChange, updatePhotos } from '$lib/utils/crud.js'
+	import { get } from 'svelte/store'
+	import { t } from '$lib/stores/locale.js'
 
 	/** @type {{data: any}} */
 	let { data = $bindable() } = $props()
@@ -163,38 +165,42 @@
 	})
 
 	function updateLogs(newLog, response) {
+		const tFn = get(t)
 		if (response.success) {
-			recipeFeedback = 'You cooked this recipe!'
+			recipeFeedback = tFn('recipe.msg.cooked')
 		} else {
-			recipeFeedback = 'Failed to add to cooked log!'
+			recipeFeedback = tFn('recipe.msg.cookedFail')
 		}
 		logs = [...logs, newLog]
 		logs = sortByDate(logs, 'cooked', 'desc')
 	}
 
 	function favRecipe(success) {
+		const tFn = get(t)
 		if (success) {
 			recipe.on_favorites = !recipe.on_favorites
 			recipe.on_favorites
-				? (recipeFeedback = 'Recipe favourited!')
-				: (recipeFeedback = 'Recipe unfavourited!')
+				? (recipeFeedback = tFn('recipe.msg.favourited'))
+				: (recipeFeedback = tFn('recipe.msg.unfavourited'))
 		} else {
-			recipeFeedback = 'Failed to favourite!'
+			recipeFeedback = tFn('recipe.msg.favouriteFail')
 		}
 	}
 
 	function pubRecipe(success) {
+		const tFn = get(t)
 		if (success) {
 			recipe.is_public = !recipe.is_public
 			recipe.is_public
-				? (recipeFeedback = 'Recipe Made Public!')
-				: (recipeFeedback = 'Recipe Made Private!')
+				? (recipeFeedback = tFn('recipe.msg.madePublic'))
+				: (recipeFeedback = tFn('recipe.msg.madePrivate'))
 		} else {
-			recipeFeedback = 'Failed to change public status!'
+			recipeFeedback = tFn('recipe.msg.visibilityFail')
 		}
 	}
 
 	async function handleLogUpdated(logId, note, scale) {
+		const tFn = get(t)
 		const numericScale = Number(scale) || 1
 		try {
 			const response = await fetch(`/api/log/${logId}`, {
@@ -204,30 +210,31 @@
 			})
 			if (response.ok) {
 				logs = logs.map((log) => (log.id === logId ? { ...log, note, scale: numericScale } : log))
-				recipeFeedback = 'Cooking log updated!'
+				recipeFeedback = tFn('recipe.msg.logUpdated')
 			} else {
-				recipeFeedback = 'Failed to update cooking log!'
+				recipeFeedback = tFn('recipe.msg.logUpdateFail')
 			}
 		} catch (err) {
 			console.error('Error updating cooking log:', err)
-			recipeFeedback = 'Failed to update cooking log!'
+			recipeFeedback = tFn('recipe.msg.logUpdateFail')
 		}
 	}
 
 	async function handleLogDeleted(logId) {
+		const tFn = get(t)
 		try {
 			const response = await fetch(`/api/log/${logId}`, {
 				method: 'DELETE'
 			})
 			if (response.ok) {
 				logs = logs.filter((log) => log.id !== logId)
-				recipeFeedback = 'Cooking log deleted!'
+				recipeFeedback = tFn('recipe.msg.logDeleted')
 			} else {
-				recipeFeedback = 'Failed to delete cooking log!'
+				recipeFeedback = tFn('recipe.msg.logDeleteFail')
 			}
 		} catch (err) {
 			console.error('Error deleting cooking log:', err)
-			recipeFeedback = 'Failed to delete cooking log!'
+			recipeFeedback = tFn('recipe.msg.logDeleteFail')
 		}
 	}
 
@@ -270,14 +277,15 @@
 			const data = await response.json()
 			if (typeof data.text === 'string' && data.text.trim()) {
 				recipe.nutritional_info = data.text
+				const tFn = get(t)
 				recipeFeedback =
-					data.source === 'fallback' ? 'Nutrition cleaned (local parser).' : 'Nutrition cleaned.'
+					data.source === 'fallback' ? tFn('recipe.msg.nutritionCleanedLocal') : tFn('recipe.msg.nutritionCleaned')
 			} else {
-				recipeFeedback = 'No nutrition changes applied.'
+				recipeFeedback = get(t)('recipe.msg.nutritionNoChanges')
 			}
 		} catch (error) {
 			console.error('Nutrition cleanup failed:', error)
-			recipeFeedback = 'Failed to clean nutrition.'
+			recipeFeedback = get(t)('recipe.msg.nutritionCleanFail')
 		} finally {
 			cleaningNutrition = false
 		}
@@ -361,7 +369,7 @@
 
 {#if viewOnly}
 	<div class="mb-4">
-		<h3 class="text-2xl font-semibold">{recUser.username}'s Recipe</h3>
+		<h3 class="text-2xl font-semibold">{$t('recipe.usersRecipe', { username: recUser.username })}</h3>
 	</div>
 {/if}
 <FeedbackMessage message={recipeFeedback} />
@@ -384,7 +392,7 @@
 {#if isLoading}
 	<div class="flex justify-center items-center p-8">
 		<span class="loading loading-spinner loading-lg text-primary"></span>
-		<span class="ml-4 text-lg">Waiting for the pan to boil...</span>
+		<span class="ml-4 text-lg">{$t('recipe.loadingDirections')}</span>
 	</div>
 {:else}
 	<!-- Row 1: Image + About Card -->
@@ -430,7 +438,7 @@
 			{:else}
 				<div class="flex justify-center items-center p-8">
 					<span class="loading loading-spinner loading-md text-primary"></span>
-					<span class="ml-4">Getting ingredients ready...</span>
+					<span class="ml-4">{$t('recipe.loadingIngredients')}</span>
 				</div>
 			{/if}
 		</div>
@@ -439,9 +447,9 @@
 			<RecipeViewDesc {recipe} open={showNotesDescription} />
 			{#if recipe.directions_original}
 				<div class="flex items-center gap-2 mt-6 mb-2">
-					<span class="text-sm">Summarized</span>
+					<span class="text-sm">{$t('recipe.summarized')}</span>
 					<Toggle bind:checked={showOriginalDirections} size="sm" />
-					<span class="text-sm">Original</span>
+					<span class="text-sm">{$t('recipe.original')}</span>
 				</div>
 			{/if}
 			<RecipeViewDirections {directionLines} {sanitizedDirections} {loadingIngredients} />
@@ -478,7 +486,7 @@
 
 {#if showSimilarStrip && similarRecipes.length > 0}
 	<div class="mt-8">
-		<h3 class="text-lg font-semibold mb-3">Similar Recipes</h3>
+		<h3 class="text-lg font-semibold mb-3">{$t('recipe.similarRecipes')}</h3>
 		<Carousel>
 			{#each similarRecipes as r (r.uid)}
 				<CarouselItem>
