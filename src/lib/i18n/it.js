@@ -671,11 +671,11 @@ export default {
     "noteHint": "Com'è venuto? Hai apportato modifiche?",
     "logCooked": "Registra la cottura",
     "historyTitle": "Cronologia cotture",
-    "historyHint": "Clicca su una riga per modificare la nota o la scala.",
+    "historyHint": "Clicca su una riga per modificare la nota o le porzioni.",
     "date": "Data",
     "note": "Nota",
-    "scale": "Scala",
-    "useScale": "Usa questa scala",
+    "scale": "Porzioni",
+    "useScale": "Usa queste porzioni",
     "deleteLog": "Elimina registro",
     "empty": "Nessuna cronologia di cottura ancora.",
     "editTitle": "Modifica registro di cottura"
@@ -795,10 +795,10 @@ export default {
     "cleanInEdit": "Pulisci nutrizione in modifica"
   },
   "scaleControl": {
+    "decreaseFive": "Diminuisci di 5",
     "decreaseOne": "Diminuisci di 1",
-    "decreaseTenth": "Diminuisci di 0,1",
-    "increaseTenth": "Aumenta di 0,1",
-    "increaseOne": "Aumenta di 1"
+    "increaseOne": "Aumenta di 1",
+    "increaseFive": "Aumenta di 5"
   },
   "dialog": {
     "confirmAction": "Conferma azione",

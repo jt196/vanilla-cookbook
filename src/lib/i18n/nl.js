@@ -375,11 +375,11 @@ export default {
     "noteHint": "Hoe is het geworden? Heb je aanpassingen gedaan?",
     "logCooked": "Gekookt loggen",
     "historyTitle": "Kookgeschiedenis",
-    "historyHint": "Klik op een rij om de notitie of schaal aan te passen.",
+    "historyHint": "Klik op een rij om de notitie of porties aan te passen.",
     "date": "Datum",
     "note": "Notitie",
-    "scale": "Schaal",
-    "useScale": "Gebruik deze schaal",
+    "scale": "Porties",
+    "useScale": "Gebruik deze porties",
     "deleteLog": "Log verwijderen",
     "empty": "Nog geen kookgeschiedenis.",
     "editTitle": "Kooklogboek bewerken"
@@ -735,10 +735,10 @@ export default {
     "cleanInEdit": "Voedingswaarden opschonen in Bewerken"
   },
   "scaleControl": {
+    "decreaseFive": "Verlaag met 5",
     "decreaseOne": "Verlaag met 1",
-    "decreaseTenth": "Verlaag met 0,1",
-    "increaseTenth": "Verhoog met 0,1",
-    "increaseOne": "Verhoog met 1"
+    "increaseOne": "Verhoog met 1",
+    "increaseFive": "Verhoog met 5"
   },
   "dialog": {
     "confirmAction": "Actie bevestigen",

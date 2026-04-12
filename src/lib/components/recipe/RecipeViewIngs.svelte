@@ -6,7 +6,7 @@
 	import { i18nMap } from '$lib/submodules/recipe-ingredient-parser/src/i18n'
 	import { t } from '$lib/stores/locale.js'
 
-	/** @type {{ingredients: any, sanitizedIngredients: any, scale: any, scaledServings: any, selectedSystem: any, measurementSystem: any, recipeUid: any }} */
+	/** @type {{ingredients: any, sanitizedIngredients: any, scale: any, scaledServings: any, selectedSystem: any, measurementSystem: any, recipeUid: any, baseServings?: number }} */
 	let {
 		ingredients,
 		sanitizedIngredients,
@@ -16,7 +16,8 @@
 		recipeUid,
 		scale,
 		selectedSystem,
-		user
+		user,
+		baseServings = 1
 	} = $props()
 
 	let displayExtra = $state(user.ingExtra)
@@ -51,7 +52,7 @@
 	{#if ingredients.length > 0}
 		{#if sanitizedIngredients.some((item) => item.ingredient)}
 			<div class="mb-4">
-				<Scale {scale} {onScaleChange} />
+				<Scale {scale} {onScaleChange} {baseServings} />
 			</div>
 		{/if}
 	{:else}

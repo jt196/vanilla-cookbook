@@ -671,11 +671,11 @@ export default {
     "noteHint": "Wie ist es geworden? Hast du etwas geändert?",
     "logCooked": "Als gekocht protokollieren",
     "historyTitle": "Kochverlauf",
-    "historyHint": "Klicke auf eine Zeile, um die Notiz oder Skala zu bearbeiten.",
+    "historyHint": "Klicke auf eine Zeile, um die Notiz oder Portionen zu bearbeiten.",
     "date": "Datum",
     "note": "Notiz",
-    "scale": "Skala",
-    "useScale": "Diese Skala verwenden",
+    "scale": "Portionen",
+    "useScale": "Diese Portionen verwenden",
     "deleteLog": "Protokoll löschen",
     "empty": "Noch kein Kochverlauf vorhanden.",
     "editTitle": "Kochprotokoll bearbeiten"
@@ -795,10 +795,10 @@ export default {
     "cleanInEdit": "Nährwerte im Bearbeitungsmodus bereinigen"
   },
   "scaleControl": {
+    "decreaseFive": "Um 5 verringern",
     "decreaseOne": "Um 1 verringern",
-    "decreaseTenth": "Um 0,1 verringern",
-    "increaseTenth": "Um 0,1 erhöhen",
-    "increaseOne": "Um 1 erhöhen"
+    "increaseOne": "Um 1 erhöhen",
+    "increaseFive": "Um 5 erhöhen"
   },
   "dialog": {
     "confirmAction": "Aktion bestätigen",

@@ -375,11 +375,11 @@ export default {
     "noteHint": "यह कैसा बना? क्या आपने कोई बदलाव किए?",
     "logCooked": "पकाया हुआ लॉग करें",
     "historyTitle": "खाना पकाने का इतिहास",
-    "historyHint": "नोट या स्केल संपादित करने के लिए एक पंक्ति पर क्लिक करें।",
+    "historyHint": "नोट या सर्विंग्स संपादित करने के लिए एक पंक्ति पर क्लिक करें।",
     "date": "दिनांक",
     "note": "नोट",
-    "scale": "स्केल",
-    "useScale": "इस स्केल का उपयोग करें",
+    "scale": "सर्विंग्स",
+    "useScale": "इन सर्विंग्स का उपयोग करें",
     "deleteLog": "लॉग हटाएँ",
     "empty": "अभी तक कोई खाना पकाने का इतिहास नहीं है।",
     "editTitle": "खाना पकाने का लॉग संपादित करें"
@@ -735,10 +735,10 @@ export default {
     "cleanInEdit": "एडिट में पोषण साफ़ करें"
   },
   "scaleControl": {
+    "decreaseFive": "5 कम करें",
     "decreaseOne": "1 कम करें",
-    "decreaseTenth": "0.1 कम करें",
-    "increaseTenth": "0.1 बढ़ाएँ",
-    "increaseOne": "1 बढ़ाएँ"
+    "increaseOne": "1 बढ़ाएँ",
+    "increaseFive": "5 बढ़ाएँ"
   },
   "dialog": {
     "confirmAction": "कार्रवाई की पुष्टि करें",

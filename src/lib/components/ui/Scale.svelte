@@ -7,24 +7,28 @@
 	 * @typedef {number} Scale
 	 */
 
-	/** @type {{scale?: Scale}} */
-	let { scale = 1, onScaleChange } = $props()
+	/** @type {{scale?: Scale, baseServings?: number}} */
+	let { scale = 1, onScaleChange, baseServings = 1 } = $props()
 
 	const MIN_SCALE = 0.1
-	const SMALL_STEP = 0.1
-	const BIG_STEP = 1
+	const SMALL_STEP = 1
+	const BIG_STEP = 5
 
-	const clampScale = (value) => Math.max(MIN_SCALE, parseFloat(value.toFixed(2)))
+	// Display value in servings units
+	const displayValue = $derived(parseFloat((scale * baseServings).toFixed(2)))
+
+	const clampScale = (multiplier) => Math.max(MIN_SCALE, parseFloat(multiplier.toFixed(4)))
 
 	function adjust(delta) {
-		const next = clampScale(scale + delta)
+		const newServings = Math.max(baseServings * MIN_SCALE, displayValue + delta)
+		const next = clampScale(newServings / baseServings)
 		onScaleChange && onScaleChange(next)
 	}
 
 	function handleInput(event) {
-		const value = parseFloat(event.target.value)
-		if (isNaN(value)) return
-		onScaleChange && onScaleChange(clampScale(value))
+		const servings = parseFloat(event.target.value)
+		if (isNaN(servings) || servings <= 0) return
+		onScaleChange && onScaleChange(clampScale(servings / baseServings))
 	}
 </script>
 
@@ -33,26 +37,26 @@
 		onclick={() => adjust(-BIG_STEP)}
 		style="soft"
 		color="secondary"
-		aria-label={$t('scaleControl.decreaseOne')}>-1</Button
+		aria-label={$t('scaleControl.decreaseFive')}>-5</Button
 	>
 	<Button
 		onclick={() => adjust(-SMALL_STEP)}
 		style="soft"
 		color="secondary"
-		aria-label={$t('scaleControl.decreaseTenth')}>-0.1</Button
+		aria-label={$t('scaleControl.decreaseOne')}>-1</Button
 	>
-	<Input type="number" value={scale} min="0.1" step="0.1" oninput={handleInput} />
+	<Input type="number" value={displayValue} min={parseFloat((baseServings * MIN_SCALE).toFixed(2))} step="1" oninput={handleInput} />
 	<Button
 		onclick={() => adjust(SMALL_STEP)}
 		style="soft"
 		color="secondary"
-		aria-label={$t('scaleControl.increaseTenth')}>+0.1</Button
+		aria-label={$t('scaleControl.increaseOne')}>+1</Button
 	>
 	<Button
 		onclick={() => adjust(BIG_STEP)}
 		style="soft"
 		color="secondary"
-		aria-label={$t('scaleControl.increaseOne')}>+1</Button
+		aria-label={$t('scaleControl.increaseFive')}>+5</Button
 	>
 </div>
 
