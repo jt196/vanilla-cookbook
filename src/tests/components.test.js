@@ -16,50 +16,62 @@ describe('Scale component', () => {
 		const mockChange = vi.fn()
 		const { component } = render(Scale, { props: { scale: 1, onScaleChange: mockChange } })
 
-		const smallPlusButton = screen.getByText('+0.1')
-		const bigPlusButton = screen.getByText('+1')
+		const plusOneButton = screen.getByText('+1')
+		const plusFiveButton = screen.getByText('+5')
 
-		// Increase from 1 to 1.1 (small step)
-		await fireEvent.click(smallPlusButton)
-		expect(mockChange).toHaveBeenLastCalledWith(1.1)
+		// Increase from 1 to 2 (small step)
+		await fireEvent.click(plusOneButton)
+		expect(mockChange).toHaveBeenLastCalledWith(2)
 
-		// Simulate parent updating scale to 1.1
 		// @ts-expect-deprecated - $set is fine in tests despite deprecation notice
-		component.$set({ scale: 1.1 })
+		component.$set({ scale: 4 })
 
-		// Increase from 1.1 to 2.1 (big step)
-		await fireEvent.click(bigPlusButton)
-		expect(mockChange).toHaveBeenLastCalledWith(2.1)
+		// Increase from 4 to 9 (big step)
+		await fireEvent.click(plusFiveButton)
+		expect(mockChange).toHaveBeenLastCalledWith(9)
 
 		component.$set({ scale: 5 })
 
-		// Set to 5, increase to 6
-		await fireEvent.click(bigPlusButton)
+		// Increase from 5 to 6
+		await fireEvent.click(plusOneButton)
 		expect(mockChange).toHaveBeenLastCalledWith(6)
 	})
 
 	it('should decrease the scale value correctly', async () => {
 		const mockChange = vi.fn()
-		const { component } = render(Scale, { props: { scale: 1, onScaleChange: mockChange } })
+		const { component } = render(Scale, { props: { scale: 3, onScaleChange: mockChange } })
 
-		const smallMinusButton = screen.getByText('-0.1')
-		const bigMinusButton = screen.getByText('-1')
+		const minusOneButton = screen.getByText('-1')
+		const minusFiveButton = screen.getByText('-5')
 
-		// Decrease from 1 to 0.9 (small step)
-		await fireEvent.click(smallMinusButton)
-		expect(mockChange).toHaveBeenLastCalledWith(0.9)
-
-		component.$set({ scale: 2 })
-
-		// Decrease from 2 to 1.9 (small step)
-		await fireEvent.click(smallMinusButton)
-		expect(mockChange).toHaveBeenLastCalledWith(1.9)
+		// Decrease from 3 to 2
+		await fireEvent.click(minusOneButton)
+		expect(mockChange).toHaveBeenLastCalledWith(2)
 
 		component.$set({ scale: 6 })
 
-		// Decrease from 6 to 5 (big step)
-		await fireEvent.click(bigMinusButton)
-		expect(mockChange).toHaveBeenLastCalledWith(5)
+		// Decrease from 6 to 1 (big step)
+		await fireEvent.click(minusFiveButton)
+		expect(mockChange).toHaveBeenLastCalledWith(1)
+
+		component.$set({ scale: 1 })
+
+		// Clamp at minimum (0.1) when decreasing below it
+		await fireEvent.click(minusOneButton)
+		expect(mockChange).toHaveBeenLastCalledWith(0.1)
+	})
+
+	it('should display servings when baseServings is provided', async () => {
+		const mockChange = vi.fn()
+		render(Scale, { props: { scale: 1, baseServings: 4, onScaleChange: mockChange } })
+
+		// Input should display 4 servings (scale 1 × baseServings 4)
+		const input = screen.getByRole('spinbutton')
+		expect(input.value).toBe('4')
+
+		// +1 should add 1 serving: 5/4 = 1.25 multiplier
+		await fireEvent.click(screen.getByText('+1'))
+		expect(mockChange).toHaveBeenLastCalledWith(1.25)
 	})
 })
 
