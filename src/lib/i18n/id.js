@@ -375,11 +375,11 @@ export default {
     "noteHint": "Bagaimana hasilnya? Ada perubahan yang Anda buat?",
     "logCooked": "Catat Masakan",
     "historyTitle": "Riwayat Memasak",
-    "historyHint": "Klik pada baris untuk mengedit catatan atau skala.",
+    "historyHint": "Klik pada baris untuk mengedit catatan atau porsi.",
     "date": "Tanggal",
     "note": "Catatan",
-    "scale": "Skala",
-    "useScale": "Gunakan skala ini",
+    "scale": "Porsi",
+    "useScale": "Gunakan porsi ini",
     "deleteLog": "Hapus catatan",
     "empty": "Belum ada riwayat memasak.",
     "editTitle": "Edit Catatan Masakan"
@@ -735,10 +735,10 @@ export default {
     "cleanInEdit": "Bersihkan Nutrisi di Edit"
   },
   "scaleControl": {
+    "decreaseFive": "Kurangi 5",
     "decreaseOne": "Kurangi 1",
-    "decreaseTenth": "Kurangi 0,1",
-    "increaseTenth": "Tambah 0,1",
-    "increaseOne": "Tambah 1"
+    "increaseOne": "Tambah 1",
+    "increaseFive": "Tambah 5"
   },
   "dialog": {
     "confirmAction": "Konfirmasi Tindakan",

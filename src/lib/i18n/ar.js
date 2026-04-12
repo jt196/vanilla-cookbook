@@ -375,11 +375,11 @@ export default {
     "noteHint": "كيف كانت النتيجة؟ هل أجريت أي تعديلات؟",
     "logCooked": "تسجيل الطبخ",
     "historyTitle": "تاريخ الطبخ",
-    "historyHint": "انقر على صف لتعديل الملاحظة أو المقياس.",
+    "historyHint": "انقر على صف لتعديل الملاحظة أو الحصص.",
     "date": "التاريخ",
     "note": "ملاحظة",
-    "scale": "المقياس",
-    "useScale": "استخدم هذا المقياس",
+    "scale": "الحصص",
+    "useScale": "استخدم هذه الحصص",
     "deleteLog": "حذف السجل",
     "empty": "لا يوجد تاريخ طبخ بعد.",
     "editTitle": "تعديل سجل الطبخ"
@@ -735,10 +735,10 @@ export default {
     "cleanInEdit": "تنظيف التغذية في التعديل"
   },
   "scaleControl": {
+    "decreaseFive": "إنقاص بمقدار 5",
     "decreaseOne": "إنقاص بمقدار 1",
-    "decreaseTenth": "إنقاص بمقدار 0.1",
-    "increaseTenth": "زيادة بمقدار 0.1",
-    "increaseOne": "زيادة بمقدار 1"
+    "increaseOne": "زيادة بمقدار 1",
+    "increaseFive": "زيادة بمقدار 5"
   },
   "dialog": {
     "confirmAction": "تأكيد الإجراء",

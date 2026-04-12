@@ -14,6 +14,8 @@
 		isOpen = $bindable(false),
 		/** @type {Array<{id: string, cooked: string, note?: string, scale?: number}>} */
 		logs = [],
+		/** @type {number} */
+		baseServings = 1,
 		/** @type {(scale: number) => void} */
 		onRestoreScale = null,
 		/** @type {(logId: string, note: string | null, scale: number) => Promise<void>} */
@@ -21,6 +23,10 @@
 		/** @type {(logId: string) => Promise<void>} */
 		onLogDeleted = null
 	} = $props()
+
+	// Convert multiplier → servings for display, servings → multiplier for save
+	const toServings = (multiplier) => parseFloat(((multiplier ?? 1) * baseServings).toFixed(2))
+	const toMultiplier = (servings) => parseFloat((servings / baseServings).toFixed(4))
 
 	let editDialogOpen = $state(false)
 	let editingLog = $state(null)
@@ -48,7 +54,7 @@
 		if (!onLogUpdated) return
 		editingLog = log
 		editNote = log.note || ''
-		editScale = log.scale ?? 1
+		editScale = toServings(log.scale ?? 1)
 		editDialogOpen = true
 	}
 
@@ -62,7 +68,7 @@
 	async function handleSaveLog() {
 		if (!editingLog || !onLogUpdated) return
 		saving = true
-		await onLogUpdated(editingLog.id, editNote.trim() || null, editScale)
+		await onLogUpdated(editingLog.id, editNote.trim() || null, toMultiplier(editScale))
 		saving = false
 		closeEditDialog()
 	}
@@ -92,7 +98,7 @@
 						<td class="text-base-content/70">{log.note || '-'}</td>
 						<td>
 							<div class="flex items-center gap-1 flex-nowrap">
-								<span class="whitespace-nowrap">{log.scale ?? 1}x</span>
+								<span class="whitespace-nowrap">{toServings(log.scale ?? 1)}</span>
 								{#if onRestoreScale}
 									<Button
 										size="xs"

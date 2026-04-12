@@ -375,11 +375,11 @@ export default {
     "noteHint": "Jak se to povedlo? Udělal/a jsi nějaké úpravy?",
     "logCooked": "Zaznamenat uvaření",
     "historyTitle": "Historie vaření",
-    "historyHint": "Klikněte na řádek pro úpravu poznámky nebo měřítka.",
+    "historyHint": "Klikněte na řádek pro úpravu poznámky nebo porcí.",
     "date": "Datum",
     "note": "Poznámka",
-    "scale": "Měřítko",
-    "useScale": "Použít toto měřítko",
+    "scale": "Porce",
+    "useScale": "Použít tyto porce",
     "deleteLog": "Smazat záznam",
     "empty": "Zatím žádná historie vaření.",
     "editTitle": "Upravit záznam vaření"
@@ -735,10 +735,10 @@ export default {
     "cleanInEdit": "Vyčistit výživu v úpravách"
   },
   "scaleControl": {
+    "decreaseFive": "Snížit o 5",
     "decreaseOne": "Snížit o 1",
-    "decreaseTenth": "Snížit o 0,1",
-    "increaseTenth": "Zvýšit o 0,1",
-    "increaseOne": "Zvýšit o 1"
+    "increaseOne": "Zvýšit o 1",
+    "increaseFive": "Zvýšit o 5"
   },
   "dialog": {
     "confirmAction": "Potvrdit akci",

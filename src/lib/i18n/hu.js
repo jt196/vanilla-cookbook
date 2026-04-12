@@ -375,11 +375,11 @@ export default {
     "noteHint": "Milyen lett? Változtattál rajta valamit?",
     "logCooked": "Főzés naplózása",
     "historyTitle": "Főzési előzmények",
-    "historyHint": "Kattints egy sorra a jegyzet vagy a méret szerkesztéséhez.",
+    "historyHint": "Kattints egy sorra a jegyzet vagy az adagok szerkesztéséhez.",
     "date": "Dátum",
     "note": "Jegyzet",
-    "scale": "Méret",
-    "useScale": "Használd ezt a méretet",
+    "scale": "Adagok",
+    "useScale": "Használd ezeket az adagokat",
     "deleteLog": "Naplóbejegyzés törlése",
     "empty": "Még nincs főzési előzmény.",
     "editTitle": "Főzési napló szerkesztése"
@@ -735,10 +735,10 @@ export default {
     "cleanInEdit": "Tápérték adatok tisztítása szerkesztéskor"
   },
   "scaleControl": {
+    "decreaseFive": "Csökkentés 5-tel",
     "decreaseOne": "Csökkentés 1-gyel",
-    "decreaseTenth": "Csökkentés 0,1-gyel",
-    "increaseTenth": "Növelés 0,1-gyel",
-    "increaseOne": "Növelés 1-gyel"
+    "increaseOne": "Növelés 1-gyel",
+    "increaseFive": "Növelés 5-tel"
   },
   "dialog": {
     "confirmAction": "Művelet megerősítése",

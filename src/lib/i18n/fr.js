@@ -375,11 +375,11 @@ export default {
     "noteHint": "Comment était-ce ? Des ajustements que vous avez faits ?",
     "logCooked": "Enregistrer la cuisson",
     "historyTitle": "Historique des cuissons",
-    "historyHint": "Cliquez sur une ligne pour modifier la note ou l'échelle.",
+    "historyHint": "Cliquez sur une ligne pour modifier la note ou les portions.",
     "date": "Date",
     "note": "Note",
-    "scale": "Échelle",
-    "useScale": "Utiliser cette échelle",
+    "scale": "Portions",
+    "useScale": "Utiliser ces portions",
     "deleteLog": "Supprimer l'entrée",
     "empty": "Aucun historique de cuisson pour l'instant.",
     "editTitle": "Modifier l'entrée de cuisson"
@@ -735,10 +735,10 @@ export default {
     "cleanInEdit": "Nettoyer la nutrition en mode édition"
   },
   "scaleControl": {
+    "decreaseFive": "Diminuer de 5",
     "decreaseOne": "Diminuer de 1",
-    "decreaseTenth": "Diminuer de 0,1",
-    "increaseTenth": "Augmenter de 0,1",
-    "increaseOne": "Augmenter de 1"
+    "increaseOne": "Augmenter de 1",
+    "increaseFive": "Augmenter de 5"
   },
   "dialog": {
     "confirmAction": "Confirmer l'action",

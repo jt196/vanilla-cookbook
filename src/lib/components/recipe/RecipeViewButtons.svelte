@@ -22,7 +22,7 @@
 	import Spinner from '$lib/components/ui/Spinner.svelte'
 	import { t } from '$lib/stores/locale.js'
 
-	/** @type {{recipe: any, updateLogs: any, favRecipe: any, scale?: number, onRestoreScale?: (scale: number) => void, onLogUpdated?: (logId: string, note: string | null, scale: number) => Promise<void>, onLogDeleted?: (logId: string) => Promise<void>, viewerUserId?: string | null}} */
+	/** @type {{recipe: any, updateLogs: any, favRecipe: any, scale?: number, baseServings?: number, onRestoreScale?: (scale: number) => void, onLogUpdated?: (logId: string, note: string | null, scale: number) => Promise<void>, onLogDeleted?: (logId: string) => Promise<void>, viewerUserId?: string | null}} */
 	let {
 		recipe,
 		updateLogs,
@@ -31,6 +31,7 @@
 		logs,
 		viewOnly,
 		scale = 1,
+		baseServings = 1,
 		onRestoreScale = null,
 		onLogUpdated = null,
 		onLogDeleted = null,
@@ -247,6 +248,7 @@
 <CookedHistoryModal
 	bind:isOpen={showHistoryModal}
 	{logs}
+	{baseServings}
 	{onRestoreScale}
 	{onLogUpdated}
 	{onLogDeleted}

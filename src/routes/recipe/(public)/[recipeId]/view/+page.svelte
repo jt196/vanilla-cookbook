@@ -41,7 +41,14 @@
 	const showSimilarStrip = $derived(semanticEnabled && (viewUser?.showSimilarRecipes ?? true))
 	const showNotesDescription = $derived(viewUser?.showNotesDescription ?? false)
 
-	// Scaling factor for the ingredients
+	// Parse the lowest number from the servings field to use as the base
+	const baseServings = $derived.by(() => {
+		if (!recipe.servings) return 1
+		const match = String(recipe.servings).match(/\d+(?:\.\d+)?/)
+		return match ? parseFloat(match[0]) : 1
+	})
+
+	// Scaling factor for the ingredients (multiplier: 1 = original recipe)
 	let scale = $state(1)
 
 	let convertedIngredients = $state([])
@@ -382,6 +389,7 @@
 		{logs}
 		{viewOnly}
 		{scale}
+		{baseServings}
 		viewerUserId={viewUser?.userId}
 		onRestoreScale={handleScaleChange}
 		onLogUpdated={viewOnly ? undefined : handleLogUpdated}
@@ -416,6 +424,7 @@
 					recipeUid={recipe.uid}
 					{sanitizedIngredients}
 					{scale}
+					{baseServings}
 					user={viewUser}
 					{measurementSystem}
 					{selectedSystem}

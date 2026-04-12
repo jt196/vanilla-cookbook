@@ -406,11 +406,11 @@ export default {
 		noteHint: 'How did it turn out? Any tweaks you made?',
 		logCooked: 'Log Cooked',
 		historyTitle: 'Cooking History',
-		historyHint: 'Click on a row to edit the note or scale.',
+		historyHint: 'Click on a row to edit the note or servings.',
 		date: 'Date',
 		note: 'Note',
-		scale: 'Scale',
-		useScale: 'Use this scale',
+		scale: 'Servings',
+		useScale: 'Use these servings',
 		deleteLog: 'Delete log',
 		empty: 'No cooking history yet.',
 		editTitle: 'Edit Cooking Log'
@@ -806,10 +806,10 @@ export default {
 	},
 
 	scaleControl: {
+		decreaseFive: 'Decrease by 5',
 		decreaseOne: 'Decrease by 1',
-		decreaseTenth: 'Decrease by 0.1',
-		increaseTenth: 'Increase by 0.1',
-		increaseOne: 'Increase by 1'
+		increaseOne: 'Increase by 1',
+		increaseFive: 'Increase by 5'
 	},
 
 	dialog: {
