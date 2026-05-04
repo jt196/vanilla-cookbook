@@ -218,6 +218,49 @@ export async function handleImage(event = null, imageInput, language = 'eng') {
 }
 
 /**
+ * Handles HTML file-based recipe parsing.
+ * Sends an uploaded HTML file to the backend parser without requiring AI.
+ *
+ * @param {Event|null} event - Optional event to prevent default form behavior
+ * @param {File} file - The HTML file to parse
+ * @returns {Promise<Object>} The parsed and formatted recipe object
+ */
+export async function handleHTMLFile(event = null, file) {
+	if (event) event.preventDefault()
+
+	try {
+		if (!file) {
+			throw makeCodedError('No HTML file provided', 'recipeNew.msg.noFile')
+		}
+
+		const formData = new FormData()
+		formData.append('html', file)
+
+		const response = await fetch('/api/recipe/parse/html', {
+			method: 'POST',
+			body: formData
+		})
+
+		if (!response.ok) {
+			const error = await response.json()
+			throw makeCodedError(error?.error || 'Failed to parse HTML.', error?.code || null)
+		}
+
+		const raw = await response.json()
+		const formatted = formatScrapedRecipe(raw)
+
+		return {
+			...formatted,
+			_source: raw._source,
+			_status: raw._status
+		}
+	} catch (err) {
+		console.error('handleHTMLFile error:', err)
+		throw err
+	}
+}
+
+/**
  * Reusable formatting function for both methods
  * Formats scraped recipe data into a standardized object.
  *

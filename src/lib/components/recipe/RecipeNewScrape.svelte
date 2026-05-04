@@ -1,5 +1,5 @@
 <script>
-	import { handleParse, handleScrape, handleImage } from '$lib/utils/parse/parseHelpersClient'
+	import { handleParse, handleScrape, handleImage, handleHTMLFile } from '$lib/utils/parse/parseHelpersClient'
 	import FeedbackMessage from '$lib/components/ui/FeedbackMessage.svelte'
 	import { defaultRecipe } from '$lib/utils/config'
 	import Input from '$lib/components/ui/Form/Input.svelte'
@@ -33,7 +33,7 @@
 	// Tab state
 	let selectedMode = $state(initialMode)
 	let isPromptMode = $state(false)
-	let imageFiles = $state([])
+	let selectedFiles = $state([])
 	let lastAppliedInitialMode = $state(initialMode)
 
 	// Derive textMode from isPromptMode for cleaner reactivity
@@ -42,13 +42,15 @@
 	// Derive disabled states for submit buttons
 	let isUrlEmpty = $derived(!url || url.trim() === '')
 	let isTextEmpty = $derived(!sharedText || sharedText.trim() === '')
-	let isImageEmpty = $derived(!imageFiles || imageFiles.length === 0)
+	let isFileEmpty = $derived(!selectedFiles || selectedFiles.length === 0)
 
-	$effect(() => {
-		if (!imageAllowed && selectedMode === 'image') {
-			selectedMode = 'url'
-		}
-	})
+	// Detect whether selected files are HTML or images
+	let detectedFileMode = $derived(
+		selectedFiles?.length > 0 &&
+			selectedFiles.some((f) => f.name.endsWith('.html') || f.type === 'text/html')
+			? 'html'
+			: 'image'
+	)
 
 	$effect(() => {
 		if (initialMode && initialMode !== lastAppliedInitialMode) {
@@ -109,33 +111,47 @@
 						? tFn('recipeNew.msg.generateSuccess')
 						: tFn('recipeNew.msg.parseSuccess')
 				feedbackType = 'success'
-			} else if (selectedMode === 'image') {
-				if (!imageFiles?.length) {
-					feedbackMessage = tFn('recipeNew.msg.noImage')
+			} else if (selectedMode === 'file') {
+				if (!selectedFiles?.length) {
+					feedbackMessage = tFn('recipeNew.msg.noFile')
 					feedbackCode = null
 					feedbackType = 'error'
 					return
 				}
 
-				feedbackMessage = tFn('recipeNew.msg.analyzingImage')
-				feedbackCode = null
-				const parsedData = await handleImage(event, imageFiles, userLanguage)
-				recipe = { ...recipe, ...parsedData }
-
-				if (parsedData._status === 'complete') {
+				if (detectedFileMode === 'html') {
+					feedbackMessage = tFn('recipeNew.msg.parsingHtml')
+					feedbackCode = null
+					feedbackType = 'info'
+					const parsedData = await handleHTMLFile(event, selectedFiles[0])
+					recipe = { ...recipe, ...parsedData }
 					feedbackCode = null
 					feedbackMessage =
-						parsedData._source === 'AI'
-							? tFn('recipeNew.msg.imageAiSuccess')
-							: tFn('recipeNew.msg.imageManualSuccess')
-					feedbackType = 'success'
+						parsedData._status === 'complete'
+							? tFn('recipeNew.msg.htmlSuccess')
+							: tFn('recipeNew.msg.htmlPartial')
+					feedbackType = parsedData._status === 'complete' ? 'success' : 'warning'
 				} else {
+					feedbackMessage = tFn('recipeNew.msg.analyzingImage')
 					feedbackCode = null
-					feedbackMessage =
-						parsedData._source === 'AI'
-							? tFn('recipeNew.msg.imageAiPartial')
-							: tFn('recipeNew.msg.imageManualPartial')
-					feedbackType = 'warning'
+					const parsedData = await handleImage(event, selectedFiles, userLanguage)
+					recipe = { ...recipe, ...parsedData }
+
+					if (parsedData._status === 'complete') {
+						feedbackCode = null
+						feedbackMessage =
+							parsedData._source === 'AI'
+								? tFn('recipeNew.msg.imageAiSuccess')
+								: tFn('recipeNew.msg.imageManualSuccess')
+						feedbackType = 'success'
+					} else {
+						feedbackCode = null
+						feedbackMessage =
+							parsedData._source === 'AI'
+								? tFn('recipeNew.msg.imageAiPartial')
+								: tFn('recipeNew.msg.imageManualPartial')
+						feedbackType = 'warning'
+					}
 				}
 			}
 		} catch (err) {
@@ -206,40 +222,59 @@
 				</Button>
 			</div>
 
-			{#if textParsingAvailable && imageAllowed}
-				<input
-					type="radio"
-					name="scrape_tabs"
-					class="tab"
-					aria-label={$t('recipeNew.tabImage')}
-					value="image"
-					bind:group={selectedMode}
-					checked={selectedMode === 'image'}
-				/>
-				<div class="tab-content bg-base-100 border-base-300 p-2 ml-0 mr-0">
-					<FileInput
-						accept="image/*"
-						multiple={true}
-						on:change={(e) => {
-							const files = Array.from(e.detail.target.files)
-							imageFiles = files.slice(0, maxImages)
-							if (files.length > maxImages) {
-								feedbackCode = null
-								feedbackMessage = get(t)('recipeNew.msg.imageLimitExceeded', { max: maxImages })
-								feedbackType = 'warning'
-							} else {
-								feedbackMessage = ''
-								feedbackCode = null
-							}
-						}}
-						optionalLabel={$t('recipeNew.imageLimit', { max: maxImages })}
-					/>
-					<Button type="submit" class="w-auto self-start mt-2" disabled={isImageEmpty}>
-						{imageFiles?.length > 1 ? $t('recipeNew.analyzeImages') : $t('recipeNew.analyzeImage')}
-					</Button>
-				</div>
 			{/if}
-		{/if}
+
+		<input
+			type="radio"
+			name="scrape_tabs"
+			class="tab"
+			aria-label={$t('recipeNew.tabFile')}
+			value="file"
+			bind:group={selectedMode}
+			checked={selectedMode === 'file'}
+		/>
+		<div class="tab-content bg-base-100 border-base-300 p-2 ml-0 mr-0">
+			<FileInput
+				accept="image/*,.html"
+				multiple={true}
+				on:change={(e) => {
+					const files = Array.from(e.detail.target.files)
+					const hasHtml = files.some((f) => f.name.endsWith('.html') || f.type === 'text/html')
+					if (hasHtml) {
+						selectedFiles = files
+							.filter((f) => f.name.endsWith('.html') || f.type === 'text/html')
+							.slice(0, 1)
+					} else {
+						selectedFiles = files.slice(0, maxImages)
+						if (files.length > maxImages) {
+							feedbackCode = null
+							feedbackMessage = get(t)('recipeNew.msg.imageLimitExceeded', { max: maxImages })
+							feedbackType = 'warning'
+						} else {
+							feedbackMessage = ''
+							feedbackCode = null
+						}
+					}
+				}}
+				optionalLabel={$t('recipeNew.fileLimit', { max: maxImages })}
+			/>
+			<Button
+				type="submit"
+				class="w-auto self-start mt-2"
+				disabled={isFileEmpty || (detectedFileMode === 'image' && !textParsingAvailable)}
+			>
+				{#if detectedFileMode === 'html' && !isFileEmpty}
+					{$t('recipeNew.parseHtml')}
+				{:else if textParsingAvailable}
+					{selectedFiles?.length > 1 ? $t('recipeNew.analyzeImages') : $t('recipeNew.analyzeImage')}
+				{:else}
+					{$t('recipeNew.aiNotEnabled')}
+				{/if}
+			</Button>
+			{#if detectedFileMode === 'image' && !isFileEmpty && !textParsingAvailable}
+				<p class="text-sm text-warning mt-1">{$t('recipeNew.msg.aiNotEnabled')}</p>
+			{/if}
+		</div>
 	</div>
 </form>
 

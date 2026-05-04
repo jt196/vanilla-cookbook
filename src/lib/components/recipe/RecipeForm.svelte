@@ -491,7 +491,6 @@
 </script>
 
 <InfoText class="my-4">
-	<a target="_blank" href="https://www.markdownguide.org/basic-syntax/">Markdown</a>
 	{$t('recipeForm.markdownNote')}
 </InfoText>
 
@@ -510,8 +509,7 @@
 			{/if}
 			{#if onDelete}
 				<Button type="button" size="sm" style="soft" color="error" onclick={onDelete}
-					>{$t('recipeForm.delete')}</Button
-				>
+					>{$t('recipeForm.delete')}</Button>
 			{/if}
 			<Button type="submit" size="sm">{resolvedButtonText}</Button>
 		</div>
@@ -525,8 +523,7 @@
 					size="sm"
 					style="soft"
 					onclick={handleTranslateRecipe}
-					disabled={translatingRecipe}
-				>
+					disabled={translatingRecipe}>
 					{#if translatingRecipe}
 						<Spinner visible={true} size="xs" type="dots" />
 						Translating...
@@ -556,8 +553,7 @@
 					name="name"
 					bind:value={recipe.name}
 					label={$t('recipeForm.name')}
-					placeholder={$t('recipeForm.namePlaceholder')}
-				/>
+					placeholder={$t('recipeForm.namePlaceholder')} />
 
 				<Input
 					type="text"
@@ -565,24 +561,21 @@
 					name="source"
 					bind:value={recipe.source}
 					label={$t('recipeForm.source')}
-					placeholder={$t('recipeForm.sourcePlaceholder')}
-				/>
+					placeholder={$t('recipeForm.sourcePlaceholder')} />
 				<Input
 					type="text"
 					id="source_url"
 					name="source_url"
 					placeholder="https://grannysrecipes.com"
 					bind:value={recipe.source_url}
-					label={$t('recipeForm.sourceUrl')}
-				/>
+					label={$t('recipeForm.sourceUrl')} />
 				<Input
 					type="text"
 					id="image_url"
 					placeholder="https://grannysrecipes.com/norma.jpg"
 					name="image_url"
 					bind:value={recipe.image_url}
-					label={$t('recipeForm.imageUrl')}
-				/>
+					label={$t('recipeForm.imageUrl')} />
 			</div>
 
 			<div class="form-col">
@@ -592,32 +585,28 @@
 					name="prep_time"
 					placeholder={$t('recipeForm.prepTimePlaceholder')}
 					bind:value={recipe.prep_time}
-					label={$t('recipeForm.prepTime')}
-				/>
+					label={$t('recipeForm.prepTime')} />
 				<Input
 					type="text"
 					id="cook_time"
 					name="cook_time"
 					placeholder={$t('recipeForm.cookTimePlaceholder')}
 					bind:value={recipe.cook_time}
-					label={$t('recipeForm.cookTime')}
-				/>
+					label={$t('recipeForm.cookTime')} />
 				<Input
 					type="text"
 					id="total_time"
 					name="total_time"
 					placeholder={$t('recipeForm.totalTimePlaceholder')}
 					bind:value={recipe.total_time}
-					label={$t('recipeForm.totalTime')}
-				/>
+					label={$t('recipeForm.totalTime')} />
 				<Input
 					type="text"
 					id="servings"
 					placeholder={$t('recipeForm.servingsPlaceholder')}
 					name="servings"
 					bind:value={recipe.servings}
-					label={$t('recipeForm.servings')}
-				/>
+					label={$t('recipeForm.servings')} />
 			</div>
 		</div>
 
@@ -628,8 +617,7 @@
 			{imageChecked}
 			{selectedFiles}
 			{onSelectedFilesChange}
-			bind:saveImageUrl
-		/>
+			bind:saveImageUrl />
 		{#if aiEnabled}
 			<div class="mt-2">
 				<Button
@@ -637,8 +625,7 @@
 					size="sm"
 					style="soft"
 					onclick={() => (imagePromptDialogOpen = true)}
-					disabled={generatingRecipeImage || !canGenerateImage}
-				>
+					disabled={generatingRecipeImage || !canGenerateImage}>
 					{#if generatingRecipeImage}
 						<Spinner visible={true} size="xs" type="dots" />
 						{$t('recipeForm.generatingImage')}
@@ -662,8 +649,7 @@
 				rows="7"
 				placeholder={$t('recipeForm.ingredientsPlaceholder')}
 				bind:value={recipe.ingredients}
-				label={$t('recipeForm.ingredients')}
-			/>
+				label={$t('recipeForm.ingredients')} />
 			{#if aiEnabled}
 				<div class="flex gap-2 mt-2">
 					{#if recipe.ingredients_original}
@@ -672,8 +658,7 @@
 							size="sm"
 							style="outline"
 							color="warning"
-							onclick={restoreOriginalIngredients}
-						>
+							onclick={restoreOriginalIngredients}>
 							<Undo width="16px" height="16px" />
 							{$t('recipeForm.restoreOriginal')}
 						</Button>
@@ -685,8 +670,7 @@
 							onclick={handleCleanIngredients}
 							disabled={cleaningIngredients ||
 								!recipe.ingredients ||
-								recipe.ingredients.trim() === ''}
-						>
+								recipe.ingredients.trim() === ''}>
 							{#if cleaningIngredients}
 								<Spinner visible={true} size="xs" type="dots" />
 								{$t('recipeForm.cleaning')}
@@ -701,8 +685,7 @@
 								size="sm"
 								style="outline"
 								color="secondary"
-								onclick={undoCleanIngredients}
-							>
+								onclick={undoCleanIngredients}>
 								<Undo width="16px" height="16px" />
 								{$t('common.undo')}
 							</Button>
@@ -722,8 +705,7 @@
 			rows="3"
 			placeholder={$t('recipeForm.descriptionPlaceholder')}
 			bind:value={recipe.description}
-			label={$t('recipeForm.description')}
-		/>
+			label={$t('recipeForm.description')} />
 		<div>
 			<Textarea
 				id="directions"
@@ -731,8 +713,7 @@
 				rows="7"
 				name="directions"
 				bind:value={recipe.directions}
-				label={$t('recipeForm.directions')}
-			/>
+				label={$t('recipeForm.directions')} />
 			{#if aiEnabled}
 				<div class="flex gap-2 mt-2">
 					{#if recipe.directions_original}
@@ -741,8 +722,7 @@
 							size="sm"
 							style="outline"
 							color="warning"
-							onclick={restoreOriginalDirections}
-						>
+							onclick={restoreOriginalDirections}>
 							<Undo width="16px" height="16px" />
 							{$t('recipeForm.restoreOriginal')}
 						</Button>
@@ -752,8 +732,9 @@
 							size="sm"
 							style="soft"
 							onclick={handleSummarizeDirections}
-							disabled={cleaningDirections || !recipe.directions || recipe.directions.trim() === ''}
-						>
+							disabled={cleaningDirections ||
+								!recipe.directions ||
+								recipe.directions.trim() === ''}>
 							{#if cleaningDirections}
 								<Spinner visible={true} size="xs" type="dots" />
 								{$t('recipeForm.summarizing')}
@@ -768,8 +749,7 @@
 								size="sm"
 								style="outline"
 								color="secondary"
-								onclick={undoSummarizeDirections}
-							>
+								onclick={undoSummarizeDirections}>
 								<Undo width="16px" height="16px" />
 								{$t('common.undo')}
 							</Button>
@@ -789,8 +769,7 @@
 			rows="3"
 			placeholder={$t('recipeForm.notesPlaceholder')}
 			bind:value={recipe.notes}
-			label={$t('recipeForm.notes')}
-		/>
+			label={$t('recipeForm.notes')} />
 		{#if aiEnabled}
 			<div class="flex gap-2 mt-2">
 				<Button
@@ -798,8 +777,7 @@
 					size="sm"
 					style="soft"
 					onclick={handleAddTips}
-					disabled={addingTips || (!recipe.ingredients && !recipe.directions)}
-				>
+					disabled={addingTips || (!recipe.ingredients && !recipe.directions)}>
 					{#if addingTips}
 						<Spinner visible={true} size="xs" type="dots" />
 						{$t('recipeForm.addingTips')}
@@ -822,8 +800,7 @@
 			name="nutritional_info"
 			rows="3"
 			bind:value={recipe.nutritional_info}
-			label={$t('recipeForm.nutritionalInfo')}
-		/>
+			label={$t('recipeForm.nutritionalInfo')} />
 		{#if aiEnabled}
 			<div class="flex gap-2 mt-2">
 				<Button
@@ -833,8 +810,7 @@
 					onclick={handleCleanNutrition}
 					disabled={cleaningNutrition ||
 						!recipe.nutritional_info ||
-						recipe.nutritional_info.trim() === ''}
-				>
+						recipe.nutritional_info.trim() === ''}>
 					{#if cleaningNutrition}
 						<Spinner visible={true} size="xs" type="dots" />
 						{$t('recipeForm.cleaning')}
@@ -849,8 +825,7 @@
 						size="sm"
 						style="outline"
 						color="secondary"
-						onclick={undoCleanNutrition}
-					>
+						onclick={undoCleanNutrition}>
 						<Undo width="16px" height="16px" />
 						{$t('common.undo')}
 					</Button>
@@ -875,8 +850,7 @@
 			rows={3}
 			placeholder={DEFAULT_IMAGE_STYLE_DESCRIPTION}
 			bind:value={imagePromptOverride}
-			disabled={generatingRecipeImage}
-		/>
+			disabled={generatingRecipeImage} />
 		<InfoText>
 			{$t('recipeForm.styleOverrideHint')}
 		</InfoText>
@@ -887,15 +861,13 @@
 			style="outline"
 			color="secondary"
 			onclick={() => (imagePromptDialogOpen = false)}
-			disabled={generatingRecipeImage}
-		>
+			disabled={generatingRecipeImage}>
 			{$t('common.cancel')}
 		</Button>
 		<Button
 			type="button"
 			onclick={handleGenerateRecipeImage}
-			disabled={generatingRecipeImage || !canGenerateImage}
-		>
+			disabled={generatingRecipeImage || !canGenerateImage}>
 			{#if generatingRecipeImage}
 				<Spinner visible={true} size="xs" type="dots" />
 				{$t('recipeForm.generating')}

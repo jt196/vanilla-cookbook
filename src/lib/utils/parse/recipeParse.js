@@ -10,7 +10,8 @@ import {
 	parseJSONLD,
 	getDomainFromUrl,
 	parseUsingSiteConfig,
-	extractMicrodata
+	extractMicrodata,
+	cleanObjectStrings
 } from './parseHelpers.js'
 import { parse } from 'node-html-parser'
 import { siteConfigurations } from './siteConfigurations.js'
@@ -106,7 +107,7 @@ export function parseRecipe(html, url) {
 		const video = parseVideo(recipeRaw.video)
 		const nutrition = getNutrition(recipeRaw.nutrition)
 
-		return {
+		return cleanObjectStrings({
 			name: recipeRaw.name,
 			author,
 			sourceUrl,
@@ -124,7 +125,7 @@ export function parseRecipe(html, url) {
 			servings,
 			...video,
 			nutrition
-		}
+		})
 	} catch (error) {
 		console.log('Error:', error)
 		return typeof error === 'string' ? error : error?.message || 'Unknown error'
