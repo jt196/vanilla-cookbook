@@ -61,7 +61,7 @@ export function parseInstructions(instructions) {
 	if (!instructions) return []
 
 	if (typeof instructions === 'string') {
-		return [cleanString(instructions)]
+		return instructions.trim() ? [instructions] : []
 	}
 
 	if (Array.isArray(instructions)) {
@@ -79,8 +79,7 @@ function flattenInstructionNode(node) {
 	if (!node) return []
 
 	if (typeof node === 'string') {
-		const cleaned = cleanString(node)
-		return cleaned ? [cleaned] : []
+		return node.trim() ? [node] : []
 	}
 
 	if (Array.isArray(node)) {
@@ -89,15 +88,15 @@ function flattenInstructionNode(node) {
 
 	if (typeof node !== 'object') return []
 
-	const directText = cleanString(node.text || node.name || '')
+	const directText = (node.text || node.name || '').trim()
 	if (directText && !Array.isArray(node.itemListElement)) {
-		return [directText]
+		return [node.text || node.name]
 	}
 
 	const nestedSteps = flattenInstructionNode(node.itemListElement || node.itemList || [])
 	if (nestedSteps.length) return nestedSteps
 
-	return directText ? [directText] : []
+	return directText ? [node.text || node.name] : []
 }
 
 /**
@@ -106,17 +105,15 @@ function flattenInstructionNode(node) {
  * @returns {Array} An array of cleaned ingredient strings.
  */
 export function parseIngredients(ingredients) {
-	// If ingredients is already an array, clean each string and return
 	if (Array.isArray(ingredients)) {
-		return ingredients.map(cleanString)
+		return ingredients
 	}
 
-	// If ingredients is a string, split by comma and clean each resulting string
+	// Split comma-separated string into individual ingredients
 	if (typeof ingredients === 'string') {
-		return ingredients.split(',').map(cleanString)
+		return ingredients.split(',').map((s) => s.trim()).filter(Boolean)
 	}
 
-	// If ingredients is neither an array nor a string, return an empty array
 	return []
 }
 /**
@@ -136,6 +133,21 @@ export function cleanString(str) {
 		.join(' ')
 		.trim()
 		.replace(/\s+/g, ' ')
+}
+
+/**
+ * Recursively applies cleanString to all string values in an object, array, or scalar.
+ * Non-string primitives (numbers, booleans, null) are passed through unchanged.
+ * @param {*} value - The value to clean.
+ * @returns {*} The cleaned value.
+ */
+export function cleanObjectStrings(value) {
+	if (typeof value === 'string') return cleanString(value)
+	if (Array.isArray(value)) return value.map(cleanObjectStrings)
+	if (value && typeof value === 'object') {
+		return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, cleanObjectStrings(v)]))
+	}
+	return value
 }
 
 /**
@@ -292,9 +304,6 @@ export function extractMicrodata(root) {
 			recipeIngredient = extractTextFromSelector(item, '[itemprop="ingredients"]')
 		}
 
-		if (Array.isArray(recipeIngredient) && typeof recipeIngredient[0] === 'string') {
-			recipeIngredient = recipeIngredient.map(cleanString)
-		}
 
 		// If still no ingredients found, try the custom extraction method
 		if (!recipeIngredient?.length) {
@@ -306,12 +315,7 @@ export function extractMicrodata(root) {
 	// const imageUrl = extractTextFromSelector(item, '[itemprop="image"]')[0]
 	const image = extractTextFromSelector(item, '[itemprop*="image"]')[0]
 	const sourceUrl = extractTextFromSelector(item, '[itemprop="url"]')[0]
-	let description = extractTextFromSelector(item, '[itemprop="description"]')[0]
-	if (Array.isArray(description) && typeof description[0] === 'string') {
-		description = description.map(cleanString)
-	} else {
-		description = cleanString(description)
-	}
+	const description = extractTextFromSelector(item, '[itemprop="description"]')[0]
 	console.log('Extracted Ingredients:', recipeIngredient) // This will print the extracted ingredients
 
 	const recipeInstructions = extractTextFromSelector(
@@ -324,8 +328,7 @@ export function extractMicrodata(root) {
 	const keywords = extractTextFromSelector(item, '[itemprop="keywords"]')[0]
 	const recipeCategory = extractTextFromSelector(item, '[itemprop="recipeCategory"]')[0]
 	const recipeCuisine = extractTextFromSelector(item, '[itemprop="recipeCuisine"]')[0]
-	let recipeYield = extractTextFromSelector(item, '[itemprop="recipeYield"]')[0]
-	recipeYield = cleanString(recipeYield)
+	const recipeYield = extractTextFromSelector(item, '[itemprop="recipeYield"]')[0]
 	const datePublished = extractTextFromSelector(item, '[itemprop="datePublished"]')[0]
 	const aggregateRating = extractNestedProperties(item, '[itemprop="aggregateRating"]')
 	const nutrition = extractNestedProperties(item, '[itemprop="nutrition"]')
@@ -468,9 +471,6 @@ export function cleanJsonString(jsonString) {
 
 	// Remove unnecessary spaces around special characters
 	cleanedString = cleanedString.replace(/ & /g, '&')
-
-	// Additional cleaning for known problematic entities
-	cleanedString = cleanedString.replace(/&#039;/g, "'")
 
 	// Replace line breaks inside JSON key or value
 	cleanedString = cleanedString.replace(/"([^"]+)"/g, function (match) {
