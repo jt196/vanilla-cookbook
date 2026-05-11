@@ -337,6 +337,39 @@ describe('API Routes - /api/recipe/cleanup', () => {
 		expect(data.text).toContain('Calories')
 	})
 
+	describe('suggestions cleanup', () => {
+		it('returns suggestions text', async () => {
+			generateRecipeWithLLM.mockResolvedValue({
+				text: '# Substitutions\n\nUse canned salmon instead of fresh.\n\n# Additions\n\nAdd capers for extra flavour.'
+			})
+
+			const request = createRequest({
+				type: 'suggestions',
+				content: "Chef John's Fresh Salmon Cakes: salmon, bread crumbs, egg..."
+			})
+			const response = await cleanupPost({ request, locals: {} })
+			const data = await response.json()
+
+			expect(response.status).toBe(200)
+			expect(data.text).toContain('# Substitutions')
+			expect(data.text).toContain('# Additions')
+		})
+
+		it('returns 422 when suggestions response is missing text field', async () => {
+			generateRecipeWithLLM.mockResolvedValue({ name: 'Something else' })
+
+			const request = createRequest({
+				type: 'suggestions',
+				content: 'Some recipe content'
+			})
+			const response = await cleanupPost({ request, locals: {} })
+			const data = await response.json()
+
+			expect(response.status).toBe(422)
+			expect(data.error).toContain('invalid response')
+		})
+	})
+
 	it('returns 400 when type is missing', async () => {
 		const request = createRequest({ content: 'some content' })
 		const response = await cleanupPost({ request, locals: {} })

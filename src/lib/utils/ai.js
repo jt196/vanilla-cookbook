@@ -108,7 +108,7 @@ User prompt:
  * @returns {string}
  */
 function buildRecipeTranslatePrompt(recipe, language = 'eng', fromLanguage = null) {
-	const languageName = languageMap[language] || 'English'
+	const languageName = languageLabels[language] || 'English'
 	const fromLanguageName = fromLanguage ? languageLabels[fromLanguage] || fromLanguage : null
 	const recipeJson = JSON.stringify(recipe, null, 2)
 

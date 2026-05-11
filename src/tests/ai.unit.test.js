@@ -1,7 +1,19 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { readFileSync } from 'fs'
 import { join } from 'path'
-import { parseLLMJsonOutput } from '$lib/utils/ai.js'
+import {
+	parseLLMJsonOutput,
+	translateRecipeWithLLM,
+	extractRecipeWithLLM,
+	generateRecipeWithLLM
+} from '$lib/utils/ai.js'
+
+// Spoof the LangChain OpenAI client — each describe block configures invoke via mockImplementation
+vi.mock('@langchain/openai', () => ({
+	ChatOpenAI: vi.fn()
+}))
+
+import { ChatOpenAI } from '@langchain/openai'
 import {
 	getAvailableAiProviders,
 	resolveProviderSelection,
@@ -311,4 +323,144 @@ describe('resolveEmbeddingModel', () => {
 			expect(result).toBeTruthy()
 		})
 	}
+})
+
+describe('translateRecipeWithLLM', () => {
+	const mockRecipe = {
+		name: "Chef John's Fresh Salmon Cakes",
+		author: 'Chef John',
+		ingredients: ['1 pound fresh wild salmon'],
+		instructions: ['Flake the salmon into a bowl.']
+	}
+
+	const translatedRecipe = {
+		name: 'Saumon en galettes',
+		author: 'Chef Jean',
+		ingredients: ['500g de saumon sauvage frais'],
+		instructions: ["Émietter le saumon dans un bol."]
+	}
+
+	beforeEach(() => {
+		vi.stubEnv('OPENAI_API_KEY', 'test-key')
+		vi.spyOn(console, 'error').mockImplementation(() => {})
+		vi.spyOn(console, 'log').mockImplementation(() => {})
+		ChatOpenAI.mockImplementation(() => ({
+			invoke: vi.fn().mockResolvedValue({ content: JSON.stringify(translatedRecipe) })
+		}))
+	})
+
+	afterEach(() => {
+		vi.unstubAllEnvs()
+		vi.restoreAllMocks()
+	})
+
+	it('translates a recipe to the target language without error', async () => {
+		const result = await translateRecipeWithLLM({
+			recipe: mockRecipe,
+			provider: 'openai',
+			model: 'gpt-4o-mini',
+			language: 'fra'
+		})
+
+		expect(result.name).toBe('Saumon en galettes')
+		expect(result.ingredients).toHaveLength(1)
+	})
+})
+
+describe('extractRecipeWithLLM', () => {
+	const extractedRecipe = {
+		name: "Chef John's Fresh Salmon Cakes",
+		author: 'Chef John',
+		ingredients: ['1 pound fresh wild salmon', '1/4 cup bread crumbs'],
+		instructions: ['Flake the salmon.', 'Mix with bread crumbs.', 'Form into cakes and pan-fry.']
+	}
+
+	beforeEach(() => {
+		vi.stubEnv('OPENAI_API_KEY', 'test-key')
+		vi.spyOn(console, 'error').mockImplementation(() => {})
+		vi.spyOn(console, 'log').mockImplementation(() => {})
+		ChatOpenAI.mockImplementation(() => ({
+			invoke: vi.fn().mockResolvedValue({ content: JSON.stringify(extractedRecipe) })
+		}))
+	})
+
+	afterEach(() => {
+		vi.unstubAllEnvs()
+		vi.restoreAllMocks()
+	})
+
+	it('extracts a recipe from plain text', async () => {
+		const result = await extractRecipeWithLLM({
+			provider: 'openai',
+			type: 'text',
+			content: 'Salmon Cakes: mix 1 pound salmon with 1/4 cup bread crumbs, form into cakes.'
+		})
+
+		expect(result.name).toBe("Chef John's Fresh Salmon Cakes")
+		expect(result.ingredients).toHaveLength(2)
+		expect(result.instructions).toHaveLength(3)
+	})
+
+	it('extracts a recipe from HTML content', async () => {
+		const result = await extractRecipeWithLLM({
+			provider: 'openai',
+			type: 'html',
+			content: '<html><body><h1>Salmon Cakes</h1></body></html>',
+			url: 'https://example.com/salmon-cakes'
+		})
+
+		expect(result.name).toBe("Chef John's Fresh Salmon Cakes")
+		expect(result.ingredients).toHaveLength(2)
+	})
+})
+
+describe('generateRecipeWithLLM', () => {
+	const generatedRecipe = {
+		name: 'Chocolate Lava Cake',
+		author: null,
+		ingredients: ['200g dark chocolate', '4 eggs', '100g butter'],
+		instructions: ['Melt chocolate and butter.', 'Whisk in eggs.', 'Bake for 12 minutes.'],
+		prepTime: 'PT15M',
+		cookTime: 'PT12M',
+		servings: '4'
+	}
+
+	beforeEach(() => {
+		vi.stubEnv('OPENAI_API_KEY', 'test-key')
+		vi.spyOn(console, 'error').mockImplementation(() => {})
+		vi.spyOn(console, 'log').mockImplementation(() => {})
+		ChatOpenAI.mockImplementation(() => ({
+			invoke: vi.fn().mockResolvedValue({ content: JSON.stringify(generatedRecipe) })
+		}))
+	})
+
+	afterEach(() => {
+		vi.unstubAllEnvs()
+		vi.restoreAllMocks()
+	})
+
+	it('generates a recipe from a user prompt', async () => {
+		const result = await generateRecipeWithLLM({
+			prompt: 'A rich chocolate lava cake',
+			provider: 'openai',
+			unitsPreference: 'metric',
+			language: 'eng'
+		})
+
+		expect(result.name).toBe('Chocolate Lava Cake')
+		expect(result.ingredients).toHaveLength(3)
+		expect(result.instructions).toHaveLength(3)
+		expect(result.servings).toBe('4')
+	})
+
+	it('accepts US volumetric unit preference without error', async () => {
+		const result = await generateRecipeWithLLM({
+			prompt: 'Fluffy pancakes',
+			provider: 'openai',
+			unitsPreference: 'americanVolumetric',
+			language: 'eng'
+		})
+
+		expect(result.name).toBe('Chocolate Lava Cake')
+	})
 })
