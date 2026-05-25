@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from 'svelte'
-	import { goto } from '$app/navigation'
+	import { goto, afterNavigate } from '$app/navigation'
 	import { createRecipe } from '$lib/utils/crud'
 	import {
 		handleParse,
@@ -65,30 +65,25 @@
 	 * @returns {Promise<void>}
 	 */
 
-	onMount(async () => {
-		const urlParams = new URLSearchParams(window.location.search)
-		const bookmarkletPayload = readBookmarkletPayload(window)
-		let rawUrl = urlParams.get('url')
-		let text = urlParams.get('text')
+	// Tracks the last share URL/text we processed so afterNavigate doesn't re-run onMount's work.
+	let lastProcessedShare = $state('')
+
+	async function processIncomingShare(rawUrl, text) {
 		const tFn = get(t)
-
-		if (!rawUrl && bookmarkletPayload?.url) {
-			rawUrl = bookmarkletPayload.url
-		}
-
-		if (!text && bookmarkletPayload?.text) {
-			text = bookmarkletPayload.text
-		}
 
 		if (!rawUrl && text && /^https?:\/\//.test(text)) {
 			rawUrl = text
 		}
 
-		url = rawUrl
+		const shareKey = rawUrl || text || ''
+		if (!shareKey || shareKey === lastProcessedShare) return
+		lastProcessedShare = shareKey
+
+		url = rawUrl ? decodeURIComponent(rawUrl) : null
 		sharedText = !rawUrl ? text : null
+		recipe = { ...defaultRecipe, is_public: !!userPublicRecipes }
 
 		if (url) {
-			url = decodeURIComponent(url)
 			initialMode = 'url'
 			console.log('[recipe:new] Starting scrape for:', url)
 			try {
@@ -112,18 +107,15 @@
 					error?.message || (typeof error === 'string' ? error : tFn('recipeNew.msg.scrapeError'))
 				if (isBlockedScrapeErrorMessage(message) && sharedText) {
 					initialMode = 'text'
-
 					if (apiKeyPresent && aiEnabled) {
 						try {
 							feedbackMessage = tFn('recipeNew.msg.scrapeBlocked')
 							feedbackType = 'info'
-
 							const parsedData = await handleParse(null, sharedText, {
 								mode: 'parse',
 								unitsPreference: userUnits,
 								language: userLanguage
 							})
-
 							recipe = { ...recipe, ...parsedData }
 							feedbackMessage =
 								parsedData._status === 'complete'
@@ -150,6 +142,24 @@
 			initialMode = 'text'
 			feedbackMessage = tFn('recipeNew.msg.aiNotEnabled')
 		}
+	}
+
+	onMount(async () => {
+		const urlParams = new URLSearchParams(window.location.search)
+		const bookmarkletPayload = readBookmarkletPayload(window)
+		let rawUrl = urlParams.get('url') || bookmarkletPayload?.url || null
+		let text = urlParams.get('text') || bookmarkletPayload?.text || null
+		await processIncomingShare(rawUrl, text)
+	})
+
+	// Handles the case where the app is already open when a share arrives.
+	// onMount won't re-fire on same-route navigation; afterNavigate catches it.
+	afterNavigate(async ({ to }) => {
+		if (!to?.url) return
+		const rawUrl = to.url.searchParams.get('url')
+		const text = to.url.searchParams.get('text')
+		if (!rawUrl && !text) return
+		await processIncomingShare(rawUrl, text)
 	})
 
 	async function handleCreateRecipe(event) {

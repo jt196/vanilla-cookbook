@@ -290,6 +290,32 @@ async function invokeLLM({ provider, model, type, messages }) {
 }
 
 /**
+ * Extract a recipe from video description or transcript text.
+ * Uses a prompt that includes a _noRecipe escape hatch so the AI can signal
+ * "no recipe here" rather than fabricating one, driving stage fallback logic.
+ *
+ * @param {Object} options
+ * @param {string} [options.provider]
+ * @param {string} [options.model]
+ * @param {string} [options.content='']
+ * @param {string} [options.url='']
+ * @returns {Promise<Object>} Parsed recipe object, or { _noRecipe: true }
+ */
+export async function extractRecipeFromVideoText({ provider, model, content = '', url = '', language = 'eng' }) {
+	const { buildVideoTextExtractionPrompt } = await import('./aiShared.js')
+	const prompt = buildVideoTextExtractionPrompt({ content, url, language })
+	return invokeLLM({
+		provider,
+		model,
+		type: 'text',
+		messages: [
+			new SystemMessage('You are an expert recipe extraction AI.'),
+			new HumanMessage(prompt)
+		]
+	})
+}
+
+/**
  * Extract a recipe from HTML, text, or image content using an LLM
  *
  * @param {Object} options

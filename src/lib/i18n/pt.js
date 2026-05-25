@@ -327,7 +327,18 @@ export default {
       "somethingWrong": "Algo deu errado.",
       "scrapeTimeout": "A solicitação expirou. O site pode estar lento ou inacessível.",
       "imageLimitExceeded": "Apenas as primeiras {max} imagens serão usadas.",
-      "saveFail": "Falha ao salvar receita."
+      "saveFail": "Falha ao salvar receita.",
+      "parseNoRecipe": "Nenhum conteúdo de receita encontrado no texto.",
+      "youtubeCheckingLinks": "Buscando descrição do vídeo e verificando links de receitas…",
+      "youtubeParsingDescription": "Nenhum link de receita encontrado. Analisando descrição do vídeo com IA…",
+      "youtubeFetchingTranscript": "Nenhuma receita na descrição. Buscando transcrição do vídeo…",
+      "youtubeSuccess": "Receita extraída do vídeo do YouTube.",
+      "youtubePartial": "Receita parcial extraída do vídeo do YouTube. Revise antes de salvar.",
+      "youtubeNoRecipe": "Não foi possível encontrar uma receita neste vídeo.",
+      "youtubeNoAi": "A análise de IA é necessária para extrair receitas de vídeos do YouTube.",
+      "youtubeNoDescription": "Nenhuma descrição encontrada neste vídeo. Tente copiar o texto e usar a aba Texto.",
+      "instagramBlocked": "O Instagram não permite a extração de receitas. Copie a legenda da publicação e use a aba Texto.",
+      "tiktokBlocked": "O TikTok não permite a extração de receitas. Copie a legenda do vídeo e use a aba Texto."
     }
   },
   "photos": {

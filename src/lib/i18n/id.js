@@ -374,7 +374,18 @@ export default {
       "somethingWrong": "Terjadi kesalahan.",
       "scrapeTimeout": "Permintaan habis waktu. Situs mungkin lambat atau tidak dapat dijangkau.",
       "imageLimitExceeded": "Hanya {max} gambar pertama yang akan digunakan.",
-      "saveFail": "Gagal menyimpan resep."
+      "saveFail": "Gagal menyimpan resep.",
+      "parseNoRecipe": "Tidak ada konten resep yang ditemukan dalam teks.",
+      "youtubeCheckingLinks": "Mengambil deskripsi video dan memeriksa tautan resep…",
+      "youtubeParsingDescription": "Tidak ada tautan resep yang ditemukan. Mengurai deskripsi video dengan AI…",
+      "youtubeFetchingTranscript": "Tidak ada resep dalam deskripsi. Mengambil transkrip video…",
+      "youtubeSuccess": "Resep berhasil diekstrak dari video YouTube.",
+      "youtubePartial": "Resep sebagian diekstrak dari video YouTube. Harap tinjau sebelum menyimpan.",
+      "youtubeNoRecipe": "Tidak dapat menemukan resep dalam video ini.",
+      "youtubeNoAi": "Analisis AI diperlukan untuk mengekstrak resep dari video YouTube.",
+      "youtubeNoDescription": "Tidak ada deskripsi yang ditemukan untuk video ini. Coba salin teks dan gunakan tab Teks.",
+      "instagramBlocked": "Instagram tidak mengizinkan pengambilan resep. Salin teks postingan dan gunakan tab Teks.",
+      "tiktokBlocked": "TikTok tidak mengizinkan pengambilan resep. Salin teks video dan gunakan tab Teks."
     }
   },
   "cookedLog": {

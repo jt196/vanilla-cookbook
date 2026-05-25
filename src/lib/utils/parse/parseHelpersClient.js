@@ -56,6 +56,77 @@ export async function scrapeRecipeFromURL(url) {
 }
 
 /**
+ * Returns true if the URL is a YouTube video URL.
+ *
+ * @param {string} url
+ * @returns {boolean}
+ */
+export function isYouTubeUrl(url) {
+	try {
+		const { hostname } = new URL(url)
+		return hostname === 'www.youtube.com' || hostname === 'youtube.com' || hostname === 'youtu.be'
+	} catch {
+		return false
+	}
+}
+
+/**
+ * Runs the three-stage YouTube recipe extraction pipeline.
+ * Calls the /api/recipe/scrape/youtube endpoint for each stage and updates
+ * the caller via onProgress between stages.
+ *
+ * @param {Event|null} event
+ * @param {string} url - YouTube video URL
+ * @param {{ onProgress?: (key: string) => void, language?: string }} [options]
+ * @returns {Promise<Object>} Formatted recipe object with _source and _status
+ * @throws If all three stages fail to find a recipe
+ */
+export async function handleYouTubeScrape(event = null, url, { onProgress = () => {}, language = 'eng' } = {}) {
+	if (event) event.preventDefault()
+
+	async function callStage(stage) {
+		const res = await fetch('/api/recipe/scrape/youtube', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ stage, url, language })
+		})
+		if (res.status === 422) {
+			const err = await res.json().catch(() => ({}))
+			if (err._noAi) throw makeCodedError('', err.code)
+			throw makeCodedError(err.error || 'YouTube scrape failed.', err.code || null)
+		}
+		if (!res.ok) {
+			const err = await res.json().catch(() => ({}))
+			throw makeCodedError(err.error || 'YouTube scrape failed.', err.code || null)
+		}
+		return res.json()
+	}
+
+	// Stage 1: check description for recipe links
+	onProgress('recipeNew.msg.youtubeCheckingLinks')
+	const stage1 = await callStage('links')
+	if (!stage1._noRecipe) {
+		return { ...formatScrapedRecipe(stage1), _source: stage1._source, _status: stage1._status }
+	}
+
+	// Stage 2: AI parse the description text
+	onProgress('recipeNew.msg.youtubeParsingDescription')
+	const stage2 = await callStage('description')
+	if (!stage2._noRecipe) {
+		return { ...formatScrapedRecipe(stage2), _source: stage2._source, _status: stage2._status }
+	}
+
+	// Stage 3: AI parse the video transcript
+	onProgress('recipeNew.msg.youtubeFetchingTranscript')
+	const stage3 = await callStage('transcript')
+	if (!stage3._noRecipe) {
+		return { ...formatScrapedRecipe(stage3), _source: stage3._source, _status: stage3._status }
+	}
+
+	throw makeCodedError('Could not find a recipe in this video.', 'recipeNew.msg.youtubeNoRecipe')
+}
+
+/**
  * Handles the scraping of a recipe from a given URL.
  * Optionally prevents the default behavior of a passed event.
  *

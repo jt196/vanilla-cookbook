@@ -35,6 +35,13 @@ export async function POST({ request, locals }) {
 						language
 					})
 
+		if (recipe?._noRecipe) {
+			return json(
+				{ error: 'No recipe content found in the text.', code: 'recipeNew.msg.parseNoRecipe' },
+				{ status: 422 }
+			)
+		}
+
 		if (!recipe || !recipe.name || !recipe.ingredients?.length) {
 			return json(
 				{ error: 'Recipe parsing incomplete.', code: 'recipeNew.msg.parseIncomplete' },
