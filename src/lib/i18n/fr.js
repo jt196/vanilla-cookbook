@@ -374,7 +374,18 @@ export default {
       "somethingWrong": "Quelque chose s'est mal passé.",
       "scrapeTimeout": "La requête a expiré. Le site peut être lent ou inaccessible.",
       "imageLimitExceeded": "Seules les {max} premières images seront utilisées.",
-      "saveFail": "Échec de l'enregistrement de la recette."
+      "saveFail": "Échec de l'enregistrement de la recette.",
+      "parseNoRecipe": "Aucun contenu de recette trouvé dans le texte.",
+      "youtubeCheckingLinks": "Récupération de la description de la vidéo et vérification des liens de recettes…",
+      "youtubeParsingDescription": "Aucun lien de recette trouvé. Analyse de la description de la vidéo avec l'IA…",
+      "youtubeFetchingTranscript": "Aucune recette dans la description. Récupération de la transcription de la vidéo…",
+      "youtubeSuccess": "Recette extraite de la vidéo YouTube.",
+      "youtubePartial": "Recette partielle extraite de la vidéo YouTube. Veuillez vérifier avant d'enregistrer.",
+      "youtubeNoRecipe": "Impossible de trouver une recette dans cette vidéo.",
+      "youtubeNoAi": "L'analyse par IA est nécessaire pour extraire des recettes des vidéos YouTube.",
+      "youtubeNoDescription": "Aucune description trouvée pour cette vidéo. Essayez de copier le texte et d'utiliser l'onglet Texte.",
+      "instagramBlocked": "Instagram n'autorise pas l'extraction de recettes. Copiez le texte du post et utilisez l'onglet Texte.",
+      "tiktokBlocked": "TikTok n'autorise pas l'extraction de recettes. Copiez le texte de la vidéo et utilisez l'onglet Texte."
     }
   },
   "cookedLog": {

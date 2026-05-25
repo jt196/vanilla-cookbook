@@ -1,5 +1,5 @@
 <script>
-	import { handleParse, handleScrape, handleImage, handleHTMLFile } from '$lib/utils/parse/parseHelpersClient'
+	import { handleParse, handleScrape, handleImage, handleHTMLFile, handleYouTubeScrape, isYouTubeUrl } from '$lib/utils/parse/parseHelpersClient'
 	import FeedbackMessage from '$lib/components/ui/FeedbackMessage.svelte'
 	import { defaultRecipe } from '$lib/utils/config'
 	import Input from '$lib/components/ui/Form/Input.svelte'
@@ -70,20 +70,35 @@
 				feedbackMessage = tFn('recipeNew.msg.scraping')
 				feedbackCode = null
 				feedbackType = 'info'
-				const scrapedData = await handleScrape(event, url)
+
+				let scrapedData
+				if (isYouTubeUrl(url)) {
+					scrapedData = await handleYouTubeScrape(event, url, {
+						language: userLanguage,
+						onProgress: (key) => {
+							feedbackMessage = tFn(key)
+							feedbackCode = null
+							feedbackType = 'info'
+						}
+					})
+				} else {
+					scrapedData = await handleScrape(event, url)
+				}
 				recipe = { ...recipe, ...scrapedData }
 
 				if (scrapedData._status === 'complete') {
 					feedbackCode = null
-					feedbackMessage =
-						scrapedData._source === 'AI'
+					feedbackMessage = scrapedData._source?.startsWith('YouTube')
+						? tFn('recipeNew.msg.youtubeSuccess', { source: scrapedData._source })
+						: scrapedData._source === 'AI'
 							? tFn('recipeNew.msg.aiSuccess')
 							: tFn('recipeNew.msg.manualSuccess')
 					feedbackType = 'success'
 				} else {
 					feedbackCode = null
-					feedbackMessage =
-						scrapedData._source === 'AI'
+					feedbackMessage = scrapedData._source?.startsWith('YouTube')
+						? tFn('recipeNew.msg.youtubePartial')
+						: scrapedData._source === 'AI'
 							? tFn('recipeNew.msg.aiPartial')
 							: tFn('recipeNew.msg.manualPartial')
 					feedbackType = 'warning'

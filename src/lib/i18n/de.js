@@ -327,7 +327,18 @@ export default {
       "somethingWrong": "Es ist etwas schiefgelaufen.",
       "scrapeTimeout": "Anfragezeitüberschreitung. Die Seite ist möglicherweise langsam oder nicht erreichbar.",
       "imageLimitExceeded": "Es werden nur die ersten {max} Bilder verwendet.",
-      "saveFail": "Rezept konnte nicht gespeichert werden."
+      "saveFail": "Rezept konnte nicht gespeichert werden.",
+      "parseNoRecipe": "Kein Rezeptinhalt im Text gefunden.",
+      "youtubeCheckingLinks": "Videobeschreibung abrufen und nach Rezeptlinks suchen…",
+      "youtubeParsingDescription": "Kein Rezeptlink gefunden. Videobeschreibung mit KI analysieren…",
+      "youtubeFetchingTranscript": "Kein Rezept in der Beschreibung. Videotranskript abrufen…",
+      "youtubeSuccess": "Rezept aus YouTube-Video extrahiert.",
+      "youtubePartial": "Teilweises Rezept aus YouTube-Video extrahiert. Bitte vor dem Speichern überprüfen.",
+      "youtubeNoRecipe": "In diesem Video konnte kein Rezept gefunden werden.",
+      "youtubeNoAi": "KI-Analyse ist erforderlich, um Rezepte aus YouTube-Videos zu extrahieren.",
+      "youtubeNoDescription": "Keine Beschreibung für dieses Video gefunden. Versuchen Sie, den Text zu kopieren und den Text-Tab zu verwenden.",
+      "instagramBlocked": "Instagram erlaubt kein Rezept-Scraping. Kopieren Sie den Post-Text und verwenden Sie stattdessen den Text-Tab.",
+      "tiktokBlocked": "TikTok erlaubt kein Rezept-Scraping. Kopieren Sie den Video-Text und verwenden Sie stattdessen den Text-Tab."
     }
   },
   "photos": {

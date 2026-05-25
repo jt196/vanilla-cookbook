@@ -374,7 +374,18 @@ export default {
       "somethingWrong": "Valami hiba történt.",
       "scrapeTimeout": "A kérés időtúllépésbe ütközött. Az oldal lassú vagy elérhetetlen lehet.",
       "imageLimitExceeded": "Csak az első {max} kép lesz felhasználva.",
-      "saveFail": "A recept mentése sikertelen."
+      "saveFail": "A recept mentése sikertelen.",
+      "parseNoRecipe": "Nem található recept tartalom a szövegben.",
+      "youtubeCheckingLinks": "Videóleírás lekérése és receptlinkek ellenőrzése…",
+      "youtubeParsingDescription": "Nem található receptlink. Videóleírás elemzése AI-val…",
+      "youtubeFetchingTranscript": "Nincs recept a leírásban. Videóátirat lekérése…",
+      "youtubeSuccess": "Recept kinyerve a YouTube-videóból.",
+      "youtubePartial": "Részleges recept kinyerve a YouTube-videóból. Kérjük, ellenőrizze mentés előtt.",
+      "youtubeNoRecipe": "Nem sikerült receptet találni ebben a videóban.",
+      "youtubeNoAi": "AI elemzés szükséges a receptek YouTube-videókból való kinyeréséhez.",
+      "youtubeNoDescription": "Nem található leírás ehhez a videóhoz. Másolja a szöveget és használja a Szöveg lapot.",
+      "instagramBlocked": "Az Instagram nem engedélyezi a receptek kinyerését. Másolja a bejegyzés szövegét és használja a Szöveg lapot.",
+      "tiktokBlocked": "A TikTok nem engedélyezi a receptek kinyerését. Másolja a videó szövegét és használja a Szöveg lapot."
     }
   },
   "cookedLog": {

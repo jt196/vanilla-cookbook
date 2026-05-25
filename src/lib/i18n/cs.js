@@ -374,7 +374,18 @@ export default {
       "somethingWrong": "Něco se pokazilo.",
       "scrapeTimeout": "Požadavek vypršel. Stránka může být pomalá nebo nedostupná.",
       "imageLimitExceeded": "Použito bude pouze prvních {max} obrázků.",
-      "saveFail": "Nepodařilo se uložit recept."
+      "saveFail": "Nepodařilo se uložit recept.",
+      "parseNoRecipe": "V textu nebyl nalezen žádný obsah receptu.",
+      "youtubeCheckingLinks": "Načítání popisu videa a kontrola odkazů na recepty…",
+      "youtubeParsingDescription": "Nebyl nalezen žádný odkaz na recept. Analýza popisu videa pomocí AI…",
+      "youtubeFetchingTranscript": "V popisu není recept. Načítání přepisu videa…",
+      "youtubeSuccess": "Recept byl extrahován z videa na YouTube.",
+      "youtubePartial": "Byl extrahován částečný recept z videa na YouTube. Před uložením zkontrolujte.",
+      "youtubeNoRecipe": "V tomto videu se nepodařilo najít recept.",
+      "youtubeNoAi": "K extrahování receptů z videí na YouTube je vyžadována analýza AI.",
+      "youtubeNoDescription": "Pro toto video nebyl nalezen žádný popis. Zkuste zkopírovat text a použít záložku Text.",
+      "instagramBlocked": "Instagram neumožňuje extrakci receptů. Zkopírujte text příspěvku a použijte záložku Text.",
+      "tiktokBlocked": "TikTok neumožňuje extrakci receptů. Zkopírujte text videa a použijte záložku Text."
     }
   },
   "cookedLog": {

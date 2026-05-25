@@ -109,6 +109,7 @@ Add your recipe here. Multiple sources accepted:
 
 - Websites with Schema.org recipe schema (most of the web)
 - Websites with no schema
+- YouTube videos (three-stage pipeline with AI fallback)
 - Pasted text
 - Prompted text
 - Images of recipes
@@ -174,6 +175,20 @@ Recipe language is detected locally. If the user language is different to the re
   <source src="../../videos/translate-recipe.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
+
+#### YouTube Videos
+
+Paste a YouTube URL into the URL field and press **Scrape URL**. The app runs a three-stage pipeline, showing progress in the feedback bar:
+
+1. **Check description for links** — Fetches the video description and looks for links to external recipe pages. If a link points to a recognisable recipe site, that page is scraped as normal (no AI required).
+2. **Parse description with AI** — If no recipe link is found, the full video description is sent to your configured LLM to extract a recipe directly from the text.
+3. **Fetch transcript with AI** — If the description contains no recipe, the video's caption transcript is fetched and sent to the LLM for parsing.
+
+Each stage falls back to the next automatically. If all three stages find no recipe content, an error is shown.
+
+> **Note:** Stages 2 and 3 require AI to be configured. Stage 1 works without an API key if the description links to a standard recipe site.
+
+**Blocked platforms:** Instagram and TikTok block server-side fetching. If you paste one of these URLs, the app will tell you to copy the post/caption text and use the **Text** tab instead.
 
 #### Scrape Fallback
 

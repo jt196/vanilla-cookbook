@@ -1,6 +1,7 @@
 import { parseURL } from '$lib/utils/parse/recipeParse'
 import { extractRecipeWithLLM } from '$lib/utils/ai'
 import { resolveAIConfig } from '$lib/server/aiHelpers'
+import { isBlockedVideoUrl } from '$lib/utils/parse/videoHelpers'
 
 export async function GET({ params, locals }) {
 	const url = decodeURIComponent(params.url)
@@ -10,6 +11,14 @@ export async function GET({ params, locals }) {
 	let html = ''
 	let scrapeError = null
 	console.log(`[scrape:${reqId}] start`, { url })
+
+	const blockedPlatform = isBlockedVideoUrl(url)
+	if (blockedPlatform) {
+		return jsonResponse(
+			{ message: null, code: `recipeNew.msg.${blockedPlatform.platform}Blocked` },
+			422
+		)
+	}
 
 	try {
 		console.log(`[scrape:${reqId}] Attempting regular scrape`)

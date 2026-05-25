@@ -404,7 +404,18 @@ export default {
 			somethingWrong: 'Something went wrong.',
 			scrapeTimeout: 'Request timed out. The site may be slow or unreachable.',
 			imageLimitExceeded: 'Only the first {max} images will be used.',
-			saveFail: 'Failed to save recipe.'
+			saveFail: 'Failed to save recipe.',
+			parseNoRecipe: 'No recipe content found in the text.',
+			youtubeCheckingLinks: 'Fetching video description and checking for recipe links…',
+			youtubeParsingDescription: 'No recipe link found. Parsing video description with AI…',
+			youtubeFetchingTranscript: 'No recipe in description. Fetching video transcript…',
+			youtubeSuccess: 'Recipe extracted from YouTube video.',
+			youtubePartial: 'Partial recipe extracted from YouTube video. Please review before saving.',
+			youtubeNoRecipe: 'Could not find a recipe in this video.',
+			youtubeNoAi: 'AI parsing is required to extract recipes from YouTube videos.',
+			youtubeNoDescription: 'No description found on this video. Try copying the text and using the Text tab.',
+			instagramBlocked: 'Instagram doesn’t allow recipe scraping. Copy the post caption and use the Text tab instead.',
+			tiktokBlocked: 'TikTok doesn’t allow recipe scraping. Copy the video caption and use the Text tab instead.'
 		}
 	},
 

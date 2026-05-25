@@ -374,7 +374,18 @@ export default {
       "somethingWrong": "Er is iets misgegaan.",
       "scrapeTimeout": "Verzoek is verlopen. De site is mogelijk traag of onbereikbaar.",
       "imageLimitExceeded": "Alleen de eerste {max} afbeeldingen worden gebruikt.",
-      "saveFail": "Opslaan van recept mislukt."
+      "saveFail": "Opslaan van recept mislukt.",
+      "parseNoRecipe": "Geen receptinhoud gevonden in de tekst.",
+      "youtubeCheckingLinks": "Videobeschrijving ophalen en controleren op receptlinks…",
+      "youtubeParsingDescription": "Geen receptlink gevonden. Videobeschrijving analyseren met AI…",
+      "youtubeFetchingTranscript": "Geen recept in beschrijving. Videotranscriptie ophalen…",
+      "youtubeSuccess": "Recept geëxtraheerd uit YouTube-video.",
+      "youtubePartial": "Gedeeltelijk recept geëxtraheerd uit YouTube-video. Controleer voor opslaan.",
+      "youtubeNoRecipe": "Kan geen recept vinden in deze video.",
+      "youtubeNoAi": "AI-analyse is vereist om recepten uit YouTube-video's te extraheren.",
+      "youtubeNoDescription": "Geen beschrijving gevonden voor deze video. Probeer de tekst te kopiëren en het tabblad Tekst te gebruiken.",
+      "instagramBlocked": "Instagram staat het extraheren van recepten niet toe. Kopieer het bijschrift van het bericht en gebruik het tabblad Tekst.",
+      "tiktokBlocked": "TikTok staat het extraheren van recepten niet toe. Kopieer het bijschrift van de video en gebruik het tabblad Tekst."
     }
   },
   "cookedLog": {
