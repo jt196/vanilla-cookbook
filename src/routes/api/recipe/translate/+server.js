@@ -39,9 +39,6 @@ export async function POST({ request, locals }) {
 		return json({ recipe: response })
 	} catch (err) {
 		console.error('Translate API failed:', err)
-		return json(
-			{ error: 'Failed to translate recipe.', code: 'recipeForm.msg.translateFailed' },
-			{ status: 500 }
-		)
+		return json({ error: err.message || 'Failed to translate recipe.' }, { status: 500 })
 	}
 }

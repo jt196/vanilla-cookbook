@@ -30,7 +30,7 @@ function resolveCompatibilityModel(provider, model, env = process.env) {
 		env.LLM_API_ENGINE_TEXT ||
 		getDefaultModelsForProvider(provider)?.text ||
 		getDefaultModelsForProvider('openai')?.text ||
-		'gpt-4o-mini'
+		'gpt-5.6-luna'
 	)
 }
 

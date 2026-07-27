@@ -230,9 +230,6 @@ Return format:
 				{ status: 429 }
 			)
 		}
-		return json(
-			{ error: 'Failed to clean up content.', code: 'recipeForm.msg.cleanupFailed' },
-			{ status: 500 }
-		)
+		return json({ error: err.message || 'Failed to clean up content.' }, { status: 500 })
 	}
 }

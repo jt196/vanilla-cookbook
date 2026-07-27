@@ -231,6 +231,6 @@ describe('API Routes - /api/recipe/[uid]/image/generate', () => {
 		const data = await response.json()
 
 		expect(response.status).toBe(500)
-		expect(data.code).toBe('recipeForm.msg.imageGenerateFailed')
+		expect(data.error).toBe('Provider unavailable')
 	})
 })

@@ -171,7 +171,7 @@ describe('API Routes - /api/recipe/parse', () => {
 			const data = await response.json()
 
 			expect(response.status).toBe(500)
-			expect(data.error).toContain('Failed to parse')
+			expect(data.error).toContain('LLM API error')
 		})
 	})
 })

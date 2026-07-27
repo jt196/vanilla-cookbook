@@ -264,7 +264,7 @@ async function invokeLLM({ provider, model, type, messages }) {
 		env.LLM_API_ENGINE_TEXT ||
 		providerDefaults.text ||
 		fallbackDefaults.text ||
-		'gpt-4o-mini'
+		'gpt-5.6-luna'
 	const defaultImageModel =
 		env.LLM_IMAGE_MODEL ||
 		env.LLM_API_ENGINE_IMAGE ||

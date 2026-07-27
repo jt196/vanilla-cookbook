@@ -548,7 +548,7 @@
 							type="text"
 							id="customTextModel"
 							label={$t('admin.site.customModel')}
-							placeholder="e.g. gpt-4o-2024-08-06"
+							placeholder="e.g. gpt-5.6-terra"
 							bind:value={customTextModel}
 						/>
 					{/if}
@@ -574,7 +574,7 @@
 								type="text"
 								id="customImageModel"
 								label={$t('admin.site.customModel')}
-								placeholder="e.g. claude-3-5-sonnet-20241022"
+								placeholder="e.g. claude-sonnet-5"
 								bind:value={customImageModel}
 							/>
 						{/if}

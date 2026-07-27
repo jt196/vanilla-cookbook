@@ -262,7 +262,7 @@ describe('compatibility LLM config resolution', () => {
 			})
 		).toEqual({
 			provider: 'openai',
-			model: 'gpt-4o-mini'
+			model: 'gpt-5.6-luna'
 		})
 	})
 })
