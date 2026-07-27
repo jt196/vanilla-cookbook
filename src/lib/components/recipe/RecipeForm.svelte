@@ -171,7 +171,7 @@
 		} catch (err) {
 			console.error('Ingredient cleanup failed:', err)
 			errorMessage = err.message || ''
-			errorCode = err.code || 'recipeForm.msg.cleanIngredientsFailed'
+			errorCode = err.code || (errorMessage ? null : 'recipeForm.msg.cleanIngredientsFailed')
 			ingredientsBeforeClean = null // Clear on failure
 		} finally {
 			cleaningIngredients = false
@@ -229,7 +229,7 @@
 		} catch (err) {
 			console.error('Direction summarization failed:', err)
 			errorMessage = err.message || ''
-			errorCode = err.code || 'recipeForm.msg.summarizeDirectionsFailed'
+			errorCode = err.code || (errorMessage ? null : 'recipeForm.msg.summarizeDirectionsFailed')
 			directionsBeforeSummarize = null // Clear on failure
 		} finally {
 			cleaningDirections = false
@@ -322,7 +322,7 @@
 		} catch (err) {
 			console.error('Recipe translation failed:', err)
 			errorMessage = err.message || ''
-			errorCode = err.code || 'recipeForm.msg.translateFailed'
+			errorCode = err.code || (errorMessage ? null : 'recipeForm.msg.translateFailed')
 		} finally {
 			translatingRecipe = false
 		}
@@ -364,7 +364,7 @@
 		} catch (err) {
 			console.error('Recipe image generation failed:', err)
 			errorMessage = err.message || ''
-			errorCode = err.code || 'recipeForm.msg.imageGenerateFailed'
+			errorCode = err.code || (errorMessage ? null : 'recipeForm.msg.imageGenerateFailed')
 		} finally {
 			generatingRecipeImage = false
 		}
@@ -401,7 +401,7 @@
 		} catch (err) {
 			console.error('Nutrition cleanup failed:', err)
 			errorMessage = err.message || ''
-			errorCode = err.code || 'recipeForm.msg.cleanNutritionFailed'
+			errorCode = err.code || (errorMessage ? null : 'recipeForm.msg.cleanNutritionFailed')
 			nutritionBeforeClean = null
 		} finally {
 			cleaningNutrition = false
@@ -453,7 +453,7 @@
 		} catch (err) {
 			console.error('Tips generation failed:', err)
 			errorMessage = err.message || ''
-			errorCode = err.code || 'recipeForm.msg.addTipsFailed'
+			errorCode = err.code || (errorMessage ? null : 'recipeForm.msg.addTipsFailed')
 			notesBeforeTips = null
 		} finally {
 			addingTips = false

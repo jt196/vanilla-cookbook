@@ -67,9 +67,6 @@ export async function POST({ request, locals }) {
 		return json({ ...recipe, _source: 'AI', _status: 'complete' })
 	} catch (err) {
 		console.error('Image parsing failed:', err)
-		return json(
-			{ error: 'Image parsing failed', code: 'recipeNew.msg.imageParseFailed' },
-			{ status: 500 }
-		)
+		return json({ error: err.message || 'Image parsing failed' }, { status: 500 })
 	}
 }

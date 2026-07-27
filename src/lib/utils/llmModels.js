@@ -49,18 +49,17 @@ export const providers = providerMeta.map((provider) => ({
 // Text models by provider - fast/cheap models for simple text processing
 export const textModels = {
 	openai: [
-		{ value: 'gpt-4o-mini', label: 'GPT-4o Mini (Recommended)' },
-		{ value: 'gpt-3.5-turbo', label: 'GPT-3.5 Turbo (Cheapest)' },
-		{ value: 'gpt-4o', label: 'GPT-4o (Higher quality)' }
+		{ value: 'gpt-5.6-luna', label: 'GPT-5.6 Luna (Recommended, cheapest)' },
+		{ value: 'gpt-5.6-terra', label: 'GPT-5.6 Terra (Higher quality)' }
 	],
 	anthropic: [
-		{ value: 'claude-3-5-haiku-20241022', label: 'Claude 3.5 Haiku (Recommended)' },
-		{ value: 'claude-3-5-sonnet-20241022', label: 'Claude 3.5 Sonnet' }
+		{ value: 'claude-haiku-4-5-20251001', label: 'Claude Haiku 4.5 (Recommended)' },
+		{ value: 'claude-sonnet-5', label: 'Claude Sonnet 5 (Higher quality)' }
 	],
 	google: [
-		{ value: 'gemini-2.0-flash', label: 'Gemini 2.0 Flash (Recommended)' },
-		{ value: 'gemini-1.5-flash', label: 'Gemini 1.5 Flash' },
-		{ value: 'gemini-1.5-pro', label: 'Gemini 1.5 Pro (Higher quality)' }
+		{ value: 'gemini-2.5-flash', label: 'Gemini 2.5 Flash (Recommended)' },
+		{ value: 'gemini-2.5-flash-lite', label: 'Gemini 2.5 Flash Lite (Cheapest)' },
+		{ value: 'gemini-2.5-pro', label: 'Gemini 2.5 Pro (Higher quality)' }
 	],
 	ollama: [
 		{ value: 'llama3.2', label: 'Llama 3.2' },
@@ -74,17 +73,17 @@ export const textModels = {
 // Ollama doesn't reliably support vision
 export const imageModels = {
 	openai: [
-		{ value: 'gpt-4o-mini', label: 'GPT-4o Mini (Recommended)' },
-		{ value: 'gpt-4o', label: 'GPT-4o (Higher quality)' }
+		{ value: 'gpt-5.6-luna', label: 'GPT-5.6 Luna (Recommended, cheapest)' },
+		{ value: 'gpt-5.6-terra', label: 'GPT-5.6 Terra (Higher quality)' }
 	],
 	anthropic: [
-		{ value: 'claude-3-5-sonnet-20241022', label: 'Claude 3.5 Sonnet (Recommended)' },
-		{ value: 'claude-3-5-haiku-20241022', label: 'Claude 3.5 Haiku' }
+		{ value: 'claude-sonnet-5', label: 'Claude Sonnet 5 (Recommended)' },
+		{ value: 'claude-haiku-4-5-20251001', label: 'Claude Haiku 4.5' }
 	],
 	google: [
-		{ value: 'gemini-2.0-flash', label: 'Gemini 2.0 Flash (Recommended)' },
-		{ value: 'gemini-1.5-flash', label: 'Gemini 1.5 Flash' },
-		{ value: 'gemini-1.5-pro', label: 'Gemini 1.5 Pro (Higher quality)' }
+		{ value: 'gemini-2.5-flash', label: 'Gemini 2.5 Flash (Recommended)' },
+		{ value: 'gemini-2.5-flash-lite', label: 'Gemini 2.5 Flash Lite (Cheapest)' },
+		{ value: 'gemini-2.5-pro', label: 'Gemini 2.5 Pro (Higher quality)' }
 	],
 	ollama: [] // Ollama vision support is inconsistent
 }

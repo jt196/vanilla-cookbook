@@ -125,6 +125,6 @@ export async function POST({ request, locals, params }) {
 				{ status: 429 }
 			)
 		}
-		return json({ error: message, code: 'recipeForm.msg.imageGenerateFailed' }, { status: 500 })
+		return json({ error: message }, { status: 500 })
 	}
 }

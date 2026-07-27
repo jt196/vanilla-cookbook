@@ -52,9 +52,6 @@ export async function POST({ request, locals }) {
 		return json({ ...recipe, _source: 'AI', _status: 'complete' })
 	} catch (err) {
 		console.error('Text parse API failed:', err)
-		return json(
-			{ error: 'Failed to parse recipe.', code: 'recipeNew.msg.parseFailed' },
-			{ status: 500 }
-		)
+		return json({ error: err.message || 'Failed to parse recipe.' }, { status: 500 })
 	}
 }
