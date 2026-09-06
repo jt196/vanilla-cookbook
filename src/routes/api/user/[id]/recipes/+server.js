@@ -39,47 +39,35 @@ export async function GET({ params, locals }) {
 			orderBy: {
 				created: 'desc'
 			},
+			// Feed card + client-side search/sort only. Full ingredient/direction text,
+			// times, per-recipe log rows and (deprecated) categories are not read here;
+			// the recipe detail page loads those. `ingredients` is kept until search
+			// moves server-side (phase 2) so client-side ingredient search keeps working.
 			select: {
 				uid: true,
 				name: true,
 				image_url: true,
 				ingredients: true,
 				source: true,
-				source_url: true,
-				prep_time: true,
-				cook_time: true,
-				total_time: true,
-				servings: true,
 				rating: true,
 				created: true,
-				is_public: true,
-				is_pinned: true,
-				in_trash: true,
 				on_favorites: true,
 				parentRecipeId: true,
 				userId: true,
 				auth_user: {
 					select: {
-						id: true,
 						username: true
 					}
 				},
-				categories: {
+				log: {
 					select: {
-						category: {
-							select: {
-								name: true,
-								uid: true
-							}
-						}
+						cooked: true
 					}
 				},
-				log: true,
 				photos: {
 					orderBy: [{ isMain: 'desc' }, { id: 'asc' }],
 					select: {
-						id: true,
-						fileType: true
+						id: true
 					}
 				}
 			}
@@ -88,21 +76,22 @@ export async function GET({ params, locals }) {
 		let favouriteLookup = new Set()
 		let forkLookup = new Set()
 		if (user && recipes.length > 0) {
-			const recipeUids = recipes.map((recipe) => recipe.uid)
-
-			// Run favorites and forks queries in parallel
+			// Fetch the viewer's own favourites and forks in full rather than filtering
+			// by the loaded recipe UIDs. That UID list can run to thousands of entries,
+			// which overflows SQLite's bound-parameter limit (`recipeUid: { in: [...] }`).
+			// Both result sets are bounded by the viewer's own activity, and the Set
+			// lookups below intersect them with the page.
 			const [favs, forks] = await Promise.all([
 				prisma.recipeFavorite.findMany({
 					where: {
-						userId: user.userId,
-						recipeUid: { in: recipeUids }
+						userId: user.userId
 					},
 					select: { recipeUid: true }
 				}),
 				prisma.recipe.findMany({
 					where: {
 						userId: user.userId,
-						parentRecipeId: { in: recipeUids }
+						parentRecipeId: { not: null }
 					},
 					select: { parentRecipeId: true }
 				})

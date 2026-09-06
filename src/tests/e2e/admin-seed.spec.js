@@ -124,6 +124,11 @@ test('fresh install admin seed, login, and page smoke tests', async ({ page }, t
 	const firstRecipeHref = await firstRecipeLink.getAttribute('href')
 	expect(firstRecipeHref).toBeTruthy()
 
+	await assertPage(page, '/recipes', { heading: 'All Recipes' }, projectName)
+	for (const name of seededRecipes) {
+		await expect(page.getByRole('link', { name })).toBeVisible()
+	}
+
 	await assertPage(page, '/users', { heading: 'Vanilla Users' }, projectName)
 	await assertPage(page, '/recipe/new', { heading: 'New Recipe' }, projectName)
 	await assertPage(page, `/user/${userId}/shopping`, { heading: 'Shopping' }, projectName)
