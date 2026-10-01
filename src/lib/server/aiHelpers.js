@@ -89,7 +89,7 @@ export async function generateImageBuffer(aiConfig, prompt) {
 			(aiConfig.model && aiConfig.model.trim()) ||
 			env.GEMINI_IMAGE_GENERATION_MODEL ||
 			env.LLM_IMAGE_GENERATION_MODEL ||
-			'gemini-2.5-flash-image'
+			'gemini-3.1-flash-image'
 		const response = await fetch(
 			`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(env.GOOGLE_API_KEY)}`,
 			{

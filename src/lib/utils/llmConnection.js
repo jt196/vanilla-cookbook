@@ -252,7 +252,7 @@ async function testImageGeneration(provider, apiConfig, envValue, model, start, 
 		provider === 'openai'
 			? 'gpt-image-1'
 			: provider === 'google'
-				? 'gemini-2.5-flash-image'
+				? 'gemini-3.1-flash-image'
 				: provider === 'ollama'
 					? 'sdxl'
 					: defaults.image || defaults.text

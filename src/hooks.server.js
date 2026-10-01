@@ -9,7 +9,8 @@ import {
 	getAvailableAiProviders,
 	getAvailableEmbeddingProviders,
 	resolveEmbeddingProvider,
-	resolveProviderSelection
+	resolveProviderSelection,
+	resolveRetiredModel
 } from '$lib/utils/llmModels'
 
 const envTrue = (v) => typeof v === 'string' && /^(true|1|yes|on)$/i.test(v.trim())
@@ -125,9 +126,11 @@ export const handle = async ({ event, resolve }) => {
 		const usingPreferredProvider = llmProvider && llmProvider === preferredProvider
 		const usingPreferredImageProvider =
 			llmImageProvider && llmImageProvider === preferredImageProvider
-		const textModel = usingPreferredProvider ? s?.llmTextModel || env.LLM_TEXT_MODEL || null : null
+		const textModel = usingPreferredProvider
+			? resolveRetiredModel(llmProvider, s?.llmTextModel || env.LLM_TEXT_MODEL) || null
+			: null
 		const imageModel = usingPreferredImageProvider
-			? s?.llmImageModel || env.LLM_IMAGE_MODEL || null
+			? resolveRetiredModel(llmImageProvider, s?.llmImageModel || env.LLM_IMAGE_MODEL) || null
 			: null
 		const preferredImageGenerationProvider = s?.llmImageGenerationProvider || preferredProvider
 		const {
@@ -149,7 +152,10 @@ export const handle = async ({ event, resolve }) => {
 		const usingPreferredImageGenerationProvider =
 			llmImageGenerationProvider && llmImageGenerationProvider === preferredImageGenerationProvider
 		const imageGenerationModel = usingPreferredImageGenerationProvider
-			? s?.llmImageGenerationModel || env.LLM_IMAGE_GENERATION_MODEL || null
+			? resolveRetiredModel(
+					llmImageGenerationProvider,
+					s?.llmImageGenerationModel || env.LLM_IMAGE_GENERATION_MODEL
+				) || null
 			: null
 
 		ai = {

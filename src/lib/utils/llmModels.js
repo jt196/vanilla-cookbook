@@ -57,9 +57,8 @@ export const textModels = {
 		{ value: 'claude-sonnet-5', label: 'Claude Sonnet 5 (Higher quality)' }
 	],
 	google: [
-		{ value: 'gemini-2.5-flash', label: 'Gemini 2.5 Flash (Recommended)' },
-		{ value: 'gemini-2.5-flash-lite', label: 'Gemini 2.5 Flash Lite (Cheapest)' },
-		{ value: 'gemini-2.5-pro', label: 'Gemini 2.5 Pro (Higher quality)' }
+		{ value: 'gemini-3.8-flash', label: 'Gemini 3.8 Flash (Recommended)' },
+		{ value: 'gemini-3.5-flash-lite', label: 'Gemini 3.5 Flash-Lite (Cheapest)' }
 	],
 	ollama: [
 		{ value: 'llama3.2', label: 'Llama 3.2' },
@@ -81,9 +80,8 @@ export const imageModels = {
 		{ value: 'claude-haiku-4-5-20251001', label: 'Claude Haiku 4.5' }
 	],
 	google: [
-		{ value: 'gemini-2.5-flash', label: 'Gemini 2.5 Flash (Recommended)' },
-		{ value: 'gemini-2.5-flash-lite', label: 'Gemini 2.5 Flash Lite (Cheapest)' },
-		{ value: 'gemini-2.5-pro', label: 'Gemini 2.5 Pro (Higher quality)' }
+		{ value: 'gemini-3.8-flash', label: 'Gemini 3.8 Flash (Recommended)' },
+		{ value: 'gemini-3.5-flash-lite', label: 'Gemini 3.5 Flash-Lite (Cheapest)' }
 	],
 	ollama: [] // Ollama vision support is inconsistent
 }
@@ -97,15 +95,40 @@ export const imageGenerationModels = {
 	anthropic: [],
 	google: [
 		{
-			value: 'gemini-2.5-flash-image',
-			label: 'Gemini 2.5 Flash Image (Recommended)'
+			value: 'gemini-3.1-flash-image',
+			label: 'Gemini 3.1 Flash Image (Recommended)'
 		},
 		{
-			value: 'gemini-3-pro-image-preview',
-			label: 'Gemini 3 Pro Image Preview'
+			value: 'gemini-3-pro-image',
+			label: 'Gemini 3 Pro Image'
 		}
 	],
 	ollama: []
+}
+
+// Former defaults that Google no longer serves to new API users, or has shut down, mapped to
+// their replacement (https://ai.google.dev/gemini-api/docs/deprecations). Sites that saved the
+// admin form stored the then-default id without choosing it, so these are remapped on read.
+// Non-default ids an admin picked on purpose (e.g. gemini-2.5-pro) are left alone.
+export const retiredModels = {
+	google: {
+		'gemini-2.5-flash': 'gemini-3.8-flash',
+		'gemini-2.5-flash-image': 'gemini-3.1-flash-image',
+		'gemini-3-pro-image-preview': 'gemini-3-pro-image',
+		'gemini-3.1-flash-image-preview': 'gemini-3.1-flash-image'
+	}
+}
+
+/**
+ * Map a stored model id that the provider has retired to its replacement.
+ *
+ * @param {string | null | undefined} provider
+ * @param {string | null | undefined} model
+ * @returns {string | null | undefined}
+ */
+export function resolveRetiredModel(provider, model) {
+	if (!provider || !model) return model
+	return retiredModels[provider]?.[model] || model
 }
 
 /**
