@@ -6,23 +6,54 @@
 	import Theme from '$lib/components/svg/Theme.svelte'
 	import Settings from '$lib/components/svg/Settings.svelte'
 	import List from '$lib/components/svg/List.svelte'
-	import Button from '$lib/components/ui/Button.svelte'
+	import DropdownMenu from '$lib/components/ui/DropdownMenu.svelte'
+	import TickSymbol from '$lib/components/svg/TickSymbol.svelte'
 	import { t } from '$lib/stores/locale.js'
+	import { themePreferences, THEME_LIGHT, THEME_DARK } from '$lib/utils/theme.js'
 
-	/** @type {{user: any, settings: any, theme: string, onToggleTheme: () => void, mobile?: boolean}} */
-	let { user, settings, theme, onToggleTheme, mobile = false } = $props()
+	/** @type {{user: any, settings: any, themePreference: 'light' | 'dracula' | 'auto', onThemeChange: (preference: 'light' | 'dracula' | 'auto') => void, mobile?: boolean}} */
+	let { user, settings, themePreference, onThemeChange, mobile = false } = $props()
+
+	/** @param {string} preference */
+	function themeLabel(preference) {
+		if (preference === THEME_LIGHT) return $t('nav.themeLight')
+		if (preference === THEME_DARK) return $t('nav.themeDark')
+		return $t('nav.themeAuto')
+	}
+
+	/**
+	 * Pick a theme from the desktop dropdown and close it.
+	 * @param {MouseEvent & { currentTarget: HTMLElement }} event
+	 * @param {'light' | 'dracula' | 'auto'} preference
+	 */
+	function chooseTheme(event, preference) {
+		onThemeChange(preference)
+		event.currentTarget.closest('details')?.removeAttribute('open')
+	}
 </script>
 
 {#if mobile}
 	<!-- Mobile menu layout - list items only (parent provides <ul>) -->
 	<li>
-		<button
-			aria-label={$t('nav.toggleTheme')}
-			onclick={onToggleTheme}
-			class="flex items-center gap-2 text-primary">
-			<Theme {theme} width="20px" />
-			<span>{$t('nav.toggleTheme')}</span>
-		</button>
+		<div class="flex flex-col items-stretch gap-2 hover:bg-transparent active:bg-transparent">
+			<span id="mobile-theme-label" class="text-primary">
+				{$t('nav.theme')} · {themeLabel(themePreference)}
+			</span>
+			<div class="join w-full" role="group" aria-labelledby="mobile-theme-label">
+				{#each themePreferences as preference (preference)}
+					<button
+						type="button"
+						class="btn btn-sm join-item flex-1"
+						class:btn-primary={themePreference === preference}
+						aria-label={themeLabel(preference)}
+						title={themeLabel(preference)}
+						aria-pressed={themePreference === preference}
+						onclick={() => onThemeChange(preference)}>
+						<Theme theme={preference} width="16px" height="16px" />
+					</button>
+				{/each}
+			</div>
+		</div>
 	</li>
 	<li>
 		<a href="/recipes" class="flex items-center gap-2 text-primary">
@@ -61,14 +92,33 @@
 {:else}
 	<!-- Desktop layout - horizontal icons -->
 	<div class="flex items-center gap-2 text-base-content">
-		<Button
-			style="ghost"
-			color="neutral"
-			class="btn-circle text-primary shadow-none border-none hover:bg-base-300"
-			aria-label={$t('nav.toggleTheme')}
-			onclick={onToggleTheme}>
-			<Theme {theme} width="25px" />
-		</Button>
+		<DropdownMenu
+			align="end"
+			summaryClass="btn btn-ghost btn-circle text-primary"
+			summaryAriaLabel={`${$t('nav.theme')}: ${themeLabel(themePreference)}`}
+			contentClass="menu dropdown-content bg-base-100 rounded-box z-50 w-48 p-2 shadow-sm">
+			{#snippet trigger()}
+				<Theme theme={themePreference} width="25px" />
+			{/snippet}
+			<ul>
+				{#each themePreferences as preference (preference)}
+					<li>
+						<button
+							type="button"
+							class="flex items-center gap-2"
+							class:menu-active={themePreference === preference}
+							aria-pressed={themePreference === preference}
+							onclick={(event) => chooseTheme(event, preference)}>
+							<Theme theme={preference} width="16px" height="16px" />
+							<span class="flex-1 text-left">{themeLabel(preference)}</span>
+							{#if themePreference === preference}
+								<TickSymbol width="14px" height="14px" />
+							{/if}
+						</button>
+					</li>
+				{/each}
+			</ul>
+		</DropdownMenu>
 
 		<a
 			href="/recipes"

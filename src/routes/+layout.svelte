@@ -12,6 +12,7 @@
 	import NavLinks from '$lib/components/ui/NavLinks.svelte'
 	import Spinner from '$lib/components/ui/Spinner.svelte'
 	import { langStore, isRtl, t } from '$lib/stores/locale.js'
+	import { normalizeThemePreference, resolveTheme } from '$lib/utils/theme.js'
 
 	/** @type {{data: PageData, children?: import('svelte').Snippet}} */
 	let { data, children } = $props()
@@ -33,31 +34,30 @@
 	})
 
 	const siteName = import.meta.env.VITE_SITE_NAME || 'Vanilla Cookbook'
-	const LIGHT_THEME = 'light'
-	const DARK_THEME = 'dracula'
-	const LEGACY_DARK = 'dark'
-
-	function normalizeTheme(value) {
-		if (value === LIGHT_THEME) return LIGHT_THEME
-		if (value === DARK_THEME || value === LEGACY_DARK) return DARK_THEME
-		return LIGHT_THEME
-	}
-
-	// Get initial theme value
-	function getInitialTheme() {
-		if (!browser) return 'dark'
-
-		const prefersDark = window.matchMedia?.('(prefers-color-scheme: dark)').matches
-
-		// 1. If no user, use browser preference
-		if (!user) {
-			return prefersDark ? DARK_THEME : LIGHT_THEME
+	// Theme preference: 'light', 'dracula' (dark) or 'auto' (follow the OS setting).
+	// Logged-in users keep theirs on the account; visitors keep it in localStorage.
+	function getInitialPreference() {
+		if (!browser) return 'auto'
+		if (user) return normalizeThemePreference(user.theme)
+		try {
+			return normalizeThemePreference(localStorage.getItem('theme'))
+		} catch {
+			return 'auto'
 		}
-		// 2. If user is logged in, use their saved theme or fall back to browser
-		return normalizeTheme(user.theme ?? (prefersDark ? DARK_THEME : LIGHT_THEME))
 	}
 
-	let theme = $state(getInitialTheme())
+	const colorSchemeQuery = browser ? window.matchMedia?.('(prefers-color-scheme: dark)') : null
+	let themePreference = $state(getInitialPreference())
+	let systemPrefersDark = $state(!!colorSchemeQuery?.matches)
+	let theme = $derived(resolveTheme(themePreference, systemPrefersDark))
+
+	// Follow OS light/dark changes live while in auto mode
+	$effect(() => {
+		if (!colorSchemeQuery) return
+		const update = (event) => (systemPrefersDark = event.matches)
+		colorSchemeQuery.addEventListener('change', update)
+		return () => colorSchemeQuery.removeEventListener('change', update)
+	})
 
 	// Apply theme
 	$effect(() => {
@@ -66,18 +66,21 @@
 		}
 	})
 
-	// Toggle theme and save to user
-	function toggleTheme() {
-		theme = theme === LIGHT_THEME ? DARK_THEME : LIGHT_THEME
-		document.documentElement.setAttribute('data-theme', theme)
-		localStorage.setItem('theme', theme)
+	/** @param {'light' | 'dracula' | 'auto'} preference */
+	function setThemePreference(preference) {
+		themePreference = preference
+		try {
+			localStorage.setItem('theme', preference)
+		} catch {
+			// Storage can be unavailable (private mode); the choice still applies for this visit
+		}
 
 		if (user) {
-			user.theme = theme
+			user.theme = preference
 			fetch(`/api/user/${user.userId}`, {
 				method: 'PUT',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify(user)
+				body: JSON.stringify({ theme: preference })
 			})
 		}
 	}
@@ -120,7 +123,7 @@
 			<div class="navbar-end">
 				<!-- Desktop Navigation - hidden on mobile -->
 				<div class="hidden lg:flex">
-					<NavLinks {user} {settings} {theme} onToggleTheme={toggleTheme} />
+					<NavLinks {user} {settings} {themePreference} onThemeChange={setThemePreference} />
 				</div>
 
 				<!-- Mobile Hamburger Menu -->
@@ -145,7 +148,12 @@
 					</div>
 					<ul
 						class="dropdown-content menu bg-base-100 rounded-box z-50 mt-3 w-52 p-2 shadow-lg border border-base-300">
-						<NavLinks {user} {settings} {theme} onToggleTheme={toggleTheme} mobile={true} />
+						<NavLinks
+							{user}
+							{settings}
+							{themePreference}
+							onThemeChange={setThemePreference}
+							mobile={true} />
 					</ul>
 				</div>
 			</div>

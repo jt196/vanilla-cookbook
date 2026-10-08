@@ -45,7 +45,10 @@ export default {
     "register": "التسجيل",
     "logout": "تسجيل الخروج",
     "menu": "القائمة",
-    "toggleTheme": "تبديل المظهر",
+    "theme": "السمة",
+    "themeLight": "فاتح",
+    "themeDark": "داكن",
+    "themeAuto": "تلقائي",
     "cookbook": "كتاب وصفات {username}"
   },
   "auth": {

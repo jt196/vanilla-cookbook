@@ -45,7 +45,10 @@ export default {
     "register": "Regisztráció",
     "logout": "Kijelentkezés",
     "menu": "Menü",
-    "toggleTheme": "Téma váltása",
+    "theme": "Téma",
+    "themeLight": "Világos",
+    "themeDark": "Sötét",
+    "themeAuto": "Automatikus",
     "cookbook": "{username} szakácskönyve"
   },
   "auth": {

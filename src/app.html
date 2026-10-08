@@ -7,19 +7,16 @@
 		<!-- Apply user's preferred theme before Svelte hydrates -->
 		<script>
 			try {
+				// Mirrors resolveTheme() in src/lib/utils/theme.js (can't import before hydration)
 				const stored = localStorage.getItem('theme')
 				const prefersDark = window.matchMedia?.('(prefers-color-scheme: dark)').matches
 
 				const LIGHT = 'light'
 				const DARK = 'dracula'
 
-				const normalize = (value) => {
-					if (value === LIGHT) return LIGHT
-					if (value === DARK || value === 'dark') return DARK
-					return LIGHT
-				}
-
-				const theme = normalize(stored || (prefersDark ? DARK : LIGHT))
+				let theme = prefersDark ? DARK : LIGHT
+				if (stored === LIGHT) theme = LIGHT
+				else if (stored === DARK || stored === 'dark') theme = DARK
 				document.documentElement.setAttribute('data-theme', theme)
 			} catch (e) {
 				document.documentElement.setAttribute('data-theme', 'dracula')

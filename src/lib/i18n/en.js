@@ -47,7 +47,10 @@ export default {
 		register: 'Register',
 		logout: 'Logout',
 		menu: 'Menu',
-		toggleTheme: 'Toggle theme',
+		theme: 'Theme',
+		themeLight: 'Light',
+		themeDark: 'Dark',
+		themeAuto: 'Auto',
 		cookbook: "{username}'s Cookbook"
 	},
 

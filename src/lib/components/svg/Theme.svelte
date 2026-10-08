@@ -5,9 +5,16 @@
 	let { width = '20px', height = '20px', fill = 'currentColor', theme = 'light' } = $props()
 
 	const isDark = $derived(theme === 'dracula' || theme === 'dark')
+	const isAuto = $derived(theme === 'auto')
 </script>
 
-{#if isDark}
+{#if isAuto}
+	<SvgBase {width} {height} {fill} viewBox="0 0 512 512">
+		<!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
+		<path
+			d="M448 256c0-106-86-192-192-192l0 384c106 0 192-86 192-192zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256z" />
+	</SvgBase>
+{:else if isDark}
 	<SvgBase {width} {height} {fill} viewBox="0 0 384 512">
 		<!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
 		<path

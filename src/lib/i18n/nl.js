@@ -45,7 +45,10 @@ export default {
     "register": "Registreren",
     "logout": "Uitloggen",
     "menu": "Menu",
-    "toggleTheme": "Thema wisselen",
+    "theme": "Thema",
+    "themeLight": "Licht",
+    "themeDark": "Donker",
+    "themeAuto": "Automatisch",
     "cookbook": "{username}'s Kookboek"
   },
   "auth": {
