@@ -47,12 +47,13 @@
 	let isCopying = $state(false)
 	let showCopyConfirm = $state(false)
 
-	const canDuplicate =
+	const canDuplicate = $derived(
 		!!viewerUserId &&
-		viewOnly &&
-		recipe?.userId !== viewerUserId &&
-		!recipe?.parentRecipeId &&
-		!recipe?.duplicatedByViewer
+			viewOnly &&
+			recipe?.userId !== viewerUserId &&
+			!recipe?.parentRecipeId &&
+			!recipe?.duplicatedByViewer
+	)
 
 	async function handleDelete(uid) {
 		pendingDeleteUid = uid

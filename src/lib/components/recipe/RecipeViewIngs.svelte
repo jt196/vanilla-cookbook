@@ -1,4 +1,5 @@
 <script>
+	import { untrack } from 'svelte'
 	import Scale from '$lib/components/ui/Scale.svelte'
 	import RecipeViewIng from '$lib/components/recipe/RecipeViewIng.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
@@ -20,9 +21,9 @@
 		baseServings = 1
 	} = $props()
 
-	let displayExtra = $state(user.ingExtra)
-	let displayDryMatch = $state(user.ingMatch)
-	let displayOriginal = $state(user.ingOriginal)
+	let displayExtra = $state(untrack(() => user.ingExtra))
+	let displayDryMatch = $state(untrack(() => user.ingMatch))
+	let displayOriginal = $state(untrack(() => user.ingOriginal))
 
 	let hasDefaultDensity = $derived(sanitizedIngredients.some((i) => i.usedDefaultDensity === true))
 

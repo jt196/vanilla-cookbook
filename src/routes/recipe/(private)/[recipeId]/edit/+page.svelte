@@ -1,4 +1,5 @@
 <script>
+	import { untrack } from 'svelte'
 	import { deleteRecipeById, updateRecipe } from '$lib/utils/crud'
 	import { goto } from '$app/navigation'
 	import RecipeForm from '$lib/components/recipe/RecipeForm.svelte'
@@ -21,14 +22,16 @@
 	// /** @type {{data: PageData}} */
 	let { data } = $props()
 
-	let recipe = $state(data?.recipe ?? {})
-	let aiEnabled = $state(data?.aiEnabled ?? false)
-	let aiProvider = $state(data?.aiProvider ?? null)
-	let aiSelectedProvider = $state(data?.aiSelectedProvider ?? null)
-	let aiSelectedProviderConfigured = $state(data?.aiSelectedProviderConfigured ?? false)
-	let isAdmin = $state(data?.isAdmin ?? false)
-	let userUnits = $state(data?.userUnits ?? 'metric')
-	let userLanguage = $state(data?.userLanguage ?? 'eng')
+	let recipe = $state(untrack(() => data?.recipe ?? {}))
+	let aiEnabled = $state(untrack(() => data?.aiEnabled ?? false))
+	let aiProvider = $state(untrack(() => data?.aiProvider ?? null))
+	let aiSelectedProvider = $state(untrack(() => data?.aiSelectedProvider ?? null))
+	let aiSelectedProviderConfigured = $state(
+		untrack(() => data?.aiSelectedProviderConfigured ?? false)
+	)
+	let isAdmin = $state(untrack(() => data?.isAdmin ?? false))
+	let userUnits = $state(untrack(() => data?.userUnits ?? 'metric'))
+	let userLanguage = $state(untrack(() => data?.userLanguage ?? 'eng'))
 	let showDeleteConfirm = $state(false)
 	let saving = $state(false)
 	let feedbackMessage = $state('')

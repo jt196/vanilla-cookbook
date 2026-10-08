@@ -30,24 +30,28 @@
 		children
 	} = $props()
 
-	const tableClass = [
-		'table',
-		sizeClass[size] ?? '',
-		zebra || striped ? 'table-zebra' : '',
-		pinRows ? 'table-pin-rows' : '',
-		pinCols ? 'table-pin-cols' : '',
-		className
-	]
-		.filter(Boolean)
-		.join(' ')
+	const tableClass = $derived(
+		[
+			'table',
+			sizeClass[size] ?? '',
+			zebra || striped ? 'table-zebra' : '',
+			pinRows ? 'table-pin-rows' : '',
+			pinCols ? 'table-pin-cols' : '',
+			className
+		]
+			.filter(Boolean)
+			.join(' ')
+	)
 
-	const wrapperClass = [
-		'overflow-x-auto',
-		bordered ? 'rounded-box border border-base-300 bg-base-100' : '',
-		containerClass
-	]
-		.filter(Boolean)
-		.join(' ')
+	const wrapperClass = $derived(
+		[
+			'overflow-x-auto',
+			bordered ? 'rounded-box border border-base-300 bg-base-100' : '',
+			containerClass
+		]
+			.filter(Boolean)
+			.join(' ')
+	)
 </script>
 
 <div class={wrapperClass}>

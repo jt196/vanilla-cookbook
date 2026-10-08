@@ -4,10 +4,10 @@
 	/** @type {{data: any}} */
 	let { data } = $props()
 
-	const { recipes, user, semanticAvailable } = data
-	const { viewingUserId, requestedUserId, publicProfile } = user
+	const { recipes, user, semanticAvailable } = $derived(data)
+	const { viewingUserId, requestedUserId, publicProfile } = $derived(user)
 
-	const viewMode = viewingUserId === requestedUserId ? 'owner' : 'social'
+	const viewMode = $derived(viewingUserId === requestedUserId ? 'owner' : 'social')
 </script>
 
 <RecipeFeed

@@ -15,8 +15,8 @@
 		children
 	} = $props()
 
-	const computedAriaHidden = ariaHidden ?? (title ? undefined : 'true')
-	const computedRole = role ?? (title ? 'img' : 'presentation')
+	const computedAriaHidden = $derived(ariaHidden ?? (title ? undefined : 'true'))
+	const computedRole = $derived(role ?? (title ? 'img' : 'presentation'))
 </script>
 
 <svg

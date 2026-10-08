@@ -4,7 +4,7 @@
 	/** @type {{data: any, children?: import('svelte').Snippet}} */
 	let { data, children } = $props()
 
-	const { user } = $state(data)
+	const user = $derived(data.user)
 </script>
 
 <div role="tablist" class="tabs tabs-box">

@@ -1,4 +1,5 @@
 <script>
+	import { untrack } from 'svelte'
 	import { systems, languages } from '$lib/utils/config.js'
 	import { invalidateAll } from '$app/navigation'
 	import FeedbackMessage from '$lib/components/ui/FeedbackMessage.svelte'
@@ -9,7 +10,7 @@
 
 	/** @type {{data: any}} */
 	let { data } = $props()
-	const { user, semanticEnabled } = $state(data)
+	const { user, semanticEnabled } = $state(untrack(() => data))
 	let settingsFeedback = $state('')
 	let savedLanguage = $state(user.language)
 

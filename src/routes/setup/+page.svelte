@@ -12,7 +12,7 @@
 	import { t } from '$lib/stores/locale.js'
 
 	let { data } = $props()
-	const { passwordRequirements, passwordRequirementsDescription } = data
+	const { passwordRequirements, passwordRequirementsDescription } = $derived(data)
 
 	const passwordEnv = $derived(buildPasswordEnv(passwordRequirements))
 
