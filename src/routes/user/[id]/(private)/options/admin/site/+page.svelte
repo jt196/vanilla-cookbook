@@ -444,30 +444,25 @@
 		method="POST"
 		action="?/updateAdminSettings"
 		onsubmit={updateAdminSettings}
-		class="flex flex-col gap-3"
-	>
+		class="flex flex-col gap-3">
 		<Checkbox
 			name="registrationAllowed"
 			bind:checked={settings.registrationAllowed}
 			legend={$t('admin.site.allowRegistrations')}
 			size="sm"
-			color="primary"
-		>
+			color="primary">
 			{settings.registrationAllowed
 				? $t('admin.site.registrationEnabled')
-				: $t('admin.site.registrationDisabled')}</Checkbox
-		>
+				: $t('admin.site.registrationDisabled')}</Checkbox>
 		<Checkbox
 			name="requireLogin"
 			bind:checked={settings.requireLogin}
 			legend={$t('admin.site.requireLogin')}
 			size="sm"
-			color="primary"
-		>
+			color="primary">
 			{settings.requireLogin
 				? $t('admin.site.requireLoginEnabled')
-				: $t('admin.site.requireLoginDisabled')}</Checkbox
-		>
+				: $t('admin.site.requireLoginDisabled')}</Checkbox>
 		<InfoText>{$t('admin.site.requireLoginHint')}</InfoText>
 		{#if oidcEnabled}
 			<Checkbox
@@ -475,12 +470,10 @@
 				bind:checked={settings.oidcAutoProvision}
 				legend={$t('admin.site.oidcAutoProvision')}
 				size="sm"
-				color="primary"
-			>
+				color="primary">
 				{settings.oidcAutoProvision
 					? $t('admin.site.oidcEnabled')
-					: $t('admin.site.oidcDisabled')}</Checkbox
-			>
+					: $t('admin.site.oidcDisabled')}</Checkbox>
 			<InfoText>{$t('admin.site.oidcHint')}</InfoText>
 		{/if}
 		<footer class="flex flex-col gap-2">
@@ -503,8 +496,7 @@
 				bind:checked={llmEnabled}
 				legend={$t('admin.site.enableLlm')}
 				size="sm"
-				color="primary"
-			>
+				color="primary">
 				{llmEnabled ? $t('admin.site.llmEnabled') : $t('admin.site.llmDisabled')}
 			</Checkbox>
 
@@ -517,8 +509,7 @@
 							variant="outline"
 							onclick={runEnabledProviderTests}
 							disabled={providerTestsRunning}
-							loading={providerTestsRunning}
-						>
+							loading={providerTestsRunning}>
 							{providerTestsRunning
 								? $t('admin.site.testingProviders')
 								: $t('admin.site.testProviders')}
@@ -533,24 +524,21 @@
 					name="llmProvider"
 					options={availableProviderOptions}
 					bind:selected={llmProvider}
-					legend={$t('admin.site.provider')}
-				/>
+					legend={$t('admin.site.provider')} />
 
 				<div class="flex flex-col gap-2">
 					<Dropdown
 						name="textModel"
 						options={textModelList}
 						bind:selected={textModelSelection}
-						legend={$t('admin.site.model')}
-					/>
+						legend={$t('admin.site.model')} />
 					{#if showCustomTextInput}
 						<Input
 							type="text"
 							id="customTextModel"
 							label={$t('admin.site.customModel')}
 							placeholder="e.g. gpt-5.6-terra"
-							bind:value={customTextModel}
-						/>
+							bind:value={customTextModel} />
 					{/if}
 				</div>
 				<h4>{$t('admin.site.imageOcr')}</h4>
@@ -560,23 +548,20 @@
 						name="imageProvider"
 						options={availableProviderOptions}
 						bind:selected={llmImageProvider}
-						legend={$t('admin.site.provider')}
-					/>
+						legend={$t('admin.site.provider')} />
 					{#if supportsImages}
 						<Dropdown
 							name="imageModel"
 							options={imageModelList}
 							bind:selected={imageModelSelection}
-							legend={$t('admin.site.model')}
-						/>
+							legend={$t('admin.site.model')} />
 						{#if showCustomImageInput}
 							<Input
 								type="text"
 								id="customImageModel"
 								label={$t('admin.site.customModel')}
 								placeholder="e.g. claude-sonnet-5"
-								bind:value={customImageModel}
-							/>
+								bind:value={customImageModel} />
 						{/if}
 					{:else}
 						<InfoText>
@@ -595,23 +580,20 @@
 						name="imageGenerationProvider"
 						options={availableProviderOptions}
 						bind:selected={llmImageGenerationProvider}
-						legend={$t('admin.site.provider')}
-					/>
+						legend={$t('admin.site.provider')} />
 					{#if supportsImageGeneration}
 						<Dropdown
 							name="imageGenerationModel"
 							options={imageGenerationModelList}
 							bind:selected={imageGenerationModelSelection}
-							legend={$t('admin.site.model')}
-						/>
+							legend={$t('admin.site.model')} />
 						{#if showCustomImageGenerationInput}
 							<Input
 								type="text"
 								id="customImageGenerationModel"
 								label={$t('admin.site.customModel')}
 								placeholder="e.g. gpt-image-1"
-								bind:value={customImageGenerationModel}
-							/>
+								bind:value={customImageGenerationModel} />
 						{/if}
 					{:else}
 						<InfoText>
@@ -632,8 +614,7 @@
 						legend={$t('admin.site.enableEmbeddings')}
 						size="sm"
 						color="primary"
-						disabled={!(llmConfig.semanticAvailableProviders || []).length}
-					>
+						disabled={!(llmConfig.semanticAvailableProviders || []).length}>
 						{semanticEnabled
 							? $t('admin.site.embeddingsEnabled')
 							: $t('admin.site.embeddingsDisabled')}
@@ -646,16 +627,14 @@
 						options={semanticProviderOptions}
 						bind:selected={semanticEmbeddingProvider}
 						legend={$t('admin.site.provider')}
-						disabled={!semanticEnabled}
-					/>
+						disabled={!semanticEnabled} />
 					{#if semanticModelOptions.length > 0}
 						<Dropdown
 							name="semanticEmbeddingModel"
 							options={semanticModelOptions}
 							bind:selected={semanticEmbeddingModel}
 							legend={$t('admin.site.model')}
-							disabled={!semanticEnabled || !semanticProviderConfigured}
-						/>
+							disabled={!semanticEnabled || !semanticProviderConfigured} />
 					{:else}
 						<InfoText>{$t('admin.site.selectProviderFirst')}</InfoText>
 					{/if}
@@ -685,8 +664,7 @@
 								class="progress progress-info w-full"
 								value={embeddingPercent}
 								max="100"
-								aria-label={$t('admin.site.embeddingProgressAria')}
-							></progress>
+								aria-label={$t('admin.site.embeddingProgressAria')}></progress>
 							<p class="text-xs text-base-content/70">
 								{embeddingPercent}{$t('admin.site.percentComplete')}
 							</p>
@@ -706,8 +684,7 @@
 									type="button"
 									class="self-start w-auto"
 									onclick={() => generateEmbeddingBatch(false)}
-									disabled={embeddingInProgress || !canGenerateEmbeddings}
-								>
+									disabled={embeddingInProgress || !canGenerateEmbeddings}>
 									{embeddingInProgress
 										? $t('admin.site.generatingEmbeddings')
 										: $t('admin.site.generateEmbeddings')}
@@ -717,8 +694,7 @@
 										type="button"
 										class="self-start w-auto"
 										onclick={() => generateEmbeddingBatch(true)}
-										disabled={embeddingInProgress || !canRegenerateMismatched}
-									>
+										disabled={embeddingInProgress || !canRegenerateMismatched}>
 										{$t('admin.site.regenerateMismatched')}
 									</Button>
 								{/if}
@@ -740,8 +716,8 @@
 			{/if}
 
 			<footer class="flex flex-col gap-2">
-				<Button type="submit" class="self-start w-auto">{$t('admin.site.updateLlmSettings')}</Button
-				>
+				<Button type="submit" class="self-start w-auto"
+					>{$t('admin.site.updateLlmSettings')}</Button>
 				<FeedbackMessage message={llmFeedback} messageCode={llmFeedbackCode} inline />
 			</footer>
 		</form>
@@ -798,8 +774,7 @@
 				onclick={createManualBackup}
 				disabled={backupInProgress}
 				class="self-start w-auto"
-				loading={backupInProgress}
-			>
+				loading={backupInProgress}>
 				{backupInProgress ? $t('admin.site.creatingBackup') : $t('admin.site.backupNow')}
 			</Button>
 			<FeedbackMessage message={backupFeedback} messageCode={backupFeedbackCode} inline />
@@ -813,11 +788,9 @@
 						<TableCell tag="th">{$t('admin.site.backupType')}</TableCell>
 						<TableCell tag="th">{$t('admin.site.backupCreated')}</TableCell>
 						<TableCell tag="th" class="hidden sm:table-cell"
-							>{$t('admin.site.backupSize')}</TableCell
-						>
+							>{$t('admin.site.backupSize')}</TableCell>
 						<TableCell tag="th" class="hidden sm:table-cell"
-							>{$t('admin.site.backupFilename')}</TableCell
-						>
+							>{$t('admin.site.backupFilename')}</TableCell>
 					</TableRow>
 				</TableHead>
 				<TableBody>
@@ -891,16 +864,14 @@
 			type="button"
 			style="outline"
 			color="secondary"
-			onclick={() => (providerTestDialogOpen = false)}
-		>
+			onclick={() => (providerTestDialogOpen = false)}>
 			{$t('common.close')}
 		</Button>
 		<Button
 			type="button"
 			onclick={runEnabledProviderTests}
 			disabled={providerTestsRunning}
-			loading={providerTestsRunning}
-		>
+			loading={providerTestsRunning}>
 			{providerTestsRunning ? $t('admin.site.testing') : $t('admin.site.rerunTests')}
 		</Button>
 	</div>

@@ -1,6 +1,5 @@
+import { describe, expect, it } from 'vitest'
 import { determineSystem } from '$lib/utils/converter.js'
-
-/* global describe, expect, it */
 
 describe('determineSystem function', () => {
 	it('should return metric system as dominant', () => {

@@ -12,8 +12,6 @@ import {
 } from '$lib/utils/import/importHelpers.js'
 import { importPhotosForPairs } from '$lib/utils/import/photoHelpers.js'
 
-const IMG_RE = /\.(jpe?g|png|gif|webp|bmp)$/i
-
 /** Parse a Chowdown markdown file (front-matter + body) → normalized raw object */
 function mdToRaw(md) {
 	const { meta, body } = parseFrontMatterMarkdown(md)

@@ -5,7 +5,7 @@
 	let { width = '16px', height = '16px', stroke = 'currentColor', strokeWidth = '2' } = $props()
 </script>
 
-<SvgBase {width} {height} fill="none" {stroke} strokeWidth={strokeWidth} viewBox="0 0 24 24">
+<SvgBase {width} {height} fill="none" {stroke} {strokeWidth} viewBox="0 0 24 24">
 	<path
 		stroke-linecap="round"
 		stroke-linejoin="round"

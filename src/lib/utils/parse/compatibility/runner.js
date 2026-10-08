@@ -152,7 +152,10 @@ export async function runCompatibilitySweep({
 		llmConfig &&
 		(llmExtractor || (await loadCompatibilityLLMModule()).extractRecipeWithCompatibilityLLM)
 	const previousResults =
-		options.onlyFailed && fs.existsSync(path.resolve(process.cwd(), options.resultsPath || COMPATIBILITY_DEFAULTS.resultsPath))
+		options.onlyFailed &&
+		fs.existsSync(
+			path.resolve(process.cwd(), options.resultsPath || COMPATIBILITY_DEFAULTS.resultsPath)
+		)
 			? JSON.parse(
 					fs.readFileSync(
 						path.resolve(process.cwd(), options.resultsPath || COMPATIBILITY_DEFAULTS.resultsPath),

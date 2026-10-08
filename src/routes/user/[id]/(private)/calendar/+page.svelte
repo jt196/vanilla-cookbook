@@ -45,7 +45,9 @@
 	<Timeline>
 		{#each logs as log, i}
 			<TimelineItem start={formatStart(log.cooked)} first={i === 0} last={i === logs.length - 1}>
-				<a href="/recipe/{log.recipe.uid}/view" class="font-medium no-underline text-current hover:underline">
+				<a
+					href="/recipe/{log.recipe.uid}/view"
+					class="font-medium no-underline text-current hover:underline">
 					{log.recipe.name}
 				</a>
 			</TimelineItem>

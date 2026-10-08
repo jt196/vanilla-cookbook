@@ -1,6 +1,6 @@
 import { requireUser } from '$lib/server/authPage'
 
-export const load = async ({ locals, params }) => {
+export const load = async ({ locals }) => {
 	const user = requireUser(locals)
 
 	const ai = locals.site?.ai ?? {}

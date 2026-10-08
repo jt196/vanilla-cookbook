@@ -301,7 +301,13 @@ async function invokeLLM({ provider, model, type, messages }) {
  * @param {string} [options.url='']
  * @returns {Promise<Object>} Parsed recipe object, or { _noRecipe: true }
  */
-export async function extractRecipeFromVideoText({ provider, model, content = '', url = '', language = 'eng' }) {
+export async function extractRecipeFromVideoText({
+	provider,
+	model,
+	content = '',
+	url = '',
+	language = 'eng'
+}) {
 	const { buildVideoTextExtractionPrompt } = await import('./aiShared.js')
 	const prompt = buildVideoTextExtractionPrompt({ content, url, language })
 	return invokeLLM({

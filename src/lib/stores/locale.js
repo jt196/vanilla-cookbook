@@ -32,7 +32,12 @@ export const langStore = writable('eng')
  * Call as: $t('key') or $t('key', { count: 3 })
  * @type {import('svelte/store').Readable<(key: string, vars?: Record<string, string|number>) => string>}
  */
-export const t = derived(langStore, ($lang) => (key, vars = {}) => tFn(key, $lang, vars))
+export const t = derived(
+	langStore,
+	($lang) =>
+		(key, vars = {}) =>
+			tFn(key, $lang, vars)
+)
 
 /**
  * True when the current language renders right-to-left (Arabic).

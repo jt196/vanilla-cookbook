@@ -92,8 +92,7 @@
 				{#each logs as log}
 					<tr
 						class={onLogUpdated ? 'cursor-pointer hover:bg-base-200' : ''}
-						onclick={() => openEditDialog(log)}
-					>
+						onclick={() => openEditDialog(log)}>
 						<td>{localDateAndTime(log.cooked)}</td>
 						<td class="text-base-content/70">{log.note || '-'}</td>
 						<td>
@@ -109,8 +108,7 @@
 											handleRestoreScale(log.scale ?? 1)
 										}}
 										class="tooltip"
-										data-tip={$t('cookedLog.useScale')}
-									>
+										data-tip={$t('cookedLog.useScale')}>
 										{$t('common.use')}
 									</Button>
 								{/if}
@@ -124,8 +122,7 @@
 											handleDelete(log.id)
 										}}
 										class="tooltip"
-										data-tip={$t('cookedLog.deleteLog')}
-									>
+										data-tip={$t('cookedLog.deleteLog')}>
 										<Delete width="14px" height="14px" />
 									</Button>
 								{/if}
@@ -149,15 +146,13 @@
 		onsubmit={(e) => {
 			e.preventDefault()
 			handleSaveLog()
-		}}
-	>
+		}}>
 		<Textarea
 			label={$t('cookedLog.note')}
 			bind:value={editNote}
 			rows={3}
 			placeholder={$t('cookedLog.noteHint')}
-			disabled={saving}
-		/>
+			disabled={saving} />
 		<div class="mt-4">
 			<Input label={$t('cookedLog.scale')} type="number" bind:value={editScale} disabled={saving} />
 		</div>

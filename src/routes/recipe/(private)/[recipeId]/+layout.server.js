@@ -12,7 +12,7 @@ import { requireOwnership } from '$lib/server/authHelpers'
  * @throws Will throw an error if unauthorized or the recipe is not found.
  * @returns {Promise<{ recipe: Object }>} The loaded recipe.
  */
-export const load = async ({ url, params, locals, fetch }) => {
+export const load = async ({ params, locals, fetch }) => {
 	const user = requireUser(locals)
 
 	let recipeData = await fetch(`/api/recipe/${params.recipeId}`)

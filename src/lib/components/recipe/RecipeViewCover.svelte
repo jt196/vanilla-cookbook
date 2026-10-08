@@ -18,13 +18,11 @@
 			aria-label={$t('photos.photoAlt', { name: recipe.name })}
 			onmouseenter={() => (showOverlay = true)}
 			onmouseleave={() => (showOverlay = false)}
-			onclick={toggleOverlay}
-		>
+			onclick={toggleOverlay}>
 			<img
 				src="/api/recipe/image/{mainPhoto.id}"
 				alt={$t('photos.photoAlt', { name: recipe.name })}
-				class="w-full h-auto max-h-[400px] md:max-h-[400px] max-md:max-h-[250px] object-cover block rounded-2xl"
-			/>
+				class="w-full h-auto max-h-[400px] md:max-h-[400px] max-md:max-h-[250px] object-cover block rounded-2xl" />
 			{#if mainPhoto.notes}
 				<div class="cover-overlay" class:visible={showOverlay}>
 					<p class="cover-notes">{mainPhoto.notes}</p>
@@ -35,8 +33,7 @@
 		<img
 			src={recipe.image_url}
 			alt={$t('photos.photoAlt', { name: recipe.name })}
-			class="w-full h-auto max-h-[400px] md:max-h-[400px] max-md:max-h-[250px] object-cover block rounded-2xl"
-		/>
+			class="w-full h-auto max-h-[400px] md:max-h-[400px] max-md:max-h-[250px] object-cover block rounded-2xl" />
 	{/if}
 </div>
 

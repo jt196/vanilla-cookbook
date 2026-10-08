@@ -102,8 +102,7 @@
 					label={$t('auth.username')}
 					bind:value={adminUsername}
 					name="username"
-					required
-				/>
+					required />
 				<Input
 					type="email"
 					id="email"
@@ -111,15 +110,13 @@
 					label={$t('auth.email')}
 					bind:value={adminEmail}
 					name="email"
-					required
-				/>
+					required />
 				<ValidationMessage
 					message={emailValidation?.message}
 					messageCode={emailValidation?.messageCode}
 					isValid={emailValidation?.isValid}
 					isError={!emailValidation?.isValid}
-					hidden={!emailValidation?.message}
-				/>
+					hidden={!emailValidation?.message} />
 				{#if passwordRequirementsDescription}
 					<p class="text-sm text-base-content/70">{passwordRequirementsDescription}</p>
 				{/if}
@@ -130,8 +127,7 @@
 					label={$t('auth.password')}
 					bind:value={adminPassword}
 					name="password"
-					required
-				/>
+					required />
 				<Input
 					type="password"
 					id="passwordConfirm"
@@ -139,46 +135,39 @@
 					label={$t('auth.confirmPassword')}
 					bind:value={adminPasswordConfirm}
 					name="passwordConfirm"
-					required
-				/>
+					required />
 				<ValidationMessage
 					message={passwordValidation?.message}
 					messageCode={passwordValidation?.messageCode}
 					messageVars={passwordValidation?.messageVars}
 					isValid={passwordValidation?.isValid}
 					isError={!passwordValidation?.isValid}
-					hidden={!passwordValidation?.message}
-				/>
+					hidden={!passwordValidation?.message} />
 				<FeedbackMessage
 					message={setupFeedback}
 					messageCode={setupFeedbackCode}
 					messageVars={setupFeedbackVars}
 					type="error"
-					inline
-				/>
+					inline />
 
 				<Checkbox name="seedRecipes" bind:checked={recipeSeed} size="sm" color="primary">
-					{$t('setup.addSampleRecipes')}</Checkbox
-				>
+					{$t('setup.addSampleRecipes')}</Checkbox>
 
 				<Dropdown
 					name="units"
 					legend={$t('setup.units')}
 					options={systems}
-					bind:selected={adminUnits}
-				/>
+					bind:selected={adminUnits} />
 
 				<Dropdown
 					name="language"
 					legend={$t('setup.language')}
 					options={languages}
-					bind:selected={adminLanguage}
-				/>
+					bind:selected={adminLanguage} />
 
 				<div class="card-actions justify-end mt-6">
 					<Button type="submit" class="w-full" disabled={isSubmitDisabled}
-						>{$t('setup.createAdmin')}</Button
-					>
+						>{$t('setup.createAdmin')}</Button>
 				</div>
 			</form>
 		</div>

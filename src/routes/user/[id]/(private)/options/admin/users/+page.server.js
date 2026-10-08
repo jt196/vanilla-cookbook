@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit'
 
-export const load = async ({ url, fetch, locals }) => {
+export const load = async ({ url, fetch }) => {
 	// Fetch users
 	const res = await fetch(`${url.origin}/api/user/admin/users`)
 

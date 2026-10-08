@@ -40,33 +40,32 @@ export const load = async ({ locals }) => {
 	const baseWhere = { userId, in_trash: false }
 
 	// Run independent queries in parallel
-	const [recentlyAdded, mostCookedLogs, recentlyCookedLogs, recipeRows] =
-		await Promise.all([
-			prisma.recipe.findMany({
-				where: baseWhere,
-				orderBy: { created: 'desc' },
-				take: ROW_SIZE,
-				select: photoSelect
-			}),
-			prisma.recipeLog.groupBy({
-				by: ['recipeUid'],
-				where: { userId },
-				_count: { recipeUid: true },
-				orderBy: { _count: { recipeUid: 'desc' } },
-				take: ROW_SIZE * 2
-			}),
-			prisma.recipeLog.groupBy({
-				by: ['recipeUid'],
-				where: { userId },
-				_max: { cooked: true },
-				orderBy: { _max: { cooked: 'desc' } },
-				take: ROW_SIZE * 2
-			}),
-			prisma.recipe.findMany({
-				where: baseWhere,
-				select: { uid: true, on_favorites: true }
-			})
-		])
+	const [recentlyAdded, mostCookedLogs, recentlyCookedLogs, recipeRows] = await Promise.all([
+		prisma.recipe.findMany({
+			where: baseWhere,
+			orderBy: { created: 'desc' },
+			take: ROW_SIZE,
+			select: photoSelect
+		}),
+		prisma.recipeLog.groupBy({
+			by: ['recipeUid'],
+			where: { userId },
+			_count: { recipeUid: true },
+			orderBy: { _count: { recipeUid: 'desc' } },
+			take: ROW_SIZE * 2
+		}),
+		prisma.recipeLog.groupBy({
+			by: ['recipeUid'],
+			where: { userId },
+			_max: { cooked: true },
+			orderBy: { _max: { cooked: 'desc' } },
+			take: ROW_SIZE * 2
+		}),
+		prisma.recipe.findMany({
+			where: baseWhere,
+			select: { uid: true, on_favorites: true }
+		})
+	])
 
 	// Fetch recipe details for the log-based rows (filter trashed in DB)
 	const mostCookedUids = mostCookedLogs.map((l) => l.recipeUid)
@@ -99,7 +98,9 @@ export const load = async ({ locals }) => {
 		.slice(0, ROW_SIZE)
 
 	// Random sample and favourites use the same recipe scan to avoid duplicate lookups.
-	const randomUids = shuffleArray([...recipeRows]).slice(0, ROW_SIZE).map((recipe) => recipe.uid)
+	const randomUids = shuffleArray([...recipeRows])
+		.slice(0, ROW_SIZE)
+		.map((recipe) => recipe.uid)
 	const favouriteUids = shuffleArray(
 		recipeRows.filter((recipe) => recipe.on_favorites).map((recipe) => recipe.uid)
 	).slice(0, ROW_SIZE)

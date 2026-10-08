@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest'
 // @vitest-environment node
 
 import { findSuitableUnit } from '$lib/utils/units.js'
@@ -5,8 +6,6 @@ import { config } from 'dotenv'
 import { convertIngredientsBackend } from '$lib/utils/converterBackend.js'
 
 config()
-
-/* global describe, expect, it */
 
 // TODO: 'unbleached bread flour' metric to americanVolumetric pass
 

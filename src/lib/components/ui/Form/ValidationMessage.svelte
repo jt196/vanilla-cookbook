@@ -39,8 +39,7 @@
 		class="validator-hint {typeClass}"
 		class:hidden={shouldHide}
 		style:visibility={shouldHide ? 'hidden' : 'visible'}
-		role="alert"
-	>
+		role="alert">
 		{resolvedMessage}
 	</div>
 {/if}

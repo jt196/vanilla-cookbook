@@ -50,29 +50,25 @@
 						await update()
 						submitting = false
 					}
-				}}
-			>
+				}}>
 				<Input
 					type="text"
 					id="identifier"
 					placeholder="jgcooks or griggers@cooksmail.com"
 					name="identifier"
 					label={$t('auth.usernameOrEmail')}
-					required
-				/>
+					required />
 				<Input
 					type="password"
 					id="password"
 					placeholder="123grigsyruleZ"
 					name="password"
 					label={$t('auth.password')}
-					required
-				/>
+					required />
 
 				<div class="card-actions justify-end mt-6">
 					<Button type="submit" class="w-full" loading={submitting} disabled={submitting}
-						>{$t('auth.loginBtn')}</Button
-					>
+						>{$t('auth.loginBtn')}</Button>
 				</div>
 			</form>
 
@@ -80,8 +76,7 @@
 				message={actionMessage}
 				messageCode={errorMessageCode}
 				type="error"
-				inline={true}
-			/>
+				inline={true} />
 
 			<div class="divider"></div>
 

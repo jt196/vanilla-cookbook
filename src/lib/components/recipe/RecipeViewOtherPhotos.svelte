@@ -13,15 +13,13 @@
 						<img
 							src="/api/recipe/image/{photo.id}"
 							alt={$t('photos.setMainAlt', { name: recipeName })}
-							class="max-h-[150px] rounded-lg object-cover opacity-80 hover:opacity-100 transition-opacity"
-						/>
+							class="max-h-[150px] rounded-lg object-cover opacity-80 hover:opacity-100 transition-opacity" />
 					</button>
 				{:else}
 					<img
 						src="/api/recipe/image/{photo.id}"
 						alt={$t('photos.photoAlt', { name: recipeName })}
-						class="max-h-[150px] rounded-lg object-cover"
-					/>
+						class="max-h-[150px] rounded-lg object-cover" />
 				{/if}
 				{#if photo.notes}
 					<p class="text-xs text-base-content/70 mt-1 text-center italic">{photo.notes}</p>

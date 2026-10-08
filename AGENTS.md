@@ -336,7 +336,7 @@ pnpm coverage          # Coverage report
 
 - **No TypeScript**: Project uses JavaScript with JSDoc types (see `typeDefinitions.js`)
 - **Formatting**: Prettier enforced, 2-space indents, trailing commas
-- **Linting**: ESLint with svelte, jsdoc plugins
+- **Linting**: ESLint 9 flat config (`eslint.config.js`) with the svelte plugin; `pnpm lint` runs Prettier + ESLint
 - **Markdown docs**: Keep edited Markdown files compliant with `.markdownlint.json` (run `pnpm -s dlx markdownlint-cli <file>.md` on changed docs)
 - **JSDoc**: Document all utility functions (see `docs/technical/*.md` for examples)
 

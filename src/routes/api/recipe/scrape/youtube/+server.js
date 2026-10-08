@@ -156,9 +156,22 @@ function isNonRecipeUrl(url) {
 	try {
 		const { hostname } = new URL(url)
 		const skip = [
-			'youtube.com', 'youtu.be', 'twitter.com', 'x.com', 'instagram.com',
-			'tiktok.com', 'facebook.com', 'patreon.com', 'ko-fi.com', 'linktr.ee',
-			'amzn.to', 'amazon.com', 'apple.com', 'spotify.com', 'bit.ly', 'ow.ly'
+			'youtube.com',
+			'youtu.be',
+			'twitter.com',
+			'x.com',
+			'instagram.com',
+			'tiktok.com',
+			'facebook.com',
+			'patreon.com',
+			'ko-fi.com',
+			'linktr.ee',
+			'amzn.to',
+			'amazon.com',
+			'apple.com',
+			'spotify.com',
+			'bit.ly',
+			'ow.ly'
 		]
 		return skip.some((d) => hostname === d || hostname.endsWith('.' + d))
 	} catch {

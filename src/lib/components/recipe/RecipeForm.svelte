@@ -30,7 +30,6 @@
 		editMode = false,
 		recipeCategories = null,
 		aiEnabled = false,
-		aiProvider = null,
 		aiSelectedProvider = null,
 		aiSelectedProviderConfigured = false,
 		isAdmin = false,
@@ -472,11 +471,6 @@
 			recipe.directions = recipe.directions_original
 			recipe.directions_original = ''
 		}
-	}
-
-	function handleRatingChange(event) {
-		recipe.rating = event.detail
-		console.log('New Rating:', recipe.rating)
 	}
 
 	$effect(() => {

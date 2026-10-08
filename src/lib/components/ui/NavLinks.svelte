@@ -32,14 +32,31 @@
 	{#if !user}
 		<li><a href="/login" class="flex items-center gap-2"><span>{$t('nav.login')}</span></a></li>
 		{#if settings?.registrationAllowed}
-			<li><a href="/register" class="flex items-center gap-2"><span>{$t('nav.register')}</span></a></li>
+			<li>
+				<a href="/register" class="flex items-center gap-2"><span>{$t('nav.register')}</span></a>
+			</li>
 		{/if}
 	{:else}
-		<li><a href={`/user/${user.userId}/recipes`} class="flex items-center gap-2 text-primary"><List width="20px" /><span>{$t('nav.myRecipes')}</span></a></li>
-		<li><a href="/recipe/new" class="flex items-center gap-2 text-primary"><New width="20px" /><span>{$t('nav.newRecipe')}</span></a></li>
-		<li><a href={`/user/${user.userId}/shopping`} class="flex items-center gap-2 text-primary"><Shopping width="20px" /><span>{$t('nav.shopping')}</span></a></li>
-		<li><a href={`/user/${user.userId}/calendar`} class="flex items-center gap-2 text-primary"><Calendar width="20px" /><span>{$t('nav.calendar')}</span></a></li>
-		<li><a href={`/user/${user.userId}/options/settings`} class="flex items-center gap-2 text-primary"><Settings width="20px" /><span>{$t('nav.settings')}</span></a></li>
+		<li>
+			<a href={`/user/${user.userId}/recipes`} class="flex items-center gap-2 text-primary"
+				><List width="20px" /><span>{$t('nav.myRecipes')}</span></a>
+		</li>
+		<li>
+			<a href="/recipe/new" class="flex items-center gap-2 text-primary"
+				><New width="20px" /><span>{$t('nav.newRecipe')}</span></a>
+		</li>
+		<li>
+			<a href={`/user/${user.userId}/shopping`} class="flex items-center gap-2 text-primary"
+				><Shopping width="20px" /><span>{$t('nav.shopping')}</span></a>
+		</li>
+		<li>
+			<a href={`/user/${user.userId}/calendar`} class="flex items-center gap-2 text-primary"
+				><Calendar width="20px" /><span>{$t('nav.calendar')}</span></a>
+		</li>
+		<li>
+			<a href={`/user/${user.userId}/options/settings`} class="flex items-center gap-2 text-primary"
+				><Settings width="20px" /><span>{$t('nav.settings')}</span></a>
+		</li>
 	{/if}
 {:else}
 	<!-- Desktop layout - horizontal icons -->
@@ -53,7 +70,10 @@
 			<Theme {theme} width="25px" />
 		</Button>
 
-		<a href="/recipes" class="btn btn-ghost btn-circle text-primary" aria-label={$t('nav.allRecipes')}>
+		<a
+			href="/recipes"
+			class="btn btn-ghost btn-circle text-primary"
+			aria-label={$t('nav.allRecipes')}>
 			<FoodBowl width="25px" />
 		</a>
 
@@ -63,10 +83,16 @@
 				<a href="/register" class="btn btn-ghost">{$t('nav.register')}</a>
 			{/if}
 		{:else}
-			<a href={`/user/${user.userId}/recipes`} class="btn btn-ghost btn-circle text-primary" aria-label={$t('nav.myRecipes')}>
+			<a
+				href={`/user/${user.userId}/recipes`}
+				class="btn btn-ghost btn-circle text-primary"
+				aria-label={$t('nav.myRecipes')}>
 				<List width="25px" />
 			</a>
-			<a href="/recipe/new" class="btn btn-ghost btn-circle text-primary" aria-label={$t('nav.newRecipe')}>
+			<a
+				href="/recipe/new"
+				class="btn btn-ghost btn-circle text-primary"
+				aria-label={$t('nav.newRecipe')}>
 				<New width="25px" />
 			</a>
 			<a

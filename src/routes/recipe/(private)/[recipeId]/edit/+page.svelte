@@ -22,7 +22,6 @@
 	let { data } = $props()
 
 	let recipe = $state(data?.recipe ?? {})
-	let user = $state(data?.user ?? {})
 	let aiEnabled = $state(data?.aiEnabled ?? false)
 	let aiProvider = $state(data?.aiProvider ?? null)
 	let aiSelectedProvider = $state(data?.aiSelectedProvider ?? null)
@@ -113,8 +112,7 @@
 		cancelHref="/recipe/{recipe?.uid}/view/"
 		onDelete={() => handleDelete(recipe?.uid)}
 		onSelectedFilesChange={handleSelectedFilesChange}
-		onSubmit={handleSubmit}
-	/>
+		onSubmit={handleSubmit} />
 </div>
 
 {#if feedbackMessage}
@@ -122,8 +120,7 @@
 		message={feedbackMessage}
 		messageCode={feedbackCode}
 		type={feedbackType}
-		timeout={5000}
-	/>
+		timeout={5000} />
 {/if}
 
 <ConfirmationDialog
@@ -135,8 +132,7 @@
 		if (success) {
 			goto('/')
 		}
-	}}
->
+	}}>
 	{#snippet content()}
 		<h3 class="font-bold text-lg">{$t('recipe.deleteRecipe')}</h3>
 		<p class="py-4">{$t('recipe.confirmDelete')}</p>

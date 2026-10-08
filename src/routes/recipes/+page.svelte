@@ -14,5 +14,4 @@
 	{viewerUserId}
 	semanticEnabled={semanticAvailable}
 	title={$t('recipe.allRecipes')}
-	feedKind="all"
-/>
+	feedKind="all" />

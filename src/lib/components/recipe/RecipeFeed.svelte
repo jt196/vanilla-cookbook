@@ -22,7 +22,6 @@
 		viewMode = 'owner',
 		title = null,
 		viewerUserId = null,
-		ownerUserId = null,
 		ownerUsername = null,
 		feedKind = 'user',
 		semanticEnabled = false
@@ -404,8 +403,7 @@
 		{viewerUserId}
 		recipeFavourited={handleRecipeFavourited}
 		recipeRatingChanged={handleRecipeRatingChanged}
-		onDuplicate={handleDuplicateRequested}
-	/>
+		onDuplicate={handleDuplicateRequested} />
 </div>
 
 <CopyRecipeDialog
@@ -415,7 +413,6 @@
 	onView={() => runDuplicate('view')}
 	viewDisabled={false}
 	message={copyMessage}
-	messageCode={copyMessageCode}
-/>
+	messageCode={copyMessageCode} />
 
 <Spinner visible={isCopying} spinnerContent={$t('copyDialog.copying')} />

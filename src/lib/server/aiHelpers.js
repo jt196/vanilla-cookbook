@@ -72,7 +72,10 @@ export async function generateImageBuffer(aiConfig, prompt) {
 		}
 		const client = new OpenAI({ apiKey: env.OPENAI_API_KEY })
 		const generation = await client.images.generate({
-			model: (aiConfig.model && aiConfig.model.trim()) || env.LLM_IMAGE_GENERATION_MODEL || 'gpt-image-1',
+			model:
+				(aiConfig.model && aiConfig.model.trim()) ||
+				env.LLM_IMAGE_GENERATION_MODEL ||
+				'gpt-image-1',
 			prompt,
 			size: RECIPE_IMAGE_GENERATION_SIZE
 		})

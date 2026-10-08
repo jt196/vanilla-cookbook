@@ -46,27 +46,23 @@
 	method="POST"
 	action="?/updateSettings"
 	onsubmit={updateSettings}
-	class="flex flex-col gap-4 w-full md:w-2/3 lg:w-1/2"
->
+	class="flex flex-col gap-4 w-full md:w-2/3 lg:w-1/2">
 	<Dropdown
 		name="language"
 		options={languages}
 		bind:selected={user.language}
-		legend={$t('recipePrefs.language')}
-	/>
+		legend={$t('recipePrefs.language')} />
 	<Dropdown
 		name="system"
 		options={systems}
 		bind:selected={user.units}
-		legend={$t('recipePrefs.system')}
-	/>
+		legend={$t('recipePrefs.system')} />
 	<Checkbox
 		name="Skip Small"
 		bind:checked={user.skipSmallUnits}
 		legend={$t('recipePrefs.skipSmallUnits')}
 		size="sm"
-		color="neutral"
-	>
+		color="neutral">
 		{user.skipSmallUnits ? $t('recipePrefs.skipSmallUnitsOn') : $t('recipePrefs.skipSmallUnitsOff')}
 	</Checkbox>
 	<Checkbox
@@ -74,8 +70,7 @@
 		bind:checked={user.ingMatch}
 		size="sm"
 		color="neutral"
-		legend={$t('recipePrefs.volumetricMatch')}
-	>
+		legend={$t('recipePrefs.volumetricMatch')}>
 		{user.ingMatch ? $t('recipePrefs.volumetricMatchOn') : $t('recipePrefs.volumetricMatchOff')}
 	</Checkbox>
 	<Checkbox
@@ -83,8 +78,7 @@
 		bind:checked={user.ingOriginal}
 		size="sm"
 		color="neutral"
-		legend={$t('recipePrefs.displayOriginal')}
-	>
+		legend={$t('recipePrefs.displayOriginal')}>
 		{user.ingOriginal ? $t('recipePrefs.displayOriginalOn') : $t('recipePrefs.displayOriginalOff')}
 	</Checkbox>
 	<Checkbox
@@ -92,8 +86,7 @@
 		bind:checked={user.ingSymbol}
 		size="sm"
 		color="neutral"
-		legend={$t('recipePrefs.displaySymbols')}
-	>
+		legend={$t('recipePrefs.displaySymbols')}>
 		{user.ingSymbol ? $t('recipePrefs.displaySymbolsOn') : $t('recipePrefs.displaySymbolsOff')}
 	</Checkbox>
 	<Checkbox
@@ -101,8 +94,7 @@
 		bind:checked={user.displayNutrition}
 		size="sm"
 		color="neutral"
-		legend={$t('recipePrefs.displayNutrition')}
-	>
+		legend={$t('recipePrefs.displayNutrition')}>
 		{user.displayNutrition
 			? $t('recipePrefs.displayNutritionOn')
 			: $t('recipePrefs.displayNutritionOff')}
@@ -114,8 +106,7 @@
 			size="sm"
 			color="neutral"
 			legend={$t('recipePrefs.similarRecipes')}
-			disabled={!semanticEnabled}
-		>
+			disabled={!semanticEnabled}>
 			{#if !semanticEnabled}
 				{$t('recipePrefs.similarRecipesDisabled')}
 			{:else if user.showSimilarRecipes}
@@ -130,8 +121,7 @@
 		bind:checked={user.showNotesDescription}
 		size="sm"
 		color="neutral"
-		legend={$t('recipePrefs.showNotesDescription')}
-	>
+		legend={$t('recipePrefs.showNotesDescription')}>
 		{user.showNotesDescription
 			? $t('recipePrefs.showNotesDescriptionOn')
 			: $t('recipePrefs.showNotesDescriptionOff')}
@@ -141,8 +131,7 @@
 		bind:checked={user.ingExtra}
 		size="sm"
 		color="neutral"
-		legend={$t('recipePrefs.displayExtra')}
-	>
+		legend={$t('recipePrefs.displayExtra')}>
 		{user.ingExtra ? $t('recipePrefs.displayExtraOn') : $t('recipePrefs.displayExtraOff')}
 	</Checkbox>
 	<footer>

@@ -80,7 +80,7 @@ async function extractTandoorFromZipBuffer(buffer) {
 		const obj = JSON.parse((await readZipEntryBuffer(recipeEntry)).toString('utf-8'))
 
 		// image (with or without extension)
-		const imgEntry = inner.files.find((f) => /(^|\/)image(\.[^.\/]+)?$/i.test(f.path)) || null
+		const imgEntry = inner.files.find((f) => /(^|\/)image(\.[^./]+)?$/i.test(f.path)) || null
 
 		let photo = null
 		let photo_data = null

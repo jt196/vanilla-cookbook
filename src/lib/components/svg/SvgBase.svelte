@@ -24,9 +24,9 @@
 	{width}
 	{height}
 	{fill}
-	viewBox={viewBox}
+	{viewBox}
 	class={className}
-	style={style}
+	{style}
 	aria-hidden={computedAriaHidden}
 	role={computedRole}
 	{stroke}

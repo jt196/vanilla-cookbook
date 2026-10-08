@@ -117,7 +117,8 @@ export function cronToPlainEnglish(cronString) {
 
 	if (dayOfMonth !== '*' && month === '*') {
 		// Monthly on specific day
-		const suffix = dayOfMonth === '1' ? 'st' : dayOfMonth === '2' ? 'nd' : dayOfMonth === '3' ? 'rd' : 'th'
+		const suffix =
+			dayOfMonth === '1' ? 'st' : dayOfMonth === '2' ? 'nd' : dayOfMonth === '3' ? 'rd' : 'th'
 		return `Monthly on the ${dayOfMonth}${suffix} at ${time}`
 	}
 

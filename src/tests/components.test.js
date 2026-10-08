@@ -1,3 +1,4 @@
+import { expect, it, describe, beforeEach, vi } from 'vitest'
 // NOTE: jest-dom adds handy assertions to Jest and it is recommended, but not required.
 import '@testing-library/jest-dom'
 import { sortState, searchFields } from '$lib/stores/recipeFilter'
@@ -8,8 +9,6 @@ import { render, fireEvent, screen } from '@testing-library/svelte/svelte5'
 import Scale from '$lib/components/ui/Scale.svelte'
 import RecipeFilter from '$lib/components/recipe/RecipeFilter.svelte'
 import RecipeList from '$lib/components/recipe/RecipeList.svelte'
-
-/* global expect, it, describe, beforeEach */
 
 describe('Scale component', () => {
 	it('should increase the scale value correctly', async () => {
@@ -119,7 +118,7 @@ describe('RecipeFilter component', () => {
 			activeButton: 'created',
 			sortState: mockSortState
 		})
-		const dateButton = getByText('Added')
+		expect(getByText('Added')).toBeInTheDocument()
 	})
 
 	it('updates sort state correctly on date button click', async () => {
@@ -174,7 +173,6 @@ describe('RecipeList component', () => {
 		},
 		{ name: 'Recipe B', created: new Date('2022-01-02'), userId: 2, uid: 'B' }
 	]
-	const mockData = { user: { requestedUserId: 1 } }
 
 	it('renders without crashing', () => {
 		const { container } = render(RecipeList, {

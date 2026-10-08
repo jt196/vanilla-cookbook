@@ -111,7 +111,10 @@ export function parseIngredients(ingredients) {
 
 	// Split comma-separated string into individual ingredients
 	if (typeof ingredients === 'string') {
-		return ingredients.split(',').map((s) => s.trim()).filter(Boolean)
+		return ingredients
+			.split(',')
+			.map((s) => s.trim())
+			.filter(Boolean)
 	}
 
 	return []
@@ -235,7 +238,7 @@ export function parseUsingSiteConfig(root, config) {
 			})
 			.filter(Boolean)
 
-		return multiple ? values : values[0] ?? null
+		return multiple ? values : (values[0] ?? null)
 	}
 
 	return {
@@ -303,7 +306,6 @@ export function extractMicrodata(root) {
 		if (!recipeIngredient.length) {
 			recipeIngredient = extractTextFromSelector(item, '[itemprop="ingredients"]')
 		}
-
 
 		// If still no ingredients found, try the custom extraction method
 		if (!recipeIngredient?.length) {

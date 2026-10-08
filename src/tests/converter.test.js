@@ -1,3 +1,4 @@
+import { describe, expect, it, beforeEach } from 'vitest'
 import {
 	converter,
 	parseTemperature,
@@ -5,8 +6,6 @@ import {
 	manipulateIngredient
 } from '$lib/utils/converter.js'
 import Fuse from 'fuse.js'
-
-/* global describe, expect, it, beforeEach, vi */
 
 describe('converter function', () => {
 	it('should convert grams to ounces correctly', () => {

@@ -10,7 +10,7 @@ describe('bookmarklet helpers', () => {
 		const code = buildBookmarkletCode('https://cookbook.example')
 
 		expect(code).toContain("window.location.href=baseUrl+'/recipe/new?url='")
-		expect(code).toContain("document.body&&document.body.innerText")
+		expect(code).toContain('document.body&&document.body.innerText')
 		expect(code).toContain('&bookmarklet=1')
 	})
 

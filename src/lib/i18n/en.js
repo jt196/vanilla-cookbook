@@ -388,11 +388,11 @@ export default {
 			parseIncomplete: 'Recipe parsing incomplete.',
 			parseFailed: 'Failed to parse recipe.',
 			noImage: 'No image selected.',
-				noFile: 'No file selected.',
-				parsingHtml: 'Parsing HTML file...',
-				htmlSuccess: 'HTML parsed successfully.',
-				htmlPartial: 'HTML only partially parsed. Please review before saving.',
-				htmlError: 'Failed to extract recipe from HTML file.',
+			noFile: 'No file selected.',
+			parsingHtml: 'Parsing HTML file...',
+			htmlSuccess: 'HTML parsed successfully.',
+			htmlPartial: 'HTML only partially parsed. Please review before saving.',
+			htmlError: 'Failed to extract recipe from HTML file.',
 			invalidImageType: 'Invalid image type.',
 			analyzingImage: 'Analyzing image...',
 			imageAiSuccess: 'AI image parse success!',
@@ -413,9 +413,12 @@ export default {
 			youtubePartial: 'Partial recipe extracted from YouTube video. Please review before saving.',
 			youtubeNoRecipe: 'Could not find a recipe in this video.',
 			youtubeNoAi: 'AI parsing is required to extract recipes from YouTube videos.',
-			youtubeNoDescription: 'No description found on this video. Try copying the text and using the Text tab.',
-			instagramBlocked: 'Instagram doesn’t allow recipe scraping. Copy the post caption and use the Text tab instead.',
-			tiktokBlocked: 'TikTok doesn’t allow recipe scraping. Copy the video caption and use the Text tab instead.'
+			youtubeNoDescription:
+				'No description found on this video. Try copying the text and using the Text tab.',
+			instagramBlocked:
+				'Instagram doesn’t allow recipe scraping. Copy the post caption and use the Text tab instead.',
+			tiktokBlocked:
+				'TikTok doesn’t allow recipe scraping. Copy the video caption and use the Text tab instead.'
 		}
 	},
 

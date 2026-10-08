@@ -337,7 +337,7 @@ describe('translateRecipeWithLLM', () => {
 		name: 'Saumon en galettes',
 		author: 'Chef Jean',
 		ingredients: ['500g de saumon sauvage frais'],
-		instructions: ["Émietter le saumon dans un bol."]
+		instructions: ['Émietter le saumon dans un bol.']
 	}
 
 	beforeEach(() => {

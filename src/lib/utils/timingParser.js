@@ -22,7 +22,7 @@ export function parseTimings(text, lang = 'eng') {
 
 	// Get all time units from unitsData
 	const timeUnits = Object.entries(unitsData)
-		.filter(([key, data]) => data.unitType === 'time')
+		.filter(([, data]) => data.unitType === 'time')
 		.map(([key, data]) => ({
 			canonical: key,
 			names: data.names,

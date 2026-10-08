@@ -63,8 +63,7 @@
 		transition:fade
 		class={`alert ${alertClasses[type]} ${styleClasses[styleVariant]} ${directionClasses[direction]} ${
 			inline ? 'mt-2 w-full' : 'fixed top-20 left-1/2 -translate-x-1/2 z-50 w-[90vw] max-w-md px-4'
-		}`}
-	>
+		}`}>
 		{#if showIcon}
 			{@html icons[type]}
 		{/if}

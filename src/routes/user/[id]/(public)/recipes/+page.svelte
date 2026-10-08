@@ -17,5 +17,4 @@
 	ownerUserId={requestedUserId}
 	ownerUsername={publicProfile.username}
 	semanticEnabled={semanticAvailable}
-	feedKind="user"
-/>
+	feedKind="user" />

@@ -69,7 +69,13 @@ describe('scrape compatibility report', () => {
 					fixtureFilename: 'zeta.html',
 					hasSiteConfig: false,
 					diagnosis: 'parser ok',
-					liveFetch: { attempted: true, ok: true, status: 200, statusText: 'OK', htmlCaptured: true },
+					liveFetch: {
+						attempted: true,
+						ok: true,
+						status: 200,
+						statusText: 'OK',
+						htmlCaptured: true
+					},
 					vanillaScrape: { status: 'complete' },
 					llmFallback: { status: 'skipped' },
 					notes: 'Later row'
@@ -276,8 +282,16 @@ describe('compatibility result merging and manifest append', () => {
 				llmEnabled: false,
 				urlCount: 2,
 				results: [
-					{ site: 'a.example', url: 'https://a.example/recipe', vanillaScrape: { status: 'complete' } },
-					{ site: 'b.example', url: 'https://b.example/recipe', vanillaScrape: { status: 'failed' } }
+					{
+						site: 'a.example',
+						url: 'https://a.example/recipe',
+						vanillaScrape: { status: 'complete' }
+					},
+					{
+						site: 'b.example',
+						url: 'https://b.example/recipe',
+						vanillaScrape: { status: 'failed' }
+					}
 				]
 			},
 			{
@@ -286,7 +300,11 @@ describe('compatibility result merging and manifest append', () => {
 				llmEnabled: true,
 				urlCount: 1,
 				results: [
-					{ site: 'b.example', url: 'https://b.example/recipe', vanillaScrape: { status: 'complete' } }
+					{
+						site: 'b.example',
+						url: 'https://b.example/recipe',
+						vanillaScrape: { status: 'complete' }
+					}
 				]
 			}
 		)
@@ -294,7 +312,8 @@ describe('compatibility result merging and manifest append', () => {
 		expect(merged.generatedAt).toBe('2026-03-30T10:00:00.000Z')
 		expect(merged.urlCount).toBe(2)
 		expect(
-			merged.results.find((result) => result.url === 'https://b.example/recipe').vanillaScrape.status
+			merged.results.find((result) => result.url === 'https://b.example/recipe').vanillaScrape
+				.status
 		).toBe('complete')
 	})
 

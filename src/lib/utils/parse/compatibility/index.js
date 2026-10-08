@@ -190,7 +190,9 @@ export function classifyCompatibilityResult({
 	hasSiteConfig = false
 } = {}) {
 	if (vanillaScrape.status === 'complete') {
-		return liveFetch?.attempted && !liveFetch.ok ? 'live fetch failed, fixture parser ok' : 'parser ok'
+		return liveFetch?.attempted && !liveFetch.ok
+			? 'live fetch failed, fixture parser ok'
+			: 'parser ok'
 	}
 
 	if (vanillaScrape.error) {
@@ -220,7 +222,11 @@ export function getFixturePath(entry, fixtureDirectory = COMPATIBILITY_DEFAULTS.
 	return path.resolve(process.cwd(), fixtureDirectory, entry.expected_fixture_filename)
 }
 
-export function writeFixtureHtml(entry, html, fixtureDirectory = COMPATIBILITY_DEFAULTS.fixtureDirectory) {
+export function writeFixtureHtml(
+	entry,
+	html,
+	fixtureDirectory = COMPATIBILITY_DEFAULTS.fixtureDirectory
+) {
 	if (!html) return
 	const filePath = getFixturePath(entry, fixtureDirectory)
 	fs.mkdirSync(path.dirname(filePath), { recursive: true })
@@ -283,7 +289,8 @@ export function renderCompatibilityMarkdown(resultsPayload) {
 				escapeMarkdownCell(result.llmFallback?.status || 'skipped'),
 				escapeMarkdownCell(result.fixtureFilename || ''),
 				escapeMarkdownCell(result.notes || '')
-			].join(' | ')
+			]
+				.join(' | ')
 				.replace(/^/, '| ')
 				.concat(' |')
 		)
@@ -315,7 +322,10 @@ function formatLiveFetchStatus(liveFetch) {
 	if (typeof liveFetch.status === 'number' && liveFetch.status >= 300 && liveFetch.status < 400) {
 		return 'redirected'
 	}
-	if (typeof liveFetch.status === 'number' && [401, 402, 403, 404, 429].includes(liveFetch.status)) {
+	if (
+		typeof liveFetch.status === 'number' &&
+		[401, 402, 403, 404, 429].includes(liveFetch.status)
+	) {
 		return 'blocked'
 	}
 	return 'failed'

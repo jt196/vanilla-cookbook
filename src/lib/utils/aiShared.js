@@ -29,9 +29,10 @@ export function buildRecipeExtractionPrompt({
 	const trimmedContent = content?.substring(0, 40000) || ''
 	const languageName = languageMap[language] || 'English'
 	const isText = inputLabel.toLowerCase() === 'text'
-	const htmlInstruction = inputLabel.toLowerCase() === 'html'
-		? '1. If the content is HTML, check for structured data like Schema.org Recipe JSON-LD.'
-		: '1. Parse the content like user-pasted recipe text or OCR from an image.'
+	const htmlInstruction =
+		inputLabel.toLowerCase() === 'html'
+			? '1. If the content is HTML, check for structured data like Schema.org Recipe JSON-LD.'
+			: '1. Parse the content like user-pasted recipe text or OCR from an image.'
 	const noRecipeInstruction = isText
 		? '\nIMPORTANT: If the text does not contain actual recipe ingredients or cooking instructions, return ONLY: {"_noRecipe": true}'
 		: ''
