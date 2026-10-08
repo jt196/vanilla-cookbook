@@ -32,6 +32,10 @@
 		disabled = false,
 		id = '',
 		name = '',
+		/**
+		 * id of a <datalist> offering suggestions
+		 */
+		list = undefined,
 		class: className = '',
 		oninput = undefined,
 		onkeydown = undefined
@@ -94,19 +98,22 @@
 				{type}
 				{id}
 				{name}
+				{list}
 				placeholder={placeholderValue}
 				{required}
 				{disabled}
 				bind:value
 				oninput={handleInput}
 				{onkeydown}
-				aria-invalid={error ? 'true' : undefined} />
+				aria-invalid={error ? 'true' : undefined}
+			/>
 		</label>
 	{:else}
 		<input
 			{type}
 			{id}
 			{name}
+			{list}
 			placeholder={placeholderValue}
 			{required}
 			{disabled}
@@ -114,7 +121,8 @@
 			oninput={handleInput}
 			{onkeydown}
 			class={inputClasses}
-			aria-invalid={error ? 'true' : undefined} />
+			aria-invalid={error ? 'true' : undefined}
+		/>
 	{/if}
 	{#if error}
 		<p class="validator-hint text-error mt-1" role="alert">{error}</p>

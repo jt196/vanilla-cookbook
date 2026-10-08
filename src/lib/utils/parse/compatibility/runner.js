@@ -1,6 +1,5 @@
 import fs from 'fs'
 import path from 'path'
-import { getDefaultModelsForProvider } from '$lib/utils/llmModels'
 import {
 	COMPATIBILITY_DEFAULTS,
 	classifyCompatibilityResult,
@@ -127,11 +126,7 @@ export function resolveCompatibilityLLMConfig(enableLLM, env = process.env) {
 
 	return {
 		provider,
-		model:
-			env.LLM_TEXT_MODEL ||
-			env.LLM_API_ENGINE_TEXT ||
-			getDefaultModelsForProvider(provider)?.text ||
-			null
+		model: env.LLM_TEXT_MODEL || env.LLM_API_ENGINE_TEXT || null
 	}
 }
 
@@ -152,7 +147,10 @@ export async function runCompatibilitySweep({
 		llmConfig &&
 		(llmExtractor || (await loadCompatibilityLLMModule()).extractRecipeWithCompatibilityLLM)
 	const previousResults =
-		options.onlyFailed && fs.existsSync(path.resolve(process.cwd(), options.resultsPath || COMPATIBILITY_DEFAULTS.resultsPath))
+		options.onlyFailed &&
+		fs.existsSync(
+			path.resolve(process.cwd(), options.resultsPath || COMPATIBILITY_DEFAULTS.resultsPath)
+		)
 			? JSON.parse(
 					fs.readFileSync(
 						path.resolve(process.cwd(), options.resultsPath || COMPATIBILITY_DEFAULTS.resultsPath),

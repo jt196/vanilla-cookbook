@@ -442,7 +442,12 @@ export default {
       "textHint": "Wird für Rezept-Fallback-Parsing/-Übersetzung/-Generierung, Zutatenbereinigung und Anweisungszusammenfassung verwendet.",
       "provider": "Anbieter",
       "model": "Modell",
-      "customModel": "Benutzerdefiniertes Modell",
+      "modelPlaceholder": "Modell eingeben oder auswählen",
+      "defaultModelPlaceholder": "Standard: {model}",
+      "modelsLoading": "Modelle von {provider} werden geladen…",
+      "modelsAvailable": "{count} Modelle von {provider} verfügbar.",
+      "modelsLoadFailed": "Modellliste konnte nicht geladen werden ({error}). Sie können den Modellnamen trotzdem eingeben.",
+      "browseModels": "{provider}-Modelle durchsuchen",
       "imageOcr": "Bild-OCR",
       "imageOcrHint": "Wird zur Rezeptextraktion aus hochgeladenen Fotos/Bildern verwendet.",
       "noImageAnalysis": "unterstützt keine Bildanalyse.",
@@ -532,7 +537,8 @@ export default {
         "embeddingRateLimit": "Ratenbegrenzung oder Kontingent nach {count} verarbeiteten Elementen erreicht. Guthaben aufladen oder warten und später erneut versuchen.",
         "embeddingComplete": "Embedding-Lauf abgeschlossen: {processed} verarbeitet, {failed} fehlgeschlagen.",
         "embeddingError": "Fehler beim Generieren von Embeddings:",
-        "connectionFailed": "Verbindung fehlgeschlagen"
+        "connectionFailed": "Verbindung fehlgeschlagen",
+        "noModel": "Kein Modell festgelegt. Geben Sie oben einen Modellnamen ein."
       }
     },
     "users": {

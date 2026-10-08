@@ -484,7 +484,12 @@ export default {
       "textHint": "Recept tartalék elemzéséhez/fordításához/generálásához, összetevők tisztításához és útmutatók összefoglalásához használatos.",
       "provider": "Szolgáltató",
       "model": "Modell",
-      "customModel": "Egyéni modell",
+      "modelPlaceholder": "Írjon be vagy válasszon modellt",
+      "defaultModelPlaceholder": "Alapértelmezett: {model}",
+      "modelsLoading": "Modellek betöltése innen: {provider}…",
+      "modelsAvailable": "{count} modell érhető el innen: {provider}.",
+      "modelsLoadFailed": "Nem sikerült betölteni a modelllistát ({error}). A modell nevét így is beírhatja.",
+      "browseModels": "{provider} modellek böngészése",
       "imageOcr": "Kép OCR",
       "imageOcrHint": "Feltöltött fotókból/képekből történő receptkivonáshoz használatos.",
       "noImageAnalysis": "nem támogatja a képelemzést.",
@@ -574,7 +579,8 @@ export default {
         "embeddingRateLimit": "Sebességkorlát vagy kvóta elérve {count} feldolgozott elem után. Töltse fel a krediteket, vagy várjon, majd próbálja újra később.",
         "embeddingComplete": "Beágyazás futtatás befejezve: {processed} feldolgozva, {failed} sikertelen.",
         "embeddingError": "Hiba a beágyazások generálásakor:",
-        "connectionFailed": "Kapcsolat sikertelen"
+        "connectionFailed": "Kapcsolat sikertelen",
+        "noModel": "Nincs modell beállítva. Adja meg a modell nevét fent."
       }
     },
     "users": {

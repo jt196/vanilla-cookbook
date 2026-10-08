@@ -484,7 +484,12 @@ export default {
       "textHint": "रेसिपी फ़ॉलबैक पार्सिंग/अनुवाद/जनरेशन, सामग्री सफाई और दिशा सारांश के लिए उपयोग किया जाता है।",
       "provider": "प्रदाता",
       "model": "मॉडल",
-      "customModel": "कस्टम मॉडल",
+      "modelPlaceholder": "मॉडल टाइप करें या चुनें",
+      "defaultModelPlaceholder": "डिफ़ॉल्ट: {model}",
+      "modelsLoading": "{provider} से मॉडल लोड हो रहे हैं…",
+      "modelsAvailable": "{provider} से {count} मॉडल उपलब्ध हैं।",
+      "modelsLoadFailed": "मॉडल सूची लोड नहीं हो सकी ({error})। आप फिर भी मॉडल का नाम टाइप कर सकते हैं।",
+      "browseModels": "{provider} मॉडल देखें",
       "imageOcr": "छवि OCR",
       "imageOcrHint": "अपलोड की गई फ़ोटो/छवियों से रेसिपी निकालने के लिए उपयोग किया जाता है।",
       "noImageAnalysis": "छवि विश्लेषण का समर्थन नहीं करता है।",
@@ -574,7 +579,8 @@ export default {
         "embeddingRateLimit": "{count} संसाधित होने के बाद दर सीमा या कोटा पहुंच गया। क्रेडिट टॉप अप करें या प्रतीक्षा करें और बाद में पुनः प्रयास करें।",
         "embeddingComplete": "एम्बेडिंग रन पूर्ण: {processed} संसाधित, {failed} विफल।",
         "embeddingError": "एम्बेडिंग जनरेट करने में त्रुटि:",
-        "connectionFailed": "कनेक्शन विफल"
+        "connectionFailed": "कनेक्शन विफल",
+        "noModel": "कोई मॉडल सेट नहीं है। ऊपर मॉडल का नाम दर्ज करें।"
       }
     },
     "users": {

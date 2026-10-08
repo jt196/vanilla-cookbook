@@ -484,7 +484,12 @@ export default {
       "textHint": "Digunakan untuk penguraian/terjemahan/pembuatan resep fallback, pembersihan bahan, dan ringkasan petunjuk.",
       "provider": "Penyedia",
       "model": "Model",
-      "customModel": "Model Kustom",
+      "modelPlaceholder": "Ketik atau pilih model",
+      "defaultModelPlaceholder": "Default: {model}",
+      "modelsLoading": "Memuat model dari {provider}…",
+      "modelsAvailable": "{count} model tersedia dari {provider}.",
+      "modelsLoadFailed": "Tidak dapat memuat daftar model ({error}). Anda tetap dapat mengetik nama model.",
+      "browseModels": "Jelajahi model {provider}",
       "imageOcr": "OCR Gambar",
       "imageOcrHint": "Digunakan untuk ekstraksi resep dari foto/gambar yang diunggah.",
       "noImageAnalysis": "tidak mendukung analisis gambar.",
@@ -574,7 +579,8 @@ export default {
         "embeddingRateLimit": "Batas laju atau kuota tercapai setelah {count} diproses. Isi ulang kredit atau tunggu dan coba lagi nanti.",
         "embeddingComplete": "Proses embedding selesai: {processed} diproses, {failed} gagal.",
         "embeddingError": "Kesalahan saat membuat embeddings:",
-        "connectionFailed": "Koneksi gagal"
+        "connectionFailed": "Koneksi gagal",
+        "noModel": "Belum ada model yang diatur. Masukkan nama model di atas."
       }
     },
     "users": {

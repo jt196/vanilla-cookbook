@@ -484,7 +484,12 @@ export default {
       "textHint": "Gebruikt voor fallback-parsing/vertaling/generatie van recepten, opschonen van ingrediënten en samenvatten van instructies.",
       "provider": "Provider",
       "model": "Model",
-      "customModel": "Aangepast model",
+      "modelPlaceholder": "Typ of kies een model",
+      "defaultModelPlaceholder": "Standaard: {model}",
+      "modelsLoading": "Modellen van {provider} laden…",
+      "modelsAvailable": "{count} modellen beschikbaar van {provider}.",
+      "modelsLoadFailed": "Kan de modellenlijst niet laden ({error}). Je kunt de modelnaam nog steeds typen.",
+      "browseModels": "Bekijk {provider}-modellen",
       "imageOcr": "Afbeelding OCR",
       "imageOcrHint": "Gebruikt voor het extraheren van recepten uit geüploade foto's/afbeeldingen.",
       "noImageAnalysis": "ondersteunt geen beeldanalyse.",
@@ -574,7 +579,8 @@ export default {
         "embeddingRateLimit": "Rate-limiet of quotum bereikt na {count} verwerkte items. Waardeer credits op of wacht en probeer het later opnieuw.",
         "embeddingComplete": "Embedding-run voltooid: {processed} verwerkt, {failed} mislukt.",
         "embeddingError": "Fout bij het genereren van embeddings:",
-        "connectionFailed": "Verbinding mislukt"
+        "connectionFailed": "Verbinding mislukt",
+        "noModel": "Geen model ingesteld. Voer hierboven een modelnaam in."
       }
     },
     "users": {

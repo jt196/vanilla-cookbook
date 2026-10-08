@@ -442,7 +442,12 @@ export default {
       "textHint": "Utilizzato per l'analisi/traduzione/generazione di ricette di fallback, la pulizia degli ingredienti e la sintesi delle istruzioni.",
       "provider": "Provider",
       "model": "Modello",
-      "customModel": "Modello Personalizzato",
+      "modelPlaceholder": "Digita o scegli un modello",
+      "defaultModelPlaceholder": "Predefinito: {model}",
+      "modelsLoading": "Caricamento dei modelli da {provider}…",
+      "modelsAvailable": "{count} modelli disponibili da {provider}.",
+      "modelsLoadFailed": "Impossibile caricare l'elenco dei modelli ({error}). Puoi comunque digitare il nome del modello.",
+      "browseModels": "Sfoglia i modelli {provider}",
       "imageOcr": "OCR Immagini",
       "imageOcrHint": "Utilizzato per l'estrazione di ricette da foto/immagini caricate.",
       "noImageAnalysis": "non supporta l'analisi delle immagini.",
@@ -532,7 +537,8 @@ export default {
         "embeddingRateLimit": "Limite di velocità o quota raggiunta dopo {count} elaborati. Ricarica i crediti o attendi e riprova più tardi.",
         "embeddingComplete": "Esecuzione embedding completata: {processed} elaborati, {failed} falliti.",
         "embeddingError": "Errore durante la generazione degli embeddings:",
-        "connectionFailed": "Connessione fallita"
+        "connectionFailed": "Connessione fallita",
+        "noModel": "Nessun modello impostato. Inserisci il nome di un modello qui sopra."
       }
     },
     "users": {

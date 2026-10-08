@@ -6,7 +6,6 @@ import {
 	parseRecipeJsonOutput,
 	RECIPE_JSON_SHAPE
 } from '$lib/utils/aiShared'
-import { getDefaultModelsForProvider } from '$lib/utils/llmModels'
 
 /**
  * Map of measurement system codes to human-readable descriptions for AI prompts
@@ -255,24 +254,17 @@ async function invokeLLM({ provider, model, type, messages }) {
 			? env.LLM_IMAGE_PROVIDER || env.LLM_TEXT_PROVIDER || defaultProvider
 			: env.LLM_TEXT_PROVIDER || defaultProvider)
 
-	// Get default models from centralized catalog
-	const providerDefaults = getDefaultModelsForProvider(effectiveProvider)
-	const fallbackDefaults = getDefaultModelsForProvider('openai')
-
-	const defaultTextModel =
-		env.LLM_TEXT_MODEL ||
-		env.LLM_API_ENGINE_TEXT ||
-		providerDefaults.text ||
-		fallbackDefaults.text ||
-		'gpt-5.6-luna'
-	const defaultImageModel =
-		env.LLM_IMAGE_MODEL ||
-		env.LLM_API_ENGINE_IMAGE ||
-		providerDefaults.image ||
-		providerDefaults.text ||
-		fallbackDefaults.image ||
-		fallbackDefaults.text
-	const effectiveModel = model || (type === 'image' ? defaultImageModel : defaultTextModel)
+	// No hardcoded fallback: provider model IDs change too often to ship defaults.
+	const envModel =
+		type === 'image'
+			? env.LLM_IMAGE_MODEL || env.LLM_API_ENGINE_IMAGE
+			: env.LLM_TEXT_MODEL || env.LLM_API_ENGINE_TEXT
+	const effectiveModel = model?.trim() || envModel
+	if (!effectiveModel) {
+		throw new Error(
+			`No ${type === 'image' ? 'image' : 'text'} model set for ${effectiveProvider}. Enter a model name in Site Settings.`
+		)
+	}
 
 	if (type === 'image' && effectiveProvider === 'ollama') {
 		throw new Error('Ollama provider does not support image prompts')
@@ -301,7 +293,13 @@ async function invokeLLM({ provider, model, type, messages }) {
  * @param {string} [options.url='']
  * @returns {Promise<Object>} Parsed recipe object, or { _noRecipe: true }
  */
-export async function extractRecipeFromVideoText({ provider, model, content = '', url = '', language = 'eng' }) {
+export async function extractRecipeFromVideoText({
+	provider,
+	model,
+	content = '',
+	url = '',
+	language = 'eng'
+}) {
 	const { buildVideoTextExtractionPrompt } = await import('./aiShared.js')
 	const prompt = buildVideoTextExtractionPrompt({ content, url, language })
 	return invokeLLM({

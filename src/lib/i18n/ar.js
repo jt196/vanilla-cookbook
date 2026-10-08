@@ -484,7 +484,12 @@ export default {
       "textHint": "يستخدم لتحليل/ترجمة/توليد الوصفات الاحتياطية، وتنظيف المكونات، وتلخيص التعليمات.",
       "provider": "الموفر",
       "model": "النموذج",
-      "customModel": "نموذج مخصص",
+      "modelPlaceholder": "اكتب اسم نموذج أو اختر واحدًا",
+      "defaultModelPlaceholder": "الافتراضي: {model}",
+      "modelsLoading": "جارٍ تحميل النماذج من {provider}…",
+      "modelsAvailable": "{count} نموذجًا متاحًا من {provider}.",
+      "modelsLoadFailed": "تعذّر تحميل قائمة النماذج ({error}). لا يزال بإمكانك كتابة اسم النموذج.",
+      "browseModels": "تصفح نماذج {provider}",
       "imageOcr": "التعرف الضوئي على الحروف للصور",
       "imageOcrHint": "يستخدم لاستخراج الوصفات من الصور/الصور المرفوعة.",
       "noImageAnalysis": "لا يدعم تحليل الصور.",
@@ -574,7 +579,8 @@ export default {
         "embeddingRateLimit": "تم الوصول إلى حد المعدل أو الحصة بعد معالجة {count}. قم بزيادة الرصيد أو انتظر وحاول مرة أخرى لاحقًا.",
         "embeddingComplete": "اكتمل تشغيل التضمين: {processed} تمت معالجتها، {failed} فشلت.",
         "embeddingError": "خطأ في توليد التضمينات:",
-        "connectionFailed": "فشل الاتصال"
+        "connectionFailed": "فشل الاتصال",
+        "noModel": "لم يتم تعيين نموذج. أدخل اسم النموذج أعلاه."
       }
     },
     "users": {

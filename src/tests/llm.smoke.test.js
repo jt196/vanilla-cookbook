@@ -33,7 +33,7 @@ describe('LLM Provider Connectivity', () => {
 
 	for (const provider of configuredProviders) {
 		describe(provider.name, () => {
-			if (provider.api?.chat) {
+			if (provider.api?.chat && provider.defaultTextModel) {
 				it(
 					`connects to ${provider.name} chat API`,
 					async () => {

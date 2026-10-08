@@ -484,7 +484,12 @@ export default {
       "textHint": "Utilisé pour l'analyse/traduction/génération de recettes de secours, le nettoyage des ingrédients et la synthèse des instructions.",
       "provider": "Fournisseur",
       "model": "Modèle",
-      "customModel": "Modèle personnalisé",
+      "modelPlaceholder": "Saisissez ou choisissez un modèle",
+      "defaultModelPlaceholder": "Par défaut : {model}",
+      "modelsLoading": "Chargement des modèles de {provider}…",
+      "modelsAvailable": "{count} modèles disponibles chez {provider}.",
+      "modelsLoadFailed": "Impossible de charger la liste des modèles ({error}). Vous pouvez tout de même saisir un nom de modèle.",
+      "browseModels": "Parcourir les modèles {provider}",
       "imageOcr": "OCR d'image",
       "imageOcrHint": "Utilisé pour l'extraction de recettes à partir de photos/images téléchargées.",
       "noImageAnalysis": "ne prend pas en charge l'analyse d'images.",
@@ -574,7 +579,8 @@ export default {
         "embeddingRateLimit": "Limite de débit ou quota atteint après {count} traités. Rechargez vos crédits ou attendez et réessayez plus tard.",
         "embeddingComplete": "Exécution des embeddings terminée : {processed} traités, {failed} échoués.",
         "embeddingError": "Erreur lors de la génération des embeddings :",
-        "connectionFailed": "Connexion échouée"
+        "connectionFailed": "Connexion échouée",
+        "noModel": "Aucun modèle défini. Saisissez un nom de modèle ci-dessus."
       }
     },
     "users": {
