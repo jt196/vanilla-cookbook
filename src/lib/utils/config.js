@@ -36,6 +36,7 @@ export const languages = Object.entries(languageLabels).map(([value, label]) => 
  *  prep_time: string,
  *  ingredients: string,
  *  ingredients_original: string,
+ *  equipment: string,
  *  directions: string,
  *  directions_original: string,
  *  description: string,
