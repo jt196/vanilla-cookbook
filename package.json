@@ -47,7 +47,7 @@
 		"js-beautify": "^1.15.4",
 		"jsdom": "29.1.1",
 		"prettier": "^3.9.9",
-		"prettier-plugin-svelte": "^3.5.2",
+		"prettier-plugin-svelte": "^4.1.1",
 		"prisma": "^7.10.0",
 		"recipe-ingredient-parser-v3": "^1.5.0",
 		"sass": "^1.105.1",
