@@ -1,5 +1,10 @@
 import { env } from '$env/dynamic/private'
-import { providerMeta, embeddingProviderNames, resolveEmbeddingModel } from '$lib/utils/llmModels'
+import {
+	providerMeta,
+	embeddingProviderNames,
+	resolveEmbeddingModel,
+	getOpenAICompatibleConfig
+} from '$lib/utils/llmModels'
 import { RECIPE_IMAGE_GENERATION_SIZE } from '$lib/utils/image/imageConfig'
 
 /**
@@ -48,6 +53,29 @@ async function failedResponseResult(provider, type, response, model, start) {
 	}
 }
 
+// Room for the short test answer even when a reasoning model "thinks" first; 20 tokens
+// left newer models with nothing to say (finish_reason: length, empty content).
+const TEST_MAX_TOKENS = 200
+
+/** Best-effort reason a provider stopped, across response shapes. */
+function stopReason(data) {
+	return (
+		data?.choices?.[0]?.finish_reason ||
+		data?.candidates?.[0]?.finishReason ||
+		data?.stop_reason ||
+		data?.done_reason ||
+		null
+	)
+}
+
+function openaiCompatibleHeaders() {
+	const config = getOpenAICompatibleConfig(env)
+	return {
+		'Content-Type': 'application/json',
+		...(config?.hasApiKey ? { Authorization: `Bearer ${config.apiKey}` } : {})
+	}
+}
+
 /**
  * API connection configs for each provider.
  * Only contains the provider-specific parts - URLs, request builders, validators.
@@ -65,7 +93,7 @@ const apiConfigs = {
 				body: JSON.stringify({
 					model,
 					messages: [{ role: 'user', content: 'Return JSON: {"ok":true}' }],
-					max_tokens: 20
+					max_completion_tokens: TEST_MAX_TOKENS
 				})
 			}),
 			extractContent: (data) => data?.choices?.[0]?.message?.content
@@ -111,7 +139,7 @@ const apiConfigs = {
 				},
 				body: JSON.stringify({
 					model,
-					max_tokens: 20,
+					max_tokens: TEST_MAX_TOKENS,
 					messages: [{ role: 'user', content: 'Return JSON: {"ok":true}' }]
 				})
 			}),
@@ -130,7 +158,7 @@ const apiConfigs = {
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({
 					contents: [{ parts: [{ text: 'Return JSON: {"ok":true}' }] }],
-					generationConfig: { maxOutputTokens: 20 }
+					generationConfig: { maxOutputTokens: TEST_MAX_TOKENS }
 				})
 			}),
 			extractContent: (data) => data?.candidates?.[0]?.content?.parts?.[0]?.text
@@ -165,6 +193,45 @@ const apiConfigs = {
 					?.data
 		}
 	},
+	// Generic OpenAI-compatible server (LiteLLM, OpenRouter, LM Studio, vLLM, …).
+	// envValue is the base URL; the optional key comes from OPENAI_COMPATIBLE_API_KEY.
+	openai_compatible: {
+		chat: {
+			buildUrl: (baseUrl) => `${baseUrl.replace(/\/+$/, '')}/chat/completions`,
+			buildRequest: (_, model) => ({
+				method: 'POST',
+				headers: openaiCompatibleHeaders(),
+				body: JSON.stringify({
+					model,
+					messages: [{ role: 'user', content: 'Return JSON: {"ok":true}' }],
+					max_tokens: TEST_MAX_TOKENS
+				})
+			}),
+			extractContent: (data) => data?.choices?.[0]?.message?.content
+		},
+		embedding: {
+			buildUrl: (baseUrl) => `${baseUrl.replace(/\/+$/, '')}/embeddings`,
+			buildRequest: (_, model) => ({
+				method: 'POST',
+				headers: openaiCompatibleHeaders(),
+				body: JSON.stringify({ model, input: 'test connection' })
+			}),
+			extractEmbedding: (data) => data?.data?.[0]?.embedding
+		},
+		imageGeneration: {
+			buildUrl: (baseUrl) => `${baseUrl.replace(/\/+$/, '')}/images/generations`,
+			buildRequest: (_, model) => ({
+				method: 'POST',
+				headers: openaiCompatibleHeaders(),
+				body: JSON.stringify({
+					model,
+					prompt: 'A simple test image of a bowl of pasta on a table',
+					size: RECIPE_IMAGE_GENERATION_SIZE
+				})
+			}),
+			extractImage: (data) => data?.data?.[0]?.b64_json || data?.data?.[0]?.url
+		}
+	},
 	ollama: {
 		chat: {
 			buildUrl: (baseUrl) => `${baseUrl}/api/chat`,
@@ -175,7 +242,7 @@ const apiConfigs = {
 					model,
 					messages: [{ role: 'user', content: 'Return JSON: {"ok":true}' }],
 					stream: false,
-					options: { num_predict: 20 }
+					options: { num_predict: TEST_MAX_TOKENS }
 				})
 			}),
 			extractContent: (data) => data?.message?.content
@@ -360,9 +427,23 @@ async function testChat(provider, apiConfig, envValue, model, start, timeout) {
 
 		const data = await response.json()
 		const content = apiConfig.extractContent(data)
+		if (!content) {
+			const reason = stopReason(data)
+			const error = `Connected, but the model returned no text${reason ? ` (stopped: ${reason})` : ''}`
+			console.error(
+				`LLM connection test failed (${provider} chat, model ${effectiveModel}): ${error}`
+			)
+			return {
+				ok: false,
+				latencyMs: Date.now() - start,
+				error,
+				code: 'admin.site.msg.connectionFailed',
+				model: effectiveModel
+			}
+		}
 
 		return {
-			ok: !!content,
+			ok: true,
 			latencyMs: Date.now() - start,
 			model: effectiveModel
 		}
@@ -373,6 +454,7 @@ async function testChat(provider, apiConfig, envValue, model, start, timeout) {
 
 async function testEmbedding(provider, apiConfig, envValue, model, start, timeout) {
 	const effectiveModel = resolveEmbeddingModel(provider, model)
+	if (!effectiveModel) return noModelResult(provider)
 
 	const controller = new AbortController()
 	const timeoutId = setTimeout(() => controller.abort(), timeout)

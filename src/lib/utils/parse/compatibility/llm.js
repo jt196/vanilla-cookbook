@@ -1,5 +1,6 @@
 import { HumanMessage, SystemMessage } from '@langchain/core/messages'
 import { buildRecipeExtractionPrompt, parseRecipeJsonOutput } from '$lib/utils/aiShared'
+import { getOpenAICompatibleConfig } from '$lib/utils/llmModels'
 
 export function parseCompatibilityLLMJsonOutput(rawOutput) {
 	return parseRecipeJsonOutput(rawOutput)
@@ -18,7 +19,9 @@ function resolveCompatibilityProvider(provider, env = process.env) {
 					? 'google'
 					: env.OLLAMA_BASE_URL
 						? 'ollama'
-						: null)
+						: env.OPENAI_COMPATIBLE_BASE_URL
+							? 'openai_compatible'
+							: null)
 	)
 }
 
@@ -48,6 +51,18 @@ async function loadChatClient(provider, model, env = process.env) {
 		if (!env.GOOGLE_API_KEY) throw new Error('Missing google API key')
 		const { ChatGoogleGenerativeAI } = await import('@langchain/google-genai')
 		return new ChatGoogleGenerativeAI({ model, apiKey: env.GOOGLE_API_KEY, temperature: 0.3 })
+	}
+
+	if (provider === 'openai_compatible') {
+		const config = getOpenAICompatibleConfig(env)
+		if (!config) throw new Error('Missing OPENAI_COMPATIBLE_BASE_URL')
+		const { ChatOpenAI } = await import('@langchain/openai')
+		return new ChatOpenAI({
+			model,
+			apiKey: config.apiKey,
+			temperature: 0.3,
+			configuration: { baseURL: config.baseURL }
+		})
 	}
 
 	if (provider === 'ollama') {

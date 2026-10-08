@@ -136,7 +136,7 @@ AI-powered features help with recipe scraping, text parsing, image recognition, 
 
 **Step 1: Add API Keys**
 
-Add one or more API keys to your `.env` file:
+Add one or more providers to your `.env` file:
 
 ```env
 # Add keys for the providers you want to use
@@ -145,6 +145,9 @@ ANTHROPIC_API_KEY=sk-ant-...
 GOOGLE_API_KEY=...
 # For local models
 OLLAMA_BASE_URL=http://localhost:11434
+# Any OpenAI-compatible server (LiteLLM, OpenRouter, LM Studio, vLLM, ...)
+OPENAI_COMPATIBLE_BASE_URL=http://localhost:4000/v1
+OPENAI_COMPATIBLE_API_KEY=... # optional; local servers often don't need one
 ```
 
 **Step 2: Configure in Site Settings**
@@ -152,20 +155,21 @@ OLLAMA_BASE_URL=http://localhost:11434
 Go to **Options > Site** (admin only) to configure LLM features:
 
 - **Enable LLM Features** - Turn AI features on/off
-- **Provider** - Choose from providers with valid API keys (OpenAI, Anthropic, Google, Ollama)
-- **Text Model** - For recipe parsing and text cleanup (recommended: fast/cheap models like GPT-4o Mini, Claude 3.5 Haiku, Gemini Flash)
-- **Image Model** - For recipe photo analysis (Ollama doesn't support images)
-
-Each dropdown includes common models with a "Custom..." option if you need a specific model version.
+- **Provider** - Choose from the providers configured in `.env`
+- **Model** - Type a model name, or pick one from the suggestions, which are fetched live from the provider (`-latest` aliases first, previews last). A link to the provider's model list sits under each field.
+- **Test Enabled Providers** - Checks each configured section and shows the provider's own error message if something is wrong
 
 **Supported Providers:**
 
-| Provider  | Text Models                         | Image Models             | Notes                 |
-| --------- | ----------------------------------- | ------------------------ | --------------------- |
-| OpenAI    | GPT-4o Mini, GPT-3.5 Turbo, GPT-4o  | GPT-4o Mini, GPT-4o      | Full support          |
-| Anthropic | Claude 3.5 Haiku, Claude 3.5 Sonnet | Claude 3.5 Sonnet, Haiku | Full support          |
-| Google    | Gemini 2.0 Flash, 1.5 Flash/Pro     | Same as text             | Full support          |
-| Ollama    | Llama 3.2, Mistral, Phi-3           | Not supported            | Local only, no images |
+| Provider          | Text | Image analysis   | Image generation   | Embeddings        |
+| ----------------- | ---- | ---------------- | ------------------ | ----------------- |
+| OpenAI            | Yes  | Yes              | Yes                | Yes               |
+| Anthropic         | Yes  | Yes              | No                 | No                |
+| Google            | Yes  | Yes              | Yes                | Yes               |
+| Ollama            | Yes  | No               | Via compatible API | Yes               |
+| OpenAI-compatible | Yes  | If the model can | If the server can  | If the server can |
+
+**OpenAI-compatible** covers proxies like [LiteLLM](https://docs.litellm.ai/), multi-model services like [OpenRouter](https://openrouter.ai/), and local servers like LM Studio or vLLM. Set `OPENAI_COMPATIBLE_BASE_URL` to the server's API root (usually ending in `/v1`). It can be used alongside OpenAI itself, for example OpenRouter for text and OpenAI for image generation. Embeddings have no default model for this provider: enter one your server offers.
 
 #### Translate Recipe
 
@@ -272,7 +276,8 @@ Semantic search is optional and **admin-controlled**. Users do not need to toggl
 1. Add a supported embedding provider in `.env`:
    - `OPENAI_API_KEY` or
    - `GOOGLE_API_KEY` (Gemini embeddings) or
-   - `OLLAMA_BASE_URL`
+   - `OLLAMA_BASE_URL` or
+   - `OPENAI_COMPATIBLE_BASE_URL` (enter an embedding model your server offers)
 2. In **Options > Site** (admin), enable semantic search.
 3. In **Options > Site** (admin), select embedding provider/model.
 

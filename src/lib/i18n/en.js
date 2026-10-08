@@ -523,7 +523,7 @@ export default {
 			// LLM
 			llmConfig: 'LLM Configuration',
 			llmNoKeys:
-				'No API keys configured. Add API keys to your .env file to enable LLM features: OPENAI_API_KEY, ANTHROPIC_API_KEY, GOOGLE_API_KEY, or configure OLLAMA_BASE_URL for local models.',
+				'No API keys configured. Add API keys to your .env file to enable LLM features: OPENAI_API_KEY, ANTHROPIC_API_KEY, GOOGLE_API_KEY, or configure OLLAMA_BASE_URL / OPENAI_COMPATIBLE_BASE_URL for local models.',
 			enableLlm: 'Enable LLM Features',
 			llmEnabled: 'AI-assisted recipe parsing, OCR, and image generation are enabled.',
 			llmDisabled: 'AI-assisted recipe parsing, OCR, and image generation are disabled.',
@@ -559,13 +559,14 @@ export default {
 			embeddingsEnabled: 'Embeddings are enabled.',
 			embeddingsDisabled: 'Embeddings are disabled.',
 			noEmbeddingProviders:
-				'No embedding providers configured. Add OPENAI_API_KEY, GOOGLE_API_KEY and/or OLLAMA_BASE_URL in .env.',
+				'No embedding providers configured. Add OPENAI_API_KEY, GOOGLE_API_KEY and/or OLLAMA_BASE_URL / OPENAI_COMPATIBLE_BASE_URL in .env.',
 			selectProviderFirst: 'Select an embedding provider to choose a model.',
 			embeddingModelChangeWarning:
 				'{count} recipes are indexed with {model}. After saving, use "Regenerate Mismatched" to re-embed them with the new model (this uses API credits). Until then, semantic search and similar recipes will leave them out.',
 			missingOllama: 'Please add OLLAMA_BASE_URL to .env.',
 			missingGoogle: 'Please add GOOGLE_API_KEY to .env.',
 			missingOpenai: 'Please add OPENAI_API_KEY to .env.',
+			missingOpenaiCompatible: 'Please add OPENAI_COMPATIBLE_BASE_URL to .env.',
 			missingProviderConfig: 'Selected provider is missing configuration in .env.',
 			indexed: 'Indexed: {completed} / {total}',
 			remainingInline: '{count} remaining',

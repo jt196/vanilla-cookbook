@@ -300,7 +300,8 @@ describe('resolveEmbeddingModel', () => {
 		expect(result).toBe('custom-model')
 	})
 
-	for (const name of embeddingProviderNames) {
+	// openai_compatible deliberately has no default (see openaiCompatible.test.js)
+	for (const name of embeddingProviderNames.filter((p) => p !== 'openai_compatible')) {
 		it(`returns non-null default model for ${name}`, () => {
 			const result = resolveEmbeddingModel(name, null)
 			expect(result).toBeTruthy()

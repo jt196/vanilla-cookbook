@@ -590,6 +590,8 @@
 								{$t('admin.site.missingOllama')}
 							{:else if semanticEmbeddingProvider === 'google'}
 								{$t('admin.site.missingGoogle')}
+							{:else if semanticEmbeddingProvider === 'openai_compatible'}
+								{$t('admin.site.missingOpenaiCompatible')}
 							{:else if semanticEmbeddingProvider === 'openai'}
 								{$t('admin.site.missingOpenai')}
 							{:else}

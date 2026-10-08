@@ -1,4 +1,5 @@
 import { HumanMessage, SystemMessage } from '@langchain/core/messages'
+import { getOpenAICompatibleConfig } from '$lib/utils/llmModels'
 import { env } from '$env/dynamic/private'
 import { languageLabels } from '$lib/submodules/recipe-ingredient-parser/src/i18n'
 import {
@@ -198,6 +199,17 @@ const providerLoaders = {
 			temperature: 0.3
 		})
 	}),
+	openai_compatible: async (model) => {
+		const config = getOpenAICompatibleConfig(env)
+		if (!config) throw new Error('OPENAI_COMPATIBLE_BASE_URL is not configured')
+		const { ChatOpenAI } = await import('@langchain/openai')
+		return new ChatOpenAI({
+			model,
+			apiKey: config.apiKey,
+			temperature: 0.3,
+			configuration: { baseURL: config.baseURL }
+		})
+	},
 	ollama: async (model, type) => {
 		if (type === 'image') {
 			throw new Error('Ollama provider does not support image prompts in this flow')

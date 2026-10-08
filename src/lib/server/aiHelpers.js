@@ -2,6 +2,7 @@ import { env } from '$env/dynamic/private'
 import { jsonError } from '$lib/server/authHelpers'
 import { RECIPE_IMAGE_GENERATION_SIZE } from '$lib/utils/image/imageConfig'
 import OpenAI from 'openai'
+import { getOpenAICompatibleConfig } from '$lib/utils/llmModels'
 
 /**
  * Resolve effective AI provider/model for an API request from hook-populated locals.
@@ -95,6 +96,26 @@ export async function generateImageBuffer(aiConfig, prompt) {
 		const b64 = generation?.data?.[0]?.b64_json
 		if (!b64) throw new Error('OpenAI image generation returned no image.')
 		return Buffer.from(b64, 'base64')
+	}
+
+	if (aiConfig.provider === 'openai_compatible') {
+		const config = getOpenAICompatibleConfig(env)
+		if (!config) throw new Error('OPENAI_COMPATIBLE_BASE_URL is not configured.')
+		const client = new OpenAI({ apiKey: config.apiKey, baseURL: config.baseURL })
+		const generation = await client.images.generate({
+			model: requireImageGenerationModel(aiConfig),
+			prompt,
+			size: RECIPE_IMAGE_GENERATION_SIZE
+		})
+		const result = generation?.data?.[0]
+		if (result?.b64_json) return Buffer.from(result.b64_json, 'base64')
+		// Some servers return a URL instead of base64
+		if (result?.url) {
+			const response = await fetch(result.url, { signal: AbortSignal.timeout(30000) })
+			if (!response.ok) throw new Error(`Generated image download failed: HTTP ${response.status}`)
+			return Buffer.from(await response.arrayBuffer())
+		}
+		throw new Error('Image generation returned no image.')
 	}
 
 	if (aiConfig.provider === 'google') {

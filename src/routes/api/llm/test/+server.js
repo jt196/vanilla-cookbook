@@ -1,6 +1,7 @@
 import { json } from '@sveltejs/kit'
 import { requireAdmin } from '$lib/server/authHelpers'
 import { testProviderConnection, getConfiguredProviders } from '$lib/utils/llmConnection'
+import { providerNames } from '$lib/utils/llmModels'
 
 /**
  * Test LLM provider connection.
@@ -23,8 +24,7 @@ export async function POST({ request, locals }) {
 			)
 		}
 
-		const validProviders = ['openai', 'anthropic', 'google', 'ollama']
-		if (!validProviders.includes(provider)) {
+		if (!providerNames.includes(provider)) {
 			return json(
 				{
 					ok: false,

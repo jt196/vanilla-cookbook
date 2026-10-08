@@ -73,13 +73,15 @@ export const load = async ({ parent, locals }) => {
 						in_trash: false
 					}
 				}),
-				prisma.recipe.count({
-					where: {
-						in_trash: false,
-						embedding: { not: null },
-						embeddingModel: { not: resolvedModel }
-					}
-				}),
+				resolvedModel
+					? prisma.recipe.count({
+							where: {
+								in_trash: false,
+								embedding: { not: null },
+								embeddingModel: { not: resolvedModel }
+							}
+						})
+					: 0,
 				prisma.recipe.count({
 					where: {
 						in_trash: false
