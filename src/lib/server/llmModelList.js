@@ -1,5 +1,5 @@
 import { env } from '$env/dynamic/private'
-import { providerMeta, providerSupports } from '$lib/utils/llmModels'
+import { providerMeta, providerSupports, getOpenAICompatibleConfig } from '$lib/utils/llmModels'
 import { describeProviderError } from '$lib/utils/llmConnection'
 
 const CACHE_TTL_MS = 10 * 60 * 1000
@@ -66,10 +66,13 @@ function compareVersionsDesc(a, b) {
  */
 export function sortModels(provider, models) {
 	const byVersion = provider === 'google' || provider === 'ollama'
+	const alphabetical = provider === 'openai_compatible'
 	const family = (id) => id.split(/[-:.\d]/)[0]
 	return [...models].sort((a, b) => {
 		const rank = releaseRank(a.id) - releaseRank(b.id)
-		if (rank || !byVersion) return rank
+		if (rank) return rank
+		if (alphabetical) return a.id.localeCompare(b.id)
+		if (!byVersion) return 0
 		return (
 			family(a.id).localeCompare(family(b.id)) ||
 			compareVersionsDesc(a.id, b.id) ||
@@ -117,6 +120,15 @@ async function fetchRawModels(provider, envValue, signal) {
 		}))
 	}
 
+	if (provider === 'openai_compatible') {
+		const config = getOpenAICompatibleConfig(env)
+		const data = await getJson(`${config.baseURL}/models`, {
+			headers: config.hasApiKey ? { Authorization: `Bearer ${config.apiKey}` } : {},
+			signal
+		})
+		return (data?.data || []).map((m) => ({ id: m.id, label: m.name }))
+	}
+
 	if (provider === 'ollama') {
 		const baseUrl = envValue.replace(/\/$/, '')
 		const data = await getJson(`${baseUrl}/api/tags`, { signal })
@@ -162,6 +174,17 @@ export function filterModelsForPurpose(provider, purpose, models) {
 
 	if (provider === 'anthropic') {
 		return purpose === 'chat' || purpose === 'image' ? models : []
+	}
+
+	// OpenAI-compatible servers don't say what a model is for, so only filter by name
+	if (provider === 'openai_compatible') {
+		const isEmbedding = (m) => /embed/i.test(m.id)
+		if (purpose === 'embedding') {
+			const embedding = models.filter(isEmbedding)
+			return embedding.length ? embedding : models
+		}
+		if (purpose === 'imageGeneration') return models
+		return models.filter((m) => !isEmbedding(m))
 	}
 
 	return models

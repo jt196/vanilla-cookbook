@@ -12,8 +12,82 @@ export const providerMeta = [
 	{ value: 'openai', label: 'OpenAI', envVar: 'OPENAI_API_KEY', supportsEmbedding: true },
 	{ value: 'anthropic', label: 'Anthropic', envVar: 'ANTHROPIC_API_KEY', supportsEmbedding: false },
 	{ value: 'google', label: 'Google', envVar: 'GOOGLE_API_KEY', supportsEmbedding: true },
-	{ value: 'ollama', label: 'Ollama (Local)', envVar: 'OLLAMA_BASE_URL', supportsEmbedding: true }
+	{ value: 'ollama', label: 'Ollama (Local)', envVar: 'OLLAMA_BASE_URL', supportsEmbedding: true },
+	{
+		value: 'openai_compatible',
+		label: 'OpenAI-compatible (LiteLLM, OpenRouter, LM Studio…)',
+		envVar: 'OPENAI_COMPATIBLE_BASE_URL',
+		supportsEmbedding: true
+	}
 ]
+
+// Well-known OpenAI-compatible services, recognised by host for friendlier labels and links
+const KNOWN_COMPATIBLE_SERVICES = [
+	{ host: 'openrouter.ai', name: 'OpenRouter', docsUrl: 'https://openrouter.ai/models' },
+	{
+		host: 'together.xyz',
+		name: 'Together AI',
+		docsUrl: 'https://docs.together.ai/docs/serverless-models'
+	},
+	{ host: 'groq.com', name: 'Groq', docsUrl: 'https://console.groq.com/docs/models' },
+	{ host: 'fireworks.ai', name: 'Fireworks', docsUrl: 'https://fireworks.ai/models' },
+	{ host: 'deepinfra.com', name: 'DeepInfra', docsUrl: 'https://deepinfra.com/models' },
+	{
+		host: 'mistral.ai',
+		name: 'Mistral',
+		docsUrl: 'https://docs.mistral.ai/getting-started/models/'
+	},
+	{ host: 'x.ai', name: 'xAI', docsUrl: 'https://docs.x.ai/docs/models' },
+	{
+		host: 'deepseek.com',
+		name: 'DeepSeek',
+		docsUrl: 'https://api-docs.deepseek.com/quick_start/pricing'
+	},
+	{
+		host: 'generativelanguage.googleapis.com',
+		name: 'Google Gemini',
+		docsUrl: 'https://ai.google.dev/gemini-api/docs/models'
+	},
+	{ host: 'api.openai.com', name: 'OpenAI', docsUrl: 'https://platform.openai.com/docs/models' }
+]
+
+/**
+ * Describe the service behind an OpenAI-compatible base URL, for display.
+ * Known services get their name and model-list link; anything else (a LiteLLM proxy,
+ * LM Studio on the LAN, ...) is shown by its host, without a link.
+ *
+ * @param {string | null | undefined} baseURL
+ * @returns {{ name: string, docsUrl: string } | null}
+ */
+export function describeOpenAICompatibleService(baseURL) {
+	if (!baseURL) return null
+	let url
+	try {
+		url = new URL(baseURL)
+	} catch {
+		return { name: baseURL, docsUrl: '' }
+	}
+	const hostname = url.hostname.toLowerCase()
+	const known = KNOWN_COMPATIBLE_SERVICES.find(
+		(service) => hostname === service.host || hostname.endsWith(`.${service.host}`)
+	)
+	return known ? { name: known.name, docsUrl: known.docsUrl } : { name: url.host, docsUrl: '' }
+}
+
+/**
+ * Connection settings for the generic OpenAI-compatible provider (LiteLLM, OpenRouter,
+ * LM Studio, vLLM, …). The key is optional because local servers often don't need one;
+ * the OpenAI SDK still requires a string, so a placeholder is used.
+ *
+ * @param {Record<string, string | undefined>} env
+ * @returns {{ baseURL: string, apiKey: string, hasApiKey: boolean } | null} null if no base URL is set
+ */
+export function getOpenAICompatibleConfig(env) {
+	const baseURL = (env.OPENAI_COMPATIBLE_BASE_URL || '').trim().replace(/\/+$/, '')
+	if (!baseURL) return null
+	const key = (env.OPENAI_COMPATIBLE_API_KEY || '').trim()
+	return { baseURL, apiKey: key || 'not-needed', hasApiKey: !!key }
+}
 
 // Derived lists for convenience
 export const providerNames = providerMeta.map((p) => p.value)
@@ -27,6 +101,7 @@ export const embeddingProviderMeta = providerMeta.filter((p) => p.supportsEmbedd
 /**
  * Default embedding model per provider, used when the admin hasn't chosen one.
  * Kept fixed (rather than live) because changing it invalidates existing recipe embeddings.
+ * The OpenAI-compatible provider has no default: the admin must name a model the server offers.
  */
 export const defaultEmbeddingModels = {
 	openai: 'text-embedding-3-small',
@@ -145,7 +220,7 @@ export function getEmbeddingProviderOptionsWithAvailability(availableProviders) 
  *
  * @param {string | null | undefined} preferredProvider
  * @param {Record<string, string | undefined>} env
- * @returns {'openai' | 'google' | 'ollama' | null}
+ * @returns {'openai' | 'google' | 'ollama' | 'openai_compatible' | null}
  */
 export function resolveEmbeddingProvider(preferredProvider, env) {
 	const availableProviders = getAvailableEmbeddingProviders(env)
@@ -163,13 +238,14 @@ export function resolveEmbeddingProvider(preferredProvider, env) {
  *
  * Model precedence:
  * 1. Explicit preferred model (admin/settings)
- * 2. Provider default from `defaultEmbeddingModels`
+ * 2. Provider default from `defaultEmbeddingModels` (none for OpenAI-compatible)
  *
- * @param {'openai' | 'google' | 'ollama'} provider
+ * @param {'openai' | 'google' | 'ollama' | 'openai_compatible'} provider
  * @param {string | null | undefined} preferredModel
- * @returns {string}
+ * @returns {string | null} null for the OpenAI-compatible provider when no model is set
  */
 export function resolveEmbeddingModel(provider, preferredModel) {
 	if (preferredModel) return preferredModel
+	if (provider === 'openai_compatible') return null
 	return defaultEmbeddingModels[provider] || defaultEmbeddingModels.ollama
 }

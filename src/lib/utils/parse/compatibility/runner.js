@@ -120,7 +120,9 @@ export function resolveCompatibilityLLMConfig(enableLLM, env = process.env) {
 					? 'google'
 					: env.OLLAMA_BASE_URL
 						? 'ollama'
-						: null)
+						: env.OPENAI_COMPATIBLE_BASE_URL
+							? 'openai_compatible'
+							: null)
 
 	if (!provider) return null
 

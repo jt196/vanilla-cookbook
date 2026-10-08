@@ -253,6 +253,7 @@ pnpm start                # Build then serve
 - `BODY_SIZE_LIMIT`: Max upload size in bytes (default: 512kb, recommend 5MB)
 - `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GOOGLE_API_KEY`: LLM providers
 - `OLLAMA_BASE_URL`: For local AI models (default: <http://localhost:11434>)
+- `OPENAI_COMPATIBLE_BASE_URL`, `OPENAI_COMPATIBLE_API_KEY`: Any OpenAI-compatible server (LiteLLM, OpenRouter, LM Studio, vLLM); key optional
 - `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`: Google OAuth
 - `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`: GitHub OAuth
 - `OIDC_ISSUER_URL`, `OIDC_CLIENT_ID`, `OIDC_CLIENT_SECRET`: Generic OIDC provider

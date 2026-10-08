@@ -1,6 +1,11 @@
 import { getBackupInfo } from '$lib/server/backups'
 import { prisma } from '$lib/server/prisma'
-import { resolveEmbeddingModel } from '$lib/utils/llmModels'
+import { env } from '$env/dynamic/private'
+import {
+	resolveEmbeddingModel,
+	getOpenAICompatibleConfig,
+	describeOpenAICompatibleService
+} from '$lib/utils/llmModels'
 
 export const load = async ({ parent, locals }) => {
 	// Get parent data (settings, user)
@@ -33,6 +38,10 @@ export const load = async ({ parent, locals }) => {
 	const oauth = locals.site?.oauth ?? { oidcEnabled: false }
 
 	const llmConfig = {
+		// Which service the OpenAI-compatible provider points at (name/link only, never the key)
+		openaiCompatibleService: describeOpenAICompatibleService(
+			getOpenAICompatibleConfig(env)?.baseURL
+		),
 		enabled: ai.enabled,
 		hasAnyApiKey: ai.hasAnyApiKey,
 		availableProviders: ai.availableProviders,
@@ -73,13 +82,15 @@ export const load = async ({ parent, locals }) => {
 						in_trash: false
 					}
 				}),
-				prisma.recipe.count({
-					where: {
-						in_trash: false,
-						embedding: { not: null },
-						embeddingModel: { not: resolvedModel }
-					}
-				}),
+				resolvedModel
+					? prisma.recipe.count({
+							where: {
+								in_trash: false,
+								embedding: { not: null },
+								embeddingModel: { not: resolvedModel }
+							}
+						})
+					: 0,
 				prisma.recipe.count({
 					where: {
 						in_trash: false

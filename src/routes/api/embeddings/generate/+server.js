@@ -52,6 +52,15 @@ export async function POST({ request, locals }) {
 	console.info(`[semantic] embedding batch start (batchSize=${batchSize}, force=${force})`)
 
 	const resolvedModel = resolveEmbeddingModel(preferredEmbeddingProvider, preferredEmbeddingModel)
+	if (!resolvedModel) {
+		return json(
+			{
+				error: 'No embedding model set. Enter one in Site Settings.',
+				code: 'admin.site.msg.noModel'
+			},
+			{ status: 400 }
+		)
+	}
 	const whereClause = force
 		? { in_trash: false, OR: [{ embedding: null }, { embeddingModel: { not: resolvedModel } }] }
 		: { embedding: null, in_trash: false }
@@ -124,13 +133,15 @@ export async function GET({ locals }) {
 				in_trash: false
 			}
 		}),
-		prisma.recipe.count({
-			where: {
-				in_trash: false,
-				embedding: { not: null },
-				embeddingModel: { not: resolvedModel }
-			}
-		}),
+		resolvedModel
+			? prisma.recipe.count({
+					where: {
+						in_trash: false,
+						embedding: { not: null },
+						embeddingModel: { not: resolvedModel }
+					}
+				})
+			: 0,
 		prisma.recipe.count({
 			where: {
 				in_trash: false

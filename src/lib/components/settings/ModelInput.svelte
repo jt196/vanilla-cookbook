@@ -19,7 +19,8 @@
 	 *   value?: string,
 	 *   id: string,
 	 *   placeholder?: string,
-	 *   disabled?: boolean
+	 *   disabled?: boolean,
+	 *   service?: { name: string, docsUrl: string } | null
 	 * }}
 	 */
 	let {
@@ -28,7 +29,9 @@
 		value = $bindable(''),
 		id,
 		placeholder = '',
-		disabled = false
+		disabled = false,
+		// The service behind the OpenAI-compatible provider, if recognised (e.g. OpenRouter)
+		service = null
 	} = $props()
 
 	let models = $state([])
@@ -40,8 +43,11 @@
 	let listbox = $state()
 	let requestId = 0
 
-	let providerLabel = $derived(providerMeta.find((p) => p.value === provider)?.label || provider)
-	let docsUrl = $derived(providerModelDocs[provider] || '')
+	let compatService = $derived(provider === 'openai_compatible' ? service : null)
+	let providerLabel = $derived(
+		compatService?.name || providerMeta.find((p) => p.value === provider)?.label || provider
+	)
+	let docsUrl = $derived(compatService ? compatService.docsUrl : providerModelDocs[provider] || '')
 	let listboxId = $derived(`${id}-listbox`)
 	let filteredModels = $derived.by(() => {
 		const query = filterText.trim().toLowerCase()

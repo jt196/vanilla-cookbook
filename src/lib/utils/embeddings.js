@@ -1,5 +1,9 @@
 import { env } from '$env/dynamic/private'
-import { resolveEmbeddingProvider, resolveEmbeddingModel } from '$lib/utils/llmModels'
+import {
+	resolveEmbeddingProvider,
+	resolveEmbeddingModel,
+	getOpenAICompatibleConfig
+} from '$lib/utils/llmModels'
 
 /**
  * Get embedding for text from configured provider.
@@ -21,6 +25,9 @@ export async function getEmbedding(text, preferredProvider = null, preferredMode
 	if (provider === 'google') {
 		return googleEmbed(trimmed, preferredModel)
 	}
+	if (provider === 'openai_compatible') {
+		return openaiCompatibleEmbed(trimmed, preferredModel)
+	}
 	return ollamaEmbed(trimmed, preferredModel)
 }
 
@@ -41,6 +48,32 @@ async function openaiEmbed(text, preferredModel = null) {
 	if (!response.ok) {
 		const body = await response.text()
 		throw new Error(`OpenAI embedding failed: ${response.status} ${body}`)
+	}
+
+	const data = await response.json()
+	const vector = data?.data?.[0]?.embedding
+	if (!Array.isArray(vector)) return null
+	return new Float32Array(vector)
+}
+
+async function openaiCompatibleEmbed(text, preferredModel = null) {
+	const config = getOpenAICompatibleConfig(env)
+	if (!config) throw new Error('OPENAI_COMPATIBLE_BASE_URL is not configured')
+	const model = resolveEmbeddingModel('openai_compatible', preferredModel)
+	if (!model) throw new Error('No embedding model set for the OpenAI-compatible provider')
+
+	const response = await fetch(`${config.baseURL}/embeddings`, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			...(config.hasApiKey ? { Authorization: `Bearer ${config.apiKey}` } : {})
+		},
+		body: JSON.stringify({ model, input: text })
+	})
+
+	if (!response.ok) {
+		const body = await response.text()
+		throw new Error(`OpenAI-compatible embedding failed: ${response.status} ${body}`)
 	}
 
 	const data = await response.json()

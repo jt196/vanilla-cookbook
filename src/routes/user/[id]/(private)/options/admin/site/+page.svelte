@@ -116,8 +116,19 @@
 	let supportsImageGeneration = $derived(
 		providerSupports(llmImageGenerationProvider, 'imageGeneration')
 	)
+	// Name the service the OpenAI-compatible provider points at (e.g. "OpenRouter")
+	const compatService = llmConfig.openaiCompatibleService
+	const withServiceName = (options) =>
+		options.map((option) =>
+			option.value === 'openai_compatible' && compatService
+				? { ...option, label: `OpenAI-compatible: ${compatService.name}` }
+				: option
+		)
+
 	let semanticProviderOptions = $derived(
-		getEmbeddingProviderOptionsWithAvailability(llmConfig.semanticAvailableProviders)
+		withServiceName(
+			getEmbeddingProviderOptionsWithAvailability(llmConfig.semanticAvailableProviders)
+		)
 	)
 	let effectiveSemanticProvider = $derived(
 		semanticEmbeddingProvider || llmConfig.semanticProvider || null
@@ -156,7 +167,7 @@
 	let effectiveImageGenerationModel = $derived(imageGenerationModel.trim())
 
 	let availableProviderOptions = $derived(
-		getProviderOptionsWithAvailability(llmConfig.availableProviders)
+		withServiceName(getProviderOptionsWithAvailability(llmConfig.availableProviders))
 	)
 
 	async function updateAdminSettings(event) {
@@ -491,7 +502,12 @@
 					bind:selected={llmProvider}
 					legend={$t('admin.site.provider')} />
 
-				<ModelInput id="textModel" provider={llmProvider} type="chat" bind:value={textModel} />
+				<ModelInput
+					service={compatService}
+					id="textModel"
+					provider={llmProvider}
+					type="chat"
+					bind:value={textModel} />
 				<h4>{$t('admin.site.imageOcr')}</h4>
 				<InfoText>{$t('admin.site.imageOcrHint')}</InfoText>
 				<div class="flex flex-col gap-2">
@@ -502,6 +518,7 @@
 						legend={$t('admin.site.provider')} />
 					{#if supportsImages}
 						<ModelInput
+							service={compatService}
 							id="imageModel"
 							provider={llmImageProvider}
 							type="image"
@@ -526,6 +543,7 @@
 						legend={$t('admin.site.provider')} />
 					{#if supportsImageGeneration}
 						<ModelInput
+							service={compatService}
 							id="imageGenerationModel"
 							provider={llmImageGenerationProvider}
 							type="imageGeneration"
@@ -565,6 +583,7 @@
 						disabled={!semanticEnabled} />
 					{#if effectiveSemanticProvider}
 						<ModelInput
+							service={compatService}
 							id="semanticEmbeddingModel"
 							provider={effectiveSemanticProvider}
 							type="embedding"
@@ -590,6 +609,8 @@
 								{$t('admin.site.missingOllama')}
 							{:else if semanticEmbeddingProvider === 'google'}
 								{$t('admin.site.missingGoogle')}
+							{:else if semanticEmbeddingProvider === 'openai_compatible'}
+								{$t('admin.site.missingOpenaiCompatible')}
 							{:else if semanticEmbeddingProvider === 'openai'}
 								{$t('admin.site.missingOpenai')}
 							{:else}
