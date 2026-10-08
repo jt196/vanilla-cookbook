@@ -8,6 +8,9 @@ import {
 	generateRecipeWithLLM
 } from '$lib/utils/ai.js'
 
+// Read env live from process.env so vi.stubEnv applies (and the local .env can't leak in)
+vi.mock('$env/dynamic/private', () => ({ env: process.env }))
+
 // Spoof the LangChain OpenAI client — each describe block configures invoke via mockImplementation
 vi.mock('@langchain/openai', () => ({
 	ChatOpenAI: vi.fn()
@@ -17,9 +20,7 @@ import { ChatOpenAI } from '@langchain/openai'
 import {
 	getAvailableAiProviders,
 	resolveProviderSelection,
-	getDefaultModelsForProvider,
-	getTextModelsForProvider,
-	getImageModelsForProvider,
+	providerSupports,
 	getAvailableEmbeddingProviders,
 	resolveEmbeddingProvider,
 	resolveEmbeddingModel
@@ -209,55 +210,37 @@ describe('resolveProviderSelection', () => {
 	})
 })
 
-describe('getDefaultModelsForProvider', () => {
+describe('providerSupports', () => {
 	for (const name of providerNames) {
-		it(`returns non-null text model for ${name}`, () => {
-			const result = getDefaultModelsForProvider(name)
-			expect(result.text).toBeTruthy()
+		it(`supports chat for ${name}`, () => {
+			expect(providerSupports(name, 'chat')).toBe(true)
 		})
 	}
 
-	it('returns nulls for unknown provider', () => {
-		const result = getDefaultModelsForProvider('unknown')
-		expect(result.text).toBeNull()
-		expect(result.image).toBeNull()
-	})
-})
-
-describe('getTextModelsForProvider', () => {
-	for (const name of providerNames) {
-		it(`returns models with Custom option for ${name}`, () => {
-			const result = getTextModelsForProvider(name)
-			expect(result.length).toBeGreaterThan(0)
-			expect(result[result.length - 1].value).toBe('custom')
-		})
-	}
-
-	it('returns only Custom option for unknown provider', () => {
-		const result = getTextModelsForProvider('unknown')
-		expect(result).toHaveLength(1)
-		expect(result[0].value).toBe('custom')
-	})
-})
-
-describe('getImageModelsForProvider', () => {
 	for (const name of imageProviderNames) {
-		it(`returns image models for ${name}`, () => {
-			const result = getImageModelsForProvider(name)
-			expect(result.length).toBeGreaterThan(0)
+		it(`supports image analysis for ${name}`, () => {
+			expect(providerSupports(name, 'image')).toBe(true)
 		})
 	}
 
 	for (const name of providerNames.filter((p) => !imageProviderNames.includes(p))) {
-		it(`returns empty array for ${name} (no image support)`, () => {
-			const result = getImageModelsForProvider(name)
-			expect(result).toHaveLength(0)
+		it(`does not support image analysis for ${name}`, () => {
+			expect(providerSupports(name, 'image')).toBe(false)
 		})
 	}
 
-	it('returns empty array for unknown provider', () => {
-		const result = getImageModelsForProvider('unknown')
-		expect(result).toHaveLength(0)
+	it('does not support image generation for anthropic', () => {
+		expect(providerSupports('anthropic', 'imageGeneration')).toBe(false)
+	})
+
+	it('matches embedding support to embeddingProviderNames', () => {
+		for (const name of providerNames) {
+			expect(providerSupports(name, 'embedding')).toBe(embeddingProviderNames.includes(name))
+		}
+	})
+
+	it('returns false for unknown provider', () => {
+		expect(providerSupports('unknown', 'chat')).toBe(false)
 	})
 })
 
@@ -337,11 +320,12 @@ describe('translateRecipeWithLLM', () => {
 		name: 'Saumon en galettes',
 		author: 'Chef Jean',
 		ingredients: ['500g de saumon sauvage frais'],
-		instructions: ["Émietter le saumon dans un bol."]
+		instructions: ['Émietter le saumon dans un bol.']
 	}
 
 	beforeEach(() => {
 		vi.stubEnv('OPENAI_API_KEY', 'test-key')
+		vi.stubEnv('LLM_TEXT_MODEL', 'test-text-model')
 		vi.spyOn(console, 'error').mockImplementation(() => {})
 		vi.spyOn(console, 'log').mockImplementation(() => {})
 		ChatOpenAI.mockImplementation(() => ({
@@ -377,6 +361,7 @@ describe('extractRecipeWithLLM', () => {
 
 	beforeEach(() => {
 		vi.stubEnv('OPENAI_API_KEY', 'test-key')
+		vi.stubEnv('LLM_TEXT_MODEL', 'test-text-model')
 		vi.spyOn(console, 'error').mockImplementation(() => {})
 		vi.spyOn(console, 'log').mockImplementation(() => {})
 		ChatOpenAI.mockImplementation(() => ({
@@ -427,6 +412,7 @@ describe('generateRecipeWithLLM', () => {
 
 	beforeEach(() => {
 		vi.stubEnv('OPENAI_API_KEY', 'test-key')
+		vi.stubEnv('LLM_TEXT_MODEL', 'test-text-model')
 		vi.spyOn(console, 'error').mockImplementation(() => {})
 		vi.spyOn(console, 'log').mockImplementation(() => {})
 		ChatOpenAI.mockImplementation(() => ({
@@ -462,5 +448,26 @@ describe('generateRecipeWithLLM', () => {
 		})
 
 		expect(result.name).toBe('Chocolate Lava Cake')
+	})
+})
+
+describe('missing model', () => {
+	beforeEach(() => {
+		vi.stubEnv('OPENAI_API_KEY', 'test-key')
+		vi.stubEnv('LLM_TEXT_MODEL', '')
+		vi.stubEnv('LLM_API_ENGINE_TEXT', '')
+		ChatOpenAI.mockImplementation(() => ({ invoke: vi.fn() }))
+	})
+
+	afterEach(() => {
+		vi.unstubAllEnvs()
+		vi.restoreAllMocks()
+	})
+
+	it('throws a helpful error instead of guessing a model', async () => {
+		await expect(
+			extractRecipeWithLLM({ provider: 'openai', type: 'text', content: 'Salmon cakes' })
+		).rejects.toThrow(/No text model set for openai/)
+		expect(ChatOpenAI).not.toHaveBeenCalled()
 	})
 })

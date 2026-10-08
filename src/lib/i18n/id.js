@@ -484,7 +484,12 @@ export default {
       "textHint": "Digunakan untuk penguraian/terjemahan/pembuatan resep fallback, pembersihan bahan, dan ringkasan petunjuk.",
       "provider": "Penyedia",
       "model": "Model",
-      "customModel": "Model Kustom",
+      "modelPlaceholder": "Ketik atau pilih model",
+      "defaultModelPlaceholder": "Default: {model}",
+      "modelsLoading": "Memuat model dari {provider}…",
+      "modelsAvailable": "{count} model tersedia dari {provider}.",
+      "modelsLoadFailed": "Tidak dapat memuat daftar model ({error}). Anda tetap dapat mengetik nama model.",
+      "browseModels": "Jelajahi model {provider}",
       "imageOcr": "OCR Gambar",
       "imageOcrHint": "Digunakan untuk ekstraksi resep dari foto/gambar yang diunggah.",
       "noImageAnalysis": "tidak mendukung analisis gambar.",
@@ -498,6 +503,7 @@ export default {
       "embeddingsDisabled": "Embeddings dinonaktifkan.",
       "noEmbeddingProviders": "Tidak ada penyedia embedding yang dikonfigurasi. Tambahkan OPENAI_API_KEY, GOOGLE_API_KEY dan/atau OLLAMA_BASE_URL di .env.",
       "selectProviderFirst": "Pilih penyedia embedding untuk memilih model.",
+      "embeddingModelChangeWarning": "{count} resep diindeks dengan {model}. Setelah menyimpan, gunakan \"Buat Ulang yang Tidak Cocok\" untuk menyematkan ulang dengan model baru (menggunakan kredit API). Sampai saat itu, pencarian semantik dan resep serupa akan melewatinya.",
       "missingOllama": "Harap tambahkan OLLAMA_BASE_URL ke .env.",
       "missingGoogle": "Harap tambahkan GOOGLE_API_KEY ke .env.",
       "missingOpenai": "Harap tambahkan OPENAI_API_KEY ke .env.",
@@ -574,7 +580,8 @@ export default {
         "embeddingRateLimit": "Batas laju atau kuota tercapai setelah {count} diproses. Isi ulang kredit atau tunggu dan coba lagi nanti.",
         "embeddingComplete": "Proses embedding selesai: {processed} diproses, {failed} gagal.",
         "embeddingError": "Kesalahan saat membuat embeddings:",
-        "connectionFailed": "Koneksi gagal"
+        "connectionFailed": "Koneksi gagal",
+        "noModel": "Belum ada model yang diatur. Masukkan nama model di atas."
       }
     },
     "users": {

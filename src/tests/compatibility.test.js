@@ -254,7 +254,20 @@ describe('compatibility LLM config resolution', () => {
 		expect(resolveCompatibilityLLMConfig(false, { OPENAI_API_KEY: 'test-key' })).toBeNull()
 	})
 
-	it('prefers configured text provider defaults when enabled', () => {
+	it('uses the configured text provider and model when enabled', () => {
+		expect(
+			resolveCompatibilityLLMConfig(true, {
+				OPENAI_API_KEY: 'test-key',
+				LLM_TEXT_PROVIDER: 'openai',
+				LLM_TEXT_MODEL: 'gpt-test'
+			})
+		).toEqual({
+			provider: 'openai',
+			model: 'gpt-test'
+		})
+	})
+
+	it('leaves the model unset rather than guessing a default', () => {
 		expect(
 			resolveCompatibilityLLMConfig(true, {
 				OPENAI_API_KEY: 'test-key',
@@ -262,7 +275,7 @@ describe('compatibility LLM config resolution', () => {
 			})
 		).toEqual({
 			provider: 'openai',
-			model: 'gpt-5.6-luna'
+			model: null
 		})
 	})
 })

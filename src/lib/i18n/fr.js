@@ -484,7 +484,12 @@ export default {
       "textHint": "Utilisé pour l'analyse/traduction/génération de recettes de secours, le nettoyage des ingrédients et la synthèse des instructions.",
       "provider": "Fournisseur",
       "model": "Modèle",
-      "customModel": "Modèle personnalisé",
+      "modelPlaceholder": "Saisissez ou choisissez un modèle",
+      "defaultModelPlaceholder": "Par défaut : {model}",
+      "modelsLoading": "Chargement des modèles de {provider}…",
+      "modelsAvailable": "{count} modèles disponibles chez {provider}.",
+      "modelsLoadFailed": "Impossible de charger la liste des modèles ({error}). Vous pouvez tout de même saisir un nom de modèle.",
+      "browseModels": "Parcourir les modèles {provider}",
       "imageOcr": "OCR d'image",
       "imageOcrHint": "Utilisé pour l'extraction de recettes à partir de photos/images téléchargées.",
       "noImageAnalysis": "ne prend pas en charge l'analyse d'images.",
@@ -498,6 +503,7 @@ export default {
       "embeddingsDisabled": "Les Embeddings sont désactivés.",
       "noEmbeddingProviders": "Aucun fournisseur d'embeddings configuré. Ajoutez OPENAI_API_KEY, GOOGLE_API_KEY et/ou OLLAMA_BASE_URL dans .env.",
       "selectProviderFirst": "Sélectionnez un fournisseur d'embeddings pour choisir un modèle.",
+      "embeddingModelChangeWarning": "{count} recettes sont indexées avec {model}. Après l'enregistrement, utilisez « Regénérer les non-concordantes » pour les réindexer avec le nouveau modèle (consomme des crédits API). D'ici là, la recherche sémantique et les recettes similaires les ignoreront.",
       "missingOllama": "Veuillez ajouter OLLAMA_BASE_URL à .env.",
       "missingGoogle": "Veuillez ajouter GOOGLE_API_KEY à .env.",
       "missingOpenai": "Veuillez ajouter OPENAI_API_KEY à .env.",
@@ -574,7 +580,8 @@ export default {
         "embeddingRateLimit": "Limite de débit ou quota atteint après {count} traités. Rechargez vos crédits ou attendez et réessayez plus tard.",
         "embeddingComplete": "Exécution des embeddings terminée : {processed} traités, {failed} échoués.",
         "embeddingError": "Erreur lors de la génération des embeddings :",
-        "connectionFailed": "Connexion échouée"
+        "connectionFailed": "Connexion échouée",
+        "noModel": "Aucun modèle défini. Saisissez un nom de modèle ci-dessus."
       }
     },
     "users": {

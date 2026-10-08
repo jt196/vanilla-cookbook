@@ -442,7 +442,12 @@ export default {
       "textHint": "Usado para análise/tradução/geração de receitas de fallback, limpeza de ingredientes e resumo de instruções.",
       "provider": "Provedor",
       "model": "Modelo",
-      "customModel": "Modelo Personalizado",
+      "modelPlaceholder": "Digite ou escolha um modelo",
+      "defaultModelPlaceholder": "Padrão: {model}",
+      "modelsLoading": "Carregando modelos de {provider}…",
+      "modelsAvailable": "{count} modelos disponíveis de {provider}.",
+      "modelsLoadFailed": "Não foi possível carregar a lista de modelos ({error}). Você ainda pode digitar o nome do modelo.",
+      "browseModels": "Ver modelos de {provider}",
       "imageOcr": "OCR de Imagem",
       "imageOcrHint": "Usado para extração de receitas de fotos/imagens carregadas.",
       "noImageAnalysis": "não suporta análise de imagem.",
@@ -456,6 +461,7 @@ export default {
       "embeddingsDisabled": "Embeddings estão desativados.",
       "noEmbeddingProviders": "Nenhum provedor de embedding configurado. Adicione OPENAI_API_KEY, GOOGLE_API_KEY e/ou OLLAMA_BASE_URL em .env.",
       "selectProviderFirst": "Selecione um provedor de embedding para escolher um modelo.",
+      "embeddingModelChangeWarning": "{count} receitas estão indexadas com {model}. Depois de salvar, use \"Regenerar Incompatíveis\" para gerar novamente os embeddings com o novo modelo (consome créditos de API). Até lá, a busca semântica e as receitas semelhantes vão ignorá-las.",
       "missingOllama": "Por favor, adicione OLLAMA_BASE_URL ao .env.",
       "missingGoogle": "Por favor, adicione GOOGLE_API_KEY ao .env.",
       "missingOpenai": "Por favor, adicione OPENAI_API_KEY ao .env.",
@@ -532,7 +538,8 @@ export default {
         "embeddingRateLimit": "Limite de taxa ou cota atingido após {count} processados. Recarregue os créditos ou espere e tente novamente mais tarde.",
         "embeddingComplete": "Execução de embedding completa: {processed} processados, {failed} falharam.",
         "embeddingError": "Erro ao gerar embeddings:",
-        "connectionFailed": "Conexão falhou"
+        "connectionFailed": "Conexão falhou",
+        "noModel": "Nenhum modelo definido. Insira o nome de um modelo acima."
       }
     },
     "users": {

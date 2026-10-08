@@ -484,7 +484,12 @@ export default {
       "textHint": "Gebruikt voor fallback-parsing/vertaling/generatie van recepten, opschonen van ingrediënten en samenvatten van instructies.",
       "provider": "Provider",
       "model": "Model",
-      "customModel": "Aangepast model",
+      "modelPlaceholder": "Typ of kies een model",
+      "defaultModelPlaceholder": "Standaard: {model}",
+      "modelsLoading": "Modellen van {provider} laden…",
+      "modelsAvailable": "{count} modellen beschikbaar van {provider}.",
+      "modelsLoadFailed": "Kan de modellenlijst niet laden ({error}). Je kunt de modelnaam nog steeds typen.",
+      "browseModels": "Bekijk {provider}-modellen",
       "imageOcr": "Afbeelding OCR",
       "imageOcrHint": "Gebruikt voor het extraheren van recepten uit geüploade foto's/afbeeldingen.",
       "noImageAnalysis": "ondersteunt geen beeldanalyse.",
@@ -498,6 +503,7 @@ export default {
       "embeddingsDisabled": "Embeddings zijn uitgeschakeld.",
       "noEmbeddingProviders": "Geen embedding-providers geconfigureerd. Voeg OPENAI_API_KEY, GOOGLE_API_KEY en/of OLLAMA_BASE_URL toe in .env.",
       "selectProviderFirst": "Selecteer eerst een embedding-provider om een model te kiezen.",
+      "embeddingModelChangeWarning": "{count} recepten zijn geïndexeerd met {model}. Gebruik na het opslaan \"Mismatched opnieuw genereren\" om ze opnieuw te embedden met het nieuwe model (dit kost API-tegoed). Tot die tijd laten semantisch zoeken en vergelijkbare recepten ze weg.",
       "missingOllama": "Voeg OLLAMA_BASE_URL toe aan .env.",
       "missingGoogle": "Voeg GOOGLE_API_KEY toe aan .env.",
       "missingOpenai": "Voeg OPENAI_API_KEY toe aan .env.",
@@ -574,7 +580,8 @@ export default {
         "embeddingRateLimit": "Rate-limiet of quotum bereikt na {count} verwerkte items. Waardeer credits op of wacht en probeer het later opnieuw.",
         "embeddingComplete": "Embedding-run voltooid: {processed} verwerkt, {failed} mislukt.",
         "embeddingError": "Fout bij het genereren van embeddings:",
-        "connectionFailed": "Verbinding mislukt"
+        "connectionFailed": "Verbinding mislukt",
+        "noModel": "Geen model ingesteld. Voer hierboven een modelnaam in."
       }
     },
     "users": {

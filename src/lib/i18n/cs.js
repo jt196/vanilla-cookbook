@@ -484,7 +484,12 @@ export default {
       "textHint": "Používá se pro záložní parsování/překlad/generování receptů, čištění ingrediencí a shrnování pokynů.",
       "provider": "Poskytovatel",
       "model": "Model",
-      "customModel": "Vlastní model",
+      "modelPlaceholder": "Napište nebo vyberte model",
+      "defaultModelPlaceholder": "Výchozí: {model}",
+      "modelsLoading": "Načítání modelů od {provider}…",
+      "modelsAvailable": "Dostupné modely od {provider}: {count}.",
+      "modelsLoadFailed": "Seznam modelů se nepodařilo načíst ({error}). Název modelu můžete stále zadat ručně.",
+      "browseModels": "Procházet modely {provider}",
       "imageOcr": "OCR obrázků",
       "imageOcrHint": "Používá se pro extrakci receptů z nahraných fotografií/obrázků.",
       "noImageAnalysis": "nepodporuje analýzu obrázků.",
@@ -498,6 +503,7 @@ export default {
       "embeddingsDisabled": "Vnoření jsou zakázána.",
       "noEmbeddingProviders": "Nejsou nakonfigurováni žádní poskytovatelé vnoření. Přidejte OPENAI_API_KEY, GOOGLE_API_KEY a/nebo OLLAMA_BASE_URL do .env.",
       "selectProviderFirst": "Vyberte poskytovatele vnoření pro výběr modelu.",
+      "embeddingModelChangeWarning": "{count} receptů je indexováno modelem {model}. Po uložení použijte „Znovu vygenerovat neshodné“ a přeindexujte je novým modelem (spotřebovává kredity API). Do té doby je sémantické vyhledávání a podobné recepty vynechají.",
       "missingOllama": "Prosím, přidejte OLLAMA_BASE_URL do .env.",
       "missingGoogle": "Prosím, přidejte GOOGLE_API_KEY do .env.",
       "missingOpenai": "Prosím, přidejte OPENAI_API_KEY do .env.",
@@ -574,7 +580,8 @@ export default {
         "embeddingRateLimit": "Dosažen limit rychlosti nebo kvóty po zpracování {count}. Doplňte kredity nebo počkejte a zkuste to znovu později.",
         "embeddingComplete": "Spuštění vnoření dokončeno: {processed} zpracováno, {failed} selhalo.",
         "embeddingError": "Chyba při generování vnoření:",
-        "connectionFailed": "Připojení selhalo"
+        "connectionFailed": "Připojení selhalo",
+        "noModel": "Není nastaven žádný model. Zadejte název modelu výše."
       }
     },
     "users": {

@@ -484,7 +484,12 @@ export default {
       "textHint": "يستخدم لتحليل/ترجمة/توليد الوصفات الاحتياطية، وتنظيف المكونات، وتلخيص التعليمات.",
       "provider": "الموفر",
       "model": "النموذج",
-      "customModel": "نموذج مخصص",
+      "modelPlaceholder": "اكتب اسم نموذج أو اختر واحدًا",
+      "defaultModelPlaceholder": "الافتراضي: {model}",
+      "modelsLoading": "جارٍ تحميل النماذج من {provider}…",
+      "modelsAvailable": "{count} نموذجًا متاحًا من {provider}.",
+      "modelsLoadFailed": "تعذّر تحميل قائمة النماذج ({error}). لا يزال بإمكانك كتابة اسم النموذج.",
+      "browseModels": "تصفح نماذج {provider}",
       "imageOcr": "التعرف الضوئي على الحروف للصور",
       "imageOcrHint": "يستخدم لاستخراج الوصفات من الصور/الصور المرفوعة.",
       "noImageAnalysis": "لا يدعم تحليل الصور.",
@@ -498,6 +503,7 @@ export default {
       "embeddingsDisabled": "تم تعطيل التضمينات.",
       "noEmbeddingProviders": "لم يتم تكوين موفري تضمين. أضف OPENAI_API_KEY، GOOGLE_API_KEY و/أو OLLAMA_BASE_URL في .env.",
       "selectProviderFirst": "حدد موفر تضمين لاختيار نموذج.",
+      "embeddingModelChangeWarning": "{count} وصفة مفهرسة باستخدام {model}. بعد الحفظ، استخدم \"إعادة توليد غير المتطابق\" لإعادة تضمينها بالنموذج الجديد (يستهلك هذا أرصدة API). حتى ذلك الحين، سيستثنيها البحث الدلالي والوصفات المشابهة.",
       "missingOllama": "الرجاء إضافة OLLAMA_BASE_URL إلى .env.",
       "missingGoogle": "الرجاء إضافة GOOGLE_API_KEY إلى .env.",
       "missingOpenai": "الرجاء إضافة OPENAI_API_KEY إلى .env.",
@@ -574,7 +580,8 @@ export default {
         "embeddingRateLimit": "تم الوصول إلى حد المعدل أو الحصة بعد معالجة {count}. قم بزيادة الرصيد أو انتظر وحاول مرة أخرى لاحقًا.",
         "embeddingComplete": "اكتمل تشغيل التضمين: {processed} تمت معالجتها، {failed} فشلت.",
         "embeddingError": "خطأ في توليد التضمينات:",
-        "connectionFailed": "فشل الاتصال"
+        "connectionFailed": "فشل الاتصال",
+        "noModel": "لم يتم تعيين نموذج. أدخل اسم النموذج أعلاه."
       }
     },
     "users": {

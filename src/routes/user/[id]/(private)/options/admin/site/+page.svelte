@@ -4,17 +4,16 @@
 	import {
 		getProviderOptionsWithAvailability,
 		getEmbeddingProviderOptionsWithAvailability,
-		getEmbeddingModelsForProvider,
-		getTextModelsForProvider,
-		getImageModelsForProvider,
-		getImageGenerationModelsForProvider
+		providerSupports,
+		defaultEmbeddingModels,
+		resolveEmbeddingModel
 	} from '$lib/utils/llmModels.js'
+	import ModelInput from '$lib/components/settings/ModelInput.svelte'
 	import FeedbackMessage from '$lib/components/ui/FeedbackMessage.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Badge from '$lib/components/ui/Badge.svelte'
 	import Checkbox from '$lib/components/ui/Form/Checkbox.svelte'
 	import Dropdown from '$lib/components/ui/Form/Dropdown.svelte'
-	import Input from '$lib/components/ui/Form/Input.svelte'
 	import Table from '$lib/components/ui/Table/Table.svelte'
 	import TableHead from '$lib/components/ui/Table/TableHead.svelte'
 	import TableBody from '$lib/components/ui/Table/TableBody.svelte'
@@ -63,9 +62,9 @@
 	// LLM form state
 	let llmEnabled = $state(llmConfig.dbEnabled)
 	let semanticEnabled = $state(llmConfig.dbSemanticEnabled ?? false)
-	let semanticEmbeddingProvider = $state(
+	const initialSemanticProvider =
 		llmConfig.dbSemanticEmbeddingProvider || llmConfig.semanticSelectedProvider || ''
-	)
+	let semanticEmbeddingProvider = $state(initialSemanticProvider)
 	let semanticEmbeddingModel = $state(
 		llmConfig.dbSemanticEmbeddingModel || llmConfig.semanticModel || ''
 	)
@@ -78,76 +77,44 @@
 	let llmImageProvider = $state(initialImageProvider)
 	let llmImageGenerationProvider = $state(initialImageGenerationProvider)
 
-	// Check if current model is in the list or custom
-	function getModelSelection(currentModel, modelList) {
-		if (!currentModel) return modelList[0]?.value || ''
-		const found = modelList.find((m) => m.value === currentModel)
-		return found ? currentModel : 'custom'
-	}
+	let textModel = $state(llmConfig.dbTextModel || '')
+	let imageModel = $state(llmConfig.dbImageModel || '')
+	let imageGenerationModel = $state(llmConfig.dbImageGenerationModel || '')
 
-	// Compute initial selections based on DB values and initial provider
-	const initialTextSelection = getModelSelection(
-		llmConfig.dbTextModel,
-		getTextModelsForProvider(initialTextProvider)
-	)
-	const initialImageSelection = getModelSelection(
-		llmConfig.dbImageModel,
-		getImageModelsForProvider(initialImageProvider)
-	)
-	const initialImageGenerationSelection = getModelSelection(
-		llmConfig.dbImageGenerationModel,
-		getImageGenerationModelsForProvider(initialImageGenerationProvider)
-	)
-
-	let textModelSelection = $state(initialTextSelection)
-	let imageModelSelection = $state(initialImageSelection)
-	let imageGenerationModelSelection = $state(initialImageGenerationSelection)
-	let customTextModel = $state(initialTextSelection === 'custom' ? llmConfig.dbTextModel || '' : '')
-	let customImageModel = $state(
-		initialImageSelection === 'custom' ? llmConfig.dbImageModel || '' : ''
-	)
-	let customImageGenerationModel = $state(
-		initialImageGenerationSelection === 'custom' ? llmConfig.dbImageGenerationModel || '' : ''
-	)
-
-	let textModelList = $derived(getTextModelsForProvider(llmProvider))
-	let imageModelList = $derived(getImageModelsForProvider(llmImageProvider))
-	let imageGenerationModelList = $derived(
-		getImageGenerationModelsForProvider(llmImageGenerationProvider)
-	)
-
-	// Track provider changes to reset model selections
+	// Model IDs are provider-specific, so clear the model when its provider changes
 	let previousProvider = initialTextProvider
 	let previousImageProvider = initialImageProvider
 	let previousImageGenerationProvider = initialImageGenerationProvider
+	let previousSemanticProvider = initialSemanticProvider
 	$effect(() => {
 		if (llmProvider !== previousProvider) {
 			previousProvider = llmProvider
-			textModelSelection = getTextModelsForProvider(llmProvider)[0]?.value || ''
-			customTextModel = ''
+			textModel = ''
 		}
 	})
 	$effect(() => {
 		if (llmImageProvider !== previousImageProvider) {
 			previousImageProvider = llmImageProvider
-			imageModelSelection = getImageModelsForProvider(llmImageProvider)[0]?.value || ''
-			customImageModel = ''
+			imageModel = ''
 		}
 	})
 	$effect(() => {
 		if (llmImageGenerationProvider !== previousImageGenerationProvider) {
 			previousImageGenerationProvider = llmImageGenerationProvider
-			imageGenerationModelSelection =
-				getImageGenerationModelsForProvider(llmImageGenerationProvider)[0]?.value || ''
-			customImageGenerationModel = ''
+			imageGenerationModel = ''
+		}
+	})
+	$effect(() => {
+		if (semanticEmbeddingProvider !== previousSemanticProvider) {
+			previousSemanticProvider = semanticEmbeddingProvider
+			semanticEmbeddingModel = ''
 		}
 	})
 
-	let showCustomTextInput = $derived(textModelSelection === 'custom')
-	let showCustomImageInput = $derived(imageModelSelection === 'custom')
-	let showCustomImageGenerationInput = $derived(imageGenerationModelSelection === 'custom')
-	let supportsImages = $derived(imageModelList.length > 0)
-	let supportsImageGeneration = $derived(imageGenerationModelList.length > 0)
+	let supportsImages = $derived(providerSupports(llmImageProvider, 'image'))
+	let supportsImageGeneration = $derived(
+		providerSupports(llmImageGenerationProvider, 'imageGeneration')
+	)
 	let semanticProviderOptions = $derived(
 		getEmbeddingProviderOptionsWithAvailability(llmConfig.semanticAvailableProviders)
 	)
@@ -158,12 +125,17 @@
 		!!effectiveSemanticProvider &&
 			(llmConfig.semanticAvailableProviders || []).includes(effectiveSemanticProvider)
 	)
-	let semanticModelOptions = $derived(getEmbeddingModelsForProvider(effectiveSemanticProvider))
-	$effect(() => {
-		if (!semanticEmbeddingModel && semanticModelOptions.length > 0) {
-			semanticEmbeddingModel = semanticModelOptions[0].value
-		}
-	})
+	let defaultSemanticModel = $derived(defaultEmbeddingModels[effectiveSemanticProvider] || '')
+	// Recipes are embedded with the saved model; switching models makes those vectors incomparable
+	let indexedEmbeddingModel = $derived(
+		resolveEmbeddingModel(data.llmConfig?.semanticProvider, data.llmConfig?.semanticModel)
+	)
+	let indexedRecipeCount = $derived(embeddingIndex.completed + (embeddingIndex.mismatched || 0))
+	let embeddingModelChanged = $derived(
+		!!effectiveSemanticProvider &&
+			resolveEmbeddingModel(effectiveSemanticProvider, semanticEmbeddingModel.trim()) !==
+				indexedEmbeddingModel
+	)
 	let canGenerateEmbeddings = $derived(
 		semanticEnabled &&
 			semanticProviderConfigured &&
@@ -177,18 +149,10 @@
 			(embeddingIndex.mismatched || 0) > 0
 	)
 
-	// Get the actual model value to save
-	let effectiveTextModel = $derived(
-		textModelSelection === 'custom' ? customTextModel : textModelSelection
-	)
-	let effectiveImageModel = $derived(
-		imageModelSelection === 'custom' ? customImageModel : imageModelSelection
-	)
-	let effectiveImageGenerationModel = $derived(
-		imageGenerationModelSelection === 'custom'
-			? customImageGenerationModel
-			: imageGenerationModelSelection
-	)
+	// Trimmed model values to save and test
+	let effectiveTextModel = $derived(textModel.trim())
+	let effectiveImageModel = $derived(imageModel.trim())
+	let effectiveImageGenerationModel = $derived(imageGenerationModel.trim())
 
 	let availableProviderOptions = $derived(
 		getProviderOptionsWithAvailability(llmConfig.availableProviders)
@@ -229,7 +193,7 @@
 				llmImageModel: supportsImages ? effectiveImageModel || null : null,
 				llmImageGenerationModel: effectiveImageGenerationModel || null,
 				semanticEmbeddingProvider: semanticEmbeddingProvider || null,
-				semanticEmbeddingModel: semanticEmbeddingModel || null
+				semanticEmbeddingModel: semanticEmbeddingModel.trim() || null
 			})
 		})
 		if (response.ok) {
@@ -393,7 +357,7 @@
 				key: 'embeddings',
 				label: get(t)('admin.site.embeddings'),
 				provider: effectiveSemanticProvider,
-				model: semanticEmbeddingModel || undefined,
+				model: semanticEmbeddingModel.trim() || undefined,
 				type: 'embedding'
 			})
 		}
@@ -536,23 +500,7 @@
 					legend={$t('admin.site.provider')}
 				/>
 
-				<div class="flex flex-col gap-2">
-					<Dropdown
-						name="textModel"
-						options={textModelList}
-						bind:selected={textModelSelection}
-						legend={$t('admin.site.model')}
-					/>
-					{#if showCustomTextInput}
-						<Input
-							type="text"
-							id="customTextModel"
-							label={$t('admin.site.customModel')}
-							placeholder="e.g. gpt-5.6-terra"
-							bind:value={customTextModel}
-						/>
-					{/if}
-				</div>
+				<ModelInput id="textModel" provider={llmProvider} type="chat" bind:value={textModel} />
 				<h4>{$t('admin.site.imageOcr')}</h4>
 				<InfoText>{$t('admin.site.imageOcrHint')}</InfoText>
 				<div class="flex flex-col gap-2">
@@ -563,21 +511,12 @@
 						legend={$t('admin.site.provider')}
 					/>
 					{#if supportsImages}
-						<Dropdown
-							name="imageModel"
-							options={imageModelList}
-							bind:selected={imageModelSelection}
-							legend={$t('admin.site.model')}
+						<ModelInput
+							id="imageModel"
+							provider={llmImageProvider}
+							type="image"
+							bind:value={imageModel}
 						/>
-						{#if showCustomImageInput}
-							<Input
-								type="text"
-								id="customImageModel"
-								label={$t('admin.site.customModel')}
-								placeholder="e.g. claude-sonnet-5"
-								bind:value={customImageModel}
-							/>
-						{/if}
 					{:else}
 						<InfoText>
 							{llmImageProvider === 'ollama'
@@ -598,21 +537,12 @@
 						legend={$t('admin.site.provider')}
 					/>
 					{#if supportsImageGeneration}
-						<Dropdown
-							name="imageGenerationModel"
-							options={imageGenerationModelList}
-							bind:selected={imageGenerationModelSelection}
-							legend={$t('admin.site.model')}
+						<ModelInput
+							id="imageGenerationModel"
+							provider={llmImageGenerationProvider}
+							type="imageGeneration"
+							bind:value={imageGenerationModel}
 						/>
-						{#if showCustomImageGenerationInput}
-							<Input
-								type="text"
-								id="customImageGenerationModel"
-								label={$t('admin.site.customModel')}
-								placeholder="e.g. gpt-image-1"
-								bind:value={customImageGenerationModel}
-							/>
-						{/if}
 					{:else}
 						<InfoText>
 							{llmImageGenerationProvider === 'ollama'
@@ -648,14 +578,26 @@
 						legend={$t('admin.site.provider')}
 						disabled={!semanticEnabled}
 					/>
-					{#if semanticModelOptions.length > 0}
-						<Dropdown
-							name="semanticEmbeddingModel"
-							options={semanticModelOptions}
-							bind:selected={semanticEmbeddingModel}
-							legend={$t('admin.site.model')}
+					{#if effectiveSemanticProvider}
+						<ModelInput
+							id="semanticEmbeddingModel"
+							provider={effectiveSemanticProvider}
+							type="embedding"
+							placeholder={defaultSemanticModel
+								? $t('admin.site.defaultModelPlaceholder', { model: defaultSemanticModel })
+								: ''}
 							disabled={!semanticEnabled || !semanticProviderConfigured}
+							bind:value={semanticEmbeddingModel}
 						/>
+						{#if semanticEnabled && embeddingModelChanged && indexedRecipeCount > 0}
+							<FeedbackMessage
+								inline
+								type="warning"
+								style="soft"
+								messageCode="admin.site.embeddingModelChangeWarning"
+								messageVars={{ count: indexedRecipeCount, model: indexedEmbeddingModel }}
+							/>
+						{/if}
 					{:else}
 						<InfoText>{$t('admin.site.selectProviderFirst')}</InfoText>
 					{/if}
@@ -877,9 +819,8 @@
 						<p class="text-sm text-success">{$t('admin.site.testLatency')} {result.latencyMs}ms</p>
 					{:else if result.status === 'error'}
 						<p class="text-sm text-error">
-							{result.errorCode
-								? $t(result.errorCode)
-								: result.error || $t('admin.site.connectionFailed')}
+							{result.error ||
+								(result.errorCode ? $t(result.errorCode) : $t('admin.site.connectionFailed'))}
 						</p>
 					{/if}
 				</div>
