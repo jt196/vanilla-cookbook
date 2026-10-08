@@ -705,6 +705,11 @@ export default {
     }
   },
   "recipePrefs": {
+    "missingImagesTitle": "Ontbrekende afbeeldingen",
+    "missingImagesHint": "{count} receptfoto('s) zijn alleen gelinkt vanaf andere websites. Download ze zodat ze blijven werken als die websites veranderen.",
+    "missingImagesButton": "Ontbrekende afbeeldingen downloaden",
+    "missingImagesResult": "{downloaded} gedownload. {failed} konden niet worden gedownload (de oorspronkelijke site is mogelijk niet beschikbaar).",
+    "missingImagesFail": "Afbeeldingen konden niet worden gedownload. Probeer het opnieuw.",
     "language": "Selecteer taal",
     "system": "Selecteer meetsysteem",
     "skipSmallUnits": "Sla kleine eenheden over",

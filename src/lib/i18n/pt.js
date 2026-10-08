@@ -765,6 +765,11 @@ export default {
     "step3": "3. Quando estiver num site, clique no marcador, e ele o levará para a nova página de receita, com o URL de origem e o texto da página capturado prontos para raspagem ou análise de fallback."
   },
   "recipePrefs": {
+    "missingImagesTitle": "Imagens em falta",
+    "missingImagesHint": "{count} foto(s) de receitas estão apenas vinculadas a outros sites. Baixe-as para que continuem funcionando se esses sites mudarem.",
+    "missingImagesButton": "Baixar imagens em falta",
+    "missingImagesResult": "{downloaded} baixada(s). {failed} não puderam ser baixadas (o site original pode estar indisponível).",
+    "missingImagesFail": "Não foi possível baixar as imagens. Tente novamente.",
     "language": "Selecionar idioma",
     "system": "Selecionar sistema de medição",
     "skipSmallUnits": "Ignorar Unidades Pequenas",

@@ -765,6 +765,11 @@ export default {
     "step3": "3. Quando sei su un sito web, clicca sul segnalibro e ti porterà alla nuova pagina della ricetta, con l'URL di origine e il testo della pagina acquisito pronti per lo scraping o il parsing di fallback."
   },
   "recipePrefs": {
+    "missingImagesTitle": "Immagini mancanti",
+    "missingImagesHint": "{count} foto di ricette sono solo collegate da altri siti. Scaricale perché continuino a funzionare se quei siti cambiano.",
+    "missingImagesButton": "Scarica immagini mancanti",
+    "missingImagesResult": "{downloaded} scaricate. {failed} non è stato possibile scaricarle (il sito originale potrebbe non essere disponibile).",
+    "missingImagesFail": "Impossibile scaricare le immagini. Riprova.",
     "language": "Seleziona lingua",
     "system": "Seleziona sistema di misurazione",
     "skipSmallUnits": "Salta unità piccole",

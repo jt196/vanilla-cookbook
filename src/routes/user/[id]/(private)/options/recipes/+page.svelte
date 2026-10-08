@@ -164,24 +164,22 @@
 	</footer>
 </form>
 
-{#if linkOnlyCount > 0 || imagesFeedback}
-	<section class="mt-8 flex flex-col gap-2 w-full md:w-2/3 lg:w-1/2">
-		<h3 class="font-semibold">{$t('recipePrefs.missingImagesTitle')}</h3>
-		{#if linkOnlyCount > 0}
-			<p class="text-sm opacity-80">
-				{$t('recipePrefs.missingImagesHint', { count: linkOnlyCount })}
-			</p>
-			<div>
-				<Button
-					type="button"
-					size="sm"
-					onclick={downloadMissingImages}
-					loading={downloadingImages}
-					disabled={downloadingImages}>
-					{$t('recipePrefs.missingImagesButton')}
-				</Button>
-			</div>
-		{/if}
-		{#if imagesFeedback}<p class="text-sm">{imagesFeedback}</p>{/if}
-	</section>
+{#if linkOnlyCount > 0}
+	<!-- Missing images (maintenance action, styled like the recipe visibility actions) -->
+	<div class="flex flex-col gap-2 mt-8 w-full md:w-2/3 lg:w-1/2">
+		<h2 class="prose max-w-none mb-2">{$t('recipePrefs.missingImagesTitle')}</h2>
+		<p class="text-sm text-base-content/70">
+			{$t('recipePrefs.missingImagesHint', { count: linkOnlyCount })}
+		</p>
+		<div>
+			<Button
+				type="button"
+				color="info"
+				style="outline"
+				loading={downloadingImages}
+				disabled={downloadingImages}
+				onclick={downloadMissingImages}>{$t('recipePrefs.missingImagesButton')}</Button>
+		</div>
+	</div>
 {/if}
+<FeedbackMessage message={imagesFeedback} />

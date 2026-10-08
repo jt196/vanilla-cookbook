@@ -705,6 +705,11 @@ export default {
     }
   },
   "recipePrefs": {
+    "missingImagesTitle": "Gambar hilang",
+    "missingImagesHint": "{count} foto resep hanya ditautkan dari situs web lain. Unduh agar tetap berfungsi jika situs tersebut berubah.",
+    "missingImagesButton": "Unduh gambar yang hilang",
+    "missingImagesResult": "{downloaded} berhasil diunduh. {failed} tidak dapat diunduh (situs asli mungkin tidak tersedia).",
+    "missingImagesFail": "Gagal mengunduh gambar. Silakan coba lagi.",
     "language": "Pilih bahasa",
     "system": "Pilih sistem pengukuran",
     "skipSmallUnits": "Lewati Satuan Kecil",

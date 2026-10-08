@@ -705,6 +705,11 @@ export default {
     }
   },
   "recipePrefs": {
+    "missingImagesTitle": "Hiányzó képek",
+    "missingImagesHint": "{count} receptfotó csak más webhelyekről van hivatkozva. Töltsd le őket, hogy akkor is működjenek, ha ezek a webhelyek megváltoznak.",
+    "missingImagesButton": "Hiányzó képek letöltése",
+    "missingImagesResult": "Letöltve: {downloaded}. Nem sikerült letölteni: {failed} (lehet, hogy az eredeti webhely nem érhető el).",
+    "missingImagesFail": "A képeket nem sikerült letölteni. Kérjük, próbáld újra.",
     "language": "Nyelv kiválasztása",
     "system": "Mértékegységrendszer kiválasztása",
     "skipSmallUnits": "Kis egységek kihagyása",
