@@ -39,3 +39,17 @@ describe('processImage remote downloads', () => {
 		expect(fetchMock.mock.calls[0][1]?.signal).toBeInstanceOf(AbortSignal)
 	})
 })
+
+describe('checkImageExistence', () => {
+	afterEach(() => vi.unstubAllGlobals())
+
+	it('reads the exists flag from the response body, not just the status', async () => {
+		const { checkImageExistence } = await import('$lib/utils/image/imageUtils.js')
+		vi.spyOn(console, 'log').mockImplementation(() => {})
+		vi.stubGlobal('fetch', vi.fn().mockResolvedValue(Response.json({ exists: false })))
+		expect(await checkImageExistence('https://site/missing.jpg', 'http://app')).toBe(false)
+
+		vi.stubGlobal('fetch', vi.fn().mockResolvedValue(Response.json({ exists: true })))
+		expect(await checkImageExistence('https://site/cake.jpg', 'http://app')).toBe(true)
+	})
+})

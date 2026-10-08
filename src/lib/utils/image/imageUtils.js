@@ -53,7 +53,10 @@ export async function checkImageExistence(imageUrl, baseUrl) {
 		const response = await fetch(
 			`${baseUrl}/api/recipe/image/remote-exist?url=${encodeURIComponent(imageUrl)}`
 		)
-		return response.ok
+		if (!response.ok) return false
+		// The endpoint always answers 200; the result is in the body
+		const { exists } = await response.json()
+		return !!exists
 	} catch (error) {
 		console.log('error:', error)
 		return false
