@@ -1,0 +1,14 @@
+# Keeps the GitHub Actions used in .github/workflows up to date.
+# Updates arrive as one grouped PR a month; check the changelogs for major bumps.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      github-actions:
+        patterns:
+          - '*'
+    labels:
+      - skip-changelog

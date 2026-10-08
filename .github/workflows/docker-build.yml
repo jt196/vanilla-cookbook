@@ -6,37 +6,49 @@ on:
       docker_tags:
         required: true
         type: string
+      push:
+        description: Push the image to Docker Hub; false builds only, to check the image still builds
+        required: false
+        type: boolean
+        default: true
+      platforms:
+        required: false
+        type: string
+        default: linux/amd64,linux/arm64
     secrets:
       DOCKER_HUB_USERNAME:
-        required: true
+        required: false
       DOCKER_HUB_PASSWORD:
-        required: true
+        required: false
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v7
         with:
           submodules: 'recursive'
+          # Full history so `git describe --tags` can find the last release tag
+          fetch-depth: 0
 
       - name: Log in to Docker Hub
-        uses: docker/login-action@v3
+        if: ${{ inputs.push }}
+        uses: docker/login-action@v4
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
 
       - name: Docker Metadata
         id: meta
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images: jt196/vanilla-cookbook
           tags: ${{ inputs.docker_tags }}
@@ -48,14 +60,17 @@ jobs:
           echo "version=$version" >> $GITHUB_OUTPUT
 
       - name: Build and push Docker image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
-          push: true
-          platforms: linux/amd64,linux/arm64
+          # Build from the checkout (with submodules) rather than re-cloning the commit
+          context: .
+          push: ${{ inputs.push }}
+          platforms: ${{ inputs.platforms }}
           tags: ${{ steps.meta.outputs.tags }}
           annotations: ${{ steps.meta.outputs.annotations }}
           cache-from: type=registry,ref=jt196/vanilla-cookbook:buildcache
-          cache-to: type=registry,ref=jt196/vanilla-cookbook:buildcache,mode=max
+          # Only builds that publish update the shared cache
+          cache-to: ${{ inputs.push && 'type=registry,ref=jt196/vanilla-cookbook:buildcache,mode=max' || '' }}
           build-args: |
             GIT_VERSION=${{ steps.git_version.outputs.version }}
         env:

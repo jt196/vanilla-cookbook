@@ -28,6 +28,16 @@ jobs:
       GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
       OLLAMA_BASE_URL: ${{ secrets.OLLAMA_BASE_URL }}
 
+  # Catch a broken Dockerfile before it reaches main, where every merge publishes :latest.
+  # amd64 only and no push, to keep it quick.
+  docker-build-check:
+    if: github.repository == 'jt196/vanilla-cookbook' && github.event_name == 'pull_request'
+    uses: ./.github/workflows/docker-build.yml
+    with:
+      docker_tags: type=ref,event=pr
+      push: false
+      platforms: linux/amd64
+
   docker-build-latest:
     if: github.repository == 'jt196/vanilla-cookbook' && github.event_name == 'push'
     # A newer push to main supersedes an in-flight build, so an older build can't finish last and overwrite :latest
