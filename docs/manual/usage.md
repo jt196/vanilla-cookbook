@@ -156,7 +156,7 @@ Go to **Options > Site** (admin only) to configure LLM features:
 
 - **Enable LLM Features** - Turn AI features on/off
 - **Provider** - Choose from the providers configured in `.env`
-- **Model** - Type a model name, or pick one from the suggestions, which are fetched live from the provider (`-latest` aliases first, previews last). A link to the provider's model list sits under each field.
+- **Model** - Type a model name, or pick one from the suggestions, which are fetched live from the provider (`-latest` aliases first, previews last). A link to the provider's model list sits under each field. A model must be set for AI features to work: if AI is enabled without one, admins see a warning at the top of every page until a model is saved.
 - **Test Enabled Providers** - Checks each configured section and shows the provider's own error message if something is wrong
 
 **Supported Providers:**

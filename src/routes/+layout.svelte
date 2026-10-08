@@ -11,6 +11,7 @@
 	import CookBook from '$lib/components/svg/CookBook.svelte'
 	import NavLinks from '$lib/components/ui/NavLinks.svelte'
 	import Spinner from '$lib/components/ui/Spinner.svelte'
+	import FeedbackMessage from '$lib/components/ui/FeedbackMessage.svelte'
 	import { langStore, isRtl, t } from '$lib/stores/locale.js'
 	import { normalizeThemePreference, resolveTheme } from '$lib/utils/theme.js'
 
@@ -165,6 +166,21 @@
 
 <div class="min-h-screen bg-base-200">
 	<div class="container mx-auto px-4 py-6">
+		{#if data.aiModelMissing && user}
+			<div class="mb-4">
+				<FeedbackMessage
+					inline
+					type="warning"
+					style="soft"
+					message={$t('aiSetup.modelMissingBanner')}>
+					<span>
+						{$t('aiSetup.modelMissingBanner')}
+						<a class="link font-semibold" href={`/user/${user.userId}/options/admin/site`}
+							>{$t('aiSetup.openSiteSettings')}</a>
+					</span>
+				</FeedbackMessage>
+			</div>
+		{/if}
 		{@render children?.()}
 	</div>
 </div>

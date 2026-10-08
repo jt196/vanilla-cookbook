@@ -56,7 +56,33 @@ export function resolveAIConfig(locals, type = 'text') {
 				? ai.imageGenerationModel || null
 				: ai.textModel || null
 
+	// Image generation has its own check (requireImageGenerationModel) with an env fallback
+	if (!model && type !== 'imageGeneration') {
+		return { ok: false, response: noModelResponse(locals, type) }
+	}
+
 	return { ok: true, provider, model }
+}
+
+/**
+ * 503 response for an AI request with no model set. Admins are pointed at Site Settings;
+ * other users are told to ask an admin, since they can't change it themselves.
+ *
+ * @param {import('@sveltejs/kit').RequestEvent['locals']} locals
+ * @param {'text' | 'image'} type
+ * @returns {Response}
+ */
+function noModelResponse(locals, type) {
+	const kind = type === 'image' ? 'image' : 'text'
+	return locals?.user?.isAdmin
+		? jsonError(503, {
+				error: `No AI ${kind} model is selected. Choose one in Site Settings.`,
+				code: 'aiSetup.noModelAdmin'
+			})
+		: jsonError(503, {
+				error: "AI isn't fully set up yet. Ask your site admin to choose an AI model.",
+				code: 'aiSetup.noModelUser'
+			})
 }
 
 /**

@@ -12,6 +12,9 @@ import {
 	resolveProviderSelection
 } from '$lib/utils/llmModels'
 
+// Log the "no AI model" warning once per process, not on every request
+let warnedModelMissing = false
+
 const envTrue = (v) => typeof v === 'string' && /^(true|1|yes|on)$/i.test(v.trim())
 
 // Routes that should always be accessible even when requireLogin is enabled
@@ -125,10 +128,21 @@ export const handle = async ({ event, resolve }) => {
 		const usingPreferredProvider = llmProvider && llmProvider === preferredProvider
 		const usingPreferredImageProvider =
 			llmImageProvider && llmImageProvider === preferredImageProvider
-		const textModel = usingPreferredProvider ? s?.llmTextModel || env.LLM_TEXT_MODEL || null : null
-		const imageModel = usingPreferredImageProvider
-			? s?.llmImageModel || env.LLM_IMAGE_MODEL || null
+		// LLM_API_ENGINE_* are the older env names; invokeLLM still accepts them, so count them here too
+		const textModel = usingPreferredProvider
+			? s?.llmTextModel || env.LLM_TEXT_MODEL || env.LLM_API_ENGINE_TEXT || null
 			: null
+		const imageModel = usingPreferredImageProvider
+			? s?.llmImageModel || env.LLM_IMAGE_MODEL || env.LLM_API_ENGINE_IMAGE || null
+			: null
+		// AI is on but has no text model to call: AI actions will fail until an admin picks one
+		const modelMissing = !!llmEnabled && !!llmProvider && !textModel
+		if (modelMissing && !warnedModelMissing) {
+			warnedModelMissing = true
+			console.warn(
+				'AI is enabled but no text model is selected. AI features will fail until an admin chooses a model in Site Settings.'
+			)
+		}
 		const preferredImageGenerationProvider = s?.llmImageGenerationProvider || preferredProvider
 		const {
 			provider: llmImageGenerationProvider,
@@ -164,7 +178,8 @@ export const handle = async ({ event, resolve }) => {
 			imageModel,
 			imageGenerationProvider: llmImageGenerationProvider,
 			imageGenerationModel,
-			imageAllowed: !!llmImageProvider && llmImageProvider !== 'ollama'
+			imageAllowed: !!llmImageProvider && llmImageProvider !== 'ollama',
+			modelMissing
 		}
 
 		// Semantic config:

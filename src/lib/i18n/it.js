@@ -33,6 +33,12 @@ export default {
     "thisProvider": "Questo provider",
     "version": "Versione:"
   },
+  "aiSetup": {
+    "modelMissingBanner": "L’IA è attiva ma non è selezionato alcun modello, quindi le funzioni IA non funzioneranno.",
+    "openSiteSettings": "Scegline uno nelle impostazioni del sito",
+    "noModelAdmin": "Nessun modello di IA selezionato. Scegline uno nelle impostazioni del sito.",
+    "noModelUser": "L’IA non è ancora del tutto configurata. Chiedi all’amministratore del sito di scegliere un modello di IA."
+  },
   "nav": {
     "allRecipes": "Tutte le ricette",
     "myRecipes": "Le mie ricette",

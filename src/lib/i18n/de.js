@@ -33,6 +33,12 @@ export default {
     "thisProvider": "Dieser Anbieter",
     "version": "Version:"
   },
+  "aiSetup": {
+    "modelMissingBanner": "KI ist aktiviert, aber kein Modell ausgewählt, daher funktionieren die KI-Funktionen nicht.",
+    "openSiteSettings": "In den Website-Einstellungen auswählen",
+    "noModelAdmin": "Kein KI-Modell ausgewählt. Wähle eines in den Website-Einstellungen.",
+    "noModelUser": "KI ist noch nicht vollständig eingerichtet. Bitte den Website-Admin, ein KI-Modell auszuwählen."
+  },
   "nav": {
     "allRecipes": "Alle Rezepte",
     "myRecipes": "Meine Rezepte",

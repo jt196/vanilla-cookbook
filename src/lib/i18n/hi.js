@@ -33,6 +33,12 @@ export default {
     "thisProvider": "यह प्रदाता",
     "version": "संस्करण:"
   },
+  "aiSetup": {
+    "modelMissingBanner": "AI चालू है लेकिन कोई मॉडल चुना नहीं गया है, इसलिए AI सुविधाएँ काम नहीं करेंगी।",
+    "openSiteSettings": "साइट सेटिंग्स में एक चुनें",
+    "noModelAdmin": "कोई AI मॉडल चुना नहीं गया है। साइट सेटिंग्स में एक चुनें।",
+    "noModelUser": "AI अभी पूरी तरह सेट अप नहीं है। अपने साइट एडमिन से AI मॉडल चुनने को कहें।"
+  },
   "nav": {
     "allRecipes": "सभी रेसिपी",
     "myRecipes": "मेरी रेसिपी",

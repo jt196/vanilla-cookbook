@@ -35,6 +35,13 @@ export default {
 		version: 'Version:'
 	},
 
+	aiSetup: {
+		modelMissingBanner: "AI is turned on but no model is selected, so AI features won't work.",
+		openSiteSettings: 'Choose one in Site Settings',
+		noModelAdmin: 'No AI model is selected. Choose one in Site Settings.',
+		noModelUser: "AI isn't fully set up yet. Ask your site admin to choose an AI model."
+	},
+
 	nav: {
 		allRecipes: 'All Recipes',
 		myRecipes: 'My Recipes',
