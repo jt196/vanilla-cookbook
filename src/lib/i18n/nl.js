@@ -381,6 +381,8 @@ export default {
       "imageLimitExceeded": "Alleen de eerste {max} afbeeldingen worden gebruikt.",
       "saveFail": "Opslaan van recept mislukt.",
       "parseNoRecipe": "Geen receptinhoud gevonden in de tekst.",
+      "imageNoRecipe": "Geen recept gevonden in de afbeelding.",
+      "pageNoRecipe": "Geen recept gevonden op deze pagina.",
       "youtubeCheckingLinks": "Videobeschrijving ophalen en controleren op receptlinks…",
       "youtubeParsingDescription": "Geen receptlink gevonden. Videobeschrijving analyseren met AI…",
       "youtubeFetchingTranscript": "Geen recept in beschrijving. Videotranscriptie ophalen…",

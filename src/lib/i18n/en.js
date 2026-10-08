@@ -411,6 +411,8 @@ export default {
 			imageLimitExceeded: 'Only the first {max} images will be used.',
 			saveFail: 'Failed to save recipe.',
 			parseNoRecipe: 'No recipe content found in the text.',
+			imageNoRecipe: 'No recipe found in the image.',
+			pageNoRecipe: 'No recipe found on this page.',
 			youtubeCheckingLinks: 'Fetching video description and checking for recipe links…',
 			youtubeParsingDescription: 'No recipe link found. Parsing video description with AI…',
 			youtubeFetchingTranscript: 'No recipe in description. Fetching video transcript…',

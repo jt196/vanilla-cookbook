@@ -5,6 +5,7 @@ import { fileURLToPath } from 'url'
 import { loadCompatibilityManifest } from '$lib/utils/parse/compatibility/index.js'
 import { mockFetchForURL } from '$lib/utils/parse/parseTesting.js'
 import { parseHTML, parseURL } from '$lib/utils/parse/recipeParse.js'
+import { getImage } from '$lib/utils/parse/parseHelpers.js'
 
 let originalFetch
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -220,3 +221,24 @@ function inferFixtureUrl(html) {
 
 	return null
 }
+
+describe('getImage', () => {
+	it('handles a URL string', () => {
+		expect(getImage('https://x.test/a.jpg')).toBe('https://x.test/a.jpg')
+	})
+	it('handles an array of URL strings', () => {
+		expect(getImage(['https://x.test/a.jpg', 'https://x.test/b.jpg'])).toBe('https://x.test/a.jpg')
+	})
+	it('handles an array of ImageObjects', () => {
+		expect(getImage([{ '@type': 'ImageObject', url: 'https://x.test/a.jpg' }])).toBe(
+			'https://x.test/a.jpg'
+		)
+	})
+	it('falls back to contentUrl', () => {
+		expect(getImage({ contentUrl: 'https://x.test/a.jpg' })).toBe('https://x.test/a.jpg')
+	})
+	it('returns undefined when nothing usable is present', () => {
+		expect(getImage([])).toBeUndefined()
+		expect(getImage(undefined)).toBeUndefined()
+	})
+})

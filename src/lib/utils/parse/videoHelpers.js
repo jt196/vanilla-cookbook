@@ -17,7 +17,7 @@ const YT_HEADERS = {
 export function isYouTubeUrl(url) {
 	try {
 		const { hostname } = new URL(url)
-		return hostname === 'www.youtube.com' || hostname === 'youtube.com' || hostname === 'youtu.be'
+		return ['www.youtube.com', 'youtube.com', 'm.youtube.com', 'youtu.be'].includes(hostname)
 	} catch {
 		return false
 	}
@@ -47,7 +47,7 @@ export function isBlockedVideoUrl(url) {
 }
 
 /**
- * Handles /watch?v=, /shorts/, and youtu.be/ URL formats.
+ * Handles /watch?v=, /shorts/, /live/, /embed/, and youtu.be/ URL formats.
  *
  * @param {string} url
  * @returns {string | null}
@@ -56,7 +56,8 @@ export function extractYouTubeVideoId(url) {
 	try {
 		const parsed = new URL(url)
 		if (parsed.hostname === 'youtu.be') return parsed.pathname.slice(1)
-		if (parsed.pathname.startsWith('/shorts/')) return parsed.pathname.split('/')[2]
+		const [, prefix, id] = parsed.pathname.split('/')
+		if (['shorts', 'live', 'embed'].includes(prefix)) return id || null
 		return parsed.searchParams.get('v')
 	} catch {
 		return null

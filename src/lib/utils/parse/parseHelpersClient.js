@@ -64,7 +64,7 @@ export async function scrapeRecipeFromURL(url) {
 export function isYouTubeUrl(url) {
 	try {
 		const { hostname } = new URL(url)
-		return hostname === 'www.youtube.com' || hostname === 'youtube.com' || hostname === 'youtu.be'
+		return ['www.youtube.com', 'youtube.com', 'm.youtube.com', 'youtu.be'].includes(hostname)
 	} catch {
 		return false
 	}

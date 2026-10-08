@@ -334,6 +334,8 @@ export default {
       "imageLimitExceeded": "Verranno utilizzate solo le prime {max} immagini.",
       "saveFail": "Impossibile salvare la ricetta.",
       "parseNoRecipe": "Nessun contenuto di ricetta trovato nel testo.",
+      "imageNoRecipe": "Nessuna ricetta trovata nell’immagine.",
+      "pageNoRecipe": "Nessuna ricetta trovata in questa pagina.",
       "youtubeCheckingLinks": "Recupero della descrizione del video e verifica dei link alle ricette…",
       "youtubeParsingDescription": "Nessun link alla ricetta trovato. Analisi della descrizione del video con IA…",
       "youtubeFetchingTranscript": "Nessuna ricetta nella descrizione. Recupero della trascrizione del video…",

@@ -57,6 +57,13 @@ export async function POST({ request, locals }) {
 			language
 		})
 
+		if (recipe?._noRecipe) {
+			return json(
+				{ error: 'No recipe found in the image.', code: 'recipeNew.msg.imageNoRecipe' },
+				{ status: 422 }
+			)
+		}
+
 		if (!recipe || !recipe.name || !recipe.ingredients?.length) {
 			return json(
 				{ error: 'Incomplete recipe result.', code: 'recipeNew.msg.imageParseIncomplete' },

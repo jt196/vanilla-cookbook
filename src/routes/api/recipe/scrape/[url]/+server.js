@@ -53,6 +53,7 @@ export async function GET({ params, locals }) {
 
 	// AI fallback
 	let aiSkipReason = null
+	let aiFoundNoRecipe = false
 	if (html) {
 		try {
 			const aiConfig = resolveAIConfig(locals, 'text')
@@ -80,6 +81,10 @@ export async function GET({ params, locals }) {
 						ingredients: aiRecipe.ingredients?.length ?? 0
 					})
 					return jsonResponse({ ...aiRecipe, _source: 'AI', _status: 'complete' }, 200)
+				} else if (aiRecipe?._noRecipe) {
+					aiFoundNoRecipe = true
+					aiSkipReason = 'AI found no recipe on the page'
+					console.log(`[scrape:${reqId}] AI found no recipe on the page`)
 				} else {
 					aiSkipReason = 'AI returned incomplete data'
 					console.warn(`[scrape:${reqId}] AI scrape incomplete`, {
@@ -106,6 +111,13 @@ export async function GET({ params, locals }) {
 			aiSkipReason
 		})
 		return jsonResponse({ ...scrapedRecipe, _source: 'scraper', _status: 'partial' }, 200)
+	}
+
+	if (aiFoundNoRecipe) {
+		return jsonResponse(
+			{ message: 'No recipe found on this page.', code: 'recipeNew.msg.pageNoRecipe' },
+			422
+		)
 	}
 
 	// Total fail

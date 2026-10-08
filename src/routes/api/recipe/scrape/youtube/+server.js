@@ -37,7 +37,7 @@ export async function POST({ request, locals }) {
 
 	if (stage === 'links') return handleLinksStage(videoId)
 	if (stage === 'description') return handleDescriptionStage(videoId, url, locals, language)
-	if (stage === 'transcript') return handleTranscriptStage(videoId, locals, language)
+	if (stage === 'transcript') return handleTranscriptStage(videoId, url, locals, language)
 
 	return jsonResponse({ error: 'Invalid stage. Use "links", "description", or "transcript".' }, 400)
 }
@@ -65,6 +65,7 @@ async function handleLinksStage(videoId) {
 				return jsonResponse({
 					...recipe,
 					sourceUrl: linkedUrl,
+					imageUrl: recipe.imageUrl || thumbnailUrl(videoId),
 					_source: 'YouTube (linked recipe)',
 					_status: 'complete'
 				})
@@ -110,12 +111,14 @@ async function handleDescriptionStage(videoId, url, locals, language = 'eng') {
 	console.log(`[yt:${reqId}] recipe extracted from description`)
 	return jsonResponse({
 		...recipe,
+		sourceUrl: recipe.sourceUrl || url,
+		imageUrl: recipe.imageUrl || videoData.thumbnailUrl || thumbnailUrl(videoId),
 		_source: 'YouTube (description)',
 		_status: hasRecipe(recipe) ? 'complete' : 'partial'
 	})
 }
 
-async function handleTranscriptStage(videoId, locals, language = 'eng') {
+async function handleTranscriptStage(videoId, url, locals, language = 'eng') {
 	const reqId = crypto.randomUUID().slice(0, 8)
 	console.log(`[yt:${reqId}] transcript stage`, { videoId })
 
@@ -135,6 +138,7 @@ async function handleTranscriptStage(videoId, locals, language = 'eng') {
 		provider: aiConfig.provider,
 		model: aiConfig.model || undefined,
 		content: transcript,
+		url,
 		language
 	})
 
@@ -146,9 +150,16 @@ async function handleTranscriptStage(videoId, locals, language = 'eng') {
 	console.log(`[yt:${reqId}] recipe extracted from transcript`)
 	return jsonResponse({
 		...recipe,
+		sourceUrl: recipe.sourceUrl || url,
+		imageUrl: recipe.imageUrl || thumbnailUrl(videoId),
 		_source: 'YouTube (transcript)',
 		_status: hasRecipe(recipe) ? 'complete' : 'partial'
 	})
+}
+
+/** YouTube's standard 480x360 thumbnail, available for every public video. */
+function thumbnailUrl(videoId) {
+	return `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`
 }
 
 /** Heuristic: skip URLs that are unlikely to be recipe pages. */

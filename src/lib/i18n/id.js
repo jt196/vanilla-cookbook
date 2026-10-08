@@ -381,6 +381,8 @@ export default {
       "imageLimitExceeded": "Hanya {max} gambar pertama yang akan digunakan.",
       "saveFail": "Gagal menyimpan resep.",
       "parseNoRecipe": "Tidak ada konten resep yang ditemukan dalam teks.",
+      "imageNoRecipe": "Tidak ada resep yang ditemukan di gambar.",
+      "pageNoRecipe": "Tidak ada resep yang ditemukan di halaman ini.",
       "youtubeCheckingLinks": "Mengambil deskripsi video dan memeriksa tautan resep…",
       "youtubeParsingDescription": "Tidak ada tautan resep yang ditemukan. Mengurai deskripsi video dengan AI…",
       "youtubeFetchingTranscript": "Tidak ada resep dalam deskripsi. Mengambil transkrip video…",
