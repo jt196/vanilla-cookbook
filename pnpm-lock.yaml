@@ -42,19 +42,19 @@ importers:
         version: 8.0.1(@capacitor/core@8.5.3)
       '@langchain/anthropic':
         specifier: ^1.5.12
-        version: 1.5.12(@langchain/core@1.2.17(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@3.25.76))(ws@8.22.0))
+        version: 1.5.12(@langchain/core@1.2.17(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@4.6.5))(ws@8.22.0))
       '@langchain/core':
         specifier: ^1.2.17
-        version: 1.2.17(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@3.25.76))(ws@8.22.0)
+        version: 1.2.17(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@4.6.5))(ws@8.22.0)
       '@langchain/google-genai':
         specifier: ^2.3.2
-        version: 2.3.2(@langchain/core@1.2.17(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@3.25.76))(ws@8.22.0))
+        version: 2.3.2(@langchain/core@1.2.17(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@4.6.5))(ws@8.22.0))
       '@langchain/ollama':
         specifier: ^1.3.0
-        version: 1.3.0(@langchain/core@1.2.17(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@3.25.76))(ws@8.22.0))
+        version: 1.3.0(@langchain/core@1.2.17(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@4.6.5))(ws@8.22.0))
       '@langchain/openai':
         specifier: ^1.6.2
-        version: 1.6.2(@aws-sdk/credential-provider-node@3.972.84)(@langchain/core@1.2.17(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@3.25.76))(ws@8.22.0))(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)
+        version: 1.6.2(@aws-sdk/credential-provider-node@3.972.84)(@langchain/core@1.2.17(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@4.6.5))(ws@8.22.0))(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)
       '@lucia-auth/adapter-prisma':
         specifier: ^3.0.2
         version: 3.0.2(@prisma/client@7.10.0(prisma@7.10.0(@types/node@26.6.4)(@types/react@19.3.0)(better-sqlite3@13.0.3)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.8.2))(typescript@5.8.2))(lucia@2.7.7)
@@ -102,7 +102,7 @@ importers:
         version: 3.35.0
       langchain:
         specifier: ^1.5.15
-        version: 1.5.15(@langchain/core@1.2.17(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@3.25.76))(ws@8.22.0))(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@3.25.76))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(ws@8.22.0)
+        version: 1.5.15(@langchain/core@1.2.17(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@4.6.5))(ws@8.22.0))(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@4.6.5))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(ws@8.22.0)
       lucia:
         specifier: ^2.7.7
         version: 2.7.7
@@ -114,7 +114,7 @@ importers:
         version: 9.0.4
       openai:
         specifier: ^7.30.1
-        version: 7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@3.25.76)
+        version: 7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@4.6.5)
       openid-client:
         specifier: ^6.8.8
         version: 6.8.8
@@ -143,8 +143,8 @@ importers:
         specifier: ^1.3.1
         version: 1.3.1
       zod:
-        specifier: ^3.25.76
-        version: 3.25.76
+        specifier: ^4.6.5
+        version: 4.6.5
     devDependencies:
       '@eslint/js':
         specifier: ^9.39.5
@@ -5086,19 +5086,19 @@ packages:
     resolution: {integrity: sha512-dSvYKdvLsAHCDqPOhIwk/q5CvuWtTB3Dgpoe0uVEFjTzIOAmsQpprX25InCvrvJsirEbu1OHyy67n/kAj1Sw/w==}
     engines: {node: '>=18'}
 
-  zod@3.25.76:
-    resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
+  zod@4.6.5:
+    resolution: {integrity: sha512-v5l/aFXZQeai4awLbOpSoHecE9UiMrnfx75tEXLjNonXVARxQ5mOeipTjROUchszUNCqnE+hqAMujRsRHsut2Q==}
 
 snapshots:
 
   '@adobe/css-tools@4.5.0': {}
 
-  '@anthropic-ai/sdk@0.122.0(zod@3.25.76)':
+  '@anthropic-ai/sdk@0.122.0(zod@4.6.5)':
     dependencies:
       json-schema-to-ts: 3.1.1
       standardwebhooks: 1.1.1
     optionalDependencies:
-      zod: 3.25.76
+      zod: 4.6.5
 
   '@apideck/better-ajv-errors@0.3.7(ajv@8.20.0)':
     dependencies:
@@ -6341,21 +6341,21 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.6.0
 
-  '@langchain/anthropic@1.5.12(@langchain/core@1.2.17(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@3.25.76))(ws@8.22.0))':
+  '@langchain/anthropic@1.5.12(@langchain/core@1.2.17(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@4.6.5))(ws@8.22.0))':
     dependencies:
-      '@anthropic-ai/sdk': 0.122.0(zod@3.25.76)
-      '@langchain/core': 1.2.17(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@3.25.76))(ws@8.22.0)
-      zod: 3.25.76
+      '@anthropic-ai/sdk': 0.122.0(zod@4.6.5)
+      '@langchain/core': 1.2.17(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@4.6.5))(ws@8.22.0)
+      zod: 4.6.5
 
-  '@langchain/core@1.2.17(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@3.25.76))(ws@8.22.0)':
+  '@langchain/core@1.2.17(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@4.6.5))(ws@8.22.0)':
     dependencies:
       '@cfworker/json-schema': 4.1.1
       '@standard-schema/spec': 1.1.0
       js-tiktoken: 1.0.21
-      langsmith: 0.10.8(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@3.25.76))(ws@8.22.0)
+      langsmith: 0.10.8(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@4.6.5))(ws@8.22.0)
       mustache: 4.2.0
       p-queue: 6.6.2
-      zod: 3.25.76
+      zod: 4.6.5
     transitivePeerDependencies:
       - '@opentelemetry/api'
       - '@opentelemetry/exporter-trace-otlp-proto'
@@ -6363,18 +6363,18 @@ snapshots:
       - openai
       - ws
 
-  '@langchain/google-genai@2.3.2(@langchain/core@1.2.17(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@3.25.76))(ws@8.22.0))':
+  '@langchain/google-genai@2.3.2(@langchain/core@1.2.17(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@4.6.5))(ws@8.22.0))':
     dependencies:
       '@google/generative-ai': 0.24.1
-      '@langchain/core': 1.2.17(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@3.25.76))(ws@8.22.0)
+      '@langchain/core': 1.2.17(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@4.6.5))(ws@8.22.0)
 
-  '@langchain/langgraph-checkpoint@1.1.6(@langchain/core@1.2.17(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@3.25.76))(ws@8.22.0))':
+  '@langchain/langgraph-checkpoint@1.1.6(@langchain/core@1.2.17(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@4.6.5))(ws@8.22.0))':
     dependencies:
-      '@langchain/core': 1.2.17(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@3.25.76))(ws@8.22.0)
+      '@langchain/core': 1.2.17(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@4.6.5))(ws@8.22.0)
 
-  '@langchain/langgraph-sdk@1.12.3(@langchain/core@1.2.17(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@3.25.76))(ws@8.22.0))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
+  '@langchain/langgraph-sdk@1.12.3(@langchain/core@1.2.17(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@4.6.5))(ws@8.22.0))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
     dependencies:
-      '@langchain/core': 1.2.17(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@3.25.76))(ws@8.22.0)
+      '@langchain/core': 1.2.17(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@4.6.5))(ws@8.22.0)
       '@langchain/protocol': 0.0.19
       '@types/json-schema': 7.0.15
       p-queue: 9.3.3
@@ -6383,29 +6383,29 @@ snapshots:
       react: 19.2.3
       react-dom: 19.2.3(react@19.2.3)
 
-  '@langchain/langgraph@1.4.21(@langchain/core@1.2.17(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@3.25.76))(ws@8.22.0))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(zod@3.25.76)':
+  '@langchain/langgraph@1.4.21(@langchain/core@1.2.17(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@4.6.5))(ws@8.22.0))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(zod@4.6.5)':
     dependencies:
-      '@langchain/core': 1.2.17(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@3.25.76))(ws@8.22.0)
-      '@langchain/langgraph-checkpoint': 1.1.6(@langchain/core@1.2.17(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@3.25.76))(ws@8.22.0))
-      '@langchain/langgraph-sdk': 1.12.3(@langchain/core@1.2.17(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@3.25.76))(ws@8.22.0))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      '@langchain/core': 1.2.17(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@4.6.5))(ws@8.22.0)
+      '@langchain/langgraph-checkpoint': 1.1.6(@langchain/core@1.2.17(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@4.6.5))(ws@8.22.0))
+      '@langchain/langgraph-sdk': 1.12.3(@langchain/core@1.2.17(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@4.6.5))(ws@8.22.0))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@langchain/protocol': 0.0.19
       '@standard-schema/spec': 1.1.0
-      zod: 3.25.76
+      zod: 4.6.5
     transitivePeerDependencies:
       - react
       - react-dom
 
-  '@langchain/ollama@1.3.0(@langchain/core@1.2.17(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@3.25.76))(ws@8.22.0))':
+  '@langchain/ollama@1.3.0(@langchain/core@1.2.17(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@4.6.5))(ws@8.22.0))':
     dependencies:
-      '@langchain/core': 1.2.17(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@3.25.76))(ws@8.22.0)
+      '@langchain/core': 1.2.17(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@4.6.5))(ws@8.22.0)
       ollama: 0.6.4
 
-  '@langchain/openai@1.6.2(@aws-sdk/credential-provider-node@3.972.84)(@langchain/core@1.2.17(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@3.25.76))(ws@8.22.0))(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)':
+  '@langchain/openai@1.6.2(@aws-sdk/credential-provider-node@3.972.84)(@langchain/core@1.2.17(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@4.6.5))(ws@8.22.0))(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)':
     dependencies:
-      '@langchain/core': 1.2.17(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@3.25.76))(ws@8.22.0)
+      '@langchain/core': 1.2.17(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@4.6.5))(ws@8.22.0)
       js-tiktoken: 1.0.21
-      openai: 7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@3.25.76)
-      zod: 3.25.76
+      openai: 7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@4.6.5)
+      zod: 4.6.5
     transitivePeerDependencies:
       - '@aws-sdk/credential-provider-node'
       - '@smithy/hash-node'
@@ -8660,13 +8660,13 @@ snapshots:
 
   known-css-properties@0.37.0: {}
 
-  langchain@1.5.15(@langchain/core@1.2.17(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@3.25.76))(ws@8.22.0))(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@3.25.76))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(ws@8.22.0):
+  langchain@1.5.15(@langchain/core@1.2.17(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@4.6.5))(ws@8.22.0))(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@4.6.5))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(ws@8.22.0):
     dependencies:
-      '@langchain/core': 1.2.17(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@3.25.76))(ws@8.22.0)
-      '@langchain/langgraph': 1.4.21(@langchain/core@1.2.17(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@3.25.76))(ws@8.22.0))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(zod@3.25.76)
-      '@langchain/langgraph-checkpoint': 1.1.6(@langchain/core@1.2.17(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@3.25.76))(ws@8.22.0))
-      langsmith: 0.10.8(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@3.25.76))(ws@8.22.0)
-      zod: 3.25.76
+      '@langchain/core': 1.2.17(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@4.6.5))(ws@8.22.0)
+      '@langchain/langgraph': 1.4.21(@langchain/core@1.2.17(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@4.6.5))(ws@8.22.0))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(zod@4.6.5)
+      '@langchain/langgraph-checkpoint': 1.1.6(@langchain/core@1.2.17(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@4.6.5))(ws@8.22.0))
+      langsmith: 0.10.8(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@4.6.5))(ws@8.22.0)
+      zod: 4.6.5
     transitivePeerDependencies:
       - '@opentelemetry/api'
       - '@opentelemetry/exporter-trace-otlp-proto'
@@ -8676,11 +8676,11 @@ snapshots:
       - react-dom
       - ws
 
-  langsmith@0.10.8(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@3.25.76))(ws@8.22.0):
+  langsmith@0.10.8(openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@4.6.5))(ws@8.22.0):
     dependencies:
       p-queue: 6.6.2
     optionalDependencies:
-      openai: 7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@3.25.76)
+      openai: 7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@4.6.5)
       ws: 8.22.0
 
   launder@1.7.2:
@@ -8985,13 +8985,13 @@ snapshots:
       is-docker: 2.2.1
       is-wsl: 2.2.0
 
-  openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@3.25.76):
+  openai@7.30.1(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.4)(undici@7.30.0)(ws@8.22.0)(zod@4.6.5):
     optionalDependencies:
       '@aws-sdk/credential-provider-node': 3.972.84
       '@smithy/signature-v4': 5.7.4
       undici: 7.30.0
       ws: 8.22.0
-      zod: 3.25.76
+      zod: 4.6.5
 
   openid-client@6.8.8:
     dependencies:
@@ -10239,4 +10239,4 @@ snapshots:
       normalize-path: 3.0.0
       readable-stream: 4.8.0
 
-  zod@3.25.76: {}
+  zod@4.6.5: {}
