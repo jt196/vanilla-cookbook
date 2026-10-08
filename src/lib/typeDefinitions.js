@@ -27,6 +27,7 @@
  * @property {(string|null)} prep_time
  * @property {(string|null)} servings
  * @property {(string|null)} nutritional_info
+ * @property {(string|null)} equipment - Equipment/tools, one per line
  */
 
 /**
@@ -62,6 +63,7 @@
  * @property {(string|null)} prep_time
  * @property {(string|null)} servings
  * @property {(string|null)} nutritional_info
+ * @property {(string|null)} equipment - Equipment/tools, one per line
  */
 
 /**

@@ -100,6 +100,7 @@ export async function PUT({ request, locals, params }) {
 		'servings',
 		'ingredients',
 		'ingredients_original',
+		'equipment',
 		'directions',
 		'directions_original',
 		'notes',

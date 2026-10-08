@@ -256,6 +256,12 @@
 								.map((l) => l.trim())
 								.filter(Boolean)
 						: [],
+					equipment: recipe.equipment
+						? recipe.equipment
+								.split('\n')
+								.map((l) => l.trim())
+								.filter(Boolean)
+						: [],
 					instructions: recipe.directions
 						? recipe.directions
 								.split('\n')
@@ -297,6 +303,9 @@
 			if (translated.description) recipe.description = translated.description
 			if (Array.isArray(translated.ingredients)) {
 				recipe.ingredients = translated.ingredients.join('\n')
+			}
+			if (Array.isArray(translated.equipment) && translated.equipment.length) {
+				recipe.equipment = translated.equipment.join('\n')
 			}
 			if (Array.isArray(translated.instructions)) {
 				recipe.directions = translated.instructions.join('\n')
@@ -668,6 +677,13 @@
 				{/if}
 			{/if}
 		</div>
+		<Textarea
+			id="equipment"
+			name="equipment"
+			rows="3"
+			placeholder={$t('recipeForm.equipmentPlaceholder')}
+			bind:value={recipe.equipment}
+			label={$t('recipeForm.equipment')} />
 		<Textarea
 			id="description"
 			name="description"

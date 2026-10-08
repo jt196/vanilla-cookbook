@@ -12,6 +12,7 @@
 	import RecipeViewDesc from '$lib/components/recipe/RecipeViewDesc.svelte'
 	import RecipeViewIngs from '$lib/components/recipe/RecipeViewIngs.svelte'
 	import RecipeViewNutrition from '$lib/components/recipe/RecipeViewNutrition.svelte'
+	import RecipeViewEquipment from '$lib/components/recipe/RecipeViewEquipment.svelte'
 	import RecipeViewOtherPhotos from '$lib/components/recipe/RecipeViewOtherPhotos.svelte'
 	import RecipeViewDirections from '$lib/components/recipe/RecipeViewDirections.svelte'
 	import RecipeViewNotes from '$lib/components/recipe/RecipeViewNotes.svelte'
@@ -431,6 +432,7 @@
 					{selectedSystem}
 					onScaleChange={handleScaleChange}
 					onSelectedSystemChange={handleSelectedSystemChange} />
+				<RecipeViewEquipment equipment={recipe.equipment} />
 				{#if viewUser?.displayNutrition ?? true}
 					<div class="hidden md:block">
 						<RecipeViewNutrition

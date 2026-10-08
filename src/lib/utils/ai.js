@@ -120,7 +120,7 @@ Rules:
 - Preserve quantities, units, and numeric values exactly as provided.
 - Keep the JSON structure identical to the input and expected shape.
 - Do not invent or omit fields.
-- Ingredients and instructions must remain arrays of strings.
+- Ingredients, equipment and instructions must remain arrays of strings.
 - Notes/description/name should be translated if present.
 - Return raw JSON only, no Markdown or extra commentary.
 

@@ -210,6 +210,38 @@ export function parseVideo(video) {
 }
 
 /**
+ * Normalise schema.org `tool` data (Recipe inherits it from HowTo) to a list of names.
+ * Accepts a string, a HowToTool object ({ name } or { text }), or a (nested) array of either.
+ * Duplicates (case-insensitive) and empty entries are dropped.
+ *
+ * @param {unknown} tool - The raw `tool` value.
+ * @returns {string[]} Equipment names, in source order.
+ */
+export function parseTools(tool) {
+	const names = []
+	const visit = (value) => {
+		if (!value) return
+		if (Array.isArray(value)) return value.forEach(visit)
+		if (typeof value === 'string') return names.push(value)
+		if (typeof value === 'object') {
+			const name = value.name ?? value.text
+			if (typeof name === 'string') names.push(name)
+		}
+	}
+	visit(tool)
+
+	const seen = new Set()
+	return names
+		.map((name) => name.replace(/\s+/g, ' ').trim())
+		.filter((name) => {
+			const key = name.toLowerCase()
+			if (!name || seen.has(key)) return false
+			seen.add(key)
+			return true
+		})
+}
+
+/**
  * Return the provided nutrition data as-is.
  * @param {Object} nutrition - The nutrition data.
  * @returns {Object|undefined} The nutrition data or undefined if not provided.
@@ -335,6 +367,7 @@ export function extractMicrodata(root) {
 	const aggregateRating = extractNestedProperties(item, '[itemprop="aggregateRating"]')
 	const nutrition = extractNestedProperties(item, '[itemprop="nutrition"]')
 	const video = extractTextFromSelector(item, '[itemprop="video"]')[0]
+	const tool = extractTextFromSelector(item, '[itemprop="tool"]')
 
 	return {
 		name,
@@ -352,7 +385,8 @@ export function extractMicrodata(root) {
 		datePublished,
 		aggregateRating,
 		video,
-		nutrition
+		nutrition,
+		tool
 	}
 }
 

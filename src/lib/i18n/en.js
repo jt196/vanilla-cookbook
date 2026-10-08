@@ -289,6 +289,7 @@ export default {
 		description: 'Description',
 		directions: 'Directions',
 		notes: 'Notes',
+		equipment: 'Equipment',
 		nutritionalInfo: 'Nutritional Information',
 		styleOverride: 'Style override (optional)',
 		styleOverrideHint:
@@ -301,6 +302,7 @@ export default {
 		totalTimePlaceholder: '1.5 hours',
 		servingsPlaceholder: '4 main course',
 		ingredientsPlaceholder: '500g of pasta...',
+		equipmentPlaceholder: 'Stand mixer\nWhisk\nBaking tray (one per line)',
 		descriptionPlaceholder: "This pasta was a favourite of my Nonna's",
 		directionsPlaceholder: 'Boil the pasta according to instructions...',
 		notesPlaceholder: "Don't overcook the pasta or she'll come back to haunt you",
@@ -821,6 +823,7 @@ export default {
 		description: 'Description',
 		directions: 'Directions',
 		ingredients: 'Ingredients',
+		equipment: 'Equipment',
 		notes: 'Notes',
 		loading: 'Loading...',
 		defaultDensity: '* Converted using default water density',

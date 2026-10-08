@@ -23,6 +23,7 @@ model Recipe {
   scale                String?
   ingredients          String?
   ingredients_original String?
+  equipment            String?
   is_pinned            Boolean?           @default(false)
   is_public            Boolean?           @default(false)
   source               String?

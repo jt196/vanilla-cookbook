@@ -355,6 +355,7 @@ export function formatScrapedRecipe(raw) {
 		description: Array.isArray(raw.description) ? raw.description.join('\n\n') : raw.description,
 		total_time: durationToText(raw.totalTime),
 		servings: Array.isArray(raw.servings) ? raw.servings[0] : raw.servings,
-		nutritional_info: nutritionProcess(raw.nutrition)
+		nutritional_info: nutritionProcess(raw.nutrition),
+		equipment: Array.isArray(raw.equipment) ? raw.equipment.join('\n') : raw.equipment || ''
 	}
 }
