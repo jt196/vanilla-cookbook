@@ -59,6 +59,22 @@ export function resolveAIConfig(locals, type = 'text') {
 }
 
 /**
+ * Resolve the image generation model, throwing a helpful error when none is set.
+ *
+ * @param {{ provider: string, model: string | null }} aiConfig
+ * @returns {string}
+ */
+function requireImageGenerationModel(aiConfig) {
+	const model = (aiConfig.model && aiConfig.model.trim()) || env.LLM_IMAGE_GENERATION_MODEL
+	if (!model) {
+		throw new Error(
+			`No image generation model set for ${aiConfig.provider}. Enter a model name in Site Settings.`
+		)
+	}
+	return model
+}
+
+/**
  * Generate an image buffer from a prompt using the configured AI provider.
  *
  * @param {{ provider: string, model: string | null }} aiConfig
@@ -72,10 +88,7 @@ export async function generateImageBuffer(aiConfig, prompt) {
 		}
 		const client = new OpenAI({ apiKey: env.OPENAI_API_KEY })
 		const generation = await client.images.generate({
-			model:
-				(aiConfig.model && aiConfig.model.trim()) ||
-				env.LLM_IMAGE_GENERATION_MODEL ||
-				'gpt-image-1',
+			model: requireImageGenerationModel(aiConfig),
 			prompt,
 			size: RECIPE_IMAGE_GENERATION_SIZE
 		})
@@ -88,11 +101,9 @@ export async function generateImageBuffer(aiConfig, prompt) {
 		if (!env.GOOGLE_API_KEY) {
 			throw new Error('GOOGLE_API_KEY is not configured.')
 		}
-		const model =
-			(aiConfig.model && aiConfig.model.trim()) ||
-			env.GEMINI_IMAGE_GENERATION_MODEL ||
-			env.LLM_IMAGE_GENERATION_MODEL ||
-			'gemini-2.5-flash-image'
+		const model = env.GEMINI_IMAGE_GENERATION_MODEL
+			? (aiConfig.model && aiConfig.model.trim()) || env.GEMINI_IMAGE_GENERATION_MODEL
+			: requireImageGenerationModel(aiConfig)
 		const response = await fetch(
 			`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(env.GOOGLE_API_KEY)}`,
 			{
@@ -120,8 +131,7 @@ export async function generateImageBuffer(aiConfig, prompt) {
 		// Ollama itself does not expose a native image generation API.
 		// This supports local OpenAI-compatible endpoints if users route image generation there.
 		const baseUrl = (env.OLLAMA_BASE_URL || 'http://localhost:11434').replace(/\/$/, '')
-		const model =
-			(aiConfig.model && aiConfig.model.trim()) || env.LLM_IMAGE_GENERATION_MODEL || 'sdxl'
+		const model = requireImageGenerationModel(aiConfig)
 		const response = await fetch(`${baseUrl}/v1/images/generations`, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },

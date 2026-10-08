@@ -442,7 +442,12 @@ export default {
       "textHint": "Se utiliza para el análisis/traducción/generación de recetas de respaldo, limpieza de ingredientes y resumen de instrucciones.",
       "provider": "Proveedor",
       "model": "Modelo",
-      "customModel": "Modelo Personalizado",
+      "modelPlaceholder": "Escribe o elige un modelo",
+      "defaultModelPlaceholder": "Predeterminado: {model}",
+      "modelsLoading": "Cargando modelos de {provider}…",
+      "modelsAvailable": "{count} modelos disponibles de {provider}.",
+      "modelsLoadFailed": "No se pudo cargar la lista de modelos ({error}). Aún puedes escribir el nombre del modelo.",
+      "browseModels": "Ver modelos de {provider}",
       "imageOcr": "OCR de Imagen",
       "imageOcrHint": "Se utiliza para la extracción de recetas de fotos/imágenes subidas.",
       "noImageAnalysis": "no soporta el análisis de imágenes.",
@@ -456,6 +461,7 @@ export default {
       "embeddingsDisabled": "Las incrustaciones están deshabilitadas.",
       "noEmbeddingProviders": "No hay proveedores de incrustaciones configurados. Agregue OPENAI_API_KEY, GOOGLE_API_KEY y/o OLLAMA_BASE_URL en .env.",
       "selectProviderFirst": "Seleccione un proveedor de incrustaciones para elegir un modelo.",
+      "embeddingModelChangeWarning": "{count} recetas están indexadas con {model}. Después de guardar, usa \"Regenerar Desiguales\" para volver a generar sus embeddings con el nuevo modelo (consume créditos de API). Hasta entonces, la búsqueda semántica y las recetas similares las omitirán.",
       "missingOllama": "Por favor, agregue OLLAMA_BASE_URL a .env.",
       "missingGoogle": "Por favor, agregue GOOGLE_API_KEY a .env.",
       "missingOpenai": "Por favor, agregue OPENAI_API_KEY a .env.",
@@ -532,7 +538,8 @@ export default {
         "embeddingRateLimit": "Límite de tasa o cuota alcanzado después de {count} procesados. Recargue créditos o espere e intente de nuevo más tarde.",
         "embeddingComplete": "Ejecución de incrustaciones completa: {processed} procesados, {failed} fallidos.",
         "embeddingError": "Error al generar incrustaciones:",
-        "connectionFailed": "Conexión fallida"
+        "connectionFailed": "Conexión fallida",
+        "noModel": "No hay ningún modelo configurado. Introduce un nombre de modelo arriba."
       }
     },
     "users": {

@@ -32,6 +32,10 @@
 		disabled = false,
 		id = '',
 		name = '',
+		/**
+		 * id of a <datalist> offering suggestions
+		 */
+		list = undefined,
 		class: className = '',
 		oninput = undefined,
 		onkeydown = undefined
@@ -94,6 +98,7 @@
 				{type}
 				{id}
 				{name}
+				{list}
 				placeholder={placeholderValue}
 				{required}
 				{disabled}
@@ -107,6 +112,7 @@
 			{type}
 			{id}
 			{name}
+			{list}
 			placeholder={placeholderValue}
 			{required}
 			{disabled}

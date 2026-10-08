@@ -533,7 +533,12 @@ export default {
 				'Used for recipe fallback parsing/translation/generation, ingredient cleanup, and direction summarising.',
 			provider: 'Provider',
 			model: 'Model',
-			customModel: 'Custom Model',
+			modelPlaceholder: 'Type or pick a model',
+			defaultModelPlaceholder: 'Default: {model}',
+			modelsLoading: 'Loading models from {provider}…',
+			modelsAvailable: '{count} models available from {provider}.',
+			modelsLoadFailed: "Couldn't load the model list ({error}). You can still type a model name.",
+			browseModels: 'Browse {provider} models',
 			imageOcr: 'Image OCR',
 			imageOcrHint: 'Used for recipe extraction from uploaded photos/images.',
 			noImageAnalysis: 'does not support image analysis.',
@@ -550,6 +555,8 @@ export default {
 			noEmbeddingProviders:
 				'No embedding providers configured. Add OPENAI_API_KEY, GOOGLE_API_KEY and/or OLLAMA_BASE_URL in .env.',
 			selectProviderFirst: 'Select an embedding provider to choose a model.',
+			embeddingModelChangeWarning:
+				'{count} recipes are indexed with {model}. After saving, use "Regenerate Mismatched" to re-embed them with the new model (this uses API credits). Until then, semantic search and similar recipes will leave them out.',
 			missingOllama: 'Please add OLLAMA_BASE_URL to .env.',
 			missingGoogle: 'Please add GOOGLE_API_KEY to .env.',
 			missingOpenai: 'Please add OPENAI_API_KEY to .env.',
@@ -633,7 +640,8 @@ export default {
 					'Rate limit or quota reached after {count} processed. Top up credits or wait and try again later.',
 				embeddingComplete: 'Embedding run complete: {processed} processed, {failed} failed.',
 				embeddingError: 'Error generating embeddings:',
-				connectionFailed: 'Connection failed'
+				connectionFailed: 'Connection failed',
+				noModel: 'No model set. Enter a model name above.'
 			}
 		},
 		users: {

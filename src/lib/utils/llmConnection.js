@@ -1,11 +1,52 @@
 import { env } from '$env/dynamic/private'
-import {
-	providerMeta,
-	embeddingProviderNames,
-	embeddingModels,
-	getDefaultModelsForProvider
-} from '$lib/utils/llmModels'
+import { providerMeta, embeddingProviderNames, resolveEmbeddingModel } from '$lib/utils/llmModels'
 import { RECIPE_IMAGE_GENERATION_SIZE } from '$lib/utils/image/imageConfig'
+
+/**
+ * Turn a failed provider response into a readable message.
+ * Pulls the provider's own error text out of its JSON body rather than echoing raw JSON.
+ *
+ * @param {number} status - HTTP status code
+ * @param {string} body - Raw response body
+ * @returns {string} e.g. "404: This model is no longer available to new users."
+ */
+export function describeProviderError(status, body) {
+	let message = ''
+	try {
+		const data = JSON.parse(body)
+		const err = Array.isArray(data) ? data[0]?.error : data?.error
+		message = (typeof err === 'string' ? err : err?.message) || data?.message || ''
+	} catch {
+		message = body
+	}
+	message = String(message || '')
+		.replace(/\s+/g, ' ')
+		.trim()
+	if (message.length > 300) message = `${message.substring(0, 300)}…`
+	return message ? `${status}: ${message}` : `HTTP ${status}`
+}
+
+function noModelResult(provider) {
+	return {
+		ok: false,
+		latencyMs: 0,
+		error: `No model set for ${provider}. Enter a model name in Site Settings.`,
+		code: 'admin.site.msg.noModel'
+	}
+}
+
+async function failedResponseResult(provider, type, response, model, start) {
+	const body = await response.text()
+	const error = describeProviderError(response.status, body)
+	console.error(`LLM connection test failed (${provider} ${type}, model ${model}): ${error}`)
+	return {
+		ok: false,
+		latencyMs: Date.now() - start,
+		error,
+		code: 'admin.site.msg.connectionFailed',
+		model
+	}
+}
 
 /**
  * API connection configs for each provider.
@@ -168,7 +209,7 @@ const apiConfigs = {
  * Test connection to an LLM provider.
  *
  * @param {string} provider - Provider name
- * @param {string} [model] - Model to use (defaults to provider's recommended model)
+ * @param {string} [model] - Model to use (required for chat and image generation; embeddings fall back to the provider default)
  * @param {'chat' | 'embedding' | 'imageGeneration'} [type='chat'] - Type of connection to test
  * @returns {Promise<{ ok: boolean, latencyMs: number, error?: string, code?: string, model?: string }>}
  */
@@ -219,19 +260,35 @@ export async function testProviderConnection(provider, model, type = 'chat') {
 					code: 'admin.site.msg.connectionFailed'
 				}
 			}
-			return testEmbedding(provider, config.embedding, envValue, model, start, timeout)
+			return await testEmbedding(provider, config.embedding, envValue, model, start, timeout)
 		}
 
 		if (type === 'imageGeneration') {
-			return testImageGeneration(provider, config.imageGeneration, envValue, model, start, timeout)
+			return await testImageGeneration(
+				provider,
+				config.imageGeneration,
+				envValue,
+				model,
+				start,
+				timeout
+			)
 		}
 
-		return testChat(provider, config.chat, envValue, model, start, timeout)
+		return await testChat(provider, config.chat, envValue, model, start, timeout)
 	} catch (err) {
+		const error =
+			err instanceof Error && err.name === 'AbortError'
+				? `Timed out after ${timeout / 1000}s`
+				: err instanceof Error
+					? err.message
+					: String(err)
+		console.error(
+			`LLM connection test failed (${provider} ${type}, model ${model || 'default'}): ${error}`
+		)
 		return {
 			ok: false,
 			latencyMs: Date.now() - start,
-			error: err instanceof Error ? err.message : String(err),
+			error,
 			code: 'admin.site.msg.connectionFailed'
 		}
 	}
@@ -247,16 +304,8 @@ async function testImageGeneration(provider, apiConfig, envValue, model, start, 
 		}
 	}
 
-	const defaults = getDefaultModelsForProvider(provider)
-	const fallbackModel =
-		provider === 'openai'
-			? 'gpt-image-1'
-			: provider === 'google'
-				? 'gemini-2.5-flash-image'
-				: provider === 'ollama'
-					? 'sdxl'
-					: defaults.image || defaults.text
-	const effectiveModel = model || fallbackModel
+	const effectiveModel = model?.trim()
+	if (!effectiveModel) return noModelResult(provider)
 
 	const controller = new AbortController()
 	const timeoutId = setTimeout(() => controller.abort(), timeout)
@@ -272,14 +321,7 @@ async function testImageGeneration(provider, apiConfig, envValue, model, start, 
 		clearTimeout(timeoutId)
 
 		if (!response.ok) {
-			const body = await response.text()
-			return {
-				ok: false,
-				latencyMs: Date.now() - start,
-				error: `API error: ${response.status} ${body.substring(0, 200)}`,
-				code: 'admin.site.msg.connectionFailed',
-				model: effectiveModel
-			}
+			return failedResponseResult(provider, 'imageGeneration', response, effectiveModel, start)
 		}
 
 		const data = await response.json()
@@ -296,7 +338,8 @@ async function testImageGeneration(provider, apiConfig, envValue, model, start, 
 }
 
 async function testChat(provider, apiConfig, envValue, model, start, timeout) {
-	const effectiveModel = model || getDefaultModelsForProvider(provider).text
+	const effectiveModel = model?.trim()
+	if (!effectiveModel) return noModelResult(provider)
 
 	const controller = new AbortController()
 	const timeoutId = setTimeout(() => controller.abort(), timeout)
@@ -312,14 +355,7 @@ async function testChat(provider, apiConfig, envValue, model, start, timeout) {
 		clearTimeout(timeoutId)
 
 		if (!response.ok) {
-			const body = await response.text()
-			return {
-				ok: false,
-				latencyMs: Date.now() - start,
-				error: `API error: ${response.status} ${body.substring(0, 200)}`,
-				code: 'admin.site.msg.connectionFailed',
-				model: effectiveModel
-			}
+			return failedResponseResult(provider, 'chat', response, effectiveModel, start)
 		}
 
 		const data = await response.json()
@@ -336,16 +372,7 @@ async function testChat(provider, apiConfig, envValue, model, start, timeout) {
 }
 
 async function testEmbedding(provider, apiConfig, envValue, model, start, timeout) {
-	const effectiveModel = model || embeddingModels[provider]?.[0]?.value
-
-	if (!effectiveModel) {
-		return {
-			ok: false,
-			latencyMs: 0,
-			error: `No embedding model for ${provider}`,
-			code: 'admin.site.msg.connectionFailed'
-		}
-	}
+	const effectiveModel = resolveEmbeddingModel(provider, model)
 
 	const controller = new AbortController()
 	const timeoutId = setTimeout(() => controller.abort(), timeout)
@@ -361,14 +388,7 @@ async function testEmbedding(provider, apiConfig, envValue, model, start, timeou
 		clearTimeout(timeoutId)
 
 		if (!response.ok) {
-			const body = await response.text()
-			return {
-				ok: false,
-				latencyMs: Date.now() - start,
-				error: `API error: ${response.status} ${body.substring(0, 200)}`,
-				code: 'admin.site.msg.connectionFailed',
-				model: effectiveModel
-			}
+			return failedResponseResult(provider, 'embedding', response, effectiveModel, start)
 		}
 
 		const data = await response.json()

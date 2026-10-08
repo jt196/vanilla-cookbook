@@ -8,16 +8,15 @@ import {
 	providerMeta,
 	providerNames,
 	embeddingProviderNames,
-	imageModels,
-	embeddingModels,
-	getDefaultModelsForProvider
+	providerSupports,
+	defaultEmbeddingModels
 } from '$lib/utils/llmModels.js'
 
 // Re-export from llmModels for convenience
 export { providerMeta, providerNames, embeddingProviderNames }
 
 // Derived capability lists
-export const imageProviderNames = providerNames.filter((p) => (imageModels[p] || []).length > 0)
+export const imageProviderNames = providerNames.filter((p) => providerSupports(p, 'image'))
 
 /**
  * API connection details for smoke tests.
@@ -134,15 +133,14 @@ export function getConfiguredProviders(env = process.env) {
 	return providerMeta
 		.filter((p) => env[p.envVar])
 		.map((p) => {
-			const defaults = getDefaultModelsForProvider(p.value)
-			const defaultEmbedding = embeddingModels[p.value]?.[0]?.value || null
+			// No built-in chat defaults: set e.g. OPENAI_SMOKE_MODEL to smoke-test chat
+			const smokeModel = env[`${p.value.toUpperCase()}_SMOKE_MODEL`] || null
 			return {
 				name: p.value,
 				envValue: env[p.envVar],
 				envVar: p.envVar,
-				defaultTextModel: defaults.text,
-				defaultImageModel: defaults.image,
-				defaultEmbeddingModel: defaultEmbedding,
+				defaultTextModel: smokeModel,
+				defaultEmbeddingModel: defaultEmbeddingModels[p.value] || null,
 				supportsEmbedding: embeddingProviderNames.includes(p.value),
 				supportsImage: imageProviderNames.includes(p.value),
 				api: apiConfigs[p.value]

@@ -24,21 +24,14 @@ export const embeddingProviderNames = providerMeta
 // Backwards compatibility alias
 export const embeddingProviderMeta = providerMeta.filter((p) => p.supportsEmbedding)
 
-export const embeddingModels = {
-	openai: [
-		{ value: 'text-embedding-3-small', label: 'text-embedding-3-small (Recommended)' },
-		{ value: 'text-embedding-3-large', label: 'text-embedding-3-large' },
-		{ value: 'text-embedding-ada-002', label: 'text-embedding-ada-002 (Legacy)' }
-	],
-	google: [
-		{ value: 'gemini-embedding-001', label: 'gemini-embedding-001 (Recommended)' },
-		{ value: 'text-embedding-004', label: 'text-embedding-004 (Legacy)' }
-	],
-	ollama: [
-		{ value: 'nomic-embed-text', label: 'nomic-embed-text (Recommended)' },
-		{ value: 'mxbai-embed-large', label: 'mxbai-embed-large' },
-		{ value: 'all-minilm', label: 'all-minilm' }
-	]
+/**
+ * Default embedding model per provider, used when the admin hasn't chosen one.
+ * Kept fixed (rather than live) because changing it invalidates existing recipe embeddings.
+ */
+export const defaultEmbeddingModels = {
+	openai: 'text-embedding-3-small',
+	google: 'gemini-embedding-001',
+	ollama: 'nomic-embed-text'
 }
 
 export const providers = providerMeta.map((provider) => ({
@@ -46,66 +39,31 @@ export const providers = providerMeta.map((provider) => ({
 	label: provider.label
 }))
 
-// Text models by provider - fast/cheap models for simple text processing
-export const textModels = {
-	openai: [
-		{ value: 'gpt-5.6-luna', label: 'GPT-5.6 Luna (Recommended, cheapest)' },
-		{ value: 'gpt-5.6-terra', label: 'GPT-5.6 Terra (Higher quality)' }
-	],
-	anthropic: [
-		{ value: 'claude-haiku-4-5-20251001', label: 'Claude Haiku 4.5 (Recommended)' },
-		{ value: 'claude-sonnet-5', label: 'Claude Sonnet 5 (Higher quality)' }
-	],
-	google: [
-		{ value: 'gemini-2.5-flash', label: 'Gemini 2.5 Flash (Recommended)' },
-		{ value: 'gemini-2.5-flash-lite', label: 'Gemini 2.5 Flash Lite (Cheapest)' },
-		{ value: 'gemini-2.5-pro', label: 'Gemini 2.5 Pro (Higher quality)' }
-	],
-	ollama: [
-		{ value: 'llama3.2', label: 'Llama 3.2' },
-		{ value: 'llama3.1', label: 'Llama 3.1' },
-		{ value: 'mistral', label: 'Mistral' },
-		{ value: 'phi3', label: 'Phi-3 (Lightweight)' }
-	]
+/**
+ * Where admins can look up current model IDs for each provider.
+ * Model lists are fetched live from the provider (see `$lib/server/llmModelList`),
+ * so there is no hardcoded chat/image catalog to keep up to date.
+ */
+export const providerModelDocs = {
+	openai: 'https://platform.openai.com/docs/models',
+	anthropic: 'https://docs.anthropic.com/en/docs/about-claude/models/overview',
+	google: 'https://ai.google.dev/gemini-api/docs/models',
+	ollama: 'https://ollama.com/library'
 }
 
-// Image-capable models by provider (for recipe photo analysis)
-// Ollama doesn't reliably support vision
-export const imageModels = {
-	openai: [
-		{ value: 'gpt-5.6-luna', label: 'GPT-5.6 Luna (Recommended, cheapest)' },
-		{ value: 'gpt-5.6-terra', label: 'GPT-5.6 Terra (Higher quality)' }
-	],
-	anthropic: [
-		{ value: 'claude-sonnet-5', label: 'Claude Sonnet 5 (Recommended)' },
-		{ value: 'claude-haiku-4-5-20251001', label: 'Claude Haiku 4.5' }
-	],
-	google: [
-		{ value: 'gemini-2.5-flash', label: 'Gemini 2.5 Flash (Recommended)' },
-		{ value: 'gemini-2.5-flash-lite', label: 'Gemini 2.5 Flash Lite (Cheapest)' },
-		{ value: 'gemini-2.5-pro', label: 'Gemini 2.5 Pro (Higher quality)' }
-	],
-	ollama: [] // Ollama vision support is inconsistent
-}
-
-// Image generation models by provider (for recipe image generation)
-export const imageGenerationModels = {
-	openai: [
-		{ value: 'gpt-image-1', label: 'GPT Image 1 (Recommended)' },
-		{ value: 'dall-e-3', label: 'DALL-E 3' }
-	],
-	anthropic: [],
-	google: [
-		{
-			value: 'gemini-2.5-flash-image',
-			label: 'Gemini 2.5 Flash Image (Recommended)'
-		},
-		{
-			value: 'gemini-3-pro-image-preview',
-			label: 'Gemini 3 Pro Image Preview'
-		}
-	],
-	ollama: []
+/**
+ * Whether a provider supports a given AI purpose.
+ *
+ * @param {string} provider
+ * @param {'chat' | 'image' | 'imageGeneration' | 'embedding'} purpose
+ * @returns {boolean}
+ */
+export function providerSupports(provider, purpose) {
+	if (!providerNames.includes(provider)) return false
+	if (purpose === 'image') return provider !== 'ollama'
+	if (purpose === 'imageGeneration') return provider !== 'anthropic'
+	if (purpose === 'embedding') return embeddingProviderNames.includes(provider)
+	return true
 }
 
 /**
@@ -179,16 +137,6 @@ export function getEmbeddingProviderOptionsWithAvailability(availableProviders) 
 }
 
 /**
- * Get embedding models for a provider.
- *
- * @param {string} provider
- * @returns {Array<{value: string, label: string}>}
- */
-export function getEmbeddingModelsForProvider(provider) {
-	return embeddingModels[provider] || []
-}
-
-/**
  * Resolve embedding provider using configured provider availability.
  *
  * Precedence:
@@ -215,8 +163,7 @@ export function resolveEmbeddingProvider(preferredProvider, env) {
  *
  * Model precedence:
  * 1. Explicit preferred model (admin/settings)
- * 2. Provider default model from curated list
- * 3. Hardcoded safety fallback
+ * 2. Provider default from `defaultEmbeddingModels`
  *
  * @param {'openai' | 'google' | 'ollama'} provider
  * @param {string | null | undefined} preferredModel
@@ -224,58 +171,5 @@ export function resolveEmbeddingProvider(preferredProvider, env) {
  */
 export function resolveEmbeddingModel(provider, preferredModel) {
 	if (preferredModel) return preferredModel
-	return (
-		getEmbeddingModelsForProvider(provider)?.[0]?.value ||
-		(provider === 'openai'
-			? 'text-embedding-3-small'
-			: provider === 'google'
-				? 'gemini-embedding-001'
-				: 'nomic-embed-text')
-	)
-}
-
-/**
- * Get text models for a provider, with Custom option appended
- * @param {string} provider
- * @returns {Array<{value: string, label: string}>}
- */
-export function getTextModelsForProvider(provider) {
-	const models = textModels[provider] || []
-	return [...models, { value: 'custom', label: 'Custom...' }]
-}
-
-/**
- * Get image models for a provider, with Custom option appended
- * @param {string} provider
- * @returns {Array<{value: string, label: string}>}
- */
-export function getImageModelsForProvider(provider) {
-	const models = imageModels[provider] || []
-	if (models.length === 0) return []
-	return [...models, { value: 'custom', label: 'Custom...' }]
-}
-
-/**
- * Get image generation models for a provider, with Custom option appended.
- * Providers without defaults can still use Custom.
- *
- * @param {string} provider
- * @returns {Array<{value: string, label: string}>}
- */
-export function getImageGenerationModelsForProvider(provider) {
-	const models = imageGenerationModels[provider] || []
-	return [...models, { value: 'custom', label: 'Custom...' }]
-}
-
-/**
- * Get default models for a provider (first model in each list is recommended).
- * Used by ai.js for LLM invocation defaults.
- *
- * @param {string} provider
- * @returns {{ text: string | null, image: string | null }}
- */
-export function getDefaultModelsForProvider(provider) {
-	const text = textModels[provider]?.[0]?.value || null
-	const image = imageModels[provider]?.[0]?.value || null
-	return { text, image }
+	return defaultEmbeddingModels[provider] || defaultEmbeddingModels.ollama
 }

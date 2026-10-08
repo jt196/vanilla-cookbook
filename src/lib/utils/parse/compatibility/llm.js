@@ -1,6 +1,5 @@
 import { HumanMessage, SystemMessage } from '@langchain/core/messages'
 import { buildRecipeExtractionPrompt, parseRecipeJsonOutput } from '$lib/utils/aiShared'
-import { getDefaultModelsForProvider } from '$lib/utils/llmModels'
 
 export function parseCompatibilityLLMJsonOutput(rawOutput) {
 	return parseRecipeJsonOutput(rawOutput)
@@ -25,13 +24,11 @@ function resolveCompatibilityProvider(provider, env = process.env) {
 
 function resolveCompatibilityModel(provider, model, env = process.env) {
 	if (model) return model
-	return (
-		env.LLM_TEXT_MODEL ||
-		env.LLM_API_ENGINE_TEXT ||
-		getDefaultModelsForProvider(provider)?.text ||
-		getDefaultModelsForProvider('openai')?.text ||
-		'gpt-5.6-luna'
-	)
+	const envModel = env.LLM_TEXT_MODEL || env.LLM_API_ENGINE_TEXT
+	if (!envModel) {
+		throw new Error(`No text model set for ${provider}. Set LLM_TEXT_MODEL in the environment.`)
+	}
+	return envModel
 }
 
 async function loadChatClient(provider, model, env = process.env) {

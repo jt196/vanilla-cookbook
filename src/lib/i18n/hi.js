@@ -484,7 +484,12 @@ export default {
       "textHint": "रेसिपी फ़ॉलबैक पार्सिंग/अनुवाद/जनरेशन, सामग्री सफाई और दिशा सारांश के लिए उपयोग किया जाता है।",
       "provider": "प्रदाता",
       "model": "मॉडल",
-      "customModel": "कस्टम मॉडल",
+      "modelPlaceholder": "मॉडल टाइप करें या चुनें",
+      "defaultModelPlaceholder": "डिफ़ॉल्ट: {model}",
+      "modelsLoading": "{provider} से मॉडल लोड हो रहे हैं…",
+      "modelsAvailable": "{provider} से {count} मॉडल उपलब्ध हैं।",
+      "modelsLoadFailed": "मॉडल सूची लोड नहीं हो सकी ({error})। आप फिर भी मॉडल का नाम टाइप कर सकते हैं।",
+      "browseModels": "{provider} मॉडल देखें",
       "imageOcr": "छवि OCR",
       "imageOcrHint": "अपलोड की गई फ़ोटो/छवियों से रेसिपी निकालने के लिए उपयोग किया जाता है।",
       "noImageAnalysis": "छवि विश्लेषण का समर्थन नहीं करता है।",
@@ -498,6 +503,7 @@ export default {
       "embeddingsDisabled": "एम्बेडिंग अक्षम हैं।",
       "noEmbeddingProviders": "कोई एम्बेडिंग प्रदाता कॉन्फ़िगर नहीं किया गया है। .env में OPENAI_API_KEY, GOOGLE_API_KEY और/या OLLAMA_BASE_URL जोड़ें।",
       "selectProviderFirst": "एक मॉडल चुनने के लिए पहले एक एम्बेडिंग प्रदाता का चयन करें।",
+      "embeddingModelChangeWarning": "{count} रेसिपी {model} से इंडेक्स की गई हैं। सहेजने के बाद, नए मॉडल से उन्हें फिर से एम्बेड करने के लिए \"बेमेल को पुनर्जीवित करें\" का उपयोग करें (इसमें API क्रेडिट लगते हैं)। तब तक सिमेंटिक खोज और समान रेसिपी उन्हें शामिल नहीं करेंगी।",
       "missingOllama": "कृपया .env में OLLAMA_BASE_URL जोड़ें।",
       "missingGoogle": "कृपया .env में GOOGLE_API_KEY जोड़ें।",
       "missingOpenai": "कृपया .env में OPENAI_API_KEY जोड़ें।",
@@ -574,7 +580,8 @@ export default {
         "embeddingRateLimit": "{count} संसाधित होने के बाद दर सीमा या कोटा पहुंच गया। क्रेडिट टॉप अप करें या प्रतीक्षा करें और बाद में पुनः प्रयास करें।",
         "embeddingComplete": "एम्बेडिंग रन पूर्ण: {processed} संसाधित, {failed} विफल।",
         "embeddingError": "एम्बेडिंग जनरेट करने में त्रुटि:",
-        "connectionFailed": "कनेक्शन विफल"
+        "connectionFailed": "कनेक्शन विफल",
+        "noModel": "कोई मॉडल सेट नहीं है। ऊपर मॉडल का नाम दर्ज करें।"
       }
     },
     "users": {
