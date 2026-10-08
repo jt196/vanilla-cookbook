@@ -166,14 +166,15 @@ export function getUrl(recipe) {
 
 /**
  * Extract the main image URL from the provided image data.
- * @param {string|Object} image - The image data.
+ * @param {string|Object|Array<string|Object>} image - The image data (URL, ImageObject, or an array of either).
  * @returns {string|undefined} The image URL or undefined if not found.
  */
 export function getImage(image) {
 	if (!image) return undefined
 	if (typeof image === 'string') return image
-	if (Array.isArray(image)) return image[0].url
-	return image.url
+	// Arrays may hold URL strings or ImageObjects; take the first usable one
+	if (Array.isArray(image)) return image.map(getImage).find(Boolean)
+	return image.url || image.contentUrl
 }
 
 /**

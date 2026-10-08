@@ -5,7 +5,9 @@
 	import {
 		handleParse,
 		handleScrape,
-		isBlockedScrapeErrorMessage
+		handleYouTubeScrape,
+		isBlockedScrapeErrorMessage,
+		isYouTubeUrl
 	} from '$lib/utils/parse/parseHelpersClient'
 	import RecipeForm from '$lib/components/recipe/RecipeForm.svelte'
 	import FeedbackMessage from '$lib/components/ui/FeedbackMessage.svelte'
@@ -82,6 +84,7 @@
 		url = rawUrl ? decodeURIComponent(rawUrl) : null
 		sharedText = !rawUrl ? text : null
 		recipe = { ...defaultRecipe, is_public: !!userPublicRecipes }
+		feedbackCode = null
 
 		if (url) {
 			initialMode = 'url'
@@ -89,15 +92,28 @@
 			try {
 				feedbackMessage = tFn('recipeNew.msg.scraping')
 				feedbackType = 'info'
-				const scrapedData = await handleScrape(null, url)
+				const isYouTube = isYouTubeUrl(url)
+				const scrapedData = isYouTube
+					? await handleYouTubeScrape(null, url, {
+							language: userLanguage,
+							onProgress: (key) => {
+								feedbackMessage = tFn(key)
+								feedbackType = 'info'
+							}
+						})
+					: await handleScrape(null, url)
 				console.log('[recipe:new] Scrape completed, status:', scrapedData?._status)
 				if (scrapedData) {
 					recipe = { ...recipe, ...scrapedData }
 					if (scrapedData._status === 'complete') {
-						feedbackMessage = tFn('recipeNew.msg.scrapeSuccess')
+						feedbackMessage = isYouTube
+							? tFn('recipeNew.msg.youtubeSuccess', { source: scrapedData._source })
+							: tFn('recipeNew.msg.scrapeSuccess')
 						feedbackType = 'success'
 					} else {
-						feedbackMessage = tFn('recipeNew.msg.scrapePartial')
+						feedbackMessage = isYouTube
+							? tFn('recipeNew.msg.youtubePartial')
+							: tFn('recipeNew.msg.scrapePartial')
 						feedbackType = 'warning'
 					}
 				}
@@ -133,6 +149,7 @@
 					}
 				} else {
 					feedbackMessage = message
+					feedbackCode = error?.code || null
 					feedbackType = 'error'
 				}
 			}

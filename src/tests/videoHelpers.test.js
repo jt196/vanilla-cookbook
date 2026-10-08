@@ -23,6 +23,9 @@ describe('isYouTubeUrl', () => {
 	it('matches /shorts/ URLs', () => {
 		expect(isYouTubeUrl('https://www.youtube.com/shorts/abc123')).toBe(true)
 	})
+	it('detects mobile youtube.com URLs', () => {
+		expect(isYouTubeUrl('https://m.youtube.com/watch?v=dQw4w9WgXcQ')).toBe(true)
+	})
 	it('returns false for non-YouTube URLs', () => {
 		expect(isYouTubeUrl('https://vimeo.com/123456')).toBe(false)
 		expect(isYouTubeUrl('https://allrecipes.com/recipe/123')).toBe(false)
@@ -66,6 +69,10 @@ describe('extractYouTubeVideoId', () => {
 	})
 	it('extracts ID from /shorts/ URL', () => {
 		expect(extractYouTubeVideoId('https://www.youtube.com/shorts/abc123XYZ')).toBe('abc123XYZ')
+	})
+	it('extracts ID from /live/ and /embed/ URLs', () => {
+		expect(extractYouTubeVideoId('https://www.youtube.com/live/abc123XYZ?si=x')).toBe('abc123XYZ')
+		expect(extractYouTubeVideoId('https://www.youtube.com/embed/abc123XYZ')).toBe('abc123XYZ')
 	})
 	it('returns null for non-YouTube URL', () => {
 		expect(extractYouTubeVideoId('https://vimeo.com/123')).toBeNull()

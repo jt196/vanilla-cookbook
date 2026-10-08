@@ -188,7 +188,9 @@ Paste a YouTube URL into the URL field and press **Scrape URL**. The app runs a 
 2. **Parse description with AI** — If no recipe link is found, the full video description is sent to your configured LLM to extract a recipe directly from the text.
 3. **Fetch transcript with AI** — If the description contains no recipe, the video's caption transcript is fetched and sent to the LLM for parsing.
 
-Each stage falls back to the next automatically. If all three stages find no recipe content, an error is shown.
+Each stage falls back to the next automatically. If all three stages find no recipe content, an error is shown. When the recipe has no image of its own, the video thumbnail is used.
+
+Sharing a YouTube link to the app (from the YouTube app or a mobile browser) or using the bookmarklet on a video page runs the same pipeline. Videos covering several recipes import the first one.
 
 > **Note:** Stages 2 and 3 require AI to be configured. Stage 1 works without an API key if the description links to a standard recipe site.
 

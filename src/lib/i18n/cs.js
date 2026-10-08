@@ -381,6 +381,8 @@ export default {
       "imageLimitExceeded": "Použito bude pouze prvních {max} obrázků.",
       "saveFail": "Nepodařilo se uložit recept.",
       "parseNoRecipe": "V textu nebyl nalezen žádný obsah receptu.",
+      "imageNoRecipe": "Na obrázku nebyl nalezen žádný recept.",
+      "pageNoRecipe": "Na této stránce nebyl nalezen žádný recept.",
       "youtubeCheckingLinks": "Načítání popisu videa a kontrola odkazů na recepty…",
       "youtubeParsingDescription": "Nebyl nalezen žádný odkaz na recept. Analýza popisu videa pomocí AI…",
       "youtubeFetchingTranscript": "V popisu není recept. Načítání přepisu videa…",

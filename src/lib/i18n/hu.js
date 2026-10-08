@@ -381,6 +381,8 @@ export default {
       "imageLimitExceeded": "Csak az első {max} kép lesz felhasználva.",
       "saveFail": "A recept mentése sikertelen.",
       "parseNoRecipe": "Nem található recept tartalom a szövegben.",
+      "imageNoRecipe": "A képen nem található recept.",
+      "pageNoRecipe": "Ezen az oldalon nem található recept.",
       "youtubeCheckingLinks": "Videóleírás lekérése és receptlinkek ellenőrzése…",
       "youtubeParsingDescription": "Nem található receptlink. Videóleírás elemzése AI-val…",
       "youtubeFetchingTranscript": "Nincs recept a leírásban. Videóátirat lekérése…",

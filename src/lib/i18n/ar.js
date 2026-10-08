@@ -381,6 +381,8 @@ export default {
       "imageLimitExceeded": "سيتم استخدام أول {max} صور فقط.",
       "saveFail": "فشل في حفظ الوصفة.",
       "parseNoRecipe": "لم يتم العثور على محتوى وصفة في النص.",
+      "imageNoRecipe": "لم يتم العثور على وصفة في الصورة.",
+      "pageNoRecipe": "لم يتم العثور على وصفة في هذه الصفحة.",
       "youtubeCheckingLinks": "جارٍ جلب وصف الفيديو والتحقق من روابط الوصفات…",
       "youtubeParsingDescription": "لم يتم العثور على رابط وصفة. جارٍ تحليل وصف الفيديو بالذكاء الاصطناعي…",
       "youtubeFetchingTranscript": "لا توجد وصفة في الوصف. جارٍ جلب نص الفيديو…",

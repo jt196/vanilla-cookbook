@@ -29,14 +29,12 @@ export function buildRecipeExtractionPrompt({
 	const urlLine = inputLabel.toLowerCase() === 'html' && url ? `\nURL: ${url}` : ''
 	const trimmedContent = content?.substring(0, 40000) || ''
 	const languageName = languageMap[language] || 'English'
-	const isText = inputLabel.toLowerCase() === 'text'
 	const htmlInstruction =
 		inputLabel.toLowerCase() === 'html'
 			? '1. If the content is HTML, check for structured data like Schema.org Recipe JSON-LD.'
 			: '1. Parse the content like user-pasted recipe text or OCR from an image.'
-	const noRecipeInstruction = isText
-		? '\nIMPORTANT: If the text does not contain actual recipe ingredients or cooking instructions, return ONLY: {"_noRecipe": true}'
-		: ''
+	const subject = { html: 'page', image: 'image' }[inputLabel.toLowerCase()] || 'text'
+	const noRecipeInstruction = `\nIMPORTANT: If the ${subject} does not contain actual recipe ingredients or cooking instructions, return ONLY: {"_noRecipe": true}`
 
 	return `
 You are a recipe extraction AI. Extract recipe data from the ${blockType} below and return it as a JSON object.
