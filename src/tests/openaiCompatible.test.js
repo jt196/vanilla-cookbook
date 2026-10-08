@@ -6,6 +6,7 @@ vi.mock('$env/dynamic/private', () => ({ env: process.env }))
 
 import {
 	getOpenAICompatibleConfig,
+	describeOpenAICompatibleService,
 	providerSupports,
 	resolveEmbeddingModel,
 	providerNames
@@ -38,6 +39,37 @@ describe('getOpenAICompatibleConfig', () => {
 			OPENAI_COMPATIBLE_API_KEY: 'sk-or-123'
 		})
 		expect(config).toMatchObject({ apiKey: 'sk-or-123', hasApiKey: true })
+	})
+})
+
+describe('describeOpenAICompatibleService', () => {
+	it('names well-known services and links their model list', () => {
+		expect(describeOpenAICompatibleService('https://openrouter.ai/api/v1')).toEqual({
+			name: 'OpenRouter',
+			docsUrl: 'https://openrouter.ai/models'
+		})
+		expect(describeOpenAICompatibleService('https://api.groq.com/openai/v1').name).toBe('Groq')
+		expect(describeOpenAICompatibleService('https://api.x.ai/v1').name).toBe('xAI')
+	})
+
+	it('falls back to the host (with port) for anything else, without a link', () => {
+		expect(describeOpenAICompatibleService('http://litellm:4000/v1')).toEqual({
+			name: 'litellm:4000',
+			docsUrl: ''
+		})
+		expect(describeOpenAICompatibleService('http://192.168.1.20:1234/v1').name).toBe(
+			'192.168.1.20:1234'
+		)
+	})
+
+	it('does not match look-alike hosts', () => {
+		expect(describeOpenAICompatibleService('https://notopenrouter.ai/v1').name).toBe(
+			'notopenrouter.ai'
+		)
+	})
+
+	it('returns null without a base URL', () => {
+		expect(describeOpenAICompatibleService('')).toBeNull()
 	})
 })
 

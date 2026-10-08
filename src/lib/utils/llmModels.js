@@ -21,6 +21,59 @@ export const providerMeta = [
 	}
 ]
 
+// Well-known OpenAI-compatible services, recognised by host for friendlier labels and links
+const KNOWN_COMPATIBLE_SERVICES = [
+	{ host: 'openrouter.ai', name: 'OpenRouter', docsUrl: 'https://openrouter.ai/models' },
+	{
+		host: 'together.xyz',
+		name: 'Together AI',
+		docsUrl: 'https://docs.together.ai/docs/serverless-models'
+	},
+	{ host: 'groq.com', name: 'Groq', docsUrl: 'https://console.groq.com/docs/models' },
+	{ host: 'fireworks.ai', name: 'Fireworks', docsUrl: 'https://fireworks.ai/models' },
+	{ host: 'deepinfra.com', name: 'DeepInfra', docsUrl: 'https://deepinfra.com/models' },
+	{
+		host: 'mistral.ai',
+		name: 'Mistral',
+		docsUrl: 'https://docs.mistral.ai/getting-started/models/'
+	},
+	{ host: 'x.ai', name: 'xAI', docsUrl: 'https://docs.x.ai/docs/models' },
+	{
+		host: 'deepseek.com',
+		name: 'DeepSeek',
+		docsUrl: 'https://api-docs.deepseek.com/quick_start/pricing'
+	},
+	{
+		host: 'generativelanguage.googleapis.com',
+		name: 'Google Gemini',
+		docsUrl: 'https://ai.google.dev/gemini-api/docs/models'
+	},
+	{ host: 'api.openai.com', name: 'OpenAI', docsUrl: 'https://platform.openai.com/docs/models' }
+]
+
+/**
+ * Describe the service behind an OpenAI-compatible base URL, for display.
+ * Known services get their name and model-list link; anything else (a LiteLLM proxy,
+ * LM Studio on the LAN, ...) is shown by its host, without a link.
+ *
+ * @param {string | null | undefined} baseURL
+ * @returns {{ name: string, docsUrl: string } | null}
+ */
+export function describeOpenAICompatibleService(baseURL) {
+	if (!baseURL) return null
+	let url
+	try {
+		url = new URL(baseURL)
+	} catch {
+		return { name: baseURL, docsUrl: '' }
+	}
+	const hostname = url.hostname.toLowerCase()
+	const known = KNOWN_COMPATIBLE_SERVICES.find(
+		(service) => hostname === service.host || hostname.endsWith(`.${service.host}`)
+	)
+	return known ? { name: known.name, docsUrl: known.docsUrl } : { name: url.host, docsUrl: '' }
+}
+
 /**
  * Connection settings for the generic OpenAI-compatible provider (LiteLLM, OpenRouter,
  * LM Studio, vLLM, …). The key is optional because local servers often don't need one;
