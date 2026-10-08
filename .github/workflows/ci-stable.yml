@@ -20,6 +20,10 @@ jobs:
   docker-build-stable:
     if: github.repository == 'jt196/vanilla-cookbook'
     needs: run-tests
+    # Queue rather than cancel: every release tag should be published
+    concurrency:
+      group: docker-stable
+      cancel-in-progress: false
     uses: ./.github/workflows/docker-build.yml
     with:
       docker_tags: |
