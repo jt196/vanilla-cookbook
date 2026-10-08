@@ -44,7 +44,7 @@
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-svelte": "^3.23.0",
 		"globals": "^17.13.0",
-		"js-beautify": "^1.15.4",
+		"js-beautify": "^2.0.3",
 		"jsdom": "29.1.1",
 		"prettier": "^3.9.9",
 		"prettier-plugin-svelte": "^3.5.2",
