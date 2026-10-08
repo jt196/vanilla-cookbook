@@ -1,5 +1,5 @@
 # Use the official Node.js runtime as the base image
-FROM node:20
+FROM node:24
 
 # Install build dependencies for native modules (better-sqlite3), cron and gosu
 RUN apt-get update && apt-get install -y \
@@ -17,8 +17,8 @@ WORKDIR /app
 ENV PNPM_HOME=/pnpm
 ENV PATH=$PNPM_HOME:$PATH
 
-# Install pnpm globally
-RUN npm install -g pnpm
+# Install pnpm globally, pinned to match "packageManager" in package.json
+RUN npm install -g pnpm@10.15.0
 
 # Copy package.json and pnpm-lock.yaml
 COPY package.json pnpm-lock.yaml ./
