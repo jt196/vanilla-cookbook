@@ -6,6 +6,9 @@
 	"orientation": "any",
 	"scope": "/",
 	"display": "standalone",
+	"launch_handler": {
+		"client_mode": "navigate-existing"
+	},
 	"share_target": {
 		"action": "/recipe/new",
 		"method": "GET",
