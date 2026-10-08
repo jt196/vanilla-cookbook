@@ -45,7 +45,10 @@ export default {
     "register": "रजिस्टर",
     "logout": "लॉगआउट",
     "menu": "मेनू",
-    "toggleTheme": "थीम बदलें",
+    "theme": "थीम",
+    "themeLight": "लाइट",
+    "themeDark": "डार्क",
+    "themeAuto": "स्वचालित",
     "cookbook": "{username} की कुकबुक"
   },
   "auth": {

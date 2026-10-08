@@ -45,7 +45,10 @@ export default {
     "register": "Daftar",
     "logout": "Keluar",
     "menu": "Menu",
-    "toggleTheme": "Ganti tema",
+    "theme": "Tema",
+    "themeLight": "Terang",
+    "themeDark": "Gelap",
+    "themeAuto": "Otomatis",
     "cookbook": "Buku Resep {username}"
   },
   "auth": {

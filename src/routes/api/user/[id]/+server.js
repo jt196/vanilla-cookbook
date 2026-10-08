@@ -1,6 +1,7 @@
 import { error } from '@sveltejs/kit'
 import { prisma } from '$lib/server/prisma'
 import { requireAuth, getOptionalUser, jsonSuccess, jsonError } from '$lib/server/authHelpers'
+import { isValidThemePreference } from '$lib/utils/theme'
 
 export async function PUT({ request, locals, params }) {
 	const user = requireAuth(locals)
@@ -32,6 +33,10 @@ export async function PUT({ request, locals, params }) {
 	const updates = Object.fromEntries(
 		Object.entries(userData).filter(([key]) => allowedFields.includes(key))
 	)
+
+	if ('theme' in updates && !isValidThemePreference(updates.theme)) {
+		delete updates.theme
+	}
 
 	if (Object.keys(updates).length === 0) {
 		return jsonError(400, {

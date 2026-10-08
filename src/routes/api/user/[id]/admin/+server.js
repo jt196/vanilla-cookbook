@@ -3,6 +3,7 @@ import { auth } from '$lib/server/lucia'
 import { validatePassword } from '$lib/utils/security.js'
 import { requireAdmin, jsonSuccess, jsonError } from '$lib/server/authHelpers'
 import { env } from '$env/dynamic/private'
+import { isValidThemePreference } from '$lib/utils/theme'
 
 export async function PUT({ request, locals, params }) {
 	const user = requireAdmin(locals)
@@ -100,7 +101,7 @@ export async function PUT({ request, locals, params }) {
 						? userData.displayNutrition
 						: updatingUser.displayNutrition,
 				language: 'language' in userData ? userData.language : updatingUser.language,
-				theme: 'theme' in userData ? userData.theme : updatingUser.theme
+				theme: isValidThemePreference(userData.theme) ? userData.theme : updatingUser.theme
 			}
 		})
 

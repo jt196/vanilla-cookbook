@@ -45,7 +45,10 @@ export default {
     "register": "Registrieren",
     "logout": "Abmelden",
     "menu": "Menü",
-    "toggleTheme": "Design wechseln",
+    "theme": "Design",
+    "themeLight": "Hell",
+    "themeDark": "Dunkel",
+    "themeAuto": "Automatisch",
     "cookbook": "{username}s Kochbuch"
   },
   "auth": {

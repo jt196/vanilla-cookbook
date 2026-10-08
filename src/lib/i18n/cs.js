@@ -45,7 +45,10 @@ export default {
     "register": "Registrovat se",
     "logout": "Odhlásit se",
     "menu": "Menu",
-    "toggleTheme": "Přepnout téma",
+    "theme": "Motiv",
+    "themeLight": "Světlý",
+    "themeDark": "Tmavý",
+    "themeAuto": "Automaticky",
     "cookbook": "Kuchařka uživatele {username}"
   },
   "auth": {

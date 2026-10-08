@@ -45,7 +45,10 @@ export default {
     "register": "Зарегистрироваться",
     "logout": "Выйти",
     "menu": "Меню",
-    "toggleTheme": "Переключить тему",
+    "theme": "Тема",
+    "themeLight": "Светлая",
+    "themeDark": "Тёмная",
+    "themeAuto": "Авто",
     "cookbook": "Кулинарная книга {username}"
   },
   "auth": {

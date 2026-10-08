@@ -45,7 +45,10 @@ export default {
     "register": "S'inscrire",
     "logout": "Déconnexion",
     "menu": "Menu",
-    "toggleTheme": "Changer de thème",
+    "theme": "Thème",
+    "themeLight": "Clair",
+    "themeDark": "Sombre",
+    "themeAuto": "Automatique",
     "cookbook": "Livre de recettes de {username}"
   },
   "auth": {
