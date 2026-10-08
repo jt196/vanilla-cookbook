@@ -56,6 +56,7 @@ export const defaultRecipe = {
 	prep_time: '',
 	ingredients: '',
 	ingredients_original: '',
+	equipment: '',
 	directions: '',
 	directions_original: '',
 	description: '',
