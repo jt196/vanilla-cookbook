@@ -48,7 +48,10 @@ jobs:
       - name: Build release APK
         run: cd android && ./gradlew assembleRelease
 
+      # PR builds only check that the app compiles. Signing needs the repository secrets,
+      # which Dependabot PRs don't get.
       - name: Sign APK
+        if: github.event_name != 'pull_request'
         id: sign
         uses: r0adkll/sign-android-release@v1
         with:
@@ -61,10 +64,11 @@ jobs:
           BUILD_TOOLS_VERSION: '34.0.0'
 
       - name: Rename signed APK for release asset
+        if: github.event_name != 'pull_request'
         id: apk_asset
         run: |
           TAG_NAME="${{ github.event.release.tag_name || github.ref_name }}"
-          # PR refs look like "438/merge"; keep the file name slash-free
+          # Manual runs from a branch like "fix/x" use the branch name; keep the file name slash-free
           TAG_NAME="${TAG_NAME//\//-}"
           OUTPUT_FILE="vanilla-cookbook-${TAG_NAME}.apk"
           cp "${{ steps.sign.outputs.signedReleaseFile }}" "$OUTPUT_FILE"
@@ -76,9 +80,9 @@ jobs:
         with:
           files: ${{ steps.apk_asset.outputs.file }}
 
-      # Manual and PR builds: attach the APK to the workflow run instead of creating a release
+      # Manual builds: attach the APK to the workflow run instead of creating a release
       - name: Upload APK as workflow artifact
-        if: github.event_name != 'release'
+        if: github.event_name == 'workflow_dispatch'
         uses: actions/upload-artifact@v7
         with:
           name: ${{ steps.apk_asset.outputs.file }}
