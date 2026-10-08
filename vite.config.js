@@ -4,18 +4,6 @@ import tailwindcss from '@tailwindcss/vite'
 /** @type {import('vite').UserConfig} */
 const config = {
 	plugins: [tailwindcss(), sveltekit()],
-	test: {
-		globals: true,
-		environment: 'jsdom',
-		include: ['src/**/*.{test,spec}.{js,ts}']
-	},
-	css: {
-		preprocessorOptions: {
-			scss: {
-				api: 'modern-compiler' // or "modern"
-			}
-		}
-	},
 	server: {
 		host: true,
 		fs: {

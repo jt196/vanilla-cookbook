@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest'
 // @vitest-environment node
+import { describe, expect, it } from 'vitest'
 
 import { findSuitableUnit } from '$lib/utils/units.js'
 import { config } from 'dotenv'
