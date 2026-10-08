@@ -15,6 +15,12 @@ on:
     branches:
       - main
 
+# A new push to a PR cancels that PR's in-flight run. Pushes to main each get their own group;
+# the :latest build has its own concurrency rule below.
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   run-tests:
     if: github.repository == 'jt196/vanilla-cookbook' && github.event_name == 'pull_request'
@@ -22,21 +28,17 @@ jobs:
     with:
       run_e2e: false
       run_llm_smoke: false
-    secrets:
-      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-      GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
-      OLLAMA_BASE_URL: ${{ secrets.OLLAMA_BASE_URL }}
+      # No AI keys: only the opt-in LLM smoke test uses them, and it's off here
 
   # Catch a broken Dockerfile before it reaches main, where every merge publishes :latest.
-  # amd64 only and no push, to keep it quick.
+  # Both platforms build natively in parallel; nothing is pushed.
   docker-build-check:
     if: github.repository == 'jt196/vanilla-cookbook' && github.event_name == 'pull_request'
     uses: ./.github/workflows/docker-build.yml
     with:
       docker_tags: type=ref,event=pr
       push: false
-      platforms: linux/amd64
+      platforms: '["linux/amd64", "linux/arm64"]'
 
   docker-build-latest:
     if: github.repository == 'jt196/vanilla-cookbook' && github.event_name == 'push'

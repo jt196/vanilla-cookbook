@@ -1,7 +1,8 @@
-# Keeps the GitHub Actions used in .github/workflows up to date.
-# Updates arrive as one grouped PR a month; check the changelogs for major bumps.
+# Version updates. Security alerts are separate (repo Security tab).
 version: 2
 updates:
+  # Workflow actions are pinned to commit SHAs; Dependabot bumps the SHA and its version comment.
+  # One grouped PR a month; check the changelogs for major bumps.
   - package-ecosystem: github-actions
     directory: /
     schedule:
@@ -12,3 +13,19 @@ updates:
           - '*'
     labels:
       - skip-changelog
+
+  # npm (pnpm lockfile). Minor and patch updates arrive as one grouped PR a month;
+  # each major update gets its own PR so breaking changes can be reviewed one at a time.
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 5
+    versioning-strategy: increase-if-necessary
+    groups:
+      npm-minor-and-patch:
+        update-types:
+          - minor
+          - patch
+    labels:
+      - dependencies

@@ -14,4 +14,4 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Update draft release notes
-        uses: release-drafter/release-drafter@v7
+        uses: release-drafter/release-drafter@978bb0b30c5ee8cdd332ced253758157150d43f0 # v7.10.0
