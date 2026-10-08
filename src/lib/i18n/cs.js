@@ -493,6 +493,7 @@ export default {
       "modelsAvailable": "Dostupné modely od {provider}: {count}.",
       "modelsLoadFailed": "Seznam modelů se nepodařilo načíst ({error}). Název modelu můžete stále zadat ručně.",
       "browseModels": "Procházet modely {provider}",
+      "modelsNoMatch": "Žádné odpovídající modely. Zadaný název můžete přesto použít.",
       "imageOcr": "OCR obrázků",
       "imageOcrHint": "Používá se pro extrakci receptů z nahraných fotografií/obrázků.",
       "noImageAnalysis": "nepodporuje analýzu obrázků.",

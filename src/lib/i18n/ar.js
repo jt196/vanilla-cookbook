@@ -493,6 +493,7 @@ export default {
       "modelsAvailable": "{count} نموذجًا متاحًا من {provider}.",
       "modelsLoadFailed": "تعذّر تحميل قائمة النماذج ({error}). لا يزال بإمكانك كتابة اسم النموذج.",
       "browseModels": "تصفح نماذج {provider}",
+      "modelsNoMatch": "لا توجد نماذج مطابقة. لا يزال بإمكانك استخدام الاسم الذي كتبته.",
       "imageOcr": "التعرف الضوئي على الحروف للصور",
       "imageOcrHint": "يستخدم لاستخراج الوصفات من الصور/الصور المرفوعة.",
       "noImageAnalysis": "لا يدعم تحليل الصور.",

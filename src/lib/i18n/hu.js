@@ -493,6 +493,7 @@ export default {
       "modelsAvailable": "{count} modell érhető el innen: {provider}.",
       "modelsLoadFailed": "Nem sikerült betölteni a modelllistát ({error}). A modell nevét így is beírhatja.",
       "browseModels": "{provider} modellek böngészése",
+      "modelsNoMatch": "Nincs egyező modell. A beírt nevet így is használhatja.",
       "imageOcr": "Kép OCR",
       "imageOcrHint": "Feltöltött fotókból/képekből történő receptkivonáshoz használatos.",
       "noImageAnalysis": "nem támogatja a képelemzést.",

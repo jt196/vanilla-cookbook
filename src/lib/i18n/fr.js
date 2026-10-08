@@ -493,6 +493,7 @@ export default {
       "modelsAvailable": "{count} modèles disponibles chez {provider}.",
       "modelsLoadFailed": "Impossible de charger la liste des modèles ({error}). Vous pouvez tout de même saisir un nom de modèle.",
       "browseModels": "Parcourir les modèles {provider}",
+      "modelsNoMatch": "Aucun modèle correspondant. Vous pouvez quand même utiliser le nom saisi.",
       "imageOcr": "OCR d'image",
       "imageOcrHint": "Utilisé pour l'extraction de recettes à partir de photos/images téléchargées.",
       "noImageAnalysis": "ne prend pas en charge l'analyse d'images.",
