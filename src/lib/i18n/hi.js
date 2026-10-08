@@ -493,6 +493,7 @@ export default {
       "modelsAvailable": "{provider} से {count} मॉडल उपलब्ध हैं।",
       "modelsLoadFailed": "मॉडल सूची लोड नहीं हो सकी ({error})। आप फिर भी मॉडल का नाम टाइप कर सकते हैं।",
       "browseModels": "{provider} मॉडल देखें",
+      "modelsNoMatch": "कोई मेल खाता मॉडल नहीं। आप फिर भी टाइप किया गया नाम उपयोग कर सकते हैं।",
       "imageOcr": "छवि OCR",
       "imageOcrHint": "अपलोड की गई फ़ोटो/छवियों से रेसिपी निकालने के लिए उपयोग किया जाता है।",
       "noImageAnalysis": "छवि विश्लेषण का समर्थन नहीं करता है।",

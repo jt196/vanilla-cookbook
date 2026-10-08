@@ -493,6 +493,7 @@ export default {
       "modelsAvailable": "{count} modellen beschikbaar van {provider}.",
       "modelsLoadFailed": "Kan de modellenlijst niet laden ({error}). Je kunt de modelnaam nog steeds typen.",
       "browseModels": "Bekijk {provider}-modellen",
+      "modelsNoMatch": "Geen overeenkomende modellen. Je kunt de getypte naam nog steeds gebruiken.",
       "imageOcr": "Afbeelding OCR",
       "imageOcrHint": "Gebruikt voor het extraheren van recepten uit geüploade foto's/afbeeldingen.",
       "noImageAnalysis": "ondersteunt geen beeldanalyse.",

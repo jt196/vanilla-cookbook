@@ -542,6 +542,7 @@ export default {
 			modelsAvailable: '{count} models available from {provider}.',
 			modelsLoadFailed: "Couldn't load the model list ({error}). You can still type a model name.",
 			browseModels: 'Browse {provider} models',
+			modelsNoMatch: 'No matching models. You can still use the name you typed.',
 			imageOcr: 'Image OCR',
 			imageOcrHint: 'Used for recipe extraction from uploaded photos/images.',
 			noImageAnalysis: 'does not support image analysis.',

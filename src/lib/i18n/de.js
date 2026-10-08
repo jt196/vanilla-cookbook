@@ -451,6 +451,7 @@ export default {
       "modelsAvailable": "{count} Modelle von {provider} verfügbar.",
       "modelsLoadFailed": "Modellliste konnte nicht geladen werden ({error}). Sie können den Modellnamen trotzdem eingeben.",
       "browseModels": "{provider}-Modelle durchsuchen",
+      "modelsNoMatch": "Keine passenden Modelle. Sie können den eingegebenen Namen trotzdem verwenden.",
       "imageOcr": "Bild-OCR",
       "imageOcrHint": "Wird zur Rezeptextraktion aus hochgeladenen Fotos/Bildern verwendet.",
       "noImageAnalysis": "unterstützt keine Bildanalyse.",

@@ -32,13 +32,11 @@
 		disabled = false,
 		id = '',
 		name = '',
-		/**
-		 * id of a <datalist> offering suggestions
-		 */
-		list = undefined,
 		class: className = '',
 		oninput = undefined,
-		onkeydown = undefined
+		onkeydown = undefined,
+		/** Any other attributes (e.g. onfocus, aria-*) are passed to the <input> */
+		...rest
 	} = $props()
 
 	function handleInput(event) {
@@ -98,7 +96,7 @@
 				{type}
 				{id}
 				{name}
-				{list}
+				{...rest}
 				placeholder={placeholderValue}
 				{required}
 				{disabled}
@@ -112,7 +110,7 @@
 			{type}
 			{id}
 			{name}
-			{list}
+			{...rest}
 			placeholder={placeholderValue}
 			{required}
 			{disabled}

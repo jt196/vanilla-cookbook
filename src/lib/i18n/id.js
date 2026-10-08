@@ -493,6 +493,7 @@ export default {
       "modelsAvailable": "{count} model tersedia dari {provider}.",
       "modelsLoadFailed": "Tidak dapat memuat daftar model ({error}). Anda tetap dapat mengetik nama model.",
       "browseModels": "Jelajahi model {provider}",
+      "modelsNoMatch": "Tidak ada model yang cocok. Anda tetap dapat menggunakan nama yang diketik.",
       "imageOcr": "OCR Gambar",
       "imageOcrHint": "Digunakan untuk ekstraksi resep dari foto/gambar yang diunggah.",
       "noImageAnalysis": "tidak mendukung analisis gambar.",
