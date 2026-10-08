@@ -2,7 +2,7 @@
 import adapter from '@sveltejs/adapter-node'
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte'
 import dotenv from 'dotenv'
-dotenv.config()
+dotenv.config({ quiet: true })
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {

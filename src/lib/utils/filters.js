@@ -1,5 +1,5 @@
 import { ingredientParse } from '$lib/submodules/recipe-ingredient-parser/src/index.js'
-import he from 'he'
+import * as he from 'he'
 
 /**
  * Filters data based on a search string and a key.

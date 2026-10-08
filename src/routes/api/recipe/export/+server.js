@@ -1,7 +1,7 @@
 // src/routes/api/recipe/export/+server.js
 import { gzip } from 'zlib'
 import { promisify } from 'util'
-import archiver from 'archiver'
+import { ZipArchive } from 'archiver'
 import fs from 'fs'
 import path from 'path'
 import { sanitizeFilename } from '$lib/utils/filters.js'
@@ -75,7 +75,7 @@ async function embedMainPhotoFields(recipe) {
 }
 
 async function createZipWithGzippedRecipes(recipeData) {
-	const archive = archiver('zip')
+	const archive = new ZipArchive()
 	const buffers = []
 
 	archive.on('data', (d) => buffers.push(d))

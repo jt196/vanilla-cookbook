@@ -23,7 +23,12 @@ export async function getSanitizedHTML(content) {
 	}
 }
 
-const renderer = new marked.Renderer()
-renderer.paragraph = (text) => text // Don't wrap in <p> tags
-
-marked.setOptions({ renderer })
+// Don't wrap in <p> tags. Renderer methods receive tokens (marked >= 13), so render the
+// paragraph's inline tokens directly; `this` is the renderer, hence a non-arrow function.
+marked.use({
+	renderer: {
+		paragraph({ tokens }) {
+			return this.parser.parseInline(tokens)
+		}
+	}
+})

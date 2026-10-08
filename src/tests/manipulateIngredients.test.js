@@ -5,7 +5,7 @@ import { findSuitableUnit } from '$lib/utils/units.js'
 import { config } from 'dotenv'
 import { convertIngredientsBackend } from '$lib/utils/converterBackend.js'
 
-config()
+config({ quiet: true })
 
 // TODO: 'unbleached bread flour' metric to americanVolumetric pass
 

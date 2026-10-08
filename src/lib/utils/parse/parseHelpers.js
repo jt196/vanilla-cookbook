@@ -1,6 +1,6 @@
 import parseIsoDuration from 'parse-iso-duration'
 import humanizeDuration from 'humanize-duration'
-import he from 'he'
+import * as he from 'he'
 
 /**
  * Parse the provided JSON-LD string to extract the recipe data.
