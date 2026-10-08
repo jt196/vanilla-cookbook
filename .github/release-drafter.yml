@@ -1,30 +1,53 @@
 name-template: 'v$RESOLVED_VERSION'
 tag-template: 'v$RESOLVED_VERSION'
+
+# Label → version bump. Labels match the set listed in CLAUDE.md.
 version-resolver:
   major:
     labels:
       - 'breaking'
+      - 'major'
+  minor:
+    labels:
+      - 'feature'
+      - 'enhancement'
   patch:
     labels:
-      - 'enhancement'
+      - 'fix'
       - 'bug'
+      - 'bugfix'
+      - 'docs'
       - 'documentation'
+      - 'chore'
+      - 'refactor'
+      - 'test'
+      - 'dependencies'
   default: patch
 
 categories:
-  - title: 'Enhancements'
+  - title: 'Breaking Changes'
     labels:
+      - 'breaking'
+      - 'major'
+  - title: 'Features & Enhancements'
+    labels:
+      - 'feature'
       - 'enhancement'
   - title: 'Bug Fixes'
     labels:
+      - 'fix'
       - 'bug'
+      - 'bugfix'
   - title: 'Docs'
     labels:
+      - 'docs'
       - 'documentation'
-  - title: 'Other'
+  - title: 'Maintenance'
     labels:
-      - 'question'
-      - 'help wanted'
+      - 'chore'
+      - 'refactor'
+      - 'test'
+      - 'dependencies'
 
 exclude-labels:
   - 'duplicate'
@@ -32,10 +55,28 @@ exclude-labels:
   - 'wontfix'
   - 'skip-changelog'
 
+# Use only each PR's "## Release Notes" section (see .github/pull_request_template.md),
+# not its review notes, and nest it under the PR title.
+replacers:
+  - target: change-body
+    section: '## Release Notes'
+    not-found: empty
+  - target: change-body
+    search: '/<!--.*?-->/gs'
+    replace: ''
+  - target: change-body
+    search: '/^.*Generated with \[Claude Code\].*$/gm'
+    replace: ''
+  - target: change-body
+    search: '/^\s+|\s+$/g'
+    replace: ''
+  - target: change-body
+    search: '/^(?=.)/gm'
+    replace: '  '
+
 change-template: |
   - $TITLE ([#$NUMBER]($URL)) @$AUTHOR
-
-    $BODY
+  $BODY
 change-title-escapes: '\\<*_&'
 template: |
   ## What's Changed

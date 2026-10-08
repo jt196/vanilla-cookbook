@@ -11,11 +11,7 @@ jobs:
     with:
       run_e2e: true
       run_llm_smoke: false
-    secrets:
-      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-      GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
-      OLLAMA_BASE_URL: ${{ secrets.OLLAMA_BASE_URL }}
+      # No AI keys: only the opt-in LLM smoke test uses them, and it's off here
 
   docker-build-stable:
     if: github.repository == 'jt196/vanilla-cookbook'
