@@ -1,23 +1,4 @@
 /**
- * Fetches the Content-Type of a given URL by making a HEAD request.
- *
- * @param {string} url - The URL to fetch the Content-Type for.
- * @returns {Promise<string|null>} A promise that resolves to the Content-Type of the URL, or null if the request fails.
- */
-export async function getContentTypeFromUrl(url) {
-	try {
-		const response = await fetch(url, { method: 'HEAD' })
-		if (!response.ok) {
-			throw new Error('Failed to fetch the URL')
-		}
-		return response.headers.get('Content-Type')
-	} catch (error) {
-		console.error(`Error fetching Content-Type for URL ${url}:`, error)
-		return null
-	}
-}
-
-/**
  * Maps a given Content-Type to its corresponding file type and extension.
  *
  * @param {string} contentType - The Content-Type to map.
@@ -36,29 +17,5 @@ export function mapContentTypeToFileTypeAndExtension(contentType) {
 			return { fileType: 'image/webp', extension: 'webp' }
 		default:
 			return { fileType: 'image/jpeg', extension: 'jpg' } // default values
-	}
-}
-
-/**
- * Checks if the given image URL exists remotely.
- *
- * @param {string} imageUrl - The URL of the image to check.
- * @param {string} baseUrl - The base URL of the API to make the request to.
- *
- * @returns {Promise<boolean>} A promise that resolves to a boolean indicating whether the image exists or not.
- */
-export async function checkImageExistence(imageUrl, baseUrl) {
-	console.log('Checking image existence!')
-	try {
-		const response = await fetch(
-			`${baseUrl}/api/recipe/image/remote-exist?url=${encodeURIComponent(imageUrl)}`
-		)
-		if (!response.ok) return false
-		// The endpoint always answers 200; the result is in the body
-		const { exists } = await response.json()
-		return !!exists
-	} catch (error) {
-		console.log('error:', error)
-		return false
 	}
 }

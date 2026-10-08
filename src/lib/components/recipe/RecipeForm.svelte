@@ -1,6 +1,4 @@
 <script>
-	import { checkImageExistence } from '$lib/utils/image/imageUtils'
-	import { onMount } from 'svelte'
 	import { franc } from 'franc'
 	import {
 		getLanguageDisplayName,
@@ -19,14 +17,13 @@
 	import Undo from '$lib/components/svg/Undo.svelte'
 	import { t } from '$lib/stores/locale.js'
 
-	/** @type {{recipe: any, onSubmit: any, buttonText?: string, selectedFiles?: any, onSelectedFilesChange?: any, baseUrl?: string, editMode?: boolean, recipeCategories?: any, aiEnabled?: boolean, aiProvider?: string | null, aiSelectedProvider?: string | null, aiSelectedProviderConfigured?: boolean, isAdmin?: boolean, userUnits?: string, userLanguage?: string, cancelHref?: string, onDelete?: (() => void) | null, saveImageUrl?: boolean}} */
+	/** @type {{recipe: any, onSubmit: any, buttonText?: string, selectedFiles?: any, onSelectedFilesChange?: any, editMode?: boolean, recipeCategories?: any, aiEnabled?: boolean, aiProvider?: string | null, aiSelectedProvider?: string | null, aiSelectedProviderConfigured?: boolean, isAdmin?: boolean, userUnits?: string, userLanguage?: string, cancelHref?: string, onDelete?: (() => void) | null, saveImageUrl?: boolean}} */
 	let {
 		recipe = $bindable(),
 		onSubmit,
 		buttonText = '',
 		selectedFiles = $bindable([]),
 		onSelectedFilesChange,
-		baseUrl = '',
 		editMode = false,
 		recipeCategories = null,
 		aiEnabled = false,
@@ -47,12 +44,6 @@
 		}
 	})
 
-	onMount(() => {
-		baseUrl = window.location.origin
-	})
-
-	let imageExists = $state(false)
-	let imageChecked = $state(false)
 	let cleaningIngredients = $state(false)
 	let cleaningDirections = $state(false)
 	let addingTips = $state(false)
@@ -472,16 +463,6 @@
 			recipe.directions_original = ''
 		}
 	}
-
-	$effect(() => {
-		if (recipe.image_url && baseUrl) {
-			imageChecked = false
-			checkImageExistence(recipe.image_url, baseUrl).then((result) => {
-				imageExists = result
-				imageChecked = true
-			})
-		}
-	})
 </script>
 
 <InfoText class="my-4">
@@ -605,13 +586,7 @@
 		</div>
 
 		<!-- Full-width photo section -->
-		<PhotoSection
-			{recipe}
-			{imageExists}
-			{imageChecked}
-			{selectedFiles}
-			{onSelectedFilesChange}
-			bind:saveImageUrl />
+		<PhotoSection {recipe} {selectedFiles} {onSelectedFilesChange} bind:saveImageUrl />
 		{#if aiEnabled}
 			<div class="mt-2">
 				<Button

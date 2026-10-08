@@ -13,6 +13,29 @@
 	const { user, semanticEnabled } = $state(untrack(() => data))
 	let settingsFeedback = $state('')
 	let savedLanguage = $state(user.language)
+	let linkOnlyCount = $state(untrack(() => data.linkOnlyPhotoCount ?? 0))
+	let downloadingImages = $state(false)
+	let imagesFeedback = $state('')
+
+	async function downloadMissingImages() {
+		downloadingImages = true
+		imagesFeedback = ''
+		try {
+			const res = await fetch(`/api/user/${user.userId}/photos/download-missing`, {
+				method: 'POST'
+			})
+			const result = await res.json()
+			linkOnlyCount = result.failed?.length ?? linkOnlyCount
+			imagesFeedback = $t('recipePrefs.missingImagesResult', {
+				downloaded: result.downloaded ?? 0,
+				failed: result.failed?.length ?? 0
+			})
+		} catch {
+			imagesFeedback = $t('recipePrefs.missingImagesFail')
+		} finally {
+			downloadingImages = false
+		}
+	}
 
 	$effect(() => {
 		if (user && user.showNotesDescription === undefined) {
@@ -140,3 +163,25 @@
 		<FeedbackMessage message={settingsFeedback ? $t(settingsFeedback) : ''} />
 	</footer>
 </form>
+
+{#if linkOnlyCount > 0 || imagesFeedback}
+	<section class="mt-8 flex flex-col gap-2 w-full md:w-2/3 lg:w-1/2">
+		<h3 class="font-semibold">{$t('recipePrefs.missingImagesTitle')}</h3>
+		{#if linkOnlyCount > 0}
+			<p class="text-sm opacity-80">
+				{$t('recipePrefs.missingImagesHint', { count: linkOnlyCount })}
+			</p>
+			<div>
+				<Button
+					type="button"
+					size="sm"
+					onclick={downloadMissingImages}
+					loading={downloadingImages}
+					disabled={downloadingImages}>
+					{$t('recipePrefs.missingImagesButton')}
+				</Button>
+			</div>
+		{/if}
+		{#if imagesFeedback}<p class="text-sm">{imagesFeedback}</p>{/if}
+	</section>
+{/if}

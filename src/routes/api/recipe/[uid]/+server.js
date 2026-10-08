@@ -1,11 +1,6 @@
 import { prisma } from '$lib/server/prisma'
-import { deleteSinglePhotoFile } from '$lib/utils/image/imageBackend.js'
-import {
-	checkImageExistence,
-	getContentTypeFromUrl,
-	mapContentTypeToFileTypeAndExtension
-} from '$lib/utils/image/imageUtils.js'
-import { processImage } from '$lib/utils/image/imageBackend.js'
+import { deleteSinglePhotoFile, saveRemoteImageAsPhoto } from '$lib/utils/image/imageBackend.js'
+import { mapContentTypeToFileTypeAndExtension } from '$lib/utils/image/imageUtils.js'
 import { createRecipePhotoEntry, removeRecipePhotoEntry } from '$lib/utils/api'
 import { saveFile, validImageTypes } from '$lib/utils/import/importHelpers'
 import { fileTypeFromBuffer } from 'file-type'
@@ -51,7 +46,7 @@ export async function DELETE({ params, locals }) {
 	}
 }
 
-export async function PUT({ request, locals, params, url }) {
+export async function PUT({ request, locals, params }) {
 	const user = requireAuth(locals)
 	const reqId = crypto.randomUUID().slice(0, 8)
 	const startedAt = Date.now()
@@ -73,20 +68,6 @@ export async function PUT({ request, locals, params, url }) {
 			recipeUid: params?.uid,
 			...extra
 		})
-	const withTimeout = async (promiseFactory, ms, label) => {
-		let timeoutId
-		try {
-			return await Promise.race([
-				promiseFactory(),
-				new Promise((_, reject) => {
-					timeoutId = setTimeout(() => reject(new Error(`${label} timed out after ${ms}ms`)), ms)
-				})
-			])
-		} finally {
-			clearTimeout(timeoutId)
-		}
-	}
-
 	log('start')
 	const formData = await request.formData()
 	const recipeData = JSON.parse(formData.get('recipe'))
@@ -183,65 +164,22 @@ export async function PUT({ request, locals, params, url }) {
 			}
 		}
 
-		// Process remote image_url if user opted to save
+		// Download the image URL now (if the user opted to save it and it isn't already saved)
 		if (saveImageUrl && recipeData.image_url) {
-			try {
-				const existingPhoto = await prisma.recipePhoto.findFirst({
-					where: { recipeUid: uid, url: recipeData.image_url }
+			const alreadySaved = await prisma.recipePhoto.findFirst({
+				where: { recipeUid: uid, url: recipeData.image_url }
+			})
+			if (!alreadySaved) {
+				const hasMainPhoto = await prisma.recipePhoto.findFirst({
+					where: { recipeUid: uid, isMain: true }
 				})
-				if (!existingPhoto) {
-					const remoteImageExists = await withTimeout(
-						() => checkImageExistence(recipeData.image_url, url.origin),
-						8000,
-						'remote image existence check'
-					)
-					log('remote image existence check finished', {
-						image_url: recipeData.image_url,
-						exists: !!remoteImageExists
-					})
-					if (remoteImageExists) {
-						// Only set as main if there's no existing main photo
-						const hasMainPhoto = await prisma.recipePhoto.findFirst({
-							where: { recipeUid: uid, isMain: true }
-						})
-						const contentType = await withTimeout(
-							() => getContentTypeFromUrl(recipeData.image_url),
-							8000,
-							'remote image content-type fetch'
-						)
-						const { extension } = mapContentTypeToFileTypeAndExtension(contentType)
-						let remotePhotoEntry
-						try {
-							remotePhotoEntry = await createRecipePhotoEntry(
-								uid,
-								recipeData.image_url,
-								extension,
-								!hasMainPhoto
-							)
-							const saved = await withTimeout(
-								() => processImage(recipeData.image_url, remotePhotoEntry.id, extension),
-								15000,
-								'remote image processing'
-							)
-							// processImage reports failure by returning false; don't keep a link-only photo
-							if (!saved) throw new Error('Image download or processing failed')
-							log('remote image processed', { photoId: remotePhotoEntry.id })
-						} catch (error) {
-							errorLog('Error saving remote image', {
-								image_url: recipeData.image_url,
-								error: error?.message
-							})
-							if (remotePhotoEntry) {
-								await removeRecipePhotoEntry(remotePhotoEntry.id)
-							}
-						}
-					}
-				}
-			} catch (error) {
-				warn('Remote image step skipped', {
-					image_url: recipeData.image_url,
-					error: error?.message
+				const photo = await saveRemoteImageAsPhoto({
+					recipeUid: uid,
+					url: recipeData.image_url,
+					isMain: !hasMainPhoto
 				})
+				if (photo) log('remote image saved', { photoId: photo.id })
+				else warn('Remote image not saved', { image_url: recipeData.image_url })
 			}
 		}
 
