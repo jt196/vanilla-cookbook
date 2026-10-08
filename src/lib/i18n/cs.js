@@ -707,6 +707,11 @@ export default {
     }
   },
   "recipePrefs": {
+    "missingImagesTitle": "Chybějící obrázky",
+    "missingImagesHint": "{count} fotek receptů je pouze odkazováno z jiných webů. Stáhněte je, aby fungovaly i po změně těchto webů.",
+    "missingImagesButton": "Stáhnout chybějící obrázky",
+    "missingImagesResult": "Staženo: {downloaded}. Nepodařilo se stáhnout: {failed} (původní web může být nedostupný).",
+    "missingImagesFail": "Obrázky se nepodařilo stáhnout. Zkuste to prosím znovu.",
     "language": "Vybrat jazyk",
     "system": "Vybrat systém měření",
     "skipSmallUnits": "Přeskočit malé jednotky",

@@ -707,6 +707,11 @@ export default {
     }
   },
   "recipePrefs": {
+    "missingImagesTitle": "صور مفقودة",
+    "missingImagesHint": "{count} من صور الوصفات مرتبطة فقط من مواقع أخرى. نزّلها لتبقى تعمل إذا تغيّرت تلك المواقع.",
+    "missingImagesButton": "تنزيل الصور المفقودة",
+    "missingImagesResult": "تم تنزيل {downloaded}. تعذّر تنزيل {failed} (قد يكون الموقع الأصلي غير متاح).",
+    "missingImagesFail": "تعذّر تنزيل الصور. يُرجى المحاولة مرة أخرى.",
     "language": "اختر اللغة",
     "system": "اختر نظام القياس",
     "skipSmallUnits": "تجاهل الوحدات الصغيرة",

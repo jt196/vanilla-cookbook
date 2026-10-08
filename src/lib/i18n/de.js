@@ -767,6 +767,11 @@ export default {
     "step3": "3. Wenn Sie sich auf einer Website befinden, klicken Sie auf das Lesezeichen, und es bringt Sie zur neuen Rezeptseite, mit der Quell-URL und dem erfassten Seitentext, bereit zum Scrapen oder zur Fallback-Analyse."
   },
   "recipePrefs": {
+    "missingImagesTitle": "Fehlende Bilder",
+    "missingImagesHint": "{count} Rezeptfoto(s) sind nur von anderen Websites verlinkt. Lade sie herunter, damit sie auch funktionieren, wenn sich diese Websites ändern.",
+    "missingImagesButton": "Fehlende Bilder herunterladen",
+    "missingImagesResult": "{downloaded} heruntergeladen. {failed} konnten nicht heruntergeladen werden (die ursprüngliche Website ist möglicherweise nicht erreichbar).",
+    "missingImagesFail": "Bilder konnten nicht heruntergeladen werden. Bitte versuche es erneut.",
     "language": "Sprache auswählen",
     "system": "Maßeinheitensystem auswählen",
     "skipSmallUnits": "Kleine Einheiten überspringen",

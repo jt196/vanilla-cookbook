@@ -1,4 +1,5 @@
 <script>
+	import { untrack } from 'svelte'
 	import FeedbackMessage from '$lib/components/ui/FeedbackMessage.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Checkbox from '$lib/components/ui/Form/Checkbox.svelte'
@@ -8,9 +9,9 @@
 
 	let { data, form } = $props()
 
-	let importTypes = $state(data.importTypes || [])
+	let importTypes = $state(untrack(() => data.importTypes || []))
 	let selectedType = $state(importTypes[0]?.id || 'paprika')
-	let isPublic = $state(!!data?.user?.publicRecipes)
+	let isPublic = $state(untrack(() => !!data?.user?.publicRecipes))
 	let busy = $state(false)
 
 	// Transform importTypes for Dropdown component (id -> value)

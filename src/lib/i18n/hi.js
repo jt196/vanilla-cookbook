@@ -707,6 +707,11 @@ export default {
     }
   },
   "recipePrefs": {
+    "missingImagesTitle": "गायब छवियाँ",
+    "missingImagesHint": "{count} रेसिपी फ़ोटो केवल अन्य वेबसाइटों से लिंक हैं। उन्हें डाउनलोड करें ताकि वे साइटें बदलने पर भी काम करती रहें।",
+    "missingImagesButton": "गायब छवियाँ डाउनलोड करें",
+    "missingImagesResult": "{downloaded} डाउनलोड हुईं। {failed} डाउनलोड नहीं हो सकीं (मूल साइट उपलब्ध नहीं हो सकती)।",
+    "missingImagesFail": "छवियाँ डाउनलोड नहीं हो सकीं। कृपया फिर से प्रयास करें।",
     "language": "भाषा चुनें",
     "system": "माप प्रणाली चुनें",
     "skipSmallUnits": "छोटी इकाइयों को छोड़ें",

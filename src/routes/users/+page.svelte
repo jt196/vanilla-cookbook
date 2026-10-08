@@ -4,7 +4,7 @@
 
 	/** @type {{data: any}} */
 	let { data } = $props()
-	const { filteredUsers, userCount } = $state(data)
+	const { filteredUsers, userCount } = $derived(data)
 </script>
 
 <div class="prose max-w-none flex justify-center">

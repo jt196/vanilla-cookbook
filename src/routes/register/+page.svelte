@@ -11,10 +11,10 @@
 
 	let { data, form } = $props()
 
-	const { oauth, passwordRequirements, passwordRequirementsDescription } = $state(data)
+	const { oauth, passwordRequirements, passwordRequirementsDescription } = $derived(data)
 
-	let { oauthEnabled, googleEnabled, githubEnabled, oidcEnabled } = $state(oauth)
-	let oidcName = $state(oauth.oidcName ?? 'OIDC')
+	const { oauthEnabled, googleEnabled, githubEnabled, oidcEnabled } = $derived(oauth)
+	const oidcName = $derived(oauth.oidcName ?? 'OIDC')
 
 	let username = $state('')
 	let email = $state('')

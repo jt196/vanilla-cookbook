@@ -1,4 +1,5 @@
 <script>
+	import { untrack } from 'svelte'
 	import {
 		addIngredientToShoppingList,
 		deletePurchasedItems,
@@ -20,7 +21,7 @@
 	/** @type {{data: any}} */
 	let { data } = $props()
 
-	let { shoppingList } = $state(data)
+	let { shoppingList } = $state(untrack(() => data))
 
 	let isDeleteDialogOpen = $state(false)
 	let isCheckAllDialogOpen = $state(false)

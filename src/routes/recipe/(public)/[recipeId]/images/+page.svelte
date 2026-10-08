@@ -1,4 +1,5 @@
 <script>
+	import { untrack } from 'svelte'
 	import { invalidateAll } from '$app/navigation'
 	import FoodBowl from '$lib/components/svg/FoodBowl.svelte'
 	import { deletePhotoById, updatePhotos } from '$lib/utils/crud'
@@ -8,12 +9,14 @@
 	/** @type {{data: any}} */
 	let { data } = $props()
 
-	let { recipe, viewMode } = $state(data)
+	let { recipe, viewMode } = $state(untrack(() => data))
 
 	let filteredPhotos = $state(
-		(data?.recipe?.photos ?? [])
-			.filter((photo) => photo.fileType)
-			.sort((a, b) => (b.isMain ? 1 : 0) - (a.isMain ? 1 : 0))
+		untrack(() =>
+			(data?.recipe?.photos ?? [])
+				.filter((photo) => photo.fileType)
+				.sort((a, b) => (b.isMain ? 1 : 0) - (a.isMain ? 1 : 0))
+		)
 	)
 
 	let showDeleteConfirm = $state(false)

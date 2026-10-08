@@ -3,7 +3,7 @@
 
 	/** @type {{isExpanded: any, height?: string}} */
 	let { isExpanded, height = '20px' } = $props()
-	const width = height
+	const width = $derived(height)
 </script>
 
 <SvgBase

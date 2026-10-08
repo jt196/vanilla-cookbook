@@ -1,10 +1,6 @@
 import { prisma } from '$lib/server/prisma'
-import {
-	checkImageExistence,
-	getContentTypeFromUrl,
-	mapContentTypeToFileTypeAndExtension
-} from '$lib/utils/image/imageUtils'
-import { processImage } from '$lib/utils/image/imageBackend'
+import { mapContentTypeToFileTypeAndExtension } from '$lib/utils/image/imageUtils'
+import { saveRemoteImageAsPhoto } from '$lib/utils/image/imageBackend'
 import { createRecipePhotoEntry, removeRecipePhotoEntry } from '$lib/utils/api'
 import { saveFile, validImageTypes } from '$lib/utils/import/importHelpers'
 import { fileTypeFromBuffer } from 'file-type'
@@ -12,7 +8,7 @@ import { requireAuth, jsonSuccess, jsonError } from '$lib/server/authHelpers'
 import { normalizeToString } from '$lib/utils/normalize'
 import { regenerateRecipeEmbedding } from '$lib/server/semanticEmbedding'
 
-export async function POST({ request, locals, url }) {
+export async function POST({ request, locals }) {
 	const user = requireAuth(locals)
 	const reqId = crypto.randomUUID().slice(0, 8)
 	const startedAt = Date.now()
@@ -22,20 +18,6 @@ export async function POST({ request, locals, url }) {
 		console.warn(`[recipe:create:${reqId}] ${message}`, { userId: user?.userId, ...extra })
 	const errorLog = (message, extra = {}) =>
 		console.error(`[recipe:create:${reqId}] ${message}`, { userId: user?.userId, ...extra })
-
-	const withTimeout = async (promiseFactory, ms, label) => {
-		let timeoutId
-		try {
-			return await Promise.race([
-				promiseFactory(),
-				new Promise((_, reject) => {
-					timeoutId = setTimeout(() => reject(new Error(`${label} timed out after ${ms}ms`)), ms)
-				})
-			])
-		} finally {
-			clearTimeout(timeoutId)
-		}
-	}
 
 	log('start')
 
@@ -104,54 +86,15 @@ export async function POST({ request, locals, url }) {
 	}
 	log('recipe row created', { recipeUid: recipe.uid, ms: Date.now() - startedAt })
 
-	// Process remote image_url if it exists and user opted to save
+	// Download the image URL now (if the user opted to save it); nothing is stored if it fails
 	if (saveImageUrl && image_url) {
-		try {
-			const remoteImageExists = await withTimeout(
-				() => checkImageExistence(image_url, url.origin),
-				8000,
-				'remote image existence check'
-			)
-			log('remote image existence check finished', {
-				recipeUid: recipe.uid,
-				image_url,
-				exists: !!remoteImageExists
-			})
-			if (remoteImageExists) {
-				const contentType = await withTimeout(
-					() => getContentTypeFromUrl(image_url),
-					8000,
-					'remote image content-type fetch'
-				)
-				const { extension } = mapContentTypeToFileTypeAndExtension(contentType)
-
-				let photoEntry
-				try {
-					photoEntry = await createRecipePhotoEntry(recipe.uid, image_url, extension, true)
-					await withTimeout(
-						() => processImage(image_url, photoEntry.id, extension),
-						15000,
-						'remote image processing'
-					)
-					log('remote image processed', { recipeUid: recipe.uid, photoId: photoEntry.id })
-				} catch (error) {
-					errorLog('Failed to process remote image', {
-						recipeUid: recipe?.uid,
-						image_url,
-						error: error?.message
-					})
-					if (photoEntry) {
-						await removeRecipePhotoEntry(photoEntry.id)
-					}
-				}
-			}
-		} catch (error) {
-			warn('Remote image step skipped', {
-				recipeUid: recipe.uid,
-				image_url,
-				error: error?.message
-			})
-		}
+		const photo = await saveRemoteImageAsPhoto({
+			recipeUid: recipe.uid,
+			url: image_url,
+			isMain: true
+		})
+		if (photo) log('remote image saved', { recipeUid: recipe.uid, photoId: photo.id })
+		else warn('Remote image not saved', { recipeUid: recipe.uid, image_url })
 	}
 
 	// Process uploaded image files

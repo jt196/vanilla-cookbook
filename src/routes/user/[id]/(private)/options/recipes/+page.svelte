@@ -1,4 +1,5 @@
 <script>
+	import { untrack } from 'svelte'
 	import { systems, languages } from '$lib/utils/config.js'
 	import { invalidateAll } from '$app/navigation'
 	import FeedbackMessage from '$lib/components/ui/FeedbackMessage.svelte'
@@ -9,9 +10,32 @@
 
 	/** @type {{data: any}} */
 	let { data } = $props()
-	const { user, semanticEnabled } = $state(data)
+	const { user, semanticEnabled } = $state(untrack(() => data))
 	let settingsFeedback = $state('')
 	let savedLanguage = $state(user.language)
+	let linkOnlyCount = $state(untrack(() => data.linkOnlyPhotoCount ?? 0))
+	let downloadingImages = $state(false)
+	let imagesFeedback = $state('')
+
+	async function downloadMissingImages() {
+		downloadingImages = true
+		imagesFeedback = ''
+		try {
+			const res = await fetch(`/api/user/${user.userId}/photos/download-missing`, {
+				method: 'POST'
+			})
+			const result = await res.json()
+			linkOnlyCount = result.failed?.length ?? linkOnlyCount
+			imagesFeedback = $t('recipePrefs.missingImagesResult', {
+				downloaded: result.downloaded ?? 0,
+				failed: result.failed?.length ?? 0
+			})
+		} catch {
+			imagesFeedback = $t('recipePrefs.missingImagesFail')
+		} finally {
+			downloadingImages = false
+		}
+	}
 
 	$effect(() => {
 		if (user && user.showNotesDescription === undefined) {
@@ -139,3 +163,23 @@
 		<FeedbackMessage message={settingsFeedback ? $t(settingsFeedback) : ''} />
 	</footer>
 </form>
+
+{#if linkOnlyCount > 0}
+	<!-- Missing images (maintenance action, styled like the recipe visibility actions) -->
+	<div class="flex flex-col gap-2 mt-8 w-full md:w-2/3 lg:w-1/2">
+		<h2 class="prose max-w-none mb-2">{$t('recipePrefs.missingImagesTitle')}</h2>
+		<p class="text-sm text-base-content/70">
+			{$t('recipePrefs.missingImagesHint', { count: linkOnlyCount })}
+		</p>
+		<div>
+			<Button
+				type="button"
+				color="info"
+				style="outline"
+				loading={downloadingImages}
+				disabled={downloadingImages}
+				onclick={downloadMissingImages}>{$t('recipePrefs.missingImagesButton')}</Button>
+		</div>
+	</div>
+{/if}
+<FeedbackMessage message={imagesFeedback} />

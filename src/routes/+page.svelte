@@ -6,7 +6,7 @@
 
 	/** @type {{data: any}} */
 	let { data } = $props()
-	const { highlights } = data
+	const highlights = $derived(data.highlights)
 
 	const rows = $derived(
 		[

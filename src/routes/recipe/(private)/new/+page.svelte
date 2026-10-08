@@ -1,5 +1,5 @@
 <script>
-	import { onMount } from 'svelte'
+	import { onMount, untrack } from 'svelte'
 	import { goto, afterNavigate } from '$app/navigation'
 	import { createRecipe } from '$lib/utils/crud'
 	import {
@@ -55,7 +55,7 @@
 		userPublicRecipes,
 		userUnits,
 		userLanguage
-	} = $state(data)
+	} = $state(untrack(() => data))
 
 	let recipe = $state({ ...defaultRecipe, is_public: !!userPublicRecipes })
 

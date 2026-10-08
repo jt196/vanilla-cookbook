@@ -1,4 +1,5 @@
 <script>
+	import { untrack } from 'svelte'
 	import Timeline from '$lib/components/ui/Timeline.svelte'
 	import TimelineItem from '$lib/components/ui/TimelineItem.svelte'
 	import { t } from '$lib/stores/locale.js'
@@ -7,7 +8,9 @@
 	let { data } = $props()
 
 	let logs = $state(
-		[...data.logs].sort((a, b) => new Date(b.cooked).getTime() - new Date(a.cooked).getTime())
+		untrack(() =>
+			[...data.logs].sort((a, b) => new Date(b.cooked).getTime() - new Date(a.cooked).getTime())
+		)
 	)
 
 	// Count how many logs share each calendar day (local date string)

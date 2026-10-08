@@ -5,7 +5,7 @@
 	/** @type {{data: any}} */
 	let { data } = $props()
 
-	const { recipes, viewerUserId, semanticAvailable } = data
+	const { recipes, viewerUserId, semanticAvailable } = $derived(data)
 </script>
 
 <RecipeFeed

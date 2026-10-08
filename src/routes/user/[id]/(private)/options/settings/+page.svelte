@@ -1,4 +1,5 @@
 <script>
+	import { untrack } from 'svelte'
 	import { validatePassword, buildPasswordEnv } from '$lib/utils/security.js'
 	import FeedbackMessage from '$lib/components/ui/FeedbackMessage.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
@@ -21,7 +22,7 @@
 		recipeStats,
 		passwordRequirements,
 		passwordRequirementsDescription
-	} = $state(data)
+	} = $state(untrack(() => data))
 
 	// Account settings
 	let email = $state(user.email || '')

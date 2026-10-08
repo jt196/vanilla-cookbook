@@ -707,6 +707,11 @@ export default {
     }
   },
   "recipePrefs": {
+    "missingImagesTitle": "Images manquantes",
+    "missingImagesHint": "{count} photo(s) de recettes sont seulement liées depuis d'autres sites. Téléchargez-les pour qu'elles continuent de fonctionner si ces sites changent.",
+    "missingImagesButton": "Télécharger les images manquantes",
+    "missingImagesResult": "{downloaded} téléchargée(s). {failed} n'ont pas pu être téléchargée(s) (le site d'origine est peut-être indisponible).",
+    "missingImagesFail": "Impossible de télécharger les images. Veuillez réessayer.",
     "language": "Sélectionner la langue",
     "system": "Sélectionner le système de mesure",
     "skipSmallUnits": "Ignorer les petites unités",

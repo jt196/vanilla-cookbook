@@ -776,6 +776,13 @@ export default {
 	},
 
 	recipePrefs: {
+		missingImagesTitle: 'Missing images',
+		missingImagesHint:
+			'{count} recipe photo(s) are only linked from other websites. Download them so they keep working if those sites change.',
+		missingImagesButton: 'Download missing images',
+		missingImagesResult:
+			'Downloaded {downloaded}. {failed} could not be downloaded (the original site may be unavailable).',
+		missingImagesFail: 'Could not download images. Please try again.',
 		language: 'Select language',
 		system: 'Select measurement system',
 		skipSmallUnits: 'Skip Small Units',

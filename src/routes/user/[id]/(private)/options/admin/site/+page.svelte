@@ -1,4 +1,5 @@
 <script>
+	import { untrack } from 'svelte'
 	import { localDateAndTime } from '$lib/utils/dateTime'
 	import { invalidateAll } from '$app/navigation'
 	import {
@@ -28,7 +29,7 @@
 	let { data } = $props()
 
 	const { settings, llmConfig, passwordRequirements, passwordRequirementsDescription, oauth } =
-		$state(data)
+		$state(untrack(() => data))
 
 	let oidcEnabled = $derived(oauth?.oidcEnabled ?? false)
 
@@ -36,9 +37,9 @@
 	let settingsFeedbackCode = $state(null)
 	let llmFeedback = $state('')
 	let llmFeedbackCode = $state(null)
-	let backupInfo = $state(data.backupInfo)
-	let backupError = $state(data.backupError || '')
-	let backupErrorCode = $state(data.backupErrorCode || null)
+	let backupInfo = $state(untrack(() => data.backupInfo))
+	let backupError = $state(untrack(() => data.backupError || ''))
+	let backupErrorCode = $state(untrack(() => data.backupErrorCode || null))
 	let backupInProgress = $state(false)
 	let backupFeedback = $state('')
 	let backupFeedbackCode = $state(null)
@@ -46,7 +47,7 @@
 	let embeddingFeedback = $state('')
 	let embeddingBatchResult = $state(null)
 	let embeddingIndex = $state(
-		data.embeddingIndex || { total: 0, remaining: 0, mismatched: 0, completed: 0 }
+		untrack(() => data.embeddingIndex || { total: 0, remaining: 0, mismatched: 0, completed: 0 })
 	)
 	let embeddingPercent = $derived(
 		embeddingIndex.total > 0

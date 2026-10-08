@@ -1,4 +1,5 @@
 <script>
+	import { untrack } from 'svelte'
 	import Edit from '$lib/components/svg/Edit.svelte'
 	import Delete from '$lib/components/svg/Delete.svelte'
 	import New from '$lib/components/svg/New.svelte'
@@ -21,7 +22,9 @@
 
 	/** @type {{data: any}} */
 	let { data } = $props()
-	let { users, user, passwordRequirements, passwordRequirementsDescription } = $state(data)
+	let { users, user, passwordRequirements, passwordRequirementsDescription } = $state(
+		untrack(() => data)
+	)
 	// If the logged in user is an admin, this will return the id
 	// If the page is attempted access by a non-admin, it'll redirect
 	let currentAdminUserId = user.adminId

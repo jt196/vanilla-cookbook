@@ -1,4 +1,5 @@
 <script>
+	import { untrack } from 'svelte'
 	import {
 		handleParse,
 		handleScrape,
@@ -37,10 +38,10 @@
 	let textParsingAvailable = $derived(aiEnabled && apiKeyPresent)
 
 	// Tab state
-	let selectedMode = $state(initialMode)
+	let selectedMode = $state(untrack(() => initialMode))
 	let isPromptMode = $state(false)
 	let selectedFiles = $state([])
-	let lastAppliedInitialMode = $state(initialMode)
+	let lastAppliedInitialMode = $state(untrack(() => initialMode))
 
 	// Derive textMode from isPromptMode for cleaner reactivity
 	let textMode = $derived(isPromptMode ? 'prompt' : 'parse')

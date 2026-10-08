@@ -1,4 +1,5 @@
 <script>
+	import { untrack } from 'svelte'
 	import UpArrow from '$lib/components/svg/UpArrow.svelte'
 	import Delete from '$lib/components/svg/Delete.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
@@ -9,7 +10,7 @@
 	let { photo, recipeName = '', onSetMainPhoto, onDeletePhoto, onSaveEditedNotes } = $props()
 
 	let editingPhotoId = $state(null)
-	let editingPhotoNotes = $state(photo.notes || '')
+	let editingPhotoNotes = $state(untrack(() => photo.notes || ''))
 
 	function startEditing() {
 		editingPhotoId = photo.id

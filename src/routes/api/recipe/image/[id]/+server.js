@@ -1,46 +1,22 @@
 import { prisma } from '$lib/server/prisma'
-import { deleteSinglePhotoFile } from '$lib/utils/image/imageBackend.js'
+import { deleteSinglePhotoFile, photoFilePath } from '$lib/utils/image/imageBackend.js'
 import fs from 'fs'
-import path from 'path'
-import axios from 'axios'
 import { requireAuth, requireOwnership, jsonSuccess, jsonError } from '$lib/server/authHelpers'
 
+/**
+ * Serve a stored recipe photo. Only local files are served; photos that exist only as a
+ * remote link can be downloaded with "Download missing images" in Settings → Recipes.
+ */
 export async function GET({ params }) {
-	const { id } = params
-	const photo = await prisma.recipePhoto.findUnique({
-		where: { id }
+	const photo = await prisma.recipePhoto.findUnique({ where: { id: params.id } })
+	if (!photo?.fileType) return new Response(null, { status: 204 })
+
+	const filePath = photoFilePath(photo.id, photo.fileType)
+	if (!fs.existsSync(filePath)) return new Response(null, { status: 204 })
+
+	return new Response(fs.readFileSync(filePath), {
+		headers: { 'Content-Type': `image/${photo.fileType === 'jpg' ? 'jpeg' : photo.fileType}` }
 	})
-
-	if (!photo) {
-		return new Response(null, { status: 204 })
-	}
-
-	const filePath = path.join(process.cwd(), 'uploads/images', `${photo.id}.${photo.fileType}`)
-
-	if (fs.existsSync(filePath)) {
-		const file = fs.readFileSync(filePath)
-		return new Response(file, {
-			headers: { 'Content-Type': `image/${photo.fileType}` }
-		})
-	} else if (photo.url) {
-		try {
-			const response = await axios.get(photo.url, {
-				responseType: 'arraybuffer'
-			})
-
-			const buffer = Buffer.from(response.data, 'binary')
-
-			return new Response(buffer, {
-				status: 200,
-				headers: { 'Content-Type': `image/${photo.fileType}` }
-			})
-		} catch (err) {
-			console.error('Error fetching the image:', err)
-			return new Response(null, { status: 204 })
-		}
-	} else {
-		return new Response(null, { status: 204 })
-	}
 }
 
 export async function DELETE({ params, locals }) {

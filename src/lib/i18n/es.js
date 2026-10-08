@@ -767,6 +767,11 @@ export default {
     "step3": "3. Cuando estés en un sitio web, haz clic en el marcador y te llevará a la nueva página de recetas, con la URL de origen y el texto de la página capturado listos para el scraping o el análisis de respaldo."
   },
   "recipePrefs": {
+    "missingImagesTitle": "Imágenes que faltan",
+    "missingImagesHint": "{count} foto(s) de recetas solo están enlazadas desde otros sitios web. Descárgalas para que sigan funcionando si esos sitios cambian.",
+    "missingImagesButton": "Descargar imágenes que faltan",
+    "missingImagesResult": "Descargadas: {downloaded}. No se pudieron descargar: {failed} (el sitio original puede no estar disponible).",
+    "missingImagesFail": "No se pudieron descargar las imágenes. Inténtalo de nuevo.",
     "language": "Seleccionar idioma",
     "system": "Seleccionar sistema de medida",
     "skipSmallUnits": "Omitir Unidades Pequeñas",
