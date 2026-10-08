@@ -461,6 +461,7 @@ export default {
       "embeddingsDisabled": "Las incrustaciones están deshabilitadas.",
       "noEmbeddingProviders": "No hay proveedores de incrustaciones configurados. Agregue OPENAI_API_KEY, GOOGLE_API_KEY y/o OLLAMA_BASE_URL en .env.",
       "selectProviderFirst": "Seleccione un proveedor de incrustaciones para elegir un modelo.",
+      "embeddingModelChangeWarning": "{count} recetas están indexadas con {model}. Después de guardar, usa \"Regenerar Desiguales\" para volver a generar sus embeddings con el nuevo modelo (consume créditos de API). Hasta entonces, la búsqueda semántica y las recetas similares las omitirán.",
       "missingOllama": "Por favor, agregue OLLAMA_BASE_URL a .env.",
       "missingGoogle": "Por favor, agregue GOOGLE_API_KEY a .env.",
       "missingOpenai": "Por favor, agregue OPENAI_API_KEY a .env.",

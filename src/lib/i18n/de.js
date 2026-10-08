@@ -461,6 +461,7 @@ export default {
       "embeddingsDisabled": "Embeddings sind deaktiviert.",
       "noEmbeddingProviders": "Keine Embedding-Anbieter konfiguriert. Fügen Sie OPENAI_API_KEY, GOOGLE_API_KEY und/oder OLLAMA_BASE_URL in .env hinzu.",
       "selectProviderFirst": "Wählen Sie zuerst einen Embedding-Anbieter, um ein Modell auszuwählen.",
+      "embeddingModelChangeWarning": "{count} Rezepte sind mit {model} indiziert. Verwenden Sie nach dem Speichern „Fehlende neu generieren“, um sie mit dem neuen Modell neu einzubetten (verbraucht API-Guthaben). Bis dahin werden sie von der semantischen Suche und ähnlichen Rezepten ausgelassen.",
       "missingOllama": "Bitte fügen Sie OLLAMA_BASE_URL zu .env hinzu.",
       "missingGoogle": "Bitte fügen Sie GOOGLE_API_KEY zu .env hinzu.",
       "missingOpenai": "Bitte fügen Sie OPENAI_API_KEY zu .env hinzu.",

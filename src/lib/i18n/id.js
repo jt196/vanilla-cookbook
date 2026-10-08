@@ -503,6 +503,7 @@ export default {
       "embeddingsDisabled": "Embeddings dinonaktifkan.",
       "noEmbeddingProviders": "Tidak ada penyedia embedding yang dikonfigurasi. Tambahkan OPENAI_API_KEY, GOOGLE_API_KEY dan/atau OLLAMA_BASE_URL di .env.",
       "selectProviderFirst": "Pilih penyedia embedding untuk memilih model.",
+      "embeddingModelChangeWarning": "{count} resep diindeks dengan {model}. Setelah menyimpan, gunakan \"Buat Ulang yang Tidak Cocok\" untuk menyematkan ulang dengan model baru (menggunakan kredit API). Sampai saat itu, pencarian semantik dan resep serupa akan melewatinya.",
       "missingOllama": "Harap tambahkan OLLAMA_BASE_URL ke .env.",
       "missingGoogle": "Harap tambahkan GOOGLE_API_KEY ke .env.",
       "missingOpenai": "Harap tambahkan OPENAI_API_KEY ke .env.",

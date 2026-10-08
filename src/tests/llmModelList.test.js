@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import {
 	filterModelsForPurpose,
+	sortModels,
 	listProviderModels,
 	clearModelListCache
 } from '$lib/server/llmModelList.js'
@@ -68,6 +69,42 @@ describe('filterModelsForPurpose', () => {
 	it('returns all locally pulled ollama models', () => {
 		const models = [{ id: 'llama3.2' }, { id: 'nomic-embed-text' }]
 		expect(filterModelsForPurpose('ollama', 'embedding', models)).toEqual(models)
+	})
+})
+
+describe('sortModels', () => {
+	it('puts latest aliases first, then newest stable versions, then previews (google)', () => {
+		const models = [
+			{ id: 'gemini-2.5-flash' },
+			{ id: 'gemini-3.1-pro-preview' },
+			{ id: 'gemma-4-31b-it' },
+			{ id: 'gemini-3.6-flash' },
+			{ id: 'gemini-flash-latest' },
+			{ id: 'gemini-3.6-flash-lite' },
+			{ id: 'something-preview-latest' }
+		]
+		expect(ids(sortModels('google', models))).toEqual([
+			'gemini-flash-latest',
+			'gemini-3.6-flash',
+			'gemini-3.6-flash-lite',
+			'gemini-2.5-flash',
+			'gemma-4-31b-it',
+			'gemini-3.1-pro-preview',
+			'something-preview-latest'
+		])
+	})
+
+	it('keeps API (newest-first) order for anthropic, moving previews last', () => {
+		const models = [
+			{ id: 'claude-x-preview' },
+			{ id: 'claude-sonnet-5' },
+			{ id: 'claude-haiku-4-5' }
+		]
+		expect(ids(sortModels('anthropic', models))).toEqual([
+			'claude-sonnet-5',
+			'claude-haiku-4-5',
+			'claude-x-preview'
+		])
 	})
 })
 

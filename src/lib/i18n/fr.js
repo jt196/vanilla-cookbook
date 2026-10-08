@@ -503,6 +503,7 @@ export default {
       "embeddingsDisabled": "Les Embeddings sont désactivés.",
       "noEmbeddingProviders": "Aucun fournisseur d'embeddings configuré. Ajoutez OPENAI_API_KEY, GOOGLE_API_KEY et/ou OLLAMA_BASE_URL dans .env.",
       "selectProviderFirst": "Sélectionnez un fournisseur d'embeddings pour choisir un modèle.",
+      "embeddingModelChangeWarning": "{count} recettes sont indexées avec {model}. Après l'enregistrement, utilisez « Regénérer les non-concordantes » pour les réindexer avec le nouveau modèle (consomme des crédits API). D'ici là, la recherche sémantique et les recettes similaires les ignoreront.",
       "missingOllama": "Veuillez ajouter OLLAMA_BASE_URL à .env.",
       "missingGoogle": "Veuillez ajouter GOOGLE_API_KEY à .env.",
       "missingOpenai": "Veuillez ajouter OPENAI_API_KEY à .env.",

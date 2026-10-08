@@ -61,7 +61,7 @@ function usage() {
 		'',
 		'Options:',
 		'  --provider=auto|google|openai  LLM provider to use (default: auto)',
-		'  --model=<name>                 Model to use (default: gemini-2.5-flash or gpt-4o)',
+		'  --model=<name>                 Model to use (default: gemini-flash-latest or gpt-5.6-luna)',
 		'  --langs=deu,ita,...            Internal language codes to generate',
 		'  --namespaces=common,nav        Limit to specific top-level namespaces',
 		'  --overwrite                    Regenerate all requested namespaces even if present',
@@ -97,7 +97,7 @@ function resolveProvider(opts) {
 }
 
 function defaultModelFor(provider) {
-	return provider === 'google' ? 'gemini-2.5-flash' : 'gpt-4o'
+	return provider === 'google' ? 'gemini-flash-latest' : 'gpt-5.6-luna'
 }
 
 function isObject(value) {

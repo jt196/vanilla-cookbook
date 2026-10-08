@@ -503,6 +503,7 @@ export default {
       "embeddingsDisabled": "تم تعطيل التضمينات.",
       "noEmbeddingProviders": "لم يتم تكوين موفري تضمين. أضف OPENAI_API_KEY، GOOGLE_API_KEY و/أو OLLAMA_BASE_URL في .env.",
       "selectProviderFirst": "حدد موفر تضمين لاختيار نموذج.",
+      "embeddingModelChangeWarning": "{count} وصفة مفهرسة باستخدام {model}. بعد الحفظ، استخدم \"إعادة توليد غير المتطابق\" لإعادة تضمينها بالنموذج الجديد (يستهلك هذا أرصدة API). حتى ذلك الحين، سيستثنيها البحث الدلالي والوصفات المشابهة.",
       "missingOllama": "الرجاء إضافة OLLAMA_BASE_URL إلى .env.",
       "missingGoogle": "الرجاء إضافة GOOGLE_API_KEY إلى .env.",
       "missingOpenai": "الرجاء إضافة OPENAI_API_KEY إلى .env.",

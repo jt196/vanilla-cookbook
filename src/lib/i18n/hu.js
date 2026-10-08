@@ -503,6 +503,7 @@ export default {
       "embeddingsDisabled": "A beágyazások letiltva.",
       "noEmbeddingProviders": "Nincs konfigurált beágyazási szolgáltató. Adja hozzá az OPENAI_API_KEY, GOOGLE_API_KEY és/vagy OLLAMA_BASE_URL-t a .env fájlhoz.",
       "selectProviderFirst": "Válasszon beágyazási szolgáltatót a modell kiválasztásához.",
+      "embeddingModelChangeWarning": "{count} recept a(z) {model} modellel van indexelve. Mentés után használja az „Nem egyezők újragenerálása” lehetőséget az új modellel való újbeágyazáshoz (API-krediteket használ). Addig a szemantikus keresés és a hasonló receptek kihagyják őket.",
       "missingOllama": "Kérjük, adja hozzá az OLLAMA_BASE_URL-t a .env fájlhoz.",
       "missingGoogle": "Kérjük, adja hozzá a GOOGLE_API_KEY-t a .env fájlhoz.",
       "missingOpenai": "Kérjük, adja hozzá az OPENAI_API_KEY-t a .env fájlhoz.",

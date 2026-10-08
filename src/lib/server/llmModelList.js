@@ -22,8 +22,61 @@ const OPENAI_IMAGE_GENERATION = /^(gpt-image|dall-e|chatgpt-image)/
 const OPENAI_NOT_CHAT =
 	/embedding|whisper|tts|dall-e|image|moderation|audio|realtime|transcribe|davinci|babbage|sora|search/
 
-// Gemini image models also support generateContent, so they're split out by name.
-const GOOGLE_NOT_CHAT = /image|tts|audio|embedding|aqa|imagen|veo|live/
+// Gemini image models also support generateContent, so they're split out by name, along with
+// music, transcription, robotics and agent models that aren't useful for recipe text.
+const GOOGLE_NOT_CHAT =
+	/image|tts|audio|embedding|aqa|imagen|veo|live|lyria|transcribe|robotics|computer-use|deep-research|antigravity|nano-banana/
+
+const LATEST_ALIAS = /-latest$/
+const PRERELEASE = /preview|exp(erimental)?\b|-\d{2}-\d{2}$|beta|alpha/
+
+/** @param {string} id */
+function releaseRank(id) {
+	if (PRERELEASE.test(id.replace(LATEST_ALIAS, ''))) return 2
+	if (LATEST_ALIAS.test(id)) return 0
+	return 1
+}
+
+/**
+ * Compare version numbers found in two model IDs, highest first
+ * (e.g. "gemini-3.6-flash" before "gemini-2.5-pro").
+ *
+ * @param {string} a
+ * @param {string} b
+ */
+function compareVersionsDesc(a, b) {
+	const va = (a.match(/\d+(?:\.\d+)*/)?.[0] || '0').split('.').map(Number)
+	const vb = (b.match(/\d+(?:\.\d+)*/)?.[0] || '0').split('.').map(Number)
+	for (let i = 0; i < Math.max(va.length, vb.length); i++) {
+		const diff = (vb[i] || 0) - (va[i] || 0)
+		if (diff) return diff
+	}
+	return 0
+}
+
+/**
+ * Order models so the most useful choices come first: "-latest" aliases, then stable
+ * models, then previews/experimental. Within those groups OpenAI and Anthropic keep their
+ * newest-first API order; Google and Ollama (no dates) are grouped by model family with the
+ * highest version first.
+ *
+ * @param {string} provider
+ * @param {RawModel[]} models
+ * @returns {RawModel[]}
+ */
+export function sortModels(provider, models) {
+	const byVersion = provider === 'google' || provider === 'ollama'
+	const family = (id) => id.split(/[-:.\d]/)[0]
+	return [...models].sort((a, b) => {
+		const rank = releaseRank(a.id) - releaseRank(b.id)
+		if (rank || !byVersion) return rank
+		return (
+			family(a.id).localeCompare(family(b.id)) ||
+			compareVersionsDesc(a.id, b.id) ||
+			a.id.localeCompare(b.id)
+		)
+	})
+}
 
 /**
  * Fetch the raw model list for a provider.
@@ -147,7 +200,8 @@ export async function listProviderModels(provider, purpose = 'chat') {
 		}
 	}
 
-	const models = filterModelsForPurpose(provider, purpose, raw.models).map((m) => ({
+	const filtered = filterModelsForPurpose(provider, purpose, raw.models)
+	const models = sortModels(provider, filtered).map((m) => ({
 		value: m.id,
 		label: m.label && m.label !== m.id ? `${m.label} (${m.id})` : m.id
 	}))

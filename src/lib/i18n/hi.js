@@ -503,6 +503,7 @@ export default {
       "embeddingsDisabled": "एम्बेडिंग अक्षम हैं।",
       "noEmbeddingProviders": "कोई एम्बेडिंग प्रदाता कॉन्फ़िगर नहीं किया गया है। .env में OPENAI_API_KEY, GOOGLE_API_KEY और/या OLLAMA_BASE_URL जोड़ें।",
       "selectProviderFirst": "एक मॉडल चुनने के लिए पहले एक एम्बेडिंग प्रदाता का चयन करें।",
+      "embeddingModelChangeWarning": "{count} रेसिपी {model} से इंडेक्स की गई हैं। सहेजने के बाद, नए मॉडल से उन्हें फिर से एम्बेड करने के लिए \"बेमेल को पुनर्जीवित करें\" का उपयोग करें (इसमें API क्रेडिट लगते हैं)। तब तक सिमेंटिक खोज और समान रेसिपी उन्हें शामिल नहीं करेंगी।",
       "missingOllama": "कृपया .env में OLLAMA_BASE_URL जोड़ें।",
       "missingGoogle": "कृपया .env में GOOGLE_API_KEY जोड़ें।",
       "missingOpenai": "कृपया .env में OPENAI_API_KEY जोड़ें।",

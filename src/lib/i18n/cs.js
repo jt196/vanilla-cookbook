@@ -503,6 +503,7 @@ export default {
       "embeddingsDisabled": "Vnoření jsou zakázána.",
       "noEmbeddingProviders": "Nejsou nakonfigurováni žádní poskytovatelé vnoření. Přidejte OPENAI_API_KEY, GOOGLE_API_KEY a/nebo OLLAMA_BASE_URL do .env.",
       "selectProviderFirst": "Vyberte poskytovatele vnoření pro výběr modelu.",
+      "embeddingModelChangeWarning": "{count} receptů je indexováno modelem {model}. Po uložení použijte „Znovu vygenerovat neshodné“ a přeindexujte je novým modelem (spotřebovává kredity API). Do té doby je sémantické vyhledávání a podobné recepty vynechají.",
       "missingOllama": "Prosím, přidejte OLLAMA_BASE_URL do .env.",
       "missingGoogle": "Prosím, přidejte GOOGLE_API_KEY do .env.",
       "missingOpenai": "Prosím, přidejte OPENAI_API_KEY do .env.",

@@ -5,7 +5,8 @@
 		getProviderOptionsWithAvailability,
 		getEmbeddingProviderOptionsWithAvailability,
 		providerSupports,
-		defaultEmbeddingModels
+		defaultEmbeddingModels,
+		resolveEmbeddingModel
 	} from '$lib/utils/llmModels.js'
 	import ModelInput from '$lib/components/settings/ModelInput.svelte'
 	import FeedbackMessage from '$lib/components/ui/FeedbackMessage.svelte'
@@ -125,6 +126,16 @@
 			(llmConfig.semanticAvailableProviders || []).includes(effectiveSemanticProvider)
 	)
 	let defaultSemanticModel = $derived(defaultEmbeddingModels[effectiveSemanticProvider] || '')
+	// Recipes are embedded with the saved model; switching models makes those vectors incomparable
+	let indexedEmbeddingModel = $derived(
+		resolveEmbeddingModel(data.llmConfig?.semanticProvider, data.llmConfig?.semanticModel)
+	)
+	let indexedRecipeCount = $derived(embeddingIndex.completed + (embeddingIndex.mismatched || 0))
+	let embeddingModelChanged = $derived(
+		!!effectiveSemanticProvider &&
+			resolveEmbeddingModel(effectiveSemanticProvider, semanticEmbeddingModel.trim()) !==
+				indexedEmbeddingModel
+	)
 	let canGenerateEmbeddings = $derived(
 		semanticEnabled &&
 			semanticProviderConfigured &&
@@ -578,6 +589,15 @@
 							disabled={!semanticEnabled || !semanticProviderConfigured}
 							bind:value={semanticEmbeddingModel}
 						/>
+						{#if semanticEnabled && embeddingModelChanged && indexedRecipeCount > 0}
+							<FeedbackMessage
+								inline
+								type="warning"
+								style="soft"
+								messageCode="admin.site.embeddingModelChangeWarning"
+								messageVars={{ count: indexedRecipeCount, model: indexedEmbeddingModel }}
+							/>
+						{/if}
 					{:else}
 						<InfoText>{$t('admin.site.selectProviderFirst')}</InfoText>
 					{/if}

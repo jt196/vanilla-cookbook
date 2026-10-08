@@ -503,6 +503,7 @@ export default {
       "embeddingsDisabled": "Векторные представления отключены.",
       "noEmbeddingProviders": "Провайдеры векторных представлений не настроены. Добавьте OPENAI_API_KEY, GOOGLE_API_KEY и/или OLLAMA_BASE_URL в .env.",
       "selectProviderFirst": "Выберите провайдера векторных представлений, чтобы выбрать модель.",
+      "embeddingModelChangeWarning": "Рецептов, проиндексированных моделью {model}: {count}. После сохранения нажмите «Перегенерировать несоответствующие», чтобы переиндексировать их новой моделью (расходуются кредиты API). До тех пор семантический поиск и похожие рецепты их не учитывают.",
       "missingOllama": "Пожалуйста, добавьте OLLAMA_BASE_URL в .env.",
       "missingGoogle": "Пожалуйста, добавьте GOOGLE_API_KEY в .env.",
       "missingOpenai": "Пожалуйста, добавьте OPENAI_API_KEY в .env.",

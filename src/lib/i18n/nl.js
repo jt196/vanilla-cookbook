@@ -503,6 +503,7 @@ export default {
       "embeddingsDisabled": "Embeddings zijn uitgeschakeld.",
       "noEmbeddingProviders": "Geen embedding-providers geconfigureerd. Voeg OPENAI_API_KEY, GOOGLE_API_KEY en/of OLLAMA_BASE_URL toe in .env.",
       "selectProviderFirst": "Selecteer eerst een embedding-provider om een model te kiezen.",
+      "embeddingModelChangeWarning": "{count} recepten zijn geïndexeerd met {model}. Gebruik na het opslaan \"Mismatched opnieuw genereren\" om ze opnieuw te embedden met het nieuwe model (dit kost API-tegoed). Tot die tijd laten semantisch zoeken en vergelijkbare recepten ze weg.",
       "missingOllama": "Voeg OLLAMA_BASE_URL toe aan .env.",
       "missingGoogle": "Voeg GOOGLE_API_KEY toe aan .env.",
       "missingOpenai": "Voeg OPENAI_API_KEY toe aan .env.",
