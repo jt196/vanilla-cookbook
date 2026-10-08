@@ -59,6 +59,7 @@ export async function POST({ locals, params }) {
 				name: recipe.name,
 				ingredients: recipe.ingredients,
 				ingredients_original: recipe.ingredients_original,
+				equipment: recipe.equipment,
 				directions: recipe.directions,
 				directions_original: recipe.directions_original,
 				description: recipe.description,

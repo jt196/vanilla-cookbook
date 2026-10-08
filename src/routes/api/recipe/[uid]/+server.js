@@ -119,6 +119,7 @@ export async function PUT({ request, locals, params, url }) {
 		'servings',
 		'ingredients',
 		'ingredients_original',
+		'equipment',
 		'directions',
 		'directions_original',
 		'notes',

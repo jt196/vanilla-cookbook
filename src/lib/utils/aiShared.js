@@ -8,6 +8,7 @@ export const RECIPE_JSON_SHAPE = `{
   "description": "",
   "notes": "",
   "ingredients": ["ingredient 1", "ingredient 2"],
+  "equipment": ["equipment 1"],
   "instructions": ["Step 1", "Step 2"],
   "cookTime": "",
   "prepTime": "",
@@ -53,7 +54,8 @@ ${htmlInstruction}
    - Avoid prepositions like "of" (write "1.5 kg flour" not "1.5 kg of flour")
    - Place extra preparation information after a comma (e.g., "1.5 kg flour, sifted")
    - Avoid using "or" for alternative ingredients (pick one ingredient instead of "1.5 kg strong flour or all-purpose flour")
-9. Output the recipe in ${languageName}. Translate ingredient and instruction text if necessary.${noRecipeInstruction}
+9. Output the recipe in ${languageName}. Translate ingredient and instruction text if necessary.
+10. List equipment only when the source names it (e.g. "stand mixer", "Dutch oven"), one item per array element; otherwise return an empty array.${noRecipeInstruction}
 
 Expected format (when recipe is found):
 ${RECIPE_JSON_SHAPE}
@@ -92,6 +94,7 @@ Instructions:
    - Place extra preparation information after a comma (e.g., "1.5 kg flour, sifted")
    - Avoid using "or" for alternative ingredients (pick one ingredient instead of "1.5 kg strong flour or all-purpose flour")
 9. Output the recipe in ${languageName}. Translate ingredient and instruction text if necessary.
+10. List equipment only when the source names it (e.g. "stand mixer", "Dutch oven"), one item per array element; otherwise return an empty array.
 IMPORTANT: If the text does not contain actual recipe ingredients or cooking instructions, return ONLY: {"_noRecipe": true}
 
 Expected format (when recipe is found):

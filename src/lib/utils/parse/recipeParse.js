@@ -7,6 +7,7 @@ import {
 	parseIngredients,
 	parseVideo,
 	getNutrition,
+	parseTools,
 	parseJSONLD,
 	getDomainFromUrl,
 	parseUsingSiteConfig,
@@ -106,6 +107,7 @@ export function parseRecipe(html, url) {
 
 		const video = parseVideo(recipeRaw.video)
 		const nutrition = getNutrition(recipeRaw.nutrition)
+		const equipment = parseTools(recipeRaw.tool)
 
 		return cleanObjectStrings({
 			name: recipeRaw.name,
@@ -124,7 +126,8 @@ export function parseRecipe(html, url) {
 			rating,
 			servings,
 			...video,
-			nutrition
+			nutrition,
+			equipment
 		})
 	} catch (error) {
 		console.log('Error:', error)
