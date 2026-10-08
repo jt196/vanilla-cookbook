@@ -127,7 +127,10 @@ async function downloadImageAsBuffer(url) {
 		const filePath = url.slice(7)
 		return await readFile(filePath)
 	} else {
-		const response = await fetch(url)
+		const response = await fetch(url, { signal: AbortSignal.timeout(15000) })
+		if (!response.ok) {
+			throw new Error(`Image download failed: HTTP ${response.status}`)
+		}
 		const arrayBuffer = await response.arrayBuffer()
 		return Buffer.from(arrayBuffer)
 	}

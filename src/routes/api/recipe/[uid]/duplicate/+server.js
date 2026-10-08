@@ -1,5 +1,44 @@
+import fs from 'fs'
+import path from 'path'
 import { prisma } from '$lib/server/prisma'
 import { requireAuth, jsonSuccess, jsonError } from '$lib/server/authHelpers'
+
+const photoPath = (id, fileType) => path.join(process.cwd(), 'uploads/images', `${id}.${fileType}`)
+
+/**
+ * Copy a recipe's photos onto its duplicate. Photos with a local file get their own copy
+ * of the file (so the duplicate doesn't depend on the original or a remote site); photos
+ * that only exist at a remote URL are copied as URL-only, as before.
+ *
+ * @param {Array<{ id: string, url: string | null, fileType: string | null, isMain: boolean | null }>} photos - main photo first
+ * @param {string} newRecipeUid
+ */
+async function copyPhotos(photos, newRecipeUid) {
+	let mainAssigned = false
+	for (const photo of photos) {
+		if (!photo.fileType) continue
+		const hasLocalFile = fs.existsSync(photoPath(photo.id, photo.fileType))
+		if (!hasLocalFile && !photo.url) continue
+
+		const isMain = !mainAssigned
+		mainAssigned = true
+		const copy = await prisma.recipePhoto.create({
+			data: { recipeUid: newRecipeUid, url: photo.url, fileType: photo.fileType, isMain }
+		})
+		if (hasLocalFile) {
+			try {
+				await fs.promises.copyFile(
+					photoPath(photo.id, photo.fileType),
+					photoPath(copy.id, photo.fileType)
+				)
+			} catch (err) {
+				console.warn(`Could not copy photo ${photo.id} for duplicate: ${err.message}`)
+				// Fall back to the remote URL if there is one, otherwise drop the row
+				if (!photo.url) await prisma.recipePhoto.delete({ where: { id: copy.id } })
+			}
+		}
+	}
+}
 
 export async function POST({ locals, params }) {
 	const user = requireAuth(locals)
@@ -12,6 +51,7 @@ export async function POST({ locals, params }) {
 				photos: {
 					orderBy: [{ isMain: 'desc' }, { id: 'asc' }],
 					select: {
+						id: true,
 						url: true,
 						fileType: true,
 						isMain: true
@@ -83,17 +123,7 @@ export async function POST({ locals, params }) {
 			}
 		})
 
-		const remotePhotos = recipe.photos.filter((photo) => photo.url)
-		if (remotePhotos.length > 0) {
-			await prisma.recipePhoto.createMany({
-				data: remotePhotos.map((photo, index) => ({
-					recipeUid: newRecipe.uid,
-					url: photo.url,
-					fileType: photo.fileType,
-					isMain: index === 0
-				}))
-			})
-		}
+		await copyPhotos(recipe.photos, newRecipe.uid)
 
 		return jsonSuccess({ uid: newRecipe.uid, code: 'recipe.msg.duplicated' })
 	} catch (err) {

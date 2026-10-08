@@ -218,11 +218,13 @@ export async function PUT({ request, locals, params, url }) {
 								extension,
 								!hasMainPhoto
 							)
-							await withTimeout(
+							const saved = await withTimeout(
 								() => processImage(recipeData.image_url, remotePhotoEntry.id, extension),
 								15000,
 								'remote image processing'
 							)
+							// processImage reports failure by returning false; don't keep a link-only photo
+							if (!saved) throw new Error('Image download or processing failed')
 							log('remote image processed', { photoId: remotePhotoEntry.id })
 						} catch (error) {
 							errorLog('Error saving remote image', {

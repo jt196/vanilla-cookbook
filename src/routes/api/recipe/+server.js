@@ -126,11 +126,13 @@ export async function POST({ request, locals, url }) {
 				let photoEntry
 				try {
 					photoEntry = await createRecipePhotoEntry(recipe.uid, image_url, extension, true)
-					await withTimeout(
+					const saved = await withTimeout(
 						() => processImage(image_url, photoEntry.id, extension),
 						15000,
 						'remote image processing'
 					)
+					// processImage reports failure by returning false; don't keep a link-only photo
+					if (!saved) throw new Error('Image download or processing failed')
 					log('remote image processed', { recipeUid: recipe.uid, photoId: photoEntry.id })
 				} catch (error) {
 					errorLog('Failed to process remote image', {

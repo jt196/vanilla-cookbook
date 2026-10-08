@@ -72,7 +72,7 @@ export async function GET({ params }) {
 	if (fs.existsSync(filePath)) {
 		const file = fs.readFileSync(filePath)
 		return new Response(file, {
-			headers: { 'Content-Type': `image/${photo.fileType}` }
+			headers: { 'Content-Type': `image/${photo.fileType === 'jpg' ? 'jpeg' : photo.fileType}` }
 		})
 	} else if (photo.url) {
 		const remote = await fetchAndCacheRemotePhoto(photo, filePath)
