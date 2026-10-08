@@ -18,6 +18,7 @@ export const load = async ({ locals, url, request }) => {
 		settings: locals.site.settings,
 		dbSeed: dbSeeded,
 		semanticEnabled: locals.site?.semantic?.enabled ?? false,
+		aiModelMissing: !!(locals.user?.isAdmin && locals.site?.ai?.modelMissing),
 		passwordRequirements: getPasswordRequirements(env),
 		passwordRequirementsDescription: getPasswordRequirementsDescription(env),
 		lang

@@ -33,6 +33,12 @@ export default {
     "thisProvider": "Deze provider",
     "version": "Versie:"
   },
+  "aiSetup": {
+    "modelMissingBanner": "AI staat aan, maar er is geen model gekozen, dus AI-functies werken niet.",
+    "openSiteSettings": "Kies er een in de site-instellingen",
+    "noModelAdmin": "Er is geen AI-model gekozen. Kies er een in de site-instellingen.",
+    "noModelUser": "AI is nog niet volledig ingesteld. Vraag de sitebeheerder om een AI-model te kiezen."
+  },
   "nav": {
     "allRecipes": "Alle recepten",
     "myRecipes": "Mijn recepten",

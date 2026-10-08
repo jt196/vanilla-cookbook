@@ -33,6 +33,12 @@ export default {
     "thisProvider": "Tento poskytovatel",
     "version": "Verze:"
   },
+  "aiSetup": {
+    "modelMissingBanner": "AI je zapnutá, ale není vybrán žádný model, takže funkce AI nebudou fungovat.",
+    "openSiteSettings": "Vyberte ho v nastavení webu",
+    "noModelAdmin": "Není vybrán žádný model AI. Vyberte ho v nastavení webu.",
+    "noModelUser": "AI zatím není plně nastavena. Požádejte správce webu, aby vybral model AI."
+  },
   "nav": {
     "allRecipes": "Všechny recepty",
     "myRecipes": "Moje recepty",

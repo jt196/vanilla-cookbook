@@ -33,6 +33,12 @@ export default {
     "thisProvider": "Penyedia ini",
     "version": "Versi:"
   },
+  "aiSetup": {
+    "modelMissingBanner": "AI sudah aktif tetapi belum ada model yang dipilih, jadi fitur AI tidak akan berfungsi.",
+    "openSiteSettings": "Pilih satu di Pengaturan Situs",
+    "noModelAdmin": "Belum ada model AI yang dipilih. Pilih satu di Pengaturan Situs.",
+    "noModelUser": "AI belum sepenuhnya disiapkan. Minta admin situs untuk memilih model AI."
+  },
   "nav": {
     "allRecipes": "Semua Resep",
     "myRecipes": "Resep Saya",

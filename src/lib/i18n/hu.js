@@ -33,6 +33,12 @@ export default {
     "thisProvider": "Ez a szolgáltató",
     "version": "Verzió:"
   },
+  "aiSetup": {
+    "modelMissingBanner": "Az MI be van kapcsolva, de nincs kiválasztott modell, ezért az MI-funkciók nem fognak működni.",
+    "openSiteSettings": "Válasszon egyet a webhelybeállításokban",
+    "noModelAdmin": "Nincs kiválasztott MI-modell. Válasszon egyet a webhelybeállításokban.",
+    "noModelUser": "Az MI még nincs teljesen beállítva. Kérje meg a webhely adminisztrátorát, hogy válasszon MI-modellt."
+  },
   "nav": {
     "allRecipes": "Összes recept",
     "myRecipes": "Receptjeim",
