@@ -1,3 +1,4 @@
+import { describe, expect, it, beforeAll, afterAll } from 'vitest'
 import {
 	sortByKeyGeneric,
 	sortByDate,
@@ -24,8 +25,6 @@ import {
 	convertToMinutes,
 	convertMinutesToTime
 } from '$lib/utils/dateTime.js'
-
-/* global describe, expect, it, beforeAll, afterAll */
 
 describe('Sorting functions', () => {
 	const sampleData = [

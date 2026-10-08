@@ -184,7 +184,7 @@ export const handle = async ({ event, resolve }) => {
 			provider: semanticProvider,
 			availableProviders: semanticProviderOptions,
 			selectedProvider: preferredSemanticProvider,
-			selectedProviderConfigured: !!preferredSemanticProvider
+			selectedProviderConfigured: preferredSemanticProvider
 				? semanticProviderOptions.includes(preferredSemanticProvider)
 				: false,
 			model: semanticEmbeddingModel

@@ -71,8 +71,7 @@
 				{displayDryMatch}
 				{displayOriginal}
 				{selectedSystem}
-				userLanguage={user?.language || 'eng'}
-			/>
+				userLanguage={user?.language || 'eng'} />
 		{/each}
 	</ul>
 
@@ -124,8 +123,7 @@
 				color="primary"
 				size="sm"
 				class={originalSystem === 'metric' ? 'ring-2 ring-primary' : ''}
-				onclick={() => onSelectedSystemChange('metric')}
-			>
+				onclick={() => onSelectedSystemChange('metric')}>
 				{$t('recipeView.systemMetric')}
 			</Button>
 			<Button
@@ -133,8 +131,7 @@
 				color="primary"
 				size="sm"
 				class={originalSystem === 'americanVolumetric' ? 'ring-2 ring-primary' : ''}
-				onclick={() => onSelectedSystemChange('americanVolumetric')}
-			>
+				onclick={() => onSelectedSystemChange('americanVolumetric')}>
 				{$t('recipeView.systemUsVol')}
 			</Button>
 			<Button
@@ -142,8 +139,7 @@
 				color="primary"
 				size="sm"
 				class={originalSystem === 'imperial' ? 'ring-2 ring-primary' : ''}
-				onclick={() => onSelectedSystemChange('imperial')}
-			>
+				onclick={() => onSelectedSystemChange('imperial')}>
 				{$t('recipeView.systemImperial')}
 			</Button>
 		</div>
@@ -155,8 +151,7 @@
 			color="primary"
 			size="sm"
 			class="flex-1"
-			onclick={() => (displayOriginal = !displayOriginal)}
-		>
+			onclick={() => (displayOriginal = !displayOriginal)}>
 			{$t('recipeView.toggleOriginal')}
 		</Button>
 		{#if sanitizedIngredients.some((item) => item.additional)}
@@ -166,8 +161,7 @@
 				size="sm"
 				class="flex-1"
 				disabled={displayOriginal}
-				onclick={() => (displayExtra = !displayExtra)}
-			>
+				onclick={() => (displayExtra = !displayExtra)}>
 				{$t('recipeView.toggleExtra')}
 			</Button>
 		{/if}
@@ -177,8 +171,7 @@
 			size="sm"
 			class="flex-1"
 			disabled={displayOriginal || !isVolumetricConversion}
-			onclick={() => (displayDryMatch = !displayDryMatch)}
-		>
+			onclick={() => (displayDryMatch = !displayDryMatch)}>
 			{$t('recipeView.toggleMatch')}
 		</Button>
 	</div>

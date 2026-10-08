@@ -55,8 +55,7 @@
 					return async ({ update }) => {
 						await update()
 					}
-				}}
-			>
+				}}>
 				<Input
 					type="text"
 					id="username"
@@ -64,8 +63,7 @@
 					name="username"
 					bind:value={username}
 					label={$t('auth.username')}
-					required
-				/>
+					required />
 
 				<div>
 					<Input
@@ -75,15 +73,13 @@
 						name="email"
 						bind:value={email}
 						label={$t('auth.email')}
-						required
-					/>
+						required />
 					<ValidationMessage
 						message={emailValidation?.message}
 						messageCode={emailValidation?.messageCode}
 						isValid={emailValidation?.isValid}
 						isError={!emailValidation?.isValid}
-						hidden={!emailValidation?.message}
-					/>
+						hidden={!emailValidation?.message} />
 				</div>
 
 				<div>
@@ -97,8 +93,7 @@
 						name="password"
 						bind:value={password}
 						label={$t('auth.password')}
-						required
-					/>
+						required />
 				</div>
 
 				<div>
@@ -108,16 +103,14 @@
 						name="passwordConfirm"
 						bind:value={passwordConfirm}
 						label={$t('auth.confirmPassword')}
-						required
-					/>
+						required />
 					<ValidationMessage
 						message={passwordValidation?.message}
 						messageCode={passwordValidation?.messageCode}
 						messageVars={passwordValidation?.messageVars}
 						isError={!passwordValidation?.isValid}
 						isValid={passwordValidation?.isValid}
-						hidden={!passwordValidation?.message}
-					/>
+						hidden={!passwordValidation?.message} />
 				</div>
 
 				<Checkbox
@@ -125,15 +118,12 @@
 					bind:checked={seedRecipes}
 					legend={$t('admin.users.seedRecipes')}
 					size="sm"
-					color="primary"
-				>
-					{$t('auth.seedAccount')}</Checkbox
-				>
+					color="primary">
+					{$t('auth.seedAccount')}</Checkbox>
 
 				<div class="card-actions justify-end mt-6">
 					<Button type="submit" disabled={isSubmitDisabled} class="w-full"
-						>{$t('auth.registerBtn')}</Button
-					>
+						>{$t('auth.registerBtn')}</Button>
 				</div>
 			</form>
 
@@ -142,8 +132,7 @@
 				messageCode={form?.messageCode}
 				messageVars={form?.messageVars}
 				type="error"
-				inline={true}
-			/>
+				inline={true} />
 
 			<div class="divider"></div>
 

@@ -354,6 +354,7 @@ export async function GET({ params, locals }) {
 		}
 
 		// Exclude embedding fields - they're large and not needed for display
+		// eslint-disable-next-line no-unused-vars
 		const { embedding, embeddingModel, embeddingVersion, ...recipeWithoutEmbedding } = recipe
 		return jsonSuccess({ ...recipeWithoutEmbedding, on_favorites: favourited, duplicatedByViewer })
 	} catch (err) {

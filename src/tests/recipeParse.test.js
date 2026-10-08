@@ -1,11 +1,10 @@
+import { describe, expect, it, beforeEach, afterEach } from 'vitest'
 import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import { loadCompatibilityManifest } from '$lib/utils/parse/compatibility/index.js'
 import { mockFetchForURL } from '$lib/utils/parse/parseTesting.js'
 import { parseHTML, parseURL } from '$lib/utils/parse/recipeParse.js'
-
-/* global describe, expect, it, beforeEach, afterEach */
 
 let originalFetch
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -104,7 +103,9 @@ describe('parseURL function', () => {
 		expect(recipe.name).toBe("Chef John's Fresh Salmon Cakes")
 		expect(recipe.description).toBe('Fresh salmon cakes with capers and panko.')
 		expect(recipe.ingredients).toEqual(['1 tablespoon olive oil', '1 pound salmon'])
-		expect(recipe.instructions).toEqual(['This stale instruction should be replaced only if missing.'])
+		expect(recipe.instructions).toEqual([
+			'This stale instruction should be replaced only if missing.'
+		])
 	})
 
 	it('parses nested HowToSection instructions used by Chefkoch', async () => {
@@ -187,9 +188,7 @@ describe('parseURL function', () => {
 		expect(recipe.videoUrl).toBeUndefined()
 	})
 
-	it(
-		'parses every saved HTML fixture without throwing',
-		async () => {
+	it('parses every saved HTML fixture without throwing', async () => {
 		const fixtureFiles = fs
 			.readdirSync(fixtureDirectory)
 			.filter((file) => file.endsWith('.html'))
@@ -203,9 +202,7 @@ describe('parseURL function', () => {
 
 			await expect(parseHTML(html, canonicalUrl)).resolves.toBeDefined()
 		}
-		},
-		15000
-	)
+	}, 15000)
 })
 
 function inferFixtureUrl(html) {

@@ -11,7 +11,7 @@ function normalizeText(value) {
 		.normalize('NFKD')
 		.replace(/[\u0300-\u036F]/g, '')
 		.toLowerCase()
-		.replace(/[()\[\]{}]/g, ' ')
+		.replace(/[()[\]{}]/g, ' ')
 		.replace(/\s+/g, ' ')
 		.trim()
 }

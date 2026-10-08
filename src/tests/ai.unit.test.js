@@ -328,9 +328,11 @@ describe('translateRecipeWithLLM', () => {
 		vi.stubEnv('LLM_TEXT_MODEL', 'test-text-model')
 		vi.spyOn(console, 'error').mockImplementation(() => {})
 		vi.spyOn(console, 'log').mockImplementation(() => {})
-		ChatOpenAI.mockImplementation(() => ({
-			invoke: vi.fn().mockResolvedValue({ content: JSON.stringify(translatedRecipe) })
-		}))
+		ChatOpenAI.mockImplementation(function () {
+			return {
+				invoke: vi.fn().mockResolvedValue({ content: JSON.stringify(translatedRecipe) })
+			}
+		})
 	})
 
 	afterEach(() => {
@@ -364,9 +366,11 @@ describe('extractRecipeWithLLM', () => {
 		vi.stubEnv('LLM_TEXT_MODEL', 'test-text-model')
 		vi.spyOn(console, 'error').mockImplementation(() => {})
 		vi.spyOn(console, 'log').mockImplementation(() => {})
-		ChatOpenAI.mockImplementation(() => ({
-			invoke: vi.fn().mockResolvedValue({ content: JSON.stringify(extractedRecipe) })
-		}))
+		ChatOpenAI.mockImplementation(function () {
+			return {
+				invoke: vi.fn().mockResolvedValue({ content: JSON.stringify(extractedRecipe) })
+			}
+		})
 	})
 
 	afterEach(() => {
@@ -415,9 +419,11 @@ describe('generateRecipeWithLLM', () => {
 		vi.stubEnv('LLM_TEXT_MODEL', 'test-text-model')
 		vi.spyOn(console, 'error').mockImplementation(() => {})
 		vi.spyOn(console, 'log').mockImplementation(() => {})
-		ChatOpenAI.mockImplementation(() => ({
-			invoke: vi.fn().mockResolvedValue({ content: JSON.stringify(generatedRecipe) })
-		}))
+		ChatOpenAI.mockImplementation(function () {
+			return {
+				invoke: vi.fn().mockResolvedValue({ content: JSON.stringify(generatedRecipe) })
+			}
+		})
 	})
 
 	afterEach(() => {

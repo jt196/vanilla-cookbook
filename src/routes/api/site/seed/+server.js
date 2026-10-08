@@ -1,5 +1,4 @@
 // src/routes/api/site/seed/+server.js
-import { json } from '@sveltejs/kit'
 import { dbExists, seedRecipes } from '$lib/utils/seed/seedHelpers'
 import { seedIngredients } from '$lib/utils/seed/seedIng'
 import { execSync } from 'child_process'

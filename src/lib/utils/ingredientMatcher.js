@@ -156,7 +156,7 @@ export function matchIngredients(text, ingredients) {
 	let result = text
 
 	// Process each ingredient (longest first)
-	for (const { idx, name, variants } of ingredientData) {
+	for (const { variants } of ingredientData) {
 		// Try each variant (singular and plural forms)
 		for (const variant of variants) {
 			// Build regex with word boundaries

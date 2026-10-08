@@ -13,10 +13,6 @@
 		 */
 		selected = $bindable(),
 		/**
-		 * @type {string}
-		 */
-		label = '',
-		/**
 		 * @type {'xs' | 'sm' | 'md' | 'lg' | 'xl'}
 		 */
 		size = 'md',

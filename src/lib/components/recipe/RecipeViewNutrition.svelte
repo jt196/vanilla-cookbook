@@ -56,8 +56,7 @@
 							<TableCell
 								>{typeof entry.quantity === 'number'
 									? `${entry.quantity}${entry.unit ? ` ${entry.unit}` : ''}`
-									: entry.raw}</TableCell
-							>
+									: entry.raw}</TableCell>
 							{#if hasNotes}
 								<TableCell>{entry.note || '-'}</TableCell>
 							{/if}
@@ -73,8 +72,7 @@
 							type="button"
 							class="btn btn-soft btn-secondary btn-xs"
 							onclick={onCleanup}
-							disabled={cleanupInProgress}
-						>
+							disabled={cleanupInProgress}>
 							{cleanupInProgress ? $t('recipeForm.cleaning') : $t('recipeForm.cleanNutrition')}
 						</button>
 					{:else if recipeUid}

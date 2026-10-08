@@ -33,8 +33,7 @@
 						{viewerUserId}
 						{recipeFavourited}
 						{recipeRatingChanged}
-						{onDuplicate}
-					/>
+						{onDuplicate} />
 				{/snippet}
 			</VirtualList>
 		{/key}
@@ -42,15 +41,14 @@
 			<p class="text-sm text-base-content/70">Displaying Recipes {start}-{end}</p>
 		</div>
 	{:else}
-		{#each filteredRecipes as item, i (item.uid)}
+		{#each filteredRecipes as item (item.uid)}
 			<RecipeCard
 				{item}
 				{viewMode}
 				{viewerUserId}
 				{recipeFavourited}
 				{recipeRatingChanged}
-				{onDuplicate}
-			/>
+				{onDuplicate} />
 		{/each}
 	{/if}
 </div>

@@ -1,7 +1,6 @@
+import { expect, it, describe } from 'vitest'
 import '@testing-library/jest-dom'
 import { getSanitizedHTML } from '$lib/utils/render.js'
-
-/* global expect, it, describe */
 
 describe('getSanitizedHTML function', () => {
 	it('should parse markdown bold tags correctly', async () => {

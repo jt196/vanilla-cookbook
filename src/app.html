@@ -1,37 +1,35 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width" />
 
-<head>
-	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width" />
+		<!-- Apply user's preferred theme before Svelte hydrates -->
+		<script>
+			try {
+				const stored = localStorage.getItem('theme')
+				const prefersDark = window.matchMedia?.('(prefers-color-scheme: dark)').matches
 
-	<!-- Apply user's preferred theme before Svelte hydrates -->
-	<script>
-		try {
-			const stored = localStorage.getItem('theme')
-			const prefersDark = window.matchMedia?.('(prefers-color-scheme: dark)').matches
+				const LIGHT = 'light'
+				const DARK = 'dracula'
 
-			const LIGHT = 'light'
-			const DARK = 'dracula'
+				const normalize = (value) => {
+					if (value === LIGHT) return LIGHT
+					if (value === DARK || value === 'dark') return DARK
+					return LIGHT
+				}
 
-			const normalize = (value) => {
-				if (value === LIGHT) return LIGHT
-				if (value === DARK || value === 'dark') return DARK
-				return LIGHT
+				const theme = normalize(stored || (prefersDark ? DARK : LIGHT))
+				document.documentElement.setAttribute('data-theme', theme)
+			} catch (e) {
+				document.documentElement.setAttribute('data-theme', 'dracula')
 			}
+		</script>
 
-			const theme = normalize(stored || (prefersDark ? DARK : LIGHT))
-			document.documentElement.setAttribute('data-theme', theme)
-		} catch (e) {
-			document.documentElement.setAttribute('data-theme', 'dracula')
-		}
-	</script>
+		%sveltekit.head%
+	</head>
 
-	%sveltekit.head%
-</head>
-
-<body data-sveltekit-preload-data="hover">
-	<div style="display: contents">%sveltekit.body%</div>
-</body>
-
+	<body data-sveltekit-preload-data="hover">
+		<div style="display: contents">%sveltekit.body%</div>
+	</body>
 </html>

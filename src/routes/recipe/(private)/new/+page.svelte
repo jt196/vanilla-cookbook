@@ -166,7 +166,6 @@
 		event.preventDefault()
 		saving = true
 		console.log('[recipe:new] Starting save, recipe name:', recipe?.name)
-		const tFn = get(t)
 
 		const formData = new FormData()
 		formData.append('recipe', JSON.stringify({ ...recipe, saveImageUrl }))
@@ -211,8 +210,7 @@
 	{initialMode}
 	{imageAllowed}
 	{userUnits}
-	{userLanguage}
-/>
+	{userLanguage} />
 
 <RecipeForm
 	bind:recipe
@@ -227,16 +225,14 @@
 	{userLanguage}
 	{selectedFiles}
 	bind:saveImageUrl
-	onSelectedFilesChange={handleSelectedFilesChange}
-/>
+	onSelectedFilesChange={handleSelectedFilesChange} />
 
 {#if feedbackMessage}
 	<FeedbackMessage
 		message={feedbackMessage}
 		messageCode={feedbackCode}
 		type={feedbackType}
-		timeout={4000}
-	/>
+		timeout={4000} />
 {/if}
 
 <Spinner visible={saving} spinnerContent={$t('recipeNew.saving')} />

@@ -74,8 +74,7 @@
 		if (!closeOnEscape) {
 			e.preventDefault()
 		}
-	}}
->
+	}}>
 	<div class="modal-box {className}">
 		{@render children()}
 	</div>
@@ -86,8 +85,7 @@
 			role="button"
 			tabindex="-1"
 			onclick={handleBackdropClick}
-			onkeydown={(e) => e.key === 'Enter' && handleBackdropClick()}
-		>
+			onkeydown={(e) => e.key === 'Enter' && handleBackdropClick()}>
 			<span class="sr-only">{$t('dialog.close')}</span>
 		</div>
 	{/if}

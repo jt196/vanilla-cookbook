@@ -17,7 +17,7 @@ import {
 import { promises as fsPromises } from 'fs'
 import { processImage } from '$lib/utils/image/imageBackend'
 
-config()
+config({ quiet: true })
 
 const BASE_URL = 'https://www.paprikaapp.com/api/v1/sync/'
 

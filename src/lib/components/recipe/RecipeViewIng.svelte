@@ -170,8 +170,7 @@
 
 <div class="ingredient-line" class:highlight={isHighlighted}>
 	<button class="add-btn" onclick={() => handleAddToShoppingList(ingredient)}
-		><Shopping width="10px" fill="white" /></button
-	>
+		><Shopping width="10px" fill="white" /></button>
 	<!-- svelte-ignore a11y_click_events_have_key_events -->
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<div onclick={handleClick}>
@@ -184,8 +183,7 @@
 				<div data-heading>
 					<svelte:element
 						this={`h${markdownHeading.level}`}
-						class={getHeadingClasses(markdownHeading.level, ingredientIndex)}
-					>
+						class={getHeadingClasses(markdownHeading.level, ingredientIndex)}>
 						{markdownHeading.text}
 					</svelte:element>
 				</div>
@@ -220,8 +218,7 @@
 							{/if}
 							{#if displayDryMatch && ingredient.dryIngredient}
 								<i>
-									| {ingredient.dryIngredient.name} ({ingredient.dryIngredient.gramsPerCup} g/cup)</i
-								>
+									| {ingredient.dryIngredient.name} ({ingredient.dryIngredient.gramsPerCup} g/cup)</i>
 							{/if}
 							{#if ingredient.usedDefaultDensity === true}
 								*
@@ -241,6 +238,7 @@
 										ingredient.unit
 									)}
 									{#if ingredient.unit}
+										<!-- eslint-disable-next-line svelte/no-useless-mustaches -- forces a space -->
 										{' '}
 										{renderUnit(
 											ingredient,
@@ -259,8 +257,7 @@
 									onclick={(event) => {
 										event.stopPropagation()
 										showAlternatives = !showAlternatives
-									}}
-								>
+									}}>
 									<span class="chevron" aria-hidden="true">▸</span>
 								</button>
 							{/if}

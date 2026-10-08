@@ -1,5 +1,4 @@
 // src/lib/utils/import/photoHelpers.js
-import path from 'path'
 import fs from 'fs'
 import { prisma } from '$lib/server/prisma'
 import { processImage } from '$lib/utils/image/imageBackend'

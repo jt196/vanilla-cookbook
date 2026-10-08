@@ -42,7 +42,9 @@ export function getClientIp(event) {
 	if (xri) return xri
 	try {
 		if (typeof event.getClientAddress === 'function') return event.getClientAddress()
-	} catch {}
+	} catch {
+		// getClientAddress throws when the adapter can't determine an address
+	}
 	return 'unknown'
 }
 

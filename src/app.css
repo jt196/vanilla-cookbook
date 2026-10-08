@@ -1,7 +1,9 @@
 @import 'tailwindcss';
 @plugin '@tailwindcss/typography';
 @plugin 'daisyui' {
-	themes: light --default, dracula --prefersdark;
+	themes:
+		light --default,
+		dracula --prefersdark;
 }
 
 @source './**/*.{html,svelte}';
@@ -70,5 +72,4 @@
 	.auth-form {
 		@apply w-full max-w-md mx-auto;
 	}
-
 }

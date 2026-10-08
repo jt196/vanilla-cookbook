@@ -1,5 +1,5 @@
-import 'dotenv/config';
-import { defineConfig, env } from 'prisma/config';
+import 'dotenv/config'
+import { defineConfig, env } from 'prisma/config'
 
 export default defineConfig({
 	schema: 'prisma/schema.prisma',
@@ -12,4 +12,4 @@ export default defineConfig({
 	seed: {
 		script: 'node ./src/lib/utils/seed/seed.js'
 	}
-});
+})

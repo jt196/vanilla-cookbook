@@ -1,5 +1,5 @@
 import { ingredientParse } from '$lib/submodules/recipe-ingredient-parser/src/index.js'
-import he from 'he'
+import * as he from 'he'
 
 /**
  * Filters data based on a search string and a key.
@@ -307,7 +307,6 @@ function roundToTolerance(num, tolerance = 1e-10) {
  * @returns {string} - The string with unicode characters converted to ASCII.
  */
 export function unicodeToAscii(str) {
-	// eslint-disable-next-line no-misleading-character-class
 	return str
 		.normalize('NFKD')
 		.replace(/[\u0300-\u036F]/g, '')

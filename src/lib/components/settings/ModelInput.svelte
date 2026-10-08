@@ -73,8 +73,7 @@
 		placeholder={placeholder || $t('admin.site.modelPlaceholder')}
 		list={listId}
 		{disabled}
-		bind:value
-	/>
+		bind:value />
 	<datalist id={listId}>
 		{#each models as model (model.value)}
 			<option value={model.value}>{model.label}</option>

@@ -8,7 +8,7 @@ import {
 } from '$lib/utils/import/importHelpers.js'
 import { importPhotosForPairs } from '$lib/utils/import/photoHelpers.js'
 import { parse } from 'node-html-parser'
-import he from 'he'
+import * as he from 'he'
 
 // ---------- tiny html helpers ----------
 const txt = (n) => (n ? he.decode(String(n.text || n.textContent || '').trim()) : '')

@@ -28,15 +28,13 @@
 	method="POST"
 	action="?/importRecipes"
 	class="flex flex-col gap-4 w-full md:w-2/3 lg:w-1/2"
-	enctype="multipart/form-data"
->
+	enctype="multipart/form-data">
 	<Dropdown
 		name="type"
 		legend={$t('importPage.migrationType')}
 		options={dropdownOptions}
 		bind:selected={selectedType}
-		optionalLabel={info}
-	/>
+		optionalLabel={info} />
 
 	<FileInput id="file" name="file" label={$t('importPage.file')} {accept} required />
 
@@ -45,19 +43,16 @@
 		bind:checked={isPublic}
 		legend={$t('importPage.recipePrivacy')}
 		size="sm"
-		color="primary"
-	>
+		color="primary">
 		{isPublic ? $t('importPage.importPublic') : $t('importPage.importPrivate')}
 	</Checkbox>
 
 	<Button type="submit" class="self-start w-auto" aria-busy={busy} disabled={busy}
-		>{$t('importPage.importAction')}</Button
-	>
+		>{$t('importPage.importAction')}</Button>
 </form>
 
 <FeedbackMessage
 	message={form?.message || form?.error || ''}
 	messageCode={form?.messageCode}
 	messageVars={form?.messageVars}
-	inline
-/>
+	inline />

@@ -203,17 +203,13 @@
 		<TableRow>
 			<TableCell tag="th" scope="col">{$t('admin.users.username')}</TableCell>
 			<TableCell tag="th" scope="col" class="hidden sm:table-cell"
-				>{$t('admin.users.email')}</TableCell
-			>
+				>{$t('admin.users.email')}</TableCell>
 			<TableCell tag="th" scope="col" class="hidden sm:table-cell"
-				>{$t('admin.users.recipes')}</TableCell
-			>
+				>{$t('admin.users.recipes')}</TableCell>
 			<TableCell tag="th" scope="col" class="hidden sm:table-cell"
-				>{$t('admin.users.adminCol')}</TableCell
-			>
+				>{$t('admin.users.adminCol')}</TableCell>
 			<TableCell tag="th" scope="col" class="hidden sm:table-cell"
-				>{$t('admin.users.rootCol')}</TableCell
-			>
+				>{$t('admin.users.rootCol')}</TableCell>
 			<TableCell tag="th" scope="col">{$t('admin.users.editCol')}</TableCell>
 			<TableCell tag="th" scope="col">{$t('admin.users.deleteCol')}</TableCell>
 		</TableRow>
@@ -225,8 +221,7 @@
 					>{user.username}
 					{#if user.id === currentAdminUserId}
 						<span class="you-label">{$t('admin.users.youLabel')}</span>
-					{/if}</TableCell
-				>
+					{/if}</TableCell>
 				<TableCell class="hidden sm:table-cell">{user.email}</TableCell>
 				<TableCell class="hidden sm:table-cell">
 					{#if user.recipesCount > 0}
@@ -242,8 +237,7 @@
 						style="outline"
 						size="sm"
 						onclick={() => openEditDialog(user)}
-						data-testid="edit-button"
-					>
+						data-testid="edit-button">
 						<Edit width="20px" fill="currentColor" />
 					</Button>
 				</TableCell>
@@ -254,8 +248,7 @@
 							color="error"
 							size="sm"
 							onclick={() => deleteUser(user.id)}
-							data-testid="delete-button"
-						>
+							data-testid="delete-button">
 							<Delete width="20px" fill="currentColor" />
 						</Button>
 					{/if}
@@ -280,29 +273,25 @@
 			class="tooltip"
 			data-tip={$t('admin.users.usernameNotEditable')}
 			disabled={isEditMode}
-			bind:value={editingUser.username}
-		/>
+			bind:value={editingUser.username} />
 		<Input
 			type="email"
 			id="email"
 			name="email"
 			label={$t('admin.users.email')}
-			bind:value={editingUser.email}
-		/>
+			bind:value={editingUser.email} />
 		<ValidationMessage
 			message={emailValidation?.message}
 			messageCode={emailValidation?.messageCode}
 			isValid={emailValidation?.isValid}
 			isError={!emailValidation?.isValid}
-			hidden={!emailValidation?.message}
-		/>
+			hidden={!emailValidation?.message} />
 		<Input
 			type="password"
 			id="password"
 			name="password"
 			label={$t('auth.password')}
-			bind:value={password}
-		/>
+			bind:value={password} />
 		{#if passwordRequirementsDescription}
 			<p class="text-sm text-base-content/70">{passwordRequirementsDescription}</p>
 		{/if}
@@ -311,24 +300,21 @@
 			id="passwordConfirm"
 			name="passwordConfirm"
 			label={$t('auth.confirmPassword')}
-			bind:value={passwordConfirm}
-		/>
+			bind:value={passwordConfirm} />
 		<ValidationMessage
 			message={passwordValidation?.message}
 			messageCode={passwordValidation?.messageCode}
 			messageVars={passwordValidation?.messageVars}
 			isValid={passwordValidation?.isValid}
 			isError={!passwordValidation?.isValid}
-			hidden={!passwordValidation?.message}
-		/>
+			hidden={!passwordValidation?.message} />
 		{#if !isEditMode || !editingUser.isAdmin || adminCount > 1}
 			<Checkbox
 				name="Admin"
 				bind:checked={editingUser.isAdmin}
 				legend={$t('admin.users.adminCol')}
 				size="sm"
-				color="primary"
-			>
+				color="primary">
 				{editingUser.isAdmin ? $t('admin.users.adminRights') : $t('admin.users.standardRights')}
 			</Checkbox>
 		{/if}
@@ -338,8 +324,7 @@
 				bind:checked={editingUser.userSeed}
 				legend={$t('admin.users.seedRecipes')}
 				size="sm"
-				color="neutral"
-			>
+				color="neutral">
 				{editingUser.userSeed ? $t('admin.users.seedYes') : $t('admin.users.seedNo')}
 			</Checkbox>
 		{/if}
@@ -355,8 +340,7 @@
 <ConfirmationDialog
 	bind:isOpen={showDeleteConfirm}
 	onClose={() => (showDeleteConfirm = false)}
-	onConfirm={confirmDeleteUser}
->
+	onConfirm={confirmDeleteUser}>
 	{#snippet content()}
 		<h3 class="font-bold text-lg">{$t('admin.users.deleteTitle')}</h3>
 		<p class="py-4">{$t('admin.users.confirmDelete')}</p>

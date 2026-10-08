@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import {
 	isYouTubeUrl,
 	isBlockedVideoUrl,
@@ -7,8 +7,6 @@ import {
 	fetchYouTubeDescription,
 	fetchYouTubeTranscript
 } from '$lib/utils/parse/videoHelpers'
-
-/* global describe, it, expect */
 
 // ─── Pure function unit tests ─────────────────────────────────────────────────
 
@@ -36,13 +34,17 @@ describe('isYouTubeUrl', () => {
 
 describe('isBlockedVideoUrl', () => {
 	it('detects instagram.com', () => {
-		expect(isBlockedVideoUrl('https://www.instagram.com/p/abc123')).toEqual({ platform: 'instagram' })
+		expect(isBlockedVideoUrl('https://www.instagram.com/p/abc123')).toEqual({
+			platform: 'instagram'
+		})
 	})
 	it('detects instagram.com without www', () => {
 		expect(isBlockedVideoUrl('https://instagram.com/reel/abc')).toEqual({ platform: 'instagram' })
 	})
 	it('detects tiktok.com', () => {
-		expect(isBlockedVideoUrl('https://www.tiktok.com/@user/video/123')).toEqual({ platform: 'tiktok' })
+		expect(isBlockedVideoUrl('https://www.tiktok.com/@user/video/123')).toEqual({
+			platform: 'tiktok'
+		})
 	})
 	it('returns false for YouTube', () => {
 		expect(isBlockedVideoUrl('https://www.youtube.com/watch?v=abc')).toBe(false)
@@ -135,7 +137,9 @@ describe.skipIf(SKIP)('fetchYouTubeTranscript (network)', () => {
 			expect(typeof transcript).toBe('string')
 			expect(transcript.length).toBeGreaterThan(50)
 		} else {
-			console.warn('Transcript not available for test video — YouTube may be blocking server-side fetch')
+			console.warn(
+				'Transcript not available for test video — YouTube may be blocking server-side fetch'
+			)
 		}
 	}, 20000)
 })

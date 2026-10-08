@@ -76,7 +76,10 @@
 	}
 </script>
 
-<button onclick={share} class="btn btn-soft btn-sm tooltip btn-primary" data-tip={$t('recipe.shareRecipe')}>
+<button
+	onclick={share}
+	class="btn btn-soft btn-sm tooltip btn-primary"
+	data-tip={$t('recipe.shareRecipe')}>
 	<Share width="20px" height="20px" fill="currentColor" />
 </button>
 
@@ -87,6 +90,7 @@
 	<p class="py-4">{$t('recipe.makePublicDesc')}</p>
 	<div class="modal-action">
 		<button class="btn btn-outline" onclick={cancelShare}>{$t('common.cancel')}</button>
-		<button class="btn btn-primary" onclick={confirmMakePublic}>{$t('recipe.makePublicShare')}</button>
+		<button class="btn btn-primary" onclick={confirmMakePublic}
+			>{$t('recipe.makePublicShare')}</button>
 	</div>
 </Dialog>

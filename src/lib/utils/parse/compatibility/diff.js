@@ -1,7 +1,11 @@
 import fs from 'fs'
 import path from 'path'
 import { parse } from 'node-html-parser'
-import { COMPATIBILITY_DEFAULTS, loadCompatibilityManifest, saveCompatibilityJson } from './index.js'
+import {
+	COMPATIBILITY_DEFAULTS,
+	loadCompatibilityManifest,
+	saveCompatibilityJson
+} from './index.js'
 
 export const COMPATIBILITY_DIFF_DEFAULTS = {
 	outputPath: 'src/lib/data/compatibility/recipe-scrapers.diff.json',
@@ -45,7 +49,9 @@ export function parseRecipeScrapersSupportedSitesHtml(html = '') {
 export async function fetchRecipeScrapersSupportedSites(fetcher = fetch) {
 	const response = await fetcher(COMPATIBILITY_DIFF_DEFAULTS.sourceUrl)
 	if (!response.ok) {
-		throw new Error(`Recipe-scrapers source returned HTTP ${response.status} ${response.statusText}`)
+		throw new Error(
+			`Recipe-scrapers source returned HTTP ${response.status} ${response.statusText}`
+		)
 	}
 	const html = await response.text()
 	return parseRecipeScrapersSupportedSitesHtml(html)
@@ -70,7 +76,9 @@ export function buildCompatibilityDiff({
 		.map((domain) => {
 			const existingEntries = manifestBySite.get(domain) || []
 			const hasFixture = existingEntries.some((entry) =>
-				fs.existsSync(path.resolve(process.cwd(), fixtureDirectory, entry.expected_fixture_filename))
+				fs.existsSync(
+					path.resolve(process.cwd(), fixtureDirectory, entry.expected_fixture_filename)
+				)
 			)
 			const hasSiteConfig = existingEntries.some((entry) => Boolean(entry.has_site_config))
 

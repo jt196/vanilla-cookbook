@@ -133,15 +133,15 @@ describe('toOldUnitsFormat', () => {
 
 	it('should convert null grams to 0 for old format', () => {
 		const oldFormat = toOldUnitsFormat()
-		const cupUnit = oldFormat.find(u => u.names.includes('cup'))
+		const cupUnit = oldFormat.find((u) => u.names.includes('cup'))
 
 		expect(cupUnit.grams).toBe(0) // null → 0 for backwards compatibility
 	})
 
 	it('should preserve conversion metadata', () => {
 		const oldFormat = toOldUnitsFormat()
-		const gramUnit = oldFormat.find(u => u.names.includes('gram'))
-		const pinchUnit = oldFormat.find(u => u.names.includes('pinch'))
+		const gramUnit = oldFormat.find((u) => u.names.includes('gram'))
+		const pinchUnit = oldFormat.find((u) => u.names.includes('pinch'))
 
 		expect(gramUnit.grams).toBe(1)
 		expect(gramUnit.skipConversion).toBe(false)

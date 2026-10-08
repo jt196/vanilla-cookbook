@@ -115,10 +115,7 @@ export async function GET({ params, locals }) {
 		scrapeError: scrapeError?.message
 	})
 	const status = scrapeError?.message?.includes('Upstream site returned HTTP') ? 502 : 500
-	return jsonResponse(
-		{ message: scrapeError?.message || 'Could not scrape the recipe.' },
-		status
-	)
+	return jsonResponse({ message: scrapeError?.message || 'Could not scrape the recipe.' }, status)
 }
 
 function jsonResponse(data, status) {

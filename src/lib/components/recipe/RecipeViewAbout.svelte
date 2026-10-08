@@ -12,7 +12,8 @@
 	<h1 class="text-3xl md:text-4xl font-bold mb-4">{recipe?.name}</h1>
 
 	<InfoText class="my-2"
-		>{$t('recipe.created')} <span class="italic">{localDateAndTime(recipe.created)}</span></InfoText>
+		>{$t('recipe.created')}
+		<span class="italic">{localDateAndTime(recipe.created)}</span></InfoText>
 
 	{#if recipe?.source || recipe?.source_url || recipe?.parentRecipeId}
 		<InfoText class="my-2">
@@ -53,5 +54,4 @@
 	{#if scaledServings}
 		<p class="text-base font-medium my-2">{$t('recipe.servingsLabel')} {scaledServings}</p>
 	{/if}
-
 </div>

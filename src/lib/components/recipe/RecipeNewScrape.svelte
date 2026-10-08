@@ -1,5 +1,12 @@
 <script>
-	import { handleParse, handleScrape, handleImage, handleHTMLFile, handleYouTubeScrape, isYouTubeUrl } from '$lib/utils/parse/parseHelpersClient'
+	import {
+		handleParse,
+		handleScrape,
+		handleImage,
+		handleHTMLFile,
+		handleYouTubeScrape,
+		isYouTubeUrl
+	} from '$lib/utils/parse/parseHelpersClient'
 	import FeedbackMessage from '$lib/components/ui/FeedbackMessage.svelte'
 	import { defaultRecipe } from '$lib/utils/config'
 	import Input from '$lib/components/ui/Form/Input.svelte'
@@ -17,7 +24,6 @@
 		recipe = $bindable(),
 		apiKeyPresent = false,
 		aiEnabled = false,
-		imageAllowed = true,
 		initialMode = 'url',
 		userUnits = 'metric',
 		userLanguage = 'eng'
@@ -190,13 +196,11 @@
 			aria-label={$t('common.url')}
 			value="url"
 			bind:group={selectedMode}
-			checked={selectedMode === 'url'}
-		/>
+			checked={selectedMode === 'url'} />
 		<div class="tab-content bg-base-100 border-base-300 p-2 ml-0 mr-0">
 			<Input type="text" placeholder={$t('recipeNew.urlPlaceholder')} bind:value={url} />
 			<Button type="submit" class="w-auto self-start mt-2" disabled={isUrlEmpty}
-				>{$t('recipeNew.scrapeUrl')}</Button
-			>
+				>{$t('recipeNew.scrapeUrl')}</Button>
 		</div>
 
 		{#if textParsingAvailable || sharedText}
@@ -207,8 +211,7 @@
 				aria-label={$t('recipeNew.tabText')}
 				value="text"
 				bind:group={selectedMode}
-				checked={selectedMode === 'text'}
-			/>
+				checked={selectedMode === 'text'} />
 			<div class="tab-content bg-base-100 border-base-300 p-2 ml-0 mr-0">
 				{#if textParsingAvailable}
 					<div class="flex items-center gap-2 mb-2">
@@ -222,13 +225,11 @@
 					placeholder={textMode === 'prompt'
 						? $t('recipeNew.promptPlaceholder')
 						: $t('recipeNew.textPlaceholder')}
-					bind:value={sharedText}
-				/>
+					bind:value={sharedText} />
 				<Button
 					type="submit"
 					class="w-auto self-start  mt-2"
-					disabled={isTextEmpty || !textParsingAvailable}
-				>
+					disabled={isTextEmpty || !textParsingAvailable}>
 					{textParsingAvailable
 						? textMode === 'prompt'
 							? $t('recipeNew.generateRecipe')
@@ -236,8 +237,7 @@
 						: $t('recipeNew.aiNotEnabled')}
 				</Button>
 			</div>
-
-			{/if}
+		{/if}
 
 		<input
 			type="radio"
@@ -246,8 +246,7 @@
 			aria-label={$t('recipeNew.tabFile')}
 			value="file"
 			bind:group={selectedMode}
-			checked={selectedMode === 'file'}
-		/>
+			checked={selectedMode === 'file'} />
 		<div class="tab-content bg-base-100 border-base-300 p-2 ml-0 mr-0">
 			<FileInput
 				accept="image/*,.html"
@@ -271,13 +270,11 @@
 						}
 					}
 				}}
-				optionalLabel={$t('recipeNew.fileLimit', { max: maxImages })}
-			/>
+				optionalLabel={$t('recipeNew.fileLimit', { max: maxImages })} />
 			<Button
 				type="submit"
 				class="w-auto self-start mt-2"
-				disabled={isFileEmpty || (detectedFileMode === 'image' && !textParsingAvailable)}
-			>
+				disabled={isFileEmpty || (detectedFileMode === 'image' && !textParsingAvailable)}>
 				{#if detectedFileMode === 'html' && !isFileEmpty}
 					{$t('recipeNew.parseHtml')}
 				{:else if textParsingAvailable}
@@ -301,6 +298,5 @@
 		messageCode={feedbackCode}
 		type={feedbackType}
 		inline
-		timeout={4000}
-	/>
+		timeout={4000} />
 {/if}

@@ -37,27 +37,28 @@
 		onclick={() => adjust(-BIG_STEP)}
 		style="soft"
 		color="secondary"
-		aria-label={$t('scaleControl.decreaseFive')}>-5</Button
-	>
+		aria-label={$t('scaleControl.decreaseFive')}>-5</Button>
 	<Button
 		onclick={() => adjust(-SMALL_STEP)}
 		style="soft"
 		color="secondary"
-		aria-label={$t('scaleControl.decreaseOne')}>-1</Button
-	>
-	<Input type="number" value={displayValue} min={parseFloat((baseServings * MIN_SCALE).toFixed(2))} step="1" oninput={handleInput} />
+		aria-label={$t('scaleControl.decreaseOne')}>-1</Button>
+	<Input
+		type="number"
+		value={displayValue}
+		min={parseFloat((baseServings * MIN_SCALE).toFixed(2))}
+		step="1"
+		oninput={handleInput} />
 	<Button
 		onclick={() => adjust(SMALL_STEP)}
 		style="soft"
 		color="secondary"
-		aria-label={$t('scaleControl.increaseOne')}>+1</Button
-	>
+		aria-label={$t('scaleControl.increaseOne')}>+1</Button>
 	<Button
 		onclick={() => adjust(BIG_STEP)}
 		style="soft"
 		color="secondary"
-		aria-label={$t('scaleControl.increaseFive')}>+5</Button
-	>
+		aria-label={$t('scaleControl.increaseFive')}>+5</Button>
 </div>
 
 <style lang="scss">

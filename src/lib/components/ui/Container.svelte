@@ -1,12 +1,5 @@
 <script>
-	let {
-		/**
-		 * @type {'sm' | 'md' | 'lg' | 'xl' | 'full'}
-		 */
-		size = 'md',
-		class: className = '',
-		children
-	} = $props()
+	let { class: className = '', children } = $props()
 </script>
 
 <div class="container {className}">

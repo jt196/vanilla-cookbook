@@ -129,7 +129,10 @@
 									? 'text-success opacity-100'
 									: ''}"
 								data-tip={item.log?.length > 0
-									? $t(item.log.length === 1 ? 'recipe.cookedTimes_one' : 'recipe.cookedTimes_other', { count: item.log.length })
+									? $t(
+											item.log.length === 1 ? 'recipe.cookedTimes_one' : 'recipe.cookedTimes_other',
+											{ count: item.log.length }
+										)
 									: $t('recipe.neverCooked')}>
 								{#if item.log?.length > 1}
 									<span class="badge badge-success badge-xs text-success-content font-bold min-w-5"
@@ -162,31 +165,35 @@
 			</div>
 		{/snippet}
 
-		{#snippet children()}
-			{#if isOwnerView}
-				<div class="hidden md:block">
-					<StarRating
-						rating={item.rating}
-						editable={true}
-						ratingChanged={(newRating) => recipeRatingChanged?.(item.uid, newRating)} />
-				</div>
-				{#if lastCookedDate}
-					<p class="text-xs text-base-content/50 hidden md:block">
-						{$t('recipe.lastCooked')} {lastCookedDate.toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}
-					</p>
-				{/if}
-			{:else}
-				<p class="text-sm text-base-content/70 md:text-left">
-					{$t('common.by')}
-					{#if viewerUserId && item.userId === viewerUserId}
-						<a href="/user/{viewerUserId}/recipes" class="link link-primary font-medium">{$t('common.me')}</a>
-					{:else}
-						<a href="/user/{item.userId}/recipes" class="link link-primary">
-							{item.auth_user?.username ?? 'Unknown'}
-						</a>
-					{/if}
+		{#if isOwnerView}
+			<div class="hidden md:block">
+				<StarRating
+					rating={item.rating}
+					editable={true}
+					ratingChanged={(newRating) => recipeRatingChanged?.(item.uid, newRating)} />
+			</div>
+			{#if lastCookedDate}
+				<p class="text-xs text-base-content/50 hidden md:block">
+					{$t('recipe.lastCooked')}
+					{lastCookedDate.toLocaleDateString(undefined, {
+						day: 'numeric',
+						month: 'short',
+						year: 'numeric'
+					})}
 				</p>
 			{/if}
-		{/snippet}
+		{:else}
+			<p class="text-sm text-base-content/70 md:text-left">
+				{$t('common.by')}
+				{#if viewerUserId && item.userId === viewerUserId}
+					<a href="/user/{viewerUserId}/recipes" class="link link-primary font-medium"
+						>{$t('common.me')}</a>
+				{:else}
+					<a href="/user/{item.userId}/recipes" class="link link-primary">
+						{item.auth_user?.username ?? 'Unknown'}
+					</a>
+				{/if}
+			</p>
+		{/if}
 	</Card>
 </a>

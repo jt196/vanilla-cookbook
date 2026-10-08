@@ -11,10 +11,8 @@
 		{#snippet title()}
 			{item.username}
 		{/snippet}
-		{#snippet children()}
-			<p class="text-sm opacity-80">
-				{$t('users.publicRecipes')} <i>{item.publicRecipesCount}/{item.totalRecipesCount}</i>
-			</p>
-		{/snippet}
+		<p class="text-sm opacity-80">
+			{$t('users.publicRecipes')} <i>{item.publicRecipesCount}/{item.totalRecipesCount}</i>
+		</p>
 	</Card>
 </a>

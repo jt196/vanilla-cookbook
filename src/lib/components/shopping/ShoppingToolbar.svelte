@@ -40,11 +40,12 @@
 		{/if}
 	</Button>
 
-	<Button
-		onclick={onTogglePurchasedSort}
-		class="tooltip"
-		data-tip={$t('shopping.sortByCount')}>
-		<Check checked={sortByPurchased} width="20px" height="20px" fill={sortByPurchased ? '#4ade80' : 'white'} />
+	<Button onclick={onTogglePurchasedSort} class="tooltip" data-tip={$t('shopping.sortByCount')}>
+		<Check
+			checked={sortByPurchased}
+			width="20px"
+			height="20px"
+			fill={sortByPurchased ? '#4ade80' : 'white'} />
 	</Button>
 
 	<Button

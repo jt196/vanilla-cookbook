@@ -45,7 +45,7 @@ const [, , command, ...args] = process.argv
 ;(async () => {
 	try {
 		switch (command) {
-			case 'deleteUser':
+			case 'deleteUser': {
 				// Command: deleteUser
 				// Usage: pnpm node admin.js deleteUser <user-id>
 				if (!args[0]) {
@@ -57,8 +57,9 @@ const [, , command, ...args] = process.argv
 				const result = await deleteUser(userId)
 				console.log('Deleted user:', result)
 				break
+			}
 
-			case 'updatePassword':
+			case 'updatePassword': {
 				// Command: updatePassword
 				// Usage: pnpm node admin.js updatePassword <username> <new-password>
 				if (args.length < 2) {
@@ -70,6 +71,7 @@ const [, , command, ...args] = process.argv
 				await updatePassword(username, newPassword)
 				console.log(`Password updated for user: ${username}`)
 				break
+			}
 
 			case 'disconnect':
 				// Command: disconnect

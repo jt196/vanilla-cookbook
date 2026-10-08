@@ -81,7 +81,11 @@ export function isYouTubeUrl(url) {
  * @returns {Promise<Object>} Formatted recipe object with _source and _status
  * @throws If all three stages fail to find a recipe
  */
-export async function handleYouTubeScrape(event = null, url, { onProgress = () => {}, language = 'eng' } = {}) {
+export async function handleYouTubeScrape(
+	event = null,
+	url,
+	{ onProgress = () => {}, language = 'eng' } = {}
+) {
 	if (event) event.preventDefault()
 
 	async function callStage(stage) {

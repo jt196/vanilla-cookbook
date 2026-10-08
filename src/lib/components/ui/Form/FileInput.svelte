@@ -74,7 +74,7 @@
 		<input
 			type="file"
 			id={inputId}
-			name={name}
+			{name}
 			{accept}
 			{multiple}
 			{required}
@@ -97,7 +97,7 @@
 		<input
 			type="file"
 			id={inputId}
-			name={name}
+			{name}
 			{accept}
 			{multiple}
 			{required}

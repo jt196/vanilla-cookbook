@@ -17,12 +17,7 @@
 	} from '$lib/stores/recipeFilter'
 	import { t } from '$lib/stores/locale.js'
 
-	let {
-		viewOnly,
-		username,
-		viewMode = 'owner',
-		searchPending = false
-	} = $props()
+	let { viewOnly, username, viewMode = 'owner', searchPending = false } = $props()
 
 	const favouriteBtnClasses = $derived(
 		['tooltip', $favouriteFilter ? 'opacity-100 text-error' : 'opacity-60', 'hover:opacity-100']
@@ -82,8 +77,7 @@
 				size="md"
 				color="info"
 				class="pr-10"
-				useLabelAsPlaceholder={false}
-			/>
+				useLabelAsPlaceholder={false} />
 			{#if searchPending && $searchString?.trim()}
 				<Spinner
 					visible={true}
@@ -91,8 +85,7 @@
 					size="xs"
 					color="info"
 					spinnerContent={$t('filter.searching')}
-					inlineClass="absolute right-3 top-1/2 -translate-y-1/2"
-				/>
+					inlineClass="absolute right-3 top-1/2 -translate-y-1/2" />
 			{:else if $searchString?.trim()}
 				<Button
 					type="button"
@@ -101,8 +94,7 @@
 					color="info"
 					class="btn-circle absolute right-2 top-1/2 -translate-y-1/2"
 					onclick={clearSearch}
-					aria-label={$t('filter.clearSearch')}
-				>
+					aria-label={$t('filter.clearSearch')}>
 					×
 				</Button>
 			{/if}
@@ -112,55 +104,48 @@
 			align="end"
 			summaryClass="btn btn-md btn-outline btn-info shrink-0"
 			summaryAriaLabel={$t('filter.searchFields')}
-			contentClass="menu dropdown-content bg-base-100 rounded-box z-50 w-56 p-3 shadow-sm"
-		>
+			contentClass="menu dropdown-content bg-base-100 rounded-box z-50 w-56 p-3 shadow-sm">
 			{#snippet trigger()}
 				<Settings width="16px" height="16px" />
 				{#if $searchFields.length > 0}
 					<span class="badge badge-info badge-xs">{$searchFields.length}</span>
 				{/if}
 			{/snippet}
-			{#snippet children()}
-				<Checkbox
-					checked={hasField('name')}
-					onchange={() => toggleSearchField('name')}
-					color="info"
-					size="sm"
-					class="mb-1"
-					fullWidth={false}
-				>
-					{$t('filter.fieldName')}
-				</Checkbox>
-				<Checkbox
-					checked={hasField('ingredients')}
-					onchange={() => toggleSearchField('ingredients')}
-					color="info"
-					size="sm"
-					class="mb-1"
-					fullWidth={false}
-				>
-					{$t('filter.fieldIngredients')}
-				</Checkbox>
-				<Checkbox
-					checked={hasField('source')}
-					onchange={() => toggleSearchField('source')}
-					color="info"
-					size="sm"
-					class="mb-1"
-					fullWidth={false}
-				>
-					{$t('filter.fieldSource')}
-				</Checkbox>
-				<Checkbox
-					checked={hasField('notes')}
-					onchange={() => toggleSearchField('notes')}
-					color="info"
-					size="sm"
-					fullWidth={false}
-				>
-					{$t('filter.fieldNotes')}
-				</Checkbox>
-			{/snippet}
+			<Checkbox
+				checked={hasField('name')}
+				onchange={() => toggleSearchField('name')}
+				color="info"
+				size="sm"
+				class="mb-1"
+				fullWidth={false}>
+				{$t('filter.fieldName')}
+			</Checkbox>
+			<Checkbox
+				checked={hasField('ingredients')}
+				onchange={() => toggleSearchField('ingredients')}
+				color="info"
+				size="sm"
+				class="mb-1"
+				fullWidth={false}>
+				{$t('filter.fieldIngredients')}
+			</Checkbox>
+			<Checkbox
+				checked={hasField('source')}
+				onchange={() => toggleSearchField('source')}
+				color="info"
+				size="sm"
+				class="mb-1"
+				fullWidth={false}>
+				{$t('filter.fieldSource')}
+			</Checkbox>
+			<Checkbox
+				checked={hasField('notes')}
+				onchange={() => toggleSearchField('notes')}
+				color="info"
+				size="sm"
+				fullWidth={false}>
+				{$t('filter.fieldNotes')}
+			</Checkbox>
 		</DropdownMenu>
 
 		<Button
@@ -169,8 +154,7 @@
 			color="secondary"
 			onclick={() => ($favouriteFilter = !$favouriteFilter)}
 			class={`btn-square shrink-0 ${favouriteBtnClasses}`}
-			data-tip={$t('filter.filterFavourites')}
-		>
+			data-tip={$t('filter.filterFavourites')}>
 			<Favourite favourite={$favouriteFilter} width="20px" height="20px" fill="currentColor" />
 		</Button>
 
@@ -181,8 +165,7 @@
 				color="success"
 				onclick={() => ($cookedFilter = !$cookedFilter)}
 				class={`btn-square shrink-0 ${cookedBtnClasses}`}
-				data-tip={$t('filter.filterCooked')}
-			>
+				data-tip={$t('filter.filterCooked')}>
 				<Check checked={$cookedFilter} width="20px" height="20px" fill="currentColor" />
 			</Button>
 		{/if}
@@ -191,64 +174,54 @@
 			align="end"
 			summaryClass="btn btn-md btn-outline btn-info shrink-0"
 			summaryAriaLabel={$t('filter.sortOptions')}
-			contentClass="menu dropdown-content bg-base-100 rounded-box z-50 w-48 p-2 shadow-sm"
-		>
+			contentClass="menu dropdown-content bg-base-100 rounded-box z-50 w-48 p-2 shadow-sm">
 			{#snippet trigger()}
 				<SortAscDesc
 					sort={$sortState.direction}
-					propClass="h-4 w-4 fill-current text-info-content"
-				/>
+					propClass="h-4 w-4 fill-current text-info-content" />
 			{/snippet}
-			{#snippet children()}
+			<Button
+				type="button"
+				style={$sortState.key === 'created' && !!$sortState.direction ? 'standard' : 'ghost'}
+				class="justify-between"
+				size="sm"
+				color="info"
+				onclick={() => updateSort('created')}>
+				{$t('filter.sortAdded')}
+				<SortAscDesc sort={$sortState.key === 'created' ? $sortState.direction : null} />
+			</Button>
+			<Button
+				type="button"
+				style={$sortState.key === 'name' && !!$sortState.direction ? 'standard' : 'ghost'}
+				class="justify-between"
+				size="sm"
+				color="info"
+				onclick={() => updateSort('name')}>
+				{$t('filter.sortTitle')}
+				<SortAscDesc sort={$sortState.key === 'name' ? $sortState.direction : null} />
+			</Button>
+			{#if viewMode === 'owner'}
 				<Button
 					type="button"
-					style={$sortState.key === 'created' && !!$sortState.direction ? 'standard' : 'ghost'}
+					style={$sortState.key === 'rating' && !!$sortState.direction ? 'standard' : 'ghost'}
 					class="justify-between"
 					size="sm"
 					color="info"
-					onclick={() => updateSort('created')}
-				>
-					{$t('filter.sortAdded')}
-					<SortAscDesc sort={$sortState.key === 'created' ? $sortState.direction : null} />
+					onclick={() => updateSort('rating')}>
+					{$t('filter.sortRating')}
+					<SortAscDesc sort={$sortState.key === 'rating' ? $sortState.direction : null} />
 				</Button>
 				<Button
 					type="button"
-					style={$sortState.key === 'name' && !!$sortState.direction ? 'standard' : 'ghost'}
+					style={$sortState.key === 'lastCooked' && !!$sortState.direction ? 'standard' : 'ghost'}
 					class="justify-between"
 					size="sm"
 					color="info"
-					onclick={() => updateSort('name')}
-				>
-					{$t('filter.sortTitle')}
-					<SortAscDesc sort={$sortState.key === 'name' ? $sortState.direction : null} />
+					onclick={() => updateSort('lastCooked')}>
+					{$t('filter.sortCooked')}
+					<SortAscDesc sort={$sortState.key === 'lastCooked' ? $sortState.direction : null} />
 				</Button>
-				{#if viewMode === 'owner'}
-					<Button
-						type="button"
-						style={$sortState.key === 'rating' && !!$sortState.direction ? 'standard' : 'ghost'}
-						class="justify-between"
-						size="sm"
-						color="info"
-						onclick={() => updateSort('rating')}
-					>
-						{$t('filter.sortRating')}
-						<SortAscDesc sort={$sortState.key === 'rating' ? $sortState.direction : null} />
-					</Button>
-					<Button
-						type="button"
-						style={$sortState.key === 'lastCooked' && !!$sortState.direction
-							? 'standard'
-							: 'ghost'}
-						class="justify-between"
-						size="sm"
-						color="info"
-						onclick={() => updateSort('lastCooked')}
-					>
-						{$t('filter.sortCooked')}
-						<SortAscDesc sort={$sortState.key === 'lastCooked' ? $sortState.direction : null} />
-					</Button>
-				{/if}
-			{/snippet}
+			{/if}
 		</DropdownMenu>
 	</div>
 </div>

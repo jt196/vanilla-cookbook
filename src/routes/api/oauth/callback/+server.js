@@ -4,7 +4,7 @@ import { dev } from '$app/environment'
 import { prisma } from '$lib/server/prisma.js'
 import { auth } from '$lib/server/lucia.js'
 import { githubAuth, googleAuth } from '$lib/server/oauth.js'
-import { oidcEnabled, validateCallback as validateOidcCallback } from '$lib/server/oidc.js'
+import { validateCallback as validateOidcCallback } from '$lib/server/oidc.js'
 import { OAuthRequestError } from '@lucia-auth/oauth'
 
 // --- helpers ---
@@ -183,14 +183,10 @@ async function handleLegacyOauthCallback(provider, url, cookies, locals) {
 	// 3) not linked → try email match and link
 	if (!user) {
 		let email = null
-		let usernameBase = provider === 'github' ? 'gh' : 'gg'
-
 		if (provider === 'github') {
-			usernameBase = pa.githubUser?.login || 'gh'
 			email =
 				pa.githubUser?.email || (await getGithubVerifiedEmail(pa.githubTokens.accessToken)) || null
 		} else {
-			usernameBase = pa.googleUser?.name || pa.googleUser?.email?.split('@')[0] || 'gg'
 			if (pa.googleUser?.email && (pa.googleUser.email_verified ?? pa.googleUser.emailVerified)) {
 				email = pa.googleUser.email
 			} else {

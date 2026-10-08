@@ -30,15 +30,13 @@
 	<img
 		src="/api/recipe/image/{photo.id}"
 		alt={$t('photos.photoAlt', { name: recipeName })}
-		class="main-photo"
-	/>
+		class="main-photo" />
 {:else}
 	<button type="button" class="promote-btn" onclick={() => onSetMainPhoto(photo.id)}>
 		<img
 			src="/api/recipe/image/{photo.id}"
 			alt={$t('photos.setMainAlt', { name: recipeName })}
-			class="promotable-photo"
-		/>
+			class="promotable-photo" />
 	</button>
 {/if}
 <div class="photo-note">

@@ -1,3 +1,4 @@
+import { expect, it, describe, beforeEach, vi } from 'vitest'
 // NOTE: jest-dom adds handy assertions to Jest and it is recommended, but not required.
 import '@testing-library/jest-dom'
 import { sortState, searchFields } from '$lib/stores/recipeFilter'
@@ -9,12 +10,10 @@ import Scale from '$lib/components/ui/Scale.svelte'
 import RecipeFilter from '$lib/components/recipe/RecipeFilter.svelte'
 import RecipeList from '$lib/components/recipe/RecipeList.svelte'
 
-/* global expect, it, describe, beforeEach */
-
 describe('Scale component', () => {
 	it('should increase the scale value correctly', async () => {
 		const mockChange = vi.fn()
-		const { component } = render(Scale, { props: { scale: 1, onScaleChange: mockChange } })
+		const { rerender } = render(Scale, { props: { scale: 1, onScaleChange: mockChange } })
 
 		const plusOneButton = screen.getByText('+1')
 		const plusFiveButton = screen.getByText('+5')
@@ -23,14 +22,13 @@ describe('Scale component', () => {
 		await fireEvent.click(plusOneButton)
 		expect(mockChange).toHaveBeenLastCalledWith(2)
 
-		// @ts-expect-deprecated - $set is fine in tests despite deprecation notice
-		component.$set({ scale: 4 })
+		await rerender({ scale: 4 })
 
 		// Increase from 4 to 9 (big step)
 		await fireEvent.click(plusFiveButton)
 		expect(mockChange).toHaveBeenLastCalledWith(9)
 
-		component.$set({ scale: 5 })
+		await rerender({ scale: 5 })
 
 		// Increase from 5 to 6
 		await fireEvent.click(plusOneButton)
@@ -39,7 +37,7 @@ describe('Scale component', () => {
 
 	it('should decrease the scale value correctly', async () => {
 		const mockChange = vi.fn()
-		const { component } = render(Scale, { props: { scale: 3, onScaleChange: mockChange } })
+		const { rerender } = render(Scale, { props: { scale: 3, onScaleChange: mockChange } })
 
 		const minusOneButton = screen.getByText('-1')
 		const minusFiveButton = screen.getByText('-5')
@@ -48,13 +46,13 @@ describe('Scale component', () => {
 		await fireEvent.click(minusOneButton)
 		expect(mockChange).toHaveBeenLastCalledWith(2)
 
-		component.$set({ scale: 6 })
+		await rerender({ scale: 6 })
 
 		// Decrease from 6 to 1 (big step)
 		await fireEvent.click(minusFiveButton)
 		expect(mockChange).toHaveBeenLastCalledWith(1)
 
-		component.$set({ scale: 1 })
+		await rerender({ scale: 1 })
 
 		// Clamp at minimum (0.1) when decreasing below it
 		await fireEvent.click(minusOneButton)
@@ -119,7 +117,7 @@ describe('RecipeFilter component', () => {
 			activeButton: 'created',
 			sortState: mockSortState
 		})
-		const dateButton = getByText('Added')
+		expect(getByText('Added')).toBeInTheDocument()
 	})
 
 	it('updates sort state correctly on date button click', async () => {
@@ -174,7 +172,6 @@ describe('RecipeList component', () => {
 		},
 		{ name: 'Recipe B', created: new Date('2022-01-02'), userId: 2, uid: 'B' }
 	]
-	const mockData = { user: { requestedUserId: 1 } }
 
 	it('renders without crashing', () => {
 		const { container } = render(RecipeList, {

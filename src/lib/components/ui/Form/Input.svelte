@@ -105,8 +105,7 @@
 				bind:value
 				oninput={handleInput}
 				{onkeydown}
-				aria-invalid={error ? 'true' : undefined}
-			/>
+				aria-invalid={error ? 'true' : undefined} />
 		</label>
 	{:else}
 		<input
@@ -121,8 +120,7 @@
 			oninput={handleInput}
 			{onkeydown}
 			class={inputClasses}
-			aria-invalid={error ? 'true' : undefined}
-		/>
+			aria-invalid={error ? 'true' : undefined} />
 	{/if}
 	{#if error}
 		<p class="validator-hint text-error mt-1" role="alert">{error}</p>

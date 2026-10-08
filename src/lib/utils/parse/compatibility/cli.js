@@ -45,5 +45,7 @@ console.log(`Compatibility results written to ${options.resultsPath}`)
 console.log(`Compatibility report written to ${options.reportPath}`)
 if (options.url) {
 	console.log(`Processed URL: ${options.url}`)
-	console.log(`Result rows written: ${finalPayload.results.filter((result) => result.url === options.url).length}`)
+	console.log(
+		`Result rows written: ${finalPayload.results.filter((result) => result.url === options.url).length}`
+	)
 }

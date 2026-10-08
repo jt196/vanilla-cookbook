@@ -141,7 +141,6 @@
 	}
 
 	async function makeAllRecipesPrivate() {
-		const tFn = get(t)
 		setPrivateBusy = true
 		visibilityFeedback = ''
 		try {
@@ -166,7 +165,6 @@
 	}
 
 	async function makeAllRecipesPublic() {
-		const tFn = get(t)
 		setPrivateBusy = true
 		visibilityFeedback = ''
 		try {
@@ -213,8 +211,8 @@
 <div class="flex flex-col gap-6 w-full md:w-2/3 lg:w-1/2">
 	<!-- Logout -->
 	<form method="POST">
-		<Button id="logout" formaction="/logout" type="submit" class="w-auto">{$t('nav.logout')}</Button
-		>
+		<Button id="logout" formaction="/logout" type="submit" class="w-auto"
+			>{$t('nav.logout')}</Button>
 	</form>
 
 	<!-- Account Info -->
@@ -258,8 +256,7 @@
 			id="email"
 			label={$t('auth.email')}
 			placeholder={$t('auth.emailAddress')}
-			bind:value={email}
-		/>
+			bind:value={email} />
 		<footer>
 			<Button type="submit">{$t('settings.updateAccount')}</Button>
 			<FeedbackMessage message={accountFeedback} />
@@ -277,41 +274,34 @@
 			id="old"
 			label={$t('auth.currentPassword')}
 			placeholder={$t('auth.currentPassword')}
-			bind:value={oldPass}
-		/>
+			bind:value={oldPass} />
 		<Input
 			type="password"
 			id="new"
 			label={$t('auth.newPassword')}
 			placeholder={$t('auth.newPassword')}
-			bind:value={newPass}
-		/>
+			bind:value={newPass} />
 		<Input
 			type="password"
 			id="confirm"
 			label={$t('auth.confirmNewPassword')}
 			placeholder={$t('auth.confirmNewPassword')}
-			bind:value={newPassConfirm}
-		/>
+			bind:value={newPassConfirm} />
 		<ValidationMessage
 			message={newPasswordValidation?.message}
 			messageCode={newPasswordValidation?.messageCode}
 			messageVars={newPasswordValidation?.messageVars}
-			isValid={newPasswordValidation?.isValid}
-		/>
+			isValid={newPasswordValidation?.isValid} />
 		<ValidationMessage
 			messageCode={passwordsMismatch ? 'settings.msg.passwordMismatch' : null}
-			isError={true}
-		/>
+			isError={true} />
 		<footer>
 			<Button type="submit" disabled={isPasswordSubmitDisabled}
-				>{$t('settings.updatePassword')}</Button
-			>
+				>{$t('settings.updatePassword')}</Button>
 			<FeedbackMessage
 				message={passwordFeedback}
 				messageCode={passwordFeedbackCode}
-				messageVars={passwordFeedbackVars}
-			/>
+				messageVars={passwordFeedbackVars} />
 		</footer>
 	</form>
 
@@ -324,8 +314,7 @@
 				legend={$t('settings.profilePrivacy')}
 				bind:checked={user.publicProfile}
 				size="sm"
-				color="primary"
-			>
+				color="primary">
 				{user.publicProfile ? $t('settings.profileVisible') : $t('settings.profileHidden')}
 			</Checkbox>
 			<Checkbox
@@ -333,8 +322,7 @@
 				bind:checked={user.publicRecipes}
 				legend={$t('settings.recipePrivacy')}
 				size="sm"
-				color="primary"
-			>
+				color="primary">
 				{user.publicRecipes
 					? $t('settings.recipesPublicDefault')
 					: $t('settings.recipesPrivateDefault')}
@@ -355,30 +343,26 @@
 				color="error"
 				style="outline"
 				loading={setPrivateBusy}
-				onclick={() => openVisibilityConfirm('private')}>{$t('settings.makeAllPrivate')}</Button
-			>
+				onclick={() => openVisibilityConfirm('private')}>{$t('settings.makeAllPrivate')}</Button>
 			<Button
 				type="button"
 				color="success"
 				style="outline"
 				loading={setPrivateBusy}
 				class="ml-2"
-				onclick={() => openVisibilityConfirm('public')}>{$t('settings.makeAllPublic')}</Button
-			>
+				onclick={() => openVisibilityConfirm('public')}>{$t('settings.makeAllPublic')}</Button>
 		</div>
 		<FeedbackMessage
 			message={visibilityFeedback}
 			messageCode={visibilityFeedbackCode}
-			messageVars={visibilityFeedbackVars}
-		/>
+			messageVars={visibilityFeedbackVars} />
 	</div>
 </div>
 
 <ConfirmationDialog
 	bind:isOpen={confirmVisibilityOpen}
 	onClose={closeVisibilityConfirm}
-	onConfirm={confirmVisibilityAction}
->
+	onConfirm={confirmVisibilityAction}>
 	{#snippet content()}
 		<h3 class="font-bold text-lg">{$t('settings.confirmVisibilityTitle')}</h3>
 		{#if visibilityAction === 'public'}

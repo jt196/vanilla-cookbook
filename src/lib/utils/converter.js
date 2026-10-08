@@ -93,7 +93,7 @@ export const determineSystem = (ingredientArray = []) => {
 
 	ingredientArray.forEach((ingredient) => {
 		const system = ingredient.unitSystem
-		if (system && systemCounts.hasOwnProperty(system)) {
+		if (system && Object.hasOwn(systemCounts, system)) {
 			systemCounts[system]++
 		}
 	})
@@ -135,7 +135,6 @@ export const determineSystem = (ingredientArray = []) => {
  * @param {Array} lookupTable - The table of ingredients to search within.
  * @returns {Object|null} - Returns the matched ingredient object or null if no match is found.
  */
-// eslint-disable-next-line no-unused-vars
 export function fuzzyMatch(ingredient, lookupTable) {
 	const words = ingredient.toLowerCase().split(/\W+/) // Split by non-word characters
 	for (const word of words) {
@@ -952,9 +951,6 @@ export function parseTemperature(direction, toSystem, fromSystem, lang = 'eng') 
 	const fahrenheitRegex =
 		/(\d+(?:\.\d+)?)(?:\s*(?:-|–|to)\s*(\d+(?:\.\d+)?))?\s?(°F|ºF|F|degrees F)(?![a-zA-Z])/gi
 
-	// Matches Gas Mark (e.g., "Gas Mark 4"), not currently converted
-	const gasMarkRegex = /Gas Mark (\d+)|gas (\d+)/gi
-
 	// Matches generic "degrees" without °C/°F (e.g., "175 degrees", "175 degrees Fahrenheit")
 	const genericDegreesRegex = /(\d+(?:\.\d+)?) degrees(?: (F(ahrenheit)?|C(elcius)?))?\b/gi
 
@@ -1105,7 +1101,7 @@ export function parseTemperature(direction, toSystem, fromSystem, lang = 'eng') 
 			return direction
 		} else {
 			// Convert each generic "degrees" match
-			return direction.replace(genericDegreesRegex, (match, value, _, unit) => {
+			return direction.replace(genericDegreesRegex, (match, value) => {
 				const converted = convertValue(parseFloat(value), fromSystem, toSystem).toFixed(0)
 				const targetUnit = isTargetImperial ? '°F' : '°C'
 				return `<span class="text-secondary"><b>${converted}${targetUnit}</b></span>`

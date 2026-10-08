@@ -16,8 +16,8 @@
 
 <div class="bookmarklet-button prose max-w-none w-full md:w-2/3 lg:w-1/2">
 	<p>{$t('bookmarklet.step1')}</p>
-	<a href={bookmarkletCode} class="btn btn-primary" role="button"><Bookmark width="25px" /></a><br
-	/>
+	<a href={bookmarkletCode} class="btn btn-primary" role="button"><Bookmark width="25px" /></a
+	><br />
 	<p>
 		{$t('bookmarklet.renamePrefix')} <strong>{$t('bookmarklet.renameExample')}</strong>.
 		{$t('bookmarklet.renameSuffix')} <italic>{$t('bookmarklet.editBookmark')}</italic>.

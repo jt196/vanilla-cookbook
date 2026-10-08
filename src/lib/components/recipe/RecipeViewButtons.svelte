@@ -118,25 +118,22 @@
 		href="/recipe/{recipe?.uid}/edit/"
 		class="btn btn-soft btn-primary btn-sm tooltip"
 		data-tip={$t('recipe.editRecipe')}
-		data-testid="edit-button"
-	>
+		data-testid="edit-button">
 		<Edit width="20px" height="20px" fill="currentColor" />
 	</a>
 	<a
 		href="/recipe/{recipe?.uid}/images/"
 		class="btn btn-soft btn-primary btn-sm tooltip"
 		data-tip={$t('recipe.editImages')}
-		data-testid="edit-button"
-	>
+		data-testid="edit-button">
 		<Images width="20px" height="20px" fill="currentColor" />
 	</a>
 	<button
-		onclick={(event) => handlePublic(recipe?.uid)}
+		onclick={() => handlePublic(recipe?.uid)}
 		class="btn btn-soft btn-primary btn-sm tooltip"
 		class:btn-success={recipe?.is_public}
 		disabled={loadingPub}
-		data-tip={recipe?.is_public ? $t('recipe.makePrivate') : $t('recipe.makePublic')}
-	>
+		data-tip={recipe?.is_public ? $t('recipe.makePrivate') : $t('recipe.makePublic')}>
 		{#if loadingPub}
 			<span class="loading loading-spinner loading-sm"></span>
 		{:else}
@@ -144,12 +141,11 @@
 		{/if}
 	</button>
 	<button
-		onclick={(event) => handleFavourite(recipe?.uid)}
+		onclick={() => handleFavourite(recipe?.uid)}
 		class="btn btn-soft btn-primary btn-sm tooltip"
 		class:text-error={recipe?.on_favorites}
 		disabled={loadingFav}
-		data-tip={recipe?.on_favorites ? $t('recipe.unfavouriteRecipe') : $t('recipe.favouriteRecipe')}
-	>
+		data-tip={recipe?.on_favorites ? $t('recipe.unfavouriteRecipe') : $t('recipe.favouriteRecipe')}>
 		{#if loadingFav}
 			<span class="loading loading-spinner loading-sm"></span>
 		{:else}
@@ -165,12 +161,10 @@
 					count: logs.length
 				})
 			: $t('recipe.markCooked')}
-		data-testid="check-button"
-	>
+		data-testid="check-button">
 		{#if logs?.length > 1}
 			<span class="badge badge-success badge-sm text-success-content font-bold min-w-5"
-				>{logs.length}</span
-			>
+				>{logs.length}</span>
 		{:else}
 			<Check checked={logs?.length > 0} width="20px" height="20px" fill="currentColor" />
 		{/if}
@@ -179,8 +173,7 @@
 		<button
 			onclick={() => (showHistoryModal = true)}
 			class="btn btn-soft btn-primary btn-sm tooltip"
-			data-tip={$t('recipe.viewHistory')}
-		>
+			data-tip={$t('recipe.viewHistory')}>
 			<Calendar width="20px" height="20px" fill="currentColor" />
 		</button>
 	{/if}
@@ -188,8 +181,7 @@
 		onclick={() => handleDelete(recipe?.uid)}
 		data-testid="delete-button"
 		class="btn btn-soft btn-primary btn-sm tooltip"
-		data-tip={$t('recipe.deleteRecipe')}
-	>
+		data-tip={$t('recipe.deleteRecipe')}>
 		<Delete width="20px" height="20px" fill="currentColor" />
 	</button>
 {:else if viewerUserId}
@@ -198,8 +190,7 @@
 		class="btn btn-soft btn-primary btn-sm tooltip"
 		class:text-error={recipe?.on_favorites}
 		disabled={loadingFav}
-		data-tip={recipe?.on_favorites ? $t('recipe.unfavouriteRecipe') : $t('recipe.favouriteRecipe')}
-	>
+		data-tip={recipe?.on_favorites ? $t('recipe.unfavouriteRecipe') : $t('recipe.favouriteRecipe')}>
 		{#if loadingFav}
 			<span class="loading loading-spinner loading-sm"></span>
 		{:else}
@@ -210,16 +201,14 @@
 		<button
 			onclick={handleDuplicate}
 			class="btn btn-soft btn-primary btn-sm tooltip"
-			data-tip={$t('recipe.forkRecipe')}
-		>
+			data-tip={$t('recipe.forkRecipe')}>
 			<Fork width="20px" height="20px" fill="currentColor" />
 		</button>
 	{:else if recipe?.userId !== viewerUserId}
 		<button
 			class="btn btn-soft btn-primary btn-sm tooltip opacity-40"
 			disabled={true}
-			data-tip={$t('recipeCard.alreadyForked')}
-		>
+			data-tip={$t('recipeCard.alreadyForked')}>
 			<Fork width="20px" height="20px" fill="currentColor" />
 		</button>
 	{/if}
@@ -235,8 +224,7 @@
 		if (success) {
 			goto('/')
 		}
-	}}
->
+	}}>
 	{#snippet content()}
 		<h3 class="font-bold text-lg">{$t('recipe.deleteRecipe')}</h3>
 		<p class="py-4">{$t('recipe.confirmDelete')}</p>
@@ -251,14 +239,12 @@
 	{baseServings}
 	{onRestoreScale}
 	{onLogUpdated}
-	{onLogDeleted}
-/>
+	{onLogDeleted} />
 
 <ConfirmationDialog
 	bind:isOpen={showCopyConfirm}
 	onClose={() => (showCopyConfirm = false)}
-	onConfirm={confirmDuplicate}
->
+	onConfirm={confirmDuplicate}>
 	{#snippet content()}
 		<h3 class="font-bold text-lg">{$t('recipe.copyRecipe')}</h3>
 		<p class="py-4">{$t('recipe.confirmFork')}</p>

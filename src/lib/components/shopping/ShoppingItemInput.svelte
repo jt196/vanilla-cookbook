@@ -27,8 +27,7 @@
 		bind:value
 		useLabelAsPlaceholder={false}
 		size="lg"
-		onkeydown={onKeyPress}
-	/>
+		onkeydown={onKeyPress} />
 	<Button onclick={onAdd} size="lg" aria-label={$t('shopping.addIngredient')}>
 		<New width="20px" fill="white" />
 	</Button>

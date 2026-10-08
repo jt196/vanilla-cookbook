@@ -33,9 +33,9 @@ function hasRecipeData(recipeRaw) {
 
 	return Boolean(
 		hasValue(recipeRaw.name) ||
-			hasValue(recipeRaw.recipeIngredient) ||
-			hasValue(recipeRaw.recipeInstructions) ||
-			hasValue(recipeRaw.description)
+		hasValue(recipeRaw.recipeIngredient) ||
+		hasValue(recipeRaw.recipeInstructions) ||
+		hasValue(recipeRaw.description)
 	)
 }
 

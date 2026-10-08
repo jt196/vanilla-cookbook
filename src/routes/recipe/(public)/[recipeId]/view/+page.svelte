@@ -152,7 +152,6 @@
 	let sanitizedDirections = $state([])
 	let sanitizedNotes = $state([])
 	let sanitizedIngredients = $state([])
-	let hasAdditional
 
 	let isMounted = $state(false)
 
@@ -286,7 +285,9 @@
 				recipe.nutritional_info = data.text
 				const tFn = get(t)
 				recipeFeedback =
-					data.source === 'fallback' ? tFn('recipe.msg.nutritionCleanedLocal') : tFn('recipe.msg.nutritionCleaned')
+					data.source === 'fallback'
+						? tFn('recipe.msg.nutritionCleanedLocal')
+						: tFn('recipe.msg.nutritionCleaned')
 			} else {
 				recipeFeedback = get(t)('recipe.msg.nutritionNoChanges')
 			}
@@ -340,7 +341,6 @@
 
 		if (currentInvocation !== isLatest) return // Ignore results if this isn't the latest invocation
 		sanitizedIngredients = tempIngredientsResult
-		hasAdditional = sanitizedIngredients.some((item) => item.additional !== null)
 		isLoading = false
 	}
 
@@ -376,7 +376,9 @@
 
 {#if viewOnly}
 	<div class="mb-4">
-		<h3 class="text-2xl font-semibold">{$t('recipe.usersRecipe', { username: recUser.username })}</h3>
+		<h3 class="text-2xl font-semibold">
+			{$t('recipe.usersRecipe', { username: recUser.username })}
+		</h3>
 	</div>
 {/if}
 <FeedbackMessage message={recipeFeedback} />
@@ -393,8 +395,7 @@
 		viewerUserId={viewUser?.userId}
 		onRestoreScale={handleScaleChange}
 		onLogUpdated={viewOnly ? undefined : handleLogUpdated}
-		onLogDeleted={viewOnly ? undefined : handleLogDeleted}
-	/>
+		onLogDeleted={viewOnly ? undefined : handleLogDeleted} />
 </div>
 
 {#if isLoading}
@@ -429,8 +430,7 @@
 					{measurementSystem}
 					{selectedSystem}
 					onScaleChange={handleScaleChange}
-					onSelectedSystemChange={handleSelectedSystemChange}
-				/>
+					onSelectedSystemChange={handleSelectedSystemChange} />
 				{#if viewUser?.displayNutrition ?? true}
 					<div class="hidden md:block">
 						<RecipeViewNutrition
@@ -440,8 +440,7 @@
 							recipeUid={recipe.uid}
 							showCleanupAction={!viewOnly && aiEnabled}
 							cleanupInProgress={cleaningNutrition}
-							onCleanup={viewOnly ? null : handleCleanNutritionInView}
-						/>
+							onCleanup={viewOnly ? null : handleCleanNutritionInView} />
 					</div>
 				{/if}
 			{:else}
@@ -466,8 +465,7 @@
 				{notesLines}
 				{sanitizedNotes}
 				logs={viewOnly ? [] : logs}
-				open={showNotesDescription}
-			/>
+				open={showNotesDescription} />
 		</div>
 	</div>
 
@@ -480,8 +478,7 @@
 				recipeUid={recipe.uid}
 				showCleanupAction={!viewOnly && aiEnabled}
 				cleanupInProgress={cleaningNutrition}
-				onCleanup={viewOnly ? null : handleCleanNutritionInView}
-			/>
+				onCleanup={viewOnly ? null : handleCleanNutritionInView} />
 		</div>
 	{/if}
 {/if}
@@ -490,8 +487,7 @@
 	{otherPhotos}
 	recipeName={recipe.name}
 	onSetMainPhoto={handleSetMainPhoto}
-	{viewOnly}
-/>
+	{viewOnly} />
 
 {#if showSimilarStrip && similarRecipes.length > 0}
 	<div class="mt-8">

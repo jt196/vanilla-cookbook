@@ -26,7 +26,22 @@
 export const unitsData = {
 	// ===== VERY SMALL UNITS (skip conversion) =====
 	drop: {
-		names: ['drop', 'drops', 'dr.', 'dr', 'drs.', 'drs', 'gt.', 'gt', 'gts.', 'gts', 'gtt', 'gtt.', 'gtts', 'gtts.'],
+		names: [
+			'drop',
+			'drops',
+			'dr.',
+			'dr',
+			'drs.',
+			'drs',
+			'gt.',
+			'gt',
+			'gts.',
+			'gts',
+			'gtt',
+			'gtt.',
+			'gtts',
+			'gtts.'
+		],
 		plural: 'drops',
 		symbol: '',
 		system: null,
@@ -36,7 +51,18 @@ export const unitsData = {
 	},
 
 	smidgen: {
-		names: ['smidgen', 'smidgens', 'smdg.', 'smdg', 'smdgs.', 'smdgs', 'smi', 'smi.', 'smis.', 'smis'],
+		names: [
+			'smidgen',
+			'smidgens',
+			'smdg.',
+			'smdg',
+			'smdgs.',
+			'smdgs',
+			'smi',
+			'smi.',
+			'smis.',
+			'smis'
+		],
 		plural: 'smidgens',
 		symbol: '',
 		system: null,
@@ -149,7 +175,16 @@ export const unitsData = {
 
 	// ===== VOLUME UNITS - IMPERIAL =====
 	floz: {
-		names: ['fl oz', 'fl.oz', 'fl oz.', 'fl.oz.', 'fluid ounce', 'fluid ounces', 'fl. ounce', 'fl. ounces'],
+		names: [
+			'fl oz',
+			'fl.oz',
+			'fl oz.',
+			'fl.oz.',
+			'fluid ounce',
+			'fluid ounces',
+			'fl. ounce',
+			'fl. ounces'
+		],
 		plural: 'fluid ounces',
 		symbol: 'fl oz',
 		system: 'imperial',
@@ -490,7 +525,7 @@ export function getUnitData(canonical) {
  * // Returns: [{ names: ['gram', 'grams', 'g', ...], grams: 1, skipConversion: false, decimalPlaces: 2 }, ...]
  */
 export function toOldUnitsFormat() {
-	return Object.values(unitsData).map(data => ({
+	return Object.values(unitsData).map((data) => ({
 		names: data.names,
 		grams: data.grams || 0, // Old format expects a number, not null
 		skipConversion: data.skipConversion,
