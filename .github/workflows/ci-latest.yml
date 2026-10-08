@@ -4,6 +4,13 @@ on:
   push:
     branches:
       - main
+    # Changes that don't affect the Docker image shouldn't republish :latest
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+      - '.readthedocs.yaml'
+      - '.markdownlint.json'
+      - 'android/**'
   pull_request:
     branches:
       - main
@@ -23,6 +30,10 @@ jobs:
 
   docker-build-latest:
     if: github.repository == 'jt196/vanilla-cookbook' && github.event_name == 'push'
+    # A newer push to main supersedes an in-flight build, so an older build can't finish last and overwrite :latest
+    concurrency:
+      group: docker-latest
+      cancel-in-progress: true
     uses: ./.github/workflows/docker-build.yml
     with:
       docker_tags: latest
