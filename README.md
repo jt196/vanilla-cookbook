@@ -271,3 +271,7 @@ In **standard Nginx**: Add these to your `location` block or `server` block for 
    - `pnpm dev:setup` (prisma client gen, migration)
    - `pnpm dev`
 5. You'll be prompted for admin user details on accessing root
+
+## One-Click Deploy
+
+[![Deploy on RepoCloud](https://d16t0pc4846x52.cloudfront.net/deploylobe.svg)](https://repocloud.io/details/Vanilla%20Cookbook/)
