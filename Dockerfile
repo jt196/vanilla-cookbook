@@ -1,5 +1,5 @@
 # Use the official Node.js runtime as the base image
-FROM node:24
+FROM node:24.22.1
 
 # Install build dependencies for native modules (better-sqlite3), cron and gosu
 RUN apt-get update && apt-get install -y \

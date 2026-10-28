@@ -14,6 +14,14 @@ updates:
     labels:
       - skip-changelog
 
+  # Docker base image is pinned to an exact Node version so security releases are explicit.
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: weekly
+    labels:
+      - dependencies
+
   # npm (pnpm lockfile). Minor and patch updates arrive as one grouped PR a month;
   # each major update gets its own PR so breaking changes can be reviewed one at a time.
   - package-ecosystem: npm
