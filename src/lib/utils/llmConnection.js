@@ -16,7 +16,7 @@ import { RECIPE_IMAGE_GENERATION_SIZE } from '$lib/utils/image/imageConfig'
  * @returns {string} e.g. "404: This model is no longer available to new users."
  */
 export function describeProviderError(status, body) {
-	let message = ''
+	let message
 	try {
 		const data = JSON.parse(body)
 		const err = Array.isArray(data) ? data[0]?.error : data?.error

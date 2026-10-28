@@ -289,7 +289,7 @@ async function invokeLLM({ provider, model, type, messages }) {
 		return parseLLMJsonOutput(output)
 	} catch (err) {
 		console.error('LLM invocation failed:', err)
-		throw new Error(`LLM request failed: ${err.message}`)
+		throw new Error(`LLM request failed: ${err.message}`, { cause: err })
 	}
 }
 

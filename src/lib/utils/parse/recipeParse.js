@@ -176,7 +176,7 @@ export async function fetchHTMLResponse(url, timeoutMs = 15000) {
 		}
 	} catch (error) {
 		if (error?.name === 'AbortError') {
-			throw new Error(`Request timed out after ${timeoutMs}ms`)
+			throw new Error(`Request timed out after ${timeoutMs}ms`, { cause: error })
 		}
 		throw error
 	} finally {

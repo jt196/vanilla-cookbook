@@ -4,7 +4,7 @@ import { getOptionalUser, jsonSuccess, jsonError } from '$lib/server/authHelpers
 export async function GET({ locals }) {
 	const user = getOptionalUser(locals)
 
-	let whereClause = { in_trash: false }
+	let whereClause
 
 	if (user?.isAdmin) {
 		whereClause = { in_trash: false }

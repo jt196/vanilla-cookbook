@@ -69,7 +69,7 @@ export async function getOidcConfig() {
 		} catch (err) {
 			_configPromise = null // Allow retry on next call
 			console.error(`[OIDC] Discovery failed for ${ISSUER_URL}:`, err.message)
-			throw new Error(`OIDC discovery failed: ${err.message}`)
+			throw new Error(`OIDC discovery failed: ${err.message}`, { cause: err })
 		}
 	})()
 

@@ -52,7 +52,7 @@ export async function GET({ params, locals }) {
 	}
 
 	// AI fallback
-	let aiSkipReason = null
+	let aiSkipReason
 	let aiFoundNoRecipe = false
 	if (html) {
 		try {

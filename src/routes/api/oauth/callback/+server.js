@@ -219,7 +219,7 @@ async function handleLegacyOauthCallback(provider, url, cookies, locals) {
 
 		const username = await ensureUniqueUsername(base)
 
-		let email = null
+		let email
 		if (provider === 'github') {
 			email =
 				pa.githubUser?.email || (await getGithubVerifiedEmail(pa.githubTokens.accessToken)) || null
