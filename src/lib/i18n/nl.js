@@ -383,7 +383,7 @@ export default {
       "imageParseIncomplete": "Receptafbeeldingsparsing was onvolledig.",
       "imageParseFailed": "Afbeeldingsparsing mislukt.",
       "somethingWrong": "Er is iets misgegaan.",
-      "scrapeTimeout": "Verzoek is verlopen. De site is mogelijk traag of onbereikbaar.",
+      "scrapeTimeout": "Verzoek is verlopen. De site is mogelijk onbereikbaar of de AI-extractie duurde te lang. Probeer het opnieuw of plak de recepttekst.",
       "imageLimitExceeded": "Alleen de eerste {max} afbeeldingen worden gebruikt.",
       "saveFail": "Opslaan van recept mislukt.",
       "parseNoRecipe": "Geen receptinhoud gevonden in de tekst.",

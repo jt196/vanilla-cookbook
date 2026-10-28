@@ -336,7 +336,7 @@ export default {
       "imageParseIncomplete": "El análisis de la imagen de la receta fue incompleto.",
       "imageParseFailed": "Error al analizar la imagen.",
       "somethingWrong": "Algo salió mal.",
-      "scrapeTimeout": "La solicitud ha caducado. El sitio puede estar lento o inaccesible.",
+      "scrapeTimeout": "La solicitud ha caducado. Puede que el sitio no esté accesible o que la extracción con IA haya tardado demasiado. Inténtalo de nuevo o pega el texto de la receta.",
       "imageLimitExceeded": "Solo se usarán las primeras {max} imágenes.",
       "saveFail": "Error al guardar la receta.",
       "parseNoRecipe": "No se encontró contenido de receta en el texto.",

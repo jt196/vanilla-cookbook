@@ -383,7 +383,7 @@ export default {
       "imageParseIncomplete": "Penguraian gambar resep tidak lengkap.",
       "imageParseFailed": "Penguraian gambar gagal.",
       "somethingWrong": "Terjadi kesalahan.",
-      "scrapeTimeout": "Permintaan habis waktu. Situs mungkin lambat atau tidak dapat dijangkau.",
+      "scrapeTimeout": "Permintaan habis waktu. Situs mungkin tidak dapat dijangkau, atau ekstraksi AI memakan waktu terlalu lama. Coba lagi atau tempel teks resep.",
       "imageLimitExceeded": "Hanya {max} gambar pertama yang akan digunakan.",
       "saveFail": "Gagal menyimpan resep.",
       "parseNoRecipe": "Tidak ada konten resep yang ditemukan dalam teks.",
