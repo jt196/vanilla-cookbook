@@ -111,6 +111,6 @@
 		"unzipper": "^0.12.5",
 		"workbox-build": "^7.4.1",
 		"youtube-transcript": "^1.3.1",
-		"zod": "^3.25.76"
+		"zod": "^4.6.7"
 	}
 }
