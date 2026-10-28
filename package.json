@@ -27,7 +27,7 @@
 		"start": "pnpm build && pnpm serve"
 	},
 	"devDependencies": {
-		"@eslint/js": "^9.39.5",
+		"@eslint/js": "^10.0.1",
 		"@humanspeak/svelte-virtual-list": "^0.5.15",
 		"@playwright/test": "^1.64.0",
 		"@sveltejs/adapter-node": "^5.5.7",

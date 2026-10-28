@@ -32,15 +32,13 @@ function resolveSqlitePath() {
 export async function dbExists() {
 	const dbPath = resolveSqlitePath()
 	if (!dbPath) return false
-	let dbExists = false
 	try {
 		await fsPromise.access(dbPath)
-		dbExists = true
+		return true
 	} catch (e) {
 		console.error('🚀 ~ dbExists ~ e:', e)
-		dbExists = false
+		return false
 	}
-	return dbExists
 }
 
 /**

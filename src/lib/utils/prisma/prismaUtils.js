@@ -82,6 +82,6 @@ export async function deleteUser(userId) {
 
 		return deletedUser
 	} catch (error) {
-		throw new Error(`Error deleting user: ${error.message}`)
+		throw new Error(`Error deleting user: ${error.message}`, { cause: error })
 	}
 }
