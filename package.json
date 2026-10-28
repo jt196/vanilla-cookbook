@@ -38,6 +38,7 @@
 		"@testing-library/dom": "^10.4.2",
 		"@testing-library/jest-dom": "^7.0.1",
 		"@testing-library/svelte": "^5.4.2",
+		"chai": "^6.3.0",
 		"daisyui": "^5.7.47",
 		"eslint": "^9.39.5",
 		"eslint-config-prettier": "^10.1.8",
