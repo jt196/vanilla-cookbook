@@ -43,6 +43,8 @@
 
 	let initialMode = $state('url') // 'url' | 'text' | 'image'
 	let saving = $state(false)
+	// Share/bookmarklet scrapes run here, outside RecipeNewScrape's own spinner
+	let scraping = $state(false)
 
 	let { data } = $props()
 
@@ -89,6 +91,7 @@
 		if (url) {
 			initialMode = 'url'
 			console.log('[recipe:new] Starting scrape for:', url)
+			scraping = true
 			try {
 				feedbackMessage = tFn('recipeNew.msg.scraping')
 				feedbackType = 'info'
@@ -152,6 +155,8 @@
 					feedbackCode = error?.code || null
 					feedbackType = 'error'
 				}
+			} finally {
+				scraping = false
 			}
 		} else if (sharedText && apiKeyPresent && aiEnabled) {
 			initialMode = 'text'
@@ -252,4 +257,5 @@
 		timeout={4000} />
 {/if}
 
+<Spinner visible={scraping} spinnerContent={$t('common.working')} type="bars" size="md" />
 <Spinner visible={saving} spinnerContent={$t('recipeNew.saving')} />
