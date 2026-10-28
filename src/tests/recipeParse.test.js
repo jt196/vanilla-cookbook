@@ -153,6 +153,49 @@ describe('parseURL function', () => {
 		])
 	})
 
+	it('joins HowToStep text arrays used by einfachkochen', async () => {
+		const html = `
+			<html>
+				<head>
+					<script type="application/ld+json">
+						{
+							"@context": "https://schema.org",
+							"@graph": [
+								{
+									"@type": "Recipe",
+									"name": "Pasta mit Kürbissauce",
+									"recipeIngredient": ["1 Zwiebel", "500 g Spaghetti"],
+									"recipeInstructions": [
+										{
+											"@type": "HowToStep",
+											"text": ["Salbei waschen", "trocken schütteln und die Blätter zupfen."]
+										},
+										{
+											"@type": "HowToStep",
+											"text": "Die Pasta auf Teller aufteilen."
+										}
+									]
+								}
+							]
+						}
+					</script>
+				</head>
+				<body></body>
+			</html>
+		`
+
+		const recipe = await parseHTML(
+			html,
+			'https://www.einfachkochen.de/rezepte/pasta-mit-kuerbissauce-super-cremig-und-so-lecker'
+		)
+
+		expect(recipe.name).toBe('Pasta mit Kürbissauce')
+		expect(recipe.instructions).toEqual([
+			'Salbei waschen, trocken schütteln und die Blätter zupfen.',
+			'Die Pasta auf Teller aufteilen.'
+		])
+	})
+
 	it('parses entity-heavy JSON-LD recipe fixtures without corrupting the JSON', async () => {
 		const html = fs.readFileSync(
 			path.join(fixtureDirectory, 'justataste_com_frankenstein_rice_krispie_treats_recipe_.html'),
