@@ -88,15 +88,33 @@ function flattenInstructionNode(node) {
 
 	if (typeof node !== 'object') return []
 
-	const directText = (node.text || node.name || '').trim()
+	const directText = instructionNodeText(node)
 	if (directText && !Array.isArray(node.itemListElement)) {
-		return [node.text || node.name]
+		return [directText]
 	}
 
 	const nestedSteps = flattenInstructionNode(node.itemListElement || node.itemList || [])
 	if (nestedSteps.length) return nestedSteps
 
-	return directText ? [node.text || node.name] : []
+	return directText ? [directText] : []
+}
+
+/**
+ * Get a step's text as a string. Some sites (e.g. einfachkochen.de) emit `text` as an
+ * array of comma-split fragments, so arrays are re-joined with ', '.
+ * @param {Object} node - A HowToStep/HowToSection node.
+ * @returns {string} The trimmed step text, or '' if none.
+ */
+function instructionNodeText(node) {
+	const value = node.text || node.name
+	if (Array.isArray(value)) {
+		return value
+			.filter((part) => typeof part === 'string')
+			.map((part) => part.trim())
+			.filter(Boolean)
+			.join(', ')
+	}
+	return typeof value === 'string' ? value.trim() : ''
 }
 
 /**
