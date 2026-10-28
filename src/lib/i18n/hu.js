@@ -383,7 +383,7 @@ export default {
       "imageParseIncomplete": "A recept képének elemzése hiányos volt.",
       "imageParseFailed": "A kép elemzése sikertelen.",
       "somethingWrong": "Valami hiba történt.",
-      "scrapeTimeout": "A kérés időtúllépésbe ütközött. Az oldal lassú vagy elérhetetlen lehet.",
+      "scrapeTimeout": "A kérés időtúllépésbe ütközött. Az oldal elérhetetlen lehet, vagy az MI-alapú kinyerés túl sokáig tartott. Próbáld újra, vagy illeszd be a recept szövegét.",
       "imageLimitExceeded": "Csak az első {max} kép lesz felhasználva.",
       "saveFail": "A recept mentése sikertelen.",
       "parseNoRecipe": "Nem található recept tartalom a szövegben.",

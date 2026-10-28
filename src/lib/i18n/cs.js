@@ -383,7 +383,7 @@ export default {
       "imageParseIncomplete": "Analýza obrázku receptu byla neúplná.",
       "imageParseFailed": "Analýza obrázku selhala.",
       "somethingWrong": "Něco se pokazilo.",
-      "scrapeTimeout": "Požadavek vypršel. Stránka může být pomalá nebo nedostupná.",
+      "scrapeTimeout": "Požadavek vypršel. Stránka může být nedostupná nebo extrakce pomocí AI trvala příliš dlouho. Zkuste to znovu nebo vložte text receptu.",
       "imageLimitExceeded": "Použito bude pouze prvních {max} obrázků.",
       "saveFail": "Nepodařilo se uložit recept.",
       "parseNoRecipe": "V textu nebyl nalezen žádný obsah receptu.",

@@ -336,7 +336,7 @@ export default {
       "imageParseIncomplete": "Die Rezeptbildanalyse war unvollständig.",
       "imageParseFailed": "Bildanalyse fehlgeschlagen.",
       "somethingWrong": "Es ist etwas schiefgelaufen.",
-      "scrapeTimeout": "Anfragezeitüberschreitung. Die Seite ist möglicherweise langsam oder nicht erreichbar.",
+      "scrapeTimeout": "Zeitüberschreitung der Anfrage. Die Seite ist möglicherweise nicht erreichbar oder die KI-Extraktion hat zu lange gedauert. Versuchen Sie es erneut oder fügen Sie den Rezepttext ein.",
       "imageLimitExceeded": "Es werden nur die ersten {max} Bilder verwendet.",
       "saveFail": "Rezept konnte nicht gespeichert werden.",
       "parseNoRecipe": "Kein Rezeptinhalt im Text gefunden.",

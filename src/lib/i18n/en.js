@@ -414,7 +414,8 @@ export default {
 			imageParseIncomplete: 'Recipe image parsing was incomplete.',
 			imageParseFailed: 'Image parsing failed.',
 			somethingWrong: 'Something went wrong.',
-			scrapeTimeout: 'Request timed out. The site may be slow or unreachable.',
+			scrapeTimeout:
+				'Request timed out. The site may be unreachable, or AI extraction took too long. Try again or paste the recipe text.',
 			imageLimitExceeded: 'Only the first {max} images will be used.',
 			saveFail: 'Failed to save recipe.',
 			parseNoRecipe: 'No recipe content found in the text.',

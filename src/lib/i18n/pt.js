@@ -336,7 +336,7 @@ export default {
       "imageParseIncomplete": "A análise da imagem da receita estava incompleta.",
       "imageParseFailed": "Falha na análise da imagem.",
       "somethingWrong": "Algo deu errado.",
-      "scrapeTimeout": "A solicitação expirou. O site pode estar lento ou inacessível.",
+      "scrapeTimeout": "A solicitação expirou. O site pode estar inacessível ou a extração por IA demorou muito. Tente novamente ou cole o texto da receita.",
       "imageLimitExceeded": "Apenas as primeiras {max} imagens serão usadas.",
       "saveFail": "Falha ao salvar receita.",
       "parseNoRecipe": "Nenhum conteúdo de receita encontrado no texto.",

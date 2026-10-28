@@ -15,7 +15,8 @@ function makeCodedError(message, code = null) {
  */
 export async function scrapeRecipeFromURL(url) {
 	const controller = new AbortController()
-	const timeoutMs = 30000
+	// Long enough for the server's AI fallback, which can take a minute or more
+	const timeoutMs = 120000
 	const timeoutId = setTimeout(() => controller.abort(), timeoutMs)
 	try {
 		const response = await fetch(`/api/recipe/scrape/${encodeURIComponent(url)}`, {
@@ -41,7 +42,8 @@ export async function scrapeRecipeFromURL(url) {
 			console.error(`Scrape request timed out after ${timeoutMs}ms`)
 			return {
 				success: false,
-				error: 'Request timed out. The site may be slow or unreachable.',
+				error:
+					'Request timed out. The site may be unreachable, or AI extraction took too long. Try again or paste the recipe text.',
 				code: 'recipeNew.msg.scrapeTimeout'
 			}
 		}
