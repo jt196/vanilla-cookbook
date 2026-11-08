@@ -44,7 +44,7 @@ const isPublicPath = (pathname) => PUBLIC_PATHS.some((path) => pathname.startsWi
  * the flag from the session cookie to keep logins working.
  */
 function allowSessionCookieOverHttp(response) {
-	const sessionCookie = `${auth.sessionCookieName ?? 'auth_session'}=`
+	const sessionCookie = 'auth_session=' // Lucia v2's session cookie name
 	const cookies = response.headers.getSetCookie()
 	if (!cookies.some((c) => c.startsWith(sessionCookie))) return
 

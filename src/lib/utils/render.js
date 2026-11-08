@@ -11,7 +11,8 @@ import DOMPurify from 'dompurify'
  * @returns {Promise<string>} Sanitized HTML content.
  */
 export async function getSanitizedHTML(content) {
-	const dirtyHTML = marked(content)
+	// marked is synchronous here (no async extensions are registered)
+	const dirtyHTML = /** @type {string} */ (marked(content))
 
 	// For server-side
 	if (import.meta.env.SSR) {

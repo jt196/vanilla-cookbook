@@ -23,7 +23,7 @@ export async function createRecipePhotoEntry(recipeUid, imageUrl, fileType, isMa
 /**
  * Removes a recipe photo entry from the database.
  *
- * @param {number|string} uid - Unique identifier for the photo entry to be removed.
+ * @param {string} uid - The photo's id.
  * @returns {Promise<void>} A promise that resolves when the entry has been deleted.
  */
 export async function removeRecipePhotoEntry(uid) {

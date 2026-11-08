@@ -59,7 +59,7 @@ export async function updatePassword(username, newPassword) {
 /**
  * Deletes a user from the authUser table, as well as all associated sessions and auth keys.
  * @param {string} userId The ID of the user to delete.
- * @returns {Promise<PrismaClientPkg.authUser>} The deleted user.
+ * @returns {Promise<import('@prisma/client').AuthUser>} The deleted user.
  * @throws {Error} If there is an error deleting the user.
  */
 export async function deleteUser(userId) {

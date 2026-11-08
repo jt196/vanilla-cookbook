@@ -134,19 +134,10 @@ ${recipeJson}
 }
 
 /**
- * Dynamically load a chat model client based on provider.
- * Keeps bundling light and lets deployments install only the needed provider package.
- *
- * Supported providers (install the matching LangChain pkg):
- * - openai (@langchain/openai)
- * - anthropic (@langchain/anthropic)
- * - google (@langchain/google-genai)
- * - ollama (@langchain/ollama)
+ * The API key for a hosted provider, from the environment.
  *
  * @param {string} provider
- * @param {string} model
- * @param {string} type
- * @returns {Promise<import('@langchain/core/language_models/chat_models').BaseChatModel>}
+ * @returns {string | undefined} undefined for providers that don't use a key here.
  */
 function resolveApiKey(provider) {
 	if (provider === 'openai') return env.OPENAI_API_KEY
@@ -224,6 +215,21 @@ const providerLoaders = {
 	}
 }
 
+/**
+ * Dynamically load a chat model client based on provider.
+ * Keeps bundling light and lets deployments install only the needed provider package.
+ *
+ * Supported providers (install the matching LangChain pkg):
+ * - openai (@langchain/openai)
+ * - anthropic (@langchain/anthropic)
+ * - google (@langchain/google-genai)
+ * - ollama (@langchain/ollama)
+ *
+ * @param {string} provider
+ * @param {string} model
+ * @param {string} type
+ * @returns {Promise<import('@langchain/core/language_models/chat_models').BaseChatModel>}
+ */
 async function loadChatClient(provider, model, type) {
 	const loader = providerLoaders[provider]
 	if (!loader) {
@@ -350,6 +356,7 @@ export async function extractRecipeWithLLM({
 	imageMimeType,
 	language = 'eng'
 }) {
+	/** @type {import('@langchain/core/messages').BaseMessage[]} */
 	const messages = [new SystemMessage('You are an expert recipe extraction AI.')]
 
 	if (type === 'image') {

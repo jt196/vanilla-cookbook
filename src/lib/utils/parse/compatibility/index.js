@@ -217,6 +217,7 @@ export function summarizeRecipeResult(recipe, error = null) {
 		? recipe.instructions.join(' ').trim().length
 		: 0
 
+	/** @type {'complete' | 'partial' | 'failed'} */
 	let status = 'failed'
 	if (isRecipeObject && hasName && ingredientCount > 0) {
 		status = 'complete'

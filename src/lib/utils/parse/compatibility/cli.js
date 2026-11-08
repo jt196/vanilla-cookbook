@@ -13,7 +13,8 @@ import {
 const args = parseRunnerArgs(process.argv.slice(2))
 
 if (args.diff) {
-	const outputPath = args.output || COMPATIBILITY_DIFF_DEFAULTS.outputPath
+	const outputPath =
+		typeof args.output === 'string' ? args.output : COMPATIBILITY_DIFF_DEFAULTS.outputPath
 	const diff = await generateCompatibilityDiff({ outputPath })
 	console.log(`Compatibility diff written to ${outputPath}`)
 	console.log(`New candidate domains: ${diff.newDomainCount}`)

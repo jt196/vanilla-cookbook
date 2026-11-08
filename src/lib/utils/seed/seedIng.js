@@ -20,7 +20,7 @@ import path from 'path'
  *
  * @async
  * @function
- * @param {PrismaClient} prismaClient - The Prisma client instance to interact with the database.
+ * @param {import('@prisma/client').PrismaClient} prismaClient - The Prisma client instance to interact with the database.
  */
 export async function seedIngredients(prismaClient) {
 	try {

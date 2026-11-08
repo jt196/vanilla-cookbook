@@ -60,8 +60,7 @@ export function requireAdmin(locals) {
  *
  * @param {{ userId: string, isAdmin?: boolean }} user - The authenticated user
  * @param {{ userId: string } | null | undefined} resource - The resource to check ownership of
- * @param {{ allowAdmin?: boolean }} [options={}] - Options for ownership check
- * @param {boolean} [options.allowAdmin=false] - If true, admins can access any resource
+ * @param {{ allowAdmin?: boolean }} [options={}] - `allowAdmin`: admins may access any resource
  * @throws {import('@sveltejs/kit').HttpError} 404 if resource is null/undefined, 403 if not owner
  *
  * @example
@@ -102,10 +101,10 @@ export function requireOwnership(user, resource, options = {}) {
  * - User is admin (if allowAdmin option is true)
  *
  * @param {import('@sveltejs/kit').RequestEvent['locals']} locals - The request locals object
- * @param {{ userId: string, is_public?: boolean } | null | undefined} resource - The resource to check
- * @param {{ allowAdmin?: boolean, checkOwnerPublic?: boolean }} [options={}] - Options
- * @param {boolean} [options.allowAdmin=false] - If true, admins can access any resource
- * @param {boolean} [options.checkOwnerPublic=false] - If true, also check owner's publicRecipes setting
+ * @param {{ userId: string, is_public?: boolean, user?: { publicRecipes?: boolean } } | null | undefined} resource
+ *   The resource to check (with its owner, for `checkOwnerPublic`)
+ * @param {{ allowAdmin?: boolean, checkOwnerPublic?: boolean }} [options={}] - `allowAdmin`: admins
+ *   may access any resource; `checkOwnerPublic`: also allow if the owner made all recipes public
  * @throws {import('@sveltejs/kit').HttpError} 404 if resource is null/undefined, 403 if private and not owner
  *
  * @example
