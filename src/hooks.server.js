@@ -5,7 +5,11 @@ import { dbSeeded } from '$lib/utils/seed/seedHelpers'
 import { env } from '$env/dynamic/private'
 import { getClientIp, makeLimiter } from '$lib/server/rateLimit'
 import { resolveSiteConfig } from '$lib/server/siteConfig'
+import { warmIngredientIndex } from '$lib/utils/converterBackend'
 import { redirect } from '@sveltejs/kit'
+
+// Build the ingredient search index at startup rather than on the first unit conversion
+warmIngredientIndex()
 
 // Paths that stay reachable when "require login" is on
 const PUBLIC_PATHS = [

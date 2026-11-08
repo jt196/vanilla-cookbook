@@ -1,6 +1,7 @@
 // src/routes/api/site/seed/+server.js
 import { dbExists, seedRecipes } from '$lib/utils/seed/seedHelpers'
 import { seedIngredients } from '$lib/utils/seed/seedIng'
+import { clearIngredientCache } from '$lib/utils/converterBackend'
 import { execSync } from 'child_process'
 import { prisma as client } from '$lib/server/prisma'
 import { auth } from '$lib/server/lucia'
@@ -73,6 +74,8 @@ export async function POST({ request, locals }) {
 		})
 
 		await seedIngredients(client)
+		// The ingredient search index may have been built (empty) before setup ran
+		clearIngredientCache()
 		if (recipeSeed) await seedRecipes(newUser.userId, client)
 
 		const session = await auth.createSession({ userId: newUser.userId, attributes: {} })
