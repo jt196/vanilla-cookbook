@@ -1,3 +1,4 @@
+import { requireAuth } from '$lib/server/authHelpers'
 import { extractRecipeFromVideoText } from '$lib/utils/ai'
 import { resolveAIConfig } from '$lib/server/aiHelpers'
 import {
@@ -20,6 +21,7 @@ function hasRecipe(recipe) {
 }
 
 export async function POST({ request, locals }) {
+	requireAuth(locals)
 	let body
 	try {
 		body = await request.json()
