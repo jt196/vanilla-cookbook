@@ -12,7 +12,6 @@ FOLDERS = [
     {"source": "src/lib/utils", "destination": "docs/technical", "name": "utils"},
     {"source": "src/lib/utils/image", "destination": "docs/technical", "name": "utils_image"},
     {"source": "src/lib/utils/import", "destination": "docs/technical", "name": "utils_import"},
-    {"source": "src/lib/utils/import/paprika", "destination": "docs/technical", "name": "utils_paprika"},
     {"source": "src/lib/utils/parse", "destination": "docs/technical", "name": "utils_parse"},
     {"source": "src/lib/utils/prisma", "destination": "docs/technical", "name": "utils_prisma"},
     {"source": "src/lib/utils/pwa", "destination": "docs/technical", "name": "utils_pwa"},

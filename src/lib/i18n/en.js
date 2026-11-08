@@ -133,7 +133,7 @@ export default {
 		creatingAdmin: 'Creating Admin User...',
 		msg: {
 			allFieldsRequired: 'All fields are required.',
-			adminNotCreated: 'Admin user not created.',
+			alreadySeeded: 'This site is already set up.',
 			seeded: 'Database seeded successfully.',
 			seedFailed: 'Failed to seed the database.'
 		}
@@ -700,6 +700,7 @@ export default {
 				cannotDeleteSelf: 'Cannot delete yourself.',
 				cannotDeleteRoot: 'Cannot delete root user.',
 				onlyAdminMustRemain: "The only admin user can't make themselves non-admin.",
+				rootMustRemainAdmin: 'The root user must remain an admin.',
 				invalidUserId: 'Invalid user id.'
 			}
 		}

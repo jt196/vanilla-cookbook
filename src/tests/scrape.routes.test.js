@@ -17,7 +17,16 @@ import { extractRecipeWithLLM } from '$lib/utils/ai'
 import { resolveAIConfig } from '$lib/server/aiHelpers'
 import { GET as scrapeGet } from '../routes/api/recipe/scrape/[url]/+server.js'
 
+const userLocals = { user: { userId: 'u1', username: 'cook' } }
+
 describe('API Routes - /api/recipe/scrape/[url]', () => {
+	it('requires a logged-in user', async () => {
+		await expect(
+			scrapeGet({ params: { url: encodeURIComponent('https://example.com/recipe') }, locals: {} })
+		).rejects.toMatchObject({ status: 401 })
+		expect(parseURL).not.toHaveBeenCalled()
+	})
+
 	beforeEach(() => {
 		vi.clearAllMocks()
 		resolveAIConfig.mockReturnValue({
@@ -44,7 +53,7 @@ describe('API Routes - /api/recipe/scrape/[url]', () => {
 					'https://www.allrecipes.com/recipe/239541/chef-johns-fresh-salmon-cakes/'
 				)
 			},
-			locals: {}
+			locals: userLocals
 		})
 		const data = await response.json()
 
@@ -64,7 +73,7 @@ describe('API Routes - /api/recipe/scrape/[url]', () => {
 					'https://www.allrecipes.com/recipe/239541/chef-johns-fresh-salmon-cakes/'
 				)
 			},
-			locals: {}
+			locals: userLocals
 		})
 		const data = await response.json()
 
@@ -94,7 +103,7 @@ describe('API Routes - /api/recipe/scrape/[url]', () => {
 					'https://www.allrecipes.com/recipe/239541/chef-johns-fresh-salmon-cakes/'
 				)
 			},
-			locals: {}
+			locals: userLocals
 		})
 		const data = await response.json()
 

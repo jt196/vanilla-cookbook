@@ -1,3 +1,4 @@
+import { requireAuth } from '$lib/server/authHelpers'
 import { extractRecipeWithLLM } from '$lib/utils/ai'
 import { fileTypeFromBuffer } from 'file-type'
 import { json } from '@sveltejs/kit'
@@ -6,6 +7,7 @@ import { RECIPE_IMAGE_MAX_DIMENSION } from '$lib/utils/image/imageConfig'
 import { resolveAIConfig } from '$lib/server/aiHelpers'
 
 export async function POST({ request, locals }) {
+	requireAuth(locals)
 	const aiConfig = resolveAIConfig(locals, 'image')
 	if (!aiConfig.ok) {
 		return aiConfig.response

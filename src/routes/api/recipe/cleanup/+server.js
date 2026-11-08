@@ -1,3 +1,4 @@
+import { requireAuth } from '$lib/server/authHelpers'
 import { generateRecipeWithLLM } from '$lib/utils/ai'
 import { json } from '@sveltejs/kit'
 import { resolveAIConfig } from '$lib/server/aiHelpers'
@@ -5,6 +6,7 @@ import { parseNutritionInfo, serializeNutritionEntries } from '$lib/utils/nutrit
 import { getNutritionLocale } from '$lib/submodules/recipe-ingredient-parser/src/i18n/nutrition'
 
 export async function POST({ request, locals }) {
+	requireAuth(locals)
 	try {
 		const { type, content, userUnits = 'metric', language = 'eng' } = await request.json()
 

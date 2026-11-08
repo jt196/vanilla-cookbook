@@ -1,7 +1,9 @@
+import { requireAuth } from '$lib/server/authHelpers'
 import { json } from '@sveltejs/kit'
 import { parseHTML } from '$lib/utils/parse/recipeParse'
 
-export async function POST({ request }) {
+export async function POST({ request, locals }) {
+	requireAuth(locals)
 	const formData = await request.formData()
 	const file = formData.get('html')
 

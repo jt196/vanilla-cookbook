@@ -18,6 +18,20 @@ export async function POST({ locals, params, request }) {
 	}
 
 	try {
+		const recipe = await prisma.recipe.findUnique({
+			where: { uid },
+			select: { userId: true, is_public: true }
+		})
+		if (!recipe) {
+			return jsonError(404, { error: 'Recipe not found', code: 'recipe.msg.notFound' })
+		}
+		if (!recipe.is_public && recipe.userId !== user.userId && !user.isAdmin) {
+			return jsonError(403, {
+				error: 'Access denied: this recipe is private',
+				code: 'recipe.msg.privateAccessDenied'
+			})
+		}
+
 		const cookedTime = new Date()
 		const cookedEndTime = new Date(cookedTime.getTime() + 180 * 60 * 1000)
 		const recipeLog = await prisma.RecipeLog.create({
@@ -32,7 +46,7 @@ export async function POST({ locals, params, request }) {
 		})
 		return jsonSuccess({ recipeLog })
 	} catch (err) {
-		console.log('Error: ' + err)
+		console.error('Error adding recipe log:', err)
 		return jsonError(500, {
 			error: `Failed to add recipe log: ${err.message}`,
 			code: 'recipe.msg.cookedFail'

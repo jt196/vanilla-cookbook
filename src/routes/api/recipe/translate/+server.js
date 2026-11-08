@@ -1,8 +1,10 @@
+import { requireAuth } from '$lib/server/authHelpers'
 import { translateRecipeWithLLM } from '$lib/utils/ai'
 import { json } from '@sveltejs/kit'
 import { resolveAIConfig } from '$lib/server/aiHelpers'
 
 export async function POST({ request, locals }) {
+	requireAuth(locals)
 	try {
 		const aiConfig = resolveAIConfig(locals, 'text')
 		if (!aiConfig.ok) {

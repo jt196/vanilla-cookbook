@@ -3,6 +3,18 @@ import { deleteSinglePhotoFile, photoFilePath } from '$lib/utils/image/imageBack
 import fs from 'fs'
 import { requireAuth, requireOwnership, jsonSuccess, jsonError } from '$lib/server/authHelpers'
 
+// Raster formats only. Anything else (e.g. an extension taken from an imported file name)
+// is served as a download so the browser never renders it inline.
+const IMAGE_TYPES = {
+	jpg: 'image/jpeg',
+	jpeg: 'image/jpeg',
+	png: 'image/png',
+	gif: 'image/gif',
+	webp: 'image/webp',
+	avif: 'image/avif',
+	bmp: 'image/bmp'
+}
+
 /**
  * Serve a stored recipe photo. Only local files are served; photos that exist only as a
  * remote link can be downloaded with "Download missing images" in Settings → Recipes.
@@ -15,7 +27,10 @@ export async function GET({ params }) {
 	if (!fs.existsSync(filePath)) return new Response(null, { status: 204 })
 
 	return new Response(fs.readFileSync(filePath), {
-		headers: { 'Content-Type': `image/${photo.fileType === 'jpg' ? 'jpeg' : photo.fileType}` }
+		headers: {
+			'Content-Type': IMAGE_TYPES[photo.fileType.toLowerCase()] || 'application/octet-stream',
+			'X-Content-Type-Options': 'nosniff'
+		}
 	})
 }
 

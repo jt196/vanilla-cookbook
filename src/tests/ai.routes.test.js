@@ -25,8 +25,9 @@ vi.mock('$lib/utils/llmConnection', () => ({
 	getConfiguredProviders: vi.fn()
 }))
 
-// Mock authHelpers for admin checks in /api/llm/test
+// Mock authHelpers for login checks (AI routes) and admin checks (/api/llm/test)
 vi.mock('$lib/server/authHelpers', () => ({
+	requireAuth: vi.fn(),
 	requireAdmin: vi.fn(),
 	jsonError: vi.fn(
 		(status, message) => new Response(JSON.stringify({ error: message }), { status })
@@ -36,7 +37,7 @@ vi.mock('$lib/server/authHelpers', () => ({
 import { extractRecipeWithLLM, generateRecipeWithLLM, translateRecipeWithLLM } from '$lib/utils/ai'
 import { resolveAIConfig } from '$lib/server/aiHelpers'
 import { testProviderConnection, getConfiguredProviders } from '$lib/utils/llmConnection'
-import { requireAdmin } from '$lib/server/authHelpers'
+import { requireAuth, requireAdmin } from '$lib/server/authHelpers'
 
 // Import route handlers after mocks so handlers bind mocked dependencies.
 import { POST as parsePost } from '../routes/api/recipe/parse/+server.js'
@@ -486,5 +487,32 @@ describe('API Routes - /api/llm/test', () => {
 			expect(data.chat).toContain('anthropic')
 			expect(data.embedding).toContain('openai')
 		})
+	})
+})
+
+describe('API Routes - AI endpoints require login', () => {
+	beforeEach(() => {
+		vi.clearAllMocks()
+		resolveAIConfig.mockReturnValue(mockAIConfig)
+		requireAuth.mockImplementation(() => {
+			throw Object.assign(new Error('Authentication required'), { status: 401 })
+		})
+	})
+
+	afterEach(() => {
+		requireAuth.mockReset()
+	})
+
+	it.each([
+		['parse', () => parsePost, { text: 'recipe' }],
+		['translate', () => translatePost, { recipe: mockRecipe }],
+		['cleanup', () => cleanupPost, { type: 'ingredients', content: '1 cup flour' }]
+	])('%s requires a logged-in user', async (_, handler, body) => {
+		await expect(handler()({ request: createRequest(body), locals: {} })).rejects.toMatchObject({
+			status: 401
+		})
+		expect(extractRecipeWithLLM).not.toHaveBeenCalled()
+		expect(generateRecipeWithLLM).not.toHaveBeenCalled()
+		expect(translateRecipeWithLLM).not.toHaveBeenCalled()
 	})
 })

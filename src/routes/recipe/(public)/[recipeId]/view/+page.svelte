@@ -30,7 +30,7 @@
 	let { data = $bindable() } = $props()
 	let isLoading = $state(true)
 
-	let { recipe, viewUser, logs, recUser, aiEnabled, semanticEnabled } = $state(data)
+	let { recipe, viewUser, viewMode, logs, recUser, aiEnabled, semanticEnabled } = $state(data)
 	$effect(() => {
 		;({ recipe, viewUser, logs, recUser, aiEnabled, semanticEnabled } = data)
 	})
@@ -413,7 +413,11 @@
 			</div>
 		{/if}
 		<div class="w-full {mainPhoto ? 'md:w-2/3' : ''}">
-			<RecipeViewAbout {recipe} {scaledServings} recipeRatingChanged={handleRecipeRatingChanged} />
+			<RecipeViewAbout
+				{recipe}
+				{scaledServings}
+				canRate={!viewMode}
+				recipeRatingChanged={handleRecipeRatingChanged} />
 		</div>
 	</div>
 
