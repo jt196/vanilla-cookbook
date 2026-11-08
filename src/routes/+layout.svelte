@@ -124,7 +124,7 @@
 
 		{#if dbSeed}
 			<div class="navbar-end gap-2">
-				<SearchButton />
+				<SearchButton isMac={data.isApplePlatform} />
 				<!-- Desktop Navigation - hidden on mobile -->
 				<div class="hidden lg:flex">
 					<NavLinks {user} {settings} {themePreference} onThemeChange={setThemePreference} />

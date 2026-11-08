@@ -1,12 +1,16 @@
 <script>
-	import { browser } from '$app/environment'
 	import Search from '$lib/components/svg/Search.svelte'
 	import { commandPaletteOpen } from '$lib/stores/commandPalette'
 	import { t } from '$lib/stores/locale.js'
 
-	/** Navbar button that opens the command palette: an input-like box, icon only on small screens. */
-	const isMac = browser && /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent)
-	const shortcut = isMac ? '⌘K' : 'Ctrl K'
+	/**
+	 * Navbar button that opens the command palette: an input-like box, icon only on small screens.
+	 * `isMac` comes from the server (User-Agent) so the shortcut hint doesn't change on hydration.
+	 *
+	 * @type {{ isMac?: boolean }}
+	 */
+	let { isMac = false } = $props()
+	const shortcut = $derived(isMac ? '⌘K' : 'Ctrl K')
 </script>
 
 <button
