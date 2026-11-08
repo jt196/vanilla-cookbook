@@ -45,6 +45,7 @@ export default {
 	nav: {
 		allRecipes: 'All Recipes',
 		myRecipes: 'My Recipes',
+		recipes: 'Recipes',
 		newRecipe: 'New Recipe',
 		shopping: 'Shopping',
 		shoppingList: 'Shopping list',
