@@ -75,6 +75,14 @@ jobs:
       - name: Build Project
         run: pnpm build
 
+      # Prettier + ESLint, including required JSDoc on exported functions
+      - name: Lint
+        run: pnpm lint
+
+      # svelte-check with checkJs; fails if type errors rise above scripts/type-baseline.json
+      - name: Type check
+        run: pnpm check:types
+
       - name: Run Prisma Migrations
         run: pnpm prisma migrate deploy
 
