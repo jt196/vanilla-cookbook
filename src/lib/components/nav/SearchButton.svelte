@@ -23,7 +23,7 @@
 	aria-label={text}
 	aria-keyshortcuts={isMac ? 'Meta+K' : 'Control+K'}
 	class={compact
-		? 'btn btn-ghost btn-circle md:btn-sm md:w-56 md:justify-start md:rounded-lg md:border md:border-base-300 md:bg-base-200 md:font-normal md:text-base-content/60'
+		? 'btn btn-ghost btn-circle md:btn-sm md:w-48 md:justify-start md:rounded-lg md:border md:border-base-300 md:bg-base-200 md:font-normal md:text-base-content/60'
 		: 'flex w-full items-center gap-3 rounded-xl border border-base-300 bg-base-100 px-4 py-3 text-left text-base-content/60 shadow-sm transition hover:border-primary/50'}>
 	<span class={compact ? 'text-primary md:text-current' : ''}>
 		<Search width={compact ? '18px' : '16px'} height={compact ? '18px' : '16px'} />

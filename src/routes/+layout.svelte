@@ -108,7 +108,7 @@
 
 <div class="bg-base-100 border-b border-base-300">
 	<div class="navbar container mx-auto px-4">
-		<div class="navbar-start">
+		<div class="navbar-start w-auto shrink-0">
 			{#if user}
 				<a href="/" class="flex items-center gap-2 text-primary">
 					<CookBook width="45px" height="45px" />
@@ -123,7 +123,7 @@
 		</div>
 
 		{#if dbSeed}
-			<div class="navbar-end gap-2">
+			<div class="navbar-end flex-1 gap-2">
 				<SearchButton compact label={$t('nav.search')} />
 				<!-- Desktop Navigation - hidden on mobile -->
 				<div class="hidden lg:flex">

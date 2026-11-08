@@ -7,6 +7,7 @@ import { get } from 'svelte/store'
 import { render, fireEvent, screen } from '@testing-library/svelte/svelte5'
 
 import Scale from '$lib/components/ui/Scale.svelte'
+import RecipeScopeTabs from '$lib/components/recipe/RecipeScopeTabs.svelte'
 import RecipeFilter from '$lib/components/recipe/RecipeFilter.svelte'
 import RecipeList from '$lib/components/recipe/RecipeList.svelte'
 
@@ -214,5 +215,19 @@ describe('RecipeList component', () => {
 		// Assuming that the id of the photo for "Recipe A" is known and is stored in a variable called photoId
 		const photoId = mockRecipes[0].photos[0].id // or however you get the id from the mock
 		expect(image.src).toContain(`/api/recipe/image/${photoId}`)
+	})
+})
+
+describe('RecipeScopeTabs component', () => {
+	it('links to the viewer’s recipes and all recipes, marking the current one', () => {
+		render(RecipeScopeTabs, { props: { userId: 'u1', active: 'all' } })
+		const mine = screen.getByRole('link', { name: 'My Recipes' })
+		const all = screen.getByRole('link', { name: 'All Recipes' })
+
+		expect(mine).toHaveAttribute('href', '/user/u1/recipes')
+		expect(mine).not.toHaveAttribute('aria-current')
+		expect(all).toHaveAttribute('href', '/recipes')
+		expect(all).toHaveAttribute('aria-current', 'page')
+		expect(all).toHaveClass('tab-active')
 	})
 })

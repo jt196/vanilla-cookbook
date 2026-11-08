@@ -17,8 +17,9 @@
 		favouriteFilter
 	} from '$lib/stores/recipeFilter'
 
-	/** @type {{recipes?: any[], viewMode?: 'owner' | 'social', title?: string | null, viewerUserId?: string | null, ownerUserId?: string | null, ownerUsername?: string | null, feedKind?: 'all' | 'user', semanticEnabled?: boolean}} */
+	/** @type {{recipes?: any[], viewMode?: 'owner' | 'social', title?: string | null, viewerUserId?: string | null, ownerUserId?: string | null, ownerUsername?: string | null, feedKind?: 'all' | 'user', semanticEnabled?: boolean, header?: import('svelte').Snippet}} */
 	let {
+		header,
 		recipes = [],
 		viewMode = 'owner',
 		title = null,
@@ -385,7 +386,9 @@
 	})
 </script>
 
-{#if title}
+{#if header}
+	{@render header()}
+{:else if title}
 	<div class="mb-2 md:mb-4 prose max-w-none flex justify-center">
 		<h2>{title}</h2>
 	</div>
