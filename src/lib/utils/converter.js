@@ -812,7 +812,8 @@ export function parseRecipeText(
  * @param {string} direction - The input string containing temperature values.
  * @param {string} toSystem - The target system: 'metric', 'imperial', or 'americanVolumetric'.
  *                            Note: 'americanVolumetric' is treated as a subtype of 'imperial'.
- * @param {string} fromSystem - The source system: 'metric' or 'imperial'.
+ * @param {string} [fromSystem] - The recipe's system; when it matches `toSystem`,
+ *   temperatures are left as they are.
  * @param {string} [lang='eng'] - Language code for i18n joiners (e.g., 'eng', 'deu', 'esp').
  *
  * @returns {string} - The string with converted temperatures, wrapped in `<span class="text-secondary">`, or original if no conversion needed.

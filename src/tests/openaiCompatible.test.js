@@ -15,6 +15,7 @@ import { listProviderModels, clearModelListCache } from '$lib/server/llmModelLis
 import { testProviderConnection } from '$lib/utils/llmConnection.js'
 import { getEmbedding } from '$lib/utils/embeddings.js'
 
+import { fake } from './helpers/fake.js'
 const json = (body, status = 200) => Response.json(body, { status })
 
 describe('getOpenAICompatibleConfig', () => {
@@ -77,7 +78,7 @@ describe('openai_compatible provider capabilities', () => {
 	it('is a known provider supporting every purpose', () => {
 		expect(providerNames).toContain('openai_compatible')
 		for (const purpose of ['chat', 'image', 'imageGeneration', 'embedding']) {
-			expect(providerSupports('openai_compatible', purpose)).toBe(true)
+			expect(providerSupports('openai_compatible', fake(purpose))).toBe(true)
 		}
 	})
 
@@ -123,15 +124,16 @@ describe('openai_compatible requests', () => {
 
 		expect(fetchMock.mock.calls[0][0]).toBe('http://litellm:4000/v1/models')
 		expect(fetchMock.mock.calls[0][1].headers).toEqual({})
-		expect(chat.models.map((m) => m.value)).toEqual([
+		expect(chat.ok).toBe(true)
+		expect(fake(chat).models.map((m) => m.value)).toEqual([
 			'anthropic/claude-sonnet-5',
 			'mistral/mistral-small',
 			'google/gemini-3.6-flash-preview'
 		])
-		expect(chat.models[1].label).toBe('Mistral Small (mistral/mistral-small)')
+		expect(fake(chat).models[1].label).toBe('Mistral Small (mistral/mistral-small)')
 
 		const embedding = await listProviderModels('openai_compatible', 'embedding')
-		expect(embedding.models.map((m) => m.value)).toEqual(['openai/text-embedding-3-small'])
+		expect(fake(embedding).models.map((m) => m.value)).toEqual(['openai/text-embedding-3-small'])
 	})
 
 	it('sends the key as a bearer token when set', async () => {

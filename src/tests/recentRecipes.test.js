@@ -7,6 +7,7 @@ import {
 	toRecent
 } from '$lib/utils/recentRecipes'
 
+import { fake } from './helpers/fake.js'
 function memoryStorage(initial = {}) {
 	const data = { ...initial }
 	return {
@@ -51,18 +52,20 @@ describe('recentRecipes', () => {
 
 	it('remembers per user, separately from visitors', () => {
 		const storage = memoryStorage()
-		rememberRecipe('u1', recipe('a'), storage)
-		rememberRecipe(null, recipe('b'), storage)
+		rememberRecipe('u1', recipe('a'), fake(storage))
+		rememberRecipe(null, recipe('b'), fake(storage))
 
-		expect(getRecentRecipes('u1', storage).map((r) => r.uid)).toEqual(['a'])
-		expect(getRecentRecipes(null, storage).map((r) => r.uid)).toEqual(['b'])
-		expect(getRecentRecipes('u2', storage)).toEqual([])
+		expect(getRecentRecipes('u1', fake(storage)).map((r) => r.uid)).toEqual(['a'])
+		expect(getRecentRecipes(null, fake(storage)).map((r) => r.uid)).toEqual(['b'])
+		expect(getRecentRecipes('u2', fake(storage))).toEqual([])
 	})
 
 	it('survives corrupt or unavailable storage', () => {
-		expect(getRecentRecipes('u1', memoryStorage({ 'vanilla:recent:u1': '{nope' }))).toEqual([])
+		expect(getRecentRecipes('u1', fake(memoryStorage({ 'vanilla:recent:u1': '{nope' })))).toEqual(
+			[]
+		)
 		expect(
-			getRecentRecipes('u1', memoryStorage({ 'vanilla:recent:u1': '[{"uid":"x"},"junk"]' }))
+			getRecentRecipes('u1', fake(memoryStorage({ 'vanilla:recent:u1': '[{"uid":"x"},"junk"]' })))
 		).toEqual([])
 
 		const blocked = {
@@ -73,7 +76,7 @@ describe('recentRecipes', () => {
 				throw new Error('SecurityError')
 			}
 		}
-		expect(getRecentRecipes('u1', blocked)).toEqual([])
-		expect(() => rememberRecipe('u1', recipe('a'), blocked)).not.toThrow()
+		expect(getRecentRecipes('u1', fake(blocked))).toEqual([])
+		expect(() => rememberRecipe('u1', recipe('a'), fake(blocked))).not.toThrow()
 	})
 })
