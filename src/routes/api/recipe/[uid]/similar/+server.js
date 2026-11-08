@@ -1,6 +1,7 @@
 import { json } from '@sveltejs/kit'
 import { prisma } from '$lib/server/prisma'
 import { getOptionalUser } from '$lib/server/authHelpers'
+import { mainPhoto, PHOTO_SELECT, visibleRecipesWhere } from '$lib/server/recipeFeed'
 import { deserializeEmbedding, cosineSimilarity } from '$lib/utils/embeddings'
 import { resolveSemanticAvailability } from '$lib/server/semanticHelpers'
 
@@ -43,34 +44,14 @@ export async function GET({ params, url, locals }) {
 			return json({ enabled: true, results: [] })
 		}
 
-		// Build visibility filter for candidates
-		let whereClause = {
-			in_trash: false,
-			embedding: { not: null },
-			uid: { not: uid } // exclude source
-		}
-
-		if (!user) {
-			whereClause = { ...whereClause, is_public: true }
-		} else if (!user.isAdmin) {
-			whereClause = {
-				...whereClause,
-				OR: [{ userId: user.userId }, { is_public: true }]
-			}
-		}
-
 		const candidates = await prisma.recipe.findMany({
-			where: whereClause,
+			where: { ...visibleRecipesWhere(user), embedding: { not: null }, uid: { not: uid } },
 			select: {
 				uid: true,
 				name: true,
 				image_url: true,
 				embedding: true,
-				photos: {
-					orderBy: [{ isMain: 'desc' }, { id: 'asc' }],
-					select: { id: true },
-					take: 1
-				}
+				photos: PHOTO_SELECT
 			}
 		})
 
@@ -86,7 +67,7 @@ export async function GET({ params, url, locals }) {
 					uid: candidate.uid,
 					name: candidate.name,
 					image_url: candidate.image_url,
-					photos: candidate.photos,
+					photos: mainPhoto(candidate.photos),
 					score
 				})
 			}
