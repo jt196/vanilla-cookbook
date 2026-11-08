@@ -1,6 +1,12 @@
 import { prisma } from '$lib/server/prisma'
 import { getOptionalUser, jsonSuccess, jsonError } from '$lib/server/authHelpers'
 
+/**
+ * Users with public profiles (all users for admins) and their public/total recipe counts.
+ *
+ * @param {import('./$types').RequestEvent} event
+ * @returns {Promise<Response>}
+ */
 export async function GET({ locals }) {
 	const user = getOptionalUser(locals)
 

@@ -1,3 +1,9 @@
+/**
+ * New-recipe page settings: AI availability (text and image), default privacy, units and
+ * language.
+ *
+ * @type {import('./$types').PageServerLoad}
+ */
 export const load = async ({ locals }) => {
 	const ai = locals.site?.ai ?? {}
 	const units = locals.user?.units || 'metric'

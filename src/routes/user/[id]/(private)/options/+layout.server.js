@@ -1,12 +1,11 @@
-/**
- * Validates the current user's authentication status and returns user data.
- * @async
- * @function
- * @param {Object} locals - The context object containing authentication data.
- * @returns {Object} Returns the authenticated user object.
- */
 import { requireUser } from '$lib/server/authPage'
 
+/**
+ * Options pages: requires login and provides the user and current path for the options
+ * menu.
+ *
+ * @type {import('./$types').LayoutServerLoad}
+ */
 export const load = async ({ url, locals }) => {
 	const user = requireUser(locals)
 	return { user, pathname: url.pathname }

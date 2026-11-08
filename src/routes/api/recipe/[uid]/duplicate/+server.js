@@ -40,6 +40,13 @@ async function copyPhotos(photos, newRecipeUid) {
 	}
 }
 
+/**
+ * Copy another user's visible recipe (and its photos) into the current user's account as a
+ * private recipe.
+ *
+ * @param {import('./$types').RequestEvent} event
+ * @returns {Promise<Response>}
+ */
 export async function POST({ locals, params }) {
 	const user = requireAuth(locals)
 	const { uid } = params

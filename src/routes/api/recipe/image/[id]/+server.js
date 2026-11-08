@@ -60,6 +60,12 @@ export async function GET({ params, url, request }) {
 	})
 }
 
+/**
+ * Delete a photo (row and file) from one of the current user's recipes.
+ *
+ * @param {import('./$types').RequestEvent} event
+ * @returns {Promise<Response>}
+ */
 export async function DELETE({ params, locals }) {
 	const user = requireAuth(locals)
 	const { id } = params

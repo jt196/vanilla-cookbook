@@ -14,6 +14,12 @@ import {
 	saveUploadedPhotos
 } from '$lib/server/recipeSave'
 
+/**
+ * Delete one of the current user's recipes and its photo files.
+ *
+ * @param {import('./$types').RequestEvent} event
+ * @returns {Promise<Response>}
+ */
 export async function DELETE({ params, locals }) {
 	const user = requireAuth(locals)
 	const { uid } = params
@@ -131,6 +137,13 @@ export async function PUT({ request, locals, params }) {
 	}
 }
 
+/**
+ * A recipe with its photos, categories and parent, if the viewer may see it, plus whether
+ * they've favourited or copied it.
+ *
+ * @param {import('./$types').RequestEvent} event
+ * @returns {Promise<Response>}
+ */
 export async function GET({ params, locals }) {
 	const user = getOptionalUser(locals)
 	const { uid } = params

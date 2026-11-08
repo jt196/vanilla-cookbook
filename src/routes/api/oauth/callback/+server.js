@@ -242,6 +242,13 @@ async function handleLegacyOauthCallback(provider, url, cookies, locals) {
 	throw redirect(303, `/user/${user.userId}/recipes`)
 }
 
+/**
+ * OAuth/OIDC callback: verify state, then log in a linked account, link by verified email,
+ * or create a user (if allowed), and redirect to their recipes.
+ *
+ * @param {import('./$types').RequestEvent} event
+ * @returns {Promise<Response>}
+ */
 export async function GET({ url, cookies, locals }) {
 	const provider = cookies.get('oauth_provider')
 	const storedState = cookies.get('oauth_state')

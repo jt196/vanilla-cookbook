@@ -1,6 +1,12 @@
 import { prisma } from '$lib/server/prisma'
 import { requireAuth, requireOwnership, jsonSuccess, jsonError } from '$lib/server/authHelpers'
 
+/**
+ * Set the rating (0–5, or null) of one of the current user's recipes.
+ *
+ * @param {import('./$types').RequestEvent} event
+ * @returns {Promise<Response>}
+ */
 export async function PUT({ request, locals, params }) {
 	const user = requireAuth(locals)
 	const { uid } = params

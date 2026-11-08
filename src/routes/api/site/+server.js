@@ -2,6 +2,13 @@ import { prisma } from '$lib/server/prisma'
 import { requireAdmin, jsonSuccess, jsonError } from '$lib/server/authHelpers'
 import { normalizeBoolean } from '$lib/utils/normalize'
 
+/**
+ * Admin: update site settings (registration, require login, OIDC auto-provisioning, AI and
+ * semantic search providers/models).
+ *
+ * @param {import('./$types').RequestEvent} event
+ * @returns {Promise<Response>}
+ */
 export async function POST({ request, locals }) {
 	requireAdmin(locals)
 	const siteData = await request.json()

@@ -116,6 +116,13 @@ async function createZipWithGzippedRecipes(recipeData) {
 
 import { requireAuth } from '$lib/server/authHelpers'
 
+/**
+ * Download all of the current user's recipes as a Paprika-format `.paprikarecipes`
+ * archive.
+ *
+ * @param {import('./$types').RequestEvent} event
+ * @returns {Promise<Response>}
+ */
 export async function POST({ locals }) {
 	const user = requireAuth(locals)
 

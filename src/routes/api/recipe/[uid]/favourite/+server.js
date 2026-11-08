@@ -1,6 +1,12 @@
 import { prisma } from '$lib/server/prisma'
 import { requireAuth, jsonSuccess, jsonError } from '$lib/server/authHelpers'
 
+/**
+ * Toggle whether the current user has favourited a visible recipe.
+ *
+ * @param {import('./$types').RequestEvent} event
+ * @returns {Promise<Response>}
+ */
 export async function PUT({ locals, params }) {
 	const user = requireAuth(locals)
 	const { uid } = params

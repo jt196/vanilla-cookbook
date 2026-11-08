@@ -3,6 +3,11 @@ import { fail } from '@sveltejs/kit'
 import { importers } from '$lib/utils/import/registry.js'
 import { fileTypeFromBuffer } from 'file-type'
 
+/**
+ * Import page: the available import formats.
+ *
+ * @param {import('./$types').PageServerLoadEvent} event
+ */
 export async function load({ fetch }) {
 	const fallback = {
 		importTypes: [
