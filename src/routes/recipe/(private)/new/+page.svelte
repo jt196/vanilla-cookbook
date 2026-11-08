@@ -37,6 +37,7 @@
 	let sharedText = $state(null)
 	let feedbackMessage = $state('')
 	let feedbackCode = $state(null)
+	/** @type {'info' | 'error' | 'success' | 'warning'} */
 	let feedbackType = $state('info')
 	let selectedFiles = $state([])
 	let saveImageUrl = $state(true)

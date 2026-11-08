@@ -24,5 +24,11 @@ export async function GET({ url, locals }) {
 		return json({ ok: false, error: `Invalid type: ${type}` }, { status: 400 })
 	}
 
-	return json(await listProviderModels(provider, type))
+	// `type` was checked against validTypes above
+	return json(
+		await listProviderModels(
+			provider,
+			/** @type {'chat' | 'image' | 'imageGeneration' | 'embedding'} */ (type)
+		)
+	)
 }

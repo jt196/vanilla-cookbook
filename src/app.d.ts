@@ -25,23 +25,24 @@ declare global {
 		type Auth = import('$lib/server/lucia').Auth
 		type DatabaseUserAttributes = {
 			username: string
-			isAdmin: boolean
+			// The rest have database defaults, so they are optional when creating a user
+			isAdmin?: boolean
 			isRoot?: boolean
 			email?: string | null
 			about?: string | null
-			publicProfile: boolean
-			publicRecipes: boolean
-			units: string
-			skipSmallUnits: boolean
-			ingMatch: boolean
-			ingOriginal: boolean
-			ingExtra: boolean
-			displayNutrition: boolean
-			showSimilarRecipes: boolean
-			showNotesDescription: boolean
-			ingSymbol: boolean
-			language: string
-			theme: string
+			publicProfile?: boolean
+			publicRecipes?: boolean
+			units?: string
+			skipSmallUnits?: boolean
+			ingMatch?: boolean
+			ingOriginal?: boolean
+			ingExtra?: boolean
+			displayNutrition?: boolean
+			showSimilarRecipes?: boolean
+			showNotesDescription?: boolean
+			ingSymbol?: boolean
+			language?: string
+			theme?: string
 		}
 		type DatabaseSessionAttributes = Record<string, never>
 	}

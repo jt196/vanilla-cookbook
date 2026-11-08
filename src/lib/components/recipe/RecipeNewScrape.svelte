@@ -25,6 +25,8 @@
 		recipe = $bindable(),
 		apiKeyPresent = false,
 		aiEnabled = false,
+		// The configured image provider can read photos (not every provider can, e.g. Ollama)
+		imageAllowed = true,
 		initialMode = 'url',
 		userUnits = 'metric',
 		userLanguage = 'eng'
@@ -36,6 +38,7 @@
 	let loading = $state(false)
 	let maxImages = 3
 	let textParsingAvailable = $derived(aiEnabled && apiKeyPresent)
+	let imageParsingAvailable = $derived(textParsingAvailable && imageAllowed)
 
 	// Tab state
 	let selectedMode = $state(untrack(() => initialMode))
@@ -275,17 +278,21 @@
 			<Button
 				type="submit"
 				class="w-auto self-start mt-2"
-				disabled={isFileEmpty || (detectedFileMode === 'image' && !textParsingAvailable)}>
+				disabled={isFileEmpty || (detectedFileMode === 'image' && !imageParsingAvailable)}>
 				{#if detectedFileMode === 'html' && !isFileEmpty}
 					{$t('recipeNew.parseHtml')}
-				{:else if textParsingAvailable}
+				{:else if imageParsingAvailable}
 					{selectedFiles?.length > 1 ? $t('recipeNew.analyzeImages') : $t('recipeNew.analyzeImage')}
 				{:else}
 					{$t('recipeNew.aiNotEnabled')}
 				{/if}
 			</Button>
-			{#if detectedFileMode === 'image' && !isFileEmpty && !textParsingAvailable}
-				<p class="text-sm text-warning mt-1">{$t('recipeNew.msg.aiNotEnabled')}</p>
+			{#if detectedFileMode === 'image' && !isFileEmpty && !imageParsingAvailable}
+				<p class="text-sm text-warning mt-1">
+					{textParsingAvailable
+						? $t('recipeNew.msg.imageProviderUnsupported')
+						: $t('recipeNew.msg.aiNotEnabled')}
+				</p>
 			{/if}
 		</div>
 	</div>

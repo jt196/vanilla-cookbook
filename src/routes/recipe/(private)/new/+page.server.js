@@ -5,7 +5,7 @@
  * @type {import('./$types').PageServerLoad}
  */
 export const load = async ({ locals }) => {
-	const ai = locals.site?.ai ?? {}
+	const { ai } = locals.site
 	const units = locals.user?.units || 'metric'
 	const language = locals.user?.language || 'eng'
 

@@ -140,7 +140,7 @@ export const validImageTypes = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp']
 /**
  * Saves a given file data to a specified filename in a given directory.
  * If the file already exists, this function will not overwrite it.
- * @param {ArrayBuffer|string} fileData - The data of the file to be saved.
+ * @param {Buffer|ArrayBuffer|string} fileData - The data to save; a string is treated as base64.
  * @param {string} filename - The name of the file to be saved.
  * @param {string} directory - The directory in which to save the file.
  * @throws {Error} If there is an error while saving the file.

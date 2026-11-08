@@ -3,10 +3,10 @@ import { fail, redirect } from '@sveltejs/kit'
 import { prisma } from '$lib/server/prisma'
 
 /**
- * Validates if the user is logged in and redirects if necessary.
+ * Login page: redirects logged-in users home; provides site settings, OAuth providers and
+ * any message code passed in the URL (e.g. after a failed OAuth login).
  *
- * @param {Object} context - The context object.
- * @param {AppLocals} context.locals - Local variables.
+ * @type {import('./$types').PageServerLoad}
  */
 export const load = async ({ locals, url }) => {
 	const user = locals.user
@@ -25,9 +25,9 @@ export const load = async ({ locals, url }) => {
 }
 
 /**
- * Actions related to login, such as default login.
+ * Login form: rate-limited by IP and account; accepts a username or email with a password.
  *
- * @type {Object}
+ * @type {import('./$types').Actions}
  */
 export const actions = {
 	default: async ({ request, locals }) => {

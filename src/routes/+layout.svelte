@@ -17,7 +17,7 @@
 	import { langStore, isRtl, t } from '$lib/stores/locale.js'
 	import { normalizeThemePreference, resolveTheme } from '$lib/utils/theme.js'
 
-	/** @type {{data: PageData, children?: import('svelte').Snippet}} */
+	/** @type {{data: import('./$types').LayoutData, children?: import('svelte').Snippet}} */
 	let { data, children } = $props()
 	let user = $derived(data.user)
 	let settings = $derived(data.settings)

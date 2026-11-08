@@ -20,7 +20,8 @@ export function semanticEmbeddingJobsEnabled(preferredProvider = null) {
  * 2. Site-level setting allows it
  *
  * @param {import('@sveltejs/kit').RequestEvent['locals']} locals
- * @returns {{ enabled: true } | { enabled: false, reason: string, code: string, response: Response }}
+ * @returns {{ enabled: true, reason?: undefined, code?: undefined, response?: undefined }
+ *   | { enabled: false, reason: string, code: string, response: Response }}
  */
 export function resolveSemanticAvailability(locals) {
 	const semantic = locals?.site?.semantic

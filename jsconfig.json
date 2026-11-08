@@ -1,5 +1,4 @@
 {
 	"compilerOptions": {},
-	"extends": "./.svelte-kit/tsconfig.json",
-	"include": ["src/**/*", "static/*.js"]
+	"extends": "./.svelte-kit/tsconfig.json"
 }

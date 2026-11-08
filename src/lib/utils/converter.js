@@ -533,8 +533,8 @@ function convertStandardWeightUnits(ingredientObj, quantity, fromUnit, toSystem,
 /**
  * Normalizes an ingredient object by standardizing units, rounding quantity, and adding metadata.
  * @param {Object} ingredientObj - The original ingredient object.
- * @param {Object} options - Optional settings.
- * @param {boolean} options.skipRounding - If true, skip rounding quantity.
+ * @param {Object} [options] - Optional settings.
+ * @param {boolean} [options.skipRounding] - If true, skip rounding quantity.
  * @returns {Object} - Normalized ingredient object.
  */
 export function normalizeIngredient(ingredientObj, options = {}, lang = 'eng') {

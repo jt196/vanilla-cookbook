@@ -75,7 +75,8 @@ async function embedMainPhotoFields(recipe) {
 }
 
 async function createZipWithGzippedRecipes(recipeData) {
-	const archive = new ZipArchive()
+	// archiver's types omit the EventEmitter methods the archive has at runtime
+	const archive = /** @type {ZipArchive & import('events').EventEmitter} */ (new ZipArchive())
 	const buffers = []
 
 	archive.on('data', (d) => buffers.push(d))

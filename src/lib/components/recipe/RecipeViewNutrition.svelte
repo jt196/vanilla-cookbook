@@ -7,7 +7,7 @@
 	import { parseNutritionInfo, scaleNutrition } from '$lib/utils/nutrition'
 	import { t } from '$lib/stores/locale.js'
 
-	/** @type {{ nutritionalInfo?: string, scale?: number, language?: string }} */
+	/** @type {{ nutritionalInfo?: string, scale?: number, language?: string, recipeUid?: string, showCleanupAction?: boolean, cleanupInProgress?: boolean, onCleanup?: (() => void) | null }} */
 	let {
 		nutritionalInfo = '',
 		scale = 1,

@@ -376,7 +376,8 @@ export function scaleNutrition(parsed, scale = 1) {
  * Turn parsed nutrition back into text, one "Name: quantity unit" line per entry, with
  * the per-serving phrase for the language when the values are per serving.
  *
- * @param {ReturnType<typeof parseNutritionInfo>} parsedNutrition
+ * @param {{ perServing: boolean, entries: Array<object> }} parsedNutrition - e.g. from
+ *   `parseNutritionInfo`.
  * @param {string} [language='eng'] - App language code for labels.
  * @returns {string} The text, or '' if there are no entries.
  */

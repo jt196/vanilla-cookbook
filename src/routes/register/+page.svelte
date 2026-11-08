@@ -128,9 +128,10 @@
 			</form>
 
 			<FeedbackMessage
-				message={form?.message}
 				messageCode={form?.messageCode}
-				messageVars={form?.messageVars}
+				messageVars={form && 'messageVars' in form
+					? /** @type {Record<string, string | number>} */ (form.messageVars)
+					: undefined}
 				type="error"
 				inline={true} />
 

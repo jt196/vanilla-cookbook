@@ -7,7 +7,7 @@
 	import { enhance } from '$app/forms'
 	import { t } from '$lib/stores/locale.js'
 
-	/** @type {{data: any}} */
+	/** @type {{data: import('./$types').PageData, form: import('./$types').ActionData}} */
 	let { data, form } = $props()
 
 	let settings = $derived(data.settings)
@@ -22,7 +22,6 @@
 	// messages
 	let flashMessageCode = $derived(data.messageCode)
 	let actionMessageCode = $derived(form?.messageCode)
-	let actionMessage = $derived(form?.message)
 	let errorMessageCode = $derived(actionMessageCode ?? flashMessageCode)
 
 	let submitting = $state(false)
@@ -72,11 +71,7 @@
 				</div>
 			</form>
 
-			<FeedbackMessage
-				message={actionMessage}
-				messageCode={errorMessageCode}
-				type="error"
-				inline={true} />
+			<FeedbackMessage messageCode={errorMessageCode} type="error" inline={true} />
 
 			<div class="divider"></div>
 

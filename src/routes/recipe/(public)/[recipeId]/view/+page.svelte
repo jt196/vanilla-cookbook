@@ -299,12 +299,12 @@
 		}
 	}
 
-	let isLatest = true
+	// Token for the latest ingredient conversion; older async results are ignored
+	let latestInvocation = null
 
 	const sanitizeContent = async () => {
-		isLatest = false // Reset flag when starting a new invocation
 		const currentInvocation = {}
-		isLatest = currentInvocation
+		latestInvocation = currentInvocation
 
 		const directionsResult = await Promise.all(
 			parseRecipeText(
@@ -326,7 +326,7 @@
 			).map((note) => getSanitizedHTML(note))
 		)
 
-		if (currentInvocation !== isLatest) return // Ignore results if this isn't the latest invocation
+		if (currentInvocation !== latestInvocation) return // Ignore results if this isn't the latest invocation
 		sanitizedDirections = directionsResult
 		sanitizedNotes = notesResult
 
@@ -339,7 +339,7 @@
 			})
 		)
 
-		if (currentInvocation !== isLatest) return // Ignore results if this isn't the latest invocation
+		if (currentInvocation !== latestInvocation) return // Ignore results if this isn't the latest invocation
 		sanitizedIngredients = tempIngredientsResult
 		isLoading = false
 	}

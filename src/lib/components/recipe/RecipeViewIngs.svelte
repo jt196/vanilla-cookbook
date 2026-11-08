@@ -7,7 +7,7 @@
 	import { i18nMap } from '$lib/submodules/recipe-ingredient-parser/src/i18n'
 	import { t } from '$lib/stores/locale.js'
 
-	/** @type {{ingredients: any, sanitizedIngredients: any, scale: any, scaledServings: any, selectedSystem: any, measurementSystem: any, recipeUid: any, baseServings?: number }} */
+	/** @type {{ingredients: any, sanitizedIngredients: any, scale: any, selectedSystem: any, measurementSystem: any, recipeUid: any, user: any, onScaleChange?: (scale: number) => void, onSelectedSystemChange?: (system: string) => void, baseServings?: number }} */
 	let {
 		ingredients,
 		sanitizedIngredients,

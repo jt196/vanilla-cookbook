@@ -303,6 +303,7 @@ async function invokeLLM({ provider, model, type, messages }) {
  * @param {string} [options.model]
  * @param {string} [options.content='']
  * @param {string} [options.url='']
+ * @param {string} [options.language='eng'] - App language code for the recipe text.
  * @returns {Promise<Object>} Parsed recipe object, or { _noRecipe: true }
  */
 export async function extractRecipeFromVideoText({
