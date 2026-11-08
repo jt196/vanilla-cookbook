@@ -3,6 +3,12 @@ import { requireAuth, requireOwnership, jsonSuccess, jsonError } from '$lib/serv
 import { normalizeString } from '$lib/utils/normalize'
 
 // Handle recipe log updates
+/**
+ * Update one of the current user's cooking log entries (start, end, note, scale).
+ *
+ * @param {import('./$types').RequestEvent} event
+ * @returns {Promise<Response>}
+ */
 export async function PUT({ locals, request, params }) {
 	const user = requireAuth(locals)
 	const { id } = params
@@ -11,7 +17,7 @@ export async function PUT({ locals, request, params }) {
 	const body = await request.json()
 	const { start, end, note, scale } = body
 
-	const log = await prisma.RecipeLog.findUnique({
+	const log = await prisma.recipeLog.findUnique({
 		where: { id }
 	})
 
@@ -25,7 +31,7 @@ export async function PUT({ locals, request, params }) {
 	if (scale !== undefined) updateData.scale = scale
 
 	try {
-		const updatedLog = await prisma.RecipeLog.update({
+		const updatedLog = await prisma.recipeLog.update({
 			where: { id },
 			data: updateData
 		})
@@ -40,18 +46,24 @@ export async function PUT({ locals, request, params }) {
 }
 
 // Handle recipe log deletion
+/**
+ * Delete one of the current user's cooking log entries.
+ *
+ * @param {import('./$types').RequestEvent} event
+ * @returns {Promise<Response>}
+ */
 export async function DELETE({ locals, params }) {
 	const user = requireAuth(locals)
 	const { id } = params
 
-	const log = await prisma.RecipeLog.findUnique({
+	const log = await prisma.recipeLog.findUnique({
 		where: { id }
 	})
 
 	requireOwnership(user, log)
 
 	try {
-		await prisma.RecipeLog.delete({
+		await prisma.recipeLog.delete({
 			where: { id }
 		})
 		return jsonSuccess({ deleted: id })

@@ -2,6 +2,12 @@ import { error } from '@sveltejs/kit'
 import { prisma } from '$lib/server/prisma'
 import { requireAuth, jsonSuccess, jsonError } from '$lib/server/authHelpers'
 
+/**
+ * Make all of the current user's recipes public or private. Body: `{ isPublic }`.
+ *
+ * @param {import('./$types').RequestEvent} event
+ * @returns {Promise<Response>}
+ */
 export async function POST({ request, locals, params }) {
 	const user = requireAuth(locals)
 	const { id } = params

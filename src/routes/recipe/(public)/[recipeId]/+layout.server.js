@@ -1,5 +1,11 @@
 import { error, redirect } from '@sveltejs/kit'
 
+/**
+ * Recipe view data: the recipe (if visible), its owner's public profile, its cooking logs
+ * (owner or admin only), and display preferences (defaults for visitors).
+ *
+ * @type {import('./$types').LayoutServerLoad}
+ */
 export const load = async ({ params, locals, fetch }) => {
 	const user = locals.user
 	const aiEnabled = locals.site?.ai?.enabled ?? false

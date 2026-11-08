@@ -9,19 +9,20 @@ import {
 	getOptionalUser
 } from '$lib/server/authHelpers'
 
+import { fake } from './helpers/fake.js'
 describe('authHelpers', () => {
 	describe('requireAuth', () => {
 		it('returns user when authenticated', () => {
 			const locals = { user: { userId: 'user123', username: 'testuser', isAdmin: false } }
-			const user = requireAuth(locals)
+			const user = requireAuth(fake(locals))
 			expect(user).toEqual(locals.user)
 		})
 
 		it('throws 401 when user is null', () => {
 			const locals = { user: null }
-			expect(() => requireAuth(locals)).toThrow()
+			expect(() => requireAuth(fake(locals))).toThrow()
 			try {
-				requireAuth(locals)
+				requireAuth(fake(locals))
 			} catch (e) {
 				expect(e.status).toBe(401)
 				expect(e.body.message).toBe('Authentication required')
@@ -30,9 +31,9 @@ describe('authHelpers', () => {
 
 		it('throws 401 when user is undefined', () => {
 			const locals = {}
-			expect(() => requireAuth(locals)).toThrow()
+			expect(() => requireAuth(fake(locals))).toThrow()
 			try {
-				requireAuth(locals)
+				requireAuth(fake(locals))
 			} catch (e) {
 				expect(e.status).toBe(401)
 			}
@@ -42,16 +43,16 @@ describe('authHelpers', () => {
 	describe('requireAdmin', () => {
 		it('returns user when admin', () => {
 			const locals = { user: { userId: 'admin1', username: 'admin', isAdmin: true } }
-			const user = requireAdmin(locals)
+			const user = requireAdmin(fake(locals))
 			expect(user).toEqual(locals.user)
 			expect(user.isAdmin).toBe(true)
 		})
 
 		it('throws 401 when not authenticated', () => {
 			const locals = { user: null }
-			expect(() => requireAdmin(locals)).toThrow()
+			expect(() => requireAdmin(fake(locals))).toThrow()
 			try {
-				requireAdmin(locals)
+				requireAdmin(fake(locals))
 			} catch (e) {
 				expect(e.status).toBe(401)
 			}
@@ -59,9 +60,9 @@ describe('authHelpers', () => {
 
 		it('throws 403 when authenticated but not admin', () => {
 			const locals = { user: { userId: 'user1', username: 'user', isAdmin: false } }
-			expect(() => requireAdmin(locals)).toThrow()
+			expect(() => requireAdmin(fake(locals))).toThrow()
 			try {
-				requireAdmin(locals)
+				requireAdmin(fake(locals))
 			} catch (e) {
 				expect(e.status).toBe(403)
 				expect(e.body.message).toBe('Admin access required')
@@ -131,24 +132,24 @@ describe('authHelpers', () => {
 
 		it('allows access to public resources for anonymous users', () => {
 			const resource = { userId: 'otherUser', is_public: true }
-			expect(() => requireAccessOrPublic(anonLocals, resource)).not.toThrow()
+			expect(() => requireAccessOrPublic(fake(anonLocals), resource)).not.toThrow()
 		})
 
 		it('allows access to public resources for authenticated users', () => {
 			const resource = { userId: 'otherUser', is_public: true }
-			expect(() => requireAccessOrPublic(authLocals, resource)).not.toThrow()
+			expect(() => requireAccessOrPublic(fake(authLocals), resource)).not.toThrow()
 		})
 
 		it('allows owner access to private resources', () => {
 			const resource = { userId: 'user123', is_public: false }
-			expect(() => requireAccessOrPublic(authLocals, resource)).not.toThrow()
+			expect(() => requireAccessOrPublic(fake(authLocals), resource)).not.toThrow()
 		})
 
 		it('throws 403 for anonymous users on private resources', () => {
 			const resource = { userId: 'otherUser', is_public: false }
-			expect(() => requireAccessOrPublic(anonLocals, resource)).toThrow()
+			expect(() => requireAccessOrPublic(fake(anonLocals), resource)).toThrow()
 			try {
-				requireAccessOrPublic(anonLocals, resource)
+				requireAccessOrPublic(fake(anonLocals), resource)
 			} catch (e) {
 				expect(e.status).toBe(403)
 				expect(e.body.message).toBe('Access denied: this resource is private')
@@ -157,18 +158,18 @@ describe('authHelpers', () => {
 
 		it('throws 403 for non-owner on private resources', () => {
 			const resource = { userId: 'otherUser', is_public: false }
-			expect(() => requireAccessOrPublic(authLocals, resource)).toThrow()
+			expect(() => requireAccessOrPublic(fake(authLocals), resource)).toThrow()
 			try {
-				requireAccessOrPublic(authLocals, resource)
+				requireAccessOrPublic(fake(authLocals), resource)
 			} catch (e) {
 				expect(e.status).toBe(403)
 			}
 		})
 
 		it('throws 404 when resource is null', () => {
-			expect(() => requireAccessOrPublic(authLocals, null)).toThrow()
+			expect(() => requireAccessOrPublic(fake(authLocals), null)).toThrow()
 			try {
-				requireAccessOrPublic(authLocals, null)
+				requireAccessOrPublic(fake(authLocals), null)
 			} catch (e) {
 				expect(e.status).toBe(404)
 			}
@@ -176,13 +177,15 @@ describe('authHelpers', () => {
 
 		it('allows admin access when allowAdmin is true', () => {
 			const resource = { userId: 'otherUser', is_public: false }
-			expect(() => requireAccessOrPublic(adminLocals, resource, { allowAdmin: true })).not.toThrow()
+			expect(() =>
+				requireAccessOrPublic(fake(adminLocals), resource, { allowAdmin: true })
+			).not.toThrow()
 		})
 
 		it('checks owner publicRecipes when checkOwnerPublic is true', () => {
 			const resource = { userId: 'otherUser', is_public: false, user: { publicRecipes: true } }
 			expect(() =>
-				requireAccessOrPublic(anonLocals, resource, { checkOwnerPublic: true })
+				requireAccessOrPublic(fake(anonLocals), resource, { checkOwnerPublic: true })
 			).not.toThrow()
 		})
 	})
@@ -190,19 +193,19 @@ describe('authHelpers', () => {
 	describe('getOptionalUser', () => {
 		it('returns user when authenticated', () => {
 			const locals = { user: { userId: 'user123', username: 'testuser' } }
-			const user = getOptionalUser(locals)
+			const user = getOptionalUser(fake(locals))
 			expect(user).toEqual(locals.user)
 		})
 
 		it('returns null when not authenticated', () => {
 			const locals = { user: null }
-			const user = getOptionalUser(locals)
+			const user = getOptionalUser(fake(locals))
 			expect(user).toBeNull()
 		})
 
 		it('returns null when user is undefined', () => {
 			const locals = {}
-			const user = getOptionalUser(locals)
+			const user = getOptionalUser(fake(locals))
 			expect(user).toBeNull()
 		})
 	})

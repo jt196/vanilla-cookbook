@@ -4,6 +4,13 @@ import { extractRecipeWithLLM } from '$lib/utils/ai'
 import { resolveAIConfig } from '$lib/server/aiHelpers'
 import { isBlockedVideoUrl } from '$lib/utils/parse/videoHelpers'
 
+/**
+ * Scrape a recipe from a URL, falling back to AI when structured data is missing.
+ * Logged-in users only.
+ *
+ * @param {import('./$types').RequestEvent} event
+ * @returns {Promise<Response>}
+ */
 export async function GET({ params, locals }) {
 	requireAuth(locals)
 	const url = decodeURIComponent(params.url)

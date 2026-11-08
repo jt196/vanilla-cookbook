@@ -7,6 +7,7 @@ import {
 	parseRecipeScrapersSupportedSitesHtml
 } from '$lib/utils/parse/compatibility/diff.js'
 
+import { fake } from './helpers/fake.js'
 const tempDirectories = []
 
 afterEach(() => {
@@ -55,7 +56,7 @@ describe('compatibility diff generation', () => {
 
 		const diff = buildCompatibilityDiff({
 			upstreamDomains: ['101cookbooks.com', 'bbcgoodfood.com', 'newsite.example'],
-			manifestEntries,
+			manifestEntries: fake(manifestEntries),
 			fixtureDirectory: tempDir,
 			outputPath: 'ignored.json'
 		})

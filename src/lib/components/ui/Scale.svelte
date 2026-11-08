@@ -7,7 +7,7 @@
 	 * @typedef {number} Scale
 	 */
 
-	/** @type {{scale?: Scale, baseServings?: number}} */
+	/** @type {{scale?: Scale, baseServings?: number, onScaleChange?: (scale: number) => void}} */
 	let { scale = 1, onScaleChange, baseServings = 1 } = $props()
 
 	const MIN_SCALE = 0.1

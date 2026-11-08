@@ -52,11 +52,13 @@
 		newPass.length > 0 ? validatePassword(newPass, passwordEnv) : null
 	)
 	let isPasswordSubmitDisabled = $derived(
-		!oldPass ||
+		!!(
+			!oldPass ||
 			!newPass ||
 			!newPassConfirm ||
 			passwordsMismatch ||
 			(newPasswordValidation && !newPasswordValidation.isValid)
+		)
 	)
 
 	async function updateAccount(event) {

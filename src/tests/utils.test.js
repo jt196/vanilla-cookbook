@@ -26,6 +26,7 @@ import {
 	convertMinutesToTime
 } from '$lib/utils/dateTime.js'
 
+import { fake } from './helpers/fake.js'
 describe('Sorting functions', () => {
 	const sampleData = [
 		{ name: 'John', date: '2023-01-01' },
@@ -62,7 +63,7 @@ describe('Sorting functions', () => {
 	})
 
 	it('should randomly sort the array', () => {
-		const result = randomSortArray([...sampleData])
+		const result = randomSortArray(fake([...sampleData]))
 		expect(result.length).toBe(sampleData.length)
 		// This test is tricky since the result is random. We can just check if the length is preserved.
 	})
@@ -73,13 +74,13 @@ describe('Filter functions', () => {
 		const data = [{ name: 'Apple' }, { name: 'Banana' }, { name: 'Cherry' }]
 
 		it('should filter based on search string', () => {
-			const result = filterSearch('ban', data, 'name')
+			const result = filterSearch('ban', fake(data), 'name')
 			expect(result.length).toBe(1)
-			expect(result[0].name).toBe('Banana')
+			expect(fake(result[0]).name).toBe('Banana')
 		})
 
 		it('should return all items if search string is null', () => {
-			const result = filterSearch(null, data, 'name')
+			const result = filterSearch(null, fake(data), 'name')
 			expect(result.length).toBe(3)
 		})
 	})

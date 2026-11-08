@@ -22,7 +22,7 @@
 	let adminEmail = $state('')
 	let adminPassword = $state('')
 	let adminPasswordConfirm = $state('')
-	let recipeSeed = $state('true')
+	let recipeSeed = $state(true)
 
 	let spinnerVisible = $state(false)
 	let setupFeedback = $state('')

@@ -39,6 +39,8 @@ import { fileTypeFromBuffer } from 'file-type'
 
 import { POST as generateImagePost } from '../routes/api/recipe/[uid]/image/generate/+server.js'
 
+import { fake } from './helpers/fake.js'
+
 const mockUser = { userId: 'user1', username: 'testuser' }
 
 const mockRecipe = {
@@ -74,15 +76,15 @@ function createRequest(body = {}) {
 describe('API Routes - /api/recipe/[uid]/image/generate', () => {
 	beforeEach(() => {
 		vi.clearAllMocks()
-		requireAuth.mockReturnValue(mockUser)
-		requireOwnership.mockReturnValue(undefined)
-		prisma.recipe.findUnique.mockResolvedValue(mockRecipe)
-		prisma.recipePhoto.findFirst.mockResolvedValue(null)
-		resolveAIConfig.mockReturnValue(mockAIConfig)
-		generateImageBuffer.mockResolvedValue(Buffer.from('fake-image-data'))
-		fileTypeFromBuffer.mockResolvedValue({ ext: 'png', mime: 'image/png' })
-		createRecipePhotoEntry.mockResolvedValue(mockPhotoEntry)
-		saveFile.mockResolvedValue(undefined)
+		vi.mocked(requireAuth).mockReturnValue(fake(mockUser))
+		vi.mocked(requireOwnership).mockReturnValue(undefined)
+		vi.mocked(prisma.recipe.findUnique).mockResolvedValue(fake(mockRecipe))
+		vi.mocked(prisma.recipePhoto.findFirst).mockResolvedValue(null)
+		vi.mocked(resolveAIConfig).mockReturnValue(fake(mockAIConfig))
+		vi.mocked(generateImageBuffer).mockResolvedValue(Buffer.from('fake-image-data'))
+		vi.mocked(fileTypeFromBuffer).mockResolvedValue({ ext: 'png', mime: 'image/png' })
+		vi.mocked(createRecipePhotoEntry).mockResolvedValue(mockPhotoEntry)
+		vi.mocked(saveFile).mockResolvedValue(undefined)
 	})
 
 	afterEach(() => {
@@ -90,11 +92,13 @@ describe('API Routes - /api/recipe/[uid]/image/generate', () => {
 	})
 
 	it('generates and saves a recipe image', async () => {
-		const response = await generateImagePost({
-			request: createRequest(),
-			locals: {},
-			params: { uid: 'recipe-123' }
-		})
+		const response = await generateImagePost(
+			fake({
+				request: createRequest(),
+				locals: {},
+				params: { uid: 'recipe-123' }
+			})
+		)
 		const data = await response.json()
 
 		expect(response.status).toBe(200)
@@ -109,47 +113,55 @@ describe('API Routes - /api/recipe/[uid]/image/generate', () => {
 	})
 
 	it('includes recipe content in the image prompt', async () => {
-		await generateImagePost({
-			request: createRequest(),
-			locals: {},
-			params: { uid: 'recipe-123' }
-		})
+		await generateImagePost(
+			fake({
+				request: createRequest(),
+				locals: {},
+				params: { uid: 'recipe-123' }
+			})
+		)
 
-		const [, prompt] = generateImageBuffer.mock.calls[0]
+		const [, prompt] = vi.mocked(generateImageBuffer).mock.calls[0]
 		expect(prompt).toContain('Salmon Cakes')
 		expect(prompt).toContain('salmon')
 	})
 
 	it('uses a custom style description when provided', async () => {
-		await generateImagePost({
-			request: createRequest({ styleDescription: 'Dark moody overhead lighting' }),
-			locals: {},
-			params: { uid: 'recipe-123' }
-		})
+		await generateImagePost(
+			fake({
+				request: createRequest({ styleDescription: 'Dark moody overhead lighting' }),
+				locals: {},
+				params: { uid: 'recipe-123' }
+			})
+		)
 
-		const [, prompt] = generateImageBuffer.mock.calls[0]
+		const [, prompt] = vi.mocked(generateImageBuffer).mock.calls[0]
 		expect(prompt).toContain('Dark moody overhead lighting')
 	})
 
 	it('falls back to default style when none provided', async () => {
-		await generateImagePost({
-			request: createRequest(),
-			locals: {},
-			params: { uid: 'recipe-123' }
-		})
+		await generateImagePost(
+			fake({
+				request: createRequest(),
+				locals: {},
+				params: { uid: 'recipe-123' }
+			})
+		)
 
-		const [, prompt] = generateImageBuffer.mock.calls[0]
+		const [, prompt] = vi.mocked(generateImageBuffer).mock.calls[0]
 		expect(prompt).toContain('Photo realistic')
 	})
 
 	it('marks the photo as main when no existing main photo', async () => {
-		prisma.recipePhoto.findFirst.mockResolvedValue(null)
+		vi.mocked(prisma.recipePhoto.findFirst).mockResolvedValue(null)
 
-		await generateImagePost({
-			request: createRequest(),
-			locals: {},
-			params: { uid: 'recipe-123' }
-		})
+		await generateImagePost(
+			fake({
+				request: createRequest(),
+				locals: {},
+				params: { uid: 'recipe-123' }
+			})
+		)
 
 		expect(createRecipePhotoEntry).toHaveBeenCalledWith(
 			'recipe-123',
@@ -160,30 +172,36 @@ describe('API Routes - /api/recipe/[uid]/image/generate', () => {
 	})
 
 	it('does not mark as main when a main photo already exists', async () => {
-		prisma.recipePhoto.findFirst.mockResolvedValue({ id: 'existing-main' })
+		vi.mocked(prisma.recipePhoto.findFirst).mockResolvedValue(fake({ id: 'existing-main' }))
 
-		await generateImagePost({
-			request: createRequest(),
-			locals: {},
-			params: { uid: 'recipe-123' }
-		})
+		await generateImagePost(
+			fake({
+				request: createRequest(),
+				locals: {},
+				params: { uid: 'recipe-123' }
+			})
+		)
 
 		expect(createRecipePhotoEntry).toHaveBeenCalledWith('recipe-123', null, 'png', false)
 	})
 
 	it('returns 400 when recipe has no name, ingredients, or directions', async () => {
-		prisma.recipe.findUnique.mockResolvedValue({
-			...mockRecipe,
-			name: '',
-			ingredients: '',
-			directions: ''
-		})
+		vi.mocked(prisma.recipe.findUnique).mockResolvedValue(
+			fake({
+				...mockRecipe,
+				name: '',
+				ingredients: '',
+				directions: ''
+			})
+		)
 
-		const response = await generateImagePost({
-			request: createRequest(),
-			locals: {},
-			params: { uid: 'recipe-123' }
-		})
+		const response = await generateImagePost(
+			fake({
+				request: createRequest(),
+				locals: {},
+				params: { uid: 'recipe-123' }
+			})
+		)
 		const data = await response.json()
 
 		expect(response.status).toBe(400)
@@ -192,27 +210,31 @@ describe('API Routes - /api/recipe/[uid]/image/generate', () => {
 	})
 
 	it('returns 503 when AI image generation is not configured', async () => {
-		resolveAIConfig.mockReturnValue(mockAIDisabled)
+		vi.mocked(resolveAIConfig).mockReturnValue(fake(mockAIDisabled))
 
-		const response = await generateImagePost({
-			request: createRequest(),
-			locals: {},
-			params: { uid: 'recipe-123' }
-		})
+		const response = await generateImagePost(
+			fake({
+				request: createRequest(),
+				locals: {},
+				params: { uid: 'recipe-123' }
+			})
+		)
 
 		expect(response.status).toBe(503)
 		expect(generateImageBuffer).not.toHaveBeenCalled()
 	})
 
 	it('returns 429 on rate limit error', async () => {
-		generateImageBuffer.mockRejectedValue(new Error('429 Too Many Requests'))
+		vi.mocked(generateImageBuffer).mockRejectedValue(new Error('429 Too Many Requests'))
 		vi.spyOn(console, 'error').mockImplementation(() => {})
 
-		const response = await generateImagePost({
-			request: createRequest(),
-			locals: {},
-			params: { uid: 'recipe-123' }
-		})
+		const response = await generateImagePost(
+			fake({
+				request: createRequest(),
+				locals: {},
+				params: { uid: 'recipe-123' }
+			})
+		)
 		const data = await response.json()
 
 		expect(response.status).toBe(429)
@@ -220,14 +242,16 @@ describe('API Routes - /api/recipe/[uid]/image/generate', () => {
 	})
 
 	it('returns 500 on unexpected generation error', async () => {
-		generateImageBuffer.mockRejectedValue(new Error('Provider unavailable'))
+		vi.mocked(generateImageBuffer).mockRejectedValue(new Error('Provider unavailable'))
 		vi.spyOn(console, 'error').mockImplementation(() => {})
 
-		const response = await generateImagePost({
-			request: createRequest(),
-			locals: {},
-			params: { uid: 'recipe-123' }
-		})
+		const response = await generateImagePost(
+			fake({
+				request: createRequest(),
+				locals: {},
+				params: { uid: 'recipe-123' }
+			})
+		)
 		const data = await response.json()
 
 		expect(response.status).toBe(500)

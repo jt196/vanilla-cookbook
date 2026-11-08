@@ -60,6 +60,15 @@ const CSV_PHOTO_STRATEGY = {
 	urlOrder: ['photo_url', 'image_url']
 }
 
+/**
+ * Import recipes from a MyRecipeBox export (.csv) into a user's account, including any
+ * photos it contains.
+ *
+ * @param {{ buffer: Buffer, userId: string, isPublic?: boolean }} options - The uploaded
+ *   file contents, the owner, and whether imported recipes are public.
+ * @returns {Promise<{ inserted: number, message: string }>} How many recipes were added and a
+ *   summary for the import page.
+ */
 export async function importMyRecipeBoxFromBuffer({ buffer, userId, isPublic }) {
 	const rows = await parseCsvBuffer(buffer)
 

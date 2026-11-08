@@ -84,19 +84,27 @@
 	const commands = $derived(filterCommands(buildCommands(user, themePreference), query, label))
 	const importUrl = $derived(user ? importUrlFrom(query) : null)
 
+	/**
+	 * @typedef {{ kind: 'import', url: URL }
+	 *   | { kind: 'recipe' | 'recent', recipe: { uid: string, name: string, image_url?: string | null, author?: string | null, photos: Array<{ id: string }> } }
+	 *   | { kind: 'command', command: import('$lib/utils/commandPalette').Command }} PaletteItem
+	 */
+
 	/** Everything selectable, in display order, so arrow keys can walk one list. */
-	const items = $derived([
-		...(importUrl ? [{ kind: 'import', url: importUrl }] : []),
-		// With no query, offer recently viewed recipes first
-		...(query.trim()
-			? []
-			: recent.map(({ uid, name, photoId, image_url }) => ({
-					kind: 'recent',
-					recipe: { uid, name, image_url, photos: photoId ? [{ id: photoId }] : [] }
-				}))),
-		...recipes.map((recipe) => ({ kind: 'recipe', recipe })),
-		...commands.map((command) => ({ kind: 'command', command }))
-	])
+	const items = $derived(
+		/** @type {PaletteItem[]} */ ([
+			...(importUrl ? [{ kind: 'import', url: importUrl }] : []),
+			// With no query, offer recently viewed recipes first
+			...(query.trim()
+				? []
+				: recent.map(({ uid, name, photoId, image_url }) => ({
+						kind: 'recent',
+						recipe: { uid, name, image_url, photos: photoId ? [{ id: photoId }] : [] }
+					}))),
+			...recipes.map((recipe) => ({ kind: 'recipe', recipe })),
+			...commands.map((command) => ({ kind: 'command', command }))
+		])
+	)
 
 	const sections = $derived(
 		[
@@ -112,7 +120,8 @@
 					.map((item, index) => ({ item, index }))
 					.filter(
 						({ item }) =>
-							item.kind === section.kind && (!section.group || item.command.group === section.group)
+							item.kind === section.kind &&
+							(item.kind !== 'command' || item.command.group === section.group)
 					)
 			}))
 			.filter((section) => section.entries.length)
@@ -232,7 +241,7 @@
 								{$t('palette.byAuthor', { name: item.recipe.author })}
 							</span>
 						{/if}
-					{:else}
+					{:else if item.kind === 'command'}
 						<span class="text-primary"><Icon width="18px" height="18px" /></span>
 						<span class="truncate">{label(item.command)}</span>
 					{/if}

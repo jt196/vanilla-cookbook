@@ -7,6 +7,7 @@ export const THEME_DARK = 'dracula'
 export const THEME_AUTO = 'auto'
 
 /** Preferences offered in the UI, in display order. */
+/** @type {Array<'light' | 'dracula' | 'auto'>} */
 export const themePreferences = [THEME_LIGHT, THEME_DARK, THEME_AUTO]
 
 /**

@@ -15,6 +15,7 @@ import {
 	visibleRecipesWhere
 } from '$lib/server/recipeFeed'
 
+import { fake } from './helpers/fake.js'
 describe('mainPhoto', () => {
 	it('returns an empty list when there are no photos', () => {
 		expect(mainPhoto([])).toEqual([])
@@ -82,10 +83,10 @@ describe('loadRecipeFeed', () => {
 	})
 
 	it('never orders or limits nested relations (keeps Prisma able to chunk IN lists)', async () => {
-		prisma.recipe.findMany.mockResolvedValue([])
+		vi.mocked(prisma.recipe.findMany).mockResolvedValue([])
 		await loadRecipeFeed({ in_trash: false }, null)
 
-		const { select } = prisma.recipe.findMany.mock.calls[0][0]
+		const { select } = vi.mocked(prisma.recipe.findMany).mock.calls[0][0]
 		for (const [field, value] of Object.entries(select)) {
 			if (value && typeof value === 'object') {
 				expect(value, `nested relation "${field}"`).not.toHaveProperty('orderBy')
@@ -95,7 +96,7 @@ describe('loadRecipeFeed', () => {
 	})
 
 	it('skips the viewer lookups for anonymous visitors', async () => {
-		prisma.recipe.findMany.mockResolvedValue([{ uid: 'r1', photos: [] }])
+		vi.mocked(prisma.recipe.findMany).mockResolvedValue(fake([{ uid: 'r1', photos: [] }]))
 		const feed = await loadRecipeFeed({}, null)
 
 		expect(prisma.recipeFavorite.findMany).not.toHaveBeenCalled()
@@ -105,19 +106,21 @@ describe('loadRecipeFeed', () => {
 	})
 
 	it('annotates favourites, copies and the display photo for a viewer', async () => {
-		prisma.recipe.findMany
-			.mockResolvedValueOnce([
-				{
-					uid: 'r1',
-					photos: [
-						{ id: 'p2', isMain: false },
-						{ id: 'p9', isMain: true }
-					]
-				},
-				{ uid: 'r2', photos: [{ id: 'p1', isMain: false }] }
-			])
-			.mockResolvedValueOnce([{ parentRecipeId: 'r2' }])
-		prisma.recipeFavorite.findMany.mockResolvedValue([{ recipeUid: 'r1' }])
+		vi.mocked(prisma.recipe.findMany)
+			.mockResolvedValueOnce(
+				fake([
+					{
+						uid: 'r1',
+						photos: [
+							{ id: 'p2', isMain: false },
+							{ id: 'p9', isMain: true }
+						]
+					},
+					{ uid: 'r2', photos: [{ id: 'p1', isMain: false }] }
+				])
+			)
+			.mockResolvedValueOnce(fake([{ parentRecipeId: 'r2' }]))
+		vi.mocked(prisma.recipeFavorite.findMany).mockResolvedValue([fake({ recipeUid: 'r1' })])
 
 		const feed = await loadRecipeFeed({}, { userId: 'u1' })
 
@@ -126,8 +129,10 @@ describe('loadRecipeFeed', () => {
 			{ uid: 'r2', photos: [{ id: 'p1' }], on_favorites: false, duplicatedByViewer: true }
 		])
 		// Viewer lookups are scoped by user, not by an IN list of the loaded recipe uids
-		expect(prisma.recipeFavorite.findMany.mock.calls[0][0].where).toEqual({ userId: 'u1' })
-		expect(prisma.recipe.findMany.mock.calls[1][0].where).toEqual({
+		expect(vi.mocked(prisma.recipeFavorite.findMany).mock.calls[0][0].where).toEqual({
+			userId: 'u1'
+		})
+		expect(vi.mocked(prisma.recipe.findMany).mock.calls[1][0].where).toEqual({
 			userId: 'u1',
 			parentRecipeId: { not: null }
 		})

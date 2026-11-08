@@ -7,6 +7,7 @@ import {
 } from '$lib/utils/embeddings.js'
 import { resolveSemanticAvailability } from '$lib/server/semanticHelpers.js'
 
+import { fake } from './helpers/fake.js'
 describe('semantic helpers', () => {
 	it('cosineSimilarity returns 1 for identical vectors', () => {
 		const a = new Float32Array([1, 2, 3])
@@ -42,17 +43,13 @@ describe('semantic helpers', () => {
 	})
 
 	it('resolveSemanticAvailability blocks when globally disabled', () => {
-		const result = resolveSemanticAvailability({
-			site: { semantic: { enabled: false } }
-		})
+		const result = resolveSemanticAvailability(fake({ site: { semantic: { enabled: false } } }))
 		expect(result.enabled).toBe(false)
 		expect(result.response.status).toBe(503)
 	})
 
 	it('resolveSemanticAvailability allows when enabled', () => {
-		const result = resolveSemanticAvailability({
-			site: { semantic: { enabled: true } }
-		})
+		const result = resolveSemanticAvailability(fake({ site: { semantic: { enabled: true } } }))
 		expect(result.enabled).toBe(true)
 	})
 })

@@ -2,6 +2,12 @@ import { prisma } from '$lib/server/prisma'
 import { error } from '@sveltejs/kit'
 import { requireAuth, jsonSuccess, jsonError } from '$lib/server/authHelpers'
 
+/**
+ * The current user's cooking log entries with recipe names, for the calendar.
+ *
+ * @param {import('./$types').RequestEvent} event
+ * @returns {Promise<Response>}
+ */
 export async function GET({ params, locals }) {
 	const user = requireAuth(locals)
 	const { id } = params

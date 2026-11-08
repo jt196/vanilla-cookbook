@@ -1,6 +1,12 @@
 import { prisma } from '$lib/server/prisma'
 import { requireAuth, requireOwnership, jsonSuccess, jsonError } from '$lib/server/authHelpers'
 
+/**
+ * Toggle whether one of the current user's recipes is public.
+ *
+ * @param {import('./$types').RequestEvent} event
+ * @returns {Promise<Response>}
+ */
 export async function PUT({ locals, params }) {
 	const user = requireAuth(locals)
 	const { uid } = params

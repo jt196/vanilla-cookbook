@@ -9,7 +9,9 @@ import { getOpenAICompatibleConfig } from '$lib/utils/llmModels'
  *
  * @param {import('@sveltejs/kit').RequestEvent['locals']} locals
  * @param {'text' | 'image' | 'imageGeneration'} [type='text']
- * @returns {{ ok: true, provider: string, model: string | null } | { ok: false, response: Response }}
+ * @returns {{ ok: true, provider: string, model: string | null, response?: undefined }
+ *   | { ok: false, response: Response, provider?: undefined, model?: undefined }}
+ *   Check `ok`; when false, return `response` (an error) from the route.
  */
 export function resolveAIConfig(locals, type = 'text') {
 	const ai = locals?.site?.ai

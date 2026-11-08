@@ -35,6 +35,8 @@ import {
 } from '$lib/utils/image/imageBackend.js'
 import { POST as downloadMissingPost } from '../routes/api/user/[id]/photos/download-missing/+server.js'
 
+import { fake } from './helpers/fake.js'
+
 let png
 beforeAll(async () => {
 	png = await sharp({
@@ -49,7 +51,12 @@ const respond = (body, status = 200) => new Response(body, { status })
 describe('remote recipe images', () => {
 	beforeEach(() => {
 		vi.spyOn(console, 'warn').mockImplementation(() => {})
-		prisma.recipePhoto.create.mockImplementation(async ({ data }) => ({ id: 'photo-1', ...data }))
+		vi.mocked(prisma.recipePhoto.create).mockImplementation(
+			fake(async ({ data }) => ({
+				id: 'photo-1',
+				...data
+			}))
+		)
 	})
 
 	afterEach(() => {
@@ -114,7 +121,7 @@ describe('remote recipe images', () => {
 
 		it('removes the row again if the file cannot be written', async () => {
 			vi.stubGlobal('fetch', vi.fn().mockResolvedValue(respond(png)))
-			fs.promises.writeFile.mockRejectedValueOnce(new Error('EACCES'))
+			vi.mocked(fs.promises.writeFile).mockRejectedValueOnce(new Error('EACCES'))
 
 			expect(await saveRemoteImageAsPhoto({ recipeUid: 'r1', url: 'https://x/y.png' })).toBeNull()
 			expect(prisma.recipePhoto.delete).toHaveBeenCalledWith({ where: { id: 'photo-1' } })
@@ -129,8 +136,8 @@ describe('remote recipe images', () => {
 		]
 
 		beforeEach(() => {
-			prisma.recipePhoto.findMany.mockResolvedValue(rows)
-			fs.existsSync.mockImplementation((p) => p.includes('stored'))
+			vi.mocked(prisma.recipePhoto.findMany).mockResolvedValue(fake(rows))
+			vi.mocked(fs.existsSync).mockImplementation((p) => String(p).includes('stored'))
 		})
 
 		it("finds only the user's photos with a URL and no local file", async () => {
@@ -162,7 +169,7 @@ describe('remote recipe images', () => {
 
 		it('the endpoint only works on your own account', async () => {
 			await expect(
-				downloadMissingPost({ locals: {}, params: { id: 'someone-else' } })
+				downloadMissingPost(fake({ locals: {}, params: { id: 'someone-else' } }))
 			).rejects.toMatchObject({ status: 403 })
 		})
 	})

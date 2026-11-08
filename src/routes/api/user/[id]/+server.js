@@ -3,6 +3,12 @@ import { prisma } from '$lib/server/prisma'
 import { requireAuth, jsonSuccess, jsonError } from '$lib/server/authHelpers'
 import { isValidThemePreference } from '$lib/utils/theme'
 
+/**
+ * Update the current user's own profile and preferences (allowlisted fields only).
+ *
+ * @param {import('./$types').RequestEvent} event
+ * @returns {Promise<Response>}
+ */
 export async function PUT({ request, locals, params }) {
 	const user = requireAuth(locals)
 	const { id } = params

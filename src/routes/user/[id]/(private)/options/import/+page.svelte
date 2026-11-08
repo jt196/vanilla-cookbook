@@ -53,7 +53,7 @@
 </form>
 
 <FeedbackMessage
-	message={form?.message || form?.error || ''}
+	message={form?.message || ''}
 	messageCode={form?.messageCode}
 	messageVars={form?.messageVars}
 	inline />

@@ -5,6 +5,13 @@ import { validatePassword } from '$lib/utils/security.js'
 import { requireAuth, jsonSuccess } from '$lib/server/authHelpers'
 import { env } from '$env/dynamic/private'
 
+/**
+ * Change the current user's password after checking the old one. Body: `{ oldPass,
+ * newPass, newPassConfirm }`.
+ *
+ * @param {import('./$types').RequestEvent} event
+ * @returns {Promise<Response>}
+ */
 export async function POST({ request, locals, params }) {
 	const user = requireAuth(locals)
 	const userId = params.id

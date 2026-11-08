@@ -180,6 +180,15 @@ const TANDOOR_PHOTO_STRATEGY = {
 
 // --- main entry ---
 
+/**
+ * Import recipes from a Tandoor export (.zip) into a user's account, including any
+ * photos it contains.
+ *
+ * @param {{ buffer: Buffer, userId: string, isPublic?: boolean }} options - The uploaded
+ *   file contents, the owner, and whether imported recipes are public.
+ * @returns {Promise<{ inserted: number, message: string }>} How many recipes were added and a
+ *   summary for the import page.
+ */
 export async function importTandoorFromBuffer({ buffer, userId, isPublic }) {
 	const raw = await extractTandoorFromZipBuffer(buffer)
 	if (!raw?.length) return { inserted: 0, message: 'No recipes found.' }

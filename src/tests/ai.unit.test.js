@@ -33,6 +33,7 @@ import {
 	mockEnvWithProviders
 } from './fixtures/llm-providers.js'
 
+import { fake } from './helpers/fake.js'
 const fixturesDir = join(process.cwd(), 'src/tests/fixtures/llm-output')
 
 function loadFixture(filename) {
@@ -152,14 +153,14 @@ describe('getAvailableAiProviders', () => {
 	for (const meta of providerMeta) {
 		it(`returns ${meta.value} when ${meta.envVar} is set`, () => {
 			const env = mockEnvWithProviders(meta.value)
-			const result = getAvailableAiProviders(env)
+			const result = getAvailableAiProviders(fake(env))
 			expect(result).toContain(meta.value)
 		})
 	}
 
 	it('returns multiple providers when multiple keys set', () => {
 		const env = mockEnvWithProviders(...providerNames)
-		const result = getAvailableAiProviders(env)
+		const result = getAvailableAiProviders(fake(env))
 		for (const name of providerNames) {
 			expect(result).toContain(name)
 		}
@@ -253,7 +254,7 @@ describe('getAvailableEmbeddingProviders', () => {
 	for (const name of embeddingProviderNames) {
 		it(`returns ${name} for embedding when configured`, () => {
 			const env = mockEnvWithProviders(name)
-			const result = getAvailableEmbeddingProviders(env)
+			const result = getAvailableEmbeddingProviders(fake(env))
 			expect(result).toContain(name)
 		})
 	}
@@ -261,7 +262,7 @@ describe('getAvailableEmbeddingProviders', () => {
 	for (const name of providerNames.filter((p) => !embeddingProviderNames.includes(p))) {
 		it(`does not include ${name} (no embedding support)`, () => {
 			const env = mockEnvWithProviders(name)
-			const result = getAvailableEmbeddingProviders(env)
+			const result = getAvailableEmbeddingProviders(fake(env))
 			expect(result).not.toContain(name)
 		})
 	}
@@ -276,34 +277,34 @@ describe('resolveEmbeddingProvider', () => {
 	it('returns preferred provider when available', () => {
 		const name = embeddingProviderNames[0]
 		const env = mockEnvWithProviders(name)
-		const result = resolveEmbeddingProvider(name, env)
+		const result = resolveEmbeddingProvider(name, fake(env))
 		expect(result).toBe(name)
 	})
 
 	it('returns first available when no preference', () => {
 		const env = mockEnvWithProviders(...embeddingProviderNames)
-		const result = resolveEmbeddingProvider(null, env)
+		const result = resolveEmbeddingProvider(null, fake(env))
 		expect(embeddingProviderNames).toContain(result)
 	})
 
 	it('returns null when preferred provider not configured', () => {
 		const [first, second] = embeddingProviderNames
 		const env = mockEnvWithProviders(first)
-		const result = resolveEmbeddingProvider(second, env)
+		const result = resolveEmbeddingProvider(second, fake(env))
 		expect(result).toBeNull()
 	})
 })
 
 describe('resolveEmbeddingModel', () => {
 	it('returns preferred model when provided', () => {
-		const result = resolveEmbeddingModel(embeddingProviderNames[0], 'custom-model')
+		const result = resolveEmbeddingModel(fake(embeddingProviderNames[0]), 'custom-model')
 		expect(result).toBe('custom-model')
 	})
 
 	// openai_compatible deliberately has no default (see openaiCompatible.test.js)
 	for (const name of embeddingProviderNames.filter((p) => p !== 'openai_compatible')) {
 		it(`returns non-null default model for ${name}`, () => {
-			const result = resolveEmbeddingModel(name, null)
+			const result = resolveEmbeddingModel(fake(name), null)
 			expect(result).toBeTruthy()
 		})
 	}
@@ -329,7 +330,7 @@ describe('translateRecipeWithLLM', () => {
 		vi.stubEnv('LLM_TEXT_MODEL', 'test-text-model')
 		vi.spyOn(console, 'error').mockImplementation(() => {})
 		vi.spyOn(console, 'log').mockImplementation(() => {})
-		ChatOpenAI.mockImplementation(function () {
+		vi.mocked(ChatOpenAI).mockImplementation(function () {
 			return {
 				invoke: vi.fn().mockResolvedValue({ content: JSON.stringify(translatedRecipe) })
 			}
@@ -367,7 +368,7 @@ describe('extractRecipeWithLLM', () => {
 		vi.stubEnv('LLM_TEXT_MODEL', 'test-text-model')
 		vi.spyOn(console, 'error').mockImplementation(() => {})
 		vi.spyOn(console, 'log').mockImplementation(() => {})
-		ChatOpenAI.mockImplementation(function () {
+		vi.mocked(ChatOpenAI).mockImplementation(function () {
 			return {
 				invoke: vi.fn().mockResolvedValue({ content: JSON.stringify(extractedRecipe) })
 			}
@@ -420,7 +421,7 @@ describe('generateRecipeWithLLM', () => {
 		vi.stubEnv('LLM_TEXT_MODEL', 'test-text-model')
 		vi.spyOn(console, 'error').mockImplementation(() => {})
 		vi.spyOn(console, 'log').mockImplementation(() => {})
-		ChatOpenAI.mockImplementation(function () {
+		vi.mocked(ChatOpenAI).mockImplementation(function () {
 			return {
 				invoke: vi.fn().mockResolvedValue({ content: JSON.stringify(generatedRecipe) })
 			}
@@ -463,7 +464,7 @@ describe('missing model', () => {
 		vi.stubEnv('OPENAI_API_KEY', 'test-key')
 		vi.stubEnv('LLM_TEXT_MODEL', '')
 		vi.stubEnv('LLM_API_ENGINE_TEXT', '')
-		ChatOpenAI.mockImplementation(() => ({ invoke: vi.fn() }))
+		vi.mocked(ChatOpenAI).mockImplementation(() => ({ invoke: vi.fn() }))
 	})
 
 	afterEach(() => {

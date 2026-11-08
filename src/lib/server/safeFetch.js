@@ -13,6 +13,7 @@ import { isIP } from 'node:net'
 const MAX_REDIRECTS = 5
 
 /** IPv4 ranges that are not publicly routable: [first octets as a prefix, bit length]. */
+/** @type {Array<[base: string, bits: number]>} */
 const BLOCKED_V4 = [
 	['0.0.0.0', 8], // "this" network
 	['10.0.0.0', 8], // private

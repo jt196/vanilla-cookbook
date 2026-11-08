@@ -271,6 +271,15 @@ function resolveCanonicalName(label, aliasMap) {
 	return null
 }
 
+/**
+ * Parse free-text nutrition information (e.g. "Calories: 471 kcal, Fat: 12 g") into
+ * structured entries, recognising nutrient names in the given language.
+ *
+ * @param {string} text - Nutrition text from a recipe.
+ * @param {string} [language='eng'] - App language code used to match nutrient names.
+ * @returns {{ perServing: boolean, entries: Array<object>, format: string, rawText: string,
+ *   confidence: number }} Parsed entries; `entries` is empty if nothing was recognised.
+ */
 export function parseNutritionInfo(text, language = 'eng') {
 	const rawText = typeof text === 'string' ? text.trim() : ''
 	if (!rawText) {
@@ -336,6 +345,14 @@ export function parseNutritionInfo(text, language = 'eng') {
 	}
 }
 
+/**
+ * Scale nutrition quantities with the recipe. Per-serving values are left as they are,
+ * since they don't change with the number of servings.
+ *
+ * @param {ReturnType<typeof parseNutritionInfo>} parsed - Output of `parseNutritionInfo`.
+ * @param {number} [scale=1] - Recipe scale factor.
+ * @returns {ReturnType<typeof parseNutritionInfo>} A scaled copy (or the input, unchanged).
+ */
 export function scaleNutrition(parsed, scale = 1) {
 	if (!parsed || typeof parsed !== 'object') return parsed
 	if (parsed.perServing) return parsed
@@ -355,6 +372,15 @@ export function scaleNutrition(parsed, scale = 1) {
 	}
 }
 
+/**
+ * Turn parsed nutrition back into text, one "Name: quantity unit" line per entry, with
+ * the per-serving phrase for the language when the values are per serving.
+ *
+ * @param {{ perServing: boolean, entries: Array<object> }} parsedNutrition - e.g. from
+ *   `parseNutritionInfo`.
+ * @param {string} [language='eng'] - App language code for labels.
+ * @returns {string} The text, or '' if there are no entries.
+ */
 export function serializeNutritionEntries(parsedNutrition, language = 'eng') {
 	if (!parsedNutrition || !Array.isArray(parsedNutrition.entries)) {
 		return ''

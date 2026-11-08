@@ -2,15 +2,9 @@ import { requireUser } from '$lib/server/authPage'
 import { requireOwnership } from '$lib/server/authHelpers'
 
 /**
- * Handles loading the page data.
+ * Recipe edit pages: requires the logged-in user to own the recipe and provides it.
  *
- * @function
- * @async
- * @param {Object} context - The context of the load.
- * @param {Object} context.params - Parameters of the request.
- * @param {AppLocals} context.locals - The locals object.
- * @throws Will throw an error if unauthorized or the recipe is not found.
- * @returns {Promise<{ recipe: Object }>} The loaded recipe.
+ * @type {import('./$types').LayoutServerLoad}
  */
 export const load = async ({ params, locals, fetch }) => {
 	const user = requireUser(locals)

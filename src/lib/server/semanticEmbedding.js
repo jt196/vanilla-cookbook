@@ -44,7 +44,8 @@ export async function regenerateRecipeEmbedding(
 	await prisma.recipe.update({
 		where: { uid },
 		data: {
-			embedding: serializeEmbedding(embedding),
+			// A Node Buffer is a Uint8Array, which Prisma stores as Bytes
+			embedding: /** @type {Uint8Array<ArrayBuffer>} */ (serializeEmbedding(embedding)),
 			embeddingModel: resolveEmbeddingModel(provider, preferredModel),
 			embeddingVersion: {
 				increment: 1

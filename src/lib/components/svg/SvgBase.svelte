@@ -1,5 +1,10 @@
 <script>
-	/** @type {{width?: string, height?: string, fill?: string, stroke?: string, strokeWidth?: string, viewBox?: string, class?: string}} */
+	/**
+	 * Shared <svg> wrapper for icons. Decorative unless `title` is given, in which case it's
+	 * exposed to screen readers as an image.
+	 *
+	 * @type {{width?: string, height?: string, fill?: string, stroke?: string, strokeWidth?: string | number, viewBox?: string, class?: string, style?: string, title?: string, ariaHidden?: 'true' | 'false', role?: string, children?: import('svelte').Snippet}}
+	 */
 	let {
 		width,
 		height,

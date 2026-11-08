@@ -4,7 +4,7 @@
 	import Button from '$lib/components/ui/Button.svelte'
 	import { t } from '$lib/stores/locale.js'
 
-	/** @type {{isOpen?: boolean, content?: import('svelte').Snippet}} */
+	/** @type {{isOpen?: boolean, content?: import('svelte').Snippet, onClose?: () => void, onConfirm?: () => void | Promise<void>}} */
 	let { isOpen = $bindable(), content, onClose, onConfirm } = $props()
 </script>
 

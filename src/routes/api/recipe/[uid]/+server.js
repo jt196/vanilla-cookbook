@@ -14,6 +14,12 @@ import {
 	saveUploadedPhotos
 } from '$lib/server/recipeSave'
 
+/**
+ * Delete one of the current user's recipes and its photo files.
+ *
+ * @param {import('./$types').RequestEvent} event
+ * @returns {Promise<Response>}
+ */
 export async function DELETE({ params, locals }) {
 	const user = requireAuth(locals)
 	const { uid } = params
@@ -93,7 +99,7 @@ export async function PUT({ request, locals, params }) {
 	const formData = await request.formData()
 	let recipeData
 	try {
-		recipeData = JSON.parse(formData.get('recipe'))
+		recipeData = JSON.parse(/** @type {string} */ (formData.get('recipe')))
 	} catch (err) {
 		logger.error('Failed to parse recipe payload', { error: err?.message })
 		return jsonError(400, { error: 'Invalid recipe payload', code: 'recipe.msg.invalidPayload' })
@@ -113,7 +119,7 @@ export async function PUT({ request, locals, params }) {
 		await prisma.recipe.update({ where: { uid }, data: updates })
 		logger.log('recipe row updated', { ms: logger.elapsed() })
 
-		await saveUploadedPhotos(uid, formData.getAll('images'), logger)
+		await saveUploadedPhotos(uid, /** @type {File[]} */ (formData.getAll('images')), logger)
 		if (recipeData.saveImageUrl && recipeData.image_url) {
 			await saveImageUrlAsPhoto(uid, recipeData.image_url, logger)
 		}
@@ -131,6 +137,13 @@ export async function PUT({ request, locals, params }) {
 	}
 }
 
+/**
+ * A recipe with its photos, categories and parent, if the viewer may see it, plus whether
+ * they've favourited or copied it.
+ *
+ * @param {import('./$types').RequestEvent} event
+ * @returns {Promise<Response>}
+ */
 export async function GET({ params, locals }) {
 	const user = getOptionalUser(locals)
 	const { uid } = params

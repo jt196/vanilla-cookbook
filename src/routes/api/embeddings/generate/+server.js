@@ -5,6 +5,14 @@ import { semanticEmbeddingJobsEnabled } from '$lib/server/semanticHelpers'
 import { regenerateRecipeEmbedding } from '$lib/server/semanticEmbedding'
 import { resolveEmbeddingModel } from '$lib/utils/llmModels'
 
+/**
+ * Admin: generate semantic-search embeddings for the next batch of recipes that are
+ * missing one or were embedded with a different model. Returns counts processed, failed
+ * and remaining.
+ *
+ * @param {import('./$types').RequestEvent} event
+ * @returns {Promise<Response>}
+ */
 export async function POST({ request, locals }) {
 	requireAdmin(locals)
 	const configuredProvider = locals.site?.semantic?.selectedProvider || null
@@ -119,6 +127,13 @@ export async function POST({ request, locals }) {
 	})
 }
 
+/**
+ * Admin: progress of the semantic-search index (total recipes, missing embeddings,
+ * wrong-model embeddings).
+ *
+ * @param {import('./$types').RequestEvent} event
+ * @returns {Promise<Response>}
+ */
 export async function GET({ locals }) {
 	requireAdmin(locals)
 
