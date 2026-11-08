@@ -130,7 +130,13 @@ test('fresh install admin seed, login, and page smoke tests', async ({ page }, t
 	const firstRecipeHref = await firstRecipeLink.getAttribute('href')
 	expect(firstRecipeHref).toBeTruthy()
 
-	await assertPage(page, '/recipes', { heading: 'All Recipes' }, projectName)
+	// Signed in, /recipes shows My Recipes / All Recipes tabs rather than a heading
+	await assertPage(
+		page,
+		'/recipes',
+		{ selector: 'a[aria-current="page"]:has-text("All Recipes")' },
+		projectName
+	)
 	for (const name of seededRecipes) {
 		await expect(page.getByRole('link', { name })).toBeVisible()
 	}

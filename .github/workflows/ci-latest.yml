@@ -26,7 +26,8 @@ jobs:
     if: github.repository == 'jt196/vanilla-cookbook' && github.event_name == 'pull_request'
     uses: ./.github/workflows/run-tests.yml
     with:
-      run_e2e: false
+      # Run the browser smoke tests on PRs too, so UI changes can't first break them at release
+      run_e2e: true
       run_llm_smoke: false
       # No AI keys: only the opt-in LLM smoke test uses them, and it's off here
 
