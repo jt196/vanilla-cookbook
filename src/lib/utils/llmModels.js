@@ -223,11 +223,14 @@ export function getEmbeddingProviderOptionsWithAvailability(availableProviders) 
  * @returns {'openai' | 'google' | 'ollama' | 'openai_compatible' | null}
  */
 export function resolveEmbeddingProvider(preferredProvider, env) {
-	const availableProviders = getAvailableEmbeddingProviders(env)
+	const availableProviders =
+		/** @type {Array<'openai' | 'google' | 'ollama' | 'openai_compatible'>} */ (
+			getAvailableEmbeddingProviders(env)
+		)
 	const preferred = (preferredProvider || '').trim().toLowerCase()
 
 	if (preferred) {
-		return availableProviders.includes(preferred) ? preferred : null
+		return availableProviders.find((provider) => provider === preferred) ?? null
 	}
 
 	return availableProviders[0] ?? null

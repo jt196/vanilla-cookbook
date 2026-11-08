@@ -23,6 +23,7 @@ import {
  * @returns {Record<string, string | true>}
  */
 export function parseRunnerArgs(argv) {
+	/** @type {Record<string, string | true>} */
 	const parsed = {}
 	for (let i = 0; i < argv.length; i += 1) {
 		const token = argv[i]
@@ -83,7 +84,7 @@ export function bootstrapCompatibilityManifest({
 /**
  * Add a URL to the manifest (or update it) and save.
  *
- * @param {{ url: string, statusClass?: string, notes?: string, manifestPath?: string }} options
+ * @param {{ url: string, statusClass?: import('./index.js').ManifestEntry['status_class'], notes?: string, manifestPath?: string }} options
  * @returns {import('./index.js').ManifestEntry | undefined} The saved entry.
  * @throws {Error} If no URL is given.
  */
@@ -179,7 +180,7 @@ export function resolveCompatibilityLLMConfig(enableLLM, env = process.env) {
  * fixture), parse the fixture or live HTML, optionally try the AI fallback, and diagnose.
  * Options filter by status class, single URL, previous failures and a limit.
  *
- * @param {{ manifest: import('./index.js').ManifestEntry[], options?: object, env?: object, fetcher?: Function | null,
+ * @param {{ manifest: import('./index.js').ManifestEntry[], options?: object, env?: object, fetcher?: ((url: string) => Promise<any>) | null,
  *   parseHtml?: Function | null, readFixture?: Function, writeFixture?: Function,
  *   llmExtractor?: Function | null }} sweep - The functions are injectable for tests.
  * @returns {Promise<import('./index.js').CompatibilityPayload>}

@@ -130,12 +130,10 @@ export function parseRecipe(html, url) {
 export async function downloadHTML(url, timeoutMs = 15000) {
 	const response = await fetchHTMLResponse(url, timeoutMs)
 	if (!response.ok) {
-		const error = new Error(
-			`Upstream site returned HTTP ${response.status} ${response.statusText}`.trim()
+		throw Object.assign(
+			new Error(`Upstream site returned HTTP ${response.status} ${response.statusText}`.trim()),
+			{ html: response.html, status: response.status }
 		)
-		error.html = response.html
-		error.status = response.status
-		throw error
 	}
 	return response.html
 }

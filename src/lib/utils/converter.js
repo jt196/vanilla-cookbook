@@ -43,7 +43,8 @@ function findUnitData(unitName, lang = 'eng') {
  * @param {number} quantity - The quantity of the 'from' unit.
  * @param {string} from - The original unit to be converted.
  * @param {string} [to='grams'] - The unit to be converted to.
- * @returns {{quantity: number, unit: string} | {error: string}} - Returns an object containing either the converted quantity and unit or an error message.
+ * @returns {{ quantity?: number, unit?: string, error?: string }} The converted quantity and
+ *   unit, or `error` (and no quantity) if the conversion is impossible.
  */
 export const converter = (quantity, from, to = 'grams') => {
 	if (quantity <= 0) return { error: 'Quantity must be greater than 0' }
@@ -135,7 +136,7 @@ export const determineSystem = (ingredientArray = []) => {
  * 4. Water density as final fallback
  *
  * @param {string} ingredient - The ingredient name to search for
- * @param {Fuse} fuse - Fuse instance configured with ingredient database
+ * @param {import('fuse.js').default<any>} fuse - Fuse instance configured with ingredient database
  * @param {Array<string>} [instructions=[]] - Optional preparation instructions (sliced, chopped, etc.)
  * @returns {{ingredient: Object, usedDefaultDensity: boolean, matchType: string, matchedWord?: string, matchScore: number}} Matched ingredient and metadata
  */
@@ -272,12 +273,12 @@ function convertMetricVolumetricToAmerican(ingredientObj, fromUnit, quantity, la
 	// Return the object
 	return {
 		...ingredientObj,
-		quantity: parseFloat(convertedQuantityFinal).toFixed(2),
+		quantity: Number(convertedQuantityFinal).toFixed(2),
 		unit: targetUnit,
 		unitPlural: targetUnit + 's',
 		symbol: getSymbol(targetUnit, lang),
-		minQty: parseFloat(convertedQuantityFinal).toFixed(2),
-		maxQty: parseFloat(convertedQuantityFinal).toFixed(2)
+		minQty: Number(convertedQuantityFinal).toFixed(2),
+		maxQty: Number(convertedQuantityFinal).toFixed(2)
 	}
 }
 
@@ -602,7 +603,7 @@ export function normalizeIngredient(ingredientObj, options = {}, lang = 'eng') {
  * @param {Object} ingredientObj - The ingredient object to be manipulated
  * @param {string} fromSystem - The original measurement system ('metric', 'imperial', 'americanVolumetric')
  * @param {string} toSystem - The target measurement system
- * @param {Fuse} fuse - Fuse instance for ingredient density lookups
+ * @param {import('fuse.js').default<any>} fuse - Fuse instance for ingredient density lookups
  * @param {string} lang - Language code for unit symbols
  * @returns {Object} The converted ingredient object with updated quantity and unit
  *

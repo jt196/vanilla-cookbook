@@ -46,7 +46,7 @@ export async function dbExists() {
  *
  * @async
  * @function
- * @param {PrismaClient} prismaClient - The Prisma client instance to interact with the database.
+ * @param {import('@prisma/client').PrismaClient} prismaClient - The Prisma client instance to interact with the database.
  * @returns {Promise<boolean>} A promise that resolves to true if the site settings exist, indicating the database has been seeded, otherwise false.
  */
 export async function dbSeeded(prismaClient) {
@@ -65,7 +65,7 @@ export async function dbSeeded(prismaClient) {
  * @async
  * @function
  * @param {string} adminUserId - The ID of the admin user to associate the recipes with.
- * @param {PrismaClient} prismaClient - The Prisma client instance used for database operations.
+ * @param {import('@prisma/client').PrismaClient} prismaClient - The Prisma client instance used for database operations.
  */
 export async function seedRecipes(adminUserId, prismaClient) {
 	for (const recipe of recipes) {

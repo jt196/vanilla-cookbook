@@ -124,7 +124,7 @@ export function getImage(image) {
  */
 export function getRating(rating) {
 	if (!rating) return undefined
-	return parseFloat(rating.ratingValue)
+	return parseFloat(String(rating.ratingValue))
 }
 
 /**
