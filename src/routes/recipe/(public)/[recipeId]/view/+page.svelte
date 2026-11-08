@@ -5,6 +5,7 @@
 	import { getSanitizedHTML } from '$lib/utils/render'
 	import { onMount, onDestroy } from 'svelte'
 	import { setupWakeLock, cleanupWakeLock } from '$lib/utils/wakeLock.js'
+	import { rememberRecipe } from '$lib/utils/recentRecipes'
 
 	import RecipeViewButtons from '$lib/components/recipe/RecipeViewButtons.svelte'
 	import RecipeViewCover from '$lib/components/recipe/RecipeViewCover.svelte'
@@ -366,6 +367,11 @@
 	})
 
 	// Prevent Screen from Sleeping
+	// Record the view for the command palette's "Recently viewed" (reruns per recipe)
+	$effect(() => {
+		rememberRecipe(data.user?.userId ?? data.viewUser?.userId, data.recipe)
+	})
+
 	onMount(() => {
 		setupWakeLock()
 	})

@@ -16,6 +16,7 @@
 	import Link from '$lib/components/svg/Link.svelte'
 	import { commandPaletteOpen } from '$lib/stores/commandPalette'
 	import { buildCommands, filterCommands, importUrlFrom } from '$lib/utils/commandPalette'
+	import { getRecentRecipes } from '$lib/utils/recentRecipes'
 	import { t } from '$lib/stores/locale.js'
 
 	/**
@@ -32,6 +33,7 @@
 	let query = $state('')
 	let activeIndex = $state(0)
 	let recipes = $state([])
+	let recent = $state([])
 	let input = $state()
 	let list = $state()
 
@@ -45,6 +47,7 @@
 		if (!isOpen) return
 		query = ''
 		recipes = []
+		recent = getRecentRecipes(user?.userId)
 		tick().then(() => input?.focus())
 	})
 
@@ -84,6 +87,13 @@
 	/** Everything selectable, in display order, so arrow keys can walk one list. */
 	const items = $derived([
 		...(importUrl ? [{ kind: 'import', url: importUrl }] : []),
+		// With no query, offer recently viewed recipes first
+		...(query.trim()
+			? []
+			: recent.map(({ uid, name, photoId, image_url }) => ({
+					kind: 'recent',
+					recipe: { uid, name, image_url, photos: photoId ? [{ id: photoId }] : [] }
+				}))),
 		...recipes.map((recipe) => ({ kind: 'recipe', recipe })),
 		...commands.map((command) => ({ kind: 'command', command }))
 	])
@@ -91,6 +101,7 @@
 	const sections = $derived(
 		[
 			{ title: null, kind: 'import' },
+			{ title: $t('palette.recentlyViewed'), kind: 'recent' },
 			{ title: $t('palette.recipes'), kind: 'recipe' },
 			{ title: $t('palette.goTo'), kind: 'command', group: 'goto' },
 			{ title: $t('palette.actions'), kind: 'command', group: 'actions' }
@@ -116,7 +127,8 @@
 		if (!item) return
 		isOpen = false
 		if (item.kind === 'import') goto(`/recipe/new?url=${encodeURIComponent(item.url.href)}`)
-		else if (item.kind === 'recipe') goto(`/recipe/${item.recipe.uid}/view`)
+		else if (item.kind === 'recipe' || item.kind === 'recent')
+			goto(`/recipe/${item.recipe.uid}/view`)
 		else if (item.command.theme) onThemeChange(item.command.theme)
 		else goto(item.command.href)
 	}
@@ -203,7 +215,7 @@
 					{#if item.kind === 'import'}
 						<span class="text-primary"><Link width="18px" height="18px" /></span>
 						<span class="truncate">{$t('palette.importUrl', { host: item.url.hostname })}</span>
-					{:else if item.kind === 'recipe'}
+					{:else if item.kind === 'recipe' || item.kind === 'recent'}
 						<span class="h-9 w-9 shrink-0 overflow-hidden rounded bg-base-300">
 							{#if item.recipe.photos[0]}
 								<img
