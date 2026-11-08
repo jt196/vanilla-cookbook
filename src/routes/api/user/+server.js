@@ -6,21 +6,11 @@ import { requireAdmin, jsonSuccess, jsonError } from '$lib/server/authHelpers'
 import { env } from '$env/dynamic/private'
 
 /**
- * Handles the POST request to create a new user.
+ * Admin: create a user (username, password, email, about, admin flag), optionally seeding
+ * example recipes. Validates the password against the site's rules.
  *
- * Validates the current user's authentication and admin status. It expects a JSON
- * body with user data. It validates the password and creates a new user if all
- * conditions are met.
- *
- * @async
- * @function
- * @param {Object} request - The request object containing user data.
- * @param {Object} locals - The context object containing authentication data.
- * @returns {Response} Returns a JSON response indicating success or failure.
- *
- * @throws {Error} If the user is not authenticated or not an admin, it returns
- *                 a 401 error. If the password is invalid, it returns a 400 error.
- *                 If an error occurs during user creation, it returns a 500 error.
+ * @param {import('./$types').RequestEvent} event
+ * @returns {Promise<Response>}
  */
 export async function POST({ request, locals }) {
 	requireAdmin(locals)

@@ -65,7 +65,6 @@ nav:
       - General Utils: technical/utils.md
       - Image Utils: technical/utils_image.md
       - Import Utils: technical/utils_import.md
-      - Paprika Utils: technical/utils_paprika.md
       - Parse Utils: technical/utils_parse.md
       - Scraping Flow: technical/scraping.md
       - Scrape Compatibility: technical/scrape-compatibility.md

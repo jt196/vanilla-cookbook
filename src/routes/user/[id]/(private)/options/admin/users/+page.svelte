@@ -34,8 +34,10 @@
 	let passwordConfirm = $state('')
 	let userFeedback = $state('')
 	let userFeedbackCode = $state(null)
+	/** @type {'info' | 'error' | 'success' | 'warning'} */
 	let userFeedbackType = $state('error')
 
+	/** @type {{ id: string | null, username: string, email: string, isAdmin: boolean, userSeed: boolean, password?: string, [key: string]: any }} */
 	let editingUser = $state({
 		id: null,
 		username: '',
@@ -218,7 +220,7 @@
 		</TableRow>
 	</TableHead>
 	<TableBody>
-		{#each users as user}
+		{#each users as user (user.id)}
 			<TableRow>
 				<TableCell tag="th" scope="row"
 					>{user.username}

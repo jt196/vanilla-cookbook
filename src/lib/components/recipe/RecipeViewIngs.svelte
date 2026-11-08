@@ -7,7 +7,7 @@
 	import { i18nMap } from '$lib/submodules/recipe-ingredient-parser/src/i18n'
 	import { t } from '$lib/stores/locale.js'
 
-	/** @type {{ingredients: any, sanitizedIngredients: any, scale: any, scaledServings: any, selectedSystem: any, measurementSystem: any, recipeUid: any, baseServings?: number }} */
+	/** @type {{ingredients: any, sanitizedIngredients: any, scale: any, selectedSystem: any, measurementSystem: any, recipeUid: any, user: any, onScaleChange?: (scale: number) => void, onSelectedSystemChange?: (system: string) => void, baseServings?: number }} */
 	let {
 		ingredients,
 		sanitizedIngredients,
@@ -61,7 +61,7 @@
 	{/if}
 
 	<ul class="pl-0 mb-4 space-y-1">
-		{#each sanitizedIngredients as ingredient, ingredientIndex}
+		{#each sanitizedIngredients as ingredient, ingredientIndex (ingredientIndex)}
 			<RecipeViewIng
 				{ingredient}
 				{ingredientIndex}

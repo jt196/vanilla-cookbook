@@ -26,7 +26,7 @@ describe('processImage remote downloads', () => {
 
 		expect(ok).toBe(false)
 		expect(saveFile).not.toHaveBeenCalled()
-		expect(String(console.error.mock.calls[0][1]?.message)).toContain('HTTP 403')
+		expect(String(vi.mocked(console.error).mock.calls[0][1]?.message)).toContain('HTTP 403')
 	})
 
 	it('passes a timeout signal to fetch', async () => {

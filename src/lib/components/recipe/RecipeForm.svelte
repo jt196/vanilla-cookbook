@@ -17,7 +17,7 @@
 	import Undo from '$lib/components/svg/Undo.svelte'
 	import { t } from '$lib/stores/locale.js'
 
-	/** @type {{recipe: any, onSubmit: any, buttonText?: string, selectedFiles?: any, onSelectedFilesChange?: any, editMode?: boolean, recipeCategories?: any, aiEnabled?: boolean, aiProvider?: string | null, aiSelectedProvider?: string | null, aiSelectedProviderConfigured?: boolean, isAdmin?: boolean, userUnits?: string, userLanguage?: string, cancelHref?: string, onDelete?: (() => void) | null, saveImageUrl?: boolean}} */
+	/** @type {{recipe: any, onSubmit: any, buttonText?: string, selectedFiles?: any, onSelectedFilesChange?: any, editMode?: boolean, aiEnabled?: boolean, aiProvider?: string | null, aiSelectedProvider?: string | null, aiSelectedProviderConfigured?: boolean, isAdmin?: boolean, userUnits?: string, userLanguage?: string, cancelHref?: string, onDelete?: (() => void) | null, saveImageUrl?: boolean}} */
 	let {
 		recipe = $bindable(),
 		onSubmit,
@@ -25,7 +25,6 @@
 		selectedFiles = $bindable([]),
 		onSelectedFilesChange,
 		editMode = false,
-		recipeCategories = null,
 		aiEnabled = false,
 		aiSelectedProvider = null,
 		aiSelectedProviderConfigured = false,
@@ -624,7 +623,7 @@
 			<Textarea
 				id="ingredients"
 				name="ingredients"
-				rows="7"
+				rows={7}
 				placeholder={$t('recipeForm.ingredientsPlaceholder')}
 				bind:value={recipe.ingredients}
 				label={$t('recipeForm.ingredients')} />
@@ -680,24 +679,26 @@
 		<Textarea
 			id="equipment"
 			name="equipment"
-			rows="3"
+			rows={3}
 			placeholder={$t('recipeForm.equipmentPlaceholder')}
 			bind:value={recipe.equipment}
 			label={$t('recipeForm.equipment')} />
 		<Textarea
 			id="description"
 			name="description"
-			rows="3"
+			rows={3}
 			placeholder={$t('recipeForm.descriptionPlaceholder')}
 			bind:value={recipe.description}
+			markdown
 			label={$t('recipeForm.description')} />
 		<div>
 			<Textarea
 				id="directions"
 				placeholder={$t('recipeForm.directionsPlaceholder')}
-				rows="7"
+				rows={7}
 				name="directions"
 				bind:value={recipe.directions}
+				markdown
 				label={$t('recipeForm.directions')} />
 			{#if aiEnabled}
 				<div class="flex gap-2 mt-2">
@@ -751,9 +752,10 @@
 		<Textarea
 			id="notes"
 			name="notes"
-			rows="3"
+			rows={3}
 			placeholder={$t('recipeForm.notesPlaceholder')}
 			bind:value={recipe.notes}
+			markdown
 			label={$t('recipeForm.notes')} />
 		{#if aiEnabled}
 			<div class="flex gap-2 mt-2">
@@ -783,7 +785,7 @@
 		<Textarea
 			id="nutritional_info"
 			name="nutritional_info"
-			rows="3"
+			rows={3}
 			bind:value={recipe.nutritional_info}
 			label={$t('recipeForm.nutritionalInfo')} />
 		{#if aiEnabled}
@@ -819,11 +821,6 @@
 			<InfoText class="mt-1">{$t('recipeForm.cleanNutritionTip')}</InfoText>
 		{/if}
 		<Button type="submit" size="sm" class="mt-4">{resolvedButtonText}</Button>
-		{#if recipeCategories}
-			{#each recipeCategories as categoryUid}
-				<input type="hidden" name="categories[]" value={categoryUid} />
-			{/each}
-		{/if}
 	</div>
 </form>
 

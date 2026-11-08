@@ -75,7 +75,8 @@ async function embedMainPhotoFields(recipe) {
 }
 
 async function createZipWithGzippedRecipes(recipeData) {
-	const archive = new ZipArchive()
+	// archiver's types omit the EventEmitter methods the archive has at runtime
+	const archive = /** @type {ZipArchive & import('events').EventEmitter} */ (new ZipArchive())
 	const buffers = []
 
 	archive.on('data', (d) => buffers.push(d))
@@ -116,6 +117,13 @@ async function createZipWithGzippedRecipes(recipeData) {
 
 import { requireAuth } from '$lib/server/authHelpers'
 
+/**
+ * Download all of the current user's recipes as a Paprika-format `.paprikarecipes`
+ * archive.
+ *
+ * @param {import('./$types').RequestEvent} event
+ * @returns {Promise<Response>}
+ */
 export async function POST({ locals }) {
 	const user = requireAuth(locals)
 

@@ -1,7 +1,7 @@
 <script>
 	import SvgBase from '$lib/components/svg/SvgBase.svelte'
 
-	/** @type {{sort?: string | null, width?: string, height?: string}} */
+	/** @type {{sort?: string | null, width?: string, height?: string, propClass?: string}} */
 	let { sort = null, width, height, propClass = 'h-6 w-6 fill-neutral' } = $props()
 </script>
 

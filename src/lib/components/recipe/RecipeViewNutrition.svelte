@@ -7,7 +7,7 @@
 	import { parseNutritionInfo, scaleNutrition } from '$lib/utils/nutrition'
 	import { t } from '$lib/stores/locale.js'
 
-	/** @type {{ nutritionalInfo?: string, scale?: number, language?: string }} */
+	/** @type {{ nutritionalInfo?: string, scale?: number, language?: string, recipeUid?: string, showCleanupAction?: boolean, cleanupInProgress?: boolean, onCleanup?: (() => void) | null }} */
 	let {
 		nutritionalInfo = '',
 		scale = 1,
@@ -50,7 +50,7 @@
 					</TableRow>
 				</TableHead>
 				<TableBody>
-					{#each displayNutrition.entries as entry}
+					{#each displayNutrition.entries as entry, i (i)}
 						<TableRow>
 							<TableCell tag="th" scope="row">{entry.name}</TableCell>
 							<TableCell
@@ -83,7 +83,7 @@
 				</div>
 			{/if}
 			<div class="prose max-w-none">
-				{#each nutritionalInfo.split('\n') as line}
+				{#each nutritionalInfo.split('\n') as line, i (i)}
 					{#if line.trim()}
 						<p>{line}</p>
 					{/if}

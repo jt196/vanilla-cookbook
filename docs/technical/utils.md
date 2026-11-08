@@ -423,59 +423,6 @@ Manipulates an ingredient object to convert its quantity and unit from one syste
 | --- | --- |
 | `{Object}` | The manipulated ingredient object with converted quantity and unit. |
 
-### fuzzyMatch
-
-Attempts to find a match for an ingredient in a lookup table.
-This was used in the manipulate ingredients function before I transitioned to the database version
-
-#### Parameters
-
-| Parameter | Type | Description |
-| --- | --- | --- |
-| ingredient | `{string}` | The ingredient name to match. |
-| lookupTable | `{Array}` | The table of ingredients to search within. |
-
-#### Returns
-
-| Type | Description |
-| --- | --- |
-| `{Object\|null}` | Returns the matched ingredient object or null if no match is found. |
-
-### addFoodPreferences
-
-Searches through the food preferences database to find a match for the given ingredient name.
-Returns an object with the following properties: vegan, vegetarian, pescatarian, canBeVegan.
-If no match is found, returns an object with all properties set to true.
-
-#### Parameters
-
-| Parameter | Type | Description |
-| --- | --- | --- |
-| ingredientName | `{string}` | The ingredient name to search for. |
-
-#### Returns
-
-| Type | Description |
-| --- | --- |
-| `{Object}` | An object with the search results. |
-
-### getDietLabel
-
-Generates a string label indicating the dietary preference
-of the given ingredient based on the given preferences.
-
-#### Parameters
-
-| Parameter | Type | Description |
-| --- | --- | --- |
-| prefs | `{Object}` | The preferences object for the ingredient. |
-
-#### Returns
-
-| Type | Description |
-| --- | --- |
-| `{string}` | A string label indicating the dietary preference. |
-
 ### normalizeIngredient
 
 Normalizes an ingredient object by standardizing units, rounding quantity, and adding metadata.

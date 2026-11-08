@@ -175,6 +175,15 @@ const RK_PHOTO_STRATEGY = {
 }
 
 // ---------- main ----------
+/**
+ * Import recipes from a Recipe Keeper export (.zip) into a user's account, including any
+ * photos it contains.
+ *
+ * @param {{ buffer: Buffer, userId: string, isPublic?: boolean }} options - The uploaded
+ *   file contents, the owner, and whether imported recipes are public.
+ * @returns {Promise<{ inserted: number, message: string }>} How many recipes were added and a
+ *   summary for the import page.
+ */
 export async function importRecipeKeeperFromBuffer({ buffer, userId, isPublic }) {
 	const raw = await extractRecipeKeeperFromZipBuffer(buffer)
 	if (!raw?.length) return { inserted: 0, message: 'No recipes found.' }

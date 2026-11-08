@@ -5,22 +5,54 @@ import { requireAdmin, jsonSuccess, jsonError } from '$lib/server/authHelpers'
 import { env } from '$env/dynamic/private'
 import { isValidThemePreference } from '$lib/utils/theme'
 
+// Fields an admin may change; anything else in the body is ignored.
+const BOOLEAN_FIELDS = [
+	'skipSmallUnits',
+	'publicProfile',
+	'publicRecipes',
+	'isAdmin',
+	'ingMatch',
+	'ingOriginal',
+	'ingExtra',
+	'ingSymbol',
+	'displayNutrition'
+]
+
+/** Build the Prisma update payload from the request body, keeping existing values by default. */
+function buildUpdate(userData) {
+	const data = {}
+	// Empty strings keep the current value for these, matching the admin form's behaviour
+	for (const key of ['email', 'about', 'units']) if (userData[key]) data[key] = userData[key]
+	for (const key of [...BOOLEAN_FIELDS, 'language']) if (key in userData) data[key] = userData[key]
+	if (isValidThemePreference(userData.theme)) data.theme = userData.theme
+	return data
+}
+
+/** Replace the current session after the admin changes their own account. */
+async function refreshOwnSession(locals, userId) {
+	await auth.invalidateAllUserSessions(userId)
+	locals.auth.setSession(await auth.createSession({ userId, attributes: {} }))
+}
+
+/**
+ * Admin: update a user (preferences, admin role, optional password reset) and end their
+ * sessions.
+ *
+ * @param {import('./$types').RequestEvent} event
+ * @returns {Promise<Response>}
+ */
 export async function PUT({ request, locals, params }) {
 	const user = requireAdmin(locals)
-
-	const bodyText = await request.text()
-	const userData = JSON.parse(bodyText)
+	const userData = await request.json()
 	const { id } = params
+	const isSelf = user.userId === id
 
 	try {
-		const updatingUser = await prisma.authUser.findUnique({
-			where: { id }
-		})
+		const updatingUser = await prisma.authUser.findUnique({ where: { id } })
 		if (!updatingUser) {
 			return jsonError(404, { error: 'User not found!', code: 'admin.users.msg.userNotFound' })
 		}
 
-		// Update the user's password
 		if (userData.password) {
 			const passwordValidation = validatePassword(userData.password, env)
 			if (!passwordValidation.isValid) {
@@ -32,46 +64,34 @@ export async function PUT({ request, locals, params }) {
 			}
 
 			try {
-				await auth.updateKeyPassword('username', userData.username, userData.password)
-				await auth.invalidateAllUserSessions(id)
-
-				if (user.userId === id) {
-					try {
-						const newSession = await auth.createSession({
-							userId: user.userId,
-							attributes: {}
-						})
-						locals.auth.setSession(newSession)
-						return jsonSuccess({
-							message: 'Password updated successfully',
-							code: 'admin.users.msg.passwordUpdated'
-						})
-					} catch (e) {
-						if (e.name === 'LuciaError' && e.message === 'AUTH_INVALID_USER_ID') {
-							console.error('Invalid user id:', id)
-							return jsonError(400, {
-								error: 'Invalid user id.',
-								code: 'admin.users.msg.invalidUserId'
-							})
-						}
-						console.error('Unexpected error while creating session:', e)
-						return jsonError(500, {
-							error: 'Unexpected error.',
-							code: 'admin.users.msg.updateFail'
-						})
-					}
-				}
+				await auth.updateKeyPassword('username', updatingUser.username, userData.password)
 			} catch (e) {
-				console.log('Error changing password: ' + e)
+				// e.g. an OAuth/OIDC-only account has no password key to update
+				console.error('Error changing password:', e)
+				return jsonError(400, {
+					error: `Failed to update password: ${e.message}`,
+					code: 'admin.users.msg.updateFail'
+				})
 			}
+
+			if (isSelf) {
+				await refreshOwnSession(locals, id)
+				return jsonSuccess({
+					message: 'Password updated successfully',
+					code: 'admin.users.msg.passwordUpdated'
+				})
+			}
+			await auth.invalidateAllUserSessions(id)
 		}
 
-		// Check if this user is the only admin
-		if ('isAdmin' in userData && updatingUser.isAdmin) {
-			const adminCount = await prisma.authUser.count({
-				where: { isAdmin: true }
-			})
-			if (adminCount === 1 && !userData.isAdmin) {
+		if ('isAdmin' in userData && !userData.isAdmin && updatingUser.isAdmin) {
+			if (updatingUser.isRoot) {
+				return jsonError(403, {
+					error: 'The root user must remain an admin.',
+					code: 'admin.users.msg.rootMustRemainAdmin'
+				})
+			}
+			if ((await prisma.authUser.count({ where: { isAdmin: true } })) === 1) {
 				return jsonError(400, {
 					error: "The only admin user can't make themselves non-admin.",
 					code: 'admin.users.msg.onlyAdminMustRemain'
@@ -79,60 +99,24 @@ export async function PUT({ request, locals, params }) {
 			}
 		}
 
-		const updatedUser = await prisma.authUser.update({
-			where: { id },
-			data: {
-				email: userData.email || updatingUser.email,
-				about: userData.about || updatingUser.about,
-				units: userData.units || updatingUser.units,
-				skipSmallUnits:
-					'skipSmallUnits' in userData ? userData.skipSmallUnits : updatingUser.skipSmallUnits,
-				publicProfile:
-					'publicProfile' in userData ? userData.publicProfile : updatingUser.publicProfile,
-				publicRecipes:
-					'publicRecipes' in userData ? userData.publicRecipes : updatingUser.publicRecipes,
-				isAdmin: 'isAdmin' in userData ? userData.isAdmin : updatingUser.isAdmin,
-				ingMatch: 'ingMatch' in userData ? userData.ingMatch : updatingUser.ingMatch,
-				ingOriginal: 'ingOriginal' in userData ? userData.ingOriginal : updatingUser.ingOriginal,
-				ingExtra: 'ingExtra' in userData ? userData.ingExtra : updatingUser.ingExtra,
-				ingSymbol: 'ingSymbol' in userData ? userData.ingSymbol : updatingUser.ingSymbol,
-				displayNutrition:
-					'displayNutrition' in userData
-						? userData.displayNutrition
-						: updatingUser.displayNutrition,
-				language: 'language' in userData ? userData.language : updatingUser.language,
-				theme: isValidThemePreference(userData.theme) ? userData.theme : updatingUser.theme
-			}
-		})
+		const updatedUser = await prisma.authUser.update({ where: { id }, data: buildUpdate(userData) })
 
-		if (user.userId === id) {
-			await auth.invalidateAllUserSessions(id)
-			const newSession = await auth.createSession({
-				userId: id,
-				attributes: {}
-			})
-			locals.auth.setSession(newSession)
+		if (isSelf) {
+			await refreshOwnSession(locals, id)
 			return jsonSuccess({
 				message: 'Role updated successfully. Please log in again.',
 				code: 'admin.users.msg.roleUpdated'
 			})
-		} else {
-			await auth.invalidateAllUserSessions(id)
-			return jsonSuccess({ ...updatedUser, code: 'admin.users.msg.updated' })
 		}
+		await auth.invalidateAllUserSessions(id)
+		return jsonSuccess({ ...updatedUser, code: 'admin.users.msg.updated' })
 	} catch (err) {
 		if (err.code === 'P2002') {
-			if (err.meta?.target?.includes('username')) {
-				return jsonError(400, {
-					error: 'Username already taken!',
-					code: 'admin.users.msg.usernameTaken'
-				})
-			} else if (err.meta?.target?.includes('email')) {
-				return jsonError(400, {
-					error: 'Email already taken!',
-					code: 'admin.users.msg.emailTaken'
-				})
-			}
+			const field = err.meta?.target?.includes('username') ? 'username' : 'email'
+			return jsonError(400, {
+				error: `${field === 'username' ? 'Username' : 'Email'} already taken!`,
+				code: `admin.users.msg.${field}Taken`
+			})
 		}
 		return jsonError(500, {
 			error: `Failed to update user: ${err.message}`,
@@ -141,6 +125,12 @@ export async function PUT({ request, locals, params }) {
 	}
 }
 
+/**
+ * Admin: delete a user (not yourself and not the root user).
+ *
+ * @param {import('./$types').RequestEvent} event
+ * @returns {Promise<Response>}
+ */
 export async function DELETE({ params, locals }) {
 	const user = requireAdmin(locals)
 	const { id } = params
@@ -171,10 +161,7 @@ export async function DELETE({ params, locals }) {
 		await auth.deleteUser(id)
 		return jsonSuccess({ message: 'User successfully deleted!', code: 'admin.users.msg.deleted' })
 	} catch (e) {
-		console.log('Error: ' + e)
-		if (e.name === 'LuciaError') {
-			console.log('LuciaError: ' + e.message)
-		}
+		console.error('Error deleting user:', e)
 		return jsonError(500, {
 			error: 'An unexpected error occurred.',
 			code: 'admin.users.msg.deleteFail'

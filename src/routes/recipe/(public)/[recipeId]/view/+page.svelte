@@ -5,6 +5,7 @@
 	import { getSanitizedHTML } from '$lib/utils/render'
 	import { onMount, onDestroy } from 'svelte'
 	import { setupWakeLock, cleanupWakeLock } from '$lib/utils/wakeLock.js'
+	import { rememberRecipe } from '$lib/utils/recentRecipes'
 
 	import RecipeViewButtons from '$lib/components/recipe/RecipeViewButtons.svelte'
 	import RecipeViewCover from '$lib/components/recipe/RecipeViewCover.svelte'
@@ -30,7 +31,7 @@
 	let { data = $bindable() } = $props()
 	let isLoading = $state(true)
 
-	let { recipe, viewUser, logs, recUser, aiEnabled, semanticEnabled } = $state(data)
+	let { recipe, viewUser, viewMode, logs, recUser, aiEnabled, semanticEnabled } = $state(data)
 	$effect(() => {
 		;({ recipe, viewUser, logs, recUser, aiEnabled, semanticEnabled } = data)
 	})
@@ -144,11 +145,9 @@
 	let directionLines = $derived(activeDirections ? activeDirections.split('\n') : [])
 	let notesLines = $derived(recipe.notes ? recipe.notes.split('\n') : [])
 
-	let scaledServings = $state(null) // ✅ Use $state instead of $derived
-
-	$effect(() => {
-		scaledServings = recipe.servings ? scaleNumbersInString(recipe.servings, scale) : null
-	})
+	let scaledServings = $derived(
+		recipe.servings ? scaleNumbersInString(recipe.servings, scale) : null
+	)
 
 	let sanitizedDirections = $state([])
 	let sanitizedNotes = $state([])
@@ -300,12 +299,12 @@
 		}
 	}
 
-	let isLatest = true
+	// Token for the latest ingredient conversion; older async results are ignored
+	let latestInvocation = null
 
 	const sanitizeContent = async () => {
-		isLatest = false // Reset flag when starting a new invocation
 		const currentInvocation = {}
-		isLatest = currentInvocation
+		latestInvocation = currentInvocation
 
 		const directionsResult = await Promise.all(
 			parseRecipeText(
@@ -327,7 +326,7 @@
 			).map((note) => getSanitizedHTML(note))
 		)
 
-		if (currentInvocation !== isLatest) return // Ignore results if this isn't the latest invocation
+		if (currentInvocation !== latestInvocation) return // Ignore results if this isn't the latest invocation
 		sanitizedDirections = directionsResult
 		sanitizedNotes = notesResult
 
@@ -340,7 +339,7 @@
 			})
 		)
 
-		if (currentInvocation !== isLatest) return // Ignore results if this isn't the latest invocation
+		if (currentInvocation !== latestInvocation) return // Ignore results if this isn't the latest invocation
 		sanitizedIngredients = tempIngredientsResult
 		isLoading = false
 	}
@@ -366,6 +365,11 @@
 	})
 
 	// Prevent Screen from Sleeping
+	// Record the view for the command palette's "Recently viewed" (reruns per recipe)
+	$effect(() => {
+		rememberRecipe(data.user?.userId ?? data.viewUser?.userId, data.recipe)
+	})
+
 	onMount(() => {
 		setupWakeLock()
 	})
@@ -413,7 +417,11 @@
 			</div>
 		{/if}
 		<div class="w-full {mainPhoto ? 'md:w-2/3' : ''}">
-			<RecipeViewAbout {recipe} {scaledServings} recipeRatingChanged={handleRecipeRatingChanged} />
+			<RecipeViewAbout
+				{recipe}
+				{scaledServings}
+				canRate={!viewMode}
+				recipeRatingChanged={handleRecipeRatingChanged} />
 		</div>
 	</div>
 

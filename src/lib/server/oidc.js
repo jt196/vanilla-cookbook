@@ -153,11 +153,3 @@ export async function validateCallback(callbackUrl, expectedState, codeVerifier)
 		emailVerified
 	}
 }
-
-/**
- * Reset the cached configuration (useful for testing or after config changes).
- */
-export function resetOidcConfig() {
-	_config = null
-	_configPromise = null
-}

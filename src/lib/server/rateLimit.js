@@ -50,7 +50,8 @@ export function getClientIp(event) {
 
 /**
  * Build a convenience limiter API using env (or defaults).
- * @param {{ RATE_LIMIT_WINDOW_MS?: string, RATE_LIMIT_LOGIN_PER_IP?: string, RATE_LIMIT_LOGIN_PER_ID?: string }} envLike
+ * @param {Record<string, string | undefined>} envLike - Environment variables; reads RATE_LIMIT_WINDOW_MS,
+ *   RATE_LIMIT_LOGIN_PER_IP and RATE_LIMIT_LOGIN_PER_ID.
  */
 export function makeLimiter(envLike = {}) {
 	const windowMs = Number(envLike.RATE_LIMIT_WINDOW_MS) || 60_000

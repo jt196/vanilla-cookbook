@@ -215,7 +215,8 @@ pnpm test:watch           # Watch mode
 pnpm coverage             # Coverage report
 
 # Linting & Formatting
-pnpm lint                 # Prettier check + ESLint
+pnpm lint                 # Prettier check + ESLint (incl. required JSDoc)
+pnpm check:types          # JSDoc type check (must report no errors)
 pnpm format               # Format all files
 
 # Database
@@ -339,7 +340,9 @@ pnpm coverage          # Coverage report
 - **Formatting**: Prettier enforced (`.prettierrc`): tabs, single quotes, no semicolons, no trailing commas, 100-char lines
 - **Linting**: ESLint 9 flat config (`eslint.config.js`) with the svelte plugin; `pnpm lint` runs Prettier + ESLint
 - **Markdown docs**: Keep edited Markdown files compliant with `.markdownlint.json` (run `pnpm -s dlx markdownlint-cli <file>.md` on changed docs)
-- **JSDoc**: Document all utility functions (see `docs/technical/*.md` for examples)
+- **JSDoc (enforced)**: Every exported function needs a JSDoc comment: what it does, `@param` and `@returns` with types. This includes SvelteKit handlers (`GET`, `POST`, `load`, ...). ESLint (`jsdoc/require-jsdoc`) fails on missing ones, everywhere in `src`; there are no exemptions, so don't add any. For a shared object shape, define a `@typedef` once and reference it. Route handlers and loads use SvelteKit's generated types: `@param {import('./$types').RequestEvent} event` for `export async function GET(...)`, or `@type {import('./$types').PageServerLoad}` for `export const load = ...`.
+- **Types (enforced)**: JSDoc types are checked by `pnpm check:types` (svelte-check with `checkJs`), and CI fails on any type error. Keep it at zero: type new code properly rather than casting it away (in tests, wrap deliberate partial test doubles with `fake()` from `src/tests/helpers/fake.js`, and use `vi.mocked()` for mocks). Svelte props: type them with one `/** @type {{...}} */` comment directly above `let { ... } = $props()` (Svelte ignores inline comments on individual destructured props), listing every prop the component uses. Don't type `env` parameters with specific keys: SvelteKit types `$env` from each machine's `.env`, so results would differ between machines and CI.
+- **Before committing**: `pnpm lint`, `pnpm check:types` and `pnpm test` must all pass (CI runs all three)
 
 ### Svelte Conventions
 

@@ -10,12 +10,14 @@
 	import SiteIcons from '$lib/components/ui/SiteIcons.svelte'
 	import CookBook from '$lib/components/svg/CookBook.svelte'
 	import NavLinks from '$lib/components/ui/NavLinks.svelte'
+	import CommandPalette from '$lib/components/nav/CommandPalette.svelte'
+	import SearchButton from '$lib/components/nav/SearchButton.svelte'
 	import Spinner from '$lib/components/ui/Spinner.svelte'
 	import FeedbackMessage from '$lib/components/ui/FeedbackMessage.svelte'
 	import { langStore, isRtl, t } from '$lib/stores/locale.js'
 	import { normalizeThemePreference, resolveTheme } from '$lib/utils/theme.js'
 
-	/** @type {{data: PageData, children?: import('svelte').Snippet}} */
+	/** @type {{data: import('./$types').LayoutData, children?: import('svelte').Snippet}} */
 	let { data, children } = $props()
 	let user = $derived(data.user)
 	let settings = $derived(data.settings)
@@ -106,22 +108,23 @@
 
 <div class="bg-base-100 border-b border-base-300">
 	<div class="navbar container mx-auto px-4">
-		<div class="navbar-start">
+		<div class="navbar-start w-auto shrink-0">
 			{#if user}
 				<a href="/" class="flex items-center gap-2 text-primary">
 					<CookBook width="45px" height="45px" />
-					<img src="/icons/site-logo.svg" alt="Vanilla Cookbook" class="h-12" />
+					<img src="/icons/site-logo.svg" alt="Vanilla Cookbook" class="site-logo h-12" />
 				</a>
 			{:else}
 				<div class="flex items-center gap-2 text-primary">
 					<CookBook width="45px" height="45px" />
-					<img src="/icons/site-logo.svg" alt="Vanilla Cookbook" class="h-12" />
+					<img src="/icons/site-logo.svg" alt="Vanilla Cookbook" class="site-logo h-12" />
 				</div>
 			{/if}
 		</div>
 
 		{#if dbSeed}
-			<div class="navbar-end">
+			<div class="navbar-end flex-1 gap-2">
+				<SearchButton isMac={data.isApplePlatform} />
 				<!-- Desktop Navigation - hidden on mobile -->
 				<div class="hidden lg:flex">
 					<NavLinks {user} {settings} {themePreference} onThemeChange={setThemePreference} />
@@ -163,6 +166,10 @@
 </div>
 
 <Spinner visible={isNavigating} spinnerContent={$t('common.loading')} />
+
+{#if dbSeed}
+	<CommandPalette {user} {themePreference} onThemeChange={setThemePreference} />
+{/if}
 
 <div class="min-h-screen bg-base-200">
 	<div class="container mx-auto px-4 py-6">

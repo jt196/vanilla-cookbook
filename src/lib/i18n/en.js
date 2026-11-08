@@ -45,6 +45,7 @@ export default {
 	nav: {
 		allRecipes: 'All Recipes',
 		myRecipes: 'My Recipes',
+		recipes: 'Recipes',
 		newRecipe: 'New Recipe',
 		shopping: 'Shopping',
 		shoppingList: 'Shopping list',
@@ -58,7 +59,26 @@ export default {
 		themeLight: 'Light',
 		themeDark: 'Dark',
 		themeAuto: 'Auto',
-		cookbook: "{username}'s Cookbook"
+		cookbook: "{username}'s Cookbook",
+		search: 'Search'
+	},
+
+	palette: {
+		placeholder: 'Search recipes, or go to…',
+		recentlyViewed: 'Recently viewed',
+		recipes: 'Recipes',
+		goTo: 'Go to',
+		actions: 'Actions',
+		noResults: 'No matches',
+		byAuthor: 'by {name}',
+		import: 'Import recipes',
+		importUrl: 'Import recipe from {host}',
+		siteSettings: 'Site settings',
+		users: 'Users',
+		switchTheme: 'Switch to {theme} theme',
+		navigate: 'Navigate',
+		open: 'Open',
+		close: 'Close'
 	},
 
 	auth: {
@@ -133,7 +153,7 @@ export default {
 		creatingAdmin: 'Creating Admin User...',
 		msg: {
 			allFieldsRequired: 'All fields are required.',
-			adminNotCreated: 'Admin user not created.',
+			alreadySeeded: 'This site is already set up.',
 			seeded: 'Database seeded successfully.',
 			seedFailed: 'Failed to seed the database.'
 		}
@@ -386,6 +406,8 @@ export default {
 			scrapeBlockedText:
 				'Site blocked direct scraping. Captured page text has been loaded into Text mode.',
 			aiNotEnabled: 'AI not enabled!',
+			imageProviderUnsupported:
+				"The site's AI provider can't read photos. An admin can choose an image provider in Site Settings.",
 			manualSuccess: 'Manual scrape success!',
 			manualPartial: 'Manual partially scraped.',
 			aiSuccess: 'AI scrape success!',
@@ -700,6 +722,7 @@ export default {
 				cannotDeleteSelf: 'Cannot delete yourself.',
 				cannotDeleteRoot: 'Cannot delete root user.',
 				onlyAdminMustRemain: "The only admin user can't make themselves non-admin.",
+				rootMustRemainAdmin: 'The root user must remain an admin.',
 				invalidUserId: 'Invalid user id.'
 			}
 		}

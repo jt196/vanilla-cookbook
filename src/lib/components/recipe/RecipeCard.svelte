@@ -1,5 +1,6 @@
 <!-- RecipeCard.svelte -->
 <script>
+	import { photoSrc } from '$lib/utils/image/imageUtils'
 	import Favourite from '$lib/components/svg/Favourite.svelte'
 	import Check from '$lib/components/svg/Check.svelte'
 	import Fork from '$lib/components/svg/Fork.svelte'
@@ -67,7 +68,7 @@
 </script>
 
 <a
-	href="/recipe/{item.uid}/view/"
+	href="/recipe/{item.uid}/view"
 	class="flex items-stretch gap-3 mb-2 md:mb-3 rounded-lg transition no-underline text-current">
 	<Card
 		class="flex-1 hover:bg-base-200 min-h-24 md:min-h-36"
@@ -81,7 +82,7 @@
 					<img
 						class="h-full w-full object-cover"
 						loading="lazy"
-						src="/api/recipe/image/{item.photos[0].id}"
+						src={photoSrc(item.photos[0].id, { thumbnail: true })}
 						alt={$t('recipeCard.thumbnail', { name: item.name })}
 						onerror={() => (showPrimaryPhoto = false)} />
 				{:else if item.image_url && showImageUrl}

@@ -46,6 +46,13 @@ function buildRecipeImagePrompt(recipe, styleDescription) {
 		.join('\n')
 }
 
+/**
+ * Generate a photo for one of the current user's recipes with the configured AI image
+ * model. Body: optional `styleDescription`.
+ *
+ * @param {import('./$types').RequestEvent} event
+ * @returns {Promise<Response>}
+ */
 export async function POST({ request, locals, params }) {
 	const user = requireAuth(locals)
 	const { uid } = params

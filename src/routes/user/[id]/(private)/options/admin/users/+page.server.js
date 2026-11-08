@@ -1,5 +1,10 @@
 import { error } from '@sveltejs/kit'
 
+/**
+ * User management page: all users.
+ *
+ * @type {import('./$types').PageServerLoad}
+ */
 export const load = async ({ url, fetch }) => {
 	// Fetch users
 	const res = await fetch(`${url.origin}/api/user/admin/users`)

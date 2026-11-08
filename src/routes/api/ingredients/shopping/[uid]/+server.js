@@ -1,15 +1,25 @@
 import { prisma } from '$lib/server/prisma'
 import { requireAuth, jsonError, jsonSuccess } from '$lib/server/authHelpers'
 
+/**
+ * Delete one of the current user's shopping list items.
+ *
+ * @param {import('./$types').RequestEvent} event
+ * @returns {Promise<Response>}
+ */
 export async function DELETE({ locals, params }) {
-	requireAuth(locals)
-	const { uid } = params
+	const user = requireAuth(locals)
 
 	try {
-		await prisma.shoppingListItem.delete({
-			where: { uid }
+		const { count } = await prisma.shoppingListItem.deleteMany({
+			where: { uid: params.uid, userId: user.userId }
 		})
-
+		if (count === 0) {
+			return jsonError(404, {
+				error: 'Shopping list item not found',
+				code: 'shopping.msg.itemNotFound'
+			})
+		}
 		return jsonSuccess({ success: true, code: 'shopping.msg.itemDeleted' })
 	} catch (error) {
 		console.error('Failed to delete shopping list item:', error)

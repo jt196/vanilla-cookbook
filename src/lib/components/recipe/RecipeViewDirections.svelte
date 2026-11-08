@@ -11,13 +11,14 @@
 		{#if loadingIngredients}
 			<!-- Show skeleton while ingredients are loading (needed for ingredient matching) -->
 			<div class="space-y-3">
-				{#each directionLines as _}
+				{#each directionLines as _, i (i)}
 					<div class="skeleton h-4 w-full"></div>
 					<div class="skeleton h-4 w-3/4"></div>
 				{/each}
 			</div>
 		{:else}
-			{#each sanitizedDirections as parsedDirection}
+			{#each sanitizedDirections as parsedDirection, i (i)}
+				<!-- eslint-disable-next-line svelte/no-at-html-tags -- sanitised with getSanitizedHTML -->
 				<p>{@html parsedDirection}</p>
 			{/each}
 		{/if}

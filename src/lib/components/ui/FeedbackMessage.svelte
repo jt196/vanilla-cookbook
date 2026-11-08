@@ -65,6 +65,7 @@
 			inline ? 'mt-2 w-full' : 'fixed top-20 left-1/2 -translate-x-1/2 z-50 w-[90vw] max-w-md px-4'
 		}`}>
 		{#if showIcon}
+			<!-- eslint-disable-next-line svelte/no-at-html-tags -- constant SVG markup defined above -->
 			{@html icons[type]}
 		{/if}
 		{#if children}

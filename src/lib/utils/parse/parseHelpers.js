@@ -2,35 +2,14 @@ import parseIsoDuration from 'parse-iso-duration'
 import humanizeDuration from 'humanize-duration'
 import * as he from 'he'
 
-/**
- * Parse the provided JSON-LD string to extract the recipe data.
- * @param {string} jsonLD - The JSON-LD string containing potential recipe data.
- * @returns {Object|undefined} The parsed recipe data or undefined if not found.
- */
-export function parseRecipeToJSON(jsonLD) {
-	if (!jsonLD) return undefined
-
-	const json = JSON.parse(jsonLD)
-
-	if (Array.isArray(json)) {
-		const recipe = json.find((v) => {
-			if (typeof v['@type'] === 'string') {
-				return v['@type'].toLowerCase() === 'recipe'
-			} else if (Array.isArray(v['@type'])) {
-				return v['@type'].includes('Recipe')
-			}
-			return false
-		})
-		return recipe
-	} else {
-		return json
-	}
-}
+// ---------------------------------------------------------------------------
+// Field normalisers: turn one schema.org Recipe property into the shape we store
+// ---------------------------------------------------------------------------
 
 /**
- * Extract the author's name from the provided data.
- * @param {string|Object} author - The author data, which can be a string or an object.
- * @returns {string} The author's name.
+ * Extract the author's name.
+ * @param {string|Object|Array<Object>} author - A name, a Person/Organization, or a list of them.
+ * @returns {string|undefined}
  */
 export function getAuthor(author) {
 	if (typeof author === 'string') return author
@@ -39,73 +18,55 @@ export function getAuthor(author) {
 }
 
 /**
- * Convert an ISO duration string to a human-readable format.
- * @param {string} duration - The ISO duration string.
- * @returns {string} The human-readable duration.
+ * Convert an ISO 8601 duration (e.g. "PT1H30M") to text; returns the input if it isn't one.
+ * @param {string} duration
+ * @returns {string}
  */
 export function durationToText(duration) {
 	try {
-		const durationObject = parseIsoDuration(duration)
-		return humanizeDuration(durationObject)
-	} catch (error) {
+		return humanizeDuration(parseIsoDuration(duration))
+	} catch {
 		return duration
 	}
 }
 
 /**
- * Parse and clean the provided instructions data.
- * @param {string|Array} instructions - The instructions data.
- * @returns {Array} An array of cleaned instruction strings.
+ * Flatten recipe instructions to a list of step strings.
+ * Accepts a string, HowToStep/HowToSection objects, or (nested) arrays of either.
+ * Sections contribute their steps; a node with text but no steps contributes its text.
+ *
+ * @param {unknown} instructions
+ * @returns {string[]}
  */
 export function parseInstructions(instructions) {
 	if (!instructions) return []
-
-	if (typeof instructions === 'string') {
-		return instructions.trim() ? [instructions] : []
-	}
-
-	if (Array.isArray(instructions)) {
-		return instructions.flatMap(flattenInstructionNode).filter(Boolean)
-	}
-
-	if (typeof instructions === 'object') {
-		return flattenInstructionNode(instructions).filter(Boolean)
-	}
-
+	if (typeof instructions === 'string') return instructions.trim() ? [instructions] : []
+	if (Array.isArray(instructions)) return instructions.flatMap(instructionSteps)
+	if (typeof instructions === 'object') return instructionSteps(instructions)
 	return []
 }
 
-function flattenInstructionNode(node) {
+/** @returns {string[]} */
+function instructionSteps(node) {
 	if (!node) return []
-
-	if (typeof node === 'string') {
-		return node.trim() ? [node] : []
-	}
-
-	if (Array.isArray(node)) {
-		return node.flatMap(flattenInstructionNode)
-	}
-
+	if (typeof node === 'string') return node.trim() ? [node] : []
+	if (Array.isArray(node)) return node.flatMap(instructionSteps)
 	if (typeof node !== 'object') return []
 
-	const directText = instructionNodeText(node)
-	if (directText && !Array.isArray(node.itemListElement)) {
-		return [directText]
-	}
+	const text = instructionText(node)
+	if (text && !Array.isArray(node.itemListElement)) return [text]
 
-	const nestedSteps = flattenInstructionNode(node.itemListElement || node.itemList || [])
-	if (nestedSteps.length) return nestedSteps
-
-	return directText ? [directText] : []
+	const steps = instructionSteps(node.itemListElement || node.itemList || [])
+	if (steps.length) return steps
+	return text ? [text] : []
 }
 
 /**
- * Get a step's text as a string. Some sites (e.g. einfachkochen.de) emit `text` as an
- * array of comma-split fragments, so arrays are re-joined with ', '.
- * @param {Object} node - A HowToStep/HowToSection node.
- * @returns {string} The trimmed step text, or '' if none.
+ * A step's text. Some sites (e.g. einfachkochen.de) emit `text` as an array of
+ * comma-split fragments, so arrays are re-joined with ', '.
+ * @returns {string} Trimmed text, or '' if none.
  */
-function instructionNodeText(node) {
+function instructionText(node) {
 	const value = node.text || node.name
 	if (Array.isArray(value)) {
 		return value
@@ -118,107 +79,69 @@ function instructionNodeText(node) {
 }
 
 /**
- * Parse and clean the provided ingredients data.
- * @param {string|Array} ingredients - The ingredients data.
- * @returns {Array} An array of cleaned ingredient strings.
+ * Normalise ingredients to a list. A single string is treated as comma-separated.
+ * @param {string|string[]} ingredients
+ * @returns {string[]}
  */
 export function parseIngredients(ingredients) {
-	if (Array.isArray(ingredients)) {
-		return ingredients
-	}
-
-	// Split comma-separated string into individual ingredients
+	if (Array.isArray(ingredients)) return ingredients
 	if (typeof ingredients === 'string') {
 		return ingredients
 			.split(',')
 			.map((s) => s.trim())
 			.filter(Boolean)
 	}
-
 	return []
 }
+
 /**
- * Clean a provided string by trimming and removing unnecessary spaces.
- * @param {string} str - The string to clean.
- * @returns {string} The cleaned string.
+ * Normalise keywords to a list. A single string is treated as comma-separated.
+ * @param {string|string[]} keywords
+ * @returns {string[]}
  */
-export function cleanString(str) {
-	if (typeof str !== 'string') {
-		return '' // or return some default value if desired
-	}
-	return he
-		.decode(str)
-		.split('\n')
-		.map((line) => line.trim())
-		.filter((line) => line.length > 0)
-		.join(' ')
-		.trim()
-		.replace(/\s+/g, ' ')
+export function parseKeywords(keywords) {
+	if (Array.isArray(keywords)) return keywords.map((k) => k.trim())
+	if (typeof keywords === 'string') return keywords.split(',').map((k) => k.trim())
+	return []
 }
 
 /**
- * Recursively applies cleanString to all string values in an object, array, or scalar.
- * Non-string primitives (numbers, booleans, null) are passed through unchanged.
- * @param {*} value - The value to clean.
- * @returns {*} The cleaned value.
- */
-export function cleanObjectStrings(value) {
-	if (typeof value === 'string') return cleanString(value)
-	if (Array.isArray(value)) return value.map(cleanObjectStrings)
-	if (value && typeof value === 'object') {
-		return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, cleanObjectStrings(v)]))
-	}
-	return value
-}
-
-/**
- * Extract the main URL from the provided recipe data.
- * @param {Object} recipe - The recipe data.
- * @returns {string|undefined} The main URL or undefined if not found.
- */
-export function getUrl(recipe) {
-	if (typeof recipe.mainEntityOfPage === 'string') return recipe.mainEntityOfPage
-	if (recipe.mainEntityOfPage?.['@id']?.includes('http')) return recipe.mainEntityOfPage['@id']
-	return typeof recipe.isPartOf === 'string' ? recipe.isPartOf : recipe.isPartOf?.url
-}
-
-/**
- * Extract the main image URL from the provided image data.
- * @param {string|Object|Array<string|Object>} image - The image data (URL, ImageObject, or an array of either).
- * @returns {string|undefined} The image URL or undefined if not found.
+ * The image URL from a URL, an ImageObject, or a list of either (first usable one wins).
+ * @param {string|Object|Array<string|Object>} image
+ * @returns {string|undefined}
  */
 export function getImage(image) {
 	if (!image) return undefined
 	if (typeof image === 'string') return image
-	// Arrays may hold URL strings or ImageObjects; take the first usable one
 	if (Array.isArray(image)) return image.map(getImage).find(Boolean)
 	return image.url || image.contentUrl
 }
 
 /**
- * Convert the provided rating data to a float.
- * @param {Object} rating - The rating data.
- * @returns {number|undefined} The rating as a float or undefined if not found.
+ * The rating value from an AggregateRating.
+ * @param {{ ratingValue?: string|number }} rating
+ * @returns {number|undefined}
  */
 export function getRating(rating) {
 	if (!rating) return undefined
-	return parseFloat(rating.ratingValue)
+	return parseFloat(String(rating.ratingValue))
 }
 
 /**
- * Parse the provided video data to extract relevant details.
- * @param {string|Object} video - The video data.
- * @returns {Object} An object containing video details.
+ * Video fields from a URL, a VideoObject, or a list of VideoObjects (first one used).
+ * @param {string|Object|Array<Object>} video
+ * @returns {{ videoUrl?: string, videoThumbnail?: string, videoTitle?: string }}
  */
 export function parseVideo(video) {
 	if (!video) return {}
 	if (typeof video === 'string') return { videoUrl: video }
 	if (Array.isArray(video)) {
-		if (!video.length || !video[0]) return {}
+		const [first] = video
+		if (!first) return {}
 		return {
-			videoUrl: video[0].url || video[0].embedUrl,
-			videoThumbnail: video[0].thumbnailUrl,
-			videoTitle: video[0].name
+			videoUrl: first.url || first.embedUrl,
+			videoThumbnail: first.thumbnailUrl,
+			videoTitle: first.name
 		}
 	}
 	return {
@@ -261,356 +184,274 @@ export function parseTools(tool) {
 }
 
 /**
- * Return the provided nutrition data as-is.
- * @param {Object} nutrition - The nutrition data.
- * @returns {Object|undefined} The nutrition data or undefined if not provided.
+ * Decode HTML entities and collapse all whitespace (including newlines) to single spaces.
+ * @param {string} str
+ * @returns {string} The cleaned string ('' for non-strings).
  */
-export function getNutrition(nutrition) {
-	if (!nutrition) return undefined
-	return nutrition
+function cleanString(str) {
+	if (typeof str !== 'string') return ''
+	return he.decode(str).replace(/\s+/g, ' ').trim()
 }
 
 /**
- * Extract recipe data using CSS selectors from a parsed HTML root using a provided configuration.
- * @param {Object} root - The parsed HTML root.
- * @param {Object} config - The configuration object containing CSS selectors.
- * @returns {Object} An object containing extracted recipe data.
+ * Recursively apply `cleanString` to every string in an object, array, or scalar.
+ * Other values (numbers, booleans, null) pass through unchanged.
+ * @param {*} value
+ * @returns {*}
  */
-export function parseUsingSiteConfig(root, config) {
-	const getNodeValue = (selector, { multiple = false } = {}) => {
-		if (!selector) return multiple ? [] : null
-
-		const elements = [...(root.querySelectorAll(selector) ?? [])]
-		const values = elements
-			.map((el) => {
-				if (el.getAttribute('content')) return el.getAttribute('content')?.trim()
-				if (el.getAttribute('data-src')) return el.getAttribute('data-src')?.trim()
-				return el.text?.trim()
-			})
-			.filter(Boolean)
-
-		return multiple ? values : (values[0] ?? null)
+export function cleanObjectStrings(value) {
+	if (typeof value === 'string') return cleanString(value)
+	if (Array.isArray(value)) return value.map(cleanObjectStrings)
+	if (value && typeof value === 'object') {
+		return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, cleanObjectStrings(v)]))
 	}
-
-	return {
-		recipeYield: getNodeValue(config.servingsSelector),
-		prepTime: getNodeValue(config.prepTimeSelector),
-		cookTime: getNodeValue(config.cookTimeSelector),
-		totalTime: getNodeValue(config.totalTimeSelector),
-		recipeIngredient: getNodeValue(config.ingredientsSelector, { multiple: true }),
-		recipeInstructions: getNodeValue(config.instructionsSelector, { multiple: true }),
-		recipeCategory: getNodeValue(config.categorySelector, { multiple: true }),
-		description: getNodeValue(config.descriptionSelector),
-		notes: getNodeValue(config.notesSelector),
-		name: getNodeValue(config.nameSelector)
-	}
+	return value
 }
 
 /**
- * Extract the base domain from a given URL.
- * @param {string} url - The URL to extract the domain from.
- * @returns {string} The extracted domain.
+ * The hostname of an http(s) URL without a leading "www.".
+ * @param {string} url
+ * @returns {string} The domain, or '' if `url` isn't an http(s) URL.
  */
 export function getDomainFromUrl(url) {
 	if (typeof url !== 'string') return ''
-
-	const trimmedUrl = url.trim()
-	if (!/^https?:\/\//i.test(trimmedUrl)) return ''
-
+	const trimmed = url.trim()
+	if (!/^https?:\/\//i.test(trimmed)) return ''
 	try {
-		const domain = new URL(trimmedUrl).hostname
-		return domain.replace('www.', '')
+		return new URL(trimmed).hostname.replace('www.', '')
 	} catch {
 		return ''
 	}
 }
 
+// ---------------------------------------------------------------------------
+// Source 1: JSON-LD (<script type="application/ld+json">)
+// ---------------------------------------------------------------------------
+
+const JSON_LD_SELECTOR = 'script[type="application/ld+json"], script[type=\'application/ld+json\']'
+
 /**
- * Extract schema.org microdata from the provided parsed HTML root.
- * @param {Object} root - The parsed HTML root.
- * @returns {Object} An object containing extracted microdata.
+ * Whether a schema.org `@type` (a string or a list) is Recipe, ignoring case.
+ * @param {unknown} type
+ * @returns {boolean}
  */
-export function extractMicrodata(root) {
-	let isRecipeSchemaFound = true
-	let item = root.querySelector(
-		'[itemscope][itemtype="http://schema.org/Recipe"], [itemscope][itemtype="https://schema.org/Recipe"]'
-	)
+export function isRecipeType(type) {
+	return [type].flat().some((t) => typeof t === 'string' && t.toLowerCase() === 'recipe')
+}
 
-	// If no specific recipe itemtype is found, use the entire root as the item
-	if (!item) {
-		item = root
-		isRecipeSchemaFound = false
+/**
+ * Every object in a JSON-LD document, in document order: the top-level value, members of
+ * arrays, and members of `@graph` (at any depth).
+ * @param {unknown} value
+ * @returns {Generator<Object>}
+ */
+function* jsonLdNodes(value) {
+	if (Array.isArray(value)) {
+		for (const item of value) yield* jsonLdNodes(item)
+	} else if (value && typeof value === 'object') {
+		yield value
+		if (value['@graph']) yield* jsonLdNodes(value['@graph'])
 	}
+}
 
-	// Now, when extracting the name, you can adjust based on the isRecipeSchemaFound variable:
-	let name
-	if (isRecipeSchemaFound) {
-		name = extractTextFromSelector(item, '[itemprop="name"]')[0]
-	} else {
-		name = root.querySelector('title')?.text ?? ''
-	}
-	let recipeIngredient = []
+/**
+ * Tidy JSON-LD text that sites often emit slightly malformed: drop tabs, and replace raw
+ * newlines inside string values (invalid JSON) with spaces.
+ * @param {string} json
+ * @returns {string}
+ */
+function cleanJsonString(json) {
+	return json
+		.replace(/\t/g, '')
+		.replace(/ & /g, '&')
+		.replace(/"([^"]+)"/g, (match) => match.replace(/\n/g, ' '))
+		.trim()
+}
+
+/** Parse one JSON-LD script tag, or null if it isn't valid JSON. */
+function readJsonLdScript(script) {
 	try {
-		recipeIngredient = extractTextFromSelector(item, '[itemprop="recipeIngredient"]')
-
-		// If no ingredients found using "recipeIngredient", try "ingredients" as a fallback
-		if (!recipeIngredient.length) {
-			recipeIngredient = extractTextFromSelector(item, '[itemprop="ingredients"]')
-		}
-
-		// If still no ingredients found, try the custom extraction method
-		if (!recipeIngredient?.length) {
-			recipeIngredient = extractIngredientText(item) ?? []
-		}
-	} catch (error) {
-		console.error('Error extracting ingredients:', error)
-	}
-	// const imageUrl = extractTextFromSelector(item, '[itemprop="image"]')[0]
-	const image = extractTextFromSelector(item, '[itemprop*="image"]')[0]
-	const sourceUrl = extractTextFromSelector(item, '[itemprop="url"]')[0]
-	const description = extractTextFromSelector(item, '[itemprop="description"]')[0]
-	console.log('Extracted Ingredients:', recipeIngredient) // This will print the extracted ingredients
-
-	const recipeInstructions = extractTextFromSelector(
-		item,
-		'[itemprop="recipeInstructions"]',
-		'[itemprop="instructions"]'
-	)
-	const prepTime = extractTextFromSelector(item, '[itemprop="prepTime"]')[0]
-	const totalTime = extractTextFromSelector(item, '[itemprop="totalTime"]')[0]
-	const keywords = extractTextFromSelector(item, '[itemprop="keywords"]')[0]
-	const recipeCategory = extractTextFromSelector(item, '[itemprop="recipeCategory"]')[0]
-	const recipeCuisine = extractTextFromSelector(item, '[itemprop="recipeCuisine"]')[0]
-	const recipeYield = extractTextFromSelector(item, '[itemprop="recipeYield"]')[0]
-	const datePublished = extractTextFromSelector(item, '[itemprop="datePublished"]')[0]
-	const aggregateRating = extractNestedProperties(item, '[itemprop="aggregateRating"]')
-	const nutrition = extractNestedProperties(item, '[itemprop="nutrition"]')
-	const video = extractTextFromSelector(item, '[itemprop="video"]')[0]
-	const tool = extractTextFromSelector(item, '[itemprop="tool"]')
-
-	return {
-		name,
-		recipeIngredient,
-		description,
-		image,
-		sourceUrl,
-		recipeInstructions,
-		prepTime,
-		totalTime,
-		keywords,
-		recipeCategory,
-		recipeCuisine,
-		recipeYield,
-		datePublished,
-		aggregateRating,
-		video,
-		nutrition,
-		tool
-	}
-}
-
-/**
- * Extract nested properties from a main element using a provided selector.
- * @param {Object} root - The main element.
- * @param {string} mainSelector - The CSS selector to use for extraction.
- * @returns {Object|null} An object containing extracted properties or null if not found.
- */
-export function extractNestedProperties(root, mainSelector) {
-	const mainElement = root.querySelector(mainSelector)
-	if (!mainElement) return null
-
-	const properties = {}
-	const nestedElements = mainElement.querySelectorAll('[itemprop]')
-
-	nestedElements.forEach((el) => {
-		const propName = el.getAttribute('itemprop')
-		if (el.getAttribute('content')) {
-			properties[propName] = el.getAttribute('content')
-		} else if (el.text) {
-			properties[propName] = el.text.trim()
-		}
-	})
-
-	return properties
-}
-
-/**
- * Extract text content from an element using provided selectors.
- * If the item is meta, extract the content instead
- * @param {Object} root - The main element.
- * @param {...string} selectors - The CSS selectors to use for extraction.
- * @returns {Array} An array containing extracted text content.
- */
-export function extractTextFromSelector(root, ...selectors) {
-	for (let selector of selectors) {
-		// console.log('Trying selector:', selector) // Debugging line
-		const elements = root.querySelectorAll(selector) ?? []
-		if (elements && elements.length) {
-			// console.log('Found elements for selector:', selector) // Debugging line
-			if (selector.includes('instructions')) {
-				// Handle instructions differently
-				return [...elements].flatMap((el) => {
-					// console.log('Processing element:', el) // Debugging line
-					// console.log('Element type:', typeof el) // Debugging line
-					// console.log('Element is instance of HTMLElement:', el instanceof HTMLElement) // Debugging line
-
-					if (el && el.childNodes) {
-						return [...el.childNodes]
-							.filter((child) => child.nodeType === 1) // Node.ELEMENT_NODE
-							.map((child) => child.text || child.textContent || '')
-							.filter(Boolean)
-					}
-					return []
-				})
-			} else {
-				const results = [...elements]
-					.map((el) => {
-						if (el.getAttribute('content')) {
-							return el.getAttribute('content')
-						} else if (el.getAttribute('data-src')) {
-							return el.getAttribute('data-src')
-						} else if (el.text) {
-							return el.text
-						} else if (el.tagName.toLowerCase() === 'meta') {
-							return el.getAttribute('content')
-						}
-						return null
-					})
-					.filter(Boolean) // This will remove any null or empty values from the result
-
-				if (results.length) {
-					// console.log('Results for selector:', selector, results) // Debugging line
-					return results
-				}
-			}
-		}
-	}
-	// console.log('No results found for any selector') // Debugging line
-	return []
-}
-
-/**
- * Extract ingredient text from an element when standard itemprop attributes are not used.
- * See the tastykitchen example
- * @param {Object} item - The main element.
- * @returns {Array} An array containing extracted ingredient text.
- */
-export function extractIngredientText(item) {
-	const ingredients = []
-	const ingredientElements = item.querySelectorAll('[itemprop="ingredient"]')
-
-	for (const ingredientElement of ingredientElements) {
-		const amount = ingredientElement.querySelector('[itemprop="amount"]')
-		const name = ingredientElement.querySelector('[itemprop="name"]')
-
-		if (amount && name) {
-			ingredients.push(`${amount.textContent.trim()} ${name.textContent.trim()}`)
-		} else if (name) {
-			ingredients.push(name.textContent.trim())
-		}
-	}
-
-	return ingredients
-}
-
-/**
- * Clean a provided JSON string to make it more readable and standardized.
- * @param {string} jsonString - The JSON string to clean.
- * @returns {string} The cleaned JSON string.
- */
-export function cleanJsonString(jsonString) {
-	let cleanedString = jsonString
-
-	// Remove tab characters
-	cleanedString = cleanedString.replace(/\t/g, '')
-
-	// Remove unnecessary spaces around special characters
-	cleanedString = cleanedString.replace(/ & /g, '&')
-
-	// Replace line breaks inside JSON key or value
-	cleanedString = cleanedString.replace(/"([^"]+)"/g, function (match) {
-		return match.replace(/\n/g, ' ')
-	})
-
-	return cleanedString.trim()
-}
-
-/**
- * Parse and extract recipe data from a provided JSON-LD string within a parsed HTML root.
- * @param {Object} root - The parsed HTML root.
- * @returns {Object|null} The parsed recipe data or null if not found.
- */
-export function parseJSONLD(root) {
-	let recipeRaw = null
-
-	// This will get all JSON-LD scripts - double and single quote variations
-	const jsonLDs = root.querySelectorAll(
-		'script[type="application/ld+json"], script[type=\'application/ld+json\']'
-	)
-
-	const findRecipeInGraph = (graph) => {
-		// console.log('Searching in graph:', JSON.stringify(graph, null, 2))
-		console.log('Searching in graph')
-		for (let item of graph) {
-			// console.log('Checking item:', JSON.stringify(item, null, 2))
-			console.log('Checking item')
-			if (
-				Array.isArray(item['@type']) &&
-				item['@type'].includes('Recipe') &&
-				item.recipeIngredient
-			) {
-				// console.log('Found recipe in array @type:', JSON.stringify(item, null, 2))
-				console.log('Found recipe in array @type')
-				return item
-			}
-			if (
-				typeof item['@type'] === 'string' &&
-				item['@type'] === 'Recipe' &&
-				item.recipeIngredient
-			) {
-				// console.log('Found recipe in string @type:', JSON.stringify(item, null, 2))
-				console.log('Found recipe in string @type')
-				return item
-			}
-			if (item['@graph']) {
-				const nestedResult = findRecipeInGraph(item['@graph'])
-				if (nestedResult) return nestedResult
-			}
-		}
-		console.log('No item found!')
+		return JSON.parse(cleanJsonString(script.innerHTML || script.rawText || ''))
+	} catch (err) {
+		console.error('Error parsing JSON-LD:', err.message)
 		return null
 	}
+}
 
-	for (let jsonLD of jsonLDs) {
-		// Clean the JSON string
-		const cleanedJson = cleanJsonString(
-			jsonLD.innerHTML || jsonLD.rawText || jsonLD.textContent || jsonLD.innerText
-		)
+/**
+ * Find the schema.org Recipe in a page's JSON-LD.
+ *
+ * Pages often have several JSON-LD blocks (WebSite, BreadcrumbList, ...) and may nest the
+ * Recipe inside an array or `@graph`. The first Recipe with ingredients wins, else the
+ * first Recipe at all.
+ *
+ * With no Recipe, the last JSON-LD block is returned as partial data if it is a single
+ * plain object (typically the post's Article, giving a name, author and description for
+ * the other sources to complete). Blocks that are arrays or `@graph` wrappers are not used
+ * this way.
+ *
+ * @param {import('node-html-parser').HTMLElement} root - The parsed page.
+ * @returns {Object|null} The raw Recipe node, the partial fallback object, or null.
+ */
+export function parseJSONLD(root) {
+	const blocks = root.querySelectorAll(JSON_LD_SELECTOR).map(readJsonLdScript).filter(Boolean)
 
-		try {
-			recipeRaw = parseRecipeToJSON(cleanedJson)
-		} catch (e) {
-			console.error('Error parsing JSON-LD:', e)
-			continue // Move to the next script tag if this one fails
-		}
+	const recipes = blocks
+		.flatMap((block) => [...jsonLdNodes(block)])
+		.filter((node) => isRecipeType(node['@type']))
+	if (recipes.length) return recipes.find((node) => node.recipeIngredient) ?? recipes[0]
 
-		// Check if the parsed JSON is a recipe
-		if (recipeRaw && recipeRaw['@type']) {
-			const type = recipeRaw['@type']
-			const isRecipe =
-				(typeof type === 'string' && type.toLowerCase() === 'recipe') ||
-				(Array.isArray(type) && type.map((t) => t.toLowerCase()).includes('recipe'))
+	const last = blocks.at(-1)
+	const isPlainObject = last && typeof last === 'object' && !Array.isArray(last)
+	return isPlainObject && !last['@graph'] ? last : null
+}
 
-			if (isRecipe && recipeRaw.name) {
-				break // If a valid recipe with a name is found, break out of the loop
-			}
-		}
+// ---------------------------------------------------------------------------
+// Reading values from HTML elements (shared by microdata and site configs)
+// ---------------------------------------------------------------------------
 
-		// New code to handle nested @graph structure
-		if (recipeRaw && recipeRaw['@graph']) {
-			recipeRaw = findRecipeInGraph(recipeRaw['@graph'])
-			if (recipeRaw) break
-		}
+/** An element's value: its `content` attribute (meta tags), `data-src` (lazy images), or text. */
+function nodeValue(el) {
+	return el.getAttribute('content') || el.getAttribute('data-src') || el.text || null
+}
+
+/** Non-empty values of every element matching `selector`. */
+function selectValues(root, selector) {
+	return root.querySelectorAll(selector).map(nodeValue).filter(Boolean)
+}
+
+/** Text of each child element of every container matching `selector`. */
+function childElementTexts(root, selector) {
+	return root.querySelectorAll(selector).flatMap((el) =>
+		el.childNodes
+			.filter((child) => child.nodeType === 1) // element nodes only
+			.map((child) => child.text || child.textContent || '')
+			.filter(Boolean)
+	)
+}
+
+// ---------------------------------------------------------------------------
+// Source 2: per-site CSS selector configs (see siteConfigurations.js)
+// ---------------------------------------------------------------------------
+
+/**
+ * Extract recipe fields using a site's CSS selectors.
+ * @param {import('node-html-parser').HTMLElement} root - The parsed page.
+ * @param {Object} config - Selector config from siteConfigurations.js.
+ * @returns {Object} Recipe fields named as in schema.org.
+ */
+export function parseUsingSiteConfig(root, config) {
+	const all = (selector) =>
+		selector
+			? selectValues(root, selector)
+					.map((v) => v.trim())
+					.filter(Boolean)
+			: []
+	const one = (selector) => all(selector)[0] ?? null
+
+	return {
+		recipeYield: one(config.servingsSelector),
+		prepTime: one(config.prepTimeSelector),
+		cookTime: one(config.cookTimeSelector),
+		totalTime: one(config.totalTimeSelector),
+		recipeIngredient: all(config.ingredientsSelector),
+		recipeInstructions: all(config.instructionsSelector),
+		recipeCategory: all(config.categorySelector),
+		description: one(config.descriptionSelector),
+		notes: one(config.notesSelector),
+		name: one(config.nameSelector)
 	}
-	return recipeRaw
+}
+
+// ---------------------------------------------------------------------------
+// Source 3: schema.org microdata (itemscope / itemprop attributes)
+// ---------------------------------------------------------------------------
+
+const MICRODATA_RECIPE =
+	'[itemscope][itemtype="http://schema.org/Recipe"], [itemscope][itemtype="https://schema.org/Recipe"]'
+
+/** Single-valued microdata properties copied straight through. */
+const MICRODATA_FIELDS = [
+	'description',
+	'prepTime',
+	'totalTime',
+	'keywords',
+	'recipeCategory',
+	'recipeCuisine',
+	'recipeYield',
+	'datePublished',
+	'video'
+]
+
+const itemprop = (name) => `[itemprop="${name}"]`
+
+/**
+ * Child itemprops of a nested item (e.g. aggregateRating, nutrition) as a plain object.
+ * @returns {Object|null} null if the item isn't present.
+ */
+function nestedItemProps(root, name) {
+	const item = root.querySelector(itemprop(name))
+	if (!item) return null
+
+	const props = {}
+	for (const el of item.querySelectorAll('[itemprop]')) {
+		const content = el.getAttribute('content')
+		if (content) props[el.getAttribute('itemprop')] = content
+		else if (el.text) props[el.getAttribute('itemprop')] = el.text.trim()
+	}
+	return props
+}
+
+/**
+ * Microdata ingredients: `recipeIngredient`, else the older `ingredients`, else
+ * `ingredient` items with separate amount/name parts (e.g. tastykitchen).
+ */
+function microdataIngredients(item) {
+	const modern = selectValues(item, itemprop('recipeIngredient'))
+	if (modern.length) return modern
+
+	const legacy = selectValues(item, itemprop('ingredients'))
+	if (legacy.length) return legacy
+
+	return item.querySelectorAll(itemprop('ingredient')).flatMap((el) => {
+		const amount = el.querySelector(itemprop('amount'))?.textContent.trim()
+		const name = el.querySelector(itemprop('name'))?.textContent.trim()
+		if (name === undefined) return []
+		return [amount !== undefined ? `${amount} ${name}` : name]
+	})
+}
+
+/**
+ * Microdata instructions: each `recipeInstructions` element is one step. The older
+ * `instructions` property marks a container whose child elements are the steps.
+ */
+function microdataInstructions(item) {
+	const steps = selectValues(item, itemprop('recipeInstructions'))
+	return steps.length ? steps : childElementTexts(item, itemprop('instructions'))
+}
+
+/**
+ * Extract a Recipe from schema.org microdata. If the page has no Recipe itemscope, the whole
+ * page is searched and the page title is used as the name.
+ *
+ * @param {import('node-html-parser').HTMLElement} root - The parsed page.
+ * @returns {Object} Recipe fields named as in schema.org.
+ */
+export function extractMicrodata(root) {
+	const recipeItem = root.querySelector(MICRODATA_RECIPE)
+	const item = recipeItem || root
+	const first = (name) => selectValues(item, itemprop(name))[0]
+
+	return {
+		// Outside a Recipe itemscope, itemprop="name" could belong to anything on the page
+		name: recipeItem ? first('name') : (root.querySelector('title')?.text ?? ''),
+		...Object.fromEntries(MICRODATA_FIELDS.map((field) => [field, first(field)])),
+		recipeIngredient: microdataIngredients(item),
+		recipeInstructions: microdataInstructions(item),
+		image: selectValues(item, '[itemprop*="image"]')[0],
+		sourceUrl: first('url'),
+		aggregateRating: nestedItemProps(item, 'aggregateRating'),
+		nutrition: nestedItemProps(item, 'nutrition'),
+		tool: selectValues(item, itemprop('tool'))
+	}
 }

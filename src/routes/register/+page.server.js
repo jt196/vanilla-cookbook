@@ -5,6 +5,12 @@ import { validatePassword } from '$lib/utils/security.js'
 import { seedRecipes } from '$lib/utils/seed/seedHelpers.js'
 import { env } from '$env/dynamic/private'
 
+/**
+ * Registration page; redirects logged-in users home and visitors to /login when sign-ups
+ * are closed.
+ *
+ * @type {import('./$types').PageServerLoad}
+ */
 export const load = async ({ locals }) => {
 	const user = locals.user
 	if (user) {

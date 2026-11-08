@@ -1,4 +1,5 @@
 <script>
+	import { photoSrc } from '$lib/utils/image/imageUtils'
 	import { deletePhotoById, updatePhotos } from '$lib/utils/crud'
 	import FileInput from '$lib/components/ui/Form/FileInput.svelte'
 	import ConfirmationDialog from '$lib/components/ui/ConfirmationDialog.svelte'
@@ -152,13 +153,13 @@
 			id="file"
 			name="images"
 			accept="image/*"
-			fullWidth="false"
+			fullWidth={false}
 			multiple={true}
 			onchange={handleFilesChange} />
 
 		{#if previewUrls?.length}
 			<div class="flex flex-wrap gap-3 mt-3">
-				{#each previewUrls as previewUrl, index}
+				{#each previewUrls as previewUrl, index (previewUrl)}
 					<img
 						src={previewUrl}
 						alt={$t('photos.selectedImage', { index: index + 1 })}
@@ -173,7 +174,7 @@
 		<div class="mb-4">
 			<h4 class="text-sm font-semibold mb-2">{$t('photos.recipeImages')}</h4>
 			<div class="flex flex-wrap gap-3">
-				{#each filteredPhotos as photo}
+				{#each filteredPhotos as photo (photo.id)}
 					<div class="indicator">
 						<span
 							class="indicator-item badge badge-error badge-xs cursor-pointer"
@@ -183,7 +184,7 @@
 							onkeydown={(e) => e.key === 'Enter' && handleDeletePhoto(photo.id)}>✕</span>
 						{#if photo.isMain}
 							<img
-								src="/api/recipe/image/{photo.id}"
+								src={photoSrc(photo.id, { thumbnail: true })}
 								alt={$t('photos.photoAlt', { name: recipe.name })}
 								class="max-h-40 rounded-lg shadow-md ring-4 ring-primary" />
 						{:else}
@@ -192,7 +193,7 @@
 								class="btn btn-ghost p-0 h-auto min-h-0"
 								onclick={() => handleSetMainPhoto(photo.id)}>
 								<img
-									src="/api/recipe/image/{photo.id}"
+									src={photoSrc(photo.id, { thumbnail: true })}
 									alt={$t('photos.setMainAlt', { name: recipe.name })}
 									class="max-h-40 rounded-lg shadow-md opacity-80 hover:opacity-100 transition-opacity" />
 							</button>

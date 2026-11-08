@@ -42,6 +42,11 @@
 	}
 
 	/* Use built-in Dracula theme for dark mode; no overrides needed */
+
+	/* The site logo's vanilla pod is near-black; outline it so it stays visible on dark themes */
+	[data-theme='dracula'] .site-logo {
+		filter: drop-shadow(0 0 1px rgb(255 255 255 / 0.7)) drop-shadow(0 0 3px rgb(255 255 255 / 0.25));
+	}
 }
 
 @layer components {

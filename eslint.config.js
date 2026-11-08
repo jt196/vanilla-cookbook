@@ -1,5 +1,6 @@
 import js from '@eslint/js'
 import svelte from 'eslint-plugin-svelte'
+import jsdoc from 'eslint-plugin-jsdoc'
 import prettier from 'eslint-config-prettier'
 import globals from 'globals'
 import svelteConfig from './svelte.config.js'
@@ -53,6 +54,24 @@ export default [
 		files: ['**/*.svelte', '**/*.svelte.js'],
 		languageOptions: {
 			parserOptions: { svelteConfig }
+		}
+	},
+	{
+		// Every exported function needs a JSDoc comment (see CLAUDE.md, Code Style)
+		files: ['src/**/*.js'],
+		plugins: { jsdoc },
+		rules: {
+			'jsdoc/require-jsdoc': [
+				'error',
+				{
+					publicOnly: true,
+					require: {
+						FunctionDeclaration: true,
+						ArrowFunctionExpression: true,
+						FunctionExpression: true
+					}
+				}
+			]
 		}
 	}
 ]

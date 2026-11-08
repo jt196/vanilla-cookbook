@@ -4,8 +4,8 @@
 	import InfoText from '$lib/components/ui/InfoText.svelte'
 	import { t } from '$lib/stores/locale.js'
 
-	/** @type {{recipe: any}} */
-	let { recipe, recipeRatingChanged, scaledServings } = $props()
+	/** @type {{recipe: any, recipeRatingChanged?: (rating: number) => void, scaledServings?: any, canRate?: boolean}} */
+	let { recipe, recipeRatingChanged, scaledServings, canRate = false } = $props()
 </script>
 
 <div class="card bg-base-300 shadow-md p-6">
@@ -45,7 +45,7 @@
 	<div class="my-2">
 		<StarRating
 			rating={recipe.rating}
-			editable={true}
+			editable={canRate}
 			ratingChanged={(newRating) => {
 				recipeRatingChanged?.(newRating)
 			}} />

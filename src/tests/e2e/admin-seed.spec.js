@@ -19,6 +19,12 @@ async function expectOk(response) {
 	expect(response.ok(), `Expected ${response.url()} to be ok`).toBeTruthy()
 }
 
+/**
+ * @param {import('@playwright/test').Page} page
+ * @param {string} path
+ * @param {{ heading?: string | RegExp, text?: string | RegExp, selector?: string }} expectations
+ * @param {string} projectName
+ */
 async function assertPage(page, path, { heading, text, selector } = {}, projectName) {
 	await test.step(`[${projectName}] ${path}`, async () => {
 		const response = await page.goto(path, { waitUntil: 'networkidle' })

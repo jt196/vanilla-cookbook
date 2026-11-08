@@ -2,6 +2,12 @@
 import { prisma } from '$lib/server/prisma'
 import { requireUser, requireUserMatch } from '$lib/server/authPage'
 
+/**
+ * Private user pages: requires the logged-in user to match the URL, and provides their
+ * recipe counts and the app version.
+ *
+ * @type {import('./$types').LayoutServerLoad}
+ */
 export const load = async ({ locals, params }) => {
 	const id = params.id
 	const user = requireUser(locals)

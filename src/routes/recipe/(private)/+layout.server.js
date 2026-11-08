@@ -1,9 +1,15 @@
 import { requireUser } from '$lib/server/authPage'
 
+/**
+ * Requires login for recipe create/edit pages and provides AI availability and the user's
+ * units and language.
+ *
+ * @type {import('./$types').LayoutServerLoad}
+ */
 export const load = async ({ locals }) => {
 	const user = requireUser(locals)
 
-	const ai = locals.site?.ai ?? {}
+	const { ai } = locals.site
 	const units = user?.units || 'metric'
 	const language = user?.language || 'eng'
 

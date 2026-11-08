@@ -2,7 +2,7 @@
 import fs from 'fs'
 import { prisma } from '$lib/server/prisma'
 import { processImage } from '$lib/utils/image/imageBackend'
-import { saveFile, getFileType, uploadDir } from '$lib/utils/import/importHelpers' // uploadDir points to appRoot/uploads/images
+import { saveFile, getFileType, uploadDir, validImageTypes } from '$lib/utils/import/importHelpers' // uploadDir points to appRoot/uploads/images
 
 async function ensureUploadDir() {
 	if (!fs.existsSync(uploadDir)) {
@@ -19,7 +19,9 @@ async function ensureUploadDir() {
  */
 export async function saveLocalPhoto({ data, originalName, recipeUid, setMain }) {
 	await ensureUploadDir()
-	const ext = getFileType(originalName) || 'jpg'
+	// The name comes from inside an imported archive, so only trust known image extensions
+	const nameExt = getFileType(originalName || '').toLowerCase()
+	const ext = validImageTypes.includes(nameExt) ? nameExt : 'jpg'
 
 	const row = await prisma.recipePhoto.create({
 		data: { recipeUid, isMain: !!setMain, fileType: ext }
@@ -39,6 +41,14 @@ async function saveBase64AsPhoto({ base64, filename, recipeUid, setMain }) {
 	})
 }
 
+/**
+ * Download an image URL and store it as a photo of a recipe (uploads/images/{id}.{type}).
+ * The photo row is removed again if the download or processing fails.
+ *
+ * @param {{ url: string, recipeUid: string, setMain?: boolean, fileTypeHint?: string }} options
+ *   `fileTypeHint` overrides the extension guessed from the URL (default 'jpg').
+ * @returns {Promise<object | null>} The created RecipePhoto row, or null if it failed.
+ */
 export async function downloadUrlAsPhoto({ url, recipeUid, setMain, fileTypeHint }) {
 	const type = fileTypeHint || (url ? getFileType(new URL(url).pathname) : undefined) || 'jpg'
 

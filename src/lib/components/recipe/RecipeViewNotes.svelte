@@ -13,7 +13,8 @@
 	<CollapseSection title={$t('recipeView.notes')} className="mt-6" {open}>
 		<div class="prose max-w-none">
 			{#if notesLines.length > 0 || safeLogs.length > 0}
-				{#each sanitizedNotes as parsedNote}
+				{#each sanitizedNotes as parsedNote, i (i)}
+					<!-- eslint-disable-next-line svelte/no-at-html-tags -- sanitised with getSanitizedHTML -->
 					<p>{@html parsedNote}</p>
 				{/each}
 			{/if}

@@ -27,6 +27,8 @@ import { prisma } from '$lib/server/prisma'
 import fs from 'fs'
 import { POST as duplicatePost } from '../routes/api/recipe/[uid]/duplicate/+server.js'
 
+import { fake } from './helpers/fake.js'
+
 const sourceRecipe = (photos) => ({
 	uid: 'src',
 	userId: 'someone-else',
@@ -40,12 +42,14 @@ describe('duplicating a recipe copies its photos', () => {
 	beforeEach(() => {
 		nextId = 0
 		vi.spyOn(console, 'warn').mockImplementation(() => {})
-		prisma.recipe.findFirst.mockResolvedValue(null)
-		prisma.recipe.create.mockResolvedValue({ uid: 'copy' })
-		prisma.recipePhoto.create.mockImplementation(async ({ data }) => ({
-			id: `new-${++nextId}`,
-			...data
-		}))
+		vi.mocked(prisma.recipe.findFirst).mockResolvedValue(null)
+		vi.mocked(prisma.recipe.create).mockResolvedValue(fake({ uid: 'copy' }))
+		vi.mocked(prisma.recipePhoto.create).mockImplementation(
+			fake(async ({ data }) => ({
+				id: `new-${++nextId}`,
+				...data
+			}))
+		)
 	})
 
 	afterEach(() => {
@@ -54,28 +58,32 @@ describe('duplicating a recipe copies its photos', () => {
 	})
 
 	it('copies local files (uploaded and cached-remote) and keeps URL-only photos as links', async () => {
-		prisma.recipe.findUnique.mockResolvedValue(
-			sourceRecipe([
-				{ id: 'cached', url: 'https://site/cake.jpg', fileType: 'jpg', isMain: true },
-				{ id: 'uploaded', url: null, fileType: 'png', isMain: false },
-				{ id: 'remote-only', url: 'https://site/slice.jpg', fileType: 'jpg', isMain: false }
-			])
+		vi.mocked(prisma.recipe.findUnique).mockResolvedValue(
+			fake(
+				sourceRecipe([
+					{ id: 'cached', url: 'https://site/cake.jpg', fileType: 'jpg', isMain: true },
+					{ id: 'uploaded', url: null, fileType: 'png', isMain: false },
+					{ id: 'remote-only', url: 'https://site/slice.jpg', fileType: 'jpg', isMain: false }
+				])
+			)
 		)
-		fs.existsSync.mockImplementation((p) => !p.includes('remote-only'))
+		vi.mocked(fs.existsSync).mockImplementation((p) => !String(p).includes('remote-only'))
 
-		const res = await duplicatePost({ locals: {}, params: { uid: 'src' } })
+		const res = await duplicatePost(fake({ locals: {}, params: { uid: 'src' } }))
 
 		expect(res.ok).toBe(true)
-		const created = prisma.recipePhoto.create.mock.calls.map(([{ data }]) => data)
+		const created = vi.mocked(prisma.recipePhoto.create).mock.calls.map(([{ data }]) => data)
 		expect(created).toEqual([
 			{ recipeUid: 'copy', url: 'https://site/cake.jpg', fileType: 'jpg', isMain: true },
 			{ recipeUid: 'copy', url: null, fileType: 'png', isMain: false },
 			{ recipeUid: 'copy', url: 'https://site/slice.jpg', fileType: 'jpg', isMain: false }
 		])
-		const copies = fs.promises.copyFile.mock.calls.map(([from, to]) => [
-			from.split(/[\\/]/).pop(),
-			to.split(/[\\/]/).pop()
-		])
+		const copies = vi
+			.mocked(fs.promises.copyFile)
+			.mock.calls.map(([from, to]) => [
+				String(from).split(/[\\/]/).pop(),
+				String(to).split(/[\\/]/).pop()
+			])
 		expect(copies).toEqual([
 			['cached.jpg', 'new-1.jpg'],
 			['uploaded.png', 'new-2.png']
@@ -83,24 +91,24 @@ describe('duplicating a recipe copies its photos', () => {
 	})
 
 	it('skips photos with neither a local file nor a URL', async () => {
-		prisma.recipe.findUnique.mockResolvedValue(
-			sourceRecipe([{ id: 'gone', url: null, fileType: 'jpg', isMain: true }])
+		vi.mocked(prisma.recipe.findUnique).mockResolvedValue(
+			fake(sourceRecipe([{ id: 'gone', url: null, fileType: 'jpg', isMain: true }]))
 		)
-		fs.existsSync.mockReturnValue(false)
+		vi.mocked(fs.existsSync).mockReturnValue(false)
 
-		await duplicatePost({ locals: {}, params: { uid: 'src' } })
+		await duplicatePost(fake({ locals: {}, params: { uid: 'src' } }))
 
 		expect(prisma.recipePhoto.create).not.toHaveBeenCalled()
 	})
 
 	it('drops an uploaded photo row if its file cannot be copied', async () => {
-		prisma.recipe.findUnique.mockResolvedValue(
-			sourceRecipe([{ id: 'uploaded', url: null, fileType: 'png', isMain: true }])
+		vi.mocked(prisma.recipe.findUnique).mockResolvedValue(
+			fake(sourceRecipe([{ id: 'uploaded', url: null, fileType: 'png', isMain: true }]))
 		)
-		fs.existsSync.mockReturnValue(true)
-		fs.promises.copyFile.mockRejectedValueOnce(new Error('ENOSPC'))
+		vi.mocked(fs.existsSync).mockReturnValue(true)
+		vi.mocked(fs.promises.copyFile).mockRejectedValueOnce(new Error('ENOSPC'))
 
-		await duplicatePost({ locals: {}, params: { uid: 'src' } })
+		await duplicatePost(fake({ locals: {}, params: { uid: 'src' } }))
 
 		expect(prisma.recipePhoto.delete).toHaveBeenCalledWith({ where: { id: 'new-1' } })
 	})

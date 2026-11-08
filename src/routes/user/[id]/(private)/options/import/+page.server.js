@@ -3,6 +3,11 @@ import { fail } from '@sveltejs/kit'
 import { importers } from '$lib/utils/import/registry.js'
 import { fileTypeFromBuffer } from 'file-type'
 
+/**
+ * Import page: the available import formats.
+ *
+ * @param {import('./$types').PageServerLoadEvent} event
+ */
 export async function load({ fetch }) {
 	const fallback = {
 		importTypes: [
@@ -37,7 +42,7 @@ export const actions = {
 		const form = await request.formData()
 		const type = form.get('type')
 		const isPublic = !!form.get('isPublic')
-		const file = form.get('file')
+		const file = /** @type {File | null} */ (form.get('file'))
 
 		if (!type || !importers[type]) return fail(400, { messageCode: 'importPage.msg.unknownType' })
 		if (!(file && typeof file.arrayBuffer === 'function'))

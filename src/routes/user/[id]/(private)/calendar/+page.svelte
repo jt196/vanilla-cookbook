@@ -14,11 +14,11 @@
 	)
 
 	// Count how many logs share each calendar day (local date string)
-	const dayCounts = $derived(() => {
-		const counts = new Map()
+	const dayCounts = $derived.by(() => {
+		const counts = {}
 		for (const log of logs) {
 			const day = new Date(log.cooked).toLocaleDateString()
-			counts.set(day, (counts.get(day) ?? 0) + 1)
+			counts[day] = (counts[day] ?? 0) + 1
 		}
 		return counts
 	})
@@ -26,7 +26,7 @@
 	function formatStart(cookedIso) {
 		const date = new Date(cookedIso)
 		const day = date.toLocaleDateString()
-		const multipleOnDay = dayCounts().get(day) > 1
+		const multipleOnDay = dayCounts[day] > 1
 		if (multipleOnDay) {
 			return (
 				date.toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' }) +
@@ -46,7 +46,7 @@
 	<p class="text-base-content/60">{$t('calendar.empty')}</p>
 {:else}
 	<Timeline>
-		{#each logs as log, i}
+		{#each logs as log, i (log.id)}
 			<TimelineItem start={formatStart(log.cooked)} first={i === 0} last={i === logs.length - 1}>
 				<a
 					href="/recipe/{log.recipe.uid}/view"

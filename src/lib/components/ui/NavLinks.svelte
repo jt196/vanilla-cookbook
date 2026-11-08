@@ -1,5 +1,4 @@
 <script>
-	import FoodBowl from '$lib/components/svg/FoodBowl.svelte'
 	import Shopping from '$lib/components/svg/Shopping.svelte'
 	import Calendar from '$lib/components/svg/Calendar.svelte'
 	import New from '$lib/components/svg/New.svelte'
@@ -10,9 +9,46 @@
 	import TickSymbol from '$lib/components/svg/TickSymbol.svelte'
 	import { t } from '$lib/stores/locale.js'
 	import { themePreferences, THEME_LIGHT, THEME_DARK } from '$lib/utils/theme.js'
+	import { page } from '$app/state'
 
 	/** @type {{user: any, settings: any, themePreference: 'light' | 'dracula' | 'auto', onThemeChange: (preference: 'light' | 'dracula' | 'auto') => void, mobile?: boolean}} */
 	let { user, settings, themePreference, onThemeChange, mobile = false } = $props()
+
+	// Main destinations, shown with labels. "Recipes" covers both the viewer's own list and
+	// everyone's (the list page has tabs to switch).
+	const links = $derived(
+		user
+			? [
+					{
+						href: `/user/${user.userId}/recipes`,
+						label: $t('nav.recipes'),
+						icon: List,
+						match: /^\/(recipes|recipe\/|user\/[^/]+\/recipes)/
+					},
+					{
+						href: `/user/${user.userId}/shopping`,
+						label: $t('nav.shopping'),
+						icon: Shopping,
+						match: /\/shopping$/
+					},
+					{
+						href: `/user/${user.userId}/calendar`,
+						label: $t('nav.calendar'),
+						icon: Calendar,
+						match: /\/calendar$/
+					}
+				]
+			: [
+					{
+						href: '/recipes',
+						label: $t('nav.recipes'),
+						icon: List,
+						match: /^\/(recipes|recipe\/|user\/)/
+					}
+				]
+	)
+	const isActive = (link) =>
+		link.match.test(page.url.pathname) && !page.url.pathname.startsWith('/recipe/new')
 
 	/** @param {string} preference */
 	function themeLabel(preference) {
@@ -55,11 +91,14 @@
 			</div>
 		</div>
 	</li>
-	<li>
-		<a href="/recipes" class="flex items-center gap-2 text-primary">
-			<FoodBowl width="20px" /><span>{$t('nav.allRecipes')}</span>
-		</a>
-	</li>
+	{#each links as link (link.href)}
+		{@const Icon = link.icon}
+		<li>
+			<a href={link.href} class="flex items-center gap-2" class:menu-active={isActive(link)}>
+				<span class="text-primary"><Icon width="20px" /></span><span>{link.label}</span>
+			</a>
+		</li>
+	{/each}
 	{#if !user}
 		<li><a href="/login" class="flex items-center gap-2"><span>{$t('nav.login')}</span></a></li>
 		{#if settings?.registrationAllowed}
@@ -69,36 +108,43 @@
 		{/if}
 	{:else}
 		<li>
-			<a href={`/user/${user.userId}/recipes`} class="flex items-center gap-2 text-primary"
-				><List width="20px" /><span>{$t('nav.myRecipes')}</span></a>
+			<a href="/recipe/new" class="flex items-center gap-2"
+				><span class="text-primary"><New width="20px" /></span><span>{$t('nav.newRecipe')}</span
+				></a>
 		</li>
 		<li>
-			<a href="/recipe/new" class="flex items-center gap-2 text-primary"
-				><New width="20px" /><span>{$t('nav.newRecipe')}</span></a>
-		</li>
-		<li>
-			<a href={`/user/${user.userId}/shopping`} class="flex items-center gap-2 text-primary"
-				><Shopping width="20px" /><span>{$t('nav.shopping')}</span></a>
-		</li>
-		<li>
-			<a href={`/user/${user.userId}/calendar`} class="flex items-center gap-2 text-primary"
-				><Calendar width="20px" /><span>{$t('nav.calendar')}</span></a>
-		</li>
-		<li>
-			<a href={`/user/${user.userId}/options/settings`} class="flex items-center gap-2 text-primary"
-				><Settings width="20px" /><span>{$t('nav.settings')}</span></a>
+			<a href={`/user/${user.userId}/options/settings`} class="flex items-center gap-2"
+				><span class="text-primary"><Settings width="20px" /></span><span>{$t('nav.settings')}</span
+				></a>
 		</li>
 	{/if}
 {:else}
-	<!-- Desktop layout - horizontal icons -->
+	<!-- Desktop layout: labelled links, then New, theme and settings -->
 	<div class="flex items-center gap-2 text-base-content">
+		{#each links as link (link.href)}
+			{@const Icon = link.icon}
+			<a
+				href={link.href}
+				class="btn btn-ghost btn-sm gap-2 font-medium"
+				class:btn-active={isActive(link)}
+				aria-current={isActive(link) ? 'page' : undefined}>
+				<span class="text-primary"><Icon width="18px" /></span>{link.label}
+			</a>
+		{/each}
+
+		{#if user}
+			<a href="/recipe/new" class="btn btn-primary btn-sm gap-1">
+				<New width="14px" />{$t('nav.newRecipe')}
+			</a>
+		{/if}
+
 		<DropdownMenu
 			align="end"
 			summaryClass="btn btn-ghost btn-circle text-primary"
 			summaryAriaLabel={`${$t('nav.theme')}: ${themeLabel(themePreference)}`}
 			contentClass="menu dropdown-content bg-base-100 rounded-box z-50 w-48 p-2 shadow-sm">
 			{#snippet trigger()}
-				<Theme theme={themePreference} width="25px" />
+				<Theme theme={themePreference} width="22px" />
 			{/snippet}
 			<ul>
 				{#each themePreferences as preference (preference)}
@@ -120,48 +166,18 @@
 			</ul>
 		</DropdownMenu>
 
-		<a
-			href="/recipes"
-			class="btn btn-ghost btn-circle text-primary"
-			aria-label={$t('nav.allRecipes')}>
-			<FoodBowl width="25px" />
-		</a>
-
 		{#if !user}
-			<a href="/login" class="btn btn-primary">{$t('nav.login')}</a>
+			<a href="/login" class="btn btn-primary btn-sm">{$t('nav.login')}</a>
 			{#if settings?.registrationAllowed}
-				<a href="/register" class="btn btn-ghost">{$t('nav.register')}</a>
+				<a href="/register" class="btn btn-ghost btn-sm">{$t('nav.register')}</a>
 			{/if}
 		{:else}
 			<a
-				href={`/user/${user.userId}/recipes`}
-				class="btn btn-ghost btn-circle text-primary"
-				aria-label={$t('nav.myRecipes')}>
-				<List width="25px" />
-			</a>
-			<a
-				href="/recipe/new"
-				class="btn btn-ghost btn-circle text-primary"
-				aria-label={$t('nav.newRecipe')}>
-				<New width="25px" />
-			</a>
-			<a
-				href={`/user/${user.userId}/shopping`}
-				class="btn btn-ghost btn-circle text-primary"
-				aria-label={$t('nav.shoppingList')}>
-				<Shopping width="25px" />
-			</a>
-			<a
-				href={`/user/${user.userId}/calendar`}
-				class="btn btn-ghost btn-circle text-primary"
-				aria-label={$t('nav.calendar')}>
-				<Calendar width="25px" />
-			</a>
-			<a
 				href={`/user/${user.userId}/options/settings`}
 				class="btn btn-ghost btn-circle text-primary"
-				aria-label={$t('nav.settings')}>
-				<Settings width="25px" />
+				aria-label={$t('nav.settings')}
+				title={$t('nav.settings')}>
+				<Settings width="22px" />
 			</a>
 		{/if}
 	</div>

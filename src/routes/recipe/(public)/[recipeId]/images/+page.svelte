@@ -90,7 +90,7 @@
 
 <div class="mb-4">
 	<h3 class="text-2xl font-semibold mb-2">{recipe?.name}</h3>
-	<a href="/recipe/{recipe?.uid}/view/" class="btn btn-soft btn-secondary btn-sm"
+	<a href="/recipe/{recipe?.uid}/view" class="btn btn-soft btn-secondary btn-sm"
 		>{$t('photos.viewRecipe')}</a>
 </div>
 
@@ -169,7 +169,7 @@
 	</div>
 	{#if filteredPhotos.length > 1}
 		<div class="flex w-full justify-center gap-2 py-3">
-			{#each filteredPhotos as _, index}
+			{#each filteredPhotos as _, index (index)}
 				<a href="#slide{index}" class="btn btn-xs">{index + 1}</a>
 			{/each}
 		</div>

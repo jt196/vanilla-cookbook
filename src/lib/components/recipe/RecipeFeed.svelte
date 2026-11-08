@@ -1,5 +1,4 @@
 <script>
-	import { untrack } from 'svelte'
 	import { goto, invalidateAll } from '$app/navigation'
 	import { navigating } from '$app/state'
 	import { sortByDate, sortByKeyGeneric } from '$lib/utils/sorting'
@@ -17,8 +16,9 @@
 		favouriteFilter
 	} from '$lib/stores/recipeFilter'
 
-	/** @type {{recipes?: any[], viewMode?: 'owner' | 'social', title?: string | null, viewerUserId?: string | null, ownerUserId?: string | null, ownerUsername?: string | null, feedKind?: 'all' | 'user', semanticEnabled?: boolean}} */
+	/** @type {{recipes?: any[], viewMode?: 'owner' | 'social', title?: string | null, viewerUserId?: string | null, ownerUserId?: string | null, ownerUsername?: string | null, feedKind?: 'all' | 'user', semanticEnabled?: boolean, header?: import('svelte').Snippet}} */
 	let {
+		header,
 		recipes = [],
 		viewMode = 'owner',
 		title = null,
@@ -37,7 +37,8 @@
 	let copyMessage = $state(null)
 	let copyMessageCode = $state(null)
 	let semanticScores = $state(new Map())
-	let semanticRuntimeEnabled = $state(untrack(() => !!semanticEnabled))
+	// Follows the prop, but is switched off locally if semantic search fails at runtime
+	let semanticRuntimeEnabled = $derived(!!semanticEnabled)
 	let semanticSearchPending = $state(false)
 	let semanticRequestId = 0
 	let isNavigating = $derived(!!navigating?.to)
@@ -121,10 +122,6 @@
 
 		return score
 	}
-
-	$effect(() => {
-		semanticRuntimeEnabled = !!semanticEnabled
-	})
 
 	function handleRecipeFavourited(uid, nextState, recipeItem) {
 		if (
@@ -385,7 +382,9 @@
 	})
 </script>
 
-{#if title}
+{#if header}
+	{@render header()}
+{:else if title}
 	<div class="mb-2 md:mb-4 prose max-w-none flex justify-center">
 		<h2>{title}</h2>
 	</div>

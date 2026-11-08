@@ -17,6 +17,7 @@ src/lib/submodules/
 src/lib/data/recipe_html/
 src/lib/data/compatibility/
 src/tests/fixtures/llm-output/
+src/tests/__snapshots__/
 src/lib/css.bak/
 android/
 android-web/

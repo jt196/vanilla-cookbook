@@ -4,6 +4,12 @@ import { env } from '$env/dynamic/private'
 import { getPasswordRequirements, getPasswordRequirementsDescription } from '$lib/utils/security.js'
 import { langFromAcceptHeader } from '$lib/i18n/index.js'
 
+/**
+ * Root layout data for every page: redirects to /setup until the site is set up, then
+ * provides the user, site settings, language, password rules and platform hints.
+ *
+ * @type {import('./$types').LayoutServerLoad}
+ */
 export const load = async ({ locals, url, request }) => {
 	const { dbSeeded } = locals.site
 	if (!dbSeeded && !url.pathname.startsWith('/setup')) {
@@ -21,6 +27,8 @@ export const load = async ({ locals, url, request }) => {
 		aiModelMissing: !!(locals.user?.isAdmin && locals.site?.ai?.modelMissing),
 		passwordRequirements: getPasswordRequirements(env),
 		passwordRequirementsDescription: getPasswordRequirementsDescription(env),
-		lang
+		lang,
+		// Decided on the server so the ⌘K / Ctrl K hint renders the same before and after hydration
+		isApplePlatform: /Macintosh|Mac OS X|iPhone|iPad/.test(request.headers.get('user-agent') || '')
 	}
 }

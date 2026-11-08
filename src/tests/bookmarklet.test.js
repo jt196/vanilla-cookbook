@@ -5,6 +5,7 @@ import {
 	readBookmarkletPayload
 } from '$lib/utils/bookmarklet'
 
+import { fake } from './helpers/fake.js'
 describe('bookmarklet helpers', () => {
 	it('builds bookmarklet code that forwards to /recipe/new and captures text', () => {
 		const code = buildBookmarkletCode('https://cookbook.example')
@@ -24,7 +25,7 @@ describe('bookmarklet helpers', () => {
 			name: `${BOOKMARKLET_WINDOW_NAME_PREFIX}${encodeURIComponent(JSON.stringify(payload))}`
 		}
 
-		expect(readBookmarkletPayload(fakeWindow)).toEqual(payload)
+		expect(readBookmarkletPayload(fake(fakeWindow))).toEqual(payload)
 		expect(fakeWindow.name).toBe('')
 	})
 })

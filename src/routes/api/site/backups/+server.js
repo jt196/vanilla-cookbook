@@ -3,6 +3,12 @@ import { join } from 'path'
 import { getBackupInfo } from '$lib/server/backups'
 import { requireAdmin, jsonSuccess, jsonError } from '$lib/server/authHelpers'
 
+/**
+ * Admin: list database backups.
+ *
+ * @param {import('./$types').RequestEvent} event
+ * @returns {Promise<Response>}
+ */
 export async function GET({ locals }) {
 	requireAdmin(locals)
 
@@ -17,6 +23,12 @@ export async function GET({ locals }) {
 	}
 }
 
+/**
+ * Admin: create a manual backup copy of the SQLite database.
+ *
+ * @param {import('./$types').RequestEvent} event
+ * @returns {Promise<Response>}
+ */
 export async function POST({ locals }) {
 	requireAdmin(locals)
 

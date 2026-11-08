@@ -1,8 +1,17 @@
+import { requireAuth } from '$lib/server/authHelpers'
 import { extractRecipeWithLLM, generateRecipeWithLLM } from '$lib/utils/ai'
 import { json } from '@sveltejs/kit'
 import { resolveAIConfig } from '$lib/server/aiHelpers'
 
+/**
+ * AI: extract a recipe from pasted text (`mode: parse`) or generate one from a prompt
+ * (`mode: prompt`). Logged-in users only.
+ *
+ * @param {import('./$types').RequestEvent} event
+ * @returns {Promise<Response>}
+ */
 export async function POST({ request, locals }) {
+	requireAuth(locals)
 	try {
 		const aiConfig = resolveAIConfig(locals, 'text')
 		if (!aiConfig.ok) {

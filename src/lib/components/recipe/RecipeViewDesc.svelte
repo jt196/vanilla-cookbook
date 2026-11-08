@@ -29,7 +29,8 @@
 {#if sanitisedDescription.length > 0}
 	<CollapseSection title={$t('recipeView.description')} className="mt-2" {open}>
 		<div class="prose max-w-none">
-			{#each sanitisedDescription as parsedDescription}
+			{#each sanitisedDescription as parsedDescription, i (i)}
+				<!-- eslint-disable-next-line svelte/no-at-html-tags -- sanitised with getSanitizedHTML -->
 				<p>{@html parsedDescription}</p>
 			{/each}
 		</div>

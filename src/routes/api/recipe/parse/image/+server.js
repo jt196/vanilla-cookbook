@@ -1,3 +1,4 @@
+import { requireAuth } from '$lib/server/authHelpers'
 import { extractRecipeWithLLM } from '$lib/utils/ai'
 import { fileTypeFromBuffer } from 'file-type'
 import { json } from '@sveltejs/kit'
@@ -5,15 +6,22 @@ import { resizeImageBuffer, stitchImages } from '$lib/utils/image/imageBackend'
 import { RECIPE_IMAGE_MAX_DIMENSION } from '$lib/utils/image/imageConfig'
 import { resolveAIConfig } from '$lib/server/aiHelpers'
 
+/**
+ * AI: extract a recipe from up to 3 photos (form field `image`). Logged-in users only.
+ *
+ * @param {import('./$types').RequestEvent} event
+ * @returns {Promise<Response>}
+ */
 export async function POST({ request, locals }) {
+	requireAuth(locals)
 	const aiConfig = resolveAIConfig(locals, 'image')
 	if (!aiConfig.ok) {
 		return aiConfig.response
 	}
 
 	const formData = await request.formData()
-	const files = formData.getAll('image')
-	const language = formData.get('language') || 'eng'
+	const files = /** @type {File[]} */ (formData.getAll('image'))
+	const language = /** @type {string} */ (formData.get('language') || 'eng')
 
 	if (!files || files.length === 0) {
 		return json({ error: 'No image provided', code: 'recipeNew.msg.noImage' }, { status: 400 })

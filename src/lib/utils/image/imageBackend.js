@@ -1,6 +1,6 @@
+import { safeFetch } from '$lib/server/safeFetch'
 import sharp from 'sharp'
 import fs, { promises as fsPromises } from 'fs'
-import { readFile } from 'fs/promises'
 import path from 'path'
 import { fileTypeFromBuffer } from 'file-type'
 import { saveFile, validImageTypes } from '$lib/utils/import/importHelpers'
@@ -10,6 +10,53 @@ import { prisma } from '$lib/server/prisma'
 /** Absolute path of a stored photo file. */
 export function photoFilePath(photoId, fileType) {
 	return path.join(process.cwd(), 'uploads/images', `${photoId}.${fileType}`)
+}
+
+/** Widths a thumbnail can be requested at (`/api/recipe/image/[id]?w=400`). */
+export const THUMBNAIL_WIDTHS = [400]
+
+/** Absolute path of a cached thumbnail. */
+function thumbnailPath(photoId, width) {
+	return path.join(process.cwd(), 'uploads/thumbs', `${photoId}-${width}.webp`)
+}
+
+const statOrNull = (file) => fsPromises.stat(file).catch(() => null)
+
+/**
+ * A WebP thumbnail of a stored photo, generated on first request and cached on disk under
+ * uploads/thumbs. It is regenerated if the original file is newer.
+ *
+ * @param {{ id: string, fileType: string }} photo
+ * @param {number} width - One of THUMBNAIL_WIDTHS
+ * @returns {Promise<string | null>} Path to the thumbnail, or null if the original is missing
+ *   or can't be decoded (callers can fall back to the original).
+ */
+export async function photoThumbnailPath(photo, width) {
+	const original = photoFilePath(photo.id, photo.fileType)
+	const thumbnail = thumbnailPath(photo.id, width)
+	const [originalStat, thumbnailStat] = await Promise.all([
+		statOrNull(original),
+		statOrNull(thumbnail)
+	])
+	if (!originalStat) return null
+	if (thumbnailStat && thumbnailStat.mtimeMs >= originalStat.mtimeMs) return thumbnail
+
+	// Write to a unique temp file and rename, so concurrent requests never serve a partial file
+	const temp = `${thumbnail}.${process.pid}.${Math.random().toString(36).slice(2)}.tmp`
+	try {
+		await fsPromises.mkdir(path.dirname(thumbnail), { recursive: true })
+		await sharp(original)
+			.rotate() // respect EXIF orientation
+			.resize({ width, withoutEnlargement: true })
+			.webp({ quality: 75 })
+			.toFile(temp)
+		await fsPromises.rename(temp, thumbnail)
+		return thumbnail
+	} catch (err) {
+		console.warn(`Could not create thumbnail for photo ${photo.id}: ${err.message}`)
+		await fsPromises.unlink(temp).catch(() => {})
+		return null
+	}
 }
 
 /** @param {string} url */
@@ -87,7 +134,10 @@ export async function saveRemoteImageAsPhoto({ recipeUid, url, isMain = false })
  * @param {string} fileType - The file type of the photo (e.g., 'jpg', 'png').
  */
 export async function deleteSinglePhotoFile(id, fileType) {
-	const photoPath = path.join('uploads/images/', `${id}.${fileType}`)
+	const photoPath = photoFilePath(id, fileType)
+	await Promise.all(
+		THUMBNAIL_WIDTHS.map((width) => fsPromises.unlink(thumbnailPath(id, width)).catch(() => {}))
+	)
 	try {
 		await fsPromises.unlink(photoPath)
 		return true // Successfully deleted
@@ -99,32 +149,6 @@ export async function deleteSinglePhotoFile(id, fileType) {
 		}
 		return false // Failed to delete
 	}
-}
-
-/**
- * Downloads an image from a given URL and saves it to the file system.
- *
- * @param {string} url - The URL of the image to download.
- * @param {string} photoFilename - The filename of the downloaded image.
- * @param {string} directory - The directory to save the downloaded image in.
- * @throws {Error} If the image type is not supported.
- * @returns {Promise<void>} A promise that resolves when the image has been downloaded and saved.
- */
-// eslint-disable-next-line no-unused-vars
-async function downloadImage(url, photoFilename, directory) {
-	console.log('Downloading Image!')
-	const response = await fetch(url)
-	const arrayBuffer = await response.arrayBuffer()
-	const buffer = Buffer.from(arrayBuffer)
-
-	// Validate the file type of the image
-	const fileTypeResult = await fileTypeFromBuffer(buffer)
-
-	if (!fileTypeResult || !validImageTypes.includes(fileTypeResult.ext)) {
-		throw new Error('Invalid image type.')
-	}
-
-	await saveFile(buffer, photoFilename, directory)
 }
 
 /**
@@ -151,7 +175,7 @@ async function resizeImage(inputPath, outputPath, maxSize) {
  * Downloads an image, validates its type, saves it to a file, resizes it,
  * and saves the resized version back to the same file.
  *
- * @param {string} imageUrl - The URL of the image to be downloaded.
+ * @param {string | Buffer} imageUrl - Remote image URL, or image data already in memory.
  * @param {string} uid - The unique identifier for the image.
  * @param {string} fileExtension - The extension of the image file.
  * @returns {Promise<boolean>} A promise that resolves to a boolean indicating
@@ -191,24 +215,18 @@ export async function processImage(imageUrl, uid, fileExtension) {
 }
 
 /**
- * Downloads an image from a given URL and returns it as a buffer.
+ * Returns image bytes: a Buffer is passed through, a URL is downloaded with `safeFetch`.
  *
- * @param {string} url - The URL of the image to download.
+ * @param {string | Buffer} source - Remote image URL, or image data already in memory.
  * @returns {Promise<Buffer>} A promise that resolves with the downloaded image as a buffer.
  */
-async function downloadImageAsBuffer(url) {
-	if (url.startsWith('file://')) {
-		// Strip the file:// prefix and read the file from disk.
-		const filePath = url.slice(7)
-		return await readFile(filePath)
-	} else {
-		const response = await fetch(url, { signal: AbortSignal.timeout(15000) })
-		if (!response.ok) {
-			throw new Error(`Image download failed: HTTP ${response.status}`)
-		}
-		const arrayBuffer = await response.arrayBuffer()
-		return Buffer.from(arrayBuffer)
+async function downloadImageAsBuffer(source) {
+	if (Buffer.isBuffer(source)) return source
+	const response = await safeFetch(source, { signal: AbortSignal.timeout(15000) })
+	if (!response.ok) {
+		throw new Error(`Image download failed: HTTP ${response.status}`)
 	}
+	return Buffer.from(await response.arrayBuffer())
 }
 
 /**

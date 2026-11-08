@@ -1,4 +1,5 @@
 <script>
+	import { photoSrc } from '$lib/utils/image/imageUtils'
 	import { t } from '$lib/stores/locale.js'
 	/** @type {{otherPhotos?: any, recipeName?: string, onSetMainPhoto?: (photoId: string) => void, viewOnly?: boolean}} */
 	let { otherPhotos = [], recipeName = '', onSetMainPhoto, viewOnly = false } = $props()
@@ -11,13 +12,13 @@
 				{#if onSetMainPhoto && !viewOnly}
 					<button type="button" class="promote-btn" onclick={() => onSetMainPhoto(photo.id)}>
 						<img
-							src="/api/recipe/image/{photo.id}"
+							src={photoSrc(photo.id, { thumbnail: true })}
 							alt={$t('photos.setMainAlt', { name: recipeName })}
 							class="max-h-[150px] rounded-lg object-cover opacity-80 hover:opacity-100 transition-opacity" />
 					</button>
 				{:else}
 					<img
-						src="/api/recipe/image/{photo.id}"
+						src={photoSrc(photo.id, { thumbnail: true })}
 						alt={$t('photos.photoAlt', { name: recipeName })}
 						class="max-h-[150px] rounded-lg object-cover" />
 				{/if}

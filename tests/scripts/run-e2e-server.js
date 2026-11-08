@@ -12,6 +12,7 @@ const databaseUrl = `file:./${relativeDbPath}`
 // Ensure sqlite file exists before running migrations.
 fs.writeFileSync(dbPath, '', { flag: 'a' })
 
+/** @type {NodeJS.ProcessEnv} */
 const env = {
 	...process.env,
 	DATABASE_URL: databaseUrl,

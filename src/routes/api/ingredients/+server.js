@@ -2,6 +2,12 @@
 
 import { convertIngredientsBackend } from '$lib/utils/converterBackend.js'
 
+/**
+ * Convert ingredient lines between unit systems (metric, US volumetric, imperial). Body:
+ * `{ ingredients, fromSystem, toSystem, skipSmallUnits, language }`.
+ *
+ * @type {import('./$types').RequestHandler}
+ */
 export const POST = async ({ request }) => {
 	try {
 		// Parse JSON data from the request body

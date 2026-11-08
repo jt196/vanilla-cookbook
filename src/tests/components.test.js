@@ -1,15 +1,19 @@
 import { expect, it, describe, beforeEach, vi } from 'vitest'
 // NOTE: jest-dom adds handy assertions to Jest and it is recommended, but not required.
-import '@testing-library/jest-dom'
+import '@testing-library/jest-dom/vitest'
 import { sortState, searchFields } from '$lib/stores/recipeFilter'
 import { get } from 'svelte/store'
 
 import { render, fireEvent, screen } from '@testing-library/svelte/svelte5'
 
 import Scale from '$lib/components/ui/Scale.svelte'
+import RecipeScopeTabs from '$lib/components/recipe/RecipeScopeTabs.svelte'
+import Button from '$lib/components/ui/Button.svelte'
+import { createRawSnippet, tick } from 'svelte'
 import RecipeFilter from '$lib/components/recipe/RecipeFilter.svelte'
 import RecipeList from '$lib/components/recipe/RecipeList.svelte'
 
+import { fake } from './helpers/fake.js'
 describe('Scale component', () => {
 	it('should increase the scale value correctly', async () => {
 		const mockChange = vi.fn()
@@ -64,7 +68,7 @@ describe('Scale component', () => {
 		render(Scale, { props: { scale: 1, baseServings: 4, onScaleChange: mockChange } })
 
 		// Input should display 4 servings (scale 1 × baseServings 4)
-		const input = screen.getByRole('spinbutton')
+		const input = /** @type {HTMLInputElement} */ (screen.getByRole('spinbutton'))
 		expect(input.value).toBe('4')
 
 		// +1 should add 1 serving: 5/4 = 1.25 multiplier
@@ -83,20 +87,20 @@ describe('RecipeFilter component', () => {
 	})
 
 	it('renders without crashing', () => {
-		const { getByPlaceholderText } = render(RecipeFilter, { sortState: mockSortState })
+		const { getByPlaceholderText } = render(RecipeFilter)
 		expect(getByPlaceholderText('Search recipes by...')).toBeInTheDocument()
 	})
 
 	it('binds search input correctly', async () => {
-		const { getByPlaceholderText } = render(RecipeFilter, { sortState: mockSortState })
-		const input = getByPlaceholderText('Search recipes by...')
+		const { getByPlaceholderText } = render(RecipeFilter)
+		const input = /** @type {HTMLInputElement} */ (getByPlaceholderText('Search recipes by...'))
 
 		await fireEvent.input(input, { target: { value: 'test' } })
 		expect(input.value).toBe('test')
 	})
 
 	it('toggles cumulative search fields correctly', async () => {
-		const { getByLabelText } = render(RecipeFilter, { sortState: mockSortState })
+		const { getByLabelText } = render(RecipeFilter)
 		await fireEvent.click(getByLabelText('Search fields'))
 
 		const nameCheckbox = getByLabelText('Name')
@@ -112,12 +116,14 @@ describe('RecipeFilter component', () => {
 		expect(get(searchFields)).toEqual(['ingredients'])
 	})
 
-	it('highlights the correct button based on activeButton prop', () => {
-		const { getByText } = render(RecipeFilter, {
-			activeButton: 'created',
-			sortState: mockSortState
-		})
-		expect(getByText('Added')).toBeInTheDocument()
+	it('highlights the sort button for the active sort', async () => {
+		const { getByText } = render(RecipeFilter)
+		const added = getByText('Added').closest('button')
+		expect(added).toHaveClass('btn-ghost')
+
+		sortState.set(mockSortState)
+		await tick()
+		expect(added).not.toHaveClass('btn-ghost')
 	})
 
 	it('updates sort state correctly on date button click', async () => {
@@ -178,7 +184,7 @@ describe('RecipeList component', () => {
 			useVirtualList: false,
 			filteredRecipes: mockRecipes,
 			viewMode: 'owner',
-			viewerUserId: 1
+			viewerUserId: fake(1)
 		})
 		expect(container).toBeInTheDocument()
 	})
@@ -188,7 +194,7 @@ describe('RecipeList component', () => {
 			useVirtualList: false,
 			filteredRecipes: mockRecipes,
 			viewMode: 'owner',
-			viewerUserId: 1
+			viewerUserId: fake(1)
 		})
 
 		// Each recipe card renders as a link to its detail page
@@ -205,7 +211,7 @@ describe('RecipeList component', () => {
 			useVirtualList: false,
 			filteredRecipes: mockRecipes,
 			viewMode: 'owner',
-			viewerUserId: 1
+			viewerUserId: fake(1)
 		})
 
 		const image = getByAltText('Recipe A thumbnail')
@@ -213,6 +219,40 @@ describe('RecipeList component', () => {
 
 		// Assuming that the id of the photo for "Recipe A" is known and is stored in a variable called photoId
 		const photoId = mockRecipes[0].photos[0].id // or however you get the id from the mock
-		expect(image.src).toContain(`/api/recipe/image/${photoId}`)
+		expect(/** @type {HTMLImageElement} */ (image).src).toContain(`/api/recipe/image/${photoId}`)
+	})
+})
+
+describe('RecipeScopeTabs component', () => {
+	it('links to the viewer’s recipes and all recipes, marking the current one', () => {
+		render(RecipeScopeTabs, { props: { userId: 'u1', active: 'all' } })
+		const mine = screen.getByRole('link', { name: 'My Recipes' })
+		const all = screen.getByRole('link', { name: 'All Recipes' })
+
+		expect(mine).toHaveAttribute('href', '/user/u1/recipes')
+		expect(mine).not.toHaveAttribute('aria-current')
+		expect(all).toHaveAttribute('href', '/recipes')
+		expect(all).toHaveAttribute('aria-current', 'page')
+		expect(all).toHaveClass('tab-active')
+	})
+})
+
+describe('Button component', () => {
+	const label = createRawSnippet(() => ({ render: () => '<span>Log in</span>' }))
+
+	it('keeps its own size and shows a spinner inside while loading', () => {
+		render(Button, { props: { loading: true, disabled: true, class: 'w-full', children: label } })
+		const button = screen.getByRole('button', { name: 'Log in' })
+
+		// `loading` on the button itself would turn the whole button into a spinner mask
+		expect(button).not.toHaveClass('loading')
+		expect(button).toHaveClass('btn', 'btn-primary', 'w-full')
+		expect(button).toHaveAttribute('aria-busy', 'true')
+		expect(button.querySelector('.loading.loading-spinner')).not.toBeNull()
+	})
+
+	it('renders no spinner when not loading', () => {
+		render(Button, { props: { children: label } })
+		expect(screen.getByRole('button', { name: 'Log in' }).querySelector('.loading')).toBeNull()
 	})
 })

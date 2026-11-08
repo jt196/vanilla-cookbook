@@ -63,7 +63,7 @@ export async function getBackupInfo() {
 	)
 
 	// Sort by timestamp, newest first
-	backupFiles.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+	backupFiles.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
 
 	return {
 		backups: backupFiles,

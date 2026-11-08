@@ -19,3 +19,15 @@ export function mapContentTypeToFileTypeAndExtension(contentType) {
 			return { fileType: 'image/jpeg', extension: 'jpg' } // default values
 	}
 }
+
+/**
+ * URL of a stored recipe photo. Cards and small grids should use the thumbnail
+ * (a 400px-wide WebP generated and cached by the server) rather than the full image.
+ *
+ * @param {string} photoId
+ * @param {{ thumbnail?: boolean }} [options]
+ * @returns {string}
+ */
+export function photoSrc(photoId, { thumbnail = false } = {}) {
+	return `/api/recipe/image/${photoId}${thumbnail ? '?w=400' : ''}`
+}

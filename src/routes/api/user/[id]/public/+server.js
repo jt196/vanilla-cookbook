@@ -1,6 +1,12 @@
 import { prisma } from '$lib/server/prisma'
 import { jsonSuccess, jsonError } from '$lib/server/authHelpers'
 
+/**
+ * A user's public profile (username and whether the profile is public).
+ *
+ * @param {import('./$types').RequestEvent} event
+ * @returns {Promise<Response>}
+ */
 export async function GET({ params }) {
 	const { id } = params
 

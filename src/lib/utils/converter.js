@@ -1,7 +1,5 @@
 import { findSuitableUnit } from '$lib/utils/units'
 import { fuseConfig } from '$lib/utils/config'
-import Fuse from 'fuse.js'
-import { foodPreferences } from '$lib/data/ingredients/vegan/vegan'
 import { getSymbol } from '$lib/submodules/recipe-ingredient-parser/src/index.js'
 import { i18nMap } from '$lib/submodules/recipe-ingredient-parser/src/i18n'
 import { parseTimings } from './timingParser.js'
@@ -45,7 +43,8 @@ function findUnitData(unitName, lang = 'eng') {
  * @param {number} quantity - The quantity of the 'from' unit.
  * @param {string} from - The original unit to be converted.
  * @param {string} [to='grams'] - The unit to be converted to.
- * @returns {{quantity: number, unit: string} | {error: string}} - Returns an object containing either the converted quantity and unit or an error message.
+ * @returns {{ quantity?: number, unit?: string, error?: string }} The converted quantity and
+ *   unit, or `error` (and no quantity) if the conversion is impossible.
  */
 export const converter = (quantity, from, to = 'grams') => {
 	if (quantity <= 0) return { error: 'Quantity must be greater than 0' }
@@ -128,106 +127,6 @@ export const determineSystem = (ingredientArray = []) => {
 }
 
 /**
- * Attempts to find a match for an ingredient in a lookup table.
- * This was used in the manipulate ingredients function before I transitioned to the database version
- *
- * @param {string} ingredient - The ingredient name to match.
- * @param {Array} lookupTable - The table of ingredients to search within.
- * @returns {Object|null} - Returns the matched ingredient object or null if no match is found.
- */
-export function fuzzyMatch(ingredient, lookupTable) {
-	const words = ingredient.toLowerCase().split(/\W+/) // Split by non-word characters
-	for (const word of words) {
-		for (const item of lookupTable) {
-			for (const name of item.names) {
-				// Loop through the names array
-				if (name.toLowerCase().includes(word)) {
-					return item
-				}
-			}
-		}
-	}
-	return null
-}
-
-const fuseVeganOptions = {
-	keys: ['ingredients'],
-	threshold: 0.5, // Adjusted
-	caseSensitive: false,
-	includeScore: true,
-	ignoreLocation: true,
-	minMatchCharLength: 4, // Adjusted
-	tokenize: true, // Added
-	matchAllTokens: true // Added
-}
-
-const veganFuse = new Fuse(foodPreferences, fuseVeganOptions)
-
-/**
- * Searches through the food preferences database to find a match for the given ingredient name.
- * Returns an object with the following properties: vegan, vegetarian, pescatarian, canBeVegan.
- * If no match is found, returns an object with all properties set to true.
- *
- * @param {string} ingredientName - The ingredient name to search for.
- * @returns {Object} - An object with the search results.
- */
-export function addFoodPreferences(ingredientName) {
-	// Primary search with fuzzy check
-	const results = veganFuse.search(ingredientName)
-
-	if (results.length > 0 && results[0].score < 0.4) {
-		const matchedItem = results[0].item
-		return {
-			vegan: matchedItem.vegan,
-			vegetarian: matchedItem.vegetarian,
-			pescatarian: matchedItem.pescatarian,
-			canBeVegan: matchedItem.canBeVegan
-		}
-	}
-
-	// Second Pass: Simple substring check using JS .includes
-	// check if any term from the ingredients array of each item is a substring of the ingredientName
-	for (let item of veganFuse._docs) {
-		for (let term of item.ingredients) {
-			if (ingredientName.includes(term)) {
-				return {
-					vegan: item.vegan,
-					vegetarian: item.vegetarian,
-					pescatarian: item.pescatarian,
-					canBeVegan: item.canBeVegan
-				}
-			}
-		}
-	}
-
-	return {
-		vegan: true,
-		vegetarian: true,
-		pescatarian: true,
-		canBeVegan: true
-	} // default values if ingredient is not found or doesn't match closely enough
-}
-
-/**
- * Generates a string label indicating the dietary preference
- * of the given ingredient based on the given preferences.
- * @param {Object} prefs - The preferences object for the ingredient.
- * @returns {string} - A string label indicating the dietary preference.
- */
-export function getDietLabel(prefs) {
-	if (prefs.vegan) {
-		return ''
-	} else if (prefs.canBeVegan) {
-		return 'VEGAN?'
-	} else if (prefs.pescatarian && !prefs.vegetarian) {
-		return 'PESCA'
-	} else if (prefs.vegetarian && !prefs.vegan) {
-		return 'NON-VEGAN'
-	}
-	return 'MEAT' // default return value if none of the conditions are met
-}
-
-/**
  * Finds ingredient density using Fuse fuzzy matching with multi-word fallback.
  *
  * This function attempts to match ingredients in four passes:
@@ -237,7 +136,7 @@ export function getDietLabel(prefs) {
  * 4. Water density as final fallback
  *
  * @param {string} ingredient - The ingredient name to search for
- * @param {Fuse} fuse - Fuse instance configured with ingredient database
+ * @param {import('fuse.js').default<any>} fuse - Fuse instance configured with ingredient database
  * @param {Array<string>} [instructions=[]] - Optional preparation instructions (sliced, chopped, etc.)
  * @returns {{ingredient: Object, usedDefaultDensity: boolean, matchType: string, matchedWord?: string, matchScore: number}} Matched ingredient and metadata
  */
@@ -374,12 +273,12 @@ function convertMetricVolumetricToAmerican(ingredientObj, fromUnit, quantity, la
 	// Return the object
 	return {
 		...ingredientObj,
-		quantity: parseFloat(convertedQuantityFinal).toFixed(2),
+		quantity: Number(convertedQuantityFinal).toFixed(2),
 		unit: targetUnit,
 		unitPlural: targetUnit + 's',
 		symbol: getSymbol(targetUnit, lang),
-		minQty: parseFloat(convertedQuantityFinal).toFixed(2),
-		maxQty: parseFloat(convertedQuantityFinal).toFixed(2)
+		minQty: Number(convertedQuantityFinal).toFixed(2),
+		maxQty: Number(convertedQuantityFinal).toFixed(2)
 	}
 }
 
@@ -635,8 +534,8 @@ function convertStandardWeightUnits(ingredientObj, quantity, fromUnit, toSystem,
 /**
  * Normalizes an ingredient object by standardizing units, rounding quantity, and adding metadata.
  * @param {Object} ingredientObj - The original ingredient object.
- * @param {Object} options - Optional settings.
- * @param {boolean} options.skipRounding - If true, skip rounding quantity.
+ * @param {Object} [options] - Optional settings.
+ * @param {boolean} [options.skipRounding] - If true, skip rounding quantity.
  * @returns {Object} - Normalized ingredient object.
  */
 export function normalizeIngredient(ingredientObj, options = {}, lang = 'eng') {
@@ -704,7 +603,7 @@ export function normalizeIngredient(ingredientObj, options = {}, lang = 'eng') {
  * @param {Object} ingredientObj - The ingredient object to be manipulated
  * @param {string} fromSystem - The original measurement system ('metric', 'imperial', 'americanVolumetric')
  * @param {string} toSystem - The target measurement system
- * @param {Fuse} fuse - Fuse instance for ingredient density lookups
+ * @param {import('fuse.js').default<any>} fuse - Fuse instance for ingredient density lookups
  * @param {string} lang - Language code for unit symbols
  * @returns {Object} The converted ingredient object with updated quantity and unit
  *
@@ -913,7 +812,8 @@ export function parseRecipeText(
  * @param {string} direction - The input string containing temperature values.
  * @param {string} toSystem - The target system: 'metric', 'imperial', or 'americanVolumetric'.
  *                            Note: 'americanVolumetric' is treated as a subtype of 'imperial'.
- * @param {string} fromSystem - The source system: 'metric' or 'imperial'.
+ * @param {string} [fromSystem] - The recipe's system; when it matches `toSystem`,
+ *   temperatures are left as they are.
  * @param {string} [lang='eng'] - Language code for i18n joiners (e.g., 'eng', 'deu', 'esp').
  *
  * @returns {string} - The string with converted temperatures, wrapped in `<span class="text-secondary">`, or original if no conversion needed.

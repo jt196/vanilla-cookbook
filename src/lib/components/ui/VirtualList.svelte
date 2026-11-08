@@ -1,7 +1,7 @@
 <script>
 	import SvelteVirtualList from '@humanspeak/svelte-virtual-list'
 
-	/** @type {{items?: any[], itemHeight?: number, start?: number, end?: number, children?: import('svelte').Snippet}} */
+	/** @type {{items?: any[], itemHeight?: number, start?: number, end?: number, children?: import('svelte').Snippet<[any, number]>}} */
 	// start/end are $bindable outputs: written here, read by the parent
 	// eslint-disable-next-line no-useless-assignment
 	let { items = [], itemHeight = 100, start = $bindable(), end = $bindable(), children } = $props()
