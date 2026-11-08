@@ -2,7 +2,6 @@
 	import Carousel from '$lib/components/ui/Carousel.svelte'
 	import CarouselItem from '$lib/components/ui/CarouselItem.svelte'
 	import RecipePhotoCard from '$lib/components/recipe/RecipePhotoCard.svelte'
-	import SearchButton from '$lib/components/nav/SearchButton.svelte'
 	import { t } from '$lib/stores/locale.js'
 
 	/** @type {{data: any}} */
@@ -26,9 +25,6 @@
 		<a href="/recipe/new" class="btn btn-primary">{$t('home.addFirst')}</a>
 	</div>
 {:else}
-	<div class="mx-auto mb-8 max-w-2xl">
-		<SearchButton label={$t('palette.searchRecipes', { count: data.recipeCount })} />
-	</div>
 	<div class="flex flex-col gap-10">
 		{#each rows as row (row.label)}
 			<section>

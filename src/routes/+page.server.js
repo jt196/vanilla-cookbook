@@ -137,5 +137,5 @@ export const load = async ({ locals }) => {
 		random
 	}
 
-	return { highlights, recipeCount: recipeRows.length }
+	return { highlights }
 }
