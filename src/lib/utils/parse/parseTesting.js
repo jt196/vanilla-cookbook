@@ -15,10 +15,7 @@ export function mockFetchForURL() {
 		// Adjust the path to point to the correct directory for your HTML files
 		const filePath = resolve(__dirname, '../../../lib/data/recipe_html', filename)
 		const htmlContent = fs.readFileSync(filePath, 'utf-8')
-		return {
-			ok: true,
-			text: async () => htmlContent
-		}
+		return new Response(htmlContent, { status: 200 })
 	}
 }
 
