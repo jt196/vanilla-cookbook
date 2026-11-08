@@ -89,18 +89,6 @@ export function mapListByConfig(list, fieldMap, transforms = {}, staticFields = 
 	return list.map((src) => mapByConfig(src, fieldMap, transforms, staticFields))
 }
 
-/** Extension allow-list check (e.g., [".zip", ".json"]) */
-export function allowByExtension(filename, accepts) {
-	if (!accepts?.length) return true
-	const ext = '.' + (filename?.split('.').pop() || '').toLowerCase()
-	return accepts.includes(ext)
-}
-
-/** Tiny guard */
-export function isArrayOfObjects(arr) {
-	return Array.isArray(arr) && arr.every((x) => x && typeof x === 'object')
-}
-
 /**
  * Adds recipes to the database.
  * @param {Array} recipes - An array of declared recipes (i.e. recipes

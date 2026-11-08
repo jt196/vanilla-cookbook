@@ -1,9 +1,5 @@
 import { prisma } from '$lib/server/prisma'
-import { deleteSinglePhotoFile, saveRemoteImageAsPhoto } from '$lib/utils/image/imageBackend.js'
-import { mapContentTypeToFileTypeAndExtension } from '$lib/utils/image/imageUtils.js'
-import { createRecipePhotoEntry, removeRecipePhotoEntry } from '$lib/utils/api'
-import { saveFile, validImageTypes } from '$lib/utils/import/importHelpers'
-import { fileTypeFromBuffer } from 'file-type'
+import { deleteSinglePhotoFile } from '$lib/utils/image/imageBackend.js'
 import {
 	requireAuth,
 	requireOwnership,
@@ -11,7 +7,12 @@ import {
 	jsonSuccess,
 	jsonError
 } from '$lib/server/authHelpers'
-import { regenerateRecipeEmbedding } from '$lib/server/semanticEmbedding'
+import {
+	queueEmbeddingUpdate,
+	requestLogger,
+	saveImageUrlAsPhoto,
+	saveUploadedPhotos
+} from '$lib/server/recipeSave'
 
 export async function DELETE({ params, locals }) {
 	const user = requireAuth(locals)
@@ -46,177 +47,83 @@ export async function DELETE({ params, locals }) {
 	}
 }
 
+// Fields the recipe form may change; anything else in the payload is ignored
+const UPDATABLE_FIELDS = [
+	'name',
+	'description',
+	'source',
+	'source_url',
+	'cook_time',
+	'prep_time',
+	'total_time',
+	'servings',
+	'ingredients',
+	'ingredients_original',
+	'equipment',
+	'directions',
+	'directions_original',
+	'notes',
+	'image_url',
+	'photo_url',
+	'photo',
+	'photo_large',
+	'nutritional_info',
+	'difficulty',
+	'rating',
+	'scale',
+	'is_public',
+	'is_pinned',
+	'in_trash',
+	'on_favorites',
+	'on_grocery_list',
+	'parentRecipeId'
+]
+const STRING_FIELDS = ['cook_time', 'prep_time', 'total_time', 'servings']
+
+/**
+ * Update a recipe. Multipart body: recipe JSON under `recipe`, new image files under
+ * `images`. With `saveImageUrl`, `image_url` is downloaded as a photo if not already saved.
+ */
 export async function PUT({ request, locals, params }) {
 	const user = requireAuth(locals)
-	const reqId = crypto.randomUUID().slice(0, 8)
-	const startedAt = Date.now()
-	const log = (message, extra = {}) =>
-		console.log(`[recipe:update:${reqId}] ${message}`, {
-			userId: user?.userId,
-			recipeUid: params?.uid,
-			...extra
-		})
-	const warn = (message, extra = {}) =>
-		console.warn(`[recipe:update:${reqId}] ${message}`, {
-			userId: user?.userId,
-			recipeUid: params?.uid,
-			...extra
-		})
-	const errorLog = (message, extra = {}) =>
-		console.error(`[recipe:update:${reqId}] ${message}`, {
-			userId: user?.userId,
-			recipeUid: params?.uid,
-			...extra
-		})
-	log('start')
-	const formData = await request.formData()
-	const recipeData = JSON.parse(formData.get('recipe'))
-	const imageData = formData.getAll('images')
 	const { uid } = params
+	const logger = requestLogger('recipe:update', { userId: user.userId, recipeUid: uid })
+	logger.log('start')
 
-	recipeData.cook_time = recipeData.cook_time ? recipeData.cook_time.toString() : null
-	recipeData.prep_time = recipeData.prep_time ? recipeData.prep_time.toString() : null
-	recipeData.total_time = recipeData.total_time ? recipeData.total_time.toString() : null
-	recipeData.servings = recipeData.servings ? recipeData.servings.toString() : null
-
-	const recipeCategories = recipeData.categories || []
-	delete recipeData.categories
-
-	// eslint-disable-next-line no-unused-vars
-	const recipePhotos = recipeData.photos || []
-	delete recipeData.photos
-
-	const saveImageUrl = recipeData.saveImageUrl || false
-
-	// Allowlist of fields that can be updated
-	const allowedFields = [
-		'name',
-		'description',
-		'source',
-		'source_url',
-		'cook_time',
-		'prep_time',
-		'total_time',
-		'servings',
-		'ingredients',
-		'ingredients_original',
-		'equipment',
-		'directions',
-		'directions_original',
-		'notes',
-		'image_url',
-		'photo_url',
-		'photo',
-		'photo_large',
-		'nutritional_info',
-		'difficulty',
-		'rating',
-		'scale',
-		'is_public',
-		'is_pinned',
-		'in_trash',
-		'on_favorites',
-		'on_grocery_list',
-		'parentRecipeId'
-	]
+	const formData = await request.formData()
+	let recipeData
+	try {
+		recipeData = JSON.parse(formData.get('recipe'))
+	} catch (err) {
+		logger.error('Failed to parse recipe payload', { error: err?.message })
+		return jsonError(400, { error: 'Invalid recipe payload', code: 'recipe.msg.invalidPayload' })
+	}
 
 	const updates = Object.fromEntries(
-		Object.entries(recipeData).filter(([key]) => allowedFields.includes(key))
+		Object.entries(recipeData).filter(([key]) => UPDATABLE_FIELDS.includes(key))
 	)
+	for (const field of STRING_FIELDS) {
+		updates[field] = recipeData[field] ? recipeData[field].toString() : null
+	}
 
 	try {
-		const recipe = await prisma.recipe.findUnique({
-			where: { uid }
-		})
-
+		const recipe = await prisma.recipe.findUnique({ where: { uid } })
 		requireOwnership(user, recipe)
 
-		await prisma.recipe.update({
-			where: { uid },
-			data: updates
-		})
-		log('recipe row updated', { ms: Date.now() - startedAt })
+		await prisma.recipe.update({ where: { uid }, data: updates })
+		logger.log('recipe row updated', { ms: logger.elapsed() })
 
-		let photoEntry
-
-		// Loop through the uploaded images and save them
-		for (const file of imageData) {
-			try {
-				let extension = mapContentTypeToFileTypeAndExtension(file.type).extension
-				photoEntry = await createRecipePhotoEntry(recipe.uid, null, extension)
-				const photoFilename = photoEntry.id
-				const photoBuffer = await file.arrayBuffer() // Get the image data as a buffer
-
-				// Validate the file type of the image
-				const fileTypeResult = await fileTypeFromBuffer(photoBuffer)
-				if (!fileTypeResult || !validImageTypes.includes(fileTypeResult.ext)) {
-					throw new Error('Invalid image type.')
-				}
-
-				// Specify the directory where you want to save the images
-				const directory = 'uploads/images'
-
-				let fullFilename = `${photoFilename}.${extension}`
-				// Call the saveFile function to save the image
-				await saveFile(photoBuffer, fullFilename, directory)
-			} catch (err) {
-				errorLog('Error saving uploaded photo, deleting photo entry', { error: err?.message })
-				if (photoEntry?.id) removeRecipePhotoEntry(photoEntry.id)
-			}
+		await saveUploadedPhotos(uid, formData.getAll('images'), logger)
+		if (recipeData.saveImageUrl && recipeData.image_url) {
+			await saveImageUrlAsPhoto(uid, recipeData.image_url, logger)
 		}
+		queueEmbeddingUpdate(locals, uid)
 
-		// Download the image URL now (if the user opted to save it and it isn't already saved)
-		if (saveImageUrl && recipeData.image_url) {
-			const alreadySaved = await prisma.recipePhoto.findFirst({
-				where: { recipeUid: uid, url: recipeData.image_url }
-			})
-			if (!alreadySaved) {
-				const hasMainPhoto = await prisma.recipePhoto.findFirst({
-					where: { recipeUid: uid, isMain: true }
-				})
-				const photo = await saveRemoteImageAsPhoto({
-					recipeUid: uid,
-					url: recipeData.image_url,
-					isMain: !hasMainPhoto
-				})
-				if (photo) log('remote image saved', { photoId: photo.id })
-				else warn('Remote image not saved', { image_url: recipeData.image_url })
-			}
-		}
-
-		// First, remove all existing associations
-		await prisma.recipeCategory.deleteMany({
-			where: {
-				recipeUid: uid
-			}
-		})
-
-		// Then, add the new associations
-		for (let categoryUid of recipeCategories) {
-			await prisma.recipeCategory.create({
-				data: {
-					recipeUid: uid,
-					categoryUid: categoryUid
-				}
-			})
-		}
-
-		// Run semantic embedding update in background (non-blocking).
-		if (locals.site?.semantic?.enabled) {
-			const preferredEmbeddingProvider = locals.site?.semantic?.provider || null
-			const preferredEmbeddingModel = locals.site?.semantic?.model || null
-			regenerateRecipeEmbedding(uid, preferredEmbeddingProvider, preferredEmbeddingModel).catch(
-				(error) => {
-					console.error('Failed background embedding update after recipe update:', uid, error)
-				}
-			)
-		}
-
-		log('success response', { totalMs: Date.now() - startedAt })
+		logger.log('success response', { totalMs: logger.elapsed() })
 		return jsonSuccess({ message: 'Recipe updated successfully', code: 'recipe.msg.updated' })
 	} catch (err) {
 		if (err.status) throw err
-		errorLog('Error updating recipe', { error: err?.message })
+		logger.error('Error updating recipe', { error: err?.message })
 		return jsonError(500, {
 			error: `Failed to update recipe: ${err.message}`,
 			code: 'recipe.msg.updateFail'

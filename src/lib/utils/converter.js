@@ -1,7 +1,5 @@
 import { findSuitableUnit } from '$lib/utils/units'
 import { fuseConfig } from '$lib/utils/config'
-import Fuse from 'fuse.js'
-import { foodPreferences } from '$lib/data/ingredients/vegan/vegan'
 import { getSymbol } from '$lib/submodules/recipe-ingredient-parser/src/index.js'
 import { i18nMap } from '$lib/submodules/recipe-ingredient-parser/src/i18n'
 import { parseTimings } from './timingParser.js'
@@ -125,106 +123,6 @@ export const determineSystem = (ingredientArray = []) => {
 		return { system: 'metric', counts: systemCounts }
 	}
 	return { system: dominantSystem, counts: systemCounts }
-}
-
-/**
- * Attempts to find a match for an ingredient in a lookup table.
- * This was used in the manipulate ingredients function before I transitioned to the database version
- *
- * @param {string} ingredient - The ingredient name to match.
- * @param {Array} lookupTable - The table of ingredients to search within.
- * @returns {Object|null} - Returns the matched ingredient object or null if no match is found.
- */
-export function fuzzyMatch(ingredient, lookupTable) {
-	const words = ingredient.toLowerCase().split(/\W+/) // Split by non-word characters
-	for (const word of words) {
-		for (const item of lookupTable) {
-			for (const name of item.names) {
-				// Loop through the names array
-				if (name.toLowerCase().includes(word)) {
-					return item
-				}
-			}
-		}
-	}
-	return null
-}
-
-const fuseVeganOptions = {
-	keys: ['ingredients'],
-	threshold: 0.5, // Adjusted
-	caseSensitive: false,
-	includeScore: true,
-	ignoreLocation: true,
-	minMatchCharLength: 4, // Adjusted
-	tokenize: true, // Added
-	matchAllTokens: true // Added
-}
-
-const veganFuse = new Fuse(foodPreferences, fuseVeganOptions)
-
-/**
- * Searches through the food preferences database to find a match for the given ingredient name.
- * Returns an object with the following properties: vegan, vegetarian, pescatarian, canBeVegan.
- * If no match is found, returns an object with all properties set to true.
- *
- * @param {string} ingredientName - The ingredient name to search for.
- * @returns {Object} - An object with the search results.
- */
-export function addFoodPreferences(ingredientName) {
-	// Primary search with fuzzy check
-	const results = veganFuse.search(ingredientName)
-
-	if (results.length > 0 && results[0].score < 0.4) {
-		const matchedItem = results[0].item
-		return {
-			vegan: matchedItem.vegan,
-			vegetarian: matchedItem.vegetarian,
-			pescatarian: matchedItem.pescatarian,
-			canBeVegan: matchedItem.canBeVegan
-		}
-	}
-
-	// Second Pass: Simple substring check using JS .includes
-	// check if any term from the ingredients array of each item is a substring of the ingredientName
-	for (let item of veganFuse._docs) {
-		for (let term of item.ingredients) {
-			if (ingredientName.includes(term)) {
-				return {
-					vegan: item.vegan,
-					vegetarian: item.vegetarian,
-					pescatarian: item.pescatarian,
-					canBeVegan: item.canBeVegan
-				}
-			}
-		}
-	}
-
-	return {
-		vegan: true,
-		vegetarian: true,
-		pescatarian: true,
-		canBeVegan: true
-	} // default values if ingredient is not found or doesn't match closely enough
-}
-
-/**
- * Generates a string label indicating the dietary preference
- * of the given ingredient based on the given preferences.
- * @param {Object} prefs - The preferences object for the ingredient.
- * @returns {string} - A string label indicating the dietary preference.
- */
-export function getDietLabel(prefs) {
-	if (prefs.vegan) {
-		return ''
-	} else if (prefs.canBeVegan) {
-		return 'VEGAN?'
-	} else if (prefs.pescatarian && !prefs.vegetarian) {
-		return 'PESCA'
-	} else if (prefs.vegetarian && !prefs.vegan) {
-		return 'NON-VEGAN'
-	}
-	return 'MEAT' // default return value if none of the conditions are met
 }
 
 /**
