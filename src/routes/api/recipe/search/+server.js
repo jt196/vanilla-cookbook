@@ -2,6 +2,7 @@ import { json } from '@sveltejs/kit'
 import { resolveSemanticAvailability } from '$lib/server/semanticHelpers'
 import { prisma } from '$lib/server/prisma'
 import { getOptionalUser } from '$lib/server/authHelpers'
+import { visibleRecipesWhere } from '$lib/server/recipeFeed'
 import { getEmbedding, deserializeEmbedding, cosineSimilarity } from '$lib/utils/embeddings'
 
 /**
@@ -54,26 +55,9 @@ export async function GET({ url, locals }) {
 	try {
 		const user = getOptionalUser(locals)
 
-		let whereClause = {
-			in_trash: false,
-			embedding: { not: null }
-		}
-
-		if (!user) {
-			whereClause = { ...whereClause, is_public: true }
-		} else if (!user.isAdmin) {
-			whereClause = {
-				...whereClause,
-				OR: [{ userId: user.userId }, { is_public: true }]
-			}
-		}
-
 		const candidates = await prisma.recipe.findMany({
-			where: whereClause,
-			select: {
-				uid: true,
-				embedding: true
-			}
+			where: { ...visibleRecipesWhere(user), embedding: { not: null } },
+			select: { uid: true, embedding: true }
 		})
 
 		const preferredEmbeddingProvider = locals.site?.semantic?.provider || null
