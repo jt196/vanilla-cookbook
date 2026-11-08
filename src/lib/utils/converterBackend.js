@@ -30,15 +30,31 @@ async function getAllIngredientData() {
  */
 async function getCachedFuse(forceRefresh = false) {
 	if (forceRefresh || !cachedFuse || !cachedIngredientData) {
-		// Fetch fresh ingredient data
-		cachedIngredientData = await getAllIngredientData()
-
-		// Create new Fuse instance with configurable options
-		const fuseOptions = getFuseOptions()
-		cachedFuse = new Fuse(cachedIngredientData, fuseOptions)
+		const data = await getAllIngredientData()
+		const fuse = new Fuse(data, getFuseOptions())
+		// Don't cache an empty table (e.g. a fresh install before setup seeds ingredients),
+		// or conversions would keep using it after seeding
+		if (!data.length) return fuse
+		cachedIngredientData = data
+		cachedFuse = fuse
 	}
 
 	return cachedFuse
+}
+
+/**
+ * Build the ingredient search index ahead of the first conversion (call at server start),
+ * so the first user to switch units doesn't wait for it. Failures are ignored: the index
+ * is built on demand instead.
+ *
+ * @returns {Promise<void>}
+ */
+export async function warmIngredientIndex() {
+	try {
+		await getCachedFuse()
+	} catch {
+		// e.g. the database isn't migrated yet; conversions build the index later
+	}
 }
 
 /**

@@ -126,6 +126,32 @@ export const determineSystem = (ingredientArray = []) => {
 	return { system: dominantSystem, counts: systemCounts }
 }
 
+// Fuse results per index and query. The ingredient table only changes on reseed, which
+// builds a new index, so cached results never go stale; capped to bound memory.
+const searchCache = new WeakMap()
+const SEARCH_CACHE_LIMIT = 5000
+
+/**
+ * `fuse.search(query)`, remembered per index. Fuzzy search over the ingredient table is
+ * the slow part of unit conversion, and the same queries ("flour", "sugar", ...) recur
+ * across ingredients, recipes and repeated toggles.
+ *
+ * @param {import('fuse.js').default<any>} fuse
+ * @param {string} query
+ * @returns {Array<{ item: any, score?: number }>}
+ */
+export function cachedSearch(fuse, query) {
+	let cache = searchCache.get(fuse)
+	if (!cache) searchCache.set(fuse, (cache = new Map()))
+	let result = cache.get(query)
+	if (!result) {
+		if (cache.size >= SEARCH_CACHE_LIMIT) cache.clear()
+		result = fuse.search(query)
+		cache.set(query, result)
+	}
+	return result
+}
+
 /**
  * Finds ingredient density using Fuse fuzzy matching with multi-word fallback.
  *
@@ -144,7 +170,7 @@ function findIngredientDensity(ingredient, fuse, instructions = []) {
 	// Pass 1: Try with instructions included (if provided)
 	if (instructions && instructions.length > 0) {
 		const withInstructions = `${instructions.join(' ')} ${ingredient}`.trim()
-		const instructionResult = fuse.search(withInstructions)
+		const instructionResult = cachedSearch(fuse, withInstructions)
 		if (instructionResult.length > 0 && instructionResult[0].score < fuseConfig.strictThreshold) {
 			return {
 				ingredient: instructionResult[0].item,
@@ -156,7 +182,7 @@ function findIngredientDensity(ingredient, fuse, instructions = []) {
 	}
 
 	// Pass 2: Try full ingredient name with strict threshold
-	const result = fuse.search(ingredient)
+	const result = cachedSearch(fuse, ingredient)
 	if (result.length > 0 && result[0].score < fuseConfig.strictThreshold) {
 		return {
 			ingredient: result[0].item,
@@ -166,15 +192,14 @@ function findIngredientDensity(ingredient, fuse, instructions = []) {
 		}
 	}
 
-	// Pass 3: Try relaxed full-name match (captures word order differences)
-	const relaxedResult = fuse.search(ingredient)
+	// Pass 3: Accept the same full-name result at the relaxed threshold
 	const relaxedMatch =
-		relaxedResult.length > 0 && relaxedResult[0].score < fuseConfig.relaxedThreshold
+		result.length > 0 && result[0].score < fuseConfig.relaxedThreshold
 			? {
-					ingredient: relaxedResult[0].item,
+					ingredient: result[0].item,
 					usedDefaultDensity: false,
 					matchType: 'fuzzy',
-					matchScore: relaxedResult[0].score
+					matchScore: result[0].score
 				}
 			: null
 
@@ -213,7 +238,7 @@ function findIngredientDensity(ingredient, fuse, instructions = []) {
 
 	if (words.length > 1) {
 		for (const word of words) {
-			const wordResult = fuse.search(word)
+			const wordResult = cachedSearch(fuse, word)
 			if (wordResult.length > 0 && wordResult[0].score < fuseConfig.relaxedThreshold) {
 				const candidate = {
 					ingredient: wordResult[0].item,
