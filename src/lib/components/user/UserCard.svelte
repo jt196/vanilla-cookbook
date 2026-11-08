@@ -6,7 +6,7 @@
 	let { item } = $props()
 </script>
 
-<a href="/user/{item.id}/recipes/" class="block no-underline text-current">
+<a href="/user/{item.id}/recipes" class="block no-underline text-current">
 	<Card class="hover:bg-base-200 transition-colors">
 		{#snippet title()}
 			{item.username}

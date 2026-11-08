@@ -68,7 +68,7 @@
 </script>
 
 <a
-	href="/recipe/{item.uid}/view/"
+	href="/recipe/{item.uid}/view"
 	class="flex items-stretch gap-3 mb-2 md:mb-3 rounded-lg transition no-underline text-current">
 	<Card
 		class="flex-1 hover:bg-base-200 min-h-24 md:min-h-36"
