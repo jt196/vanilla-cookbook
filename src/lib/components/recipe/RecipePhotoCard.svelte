@@ -1,4 +1,5 @@
 <script>
+	import { photoSrc } from '$lib/utils/image/imageUtils'
 	let showPrimaryPhoto = $state(true)
 	let showImageUrl = $state(true)
 
@@ -22,7 +23,7 @@
 			<img
 				class="h-full w-full object-cover"
 				loading="lazy"
-				src="/api/recipe/image/{recipe.photos[0].id}"
+				src={photoSrc(recipe.photos[0].id, { thumbnail: true })}
 				alt="{recipe.name} thumbnail"
 				onerror={() => (showPrimaryPhoto = false)} />
 		{:else if recipe.image_url && showImageUrl}
