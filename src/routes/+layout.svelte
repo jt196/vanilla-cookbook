@@ -10,6 +10,8 @@
 	import SiteIcons from '$lib/components/ui/SiteIcons.svelte'
 	import CookBook from '$lib/components/svg/CookBook.svelte'
 	import NavLinks from '$lib/components/ui/NavLinks.svelte'
+	import CommandPalette from '$lib/components/nav/CommandPalette.svelte'
+	import SearchButton from '$lib/components/nav/SearchButton.svelte'
 	import Spinner from '$lib/components/ui/Spinner.svelte'
 	import FeedbackMessage from '$lib/components/ui/FeedbackMessage.svelte'
 	import { langStore, isRtl, t } from '$lib/stores/locale.js'
@@ -121,7 +123,8 @@
 		</div>
 
 		{#if dbSeed}
-			<div class="navbar-end">
+			<div class="navbar-end gap-2">
+				<SearchButton compact label={$t('nav.search')} />
 				<!-- Desktop Navigation - hidden on mobile -->
 				<div class="hidden lg:flex">
 					<NavLinks {user} {settings} {themePreference} onThemeChange={setThemePreference} />
@@ -163,6 +166,10 @@
 </div>
 
 <Spinner visible={isNavigating} spinnerContent={$t('common.loading')} />
+
+{#if dbSeed}
+	<CommandPalette {user} {themePreference} onThemeChange={setThemePreference} />
+{/if}
 
 <div class="min-h-screen bg-base-200">
 	<div class="container mx-auto px-4 py-6">

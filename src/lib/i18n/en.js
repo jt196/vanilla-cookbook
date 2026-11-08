@@ -58,7 +58,26 @@ export default {
 		themeLight: 'Light',
 		themeDark: 'Dark',
 		themeAuto: 'Auto',
-		cookbook: "{username}'s Cookbook"
+		cookbook: "{username}'s Cookbook",
+		search: 'Search'
+	},
+
+	palette: {
+		placeholder: 'Search recipes, or go to…',
+		searchRecipes: 'Search {count} recipes…',
+		recipes: 'Recipes',
+		goTo: 'Go to',
+		actions: 'Actions',
+		noResults: 'No matches',
+		byAuthor: 'by {name}',
+		import: 'Import recipes',
+		importUrl: 'Import recipe from {host}',
+		siteSettings: 'Site settings',
+		users: 'Users',
+		switchTheme: 'Switch to {theme} theme',
+		navigate: 'Navigate',
+		open: 'Open',
+		close: 'Close'
 	},
 
 	auth: {
