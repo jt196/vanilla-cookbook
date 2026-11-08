@@ -215,7 +215,8 @@ pnpm test:watch           # Watch mode
 pnpm coverage             # Coverage report
 
 # Linting & Formatting
-pnpm lint                 # Prettier check + ESLint
+pnpm lint                 # Prettier check + ESLint (incl. required JSDoc)
+pnpm check:types          # JSDoc type check (ratchet vs scripts/type-baseline.json)
 pnpm format               # Format all files
 
 # Database
@@ -339,7 +340,9 @@ pnpm coverage          # Coverage report
 - **Formatting**: Prettier enforced (`.prettierrc`): tabs, single quotes, no semicolons, no trailing commas, 100-char lines
 - **Linting**: ESLint 9 flat config (`eslint.config.js`) with the svelte plugin; `pnpm lint` runs Prettier + ESLint
 - **Markdown docs**: Keep edited Markdown files compliant with `.markdownlint.json` (run `pnpm -s dlx markdownlint-cli <file>.md` on changed docs)
-- **JSDoc**: Document all utility functions (see `docs/technical/*.md` for examples)
+- **JSDoc (enforced)**: Every exported function needs a JSDoc comment: what it does, `@param` and `@returns` with types. This includes SvelteKit handlers (`GET`, `POST`, `load`, ...). ESLint (`jsdoc/require-jsdoc`) fails on missing ones. Files in `JSDOC_BACKLOG` in `eslint.config.js` predate the rule; when you touch one, document all its exported functions and remove it from the list. Never add files to the list.
+- **Types (enforced)**: JSDoc types are checked by `pnpm check:types` (svelte-check with `checkJs`). CI fails if the error count rises above `scripts/type-baseline.json`. Don't add type errors; if you fix some, run `pnpm check:types --update` to lower the baseline. Never raise it.
+- **Before committing**: `pnpm lint`, `pnpm check:types` and `pnpm test` must all pass (CI runs all three)
 
 ### Svelte Conventions
 
