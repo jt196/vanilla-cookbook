@@ -112,12 +112,12 @@
 			{#if user}
 				<a href="/" class="flex items-center gap-2 text-primary">
 					<CookBook width="45px" height="45px" />
-					<img src="/icons/site-logo.svg" alt="Vanilla Cookbook" class="h-12" />
+					<img src="/icons/site-logo.svg" alt="Vanilla Cookbook" class="site-logo h-12" />
 				</a>
 			{:else}
 				<div class="flex items-center gap-2 text-primary">
 					<CookBook width="45px" height="45px" />
-					<img src="/icons/site-logo.svg" alt="Vanilla Cookbook" class="h-12" />
+					<img src="/icons/site-logo.svg" alt="Vanilla Cookbook" class="site-logo h-12" />
 				</div>
 			{/if}
 		</div>
