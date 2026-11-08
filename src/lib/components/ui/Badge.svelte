@@ -20,7 +20,9 @@
 		 */
 		color = undefined,
 		class: className = '',
-		children
+		children,
+		// Anything else (e.g. title for a tooltip) goes on the <span>
+		...rest
 	} = $props()
 
 	// Build DaisyUI classes
@@ -58,6 +60,6 @@
 	)
 </script>
 
-<span class={classes}>
+<span class={classes} {...rest}>
 	{@render children()}
 </span>

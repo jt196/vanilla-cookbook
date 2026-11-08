@@ -623,7 +623,7 @@
 			<Textarea
 				id="ingredients"
 				name="ingredients"
-				rows="7"
+				rows={7}
 				placeholder={$t('recipeForm.ingredientsPlaceholder')}
 				bind:value={recipe.ingredients}
 				label={$t('recipeForm.ingredients')} />
@@ -679,14 +679,14 @@
 		<Textarea
 			id="equipment"
 			name="equipment"
-			rows="3"
+			rows={3}
 			placeholder={$t('recipeForm.equipmentPlaceholder')}
 			bind:value={recipe.equipment}
 			label={$t('recipeForm.equipment')} />
 		<Textarea
 			id="description"
 			name="description"
-			rows="3"
+			rows={3}
 			placeholder={$t('recipeForm.descriptionPlaceholder')}
 			bind:value={recipe.description}
 			markdown
@@ -695,7 +695,7 @@
 			<Textarea
 				id="directions"
 				placeholder={$t('recipeForm.directionsPlaceholder')}
-				rows="7"
+				rows={7}
 				name="directions"
 				bind:value={recipe.directions}
 				markdown
@@ -752,7 +752,7 @@
 		<Textarea
 			id="notes"
 			name="notes"
-			rows="3"
+			rows={3}
 			placeholder={$t('recipeForm.notesPlaceholder')}
 			bind:value={recipe.notes}
 			markdown
@@ -785,7 +785,7 @@
 		<Textarea
 			id="nutritional_info"
 			name="nutritional_info"
-			rows="3"
+			rows={3}
 			bind:value={recipe.nutritional_info}
 			label={$t('recipeForm.nutritionalInfo')} />
 		{#if aiEnabled}

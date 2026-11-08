@@ -34,6 +34,7 @@
 
 	let feedbackMessage = $state('')
 	let feedbackCode = $state(null)
+	/** @type {'info' | 'error' | 'success' | 'warning'} */
 	let feedbackType = $state('info')
 	let loading = $state(false)
 	let maxImages = 3
@@ -47,7 +48,7 @@
 	let lastAppliedInitialMode = $state(untrack(() => initialMode))
 
 	// Derive textMode from isPromptMode for cleaner reactivity
-	let textMode = $derived(isPromptMode ? 'prompt' : 'parse')
+	let textMode = $derived(/** @type {'parse' | 'prompt'} */ (isPromptMode ? 'prompt' : 'parse'))
 
 	// Derive disabled states for submit buttons
 	let isUrlEmpty = $derived(!url || url.trim() === '')

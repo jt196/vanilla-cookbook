@@ -1,4 +1,15 @@
 <script>
+	/**
+	 * @type {{
+	 *   type?: 'text' | 'password' | 'email' | 'number' | 'url' | 'search',
+	 *   label?: string, value?: string | number, placeholder?: string, error?: string,
+	 *   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl', color?: string, style?: string,
+	 *   fullWidth?: boolean, useLabelAsPlaceholder?: boolean, required?: boolean,
+	 *   disabled?: boolean, id?: string, name?: string, class?: string,
+	 *   oninput?: (event: Event) => void, onkeydown?: (event: KeyboardEvent) => void,
+	 *   [attribute: string]: any
+	 * }}
+	 */
 	let {
 		/**
 		 * @type {'text' | 'password' | 'email' | 'number' | 'url'}

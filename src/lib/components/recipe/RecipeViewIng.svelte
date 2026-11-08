@@ -6,7 +6,7 @@
 	import { i18nMap } from '$lib/submodules/recipe-ingredient-parser/src/i18n'
 	import { t } from '$lib/stores/locale.js'
 
-	/** @type {{ingredient: any, ingredientIndex?: number, scale: any, displayExtra: any, displayDryMatch: any, displayOriginal: any, selectedSystem: any, recipeUid: any}} */
+	/** @type {{ingredient: any, ingredientIndex?: number, scale: any, displayExtra: any, displayDryMatch: any, displayOriginal: any, displaySymbol?: boolean, selectedSystem: any, recipeUid: any, userLanguage?: string}} */
 	let {
 		ingredient,
 		ingredientIndex = 0,

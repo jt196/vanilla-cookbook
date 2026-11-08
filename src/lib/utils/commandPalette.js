@@ -26,32 +26,38 @@ import { themePreferences, THEME_AUTO, THEME_DARK, THEME_LIGHT } from '$lib/util
  * @returns {Command[]}
  */
 export function buildCommands(user, currentTheme) {
-	const userBase = user ? `/user/${user.userId}` : null
+	/** @returns {Command} A "Go to" command. */
+	const link = (id, labelKey, icon, href, keywords) => ({
+		id,
+		group: 'goto',
+		labelKey,
+		icon,
+		href,
+		keywords
+	})
+
+	const base = user ? `/user/${user.userId}` : ''
 	const goto = user
 		? [
-				['myRecipes', 'nav.myRecipes', 'List', `${userBase}/recipes`, ['cookbook', 'list']],
-				['allRecipes', 'nav.allRecipes', 'FoodBowl', '/recipes', ['everyone', 'public']],
-				['newRecipe', 'nav.newRecipe', 'New', '/recipe/new', ['add', 'create', 'scrape']],
-				['shopping', 'nav.shoppingList', 'Shopping', `${userBase}/shopping`, ['groceries']],
-				['calendar', 'nav.calendar', 'Calendar', `${userBase}/calendar`, ['cooked', 'log']],
-				['import', 'palette.import', 'Export', `${userBase}/options/import`, ['paprika']],
-				['settings', 'nav.settings', 'Settings', `${userBase}/options/settings`, ['account']],
+				link('myRecipes', 'nav.myRecipes', 'List', `${base}/recipes`, ['cookbook', 'list']),
+				link('allRecipes', 'nav.allRecipes', 'FoodBowl', '/recipes', ['everyone', 'public']),
+				link('newRecipe', 'nav.newRecipe', 'New', '/recipe/new', ['add', 'create', 'scrape']),
+				link('shopping', 'nav.shoppingList', 'Shopping', `${base}/shopping`, ['groceries']),
+				link('calendar', 'nav.calendar', 'Calendar', `${base}/calendar`, ['cooked', 'log']),
+				link('import', 'palette.import', 'Export', `${base}/options/import`, ['paprika']),
+				link('settings', 'nav.settings', 'Settings', `${base}/options/settings`, ['account']),
 				...(user.isAdmin
 					? [
-							[
-								'site',
-								'palette.siteSettings',
-								'Settings',
-								`${userBase}/options/admin/site`,
-								['ai']
-							],
-							['users', 'palette.users', 'Users', `${userBase}/options/admin/users`, ['admin']]
+							link('site', 'palette.siteSettings', 'Settings', `${base}/options/admin/site`, [
+								'ai'
+							]),
+							link('users', 'palette.users', 'Users', `${base}/options/admin/users`, ['admin'])
 						]
 					: [])
 			]
 		: [
-				['allRecipes', 'nav.allRecipes', 'FoodBowl', '/recipes', ['everyone', 'public']],
-				['login', 'nav.login', 'User', '/login', ['sign in']]
+				link('allRecipes', 'nav.allRecipes', 'FoodBowl', '/recipes', ['everyone', 'public']),
+				link('login', 'nav.login', 'User', '/login', ['sign in'])
 			]
 
 	const themeLabels = {
@@ -59,6 +65,7 @@ export function buildCommands(user, currentTheme) {
 		[THEME_DARK]: 'nav.themeDark',
 		[THEME_AUTO]: 'nav.themeAuto'
 	}
+	/** @type {Command[]} */
 	const themes = themePreferences
 		.filter((theme) => theme !== currentTheme)
 		.map((theme) => ({
@@ -71,17 +78,7 @@ export function buildCommands(user, currentTheme) {
 			keywords: ['theme', 'dark', 'light', 'mode']
 		}))
 
-	return [
-		...goto.map(([id, labelKey, icon, href, keywords]) => ({
-			id,
-			group: 'goto',
-			labelKey,
-			icon,
-			href,
-			keywords
-		})),
-		...themes
-	]
+	return [...goto, ...themes]
 }
 
 /**

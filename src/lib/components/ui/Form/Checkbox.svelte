@@ -16,7 +16,8 @@
 		optionalLabel = '',
 		class: className = '',
 		onchange = undefined,
-		children
+		/** @type {import('svelte').Snippet | undefined} */
+		children = undefined
 	} = $props()
 
 	function handleChange(event) {

@@ -153,7 +153,7 @@
 			id="file"
 			name="images"
 			accept="image/*"
-			fullWidth="false"
+			fullWidth={false}
 			multiple={true}
 			onchange={handleFilesChange} />
 
