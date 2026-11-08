@@ -8,6 +8,8 @@ import { render, fireEvent, screen } from '@testing-library/svelte/svelte5'
 
 import Scale from '$lib/components/ui/Scale.svelte'
 import RecipeScopeTabs from '$lib/components/recipe/RecipeScopeTabs.svelte'
+import Button from '$lib/components/ui/Button.svelte'
+import { createRawSnippet } from 'svelte'
 import RecipeFilter from '$lib/components/recipe/RecipeFilter.svelte'
 import RecipeList from '$lib/components/recipe/RecipeList.svelte'
 
@@ -229,5 +231,25 @@ describe('RecipeScopeTabs component', () => {
 		expect(all).toHaveAttribute('href', '/recipes')
 		expect(all).toHaveAttribute('aria-current', 'page')
 		expect(all).toHaveClass('tab-active')
+	})
+})
+
+describe('Button component', () => {
+	const label = createRawSnippet(() => ({ render: () => '<span>Log in</span>' }))
+
+	it('keeps its own size and shows a spinner inside while loading', () => {
+		render(Button, { props: { loading: true, disabled: true, class: 'w-full', children: label } })
+		const button = screen.getByRole('button', { name: 'Log in' })
+
+		// `loading` on the button itself would turn the whole button into a spinner mask
+		expect(button).not.toHaveClass('loading')
+		expect(button).toHaveClass('btn', 'btn-primary', 'w-full')
+		expect(button).toHaveAttribute('aria-busy', 'true')
+		expect(button.querySelector('.loading.loading-spinner')).not.toBeNull()
+	})
+
+	it('renders no spinner when not loading', () => {
+		render(Button, { props: { children: label } })
+		expect(screen.getByRole('button', { name: 'Log in' }).querySelector('.loading')).toBeNull()
 	})
 })
