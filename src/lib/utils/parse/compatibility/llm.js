@@ -2,6 +2,12 @@ import { HumanMessage, SystemMessage } from '@langchain/core/messages'
 import { buildRecipeExtractionPrompt, parseRecipeJsonOutput } from '$lib/utils/aiShared'
 import { getOpenAICompatibleConfig } from '$lib/utils/llmModels'
 
+/**
+ * Parse the JSON recipe from an LLM response (see `parseRecipeJsonOutput`).
+ *
+ * @param {string} rawOutput
+ * @returns {any}
+ */
 export function parseCompatibilityLLMJsonOutput(rawOutput) {
 	return parseRecipeJsonOutput(rawOutput)
 }
@@ -77,6 +83,15 @@ async function loadChatClient(provider, model, env = process.env) {
 	throw new Error(`Unsupported provider: ${provider}`)
 }
 
+/**
+ * Extract a recipe from page HTML with an LLM, for the compatibility sweep's AI fallback.
+ * Runs outside SvelteKit, so it reads provider keys from `env`.
+ *
+ * @param {{ provider?: string, model?: string, content?: string, url?: string,
+ *   env?: Record<string, string | undefined> }} options
+ * @returns {Promise<any>} The parsed recipe object.
+ * @throws {Error} If no LLM provider is configured.
+ */
 export async function extractRecipeWithCompatibilityLLM({
 	provider,
 	model,

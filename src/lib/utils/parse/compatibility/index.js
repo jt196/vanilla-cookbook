@@ -17,6 +17,31 @@ export const COMPATIBILITY_DEFAULTS = {
 	fixtureDirectory: 'src/lib/data/recipe_html'
 }
 
+/**
+ * @typedef {Object} ManifestEntry - One URL in the compatibility manifest.
+ * @property {string} site - Hostname without "www."
+ * @property {string} url
+ * @property {string} expected_fixture_filename - Saved HTML snapshot name in the fixture dir
+ * @property {'active' | 'known_blocked' | 'known_unscrapable' | 'legacy_reference'} status_class
+ * @property {boolean} has_site_config - Whether siteConfigurations has CSS selectors for it
+ * @property {string} [notes]
+ */
+
+/**
+ * @typedef {Object} CompatibilityPayload - Results of a compatibility sweep.
+ * @property {string} generatedAt - ISO timestamp
+ * @property {number} runnerVersion
+ * @property {boolean} llmEnabled
+ * @property {number} urlCount
+ * @property {Array<object>} results - One result per URL (live fetch, scrape, LLM, diagnosis)
+ */
+
+/**
+ * The site name for a URL: its hostname without "www.".
+ *
+ * @param {string} url
+ * @returns {string} The site, or the input unchanged if it isn't a valid URL.
+ */
 export function getSiteName(url) {
 	try {
 		return new URL(url).hostname.replace(/^www\./, '')
@@ -25,6 +50,14 @@ export function getSiteName(url) {
 	}
 }
 
+/**
+ * Create a manifest entry for a URL, with its fixture filename and site-config flag.
+ *
+ * @param {string} url
+ * @param {ManifestEntry['status_class']} [statusClass='legacy_reference']
+ * @param {string} [notes='']
+ * @returns {ManifestEntry}
+ */
 export function createCompatibilityEntry(url, statusClass = 'legacy_reference', notes = '') {
 	const site = getSiteName(url)
 	return {
@@ -37,6 +70,13 @@ export function createCompatibilityEntry(url, statusClass = 'legacy_reference', 
 	}
 }
 
+/**
+ * Sort manifest entries (or results) by site, then URL.
+ *
+ * @template {{ site: string, url: string }} T
+ * @param {T[]} [entries=[]]
+ * @returns {T[]} A sorted copy.
+ */
 export function sortCompatibilityEntries(entries = []) {
 	return [...entries].sort((a, b) => {
 		const siteCompare = a.site.localeCompare(b.site)
@@ -44,6 +84,14 @@ export function sortCompatibilityEntries(entries = []) {
 	})
 }
 
+/**
+ * Build a manifest from lists of URLs grouped by status. A URL listed more than once keeps
+ * the first status in the order: active, blocked, unscrapable, legacy.
+ *
+ * @param {{ activeUrls?: string[], legacyUrls?: string[], blockedUrls?: string[],
+ *   unscrapableUrls?: string[] }} lists
+ * @returns {ManifestEntry[]} Sorted entries.
+ */
 export function buildCompatibilityManifest({
 	activeUrls = [],
 	legacyUrls = [],
@@ -67,6 +115,12 @@ export function buildCompatibilityManifest({
 	return sortCompatibilityEntries([...entries.values()])
 }
 
+/**
+ * Read the manifest JSON, filling in `has_site_config` where it's missing.
+ *
+ * @param {string} [manifestPath] - Relative to the working directory.
+ * @returns {ManifestEntry[]}
+ */
 export function loadCompatibilityManifest(manifestPath = COMPATIBILITY_DEFAULTS.manifestPath) {
 	const entries = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), manifestPath), 'utf8'))
 	return entries.map((entry) => ({
@@ -78,6 +132,13 @@ export function loadCompatibilityManifest(manifestPath = COMPATIBILITY_DEFAULTS.
 	}))
 }
 
+/**
+ * Merge entries into a manifest by URL; later entries override fields of earlier ones.
+ *
+ * @param {ManifestEntry[]} [existingEntries=[]]
+ * @param {...(Partial<ManifestEntry> | Partial<ManifestEntry>[])} nextEntries
+ * @returns {ManifestEntry[]} Sorted, merged entries.
+ */
 export function mergeCompatibilityManifestEntries(existingEntries = [], ...nextEntries) {
 	const entries = new Map(existingEntries.map((entry) => [entry.url, entry]))
 	for (const entry of nextEntries.flat().filter(Boolean)) {
@@ -95,12 +156,26 @@ export function mergeCompatibilityManifestEntries(existingEntries = [], ...nextE
 	return sortCompatibilityEntries([...entries.values()])
 }
 
+/**
+ * Write data as pretty-printed JSON, creating the directory if needed.
+ *
+ * @param {string} filePath - Relative to the working directory.
+ * @param {unknown} data
+ */
 export function saveCompatibilityJson(filePath, data) {
 	const absolutePath = path.resolve(process.cwd(), filePath)
 	fs.mkdirSync(path.dirname(absolutePath), { recursive: true })
 	fs.writeFileSync(absolutePath, `${JSON.stringify(data, null, 2)}\n`, 'utf8')
 }
 
+/**
+ * Normalise the result of fetching a URL live, for the results file.
+ *
+ * @param {{ attempted?: boolean, ok?: boolean, status?: number | null, statusText?: string,
+ *   contentType?: string, htmlCaptured?: boolean, error?: string | null,
+ *   finalUrl?: string | null }} [result]
+ * @returns {object} The same fields with defaults filled in.
+ */
 export function summarizeLiveFetch({
 	attempted = false,
 	ok = false,
@@ -123,6 +198,16 @@ export function summarizeLiveFetch({
 	}
 }
 
+/**
+ * Summarise a parsed recipe as complete (name and ingredients), partial (some fields) or
+ * failed, with field counts.
+ *
+ * @param {object | string | null} recipe - Parser output; a string is a parser error message.
+ * @param {Error | string | null} [error=null]
+ * @returns {{ attempted: true, ok: boolean, status: 'complete' | 'partial' | 'failed',
+ *   hasName: boolean, ingredientCount: number, instructionCount: number,
+ *   instructionChars: number, error: string | null }}
+ */
 export function summarizeRecipeResult(recipe, error = null) {
 	const isRecipeObject = Boolean(recipe && typeof recipe === 'object' && !Array.isArray(recipe))
 	const hasName = Boolean(recipe?.name)
@@ -154,6 +239,14 @@ export function summarizeRecipeResult(recipe, error = null) {
 	}
 }
 
+/**
+ * Summarise the AI fallback's result like `summarizeRecipeResult`, or as skipped.
+ *
+ * @param {{ attempted?: boolean, recipe?: object | null, provider?: string | null,
+ *   model?: string | null, error?: string | null }} [result]
+ * @returns {{ attempted: boolean, ok: boolean, status: string, provider: string | null,
+ *   model: string | null, error: string | null }}
+ */
 export function summarizeLLMResult({
 	attempted = false,
 	recipe = null,
@@ -183,6 +276,14 @@ export function summarizeLLMResult({
 	}
 }
 
+/**
+ * A short diagnosis for a URL from its fetch, scrape and AI results, e.g. "parser ok",
+ * "upstream blocked" or "parser gap, site config candidate".
+ *
+ * @param {{ liveFetch?: object, vanillaScrape?: object, llmFallback?: object,
+ *   hasSiteConfig?: boolean }} [results]
+ * @returns {string}
+ */
 export function classifyCompatibilityResult({
 	liveFetch = {},
 	vanillaScrape = {},
@@ -218,10 +319,24 @@ export function classifyCompatibilityResult({
 	return 'needs investigation'
 }
 
+/**
+ * Absolute path of an entry's saved HTML fixture.
+ *
+ * @param {ManifestEntry} entry
+ * @param {string} [fixtureDirectory]
+ * @returns {string}
+ */
 export function getFixturePath(entry, fixtureDirectory = COMPATIBILITY_DEFAULTS.fixtureDirectory) {
 	return path.resolve(process.cwd(), fixtureDirectory, entry.expected_fixture_filename)
 }
 
+/**
+ * Save an entry's HTML fixture (does nothing for empty HTML).
+ *
+ * @param {ManifestEntry} entry
+ * @param {string} html
+ * @param {string} [fixtureDirectory]
+ */
 export function writeFixtureHtml(
 	entry,
 	html,
@@ -233,12 +348,25 @@ export function writeFixtureHtml(
 	fs.writeFileSync(filePath, html, 'utf8')
 }
 
+/**
+ * Read an entry's saved HTML fixture.
+ *
+ * @param {ManifestEntry} entry
+ * @param {string} [fixtureDirectory]
+ * @returns {string | null} The HTML, or null if no fixture is saved.
+ */
 export function readFixtureHtml(entry, fixtureDirectory = COMPATIBILITY_DEFAULTS.fixtureDirectory) {
 	const filePath = getFixturePath(entry, fixtureDirectory)
 	if (!fs.existsSync(filePath)) return null
 	return fs.readFileSync(filePath, 'utf8')
 }
 
+/**
+ * Render sweep results as the Markdown table in docs/technical/scrape-compatibility.md.
+ *
+ * @param {CompatibilityPayload} resultsPayload
+ * @returns {string}
+ */
 export function renderCompatibilityMarkdown(resultsPayload) {
 	const { generatedAt, llmEnabled, urlCount, results = [] } = resultsPayload
 	const header = [
@@ -299,6 +427,14 @@ export function renderCompatibilityMarkdown(resultsPayload) {
 	return `${lines.join('\n')}\n`
 }
 
+/**
+ * Merge a new sweep into previous results by URL, so a partial run updates only the URLs
+ * it tested.
+ *
+ * @param {CompatibilityPayload | null} existingPayload
+ * @param {CompatibilityPayload} nextPayload
+ * @returns {CompatibilityPayload}
+ */
 export function mergeCompatibilityResults(existingPayload, nextPayload) {
 	if (!existingPayload?.results?.length) return nextPayload
 

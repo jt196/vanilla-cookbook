@@ -5,17 +5,6 @@ import prettier from 'eslint-config-prettier'
 import globals from 'globals'
 import svelteConfig from './svelte.config.js'
 
-// Files that predate the JSDoc rule and still have undocumented exported functions.
-// Document every exported function in a file, then delete its line here: the list only shrinks.
-// (Square brackets are escaped because these are glob patterns.)
-const JSDOC_BACKLOG = [
-	'src/lib/utils/parse/compatibility/diff.js',
-	'src/lib/utils/parse/compatibility/index.js',
-	'src/lib/utils/parse/compatibility/llm.js',
-	'src/lib/utils/parse/compatibility/runner.js',
-	'src/lib/utils/parse/downloadRecipes.js'
-]
-
 /** @type {import('eslint').Linter.Config[]} */
 export default [
 	{
@@ -70,7 +59,6 @@ export default [
 	{
 		// Every exported function needs a JSDoc comment (see CLAUDE.md, Code Style)
 		files: ['src/**/*.js'],
-		ignores: JSDOC_BACKLOG,
 		plugins: { jsdoc },
 		rules: {
 			'jsdoc/require-jsdoc': [

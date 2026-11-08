@@ -16,6 +16,12 @@ import {
 	writeFixtureHtml
 } from './index.js'
 
+/**
+ * Parse `--flag value` and bare `--flag` command-line arguments into an object.
+ *
+ * @param {string[]} argv
+ * @returns {Record<string, string | true>}
+ */
 export function parseRunnerArgs(argv) {
 	const parsed = {}
 	for (let i = 0; i < argv.length; i += 1) {
@@ -34,6 +40,13 @@ export function parseRunnerArgs(argv) {
 	return parsed
 }
 
+/**
+ * Turn parsed CLI arguments into sweep options with defaults (paths, status filter,
+ * limit, LLM, fixture refresh, single URL, add-URL mode).
+ *
+ * @param {Record<string, string | true>} [args={}]
+ * @returns {object}
+ */
 export function getRunnerOptions(args = {}) {
 	return {
 		manifestPath: args.manifest || COMPATIBILITY_DEFAULTS.manifestPath,
@@ -53,6 +66,12 @@ export function getRunnerOptions(args = {}) {
 	}
 }
 
+/**
+ * Re-save the manifest in normalised form (fills in `has_site_config`).
+ *
+ * @param {{ manifestPath?: string }} options
+ * @returns {import('./index.js').ManifestEntry[]}
+ */
 export function bootstrapCompatibilityManifest({
 	manifestPath = COMPATIBILITY_DEFAULTS.manifestPath
 }) {
@@ -61,6 +80,13 @@ export function bootstrapCompatibilityManifest({
 	return manifest
 }
 
+/**
+ * Add a URL to the manifest (or update it) and save.
+ *
+ * @param {{ url: string, statusClass?: string, notes?: string, manifestPath?: string }} options
+ * @returns {import('./index.js').ManifestEntry | undefined} The saved entry.
+ * @throws {Error} If no URL is given.
+ */
 export function addUrlAndPersist({
 	url,
 	statusClass = 'active',
@@ -76,6 +102,15 @@ export function addUrlAndPersist({
 	return nextManifest.find((entry) => entry.url === url)
 }
 
+/**
+ * Fetch a URL live for the sweep, never throwing: failures are returned as a result.
+ *
+ * @param {string} url
+ * @param {((url: string) => Promise<object>) | null} [fetcher] - Defaults to fetchHTMLResponse.
+ * @returns {Promise<{ attempted: true, ok: boolean, status: number | null, statusText: string,
+ *   contentType: string, htmlCaptured: boolean, html: string, finalUrl: string | null,
+ *   error: string | null }>}
+ */
 export async function runLiveFetch(url, fetcher = null) {
 	const effectiveFetcher = fetcher || (await loadRecipeParseModule()).fetchHTMLResponse
 	try {
@@ -106,6 +141,13 @@ export async function runLiveFetch(url, fetcher = null) {
 	}
 }
 
+/**
+ * Pick the LLM provider and model for the sweep's AI fallback from environment variables.
+ *
+ * @param {boolean} enableLLM
+ * @param {Record<string, string | undefined>} [env=process.env]
+ * @returns {{ provider: string, model: string | null } | null} null if disabled or no key.
+ */
 export function resolveCompatibilityLLMConfig(enableLLM, env = process.env) {
 	if (!enableLLM) return null
 
@@ -132,6 +174,16 @@ export function resolveCompatibilityLLMConfig(enableLLM, env = process.env) {
 	}
 }
 
+/**
+ * Test the scraper against manifest URLs: fetch each live (optionally refreshing its
+ * fixture), parse the fixture or live HTML, optionally try the AI fallback, and diagnose.
+ * Options filter by status class, single URL, previous failures and a limit.
+ *
+ * @param {{ manifest: import('./index.js').ManifestEntry[], options?: object, env?: object, fetcher?: Function | null,
+ *   parseHtml?: Function | null, readFixture?: Function, writeFixture?: Function,
+ *   llmExtractor?: Function | null }} sweep - The functions are injectable for tests.
+ * @returns {Promise<import('./index.js').CompatibilityPayload>}
+ */
 export async function runCompatibilitySweep({
 	manifest,
 	options = {},
@@ -261,10 +313,24 @@ export async function runCompatibilitySweep({
 	}
 }
 
+/**
+ * Load the manifest the sweep should use.
+ *
+ * @param {string} [manifestPath]
+ * @returns {import('./index.js').ManifestEntry[]}
+ */
 export function loadSelectedManifest(manifestPath = COMPATIBILITY_DEFAULTS.manifestPath) {
 	return loadCompatibilityManifest(manifestPath)
 }
 
+/**
+ * Save sweep results (merged with previous results unless `mergeResults: false`) and
+ * regenerate the Markdown report.
+ *
+ * @param {import('./index.js').CompatibilityPayload} payload
+ * @param {{ resultsPath?: string, reportPath?: string, mergeResults?: boolean }} [options]
+ * @returns {import('./index.js').CompatibilityPayload} The saved (merged) payload.
+ */
 export function saveCompatibilityArtifacts(payload, options = {}) {
 	const resultsPath = options.resultsPath || COMPATIBILITY_DEFAULTS.resultsPath
 	const reportPath = options.reportPath || COMPATIBILITY_DEFAULTS.reportPath
