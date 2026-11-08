@@ -2,6 +2,13 @@ import { prisma } from '$lib/server/prisma'
 import { requireAuth, requireOwnership, jsonSuccess, jsonError } from '$lib/server/authHelpers'
 import { normalizeString, normalizeNumber } from '$lib/utils/normalize'
 
+/**
+ * Log that the current user cooked a visible recipe now. Body: optional `note` and
+ * `scale`.
+ *
+ * @param {import('./$types').RequestEvent} event
+ * @returns {Promise<Response>}
+ */
 export async function POST({ locals, params, request }) {
 	const user = requireAuth(locals)
 	const { uid } = params
@@ -54,6 +61,12 @@ export async function POST({ locals, params, request }) {
 	}
 }
 
+/**
+ * Cooking log entries for one of the current user's recipes, newest first.
+ *
+ * @param {import('./$types').RequestEvent} event
+ * @returns {Promise<Response>}
+ */
 export async function GET({ params, locals }) {
 	const user = requireAuth(locals)
 	const { uid } = params

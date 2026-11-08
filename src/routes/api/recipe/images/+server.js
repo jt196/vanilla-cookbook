@@ -1,6 +1,13 @@
 import { prisma } from '$lib/server/prisma'
 import { requireAuth, requireOwnership, jsonSuccess, jsonError } from '$lib/server/authHelpers'
 
+/**
+ * Update `isMain` and `notes` on photos of the current user's recipes. Body: array of `{
+ * id, isMain, notes }`.
+ *
+ * @param {import('./$types').RequestEvent} event
+ * @returns {Promise<Response>}
+ */
 export async function PUT({ request, locals }) {
 	const user = requireAuth(locals)
 

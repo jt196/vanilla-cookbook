@@ -13,6 +13,12 @@ export const COMPATIBILITY_DIFF_DEFAULTS = {
 	sourceUrl: 'https://docs.recipe-scrapers.com/getting-started/supported-sites/'
 }
 
+/**
+ * Reduce a URL or domain to a bare lowercase domain (no scheme, "www.", path or trailing dot).
+ *
+ * @param {string} [value='']
+ * @returns {string}
+ */
 export function normalizeRecipeDomain(value = '') {
 	return String(value || '')
 		.trim()
@@ -23,6 +29,12 @@ export function normalizeRecipeDomain(value = '') {
 		.replace(/\.$/, '')
 }
 
+/**
+ * Extract the domains listed on recipe-scrapers' "supported sites" page.
+ *
+ * @param {string} [html='']
+ * @returns {string[]} Unique domains, sorted.
+ */
 export function parseRecipeScrapersSupportedSitesHtml(html = '') {
 	if (!html) return []
 
@@ -46,6 +58,13 @@ export function parseRecipeScrapersSupportedSitesHtml(html = '') {
 	return domains.sort((a, b) => a.localeCompare(b))
 }
 
+/**
+ * Fetch and parse recipe-scrapers' "supported sites" page.
+ *
+ * @param {typeof fetch} [fetcher=fetch]
+ * @returns {Promise<string[]>} Unique domains, sorted.
+ * @throws {Error} If the page returns an HTTP error.
+ */
 export async function fetchRecipeScrapersSupportedSites(fetcher = fetch) {
 	const response = await fetcher(COMPATIBILITY_DIFF_DEFAULTS.sourceUrl)
 	if (!response.ok) {
@@ -57,6 +76,14 @@ export async function fetchRecipeScrapersSupportedSites(fetcher = fetch) {
 	return parseRecipeScrapersSupportedSitesHtml(html)
 }
 
+/**
+ * Compare recipe-scrapers' supported domains with the manifest and list the ones we don't
+ * track yet, as candidates to review.
+ *
+ * @param {{ upstreamDomains?: string[], manifestEntries?: import('./index.js').ManifestEntry[],
+ *   fixtureDirectory?: string, outputPath?: string }} [options]
+ * @returns {object} Diff summary with a `candidates` list of untracked domains.
+ */
 export function buildCompatibilityDiff({
 	upstreamDomains = [],
 	manifestEntries = [],
@@ -112,6 +139,13 @@ export function buildCompatibilityDiff({
 	}
 }
 
+/**
+ * Fetch recipe-scrapers' supported sites, diff them against the manifest and save the
+ * result as JSON.
+ *
+ * @param {{ fetcher?: typeof fetch, manifestPath?: string, outputPath?: string }} [options]
+ * @returns {Promise<object>} The saved diff.
+ */
 export async function generateCompatibilityDiff({
 	fetcher = fetch,
 	manifestPath = COMPATIBILITY_DEFAULTS.manifestPath,

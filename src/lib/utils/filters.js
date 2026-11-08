@@ -110,6 +110,12 @@ export function sanitizeIngredient(str) {
 	return str.trim()
 }
 
+/**
+ * Replace characters that aren't safe in file names with underscores.
+ *
+ * @param {string} filename
+ * @returns {string} The name with only letters, digits, `_`, spaces, `-` and `.` kept.
+ */
 export function sanitizeFilename(filename) {
 	return filename.replace(/[^\w\s-.]/gi, '_')
 }

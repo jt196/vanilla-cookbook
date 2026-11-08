@@ -1,6 +1,12 @@
 import { prisma } from '$lib/server/prisma'
 import { requireAuth, jsonSuccess, jsonError } from '$lib/server/authHelpers'
 
+/**
+ * Delete all purchased items from the current user's shopping list.
+ *
+ * @param {import('./$types').RequestEvent} event
+ * @returns {Promise<Response>}
+ */
 export async function DELETE({ locals }) {
 	const user = requireAuth(locals)
 
@@ -22,6 +28,12 @@ export async function DELETE({ locals }) {
 	}
 }
 
+/**
+ * Mark every unpurchased item on the current user's shopping list as purchased.
+ *
+ * @param {import('./$types').RequestEvent} event
+ * @returns {Promise<Response>}
+ */
 export async function PATCH({ locals }) {
 	const user = requireAuth(locals)
 

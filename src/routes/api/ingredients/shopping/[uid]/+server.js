@@ -1,6 +1,12 @@
 import { prisma } from '$lib/server/prisma'
 import { requireAuth, jsonError, jsonSuccess } from '$lib/server/authHelpers'
 
+/**
+ * Delete one of the current user's shopping list items.
+ *
+ * @param {import('./$types').RequestEvent} event
+ * @returns {Promise<Response>}
+ */
 export async function DELETE({ locals, params }) {
 	const user = requireAuth(locals)
 

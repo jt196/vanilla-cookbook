@@ -3,6 +3,13 @@ import { dev } from '$app/environment'
 import { githubAuth, googleAuth } from '$lib/server/oauth.js'
 import { oidcEnabled, getAuthorizationUrl as getOidcAuthUrl } from '$lib/server/oidc.js'
 
+/**
+ * Start an OAuth/OIDC login (`?provider=github|google|oidc`): store state in cookies and
+ * redirect to the provider.
+ *
+ * @param {import('./$types').RequestEvent} event
+ * @returns {Promise<Response>}
+ */
 export async function GET({ url, cookies }) {
 	const provider = url.searchParams.get('provider')
 

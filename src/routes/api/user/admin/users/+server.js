@@ -1,6 +1,12 @@
 import { prisma } from '$lib/server/prisma'
 import { requireAdmin, jsonSuccess, jsonError } from '$lib/server/authHelpers'
 
+/**
+ * Admin: all users with their preferences and recipe counts.
+ *
+ * @param {import('./$types').RequestEvent} event
+ * @returns {Promise<Response>}
+ */
 export async function GET({ locals }) {
 	requireAdmin(locals)
 

@@ -34,6 +34,13 @@ async function refreshOwnSession(locals, userId) {
 	locals.auth.setSession(await auth.createSession({ userId, attributes: {} }))
 }
 
+/**
+ * Admin: update a user (preferences, admin role, optional password reset) and end their
+ * sessions.
+ *
+ * @param {import('./$types').RequestEvent} event
+ * @returns {Promise<Response>}
+ */
 export async function PUT({ request, locals, params }) {
 	const user = requireAdmin(locals)
 	const userData = await request.json()
@@ -118,6 +125,12 @@ export async function PUT({ request, locals, params }) {
 	}
 }
 
+/**
+ * Admin: delete a user (not yourself and not the root user).
+ *
+ * @param {import('./$types').RequestEvent} event
+ * @returns {Promise<Response>}
+ */
 export async function DELETE({ params, locals }) {
 	const user = requireAdmin(locals)
 	const { id } = params

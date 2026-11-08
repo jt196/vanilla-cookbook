@@ -20,6 +20,13 @@ function hasRecipe(recipe) {
 	return recipe && typeof recipe === 'object' && recipe.name && recipe.ingredients?.length > 0
 }
 
+/**
+ * Extract a recipe from a YouTube video in stages: `links` (recipe pages in the
+ * description), `description` or `transcript` (AI). Logged-in users only.
+ *
+ * @param {import('./$types').RequestEvent} event
+ * @returns {Promise<Response>}
+ */
 export async function POST({ request, locals }) {
 	requireAuth(locals)
 	let body

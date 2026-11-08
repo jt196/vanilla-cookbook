@@ -44,3 +44,6 @@ export const auth = lucia({
 		}
 	}
 })
+
+/** The configured Lucia instance's type; registered as `Lucia.Auth` in src/app.d.ts. */
+/** @typedef {typeof auth} Auth */

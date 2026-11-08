@@ -2,6 +2,13 @@ import { requireAuth } from '$lib/server/authHelpers'
 import { json } from '@sveltejs/kit'
 import { parseHTML } from '$lib/utils/parse/recipeParse'
 
+/**
+ * Parse a recipe from an uploaded HTML file (form field `html`) without AI. Logged-in
+ * users only.
+ *
+ * @param {import('./$types').RequestEvent} event
+ * @returns {Promise<Response>}
+ */
 export async function POST({ request, locals }) {
 	requireAuth(locals)
 	const formData = await request.formData()

@@ -2,6 +2,13 @@ import { prisma } from '$lib/server/prisma'
 import { requireAuth, jsonSuccess, jsonError } from '$lib/server/authHelpers'
 import { normalizeString, normalizeNumber, pickFirst } from '$lib/utils/normalize'
 
+/**
+ * Add an ingredient to the current user's shopping list. Body: name/ingredient, quantity,
+ * unit, optional recipeUid.
+ *
+ * @param {import('./$types').RequestEvent} event
+ * @returns {Promise<Response>}
+ */
 export async function POST({ request, locals }) {
 	const user = requireAuth(locals)
 
@@ -46,6 +53,12 @@ export async function POST({ request, locals }) {
 	}
 }
 
+/**
+ * The current user's shopping list, with each item's recipe and purchase count.
+ *
+ * @param {import('./$types').RequestEvent} event
+ * @returns {Promise<Response>}
+ */
 export async function GET({ locals }) {
 	const user = requireAuth(locals)
 
@@ -87,6 +100,13 @@ export async function GET({ locals }) {
 	}
 }
 
+/**
+ * Update one of the current user's shopping list items (purchased, name, quantity, unit);
+ * logs a purchase when it's ticked.
+ *
+ * @param {import('./$types').RequestEvent} event
+ * @returns {Promise<Response>}
+ */
 export async function PATCH({ request, locals }) {
 	const user = requireAuth(locals)
 

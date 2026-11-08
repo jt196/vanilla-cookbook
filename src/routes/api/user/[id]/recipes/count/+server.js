@@ -2,6 +2,12 @@ import { error } from '@sveltejs/kit'
 import { prisma } from '$lib/server/prisma'
 import { requireAuth, jsonSuccess, jsonError } from '$lib/server/authHelpers'
 
+/**
+ * How many recipes the current user has.
+ *
+ * @param {import('./$types').RequestEvent} event
+ * @returns {Promise<Response>}
+ */
 export async function GET({ params, locals }) {
 	const { id } = params
 	const user = requireAuth(locals)

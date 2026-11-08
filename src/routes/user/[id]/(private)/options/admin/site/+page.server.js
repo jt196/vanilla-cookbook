@@ -7,6 +7,12 @@ import {
 	describeOpenAICompatibleService
 } from '$lib/utils/llmModels'
 
+/**
+ * Site settings page: AI and semantic search configuration, backups and embedding index
+ * progress.
+ *
+ * @type {import('./$types').PageServerLoad}
+ */
 export const load = async ({ parent, locals }) => {
 	// Get parent data (settings, user)
 	const parentData = await parent()

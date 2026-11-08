@@ -14,17 +14,22 @@ import { urlToFilename } from './parseTesting.js'
 const { html: beautify } = pkg
 
 /**
- * Recipe Downloader and Fixture Utilities
+ * The compatibility manifest's entries (the canonical list of test recipe URLs).
  *
- * The compatibility manifest JSON is the canonical recipe URL corpus.
- * This module keeps manifest helpers and the fixture download helper
- * for one-off HTML snapshot capture.
+ * @param {string} [manifestPath]
+ * @returns {import('./compatibility/index.js').ManifestEntry[]}
  */
-
 export function getManifestEntries(manifestPath = COMPATIBILITY_DEFAULTS.manifestPath) {
 	return loadCompatibilityManifest(manifestPath)
 }
 
+/**
+ * Add a recipe URL to the compatibility manifest (or update it) and save.
+ *
+ * @param {string} url
+ * @param {{ statusClass?: string, notes?: string, manifestPath?: string }} [options]
+ * @returns {import('./compatibility/index.js').ManifestEntry | undefined} The saved entry.
+ */
 export function addUrlToManifest(
 	url,
 	{
