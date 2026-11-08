@@ -218,7 +218,7 @@
 		</TableRow>
 	</TableHead>
 	<TableBody>
-		{#each users as user}
+		{#each users as user (user.id)}
 			<TableRow>
 				<TableCell tag="th" scope="row"
 					>{user.username}

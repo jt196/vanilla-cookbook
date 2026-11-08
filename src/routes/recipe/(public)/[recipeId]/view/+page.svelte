@@ -144,11 +144,9 @@
 	let directionLines = $derived(activeDirections ? activeDirections.split('\n') : [])
 	let notesLines = $derived(recipe.notes ? recipe.notes.split('\n') : [])
 
-	let scaledServings = $state(null) // ✅ Use $state instead of $derived
-
-	$effect(() => {
-		scaledServings = recipe.servings ? scaleNumbersInString(recipe.servings, scale) : null
-	})
+	let scaledServings = $derived(
+		recipe.servings ? scaleNumbersInString(recipe.servings, scale) : null
+	)
 
 	let sanitizedDirections = $state([])
 	let sanitizedNotes = $state([])

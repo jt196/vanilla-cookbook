@@ -50,7 +50,7 @@
 					</TableRow>
 				</TableHead>
 				<TableBody>
-					{#each displayNutrition.entries as entry}
+					{#each displayNutrition.entries as entry, i (i)}
 						<TableRow>
 							<TableCell tag="th" scope="row">{entry.name}</TableCell>
 							<TableCell
@@ -83,7 +83,7 @@
 				</div>
 			{/if}
 			<div class="prose max-w-none">
-				{#each nutritionalInfo.split('\n') as line}
+				{#each nutritionalInfo.split('\n') as line, i (i)}
 					{#if line.trim()}
 						<p>{line}</p>
 					{/if}

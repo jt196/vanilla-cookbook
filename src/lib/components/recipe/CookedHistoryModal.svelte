@@ -89,7 +89,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				{#each logs as log}
+				{#each logs as log (log.id)}
 					<tr
 						class={onLogUpdated ? 'cursor-pointer hover:bg-base-200' : ''}
 						onclick={() => openEditDialog(log)}>
