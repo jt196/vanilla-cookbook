@@ -1,4 +1,6 @@
 <script>
+	import { markdownEditing } from '$lib/utils/markdownEditing'
+
 	let {
 		id = '',
 		name = '',
@@ -15,8 +17,12 @@
 		color = 'accent',
 		style: styleVariant = 'standard',
 		class: className = '',
+		/** GitHub-style list continuation and ⌘B / ⌘I, for fields rendered as Markdown */
+		markdown = false,
 		...rest
 	} = $props()
+
+	const markdownAction = (node) => (markdown ? markdownEditing(node) : undefined)
 
 	// Use label as legend fallback
 	$effect(() => {
@@ -77,6 +83,7 @@
 			{required}
 			{disabled}
 			bind:value
+			use:markdownAction
 			class={textareaClass}
 			style="min-width:0;max-width:100%;"
 			{...rest}></textarea>
@@ -96,6 +103,7 @@
 			{required}
 			{disabled}
 			bind:value
+			use:markdownAction
 			class={textareaClass}
 			style="min-width:0;max-width:100%;"
 			{...rest}></textarea>
