@@ -1,3 +1,4 @@
+import { safeFetch } from '$lib/server/safeFetch'
 import { ERRORS } from './parseErrors.js'
 import {
 	getAuthor,
@@ -160,9 +161,8 @@ export async function fetchHTMLResponse(url, timeoutMs = 15000) {
 	const controller = new AbortController()
 	const timeoutId = setTimeout(() => controller.abort(), timeoutMs)
 	try {
-		const response = await fetch(url, {
+		const response = await safeFetch(url, {
 			signal: controller.signal,
-			redirect: 'follow',
 			headers: SCRAPE_REQUEST_HEADERS
 		})
 		const html = await response.text()

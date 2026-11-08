@@ -130,9 +130,6 @@ export async function seedRecipes(adminUserId, prismaClient) {
 						continue
 					}
 
-					// Convert the local file path to a file URL if needed.
-					const fileUrl = `file://${localPhotoPath}`
-
 					// Create the recipe photo entry using your helper function.
 					const photoEntry = await createRecipePhotoEntry(
 						recipeRecord.uid,
@@ -141,7 +138,11 @@ export async function seedRecipes(adminUserId, prismaClient) {
 						photo.isMain
 					)
 					// Process the image (download/resize etc.)
-					const processed = await processImage(fileUrl, photoEntry.id, fileType)
+					const processed = await processImage(
+						await fsPromise.readFile(localPhotoPath),
+						photoEntry.id,
+						fileType
+					)
 					if (!processed) {
 						console.error(
 							`Image processing failed for photo ${photoId} in recipe ${recipeRecord.uid}`

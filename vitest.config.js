@@ -14,6 +14,7 @@ export default defineConfig({
 		exclude: ['**/node_modules/**', '**/dist/**', '**/testDist/**', 'src/tests/e2e/**'],
 		globals: true,
 		environment: 'jsdom',
+		setupFiles: ['src/tests/setup/dns.js'],
 		projects: [
 			{
 				extends: true,
