@@ -689,6 +689,7 @@
 			rows="3"
 			placeholder={$t('recipeForm.descriptionPlaceholder')}
 			bind:value={recipe.description}
+			markdown
 			label={$t('recipeForm.description')} />
 		<div>
 			<Textarea
@@ -697,6 +698,7 @@
 				rows="7"
 				name="directions"
 				bind:value={recipe.directions}
+				markdown
 				label={$t('recipeForm.directions')} />
 			{#if aiEnabled}
 				<div class="flex gap-2 mt-2">
@@ -753,6 +755,7 @@
 			rows="3"
 			placeholder={$t('recipeForm.notesPlaceholder')}
 			bind:value={recipe.notes}
+			markdown
 			label={$t('recipeForm.notes')} />
 		{#if aiEnabled}
 			<div class="flex gap-2 mt-2">
