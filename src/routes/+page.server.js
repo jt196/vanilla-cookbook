@@ -26,6 +26,7 @@ export const load = async ({ locals }) => {
 
 	const userId = user.userId
 
+	/** @type {import('@prisma/client').Prisma.RecipeSelect} */
 	const photoSelect = {
 		uid: true,
 		name: true,

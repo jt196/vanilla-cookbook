@@ -41,7 +41,7 @@ export async function POST({ locals, params, request }) {
 
 		const cookedTime = new Date()
 		const cookedEndTime = new Date(cookedTime.getTime() + 180 * 60 * 1000)
-		const recipeLog = await prisma.RecipeLog.create({
+		const recipeLog = await prisma.recipeLog.create({
 			data: {
 				recipeUid: uid,
 				userId: user.userId,
@@ -78,7 +78,7 @@ export async function GET({ params, locals }) {
 
 		requireOwnership(user, recipe)
 
-		const recipeLogs = await prisma.RecipeLog.findMany({
+		const recipeLogs = await prisma.recipeLog.findMany({
 			where: { recipeUid: uid },
 			orderBy: { cooked: 'desc' }
 		})

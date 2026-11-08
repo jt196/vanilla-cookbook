@@ -17,7 +17,7 @@ export async function GET({ params, locals }) {
 	}
 
 	try {
-		const count = await prisma.Recipe.count({
+		const count = await prisma.recipe.count({
 			where: { userId: user.userId }
 		})
 

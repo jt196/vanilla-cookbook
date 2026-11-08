@@ -99,7 +99,7 @@ export async function PUT({ request, locals, params }) {
 	const formData = await request.formData()
 	let recipeData
 	try {
-		recipeData = JSON.parse(formData.get('recipe'))
+		recipeData = JSON.parse(/** @type {string} */ (formData.get('recipe')))
 	} catch (err) {
 		logger.error('Failed to parse recipe payload', { error: err?.message })
 		return jsonError(400, { error: 'Invalid recipe payload', code: 'recipe.msg.invalidPayload' })
@@ -119,7 +119,7 @@ export async function PUT({ request, locals, params }) {
 		await prisma.recipe.update({ where: { uid }, data: updates })
 		logger.log('recipe row updated', { ms: logger.elapsed() })
 
-		await saveUploadedPhotos(uid, formData.getAll('images'), logger)
+		await saveUploadedPhotos(uid, /** @type {File[]} */ (formData.getAll('images')), logger)
 		if (recipeData.saveImageUrl && recipeData.image_url) {
 			await saveImageUrlAsPhoto(uid, recipeData.image_url, logger)
 		}

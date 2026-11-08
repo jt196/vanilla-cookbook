@@ -406,6 +406,8 @@ export default {
 			scrapeBlockedText:
 				'Site blocked direct scraping. Captured page text has been loaded into Text mode.',
 			aiNotEnabled: 'AI not enabled!',
+			imageProviderUnsupported:
+				"The site's AI provider can't read photos. An admin can choose an image provider in Site Settings.",
 			manualSuccess: 'Manual scrape success!',
 			manualPartial: 'Manual partially scraped.',
 			aiSuccess: 'AI scrape success!',

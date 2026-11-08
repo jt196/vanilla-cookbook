@@ -9,7 +9,7 @@ import { requireUser } from '$lib/server/authPage'
 export const load = async ({ locals }) => {
 	const user = requireUser(locals)
 
-	const ai = locals.site?.ai ?? {}
+	const { ai } = locals.site
 	const units = user?.units || 'metric'
 	const language = user?.language || 'eng'
 

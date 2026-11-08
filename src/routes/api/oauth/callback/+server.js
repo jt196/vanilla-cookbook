@@ -14,6 +14,14 @@ function clearOauthCookies(cookies) {
 	cookies.delete('oauth_provider', opts)
 	cookies.delete('oauth_code_verifier', opts)
 }
+/**
+ * Clear the OAuth cookies and redirect to the login page with a message code.
+ *
+ * @param {import('@sveltejs/kit').Cookies} cookies
+ * @param {string} msg - i18n message code shown on the login page
+ * @param {number} [status=303]
+ * @returns {never}
+ */
 function bounce(cookies, msg, status = 303) {
 	clearOauthCookies(cookies)
 	throw redirect(status, `/login?messageCode=${encodeURIComponent(msg)}`)
@@ -77,9 +85,7 @@ async function linkProviderAccount(providerId, providerUserId, userId) {
  *
  * @param {string} providerId - The provider identifier (e.g. 'oidc')
  * @param {string} providerUserId - The provider's sub claim
- * @param {Object} attrs - User attributes
- * @param {string} attrs.username - The username
- * @param {string|null} attrs.email - The email (if available)
+ * @param {{ username: string, email?: string | null }} attrs - User attributes
  * @returns {Promise<Object>} The created user
  */
 async function createOidcUser(providerId, providerUserId, attrs) {
@@ -165,12 +171,14 @@ async function handleLegacyOauthCallback(provider, url, cookies, locals) {
 	const code = url.searchParams.get('code')
 
 	// 1) validate with provider
+	// A GitHub or Google auth result. Provider-specific fields (githubUser, googleTokens, ...)
+	// are only read after checking `provider`, which TypeScript can't relate to `pa`.
+	/** @type {any} */
 	let pa
 	if (provider === 'github') {
 		pa = await githubAuth.validateCallback(code)
 	} else if (provider === 'google') {
-		const verifier = cookies.get('oauth_code_verifier') || null
-		pa = await googleAuth.validateCallback(code, verifier)
+		pa = await googleAuth.validateCallback(code)
 	} else {
 		return bounce(cookies, 'auth.msg.unsupportedProvider')
 	}

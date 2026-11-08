@@ -17,31 +17,8 @@ export const load = async ({ parent, locals }) => {
 	// Get parent data (settings, user)
 	const parentData = await parent()
 
-	// Get AI config from hooks (includes DB settings + available providers)
-	const ai = locals.site?.ai ?? {
-		enabled: false,
-		hasAnyApiKey: false,
-		availableProviders: [],
-		provider: null,
-		imageProvider: null,
-		imageGenerationProvider: null,
-		textModel: null,
-		imageModel: null,
-		imageGenerationModel: null,
-		imageAllowed: false
-	}
-	const semantic = locals.site?.semantic ?? {
-		enabled: false,
-		enabledBySite: false,
-		providerAvailable: false,
-		provider: null
-	}
-
-	// Get the raw DB settings for the form
-	const dbSettings = locals.site?.settings ?? {}
-
-	// OAuth config for conditional OIDC toggle
-	const oauth = locals.site?.oauth ?? { oidcEnabled: false }
+	// AI, semantic search, raw DB settings and OAuth config, resolved by hooks.server.js
+	const { ai, semantic, settings: dbSettings, oauth } = locals.site
 
 	const llmConfig = {
 		// Which service the OpenAI-compatible provider points at (name/link only, never the key)

@@ -20,8 +20,8 @@ export async function POST({ request, locals }) {
 	}
 
 	const formData = await request.formData()
-	const files = formData.getAll('image')
-	const language = formData.get('language') || 'eng'
+	const files = /** @type {File[]} */ (formData.getAll('image'))
+	const language = /** @type {string} */ (formData.get('language') || 'eng')
 
 	if (!files || files.length === 0) {
 		return json({ error: 'No image provided', code: 'recipeNew.msg.noImage' }, { status: 400 })

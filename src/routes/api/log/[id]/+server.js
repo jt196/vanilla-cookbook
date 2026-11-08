@@ -17,7 +17,7 @@ export async function PUT({ locals, request, params }) {
 	const body = await request.json()
 	const { start, end, note, scale } = body
 
-	const log = await prisma.RecipeLog.findUnique({
+	const log = await prisma.recipeLog.findUnique({
 		where: { id }
 	})
 
@@ -31,7 +31,7 @@ export async function PUT({ locals, request, params }) {
 	if (scale !== undefined) updateData.scale = scale
 
 	try {
-		const updatedLog = await prisma.RecipeLog.update({
+		const updatedLog = await prisma.recipeLog.update({
 			where: { id },
 			data: updateData
 		})
@@ -56,14 +56,14 @@ export async function DELETE({ locals, params }) {
 	const user = requireAuth(locals)
 	const { id } = params
 
-	const log = await prisma.RecipeLog.findUnique({
+	const log = await prisma.recipeLog.findUnique({
 		where: { id }
 	})
 
 	requireOwnership(user, log)
 
 	try {
-		await prisma.RecipeLog.delete({
+		await prisma.recipeLog.delete({
 			where: { id }
 		})
 		return jsonSuccess({ deleted: id })

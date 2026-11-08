@@ -12,7 +12,7 @@ import { parseHTML } from '$lib/utils/parse/recipeParse'
 export async function POST({ request, locals }) {
 	requireAuth(locals)
 	const formData = await request.formData()
-	const file = formData.get('html')
+	const file = /** @type {File | null} */ (formData.get('html'))
 
 	if (!file) {
 		return json({ error: 'No HTML file provided', code: 'recipeNew.msg.noFile' }, { status: 400 })

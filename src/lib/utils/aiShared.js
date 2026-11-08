@@ -76,7 +76,7 @@ ${blockType}:
  * Adds an explicit _noRecipe escape hatch so the AI can signal "no recipe here"
  * rather than fabricating one, which drives stage progression in the YouTube pipeline.
  *
- * @param {{ content?: string, url?: string }} options
+ * @param {{ content?: string, url?: string, language?: string }} [options]
  * @returns {string}
  */
 export function buildVideoTextExtractionPrompt({ content = '', url = '', language = 'eng' } = {}) {

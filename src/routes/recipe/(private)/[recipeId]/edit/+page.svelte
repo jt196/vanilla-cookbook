@@ -35,6 +35,7 @@
 	let saving = $state(false)
 	let feedbackMessage = $state('')
 	let feedbackCode = $state(null)
+	/** @type {'info' | 'error' | 'success' | 'warning'} */
 	let feedbackType = $state('info')
 
 	async function handleDelete(uid) {

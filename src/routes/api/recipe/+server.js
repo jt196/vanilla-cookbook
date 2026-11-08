@@ -20,7 +20,7 @@ export async function POST({ request, locals }) {
 	const formData = await request.formData()
 	let recipeData
 	try {
-		recipeData = JSON.parse(formData.get('recipe'))
+		recipeData = JSON.parse(/** @type {string} */ (formData.get('recipe')))
 	} catch (err) {
 		logger.error('Failed to parse recipe payload', { error: err?.message })
 		return jsonError(400, { error: 'Invalid recipe payload', code: 'recipe.msg.invalidPayload' })
@@ -61,7 +61,7 @@ export async function POST({ request, locals }) {
 	logger.log('recipe row created', { recipeUid: recipe.uid, ms: logger.elapsed() })
 
 	if (saveImageUrl && image_url) await saveImageUrlAsPhoto(recipe.uid, image_url, logger)
-	await saveUploadedPhotos(recipe.uid, formData.getAll('images'), logger)
+	await saveUploadedPhotos(recipe.uid, /** @type {File[]} */ (formData.getAll('images')), logger)
 	queueEmbeddingUpdate(locals, recipe.uid)
 
 	logger.log('success response', { recipeUid: recipe.uid, totalMs: logger.elapsed() })

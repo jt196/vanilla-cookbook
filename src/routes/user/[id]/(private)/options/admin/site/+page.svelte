@@ -764,7 +764,12 @@
 					{#each backupInfo.backups as backup (backup.name)}
 						<TableRow>
 							<TableCell>
-								<Badge variant={backup.type}>
+								<Badge
+									color={backup.type === 'pre-migration'
+										? 'warning'
+										: backup.type === 'manual'
+											? 'info'
+											: 'neutral'}>
 									{#if backup.type === 'pre-migration'}
 										{$t('admin.site.backupTypeMigration')}
 									{:else if backup.type === 'manual'}
