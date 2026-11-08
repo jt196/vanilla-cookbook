@@ -169,7 +169,7 @@
 	</div>
 	{#if filteredPhotos.length > 1}
 		<div class="flex w-full justify-center gap-2 py-3">
-			{#each filteredPhotos as _, index}
+			{#each filteredPhotos as _, index (index)}
 				<a href="#slide{index}" class="btn btn-xs">{index + 1}</a>
 			{/each}
 		</div>

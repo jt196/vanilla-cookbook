@@ -761,7 +761,7 @@
 					</TableRow>
 				</TableHead>
 				<TableBody>
-					{#each backupInfo.backups as backup}
+					{#each backupInfo.backups as backup (backup.name)}
 						<TableRow>
 							<TableCell>
 								<Badge variant={backup.type}>
@@ -796,7 +796,7 @@
 		<InfoText>{$t('admin.site.noProvidersToTest')}</InfoText>
 	{:else}
 		<div class="flex flex-col gap-2">
-			{#each providerTestResults as result}
+			{#each providerTestResults as result, i (i)}
 				<div class="rounded-box border border-base-300 p-3 flex flex-col gap-1">
 					<div class="flex items-center gap-2">
 						<span class="font-semibold">{result.label}</span>

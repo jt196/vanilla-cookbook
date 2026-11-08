@@ -73,7 +73,7 @@
 	<fieldset class={`fieldset ${fullWidth ? 'w-full' : ''}`}>
 		<legend class="fieldset-legend">{legend}</legend>
 		<select {name} bind:value={selected} {disabled} class={selectClasses}>
-			{#each options as option}
+			{#each options as option, i (i)}
 				<option value={option.value} selected={option.value === selected}>
 					{option.label}
 				</option>
@@ -88,7 +88,7 @@
 {:else}
 	<div class={`form-control ${fullWidth ? 'w-full' : ''}`}>
 		<select {name} bind:value={selected} {disabled} class={selectClasses}>
-			{#each options as option}
+			{#each options as option, i (i)}
 				<option value={option.value} selected={option.value === selected}>
 					{option.label}
 				</option>

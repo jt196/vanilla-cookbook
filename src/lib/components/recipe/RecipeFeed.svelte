@@ -1,5 +1,4 @@
 <script>
-	import { untrack } from 'svelte'
 	import { goto, invalidateAll } from '$app/navigation'
 	import { navigating } from '$app/state'
 	import { sortByDate, sortByKeyGeneric } from '$lib/utils/sorting'
@@ -38,7 +37,8 @@
 	let copyMessage = $state(null)
 	let copyMessageCode = $state(null)
 	let semanticScores = $state(new Map())
-	let semanticRuntimeEnabled = $state(untrack(() => !!semanticEnabled))
+	// Follows the prop, but is switched off locally if semantic search fails at runtime
+	let semanticRuntimeEnabled = $derived(!!semanticEnabled)
 	let semanticSearchPending = $state(false)
 	let semanticRequestId = 0
 	let isNavigating = $derived(!!navigating?.to)
@@ -122,10 +122,6 @@
 
 		return score
 	}
-
-	$effect(() => {
-		semanticRuntimeEnabled = !!semanticEnabled
-	})
 
 	function handleRecipeFavourited(uid, nextState, recipeItem) {
 		if (

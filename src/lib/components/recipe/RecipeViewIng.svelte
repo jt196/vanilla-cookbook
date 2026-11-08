@@ -20,7 +20,7 @@
 		userLanguage = 'eng'
 	} = $props()
 
-	let scaleIng = $state(1)
+	let scaleIng = $derived(handleScale(scale))
 
 	let struckThrough = $state(false)
 	let isHighlighted = $state(false)
@@ -51,10 +51,6 @@
 		}
 		return parseFloat(scale)
 	}
-
-	$effect(() => {
-		scaleIng = handleScale(scale)
-	})
 
 	const formatQuantity = (qty, min, max, unit = null) => {
 		const hasQty = qty !== null && qty !== undefined && qty !== ''
@@ -207,6 +203,7 @@
 							{/if}
 						</i>
 						<span>
+							<!-- eslint-disable-next-line svelte/no-at-html-tags -- sanitised with getSanitizedHTML (view page) -->
 							{@html ingredient.ingredient}
 							{#if extraText}
 								<i> | {extraText}</i>
@@ -291,7 +288,7 @@
 {#if panelAlternatives.length && showAlternatives}
 	<div class="alts-panel">
 		<ul>
-			{#each panelAlternatives as alt}
+			{#each panelAlternatives as alt, i (i)}
 				{#if alt}
 					<li>
 						{#if alt.quantity !== null && alt.quantity !== undefined}
