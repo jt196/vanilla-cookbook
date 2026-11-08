@@ -140,6 +140,16 @@ export async function downloadHTML(url, timeoutMs = 15000) {
 	return response.html
 }
 
+/**
+ * Fetch a recipe page (public addresses only) with browser-like headers and a timeout,
+ * returning the response details whatever the status code.
+ *
+ * @param {string} url
+ * @param {number} [timeoutMs=15000]
+ * @returns {Promise<{ ok: boolean, status: number, statusText: string, contentType: string,
+ *   finalUrl: string, html: string }>}
+ * @throws {Error} On timeout, network failure or a non-public address.
+ */
 export async function fetchHTMLResponse(url, timeoutMs = 15000) {
 	const controller = new AbortController()
 	const timeoutId = setTimeout(() => controller.abort(), timeoutMs)

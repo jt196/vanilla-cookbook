@@ -41,6 +41,14 @@ async function saveBase64AsPhoto({ base64, filename, recipeUid, setMain }) {
 	})
 }
 
+/**
+ * Download an image URL and store it as a photo of a recipe (uploads/images/{id}.{type}).
+ * The photo row is removed again if the download or processing fails.
+ *
+ * @param {{ url: string, recipeUid: string, setMain?: boolean, fileTypeHint?: string }} options
+ *   `fileTypeHint` overrides the extension guessed from the URL (default 'jpg').
+ * @returns {Promise<object | null>} The created RecipePhoto row, or null if it failed.
+ */
 export async function downloadUrlAsPhoto({ url, recipeUid, setMain, fileTypeHint }) {
 	const type = fileTypeHint || (url ? getFileType(new URL(url).pathname) : undefined) || 'jpg'
 

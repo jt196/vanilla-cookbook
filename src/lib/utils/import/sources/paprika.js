@@ -69,6 +69,15 @@ const PAPRIKA_PHOTO_STRATEGY = {
 	urlOrder: ['photo_url', 'image_url']
 }
 
+/**
+ * Import recipes from a Paprika export (.paprikarecipes / .zip) into a user's account, skipping recipes
+ * that are already in the database and including any photos it contains.
+ *
+ * @param {{ buffer: Buffer, userId: string, isPublic?: boolean }} options - The uploaded
+ *   file contents, the owner, and whether imported recipes are public.
+ * @returns {Promise<{ inserted: number, message: string }>} How many recipes were added and a
+ *   summary for the import page.
+ */
 export async function importPaprikaFromBuffer({ buffer, userId, isPublic }) {
 	// 1) read raw recipes
 	const raw = await extractPaprikaRecipesFromZipBuffer(buffer)

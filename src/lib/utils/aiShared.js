@@ -19,6 +19,15 @@ export const RECIPE_JSON_SHAPE = `{
 
 const languageMap = languageLabels
 
+/**
+ * Build the LLM prompt for extracting a recipe from pasted text, page HTML or an image.
+ * Content is truncated to 40,000 characters.
+ *
+ * @param {{ inputLabel?: string, content?: string, url?: string, language?: string }} [options]
+ *   `inputLabel` is 'Text', 'HTML' or 'Image'; `url` is only included for HTML;
+ *   `language` is an app language code (e.g. 'eng').
+ * @returns {string} The prompt text.
+ */
 export function buildRecipeExtractionPrompt({
 	inputLabel = 'Text',
 	content = '',
@@ -102,6 +111,15 @@ Video text:
 """${trimmedContent}"""${urlLine}`
 }
 
+/**
+ * Parse the JSON object from an LLM response, tolerating Markdown code fences, trailing
+ * commas and text around the object. Output that was cut off mid-object is repaired by
+ * trimming to the last complete value and closing any open brackets and braces.
+ *
+ * @param {string} rawOutput - The model's raw text output.
+ * @returns {any} The parsed object.
+ * @throws {SyntaxError} If no valid JSON can be recovered.
+ */
 export function parseRecipeJsonOutput(rawOutput) {
 	let output = (rawOutput || '').trim()
 

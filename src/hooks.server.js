@@ -57,6 +57,13 @@ function allowSessionCookieOverHttp(response) {
 	}
 }
 
+/**
+ * SvelteKit request hook: validates the session, attaches the rate limiter and site
+ * configuration to `event.locals`, enforces "require login", and applies the plain-HTTP
+ * session cookie fix and dev CORS headers to the response.
+ *
+ * @type {import('@sveltejs/kit').Handle}
+ */
 export const handle = async ({ event, resolve }) => {
 	// Session
 	event.locals.auth = auth.handleRequest(event)
