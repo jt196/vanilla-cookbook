@@ -1,5 +1,5 @@
 import { expect, it, describe } from 'vitest'
-import '@testing-library/jest-dom'
+import '@testing-library/jest-dom/vitest'
 import { getSanitizedHTML } from '$lib/utils/render.js'
 
 describe('getSanitizedHTML function', () => {

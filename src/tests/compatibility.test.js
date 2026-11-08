@@ -14,6 +14,7 @@ import {
 	runCompatibilitySweep
 } from '$lib/utils/parse/compatibility/runner.js'
 
+import { fake } from './helpers/fake.js'
 const tempDirectories = []
 
 afterEach(() => {
@@ -57,49 +58,51 @@ describe('scrape compatibility manifest', () => {
 
 describe('scrape compatibility report', () => {
 	it('renders Markdown rows sorted by site and URL', () => {
-		const markdown = renderCompatibilityMarkdown({
-			generatedAt: '2026-03-30T10:00:00.000Z',
-			llmEnabled: false,
-			urlCount: 2,
-			results: [
-				{
-					site: 'zeta.example',
-					url: 'https://zeta.example/recipe',
-					testedAt: '2026-03-30T09:00:00.000Z',
-					fixtureFilename: 'zeta.html',
-					hasSiteConfig: false,
-					diagnosis: 'parser ok',
-					liveFetch: {
-						attempted: true,
-						ok: true,
-						status: 200,
-						statusText: 'OK',
-						htmlCaptured: true
+		const markdown = renderCompatibilityMarkdown(
+			fake({
+				generatedAt: '2026-03-30T10:00:00.000Z',
+				llmEnabled: false,
+				urlCount: 2,
+				results: [
+					{
+						site: 'zeta.example',
+						url: 'https://zeta.example/recipe',
+						testedAt: '2026-03-30T09:00:00.000Z',
+						fixtureFilename: 'zeta.html',
+						hasSiteConfig: false,
+						diagnosis: 'parser ok',
+						liveFetch: {
+							attempted: true,
+							ok: true,
+							status: 200,
+							statusText: 'OK',
+							htmlCaptured: true
+						},
+						vanillaScrape: { status: 'complete' },
+						llmFallback: { status: 'skipped' },
+						notes: 'Later row'
 					},
-					vanillaScrape: { status: 'complete' },
-					llmFallback: { status: 'skipped' },
-					notes: 'Later row'
-				},
-				{
-					site: 'alpha.example',
-					url: 'https://alpha.example/recipe',
-					testedAt: '2026-03-30T08:00:00.000Z',
-					fixtureFilename: 'alpha.html',
-					hasSiteConfig: false,
-					diagnosis: 'live blocked, html captured',
-					liveFetch: {
-						attempted: true,
-						ok: false,
-						status: 402,
-						statusText: 'Payment Required',
-						htmlCaptured: true
-					},
-					vanillaScrape: { status: 'partial' },
-					llmFallback: { status: 'complete' },
-					notes: 'Earlier row'
-				}
-			]
-		})
+					{
+						site: 'alpha.example',
+						url: 'https://alpha.example/recipe',
+						testedAt: '2026-03-30T08:00:00.000Z',
+						fixtureFilename: 'alpha.html',
+						hasSiteConfig: false,
+						diagnosis: 'live blocked, html captured',
+						liveFetch: {
+							attempted: true,
+							ok: false,
+							status: 402,
+							statusText: 'Payment Required',
+							htmlCaptured: true
+						},
+						vanillaScrape: { status: 'partial' },
+						llmFallback: { status: 'complete' },
+						notes: 'Earlier row'
+					}
+				]
+			})
+		)
 
 		const alphaIndex = markdown.indexOf('| alpha.example |')
 		const zetaIndex = markdown.indexOf('| zeta.example |')

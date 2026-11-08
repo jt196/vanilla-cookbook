@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { lookup } from 'node:dns/promises'
 import { assertPublicUrl, isPrivateAddress, safeFetch } from '$lib/server/safeFetch'
 
+import { fake } from './helpers/fake.js'
 describe('isPrivateAddress', () => {
 	it.each([
 		'127.0.0.1',
@@ -49,10 +50,12 @@ describe('assertPublicUrl', () => {
 	})
 
 	it('rejects hostnames that resolve to any private address', async () => {
-		vi.mocked(lookup).mockResolvedValueOnce([
-			{ address: '93.184.216.34', family: 4 },
-			{ address: '10.0.0.5', family: 4 }
-		])
+		vi.mocked(lookup).mockResolvedValueOnce(
+			fake([
+				{ address: '93.184.216.34', family: 4 },
+				{ address: '10.0.0.5', family: 4 }
+			])
+		)
 		await expect(assertPublicUrl('https://sneaky.example/')).rejects.toThrow(/not a public/)
 	})
 

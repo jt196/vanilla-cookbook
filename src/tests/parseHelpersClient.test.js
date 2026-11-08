@@ -8,6 +8,7 @@ import {
 	isBlockedScrapeErrorMessage
 } from '$lib/utils/parse/parseHelpersClient'
 
+import { fake } from './helpers/fake.js'
 const json = (status, body) =>
 	new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } })
 
@@ -39,7 +40,7 @@ describe('parseHelpersClient', () => {
 		it('calls preventDefault and returns the formatted recipe with source/status', async () => {
 			fetchMock.mockResolvedValue(json(200, rawRecipe))
 			const event = { preventDefault: vi.fn() }
-			const result = await handleScrape(event, 'https://example.com/soup')
+			const result = await handleScrape(fake(event), 'https://example.com/soup')
 
 			expect(event.preventDefault).toHaveBeenCalled()
 			expect(fetchMock.mock.calls[0][0]).toBe(
@@ -97,6 +98,7 @@ describe('parseHelpersClient', () => {
 
 	describe('handleParse / handleImage / handleHTMLFile', () => {
 		const file = new File(['x'], 'r.html', { type: 'text/html' })
+		/** @type {Array<[name: string, call: () => Promise<any>, url: string]>} */
 		const cases = [
 			['handleParse', () => handleParse(null, 'text', { language: 'deu' }), '/api/recipe/parse'],
 			['handleImage', () => handleImage(null, [file]), '/api/recipe/parse/image'],

@@ -17,26 +17,33 @@ import { extractRecipeWithLLM } from '$lib/utils/ai'
 import { resolveAIConfig } from '$lib/server/aiHelpers'
 import { GET as scrapeGet } from '../routes/api/recipe/scrape/[url]/+server.js'
 
+import { fake } from './helpers/fake.js'
+
 const userLocals = { user: { userId: 'u1', username: 'cook' } }
 
 describe('API Routes - /api/recipe/scrape/[url]', () => {
 	it('requires a logged-in user', async () => {
 		await expect(
-			scrapeGet({ params: { url: encodeURIComponent('https://example.com/recipe') }, locals: {} })
+			scrapeGet(
+				fake({
+					params: { url: encodeURIComponent('https://example.com/recipe') },
+					locals: {}
+				})
+			)
 		).rejects.toMatchObject({ status: 401 })
 		expect(parseURL).not.toHaveBeenCalled()
 	})
 
 	beforeEach(() => {
 		vi.clearAllMocks()
-		resolveAIConfig.mockReturnValue({
+		vi.mocked(resolveAIConfig).mockReturnValue({
 			ok: false,
 			response: new Response(JSON.stringify({ error: 'AI disabled' }), { status: 503 })
 		})
 	})
 
 	it('returns a partial scraper result when extraction is incomplete and AI is unavailable', async () => {
-		parseURL.mockResolvedValue({
+		vi.mocked(parseURL).mockResolvedValue({
 			parsedHTML: {
 				name: 'Chef John’s Fresh Salmon Cakes',
 				author: 'allrecipes.com',
@@ -47,14 +54,16 @@ describe('API Routes - /api/recipe/scrape/[url]', () => {
 			html: '<html><body>recipe</body></html>'
 		})
 
-		const response = await scrapeGet({
-			params: {
-				url: encodeURIComponent(
-					'https://www.allrecipes.com/recipe/239541/chef-johns-fresh-salmon-cakes/'
-				)
-			},
-			locals: userLocals
-		})
+		const response = await scrapeGet(
+			fake({
+				params: {
+					url: encodeURIComponent(
+						'https://www.allrecipes.com/recipe/239541/chef-johns-fresh-salmon-cakes/'
+					)
+				},
+				locals: userLocals
+			})
+		)
 		const data = await response.json()
 
 		expect(response.status).toBe(200)
@@ -65,16 +74,20 @@ describe('API Routes - /api/recipe/scrape/[url]', () => {
 	})
 
 	it('returns an upstream error when the remote site blocks the scrape fetch', async () => {
-		parseURL.mockRejectedValue(new Error('Upstream site returned HTTP 402 Payment Required'))
+		vi.mocked(parseURL).mockRejectedValue(
+			new Error('Upstream site returned HTTP 402 Payment Required')
+		)
 
-		const response = await scrapeGet({
-			params: {
-				url: encodeURIComponent(
-					'https://www.allrecipes.com/recipe/239541/chef-johns-fresh-salmon-cakes/'
-				)
-			},
-			locals: userLocals
-		})
+		const response = await scrapeGet(
+			fake({
+				params: {
+					url: encodeURIComponent(
+						'https://www.allrecipes.com/recipe/239541/chef-johns-fresh-salmon-cakes/'
+					)
+				},
+				locals: userLocals
+			})
+		)
 		const data = await response.json()
 
 		expect(response.status).toBe(502)
@@ -83,28 +96,32 @@ describe('API Routes - /api/recipe/scrape/[url]', () => {
 	})
 
 	it('attempts AI fallback when scrape failure still includes HTML content', async () => {
-		const scrapeError = new Error('Upstream site returned HTTP 402 Payment Required')
-		scrapeError.html = '<html><body>blocked page</body></html>'
-		parseURL.mockRejectedValue(scrapeError)
-		resolveAIConfig.mockReturnValue({
+		const scrapeError = Object.assign(
+			new Error('Upstream site returned HTTP 402 Payment Required'),
+			{ html: '<html><body>blocked page</body></html>' }
+		)
+		vi.mocked(parseURL).mockRejectedValue(scrapeError)
+		vi.mocked(resolveAIConfig).mockReturnValue({
 			ok: true,
 			provider: 'openai',
 			model: 'gpt-4o-mini'
 		})
-		extractRecipeWithLLM.mockResolvedValue({
+		vi.mocked(extractRecipeWithLLM).mockResolvedValue({
 			name: 'Recovered Recipe',
 			ingredients: ['1 egg'],
 			instructions: ['Cook it']
 		})
 
-		const response = await scrapeGet({
-			params: {
-				url: encodeURIComponent(
-					'https://www.allrecipes.com/recipe/239541/chef-johns-fresh-salmon-cakes/'
-				)
-			},
-			locals: userLocals
-		})
+		const response = await scrapeGet(
+			fake({
+				params: {
+					url: encodeURIComponent(
+						'https://www.allrecipes.com/recipe/239541/chef-johns-fresh-salmon-cakes/'
+					)
+				},
+				locals: userLocals
+			})
+		)
 		const data = await response.json()
 
 		expect(response.status).toBe(200)

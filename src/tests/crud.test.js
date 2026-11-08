@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import * as crud from '$lib/utils/crud'
 
+import { fake } from './helpers/fake.js'
 /** Build a fetch Response-like object. */
 function res(status, body) {
 	return new Response(body === undefined ? null : JSON.stringify(body), {
@@ -33,21 +34,30 @@ describe('crud.js client helpers', () => {
 			['updatePhotos', [[{ id: 'p1' }]], '/api/recipe/images', 'PUT']
 		]
 
-		it.each(cases)('%s returns true on success', async (fn, args, url, method) => {
-			fetchMock.mockResolvedValue(res(200, { ok: 1 }))
-			expect(await crud[fn](...args)).toBe(true)
-			expect(fetchMock).toHaveBeenCalledWith(url, expect.objectContaining({ method }))
-		})
+		it.each(cases)(
+			'%s returns true on success',
+			fake(async (fn, args, url, method) => {
+				fetchMock.mockResolvedValue(res(200, { ok: 1 }))
+				expect(await crud[fn](...args)).toBe(true)
+				expect(fetchMock).toHaveBeenCalledWith(url, expect.objectContaining({ method }))
+			})
+		)
 
-		it.each(cases)('%s returns false on HTTP error', async (fn, args) => {
-			fetchMock.mockResolvedValue(res(403, { error: 'nope' }))
-			expect(await crud[fn](...args)).toBe(false)
-		})
+		it.each(cases)(
+			'%s returns false on HTTP error',
+			fake(async (fn, args) => {
+				fetchMock.mockResolvedValue(res(403, { error: 'nope' }))
+				expect(await crud[fn](...args)).toBe(false)
+			})
+		)
 
-		it.each(cases)('%s returns false on network error', async (fn, args) => {
-			fetchMock.mockRejectedValue(new Error('offline'))
-			expect(await crud[fn](...args)).toBe(false)
-		})
+		it.each(cases)(
+			'%s returns false on network error',
+			fake(async (fn, args) => {
+				fetchMock.mockRejectedValue(new Error('offline'))
+				expect(await crud[fn](...args)).toBe(false)
+			})
+		)
 
 		it('updatePhotos sends the photos as JSON', async () => {
 			fetchMock.mockResolvedValue(res(200, {}))

@@ -411,7 +411,7 @@ describe('manipulateIngredient function', () => {
 			keys: ['name'],
 			threshold: 0.4,
 			includeScore: true,
-			caseSensitive: false
+			isCaseSensitive: false
 		})
 	})
 

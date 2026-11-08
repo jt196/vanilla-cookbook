@@ -79,7 +79,7 @@ jobs:
       - name: Lint
         run: pnpm lint
 
-      # svelte-check with checkJs; fails if type errors rise above scripts/type-baseline.json
+      # svelte-check with checkJs; fails on any type error
       - name: Type check
         run: pnpm check:types
 

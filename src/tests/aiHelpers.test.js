@@ -1,13 +1,15 @@
 import { describe, expect, it } from 'vitest'
 import { resolveAIConfig } from '$lib/server/aiHelpers'
 
+import { fake } from './helpers/fake.js'
+
 const site = (ai) => ({
 	site: { ai: { enabled: true, provider: 'google', availableProviders: ['google'], ...ai } }
 })
 
 describe('resolveAIConfig', () => {
 	it('returns the provider and model when a text model is set', () => {
-		expect(resolveAIConfig(site({ textModel: 'gemini-x' }), 'text')).toEqual({
+		expect(resolveAIConfig(fake(site({ textModel: 'gemini-x' })), 'text')).toEqual({
 			ok: true,
 			provider: 'google',
 			model: 'gemini-x'
@@ -15,20 +17,20 @@ describe('resolveAIConfig', () => {
 	})
 
 	it('points admins at Site Settings when no model is set', async () => {
-		const result = resolveAIConfig({ ...site({}), user: { isAdmin: true } }, 'text')
+		const result = resolveAIConfig(fake({ ...site({}), user: { isAdmin: true } }), 'text')
 		expect(result.ok).toBe(false)
 		expect(result.response.status).toBe(503)
 		expect(await result.response.json()).toMatchObject({ code: 'aiSetup.noModelAdmin' })
 	})
 
 	it('tells other users to ask an admin when no model is set', async () => {
-		const result = resolveAIConfig({ ...site({}), user: { isAdmin: false } }, 'image')
+		const result = resolveAIConfig(fake({ ...site({}), user: { isAdmin: false } }), 'image')
 		expect(result.ok).toBe(false)
 		expect(await result.response.json()).toMatchObject({ code: 'aiSetup.noModelUser' })
 	})
 
 	it('leaves image generation to its own model check', () => {
-		const result = resolveAIConfig(site({}), 'imageGeneration')
+		const result = resolveAIConfig(fake(site({})), 'imageGeneration')
 		expect(result).toMatchObject({ ok: true, provider: 'google', model: null })
 	})
 })

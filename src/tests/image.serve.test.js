@@ -13,6 +13,7 @@ import { prisma } from '$lib/server/prisma'
 import { deleteSinglePhotoFile } from '$lib/utils/image/imageBackend.js'
 import { GET } from '../routes/api/recipe/image/[id]/+server.js'
 
+import { fake } from './helpers/fake.js'
 let root
 const imagePath = (name) => path.join(root, 'uploads/images', name)
 const thumbPath = (id) => path.join(root, 'uploads/thumbs', `${id}-400.webp`)
@@ -23,11 +24,15 @@ async function writeJpeg(id, width = 1200, height = 800) {
 		.toFile(imagePath(`${id}.jpg`))
 }
 
+/**
+ * @param {string | null} fileType
+ * @param {{ w?: number, etag?: string, id?: string }} [options]
+ */
 function serve(fileType, { w, etag, id = 'p1' } = {}) {
-	prisma.recipePhoto.findUnique.mockResolvedValue({ id, fileType })
+	vi.mocked(prisma.recipePhoto.findUnique).mockResolvedValue(fake({ id, fileType }))
 	const url = new URL(`http://localhost/api/recipe/image/${id}${w ? `?w=${w}` : ''}`)
 	const headers = etag ? { 'if-none-match': etag } : {}
-	return GET({ params: { id }, url, request: new Request(url, { headers }) })
+	return GET(fake({ params: { id }, url, request: new Request(url, { headers }) }))
 }
 
 beforeEach(() => {
