@@ -32,12 +32,3 @@ export const googleAuth =
 				redirectUri: `${BASE}/api/oauth/callback`
 			})
 		: null
-
-export const getOAuthProviders = () => {
-	const providers = {}
-	if (githubAuth) providers.github = githubAuth
-	if (googleAuth) providers.google = googleAuth
-	return providers
-}
-
-export const isOauthEnabled = () => Object.keys(getOAuthProviders()).length > 0

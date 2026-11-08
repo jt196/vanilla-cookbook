@@ -15,7 +15,6 @@
 	 * @see src/lib/typeDefinitions.js for the Recipe type definition
 	 */
 
-	let recipeCategories = $state([]) // This will store the selected category UIDs for the recipe
 	let selectedFiles = $state([])
 	let saveImageUrl = $state(false)
 
@@ -38,11 +37,6 @@
 	let feedbackCode = $state(null)
 	let feedbackType = $state('info')
 
-	$effect(() => {
-		recipeCategories =
-			recipe && recipe.categories ? recipe.categories.map((cat) => cat.categoryUid) : []
-	})
-
 	async function handleDelete(uid) {
 		if (!uid) return
 		showDeleteConfirm = true
@@ -54,16 +48,10 @@
 		feedbackMessage = ''
 		feedbackCode = null
 
-		const recipeWithCategories = {
-			...recipe,
-			categories: recipeCategories,
-			saveImageUrl
-		}
-
 		const formData = new FormData()
 
 		// Append the entire recipe object
-		formData.append('recipe', JSON.stringify(recipeWithCategories))
+		formData.append('recipe', JSON.stringify({ ...recipe, saveImageUrl }))
 
 		// Append the selected files
 		for (const file of selectedFiles) {
@@ -103,7 +91,6 @@
 		editMode={true}
 		bind:selectedFiles
 		bind:saveImageUrl
-		{recipeCategories}
 		{aiEnabled}
 		{aiProvider}
 		{aiSelectedProvider}

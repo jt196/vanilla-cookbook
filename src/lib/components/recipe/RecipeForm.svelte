@@ -17,7 +17,7 @@
 	import Undo from '$lib/components/svg/Undo.svelte'
 	import { t } from '$lib/stores/locale.js'
 
-	/** @type {{recipe: any, onSubmit: any, buttonText?: string, selectedFiles?: any, onSelectedFilesChange?: any, editMode?: boolean, recipeCategories?: any, aiEnabled?: boolean, aiProvider?: string | null, aiSelectedProvider?: string | null, aiSelectedProviderConfigured?: boolean, isAdmin?: boolean, userUnits?: string, userLanguage?: string, cancelHref?: string, onDelete?: (() => void) | null, saveImageUrl?: boolean}} */
+	/** @type {{recipe: any, onSubmit: any, buttonText?: string, selectedFiles?: any, onSelectedFilesChange?: any, editMode?: boolean, aiEnabled?: boolean, aiProvider?: string | null, aiSelectedProvider?: string | null, aiSelectedProviderConfigured?: boolean, isAdmin?: boolean, userUnits?: string, userLanguage?: string, cancelHref?: string, onDelete?: (() => void) | null, saveImageUrl?: boolean}} */
 	let {
 		recipe = $bindable(),
 		onSubmit,
@@ -25,7 +25,6 @@
 		selectedFiles = $bindable([]),
 		onSelectedFilesChange,
 		editMode = false,
-		recipeCategories = null,
 		aiEnabled = false,
 		aiSelectedProvider = null,
 		aiSelectedProviderConfigured = false,
@@ -819,11 +818,6 @@
 			<InfoText class="mt-1">{$t('recipeForm.cleanNutritionTip')}</InfoText>
 		{/if}
 		<Button type="submit" size="sm" class="mt-4">{resolvedButtonText}</Button>
-		{#if recipeCategories}
-			{#each recipeCategories as categoryUid}
-				<input type="hidden" name="categories[]" value={categoryUid} />
-			{/each}
-		{/if}
 	</div>
 </form>
 
