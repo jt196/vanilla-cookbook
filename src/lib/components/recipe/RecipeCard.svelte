@@ -1,5 +1,6 @@
 <!-- RecipeCard.svelte -->
 <script>
+	import { photoSrc } from '$lib/utils/image/imageUtils'
 	import Favourite from '$lib/components/svg/Favourite.svelte'
 	import Check from '$lib/components/svg/Check.svelte'
 	import Fork from '$lib/components/svg/Fork.svelte'
@@ -81,7 +82,7 @@
 					<img
 						class="h-full w-full object-cover"
 						loading="lazy"
-						src="/api/recipe/image/{item.photos[0].id}"
+						src={photoSrc(item.photos[0].id, { thumbnail: true })}
 						alt={$t('recipeCard.thumbnail', { name: item.name })}
 						onerror={() => (showPrimaryPhoto = false)} />
 				{:else if item.image_url && showImageUrl}

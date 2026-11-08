@@ -63,14 +63,7 @@
 	}
 
 	const classes = $derived(
-		[
-			'btn',
-			colorClasses[color],
-			styleClasses[style],
-			sizeClasses[size],
-			loading ? 'loading' : '',
-			className
-		]
+		['btn', colorClasses[color], styleClasses[style], sizeClasses[size], className]
 			.filter(Boolean)
 			.join(' ')
 	)
@@ -85,8 +78,9 @@
 	aria-label={ariaLabel}
 	class={classes}
 	{onclick}>
+	<!-- In DaisyUI 5 `loading` is the spinner element itself, never a class on the button -->
 	{#if loading}
-		<span class="loading loading-spinner"></span>
+		<span class="loading loading-spinner loading-sm" aria-hidden="true"></span>
 	{/if}
 	{@render children()}
 </button>

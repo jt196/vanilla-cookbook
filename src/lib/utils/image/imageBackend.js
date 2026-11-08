@@ -12,6 +12,53 @@ export function photoFilePath(photoId, fileType) {
 	return path.join(process.cwd(), 'uploads/images', `${photoId}.${fileType}`)
 }
 
+/** Widths a thumbnail can be requested at (`/api/recipe/image/[id]?w=400`). */
+export const THUMBNAIL_WIDTHS = [400]
+
+/** Absolute path of a cached thumbnail. */
+function thumbnailPath(photoId, width) {
+	return path.join(process.cwd(), 'uploads/thumbs', `${photoId}-${width}.webp`)
+}
+
+const statOrNull = (file) => fsPromises.stat(file).catch(() => null)
+
+/**
+ * A WebP thumbnail of a stored photo, generated on first request and cached on disk under
+ * uploads/thumbs. It is regenerated if the original file is newer.
+ *
+ * @param {{ id: string, fileType: string }} photo
+ * @param {number} width - One of THUMBNAIL_WIDTHS
+ * @returns {Promise<string | null>} Path to the thumbnail, or null if the original is missing
+ *   or can't be decoded (callers can fall back to the original).
+ */
+export async function photoThumbnailPath(photo, width) {
+	const original = photoFilePath(photo.id, photo.fileType)
+	const thumbnail = thumbnailPath(photo.id, width)
+	const [originalStat, thumbnailStat] = await Promise.all([
+		statOrNull(original),
+		statOrNull(thumbnail)
+	])
+	if (!originalStat) return null
+	if (thumbnailStat && thumbnailStat.mtimeMs >= originalStat.mtimeMs) return thumbnail
+
+	// Write to a unique temp file and rename, so concurrent requests never serve a partial file
+	const temp = `${thumbnail}.${process.pid}.${Math.random().toString(36).slice(2)}.tmp`
+	try {
+		await fsPromises.mkdir(path.dirname(thumbnail), { recursive: true })
+		await sharp(original)
+			.rotate() // respect EXIF orientation
+			.resize({ width, withoutEnlargement: true })
+			.webp({ quality: 75 })
+			.toFile(temp)
+		await fsPromises.rename(temp, thumbnail)
+		return thumbnail
+	} catch (err) {
+		console.warn(`Could not create thumbnail for photo ${photo.id}: ${err.message}`)
+		await fsPromises.unlink(temp).catch(() => {})
+		return null
+	}
+}
+
 /** @param {string} url */
 function hostOf(url) {
 	try {
@@ -87,7 +134,10 @@ export async function saveRemoteImageAsPhoto({ recipeUid, url, isMain = false })
  * @param {string} fileType - The file type of the photo (e.g., 'jpg', 'png').
  */
 export async function deleteSinglePhotoFile(id, fileType) {
-	const photoPath = path.join('uploads/images/', `${id}.${fileType}`)
+	const photoPath = photoFilePath(id, fileType)
+	await Promise.all(
+		THUMBNAIL_WIDTHS.map((width) => fsPromises.unlink(thumbnailPath(id, width)).catch(() => {}))
+	)
 	try {
 		await fsPromises.unlink(photoPath)
 		return true // Successfully deleted
