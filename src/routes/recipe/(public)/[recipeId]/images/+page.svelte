@@ -90,7 +90,7 @@
 
 <div class="mb-4">
 	<h3 class="text-2xl font-semibold mb-2">{recipe?.name}</h3>
-	<a href="/recipe/{recipe?.uid}/view/" class="btn btn-soft btn-secondary btn-sm"
+	<a href="/recipe/{recipe?.uid}/view" class="btn btn-soft btn-secondary btn-sm"
 		>{$t('photos.viewRecipe')}</a>
 </div>
 

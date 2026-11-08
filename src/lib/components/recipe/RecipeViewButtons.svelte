@@ -116,14 +116,14 @@
 {/if}
 {#if !viewOnly}
 	<a
-		href="/recipe/{recipe?.uid}/edit/"
+		href="/recipe/{recipe?.uid}/edit"
 		class="btn btn-soft btn-primary btn-sm tooltip"
 		data-tip={$t('recipe.editRecipe')}
 		data-testid="edit-button">
 		<Edit width="20px" height="20px" fill="currentColor" />
 	</a>
 	<a
-		href="/recipe/{recipe?.uid}/images/"
+		href="/recipe/{recipe?.uid}/images"
 		class="btn btn-soft btn-primary btn-sm tooltip"
 		data-tip={$t('recipe.editImages')}
 		data-testid="edit-button">
