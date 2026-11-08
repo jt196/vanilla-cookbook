@@ -6,8 +6,8 @@ import {
 	getRating,
 	parseInstructions,
 	parseIngredients,
+	parseKeywords,
 	parseVideo,
-	getNutrition,
 	parseTools,
 	parseJSONLD,
 	getDomainFromUrl,
@@ -25,35 +25,73 @@ export const SCRAPE_REQUEST_HEADERS = {
 		'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
 }
 
-function hasValue(value) {
-	if (Array.isArray(value)) return value.length > 0
-	return value !== undefined && value !== null && value !== ''
-}
+const hasValue = (value) =>
+	Array.isArray(value) ? value.length > 0 : value !== undefined && value !== null && value !== ''
 
-function hasRecipeData(recipeRaw) {
-	if (!recipeRaw || typeof recipeRaw !== 'object') return false
+/** Raw data is usable once it has ingredients and instructions; no need to try more sources. */
+const isComplete = (raw) => hasValue(raw?.recipeIngredient) && hasValue(raw?.recipeInstructions)
 
-	return Boolean(
-		hasValue(recipeRaw.name) ||
-		hasValue(recipeRaw.recipeIngredient) ||
-		hasValue(recipeRaw.recipeInstructions) ||
-		hasValue(recipeRaw.description)
-	)
-}
-
-function mergeRecipeData(primary = null, fallback = null) {
-	if (!fallback || typeof fallback !== 'object') return primary
-	if (!primary || typeof primary !== 'object') return fallback
-
+/** Fill empty fields of `primary` from `fallback`. */
+function fillMissing(primary, fallback) {
+	if (!primary) return fallback
 	const merged = { ...primary }
-
-	for (const [key, fallbackValue] of Object.entries(fallback)) {
-		if (!hasValue(merged[key]) && hasValue(fallbackValue)) {
-			merged[key] = fallbackValue
-		}
+	for (const [key, value] of Object.entries(fallback)) {
+		if (!hasValue(merged[key]) && hasValue(value)) merged[key] = value
 	}
-
 	return merged
+}
+
+/**
+ * Collect raw schema.org-shaped recipe data from a page, trying each source in turn until
+ * ingredients and instructions are both found: JSON-LD, then the site's CSS selector
+ * config (if any), then microdata. Later sources only fill fields earlier ones left empty.
+ *
+ * @param {import('node-html-parser').HTMLElement} root
+ * @param {Object | undefined} siteConfig
+ * @returns {Object | null}
+ */
+function extractRawRecipe(root, siteConfig) {
+	const fallbacks = [
+		siteConfig && (() => parseUsingSiteConfig(root, siteConfig)),
+		() => extractMicrodata(root)
+	].filter(Boolean)
+
+	let raw = parseJSONLD(root)
+	for (const extract of fallbacks) {
+		if (isComplete(raw)) break
+		raw = fillMissing(raw, extract())
+	}
+	return raw
+}
+
+/**
+ * Map raw schema.org fields to the recipe shape the app uses.
+ *
+ * @param {Object} raw - Raw Recipe data.
+ * @param {string} url - Page URL, used as the source URL if the data has none.
+ * @param {string} domain - Page domain, used as the author if the data has none.
+ */
+function toRecipe(raw, url, domain) {
+	return {
+		name: raw.name,
+		author: raw.author ? getAuthor(raw.author) : domain,
+		sourceUrl: raw.sourceUrl || url,
+		description: raw.description,
+		cookTime: raw.cookTime,
+		prepTime: raw.prepTime,
+		totalTime: raw.totalTime,
+		imageUrl: getImage(raw.image),
+		ingredients: parseIngredients(raw.recipeIngredient),
+		instructions: parseInstructions(raw.recipeInstructions),
+		keywords: parseKeywords(raw.keywords),
+		category: raw.recipeCategory,
+		cuisine: raw.recipeCuisine,
+		rating: getRating(raw.aggregateRating),
+		servings: [raw.recipeYield].flat()[0],
+		...parseVideo(raw.video),
+		nutrition: raw.nutrition || undefined,
+		equipment: parseTools(raw.tool)
+	}
 }
 
 /**
@@ -66,70 +104,15 @@ function mergeRecipeData(primary = null, fallback = null) {
 export function parseRecipe(html, url) {
 	try {
 		const root = parse(html, { lowerCaseTagName: true })
-
-		let recipeRaw = parseJSONLD(root)
 		const domain = getDomainFromUrl(url)
-		const siteConfig = siteConfigurations[domain]
+		const raw = extractRawRecipe(root, siteConfigurations[domain])
 
-		if (!hasValue(recipeRaw?.recipeIngredient) || !hasValue(recipeRaw?.recipeInstructions)) {
-			if (siteConfig) {
-				console.log('Augmenting structured data using site config')
-				recipeRaw = mergeRecipeData(recipeRaw, parseUsingSiteConfig(root, siteConfig))
-			}
+		const hasAnyData = ['name', 'recipeIngredient', 'recipeInstructions', 'description'].some(
+			(field) => hasValue(raw?.[field])
+		)
+		if (!hasAnyData) throw ERRORS.MISSING_DATA
 
-			if (!hasValue(recipeRaw?.recipeIngredient) || !hasValue(recipeRaw?.recipeInstructions)) {
-				console.log('Augmenting structured data using microdata')
-				recipeRaw = mergeRecipeData(recipeRaw, extractMicrodata(root))
-			}
-		}
-
-		if (!hasRecipeData(recipeRaw)) throw ERRORS.MISSING_DATA
-
-		const author = recipeRaw.author ? getAuthor(recipeRaw.author) : domain
-		const sourceUrl = recipeRaw.sourceUrl || url
-		const description = recipeRaw.description
-		const cookTime = recipeRaw.cookTime
-		const imageUrl = getImage(recipeRaw.image)
-		const keywords = Array.isArray(recipeRaw.keywords)
-			? recipeRaw.keywords.map((v) => v.trim())
-			: typeof recipeRaw.keywords === 'string'
-				? recipeRaw.keywords.split(',').map((v) => v.trim())
-				: []
-
-		const prepTime = recipeRaw.prepTime
-		const ingredients = parseIngredients(recipeRaw.recipeIngredient)
-		const instructions = parseInstructions(recipeRaw.recipeInstructions)
-		const category = recipeRaw.recipeCategory
-		const cuisine = recipeRaw.recipeCuisine
-		const rating = getRating(recipeRaw.aggregateRating)
-		const totalTime = recipeRaw.totalTime
-		let servings = recipeRaw.recipeYield
-		if (Array.isArray(servings)) servings = servings[0]
-
-		const video = parseVideo(recipeRaw.video)
-		const nutrition = getNutrition(recipeRaw.nutrition)
-		const equipment = parseTools(recipeRaw.tool)
-
-		return cleanObjectStrings({
-			name: recipeRaw.name,
-			author,
-			sourceUrl,
-			description,
-			cookTime,
-			prepTime,
-			totalTime,
-			imageUrl,
-			ingredients,
-			instructions,
-			keywords,
-			category,
-			cuisine,
-			rating,
-			servings,
-			...video,
-			nutrition,
-			equipment
-		})
+		return cleanObjectStrings(toRecipe(raw, url, domain))
 	} catch (error) {
 		console.log('Error:', error)
 		return typeof error === 'string' ? error : error?.message || 'Unknown error'
