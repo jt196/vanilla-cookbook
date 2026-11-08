@@ -65,7 +65,6 @@ export default {
 
 	palette: {
 		placeholder: 'Search recipes, or go to…',
-		searchRecipes: 'Search {count} recipes…',
 		recipes: 'Recipes',
 		goTo: 'Go to',
 		actions: 'Actions',

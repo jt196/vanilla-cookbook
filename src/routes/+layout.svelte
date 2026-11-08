@@ -124,7 +124,7 @@
 
 		{#if dbSeed}
 			<div class="navbar-end flex-1 gap-2">
-				<SearchButton compact label={$t('nav.search')} />
+				<SearchButton />
 				<!-- Desktop Navigation - hidden on mobile -->
 				<div class="hidden lg:flex">
 					<NavLinks {user} {settings} {themePreference} onThemeChange={setThemePreference} />
