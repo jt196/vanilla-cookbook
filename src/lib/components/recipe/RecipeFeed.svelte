@@ -8,6 +8,7 @@
 	import CopyRecipeDialog from '$lib/components/recipe/CopyRecipeDialog.svelte'
 	import { duplicateRecipe } from '$lib/utils/crud'
 	import { t } from '$lib/stores/locale.js'
+	import { stripIngredientMarkers } from '$lib/utils/ingredientMarkers'
 	import {
 		sortState,
 		searchString,
@@ -52,7 +53,7 @@
 			recipe?.name,
 			recipe?.description,
 			recipe?.ingredients,
-			recipe?.directions,
+			stripIngredientMarkers(recipe?.directions),
 			recipe?.notes,
 			recipe?.source
 		]

@@ -4,10 +4,53 @@ import { json } from '@sveltejs/kit'
 import { resolveAIConfig } from '$lib/server/aiHelpers'
 import { parseNutritionInfo, serializeNutritionEntries } from '$lib/utils/nutrition'
 import { getNutritionLocale } from '$lib/submodules/recipe-ingredient-parser/src/i18n/nutrition'
+import { ingredientProcess } from '$lib/utils/filters'
+import { isHeadingIngredient } from '$lib/utils/ingredientMarkers'
+
+/**
+ * The distinct ingredient names (without amounts) from a recipe's ingredient text,
+ * skipping Markdown headings, for the AI to use inside amount markers.
+ *
+ * @param {unknown} ingredients - Newline-separated ingredient lines
+ * @param {string} language
+ * @returns {string[]}
+ */
+function ingredientNamesForMarkers(ingredients, language) {
+	if (typeof ingredients !== 'string' || !ingredients.trim()) return []
+	const lines = ingredients.split('\n').filter((line) => line.trim())
+	const names = ingredientProcess(lines, language)
+		.filter((ing) => !isHeadingIngredient(ing))
+		.map((ing) => (typeof ing?.ingredient === 'string' ? ing.ingredient.trim() : ''))
+		.filter(Boolean)
+	return [...new Set(names)]
+}
+
+/**
+ * Prompt rules for ingredient amount markers ({onion}) when summarizing directions:
+ * always keep existing ones, and add new ones when the ingredient names are known.
+ *
+ * @param {string[]} ingredientNames
+ * @returns {string}
+ */
+function markerRules(ingredientNames) {
+	const keep = `Ingredient amount markers:
+- Text in curly braces, like {onion}, {sugar#2} or {sugar*1/2}, is an ingredient amount marker. The app shows the ingredient's amount next to it.
+- Keep every existing marker exactly as written (including anything after # or *), in the step it belongs to.
+- Never use curly braces for anything else.`
+	if (ingredientNames.length === 0) return keep
+	return `${keep}
+- Add markers where the cook needs the amount: in the step where an ingredient is measured out or added, wrap its name in curly braces, e.g. "Stir in the {sugar}".
+- Inside the braces, write the ingredient name exactly as it appears in this list, even if the sentence's grammar would prefer another form: ${JSON.stringify(ingredientNames)}
+- Mark each ingredient only once, at the step where its amount is needed. Don't mark later mentions where the amount no longer matters (e.g. if the onion is diced in one step and fried in a later one, mark only the dicing step), and don't mark anything not in the list.
+- If an ingredient is used in parts across several steps, mark each of those steps with the share used, e.g. {sugar*1/2}.
+- If two list entries have the same name, add #2 for the second one, e.g. {sugar#2}.`
+}
 
 /**
  * AI cleanup of recipe text for logged-in users. Body: `{ type:
- * ingredients|directions|nutrition|suggestions, content, userUnits, language }`.
+ * ingredients|directions|nutrition|suggestions, content, userUnits, language }`, plus
+ * `ingredients` (the recipe's ingredient text) for `directions`, so the summary keeps and
+ * adds `{ingredient}` amount markers.
  *
  * @param {import('./$types').RequestEvent} event
  * @returns {Promise<Response>}
@@ -15,7 +58,13 @@ import { getNutritionLocale } from '$lib/submodules/recipe-ingredient-parser/src
 export async function POST({ request, locals }) {
 	requireAuth(locals)
 	try {
-		const { type, content, userUnits = 'metric', language = 'eng' } = await request.json()
+		const {
+			type,
+			content,
+			ingredients = '',
+			userUnits = 'metric',
+			language = 'eng'
+		} = await request.json()
 
 		if (!type || !content) {
 			return json(
@@ -99,6 +148,8 @@ Rules:
 - Keep only the essential actions needed to execute the recipe
 - Maintain the same number of steps, just make each one more concise
 - Each instruction should be a separate array element
+
+${markerRules(ingredientNamesForMarkers(ingredients, language))}
 
 Return ONLY a JSON object with an "instructions" array.
 

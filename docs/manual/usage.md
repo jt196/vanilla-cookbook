@@ -55,6 +55,17 @@ All your recipe info is here. Ratings, source, creation date, servings.
 
 Description, Instructions and Notes sections will appear here. Markdown is fully supported.
 
+#### Ingredient Amounts in Directions
+
+On a phone you can't see the ingredients and the directions at the same time. To show an ingredient's amount right in the step that needs it, wrap the ingredient in curly braces in the directions: `Fry the {onion} until soft` displays as *Fry the onion (150 g) until soft*. The amount follows the scaler and the selected unit system.
+
+Only marked mentions show an amount, so later mentions ("dice the onion", "add the diced onion") stay plain. In the editor, select an ingredient (or put the cursor on it) and press **Show amount** to add or remove the braces.
+
+- `{sugar#2}` picks the second ingredient with that name, e.g. sugar for a topping
+- `{sugar*1/2}` shows part of the amount, for "add half the sugar"
+
+The name in the braces should match the ingredient's name (plurals and short word endings are fine). The editor lists markers that don't match any ingredient; these display as plain text.
+
 ### Recipe Ingredients
 
 Your list of ingredients and scaling appear here. Markdown is also fully supported. The ingredients are stored as plain text and parsed by the backend. This allows for conversion from US volumetric to weight conversion.
@@ -263,6 +274,8 @@ Similar to the ingredient cleanup, the "Summarize Directions" button appears bel
 - Redundant information
 
 The AI assumes an intermediate level of culinary experience, keeping all necessary steps but making each one more concise. This is particularly useful for recipes scraped from blogs that include lengthy personal anecdotes or overly detailed explanations.
+
+Summarizing keeps existing [ingredient amount markers](#ingredient-amounts-in-directions) and adds new ones at the steps where an ingredient is measured out or added. Translating a recipe keeps the markers and translates the names inside them.
 
 <video width="640" height="360" controls>
   <source src="../../videos/directions_summarize_demo.mp4" type="video/mp4">

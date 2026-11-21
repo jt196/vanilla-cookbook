@@ -278,6 +278,33 @@ describe('API Routes - /api/recipe/cleanup', () => {
 			expect(response.status).toBe(200)
 			expect(data.instructions).toHaveLength(3)
 		})
+
+		it('asks the AI to keep and add ingredient amount markers', async () => {
+			vi.mocked(generateRecipeWithLLM).mockResolvedValue({ instructions: ['Fry the {onion}'] })
+
+			const request = createRequest({
+				type: 'directions',
+				content: 'Peel and dice the {onion}, then fry it gently.',
+				ingredients: '1 onion, diced\n# Topping\n100 g sugar'
+			})
+			const response = await cleanupPost(fake({ request, locals: {} }))
+			const { prompt } = vi.mocked(generateRecipeWithLLM).mock.calls[0][0]
+
+			expect(response.status).toBe(200)
+			expect(prompt).toContain('Keep every existing marker exactly as written')
+			expect(prompt).toContain('["onion","sugar"]')
+		})
+
+		it('only keeps existing markers when no ingredients are sent', async () => {
+			vi.mocked(generateRecipeWithLLM).mockResolvedValue({ instructions: ['Fry the {onion}'] })
+
+			const request = createRequest({ type: 'directions', content: 'Fry the {onion}.' })
+			await cleanupPost(fake({ request, locals: {} }))
+			const { prompt } = vi.mocked(generateRecipeWithLLM).mock.calls[0][0]
+
+			expect(prompt).toContain('Keep every existing marker exactly as written')
+			expect(prompt).not.toContain('Add markers where the cook needs the amount')
+		})
 	})
 
 	describe('nutrition cleanup', () => {

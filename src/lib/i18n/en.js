@@ -351,6 +351,10 @@ export default {
 		restoreIngredientsTip: 'Restore the original uncleaned ingredients.',
 		summarizeDirections: 'Summarize Directions',
 		summarizeDirectionsTip: 'Condense lengthy directions into clear, concise steps.',
+		ingredientMarker: 'Show amount',
+		ingredientMarkerTip:
+			'Select an ingredient in the directions and press Show amount to display its scaled amount in that step, e.g. {example}. Add #2 for the second ingredient with that name, or *1/2 for half the amount.',
+		ingredientMarkerUnresolved: 'No matching ingredient for: {markers}',
 		summarizing: 'Summarizing...',
 		restoreDirectionsTip: 'Restore the original unsummarized directions.',
 		addTips: 'Add Tips',

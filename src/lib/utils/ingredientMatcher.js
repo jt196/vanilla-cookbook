@@ -13,7 +13,7 @@
  * @param {string} name - Ingredient name
  * @returns {string[]} - Array of name variants (singular + plural forms)
  */
-function getPluralVariants(name) {
+export function getPluralVariants(name) {
 	if (!name || typeof name !== 'string') return []
 
 	const lowerName = name.toLowerCase()

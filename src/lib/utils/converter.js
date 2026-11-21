@@ -4,6 +4,7 @@ import { getSymbol } from '$lib/submodules/recipe-ingredient-parser/src/index.js
 import { i18nMap } from '$lib/submodules/recipe-ingredient-parser/src/i18n'
 import { parseTimings } from './timingParser.js'
 import { matchIngredients } from './ingredientMatcher.js'
+import { formatAroundMarkers, renderMarker } from './ingredientMarkers.js'
 
 // Get units data for a given language (defaults to English)
 function getUnitsDataForLang(lang = 'eng') {
@@ -795,6 +796,8 @@ export { findIngredientDensity }
  * 1. Converting temperatures from one system to another
  * 2. Highlighting timing expressions (e.g., "30 minutes", "1 hour")
  * 3. Linking ingredient references to interactive badges (if ingredients provided)
+ * 4. Replacing ingredient amount markers (`{onion}`) with the name and its scaled amount
+ *    (see `ingredientMarkers.js`); without ingredients they render as the plain name
  *
  * @param {string[]} directions - An array of direction strings.
  * @param {string} toSystem - The target temperature system for conversion.
@@ -803,6 +806,8 @@ export { findIngredientDensity }
  *                              Accepted values: 'metric', 'imperial'.
  * @param {Array<Object>} ingredients - Optional array of parsed ingredient objects for matching.
  * @param {string} lang - Language code for i18n (eng, deu, ita, etc.). Defaults to 'eng'.
+ * @param {import('./ingredientMarkers.js').MarkerRenderOptions} [markerOptions] - Scale and
+ *   unit symbol preference for ingredient amount markers.
  *
  * @returns {string[]} - An array of enhanced direction strings with temperatures, timings, and ingredients highlighted.
  *
@@ -817,14 +822,19 @@ export function parseRecipeText(
 	toSystem,
 	fromSystem,
 	ingredients = null,
-	lang = 'eng'
+	lang = 'eng',
+	markerOptions = {}
 ) {
-	return directions.map((direction) => {
-		let result = parseTemperature(direction, toSystem, fromSystem, lang)
+	/** @param {string} text */
+	const formatText = (text) => {
+		let result = parseTemperature(text, toSystem, fromSystem, lang)
 		result = parseTimings(result, lang)
-		if (ingredients) result = matchIngredients(result, ingredients)
-		return result
-	})
+		return ingredients ? matchIngredients(result, ingredients) : result
+	}
+	/** @param {import('./ingredientMarkers.js').LocatedMarker} marker */
+	const formatMarker = (marker) => renderMarker(marker, ingredients, toSystem, markerOptions)
+
+	return directions.map((direction) => formatAroundMarkers(direction, formatText, formatMarker))
 }
 
 /**

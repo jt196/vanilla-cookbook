@@ -19,6 +19,8 @@
 		class: className = '',
 		/** GitHub-style list continuation and ⌘B / ⌘I, for fields rendered as Markdown */
 		markdown = false,
+		/** The underlying textarea, for callers that edit its selection */
+		element = $bindable(null),
 		...rest
 	} = $props()
 
@@ -84,6 +86,7 @@
 			{disabled}
 			bind:value
 			use:markdownAction
+			bind:this={element}
 			class={textareaClass}
 			style="min-width:0;max-width:100%;"
 			{...rest}></textarea>
@@ -104,6 +107,7 @@
 			{disabled}
 			bind:value
 			use:markdownAction
+			bind:this={element}
 			class={textareaClass}
 			style="min-width:0;max-width:100%;"
 			{...rest}></textarea>
