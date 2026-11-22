@@ -20,11 +20,12 @@ export function getAuthor(author) {
 /**
  * Convert an ISO 8601 duration (e.g. "PT1H30M") to text; returns the input if it isn't one.
  * @param {string} duration
+ * @param {string} [language='en'] - Two-letter language code for the text; unknown codes fall back to English.
  * @returns {string}
  */
-export function durationToText(duration) {
+export function durationToText(duration, language = 'en') {
 	try {
-		return humanizeDuration(parseIsoDuration(duration))
+		return humanizeDuration(parseIsoDuration(duration), { language, fallbacks: ['en'] })
 	} catch {
 		return duration
 	}

@@ -2,10 +2,26 @@
 	import { localDateAndTime } from '$lib/utils/dateTime'
 	import StarRating from '$lib/components/ui/StarRating.svelte'
 	import InfoText from '$lib/components/ui/InfoText.svelte'
-	import { t } from '$lib/stores/locale.js'
+	import { durationToText } from '$lib/utils/parse/parseHelpers'
+	import { langToBcp47 } from '$lib/i18n/index.js'
+	import { t, langStore } from '$lib/stores/locale.js'
 
 	/** @type {{recipe: any, recipeRatingChanged?: (rating: number) => void, scaledServings?: any, canRate?: boolean}} */
 	let { recipe, recipeRatingChanged, scaledServings, canRate = false } = $props()
+
+	// Prep/cook/total times that are set; imports may store ISO 8601 durations, shown as text
+	const times = $derived(
+		[
+			['recipe.prepTime', recipe?.prep_time],
+			['recipe.cookTime', recipe?.cook_time],
+			['recipe.totalTime', recipe?.total_time]
+		]
+			.filter(([, value]) => value?.trim())
+			.map(([key, value]) => ({
+				key,
+				value: durationToText(value.trim(), langToBcp47($langStore))
+			}))
+	)
 </script>
 
 <div class="card bg-base-300 shadow-md p-6">
@@ -53,5 +69,13 @@
 
 	{#if scaledServings}
 		<p class="text-base font-medium my-2">{$t('recipe.servingsLabel')} {scaledServings}</p>
+	{/if}
+
+	{#if times.length}
+		<div class="flex flex-wrap gap-x-6 gap-y-1 my-2">
+			{#each times as time (time.key)}
+				<p class="text-base font-medium">{$t(time.key)}: {time.value}</p>
+			{/each}
+		</div>
 	{/if}
 </div>
