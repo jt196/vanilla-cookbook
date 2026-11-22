@@ -3,6 +3,7 @@ import {
 	converter,
 	parseTemperature,
 	normalizeIngredient,
+	roundQuantity,
 	manipulateIngredient
 } from '$lib/utils/converter.js'
 import Fuse from 'fuse.js'
@@ -377,6 +378,30 @@ describe('normalizeIngredient function', () => {
 		expect(result.quantity).toBe(1.23)
 		expect(result.minQty).toBe(1.23)
 		expect(result.maxQty).toBe(2.35)
+	})
+
+	it.each([
+		[0.25, 'tablespoon', 0.25],
+		[0.125, 'teaspoon', 0.125],
+		[1.75, 'tablespoon', 1.75],
+		[1 / 3, 'cup', 0.333],
+		[0.5, 'clove', 0.5],
+		[2.5, 'can', 2.5]
+	])('keeps the fraction %d %s rather than rounding it away', (quantity, unit, expected) => {
+		const result = normalizeIngredient(
+			{ quantity, minQty: quantity, maxQty: quantity, unit, ingredient: 'x' },
+			{},
+			'eng'
+		)
+		expect(result.quantity).toBe(expected)
+		expect(result.minQty).toBe(expected)
+		expect(result.maxQty).toBe(expected)
+	})
+
+	it('still rounds non-fractions to the unit precision', () => {
+		expect(roundQuantity(0.27, 1)).toBe(0.3)
+		expect(roundQuantity(5.6789, 1)).toBe(5.7)
+		expect(roundQuantity(3, 0)).toBe(3)
 	})
 
 	it('should return unitless placeholder quantities unchanged', () => {

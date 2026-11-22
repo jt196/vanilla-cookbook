@@ -557,6 +557,29 @@ function convertStandardWeightUnits(ingredientObj, quantity, fromUnit, toSystem,
 	return normalizeIngredient(updatedIngredient, {}, lang)
 }
 
+/** Denominators of the fractions recipes are written in: ½, ⅓, ¼, ⅙, ⅛ */
+const COOKING_FRACTION_DENOMINATORS = [2, 3, 4, 6, 8]
+
+/**
+ * Round a quantity to a unit's decimal places, except when it is a common cooking fraction
+ * (½, ⅓, ¼, ⅙, ⅛ and their multiples). Those keep 3 decimals, because the display turns
+ * them back into fractions: rounding ¼ tbsp to 0.3 would show as ⅓, and ½ clove
+ * (0 decimal places) to 1.
+ *
+ * @param {number} value
+ * @param {number} decimalPlaces - The unit's precision
+ * @returns {number}
+ */
+export function roundQuantity(value, decimalPlaces) {
+	const fractional = Math.abs(value % 1)
+	const isCookingFraction =
+		fractional > 1e-9 &&
+		COOKING_FRACTION_DENOMINATORS.some(
+			(d) => Math.abs(fractional * d - Math.round(fractional * d)) < 1e-3 * d
+		)
+	return parseFloat(value.toFixed(isCookingFraction ? Math.max(decimalPlaces, 3) : decimalPlaces))
+}
+
 /**
  * Normalizes an ingredient object by standardizing units, rounding quantity, and adding metadata.
  * @param {Object} ingredientObj - The original ingredient object.
@@ -590,18 +613,14 @@ export function normalizeIngredient(ingredientObj, options = {}, lang = 'eng') {
 	const symbol = getSymbol(normalizedUnit, lang)
 	const decimalPlaces = unitData.decimalPlaces ?? 2
 
-	const roundedQuantity =
-		typeof qtyNum === 'number' && !Number.isNaN(qtyNum) && !options.skipRounding
-			? parseFloat(qtyNum.toFixed(decimalPlaces))
-			: qtyNum
-	const roundedMinQty =
-		typeof minQtyNum === 'number' && !Number.isNaN(minQtyNum) && !options.skipRounding
-			? parseFloat(minQtyNum.toFixed(decimalPlaces))
-			: minQtyNum
-	const roundedMaxQty =
-		typeof maxQtyNum === 'number' && !Number.isNaN(maxQtyNum) && !options.skipRounding
-			? parseFloat(maxQtyNum.toFixed(decimalPlaces))
-			: maxQtyNum
+	/** @param {number|null} value */
+	const round = (value) =>
+		typeof value === 'number' && !Number.isNaN(value) && !options.skipRounding
+			? roundQuantity(value, decimalPlaces)
+			: value
+	const roundedQuantity = round(qtyNum)
+	const roundedMinQty = round(minQtyNum)
+	const roundedMaxQty = round(maxQtyNum)
 
 	return {
 		...ingredientObj,
