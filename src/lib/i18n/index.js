@@ -77,6 +77,23 @@ export function t(key, lang = 'eng', vars = {}) {
 	return interpolate(str, vars)
 }
 
+/** BCP 47 base tag → our lang code */
+const BCP47_TO_LANG = {
+	en: 'eng',
+	de: 'deu',
+	it: 'ita',
+	es: 'esp',
+	fr: 'fra',
+	pt: 'por',
+	ru: 'rus',
+	hi: 'hin',
+	id: 'ind',
+	ar: 'ara',
+	hu: 'hun',
+	cs: 'ces',
+	nl: 'nld'
+}
+
 /**
  * Map a BCP 47 Accept-Language tag (e.g. 'de-DE', 'fr') to our internal
  * lang code (e.g. 'deu', 'fra').  Returns 'eng' if no match is found.
@@ -86,28 +103,21 @@ export function t(key, lang = 'eng', vars = {}) {
 export function langFromAcceptHeader(acceptLanguage) {
 	if (!acceptLanguage) return 'eng'
 
-	// BCP 47 → our lang code
-	const tagMap = {
-		en: 'eng',
-		de: 'deu',
-		it: 'ita',
-		es: 'esp',
-		fr: 'fra',
-		pt: 'por',
-		ru: 'rus',
-		hi: 'hin',
-		id: 'ind',
-		ar: 'ara',
-		hu: 'hun',
-		cs: 'ces',
-		nl: 'nld'
-	}
-
 	// Accept-Language: "de-DE,de;q=0.9,en-US;q=0.8,en;q=0.7"
 	// Take highest-priority tag, strip region, look up.
 	const primary = acceptLanguage.split(',')[0].split(';')[0].trim()
 	const base = primary.split('-')[0].toLowerCase()
-	return tagMap[base] ?? 'eng'
+	return BCP47_TO_LANG[base] ?? 'eng'
+}
+
+/**
+ * Map our internal lang code (e.g. 'deu') to its BCP 47 base tag (e.g. 'de').
+ * Returns 'en' for unknown codes.
+ * @param {string} lang  Language code matching AuthUser.language
+ * @returns {string}
+ */
+export function langToBcp47(lang) {
+	return Object.keys(BCP47_TO_LANG).find((tag) => BCP47_TO_LANG[tag] === lang) ?? 'en'
 }
 
 /**

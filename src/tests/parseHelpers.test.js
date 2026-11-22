@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { parse } from 'node-html-parser'
 import {
+	durationToText,
 	extractMicrodata,
 	isRecipeType,
 	parseJSONLD,
@@ -14,6 +15,24 @@ const ld = (data) => `<script type="application/ld+json">${JSON.stringify(data)}
 
 beforeEach(() => {
 	vi.spyOn(console, 'error').mockImplementation(() => {})
+})
+
+describe('durationToText', () => {
+	it('turns an ISO 8601 duration into text', () => {
+		expect(durationToText('PT1H30M')).toBe('1 hour, 30 minutes')
+	})
+
+	it('uses the given language', () => {
+		expect(durationToText('PT20M', 'de')).toBe('20 Minuten')
+	})
+
+	it('falls back to English for an unknown language', () => {
+		expect(durationToText('PT20M', 'xx')).toBe('20 minutes')
+	})
+
+	it.each([['30 mins'], ['1 hour, 30 minutes'], ['']])('leaves %j unchanged', (text) => {
+		expect(durationToText(text)).toBe(text)
+	})
 })
 
 describe('isRecipeType', () => {
