@@ -42,6 +42,8 @@ export default {
   "nav": {
     "allRecipes": "Všechny recepty",
     "myRecipes": "Moje recepty",
+    "recipes": "Recepty",
+    "search": "Hledat",
     "newRecipe": "Nový recept",
     "shopping": "Nákupy",
     "shoppingList": "Nákupní seznam",

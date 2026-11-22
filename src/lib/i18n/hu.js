@@ -42,6 +42,8 @@ export default {
   "nav": {
     "allRecipes": "Összes recept",
     "myRecipes": "Receptjeim",
+    "recipes": "Receptek",
+    "search": "Keresés",
     "newRecipe": "Új recept",
     "shopping": "Bevásárlás",
     "shoppingList": "Bevásárlólista",

@@ -42,6 +42,8 @@ export default {
   "nav": {
     "allRecipes": "सभी रेसिपी",
     "myRecipes": "मेरी रेसिपी",
+    "recipes": "रेसिपी",
+    "search": "खोजें",
     "newRecipe": "नई रेसिपी",
     "shopping": "खरीदारी",
     "shoppingList": "खरीदारी सूची",

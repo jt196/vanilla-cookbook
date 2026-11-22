@@ -42,6 +42,8 @@ export default {
   "nav": {
     "allRecipes": "Todas las recetas",
     "myRecipes": "Mis recetas",
+    "recipes": "Recetas",
+    "search": "Buscar",
     "newRecipe": "Nueva receta",
     "shopping": "Compras",
     "shoppingList": "Lista de compras",
