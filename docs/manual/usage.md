@@ -64,7 +64,7 @@ Only marked mentions show an amount, so later mentions ("dice the onion", "add t
 - `{sugar#2}` picks the second ingredient with that name, e.g. sugar for a topping
 - `{sugar*1/2}` shows part of the amount, for "add half the sugar"
 
-The name in the braces should match the ingredient's name (plurals and short word endings are fine). The editor lists markers that don't match any ingredient; these display as plain text.
+The name in the braces must match the ingredient's name in the ingredient list, ignoring case and plurals: `{onion}` or `{Onions}` for "1 onion", but `{plain flour}`, not `{flour}`, for "150 g plain flour". The editor lists markers that don't match any ingredient; these display as plain text.
 
 ### Recipe Ingredients
 

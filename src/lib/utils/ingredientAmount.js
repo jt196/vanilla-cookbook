@@ -73,11 +73,12 @@ export function formatScaledQuantity(qty, min, max, unit, scale, system) {
  */
 export function scaledQuantityForPlural(ingredient, scale) {
 	const { quantity, minQty, maxQty } = ingredient
-	if (quantity !== null && quantity !== undefined) return Number(quantity) * scale
-	if (maxQty !== null && maxQty !== undefined && !(Number(maxQty) === 0 && Number(minQty) === 0)) {
-		return Number(maxQty) * scale
-	}
-	return 0
+	const hasMax =
+		maxQty !== null && maxQty !== undefined && !(Number(maxQty) === 0 && Number(minQty) === 0)
+	const hasQty = quantity !== null && quantity !== undefined
+	// The parser sets `quantity` to a range's lower bound; "1-2 cloves" follows the upper one
+	if (hasMax && (!hasQty || Number(maxQty) > Number(quantity))) return Number(maxQty) * scale
+	return hasQty ? Number(quantity) * scale : 0
 }
 
 /**

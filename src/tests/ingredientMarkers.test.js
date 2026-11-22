@@ -80,12 +80,11 @@ describe('resolveMarker', () => {
 		expect(resolve('SALT')).toBe(4)
 	})
 
-	it('matches a shorter marker inside a longer ingredient name', () => {
-		expect(resolve('flour')).toBe(1)
-	})
-
-	it('matches a longer marker containing the ingredient name', () => {
-		expect(resolve('chopped onion')).toBe(0)
+	it('only matches the bare ingredient name, not part of it', () => {
+		expect(resolve('flour')).toBe(-1)
+		expect(resolve('plain flour')).toBe(1)
+		expect(resolve('Plain  Flour')).toBe(1)
+		expect(resolve('chopped onion')).toBe(-1)
 	})
 
 	it('picks the nth matching ingredient with #n', () => {
@@ -94,17 +93,19 @@ describe('resolveMarker', () => {
 		expect(resolve('sugar#3')).toBe(-1)
 	})
 
-	it('matches short inflections in other languages as a last resort', () => {
-		const list = [{ ingredient: 'Zwiebel' }, { ingredient: 'Tomate' }, { ingredient: 'pea' }]
-		expect(resolveMarker(parseMarker('Zwiebeln'), list)).toBe(0)
-		expect(resolveMarker(parseMarker('Tomaten'), list)).toBe(1)
-		// Too short to guess safely: "peach" is not "pea"
-		expect(resolveMarker(parseMarker('peach'), list)).toBe(-1)
+	it('does not guess between similar ingredients', () => {
+		const list = [{ ingredient: 'olive oil' }, { ingredient: 'sesame oil' }]
+		expect(resolveMarker(parseMarker('oil'), list)).toBe(-1)
+		expect(resolveMarker(parseMarker('sesame oil'), list)).toBe(1)
 	})
 
-	it('prefers exact matches over partial ones', () => {
-		const list = [{ ingredient: 'chicken stock' }, { ingredient: 'chicken' }]
-		expect(resolveMarker(parseMarker('chicken'), list)).toBe(1)
+	it('does not match other word forms beyond simple plurals', () => {
+		const list = [{ ingredient: 'Zwiebel' }, { ingredient: 'pea' }, { ingredient: 'chicken stock' }]
+		expect(resolveMarker(parseMarker('Zwiebel'), list)).toBe(0)
+		expect(resolveMarker(parseMarker('Zwiebeln'), list)).toBe(-1)
+		expect(resolveMarker(parseMarker('peas'), list)).toBe(1)
+		expect(resolveMarker(parseMarker('peach'), list)).toBe(-1)
+		expect(resolveMarker(parseMarker('chicken'), list)).toBe(-1)
 	})
 
 	it('does not match unrelated words', () => {
@@ -182,13 +183,13 @@ describe('parseRecipeText with ingredient markers', () => {
 		parseRecipeText([text], system, 'metric', ingredients, 'eng', opts)[0]
 
 	it('shows the amount after a marked ingredient', () => {
-		expect(render('Sift the {flour}.')).toBe(
-			'Sift the <span class="text-primary"><b>flour</b> <span class="whitespace-nowrap">(150 grams)</span></span>.'
+		expect(render('Sift the {plain flour}.')).toBe(
+			'Sift the <span class="text-primary"><b>plain flour</b> <span class="whitespace-nowrap">(150 grams)</span></span>.'
 		)
 	})
 
 	it('scales the amount and uses symbols when asked', () => {
-		expect(render('Sift the {flour}.', { scale: 2, useSymbol: true })).toContain('(300 g)')
+		expect(render('Sift the {plain flour}.', { scale: 2, useSymbol: true })).toContain('(300 g)')
 	})
 
 	it('applies the marker factor and picks the nth ingredient', () => {
@@ -205,6 +206,20 @@ describe('parseRecipeText with ingredient markers', () => {
 		expect(render('Season with {salt}.')).toBe(
 			'Season with <span class="text-primary"><b>salt</b></span>.'
 		)
+	})
+
+	it('uses the plural unit when the top of a range is above 1', () => {
+		const garlic = {
+			ingredient: 'garlic',
+			quantity: 1,
+			unit: 'clove',
+			unitPlural: 'cloves',
+			minQty: 1,
+			maxQty: 2
+		}
+		const html = (text) => parseRecipeText([text], 'metric', 'metric', [garlic], 'eng')[0]
+		expect(html('Crush the {garlic}.')).toContain('(1-2 cloves)')
+		expect(html('Crush the {garlic*1/2}.')).toContain('(0.5-1 clove)')
 	})
 
 	it('renders unresolved markers as plain text', () => {

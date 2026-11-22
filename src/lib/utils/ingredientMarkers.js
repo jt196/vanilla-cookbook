@@ -98,48 +98,12 @@ export function isHeadingIngredient(ing) {
 }
 
 /**
- * The lowercase words of a string, joined by single spaces and padded with a space on
- * each side, so `includes` on two of these only matches whole words.
- *
- * @param {string} str
- * @returns {string}
- */
-const paddedWords = (str) => ` ${(str.toLowerCase().match(/[\p{L}\p{N}]+/gu) ?? []).join(' ')} `
-
-/**
- * Whether `needle` appears in `haystack` as whole words (singular or plural).
- *
- * @param {string} haystack
- * @param {string} needle
- * @returns {boolean}
- */
-function containsWords(haystack, needle) {
-	const hay = paddedWords(haystack)
-	return getPluralVariants(needle).some((variant) => {
-		const words = paddedWords(variant)
-		return words.trim() !== '' && hay.includes(words)
-	})
-}
-
-/**
- * Whether two names differ only by a short ending (≤ 2 letters), e.g. German
- * "Zwiebel"/"Zwiebeln". The shorter name needs 4+ letters so "pea" doesn't match "peach".
- *
- * @param {string} a
- * @param {string} b
- * @returns {boolean}
- */
-function sameStem(a, b) {
-	const [short, long] = a.length <= b.length ? [a, b] : [b, a]
-	return short.length >= 4 && long.length - short.length <= 2 && long.startsWith(short)
-}
-
-/**
- * Find the ingredient a marker refers to. Exact name matches (ignoring case and plurals)
- * win over partial ones: an ingredient name containing the marker ("flour" → "plain flour"),
- * then a marker containing the ingredient name ("chopped onion" → "onion"), then names
- * differing by a short ending ("Zwiebeln" → "Zwiebel"). Within the best tier, `occurrence`
- * picks the nth match in ingredient order.
+ * Find the ingredient a marker refers to. Like the ingredient highlighting in the directions
+ * (`matchIngredients`), a marker only matches the bare ingredient name, ignoring case and
+ * plurals: `{onion}` and `{Onions}` match "onion", but `{flour}` does not match "plain flour".
+ * Loose matches would silently pick the wrong one of several similar ingredients ("olive oil",
+ * "sesame oil"); an unmatched marker is listed in the editor instead. `occurrence` picks the
+ * nth match in ingredient order.
  *
  * @param {IngredientMarker|null} marker
  * @param {Array<{ ingredient?: unknown, originalString?: unknown }>|null|undefined} ingredients
@@ -147,28 +111,28 @@ function sameStem(a, b) {
  */
 export function resolveMarker(marker, ingredients) {
 	if (!marker || !Array.isArray(ingredients)) return -1
-	const name = marker.name.toLowerCase()
+	const name = normalizeName(marker.name)
 	const nameVariants = getPluralVariants(name)
 
-	/** @type {number[][]} */
-	const tiers = [[], [], [], []]
+	/** @type {number[]} */
+	const matches = []
 	ingredients.forEach((ing, idx) => {
-		const ingName = typeof ing?.ingredient === 'string' ? ing.ingredient.trim().toLowerCase() : ''
+		const ingName = typeof ing?.ingredient === 'string' ? normalizeName(ing.ingredient) : ''
 		if (!ingName || isHeadingIngredient(ing)) return
 		if (nameVariants.includes(ingName) || getPluralVariants(ingName).includes(name)) {
-			tiers[0].push(idx)
-		} else if (containsWords(ingName, name)) {
-			tiers[1].push(idx)
-		} else if (containsWords(name, ingName)) {
-			tiers[2].push(idx)
-		} else if (sameStem(name, ingName)) {
-			tiers[3].push(idx)
+			matches.push(idx)
 		}
 	})
-
-	const best = tiers.find((tier) => tier.length > 0)
-	return best?.[marker.occurrence - 1] ?? -1
+	return matches[marker.occurrence - 1] ?? -1
 }
+
+/**
+ * Lowercase with runs of whitespace collapsed, so "Red  Onion" matches "red onion".
+ *
+ * @param {string} str
+ * @returns {string}
+ */
+const normalizeName = (str) => str.trim().toLowerCase().replace(/\s+/g, ' ')
 
 /**
  * Replace markers with their plain names, for text that leaves the recipe view
