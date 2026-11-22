@@ -41,6 +41,12 @@
 		if (user && user.showNotesDescription === undefined) {
 			user.showNotesDescription = true
 		}
+		if (user && user.showUnitButtons === undefined) {
+			user.showUnitButtons = false
+		}
+		if (user && user.showDisplayToggles === undefined) {
+			user.showDisplayToggles = true
+		}
 	})
 
 	async function updateSettings(event) {
@@ -88,6 +94,26 @@
 		size="sm"
 		color="neutral">
 		{user.skipSmallUnits ? $t('recipePrefs.skipSmallUnitsOn') : $t('recipePrefs.skipSmallUnitsOff')}
+	</Checkbox>
+	<Checkbox
+		name="showUnitButtons"
+		bind:checked={user.showUnitButtons}
+		size="sm"
+		color="neutral"
+		legend={$t('recipePrefs.showUnitButtons')}>
+		{user.showUnitButtons
+			? $t('recipePrefs.showUnitButtonsOn')
+			: $t('recipePrefs.showUnitButtonsOff')}
+	</Checkbox>
+	<Checkbox
+		name="showDisplayToggles"
+		bind:checked={user.showDisplayToggles}
+		size="sm"
+		color="neutral"
+		legend={$t('recipePrefs.showDisplayToggles')}>
+		{user.showDisplayToggles
+			? $t('recipePrefs.showDisplayTogglesOn')
+			: $t('recipePrefs.showDisplayTogglesOff')}
 	</Checkbox>
 	<Checkbox
 		name="Volumetric Match Display"

@@ -12,6 +12,7 @@ import Button from '$lib/components/ui/Button.svelte'
 import { createRawSnippet, tick } from 'svelte'
 import RecipeFilter from '$lib/components/recipe/RecipeFilter.svelte'
 import RecipeList from '$lib/components/recipe/RecipeList.svelte'
+import RecipeViewIngs from '$lib/components/recipe/RecipeViewIngs.svelte'
 
 import { fake } from './helpers/fake.js'
 describe('Scale component', () => {
@@ -254,5 +255,41 @@ describe('Button component', () => {
 	it('renders no spinner when not loading', () => {
 		render(Button, { props: { children: label } })
 		expect(screen.getByRole('button', { name: 'Log in' }).querySelector('.loading')).toBeNull()
+	})
+})
+
+describe('RecipeViewIngs button rows', () => {
+	/** @param {Record<string, unknown>} userSettings */
+	const renderIngs = (userSettings) =>
+		render(RecipeViewIngs, {
+			props: {
+				ingredients: [],
+				sanitizedIngredients: [],
+				scale: 1,
+				selectedSystem: 'metric',
+				measurementSystem: { system: 'metric' },
+				recipeUid: 'r1',
+				user: { ingExtra: false, ingMatch: false, ingOriginal: false, ...userSettings },
+				onScaleChange: vi.fn(),
+				onSelectedSystemChange: vi.fn()
+			}
+		})
+
+	it('hides the unit switch and shows the display toggles with the default settings', () => {
+		renderIngs({ showUnitButtons: false, showDisplayToggles: true })
+		expect(screen.queryByText('Metric')).not.toBeInTheDocument()
+		expect(screen.getByText('Original')).toBeInTheDocument()
+	})
+
+	it('shows the unit switch and hides the display toggles when set the other way', () => {
+		renderIngs({ showUnitButtons: true, showDisplayToggles: false })
+		expect(screen.getByText('Metric')).toBeInTheDocument()
+		expect(screen.queryByText('Original')).not.toBeInTheDocument()
+	})
+
+	it('shows both rows when the settings are missing, as for logged-out visitors', () => {
+		renderIngs({})
+		expect(screen.getByText('Metric')).toBeInTheDocument()
+		expect(screen.getByText('Original')).toBeInTheDocument()
 	})
 })

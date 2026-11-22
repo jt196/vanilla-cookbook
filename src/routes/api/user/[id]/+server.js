@@ -33,6 +33,8 @@ export async function PUT({ request, locals, params }) {
 		'displayNutrition',
 		'showSimilarRecipes',
 		'showNotesDescription',
+		'showUnitButtons',
+		'showDisplayToggles',
 		'about'
 	]
 

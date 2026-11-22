@@ -117,63 +117,67 @@
 		</div>
 	{/if}
 
-	<div class="mb-4">
-		<div class="grid grid-cols-3 gap-1 mb-3">
-			<Button
-				style={selectedSystem === 'metric' ? 'standard' : 'soft'}
-				color="primary"
-				size="sm"
-				class={originalSystem === 'metric' ? 'ring-2 ring-primary' : ''}
-				onclick={() => onSelectedSystemChange('metric')}>
-				{$t('recipeView.systemMetric')}
-			</Button>
-			<Button
-				style={selectedSystem === 'americanVolumetric' ? 'standard' : 'soft'}
-				color="primary"
-				size="sm"
-				class={originalSystem === 'americanVolumetric' ? 'ring-2 ring-primary' : ''}
-				onclick={() => onSelectedSystemChange('americanVolumetric')}>
-				{$t('recipeView.systemUsVol')}
-			</Button>
-			<Button
-				style={selectedSystem === 'imperial' ? 'standard' : 'soft'}
-				color="primary"
-				size="sm"
-				class={originalSystem === 'imperial' ? 'ring-2 ring-primary' : ''}
-				onclick={() => onSelectedSystemChange('imperial')}>
-				{$t('recipeView.systemImperial')}
-			</Button>
+	{#if user.showUnitButtons !== false}
+		<div class="mb-4">
+			<div class="grid grid-cols-3 gap-1 mb-3">
+				<Button
+					style={selectedSystem === 'metric' ? 'standard' : 'soft'}
+					color="primary"
+					size="sm"
+					class={originalSystem === 'metric' ? 'ring-2 ring-primary' : ''}
+					onclick={() => onSelectedSystemChange('metric')}>
+					{$t('recipeView.systemMetric')}
+				</Button>
+				<Button
+					style={selectedSystem === 'americanVolumetric' ? 'standard' : 'soft'}
+					color="primary"
+					size="sm"
+					class={originalSystem === 'americanVolumetric' ? 'ring-2 ring-primary' : ''}
+					onclick={() => onSelectedSystemChange('americanVolumetric')}>
+					{$t('recipeView.systemUsVol')}
+				</Button>
+				<Button
+					style={selectedSystem === 'imperial' ? 'standard' : 'soft'}
+					color="primary"
+					size="sm"
+					class={originalSystem === 'imperial' ? 'ring-2 ring-primary' : ''}
+					onclick={() => onSelectedSystemChange('imperial')}>
+					{$t('recipeView.systemImperial')}
+				</Button>
+			</div>
 		</div>
-	</div>
+	{/if}
 
-	<div class="flex flex-wrap gap-1">
-		<Button
-			style={displayOriginal ? 'standard' : 'soft'}
-			color="primary"
-			size="sm"
-			class="flex-1"
-			onclick={() => (displayOriginal = !displayOriginal)}>
-			{$t('recipeView.toggleOriginal')}
-		</Button>
-		{#if sanitizedIngredients.some((item) => item.additional)}
+	{#if user.showDisplayToggles !== false}
+		<div class="flex flex-wrap gap-1">
 			<Button
-				style={displayExtra ? 'standard' : 'soft'}
+				style={displayOriginal ? 'standard' : 'soft'}
 				color="primary"
 				size="sm"
 				class="flex-1"
-				disabled={displayOriginal}
-				onclick={() => (displayExtra = !displayExtra)}>
-				{$t('recipeView.toggleExtra')}
+				onclick={() => (displayOriginal = !displayOriginal)}>
+				{$t('recipeView.toggleOriginal')}
 			</Button>
-		{/if}
-		<Button
-			style={displayDryMatch ? 'standard' : 'soft'}
-			color="primary"
-			size="sm"
-			class="flex-1"
-			disabled={displayOriginal || !isVolumetricConversion}
-			onclick={() => (displayDryMatch = !displayDryMatch)}>
-			{$t('recipeView.toggleMatch')}
-		</Button>
-	</div>
+			{#if sanitizedIngredients.some((item) => item.additional)}
+				<Button
+					style={displayExtra ? 'standard' : 'soft'}
+					color="primary"
+					size="sm"
+					class="flex-1"
+					disabled={displayOriginal}
+					onclick={() => (displayExtra = !displayExtra)}>
+					{$t('recipeView.toggleExtra')}
+				</Button>
+			{/if}
+			<Button
+				style={displayDryMatch ? 'standard' : 'soft'}
+				color="primary"
+				size="sm"
+				class="flex-1"
+				disabled={displayOriginal || !isVolumetricConversion}
+				onclick={() => (displayDryMatch = !displayDryMatch)}>
+				{$t('recipeView.toggleMatch')}
+			</Button>
+		</div>
+	{/if}
 </div>
