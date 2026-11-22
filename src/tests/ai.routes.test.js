@@ -260,6 +260,23 @@ describe('API Routes - /api/recipe/cleanup', () => {
 			expect(data.ingredients).toHaveLength(2)
 			expect(data.ingredients).toContain('100g flour')
 		})
+
+		it.each([
+			[true, 'metric', true],
+			[false, 'metric', false],
+			[true, 'americanVolumetric', false]
+		])(
+			'keeps teaspoons and tablespoons when skipSmallUnits is %s (%s): %s',
+			async (skipSmallUnits, userUnits, expectRule) => {
+				vi.mocked(generateRecipeWithLLM).mockResolvedValue({ ingredients: ['1 tsp salt'] })
+
+				const request = createRequest({ type: 'ingredients', content: '1 tsp salt', userUnits })
+				await cleanupPost(fake({ request, locals: { user: { skipSmallUnits } } }))
+				const { prompt } = vi.mocked(generateRecipeWithLLM).mock.calls[0][0]
+
+				expect(prompt.includes('teaspoons and tablespoons')).toBe(expectRule)
+			}
+		)
 	})
 
 	describe('directions cleanup', () => {

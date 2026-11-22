@@ -199,64 +199,59 @@ function convertToDecimal(str) {
 }
 
 /**
- * Converts a decimal number to its fraction representation, if possible.
+ * Converts a decimal number to its fraction representation, snapping to the nearest common
+ * cooking fraction (eighths, sixths, fifths, quarters, thirds, halves). Numbers above 10 are
+ * rounded to a whole number; a fractional part within 1/16 of a whole number snaps to it.
  *
  * @param {number} decimal - The decimal number to convert.
  * @returns {string | number} - The fraction representation or original number.
+ * @example
+ * decimalToFraction(0.125) // '⅛'
+ * decimalToFraction(1.5) // '1½'
  */
-export function decimalToFraction(decimal, decimalPlaces = 10, tolerance = 1e-10) {
+export function decimalToFraction(decimal) {
 	// Return the rounded decimal if the number is higher than 10
 	if (decimal > 10) return roundToDecimalPlaces(decimal, 0)
 
-	const fractions = {
-		0.1: '⅒',
-		0.2: '⅕',
-		0.25: '¼',
-		0.3: '⅓',
-		0.4: '⅖',
-		0.5: '½',
-		0.6: '⅗',
-		0.66: '⅔',
-		0.7: '⅔',
-		0.75: '¾',
-		0.8: '⅘',
-		0.9: '⅚'
-	}
-
-	// Determine the whole number and fractional parts
-	const wholeNumber = Math.floor(decimal)
+	let wholeNumber = Math.floor(decimal)
 	const fractionalPart = decimal - wholeNumber
 
-	// If the decimal is a whole number, simply return it
-	if (fractionalPart === 0) {
+	// Whole numbers (or near enough) need no fraction. Quantities below 1 are never
+	// rounded down to 0, so "0.05 tsp" still shows a fraction.
+	if (fractionalPart < 1e-10 || (wholeNumber > 0 && fractionalPart < 1 / 16)) {
 		return wholeNumber.toString()
 	}
+	if (fractionalPart > 15 / 16) return (wholeNumber + 1).toString()
 
-	// Round to a fixed number of decimal places
-	const roundedDecimal = roundToDecimalPlaces(fractionalPart, decimalPlaces)
-
-	// Further round if the number is close to an integer
-	const finalFractional = roundToTolerance(roundedDecimal, tolerance)
-
-	if (fractions[finalFractional]) {
-		return wholeNumber === 0
-			? fractions[finalFractional]
-			: `${wholeNumber}${fractions[finalFractional]}`
-	} else {
-		let closestFraction
-		let smallestDifference = Infinity
-
-		for (let key in fractions) {
-			let difference = Math.abs(finalFractional - parseFloat(key))
-			if (difference < smallestDifference) {
-				smallestDifference = difference
-				closestFraction = fractions[key]
-			}
+	let closest = FRACTIONS[0]
+	for (const fraction of FRACTIONS) {
+		if (Math.abs(fractionalPart - fraction.value) < Math.abs(fractionalPart - closest.value)) {
+			closest = fraction
 		}
-
-		return wholeNumber === 0 ? closestFraction : `${wholeNumber}${closestFraction}`
 	}
+
+	return wholeNumber === 0 ? closest.glyph : `${wholeNumber}${closest.glyph}`
 }
+
+/** Unicode fractions decimalToFraction snaps to, in ascending order. */
+const FRACTIONS = [
+	{ value: 1 / 10, glyph: '⅒' },
+	{ value: 1 / 8, glyph: '⅛' },
+	{ value: 1 / 6, glyph: '⅙' },
+	{ value: 1 / 5, glyph: '⅕' },
+	{ value: 1 / 4, glyph: '¼' },
+	{ value: 1 / 3, glyph: '⅓' },
+	{ value: 3 / 8, glyph: '⅜' },
+	{ value: 2 / 5, glyph: '⅖' },
+	{ value: 1 / 2, glyph: '½' },
+	{ value: 3 / 5, glyph: '⅗' },
+	{ value: 5 / 8, glyph: '⅝' },
+	{ value: 2 / 3, glyph: '⅔' },
+	{ value: 3 / 4, glyph: '¾' },
+	{ value: 4 / 5, glyph: '⅘' },
+	{ value: 5 / 6, glyph: '⅚' },
+	{ value: 7 / 8, glyph: '⅞' }
+]
 
 /**
  * Rounds an ingredient quantity to the nearest whole number if greater than 10,
@@ -284,26 +279,6 @@ export function roundIngredientQuantity(decimal) {
 function roundToDecimalPlaces(num, decimalPlaces) {
 	const factor = Math.pow(10, decimalPlaces)
 	return Math.round(num * factor) / factor
-}
-
-/**
- * Rounds a number to the nearest integer if it's within a specified tolerance.
- *
- * @function
- * @param {number} num - The number to be checked and potentially rounded.
- * @param {number} [tolerance=1e-10] - The tolerance within which the number will be rounded to the nearest integer.
- * @returns {number} - The original number or its rounded value if it's within the tolerance.
- * @example
- *
- * roundToTolerance(123.00000000001); // returns 123
- * roundToTolerance(123.0001, 0.001); // returns 123
- */
-function roundToTolerance(num, tolerance = 1e-10) {
-	const rounded = Math.round(num)
-	if (Math.abs(num - rounded) < tolerance) {
-		return rounded
-	}
-	return num
 }
 
 /**
