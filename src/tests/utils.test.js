@@ -172,9 +172,31 @@ describe('Filter functions', () => {
 			const result = decimalToFraction(1.3)
 			expect(result).toBe('1⅓')
 		})
-		it('should convert 0.123 to ⅒', () => {
+		it('should convert 0.123 to ⅛', () => {
 			const result = decimalToFraction(0.123)
-			expect(result).toBe('⅒')
+			expect(result).toBe('⅛')
+		})
+		it.each([
+			[0.125, '⅛'],
+			[0.375, '⅜'],
+			[0.625, '⅝'],
+			[0.875, '⅞'],
+			[1 / 6, '⅙'],
+			[2 / 3, '⅔'],
+			[0.7, '⅔'],
+			[5 / 6, '⅚'],
+			[0.9, '⅞'],
+			[1.125, '1⅛'],
+			[2.25, '2¼']
+		])('should convert %d to %s', (decimal, expected) => {
+			expect(decimalToFraction(decimal)).toBe(expected)
+		})
+		it('should snap a near-whole number to the whole number', () => {
+			expect(decimalToFraction(1.97)).toBe('2')
+			expect(decimalToFraction(2.03)).toBe('2')
+		})
+		it('should not round a small quantity down to 0', () => {
+			expect(decimalToFraction(0.05)).toBe('⅒')
 		})
 		it('should convert 0.77 to ¾', () => {
 			const result = decimalToFraction(0.77)

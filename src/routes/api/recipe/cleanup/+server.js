@@ -42,6 +42,13 @@ export async function POST({ request, locals }) {
 		let prompt = ''
 
 		if (type === 'ingredients') {
+			// "Skip Small Units": the user keeps teaspoons and tablespoons rather than grams,
+			// the same as unit conversion does (see shouldSkipConversion)
+			const keepSpoons = !!locals.user?.skipSmallUnits && userUnits !== 'americanVolumetric'
+			const spoonRule = keepSpoons
+				? `
+- EXCEPTION: teaspoons and tablespoons (and their abbreviations, e.g. tsp, tbsp, TL, EL) are allowed. Keep them exactly as written, never convert them to grams or milliliters. If a spoon measure has a dual unit, keep the spoon measure: "1 tbsp (15ml) oil" → "1 tbsp oil"`
+				: ''
 			const preferredUnit =
 				userUnits === 'metric'
 					? 'metric (grams, milliliters, kilograms, liters)'
@@ -64,7 +71,7 @@ CRITICAL - UNIT HANDLING:
 - REMOVE ALL non-preferred units completely. The output must contain ONLY ${userUnits === 'metric' ? 'metric' : userUnits === 'americanVolumetric' ? 'US volumetric' : 'imperial'} measurements
 - If dual units are present, keep ONLY the ${userUnits === 'metric' ? 'metric' : userUnits === 'americanVolumetric' ? 'US volumetric' : 'imperial'} one and DELETE the other entirely
 - Examples: ${nonPreferredExamples}
-- NEVER output both metric and imperial/US units together
+- NEVER output both metric and imperial/US units together${spoonRule}
 
 Other formatting rules:
 1. Move alternative ingredients after a comma with "or"

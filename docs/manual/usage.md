@@ -236,7 +236,7 @@ When adding or editing a recipe, you'll find a "Clean Ingredients" button below 
 6. **Use decimal numbers** - Converts fractions to decimals (e.g., "1 1/2 kg" → "1.5 kg")
 7. **Remove prepositions** - Eliminates words like "of" (e.g., "1.5 kg of flour" → "1.5 kg flour")
 
-This feature respects your language settings and preferred unit system (metric/US/imperial).
+This feature respects your language settings and preferred unit system (metric/US/imperial). With **Teaspoons instead of grams** turned on in your recipe settings, teaspoons and tablespoons are kept as they are rather than converted to grams or milliliters.
 
 <video width="640" height="360" controls>
   <source src="../../videos/ingredients_tidy_demo.mp4" type="video/mp4">
