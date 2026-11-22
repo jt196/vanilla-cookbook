@@ -39,8 +39,12 @@ export async function POST({ request, locals }) {
 				image_url,
 				notes: recipeData.notes,
 				ingredients: recipeData.ingredients,
+				// Set when Clean Ingredients / Summarize Directions ran before the first save, so the
+				// recipe view can switch back to the original like an edited recipe can
+				ingredients_original: recipeData.ingredients_original || null,
 				equipment: recipeData.equipment,
 				directions: recipeData.directions,
+				directions_original: recipeData.directions_original || null,
 				nutritional_info: recipeData.nutritional_info,
 				is_public: recipeData.is_public,
 				cook_time: normalizeToString(cook_time),
