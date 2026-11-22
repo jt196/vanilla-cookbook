@@ -117,34 +117,36 @@
 		</div>
 	{/if}
 
-	<div class="mb-4">
-		<div class="grid grid-cols-3 gap-1 mb-3">
-			<Button
-				style={selectedSystem === 'metric' ? 'standard' : 'soft'}
-				color="primary"
-				size="sm"
-				class={originalSystem === 'metric' ? 'ring-2 ring-primary' : ''}
-				onclick={() => onSelectedSystemChange('metric')}>
-				{$t('recipeView.systemMetric')}
-			</Button>
-			<Button
-				style={selectedSystem === 'americanVolumetric' ? 'standard' : 'soft'}
-				color="primary"
-				size="sm"
-				class={originalSystem === 'americanVolumetric' ? 'ring-2 ring-primary' : ''}
-				onclick={() => onSelectedSystemChange('americanVolumetric')}>
-				{$t('recipeView.systemUsVol')}
-			</Button>
-			<Button
-				style={selectedSystem === 'imperial' ? 'standard' : 'soft'}
-				color="primary"
-				size="sm"
-				class={originalSystem === 'imperial' ? 'ring-2 ring-primary' : ''}
-				onclick={() => onSelectedSystemChange('imperial')}>
-				{$t('recipeView.systemImperial')}
-			</Button>
+	{#if user.showUnitButtons !== false}
+		<div class="mb-4">
+			<div class="grid grid-cols-3 gap-1 mb-3">
+				<Button
+					style={selectedSystem === 'metric' ? 'standard' : 'soft'}
+					color="primary"
+					size="sm"
+					class={originalSystem === 'metric' ? 'ring-2 ring-primary' : ''}
+					onclick={() => onSelectedSystemChange('metric')}>
+					{$t('recipeView.systemMetric')}
+				</Button>
+				<Button
+					style={selectedSystem === 'americanVolumetric' ? 'standard' : 'soft'}
+					color="primary"
+					size="sm"
+					class={originalSystem === 'americanVolumetric' ? 'ring-2 ring-primary' : ''}
+					onclick={() => onSelectedSystemChange('americanVolumetric')}>
+					{$t('recipeView.systemUsVol')}
+				</Button>
+				<Button
+					style={selectedSystem === 'imperial' ? 'standard' : 'soft'}
+					color="primary"
+					size="sm"
+					class={originalSystem === 'imperial' ? 'ring-2 ring-primary' : ''}
+					onclick={() => onSelectedSystemChange('imperial')}>
+					{$t('recipeView.systemImperial')}
+				</Button>
+			</div>
 		</div>
-	</div>
+	{/if}
 
 	<div class="flex flex-wrap gap-1">
 		<Button

@@ -40,7 +40,8 @@ export const load = async ({ params, locals, fetch }) => {
 		ingSymbol: true,
 		skipSmallUnits: true,
 		showSimilarRecipes: true,
-		showNotesDescription: true
+		showNotesDescription: true,
+		showUnitButtons: true
 	}
 
 	// Using nullish coalescing operator to assign user or nullUser to viewUser

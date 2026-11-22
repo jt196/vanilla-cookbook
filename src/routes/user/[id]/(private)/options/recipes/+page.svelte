@@ -41,6 +41,9 @@
 		if (user && user.showNotesDescription === undefined) {
 			user.showNotesDescription = true
 		}
+		if (user && user.showUnitButtons === undefined) {
+			user.showUnitButtons = true
+		}
 	})
 
 	async function updateSettings(event) {
@@ -88,6 +91,16 @@
 		size="sm"
 		color="neutral">
 		{user.skipSmallUnits ? $t('recipePrefs.skipSmallUnitsOn') : $t('recipePrefs.skipSmallUnitsOff')}
+	</Checkbox>
+	<Checkbox
+		name="showUnitButtons"
+		bind:checked={user.showUnitButtons}
+		size="sm"
+		color="neutral"
+		legend={$t('recipePrefs.showUnitButtons')}>
+		{user.showUnitButtons
+			? $t('recipePrefs.showUnitButtonsOn')
+			: $t('recipePrefs.showUnitButtonsOff')}
 	</Checkbox>
 	<Checkbox
 		name="Volumetric Match Display"

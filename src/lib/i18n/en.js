@@ -826,6 +826,10 @@ export default {
 		skipSmallUnits: 'Skip Small Units',
 		skipSmallUnitsOn: 'Use teaspoons and tablespoons instead of grams.',
 		skipSmallUnitsOff: 'Use grams for small measurements.',
+		showUnitButtons: 'Show Unit Buttons',
+		showUnitButtonsOn:
+			'Show buttons to switch between metric, US volumetric and imperial on recipes.',
+		showUnitButtonsOff: 'Hide the unit switching buttons.',
 		volumetricMatch: 'Volumetric Match Display',
 		volumetricMatchOn: 'Display ingredient matching when converting to and from US Cups.',
 		volumetricMatchOff: 'Hide ingredient matching when converting to and from US Cups.',
