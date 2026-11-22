@@ -5,7 +5,7 @@ import {
 	formatIngredientAmount
 } from '$lib/utils/ingredientAmount'
 import { ingredientProcess } from '$lib/utils/filters'
-import { parseRecipeText } from '$lib/utils/converter'
+import { parseRecipeText, normalizeIngredient } from '$lib/utils/converter'
 
 describe('isSpoonUnit', () => {
 	it.each([
@@ -54,6 +54,18 @@ describe('spoon fractions end to end', () => {
 		expect(formatIngredientAmount(salz, { system: 'metric', lang: 'deu', useSymbol: true })).toBe(
 			'¼ TL'
 		)
+	})
+
+	// The recipe view normalizes parsed ingredients before display (rounding to unit precision)
+	it.each([
+		['1/4 EL Öl', 'deu', 'metric', '¼ EL'],
+		['1/4 tbsp oil', 'eng', 'metric', '¼ tbs'],
+		['1/8 tsp salt', 'eng', 'americanVolumetric', '⅛ tsp'],
+		['1/3 cup milk', 'eng', 'americanVolumetric', '⅓ c']
+	])('keeps %s as written after normalizing (%s, %s)', (line, lang, system, expected) => {
+		const [parsed] = ingredientProcess([line], lang)
+		const normalized = normalizeIngredient(parsed, {}, lang)
+		expect(formatIngredientAmount(normalized, { system, lang, useSymbol: true })).toBe(expected)
 	})
 
 	it('shows spoon fractions in direction markers', () => {
