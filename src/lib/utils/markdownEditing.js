@@ -98,8 +98,9 @@ export function wrapSelection(value, start, end, token) {
  *
  * @param {HTMLTextAreaElement} textarea
  * @param {TextEdit} edit
+ * @returns {void}
  */
-function applyEdit(textarea, edit) {
+export function applyEdit(textarea, edit) {
 	textarea.setSelectionRange(edit.start, edit.end)
 	const inserted =
 		typeof document.execCommand === 'function' &&

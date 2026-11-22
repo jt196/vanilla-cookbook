@@ -1,6 +1,11 @@
 <script>
 	import { addIngredientToShoppingList } from '$lib/utils/crud'
-	import { decimalToFraction, roundIngredientQuantity } from '$lib/utils/filters'
+	import {
+		formatScaledQuantity,
+		formatUnit,
+		normalizeScale,
+		scaledQuantityForPlural
+	} from '$lib/utils/ingredientAmount'
 	import Shopping from '$lib/components/svg/Shopping.svelte'
 	import Badge from '$lib/components/ui/Badge.svelte'
 	import { i18nMap } from '$lib/submodules/recipe-ingredient-parser/src/i18n'
@@ -20,7 +25,7 @@
 		userLanguage = 'eng'
 	} = $props()
 
-	let scaleIng = $derived(handleScale(scale))
+	let scaleIng = $derived(normalizeScale(scale))
 
 	let struckThrough = $state(false)
 	let isHighlighted = $state(false)
@@ -45,44 +50,10 @@
 		}
 	}
 
-	function handleScale(scale) {
-		if (isNaN(scale) || scale < 0) {
-			return 1
-		}
-		return parseFloat(scale)
-	}
+	const formatQuantity = (qty, min, max, unit = null) =>
+		formatScaledQuantity(qty, min, max, unit, scaleIng, selectedSystem)
 
-	const formatQuantity = (qty, min, max, unit = null) => {
-		const hasQty = qty !== null && qty !== undefined && qty !== ''
-		const hasRangeValues = min !== null && min !== undefined && max !== null && max !== undefined
-		const isNoUnitZeroPlaceholder =
-			!unit &&
-			(hasQty || hasRangeValues) &&
-			Number(qty ?? 0) === 0 &&
-			Number(min ?? 0) === 0 &&
-			Number(max ?? 0) === 0
-		if (isNoUnitZeroPlaceholder) return ''
-		const hasMeaningfulRange =
-			hasRangeValues && !(!hasQty && Number(min) === 0 && Number(max) === 0)
-		if (!hasQty && !hasMeaningfulRange) return ''
-		if (hasMeaningfulRange && min !== max) {
-			return selectedSystem === 'metric'
-				? `${roundIngredientQuantity(min * scaleIng)}-${roundIngredientQuantity(max * scaleIng)}`
-				: `${decimalToFraction(min * scaleIng)}-${decimalToFraction(max * scaleIng)}`
-		}
-		const baseQty = hasQty ? qty : hasMeaningfulRange ? min : null
-		if (baseQty === null) return ''
-		return selectedSystem === 'metric'
-			? roundIngredientQuantity(baseQty * scaleIng)
-			: decimalToFraction(baseQty * scaleIng)
-	}
-
-	const renderUnit = (entry, qtyScaled) => {
-		if (!entry?.unit || entry.unit === 'q.b.') return ''
-		if (displaySymbol && entry.symbol) return entry.symbol
-		const usePlural = qtyScaled > 1 && entry.unitPlural
-		return usePlural ? entry.unitPlural : entry.unit
-	}
+	const renderUnit = (entry, qtyScaled) => formatUnit(entry, qtyScaled, displaySymbol)
 
 	const stopExtras = ['and', 'or']
 	const extraText = $derived.by(() => {
@@ -150,18 +121,7 @@
 	const displayQuantityText = $derived(
 		formatQuantity(ingredient.quantity, ingredient.minQty, ingredient.maxQty, ingredient.unit)
 	)
-	const displayQuantityForPlural = $derived.by(() => {
-		if (ingredient.quantity !== null && ingredient.quantity !== undefined)
-			return ingredient.quantity * scaleIng
-		if (
-			ingredient.maxQty !== null &&
-			ingredient.maxQty !== undefined &&
-			!(Number(ingredient.maxQty) === 0 && Number(ingredient.minQty) === 0)
-		) {
-			return ingredient.maxQty * scaleIng
-		}
-		return 0
-	})
+	const displayQuantityForPlural = $derived(scaledQuantityForPlural(ingredient, scaleIng))
 </script>
 
 <div class="ingredient-line" class:highlight={isHighlighted}>

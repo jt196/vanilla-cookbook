@@ -312,7 +312,9 @@
 				selectedSystem,
 				measurementSystem.system,
 				convertedIngredients,
-				viewUser.language
+				viewUser.language,
+				// Amount markers ({onion}) follow the scaler and the user's unit symbol setting
+				{ scale, useSymbol: !!viewUser.ingSymbol }
 			).map((direction) => getSanitizedHTML(direction))
 		)
 

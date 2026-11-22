@@ -16,6 +16,13 @@
 	import Bolt from '$lib/components/svg/Bolt.svelte'
 	import Undo from '$lib/components/svg/Undo.svelte'
 	import { t } from '$lib/stores/locale.js'
+	import { applyEdit } from '$lib/utils/markdownEditing'
+	import { ingredientProcess } from '$lib/utils/filters'
+	import {
+		findUnresolvedMarkers,
+		stripIngredientMarkers,
+		toggleIngredientMarker
+	} from '$lib/utils/ingredientMarkers'
 
 	/** @type {{recipe: any, onSubmit: any, buttonText?: string, selectedFiles?: any, onSelectedFilesChange?: any, editMode?: boolean, aiEnabled?: boolean, aiProvider?: string | null, aiSelectedProvider?: string | null, aiSelectedProviderConfigured?: boolean, isAdmin?: boolean, userUnits?: string, userLanguage?: string, cancelHref?: string, onDelete?: (() => void) | null, saveImageUrl?: boolean}} */
 	let {
@@ -56,6 +63,37 @@
 		'Photo realistic plated dish, natural lighting, shallow depth of field, no text or watermark.'
 	let errorMessage = $state('')
 	let errorCode = $state(null)
+
+	/** @type {HTMLTextAreaElement | null} */
+	let directionsTextarea = $state(null)
+
+	// Wrap the selected ingredient (or the word at the cursor) in a {marker}, or unwrap it
+	function handleToggleIngredientMarker() {
+		const textarea = directionsTextarea
+		if (!textarea) return
+		const edit = toggleIngredientMarker(
+			textarea.value,
+			textarea.selectionStart,
+			textarea.selectionEnd
+		)
+		textarea.focus()
+		if (edit) applyEdit(textarea, edit)
+	}
+
+	// Parsed lazily: only read when the directions contain a marker
+	const parsedIngredientsForMarkers = $derived(
+		ingredientProcess(
+			(recipe?.ingredients || '').split('\n').filter((line) => line.trim()),
+			userLanguage
+		)
+	)
+
+	// Markers that won't show an amount because no ingredient matches them
+	const unresolvedMarkers = $derived.by(() => {
+		const directions = recipe?.directions
+		if (!directions || !directions.includes('{')) return []
+		return findUnresolvedMarkers(directions, parsedIngredientsForMarkers)
+	})
 
 	const providerLabels = {
 		openai: 'OpenAI',
@@ -197,6 +235,8 @@
 				body: JSON.stringify({
 					type: 'directions',
 					content: recipe.directions,
+					// Lets the AI keep and add {ingredient} amount markers
+					ingredients: recipe.ingredients || '',
 					userUnits,
 					language: userLanguage
 				})
@@ -427,7 +467,7 @@
 		try {
 			errorMessage = ''
 			errorCode = null
-			const content = `Recipe: ${recipe.name || ''}\n\nIngredients:\n${recipe.ingredients || ''}\n\nDirections:\n${recipe.directions || ''}`
+			const content = `Recipe: ${recipe.name || ''}\n\nIngredients:\n${recipe.ingredients || ''}\n\nDirections:\n${stripIngredientMarkers(recipe.directions) || ''}`
 			const response = await fetch('/api/recipe/cleanup', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
@@ -698,8 +738,29 @@
 				rows={7}
 				name="directions"
 				bind:value={recipe.directions}
+				bind:element={directionsTextarea}
 				markdown
 				label={$t('recipeForm.directions')} />
+			<div class="flex flex-wrap items-center gap-2 mt-2">
+				<!-- mousedown preventDefault keeps the textarea's focus and selection -->
+				<Button
+					type="button"
+					size="sm"
+					style="soft"
+					onmousedown={(event) => event.preventDefault()}
+					onclick={handleToggleIngredientMarker}>
+					{'{ }'}
+					{$t('recipeForm.ingredientMarker')}
+				</Button>
+			</div>
+			<InfoText class="mt-1">
+				{$t('recipeForm.ingredientMarkerTip', { example: '{onion}' })}
+			</InfoText>
+			{#if unresolvedMarkers.length}
+				<p class="text-xs text-warning mt-1">
+					{$t('recipeForm.ingredientMarkerUnresolved', { markers: unresolvedMarkers.join(', ') })}
+				</p>
+			{/if}
 			{#if aiEnabled}
 				<div class="flex gap-2 mt-2">
 					{#if recipe.directions_original}

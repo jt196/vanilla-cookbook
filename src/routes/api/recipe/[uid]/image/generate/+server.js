@@ -5,6 +5,7 @@ import { requireAuth, requireOwnership } from '$lib/server/authHelpers'
 import { createRecipePhotoEntry, removeRecipePhotoEntry } from '$lib/utils/api'
 import { saveFile } from '$lib/utils/import/importHelpers'
 import { fileTypeFromBuffer } from 'file-type'
+import { stripIngredientMarkers } from '$lib/utils/ingredientMarkers'
 
 const DEFAULT_STYLE_DESCRIPTION =
 	'Photo realistic plated dish, natural lighting, shallow depth of field, clean background, no text, no watermark, no logo.'
@@ -25,7 +26,7 @@ function buildRecipeImagePrompt(recipe, styleDescription) {
 		.filter(Boolean)
 		.slice(0, 20)
 		.join(', ')
-	const directions = (recipe?.directions || '')
+	const directions = stripIngredientMarkers(recipe?.directions || '')
 		.split('\n')
 		.map((line) => line.trim())
 		.filter(Boolean)

@@ -123,6 +123,7 @@ Rules:
 - Do not invent or omit fields.
 - Ingredients, equipment and instructions must remain arrays of strings.
 - Notes/description/name should be translated if present.
+- Text in curly braces in the instructions, like {onion}, {sugar#2} or {sugar*1/2}, is an ingredient amount marker. Keep the braces and anything after # or *, and write the name inside exactly as you translated that ingredient's name in the ingredients array, even if the sentence's grammar would prefer another form.
 - Return raw JSON only, no Markdown or extra commentary.
 
 Expected format:

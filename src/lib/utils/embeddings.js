@@ -1,4 +1,5 @@
 import { env } from '$env/dynamic/private'
+import { stripIngredientMarkers } from './ingredientMarkers.js'
 import {
 	resolveEmbeddingProvider,
 	resolveEmbeddingModel,
@@ -189,7 +190,7 @@ export function prepareRecipeText(recipe) {
 		recipe?.name,
 		recipe?.description,
 		recipe?.ingredients,
-		recipe?.directions,
+		stripIngredientMarkers(recipe?.directions),
 		recipe?.notes,
 		recipe?.source
 	]
