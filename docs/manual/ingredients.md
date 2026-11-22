@@ -80,6 +80,8 @@ The parser will normalise any fractions to decimals e.g.
 
 **1½** and **1 ½** will become **1.5**.
 
+When displayed, metric recipes show decimals (**1.5 kg**) and US/imperial recipes show fractions (**1½ cups**). Spoon measures (teaspoons, tablespoons and their equivalents in other languages) always show fractions, as that's how they're written in every system: **¼ tsp**, not **0.3 tsp**.
+
 The parser will attempt process any ranges in the ingredient line as well, e.g. **4-5** vanilla beans.
 
 "What's the point in all this?" I hear you say! When we identify the numbers, we can run calculations with them, e.g. scale recipes.

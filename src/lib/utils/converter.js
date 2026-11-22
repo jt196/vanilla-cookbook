@@ -832,7 +832,8 @@ export function parseRecipeText(
 		return ingredients ? matchIngredients(result, ingredients) : result
 	}
 	/** @param {import('./ingredientMarkers.js').LocatedMarker} marker */
-	const formatMarker = (marker) => renderMarker(marker, ingredients, toSystem, markerOptions)
+	const formatMarker = (marker) =>
+		renderMarker(marker, ingredients, toSystem, { lang, ...markerOptions })
 
 	return directions.map((direction) => formatAroundMarkers(direction, formatText, formatMarker))
 }

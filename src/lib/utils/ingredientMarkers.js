@@ -40,6 +40,7 @@ import { formatIngredientAmount } from './ingredientAmount.js'
  * @typedef {Object} MarkerRenderOptions
  * @property {number} [scale=1] - Recipe scale factor
  * @property {boolean} [useSymbol=false] - Show unit symbols ("g") rather than names ("grams")
+ * @property {string} [lang='eng'] - Recipe language, to recognize spoon units
  */
 
 const MARKER_REGEX = /\{([^{}\n]{1,80})\}/g
@@ -183,14 +184,15 @@ const escapeHtml = (str) =>
  * @returns {string}
  */
 export function renderMarker(marker, ingredients, system, options = {}) {
-	const { scale = 1, useSymbol = false } = options
+	const { scale = 1, useSymbol = false, lang = 'eng' } = options
 	const name = escapeHtml(marker.name)
 	const idx = resolveMarker(marker, ingredients)
 	if (idx === -1 || !ingredients) return name
 	const amount = formatIngredientAmount(ingredients[idx], {
 		scale: scale * marker.factor,
 		system,
-		useSymbol
+		useSymbol,
+		lang
 	})
 	const amountHtml = amount ? ` <span class="whitespace-nowrap">(${escapeHtml(amount)})</span>` : ''
 	return `<span class="text-primary"><b>${name}</b>${amountHtml}</span>`

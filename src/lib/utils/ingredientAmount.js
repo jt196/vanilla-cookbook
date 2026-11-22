@@ -6,6 +6,7 @@
  */
 
 import { decimalToFraction, roundIngredientQuantity } from './filters.js'
+import { i18nMap } from '$lib/submodules/recipe-ingredient-parser/src/i18n'
 
 /**
  * @typedef {Object} AmountIngredient
@@ -28,9 +29,50 @@ export function normalizeScale(scale) {
 	return isNaN(value) || value < 0 ? 1 : value
 }
 
+/** @type {Map<string, Set<string>>} Lowercase spoon unit names, symbols and plurals per language */
+const spoonNamesByLang = new Map()
+
+/**
+ * The lowercase names, plurals and symbols of the spoon units (teaspoon, tablespoon,
+ * dessertspoon, ...) in a language, e.g. "teelöffel", "tl", "el" for German.
+ *
+ * @param {string} lang
+ * @returns {Set<string>}
+ */
+function spoonNames(lang) {
+	let names = spoonNamesByLang.get(lang)
+	if (!names) {
+		names = new Set()
+		const unitsData = /** @type {Record<string, any>} */ (i18nMap[lang]?.unitsData ?? {})
+		for (const [key, data] of Object.entries(unitsData)) {
+			if (!key.endsWith('spoon')) continue
+			for (const name of [...(data.names ?? []), data.singular, data.plural, data.symbol]) {
+				if (typeof name === 'string' && name) names.add(name.toLowerCase())
+			}
+		}
+		spoonNamesByLang.set(lang, names)
+	}
+	return names
+}
+
+/**
+ * Whether a unit is a spoon measure (teaspoon, tablespoon, ...) in `lang` or English.
+ * Spoon amounts read as fractions even in metric recipes: "¼ tsp", not "0.3 tsp".
+ *
+ * @param {string|null|undefined} unit
+ * @param {string} [lang='eng']
+ * @returns {boolean}
+ */
+export function isSpoonUnit(unit, lang = 'eng') {
+	if (!unit || typeof unit !== 'string') return false
+	const name = unit.toLowerCase()
+	return spoonNames(lang).has(name) || spoonNames('eng').has(name)
+}
+
 /**
  * Format a quantity (or min-max range) multiplied by `scale`: rounded decimals for metric,
- * fractions otherwise. Returns '' when there's nothing meaningful to show.
+ * fractions otherwise, and fractions for spoon measures in every system.
+ * Returns '' when there's nothing meaningful to show.
  *
  * @param {number|string|null|undefined} qty
  * @param {number|string|null|undefined} min
@@ -38,9 +80,10 @@ export function normalizeScale(scale) {
  * @param {string|null|undefined} unit
  * @param {number} scale
  * @param {string|null|undefined} system - 'metric', 'imperial' or 'americanVolumetric'
+ * @param {string} [lang='eng'] - Language of the unit name, to recognize spoon measures
  * @returns {string}
  */
-export function formatScaledQuantity(qty, min, max, unit, scale, system) {
+export function formatScaledQuantity(qty, min, max, unit, scale, system, lang = 'eng') {
 	const hasQty = qty !== null && qty !== undefined && qty !== ''
 	const hasRangeValues = min !== null && min !== undefined && max !== null && max !== undefined
 	const isNoUnitZeroPlaceholder =
@@ -54,7 +97,9 @@ export function formatScaledQuantity(qty, min, max, unit, scale, system) {
 	if (!hasQty && !hasMeaningfulRange) return ''
 	/** @param {number} value */
 	const format = (value) =>
-		system === 'metric' ? roundIngredientQuantity(value) : decimalToFraction(value)
+		system === 'metric' && !isSpoonUnit(unit, lang)
+			? roundIngredientQuantity(value)
+			: decimalToFraction(value)
 	if (hasMeaningfulRange && min !== max) {
 		return `${format(Number(min) * scale)}-${format(Number(max) * scale)}`
 	}
@@ -101,12 +146,12 @@ export function formatUnit(ingredient, qtyScaled, useSymbol = false) {
  * Returns '' when the ingredient has no quantity.
  *
  * @param {AmountIngredient} ingredient
- * @param {{ scale?: number, system?: string|null, useSymbol?: boolean }} [options]
+ * @param {{ scale?: number, system?: string|null, useSymbol?: boolean, lang?: string }} [options]
  * @returns {string}
  */
 export function formatIngredientAmount(
 	ingredient,
-	{ scale = 1, system = null, useSymbol = false } = {}
+	{ scale = 1, system = null, useSymbol = false, lang = 'eng' } = {}
 ) {
 	if (!ingredient) return ''
 	const quantity = formatScaledQuantity(
@@ -115,7 +160,8 @@ export function formatIngredientAmount(
 		ingredient.maxQty,
 		ingredient.unit,
 		scale,
-		system
+		system,
+		lang
 	)
 	if (!quantity) return ''
 	const unit = formatUnit(ingredient, scaledQuantityForPlural(ingredient, scale), useSymbol)
