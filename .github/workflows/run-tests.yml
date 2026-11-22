@@ -129,6 +129,10 @@ jobs:
             http://127.0.0.1:3000/api/site/seed
 
       - name: Run Tests
+        # Tests that hit real sites (YouTube) skip themselves with SKIP_NETWORK: shared CI
+        # runners get rate-limited or served captchas, failing PRs that didn't touch that code
+        env:
+          SKIP_NETWORK: '1'
         run: pnpm test
 
       - name: Run LLM Smoke Tests (optional)
