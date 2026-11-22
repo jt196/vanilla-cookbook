@@ -42,6 +42,8 @@ export default {
   "nav": {
     "allRecipes": "جميع الوصفات",
     "myRecipes": "وصفاتي",
+    "recipes": "الوصفات",
+    "search": "بحث",
     "newRecipe": "وصفة جديدة",
     "shopping": "التسوق",
     "shoppingList": "قائمة التسوق",

@@ -42,6 +42,8 @@ export default {
   "nav": {
     "allRecipes": "Semua Resep",
     "myRecipes": "Resep Saya",
+    "recipes": "Resep",
+    "search": "Cari",
     "newRecipe": "Resep Baru",
     "shopping": "Belanja",
     "shoppingList": "Daftar belanja",
