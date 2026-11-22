@@ -92,6 +92,26 @@ describe('POST /api/recipe', () => {
 		})
 	})
 
+	it('keeps the original ingredients and directions from AI cleanup before the first save', async () => {
+		await createPost(
+			fake({
+				request: formRequest({
+					name: 'Soup',
+					saveImageUrl: false,
+					ingredients: '100g onion',
+					ingredients_original: '100g (3.5oz) onion',
+					directions: 'Fry the onion.',
+					directions_original: 'First, take your onion and fry it gently until golden.'
+				}),
+				locals: locals()
+			})
+		)
+		expect(vi.mocked(prisma.recipe.create).mock.calls[0][0].data).toMatchObject({
+			ingredients_original: '100g (3.5oz) onion',
+			directions_original: 'First, take your onion and fry it gently until golden.'
+		})
+	})
+
 	it('rejects an invalid recipe payload', async () => {
 		const res = await createPost(fake({ request: formRequest('{oops'), locals: locals() }))
 		expect(res.status).toBe(400)
