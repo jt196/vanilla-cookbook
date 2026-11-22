@@ -51,7 +51,7 @@
 	}
 
 	const formatQuantity = (qty, min, max, unit = null) =>
-		formatScaledQuantity(qty, min, max, unit, scaleIng, selectedSystem)
+		formatScaledQuantity(qty, min, max, unit, scaleIng, selectedSystem, userLanguage)
 
 	const renderUnit = (entry, qtyScaled) => formatUnit(entry, qtyScaled, displaySymbol)
 
