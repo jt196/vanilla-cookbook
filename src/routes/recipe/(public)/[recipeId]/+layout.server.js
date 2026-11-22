@@ -41,7 +41,9 @@ export const load = async ({ params, locals, fetch }) => {
 		skipSmallUnits: true,
 		showSimilarRecipes: true,
 		showNotesDescription: true,
-		showUnitButtons: true
+		// Logged-out visitors have no settings, so they keep the unit switch
+		showUnitButtons: true,
+		showDisplayToggles: true
 	}
 
 	// Using nullish coalescing operator to assign user or nullUser to viewUser

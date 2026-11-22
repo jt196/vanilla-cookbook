@@ -19,7 +19,8 @@ CREATE TABLE "new_auth_user" (
     "displayNutrition" BOOLEAN NOT NULL DEFAULT true,
     "showSimilarRecipes" BOOLEAN NOT NULL DEFAULT true,
     "showNotesDescription" BOOLEAN NOT NULL DEFAULT true,
-    "showUnitButtons" BOOLEAN NOT NULL DEFAULT true,
+    "showUnitButtons" BOOLEAN NOT NULL DEFAULT false,
+    "showDisplayToggles" BOOLEAN NOT NULL DEFAULT true,
     "isAdmin" BOOLEAN NOT NULL DEFAULT false,
     "isRoot" BOOLEAN NOT NULL DEFAULT false,
     "useCats" BOOLEAN NOT NULL DEFAULT false

@@ -148,34 +148,36 @@
 		</div>
 	{/if}
 
-	<div class="flex flex-wrap gap-1">
-		<Button
-			style={displayOriginal ? 'standard' : 'soft'}
-			color="primary"
-			size="sm"
-			class="flex-1"
-			onclick={() => (displayOriginal = !displayOriginal)}>
-			{$t('recipeView.toggleOriginal')}
-		</Button>
-		{#if sanitizedIngredients.some((item) => item.additional)}
+	{#if user.showDisplayToggles !== false}
+		<div class="flex flex-wrap gap-1">
 			<Button
-				style={displayExtra ? 'standard' : 'soft'}
+				style={displayOriginal ? 'standard' : 'soft'}
 				color="primary"
 				size="sm"
 				class="flex-1"
-				disabled={displayOriginal}
-				onclick={() => (displayExtra = !displayExtra)}>
-				{$t('recipeView.toggleExtra')}
+				onclick={() => (displayOriginal = !displayOriginal)}>
+				{$t('recipeView.toggleOriginal')}
 			</Button>
-		{/if}
-		<Button
-			style={displayDryMatch ? 'standard' : 'soft'}
-			color="primary"
-			size="sm"
-			class="flex-1"
-			disabled={displayOriginal || !isVolumetricConversion}
-			onclick={() => (displayDryMatch = !displayDryMatch)}>
-			{$t('recipeView.toggleMatch')}
-		</Button>
-	</div>
+			{#if sanitizedIngredients.some((item) => item.additional)}
+				<Button
+					style={displayExtra ? 'standard' : 'soft'}
+					color="primary"
+					size="sm"
+					class="flex-1"
+					disabled={displayOriginal}
+					onclick={() => (displayExtra = !displayExtra)}>
+					{$t('recipeView.toggleExtra')}
+				</Button>
+			{/if}
+			<Button
+				style={displayDryMatch ? 'standard' : 'soft'}
+				color="primary"
+				size="sm"
+				class="flex-1"
+				disabled={displayOriginal || !isVolumetricConversion}
+				onclick={() => (displayDryMatch = !displayDryMatch)}>
+				{$t('recipeView.toggleMatch')}
+			</Button>
+		</div>
+	{/if}
 </div>

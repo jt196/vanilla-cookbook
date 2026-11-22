@@ -830,6 +830,11 @@ export default {
 		showUnitButtonsOn:
 			'Show buttons to switch between metric, US volumetric and imperial on recipes.',
 		showUnitButtonsOff: 'Hide the unit switching buttons.',
+		showDisplayToggles: 'Show Display Toggles',
+		showDisplayTogglesOn:
+			'Show the Original, Extra and Match buttons above the ingredients on recipes.',
+		showDisplayTogglesOff:
+			'Hide the Original, Extra and Match buttons. Your defaults for them still apply.',
 		volumetricMatch: 'Volumetric Match Display',
 		volumetricMatchOn: 'Display ingredient matching when converting to and from US Cups.',
 		volumetricMatchOff: 'Hide ingredient matching when converting to and from US Cups.',

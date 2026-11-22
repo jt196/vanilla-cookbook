@@ -41,6 +41,7 @@ declare global {
 			showSimilarRecipes?: boolean
 			showNotesDescription?: boolean
 			showUnitButtons?: boolean
+			showDisplayToggles?: boolean
 			ingSymbol?: boolean
 			language?: string
 			theme?: string

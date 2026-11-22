@@ -34,6 +34,7 @@ export async function PUT({ request, locals, params }) {
 		'showSimilarRecipes',
 		'showNotesDescription',
 		'showUnitButtons',
+		'showDisplayToggles',
 		'about'
 	]
 

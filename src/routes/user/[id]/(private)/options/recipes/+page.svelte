@@ -42,7 +42,10 @@
 			user.showNotesDescription = true
 		}
 		if (user && user.showUnitButtons === undefined) {
-			user.showUnitButtons = true
+			user.showUnitButtons = false
+		}
+		if (user && user.showDisplayToggles === undefined) {
+			user.showDisplayToggles = true
 		}
 	})
 
@@ -101,6 +104,16 @@
 		{user.showUnitButtons
 			? $t('recipePrefs.showUnitButtonsOn')
 			: $t('recipePrefs.showUnitButtonsOff')}
+	</Checkbox>
+	<Checkbox
+		name="showDisplayToggles"
+		bind:checked={user.showDisplayToggles}
+		size="sm"
+		color="neutral"
+		legend={$t('recipePrefs.showDisplayToggles')}>
+		{user.showDisplayToggles
+			? $t('recipePrefs.showDisplayTogglesOn')
+			: $t('recipePrefs.showDisplayTogglesOff')}
 	</Checkbox>
 	<Checkbox
 		name="Volumetric Match Display"
