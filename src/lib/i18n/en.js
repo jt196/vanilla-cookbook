@@ -867,6 +867,9 @@ export default {
 	},
 
 	recipeView: {
+		addAllToShopping: 'Add all to shopping list',
+		addAllHint: 'Untick anything you already have. Items already on your list are merged.',
+		addSelectedToShopping: 'Add to list ({count})',
 		description: 'Description',
 		directions: 'Directions',
 		ingredients: 'Ingredients',
@@ -941,6 +944,8 @@ export default {
 		// Messages
 		msg: {
 			itemAdded: 'Item added successfully!',
+			itemsAdded_one: '{count} item added to your shopping list.',
+			itemsAdded_other: '{count} items added to your shopping list.',
 			itemAddFail: 'Failed to add item. Please try again.',
 			invalidName: 'Invalid ingredient name.',
 			invalidQuantity: 'Invalid quantity value.',

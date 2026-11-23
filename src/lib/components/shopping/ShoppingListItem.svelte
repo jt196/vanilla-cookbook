@@ -5,7 +5,8 @@
 	import Check from '$lib/components/svg/Check.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Checkbox from '$lib/components/ui/Form/Checkbox.svelte'
-	import { t } from '$lib/stores/locale.js'
+	import { t, langStore } from '$lib/stores/locale.js'
+	import { shoppingUnitLabel } from '$lib/utils/shopping'
 
 	let {
 		/** @type {any} */
@@ -51,7 +52,7 @@
 				<span>{item.quantity}</span>
 			{/if}
 			{#if item.unit}
-				<span>{item.unit}</span>
+				<span>{shoppingUnitLabel(item.unit, item.quantity, $langStore)}</span>
 			{/if}
 		</div>
 	</div>

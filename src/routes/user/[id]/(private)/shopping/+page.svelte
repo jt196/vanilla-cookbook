@@ -16,7 +16,7 @@
 	import ShoppingItemInput from '$lib/components/shopping/ShoppingItemInput.svelte'
 	import ShoppingListItem from '$lib/components/shopping/ShoppingListItem.svelte'
 	import ShoppingEditDialog from '$lib/components/shopping/ShoppingEditDialog.svelte'
-	import { t } from '$lib/stores/locale.js'
+	import { t, langStore } from '$lib/stores/locale.js'
 
 	/** @type {{data: any}} */
 	let { data } = $props()
@@ -89,20 +89,34 @@
 		isDeleteDialogOpen = false
 	}
 
+	/**
+	 * Put added or merged rows from the API into the local list, replacing rows with the
+	 * same uid.
+	 *
+	 * @param {any[]} items
+	 */
+	function upsertItems(items) {
+		const byUid = new Map(items.map((item) => [item.uid, item]))
+		const kept = shoppingList.map((item) =>
+			byUid.has(item.uid) ? { ...item, ...byUid.get(item.uid) } : item
+		)
+		const existing = new Set(shoppingList.map((item) => item.uid))
+		shoppingList = [...kept, ...items.filter((item) => !existing.has(item.uid))]
+	}
+
 	async function handleAddIngredient() {
 		try {
-			const ingredientObject = ingredientParse(newIngredient, 'eng', {
+			// Parse in the user's language, so "2 EL Öl" splits into amount, unit and name
+			const ingredientObject = ingredientParse(newIngredient, $langStore || 'eng', {
 				includeUnitSystems: true,
 				includeAlternatives: true
 			})
 
-			// Send the object to the API and create a new shopping list item
+			// The API merges the item into a matching row when there is one
 			const response = await addIngredientToShoppingList(ingredientObject)
 
 			if (response.success) {
-				// Successfully added the ingredient to the API
-				const newItem = response.data
-				shoppingList = [...shoppingList, newItem] // Add the new item to the local state
+				upsertItems([response.data])
 				newIngredient = '' // Clear the input field
 				shoppingFeedback = ''
 				shoppingFeedbackCode = response.data?.code || 'shopping.msg.itemAdded'
@@ -152,7 +166,12 @@
 
 			if (result && result.updatedCount > 0) {
 				// If items were successfully updated, reflect these changes locally
-				shoppingList = shoppingList.map((item) => ({ ...item, purchased: true }))
+				// Each newly ticked item has one more purchase logged
+				shoppingList = shoppingList.map((item) =>
+					item.purchased
+						? item
+						: { ...item, purchased: true, purchaseCount: (item.purchaseCount ?? 0) + 1 }
+				)
 				shoppingFeedback = ''
 				shoppingFeedbackCode =
 					result.code ||
