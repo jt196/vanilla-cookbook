@@ -293,25 +293,28 @@
 <div class="prose mb-2 max-w-none flex gap-2 justify-center">
 	<h2>{$t('shopping.title')}</h2>
 </div>
-<div class="mb-2 max-w-none flex gap-2 justify-center">
-	<ShoppingToolbar
-		{showHidden}
-		{sortByPurchased}
-		{uncheckedItemCount}
-		{purchasedItemCount}
-		onToggleHidden={toggleHidden}
-		onTogglePurchasedSort={togglePurchasedSort}
-		onCheckAll={() => (isCheckAllDialogOpen = true)}
-		onDeletePurchased={() => (isDeleteDialogOpen = true)} />
+<!-- Toolbar and input stay at the top while scrolling through a long list or history -->
+<div class="sticky top-0 z-20 bg-base-100 pt-2 shadow-sm -mx-2 px-2">
+	<div class="mb-2 max-w-none flex gap-2 justify-center">
+		<ShoppingToolbar
+			{showHidden}
+			{sortByPurchased}
+			{uncheckedItemCount}
+			{purchasedItemCount}
+			onToggleHidden={toggleHidden}
+			onTogglePurchasedSort={togglePurchasedSort}
+			onCheckAll={() => (isCheckAllDialogOpen = true)}
+			onDeletePurchased={() => (isDeleteDialogOpen = true)} />
+	</div>
+	<ShoppingItemInput
+		bind:value={newIngredient}
+		onAdd={handleAddIngredient}
+		onKeyPress={handleKeyPressIngredient} />
 </div>
 {#if shoppingList.length === 0}
 	<InfoText class="my-2">{$t('shopping.empty')}</InfoText>
 {/if}
 
-<ShoppingItemInput
-	bind:value={newIngredient}
-	onAdd={handleAddIngredient}
-	onKeyPress={handleKeyPressIngredient} />
 <FeedbackMessage
 	message={shoppingFeedback}
 	messageCode={shoppingFeedbackCode}

@@ -64,9 +64,3 @@
 		<Delete width="20px" height="20px" fill="white" />
 	</Button>
 </div>
-
-<style>
-	.shopping-buttons {
-		margin-bottom: 1rem;
-	}
-</style>
