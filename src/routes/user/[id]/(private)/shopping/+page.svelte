@@ -294,7 +294,7 @@
 	<h2>{$t('shopping.title')}</h2>
 </div>
 <!-- Toolbar and input stay at the top while scrolling through a long list or history -->
-<div class="sticky top-0 z-20 bg-base-100 pt-2 shadow-sm -mx-2 px-2">
+<div class="sticky top-0 z-20 bg-base-100 py-2 shadow-sm -mx-2 px-2 mb-2">
 	<div class="mb-2 max-w-none flex gap-2 justify-center">
 		<ShoppingToolbar
 			{showHidden}

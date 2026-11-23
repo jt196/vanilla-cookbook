@@ -7,6 +7,7 @@
 
 import { i18nMap } from '$lib/submodules/recipe-ingredient-parser/src/i18n'
 import { scaledQuantityForPlural } from './ingredientAmount.js'
+import { decodeHTMLEntities } from './filters.js'
 
 /**
  * @typedef {Object} UnitInfo
@@ -190,7 +191,7 @@ export function planShoppingMerge(rows, item, lang = 'eng') {
 
 /**
  * The shopping list item for a parsed (and unit-converted) recipe ingredient at a scale:
- * the scaled quantity (a range's upper bound) and the singular unit.
+ * the scaled quantity (a range's upper bound), the singular unit and a plain-text name.
  *
  * @param {import('./ingredientAmount.js').AmountIngredient & { ingredient?: string|null }} ingredient
  * @param {number} scale
@@ -205,7 +206,8 @@ export function shoppingItemFromIngredient(ingredient, scale, recipeUid = null) 
 		? roundShoppingQuantity(scaledQuantityForPlural(ingredient, scale))
 		: null
 	return {
-		ingredient: (ingredient.ingredient ?? '').trim(),
+		// Parsed names can hold HTML entities ("sott&#39;olio"); store plain text
+		ingredient: decodeHTMLEntities(ingredient.ingredient ?? '').trim(),
 		quantity: quantity === 0 ? null : quantity,
 		unit: ingredient.unit && ingredient.unit !== 'q.b.' ? ingredient.unit : null,
 		recipeUid

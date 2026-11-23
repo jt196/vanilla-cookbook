@@ -66,6 +66,8 @@ describe('shopping helpers', () => {
 		})
 		const range = { ingredient: 'eggs', quantity: 2, minQty: 2, maxQty: 3, unit: null }
 		expect(shoppingItemFromIngredient(range, 2).quantity).toBe(6)
+		const olio = { ingredient: 'Acciughe sott&#39;olio', quantity: 25, unit: 'gram' }
+		expect(shoppingItemFromIngredient(olio, 1).ingredient).toBe("Acciughe sott'olio")
 		const salt = { ingredient: 'salt', quantity: null, unit: null }
 		expect(shoppingItemFromIngredient(salt, 2).quantity).toBeNull()
 	})

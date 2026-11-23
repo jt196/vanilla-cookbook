@@ -12,6 +12,7 @@
 	import { addIngredientsToShoppingList } from '$lib/utils/crud'
 	import { formatIngredientAmount, normalizeScale } from '$lib/utils/ingredientAmount'
 	import { shoppingItemFromIngredient } from '$lib/utils/shopping'
+	import { decodeHTMLEntities } from '$lib/utils/filters'
 	import { t } from '$lib/stores/locale.js'
 
 	/** @type {{ingredients: any, sanitizedIngredients: any, scale: any, selectedSystem: any, measurementSystem: any, recipeUid: any, user: any, onScaleChange?: (scale: number) => void, onSelectedSystemChange?: (system: string) => void, baseServings?: number }} */
@@ -269,7 +270,7 @@
 							{#if amountFor(ing)}
 								<span class="font-semibold">{amountFor(ing)}</span>
 							{/if}
-							{ing.ingredient}
+							{decodeHTMLEntities(ing.ingredient)}
 						</span>
 					</Checkbox>
 				</li>
