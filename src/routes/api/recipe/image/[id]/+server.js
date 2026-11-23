@@ -6,7 +6,13 @@ import {
 	THUMBNAIL_WIDTHS
 } from '$lib/utils/image/imageBackend.js'
 import fs from 'fs'
-import { requireAuth, requireOwnership, jsonSuccess, jsonError } from '$lib/server/authHelpers'
+import {
+	requireAuth,
+	requireOwnership,
+	requireAccessOrPublic,
+	jsonSuccess,
+	jsonError
+} from '$lib/server/authHelpers'
 
 // Raster formats only. Anything else (e.g. an extension taken from an imported file name)
 // is served as a download so the browser never renders it inline.
@@ -21,7 +27,9 @@ const IMAGE_TYPES = {
 }
 
 // Photo ids are never reused, so browsers can keep a photo for a long time and revalidate
-// with the ETag. `private` keeps shared proxies from storing photos of private recipes.
+// with the ETag. `private` keeps shared proxies from caching a response that was only served
+// because the caller passed the access check above (the check itself is what gates a private
+// recipe's photo, not this header).
 const CACHE_CONTROL = 'private, max-age=2592000'
 
 const noContent = () =>
@@ -31,10 +39,17 @@ const noContent = () =>
  * Serve a stored recipe photo, or with `?w=400` a cached WebP thumbnail of it.
  * Only local files are served; photos that exist only as a remote link can be downloaded
  * with "Download missing images" in Settings → Recipes.
+ *
+ * Access follows the owning recipe's own visibility: public recipes' photos are open to
+ * everyone, private recipes' photos require the viewer to be authenticated and own the
+ * recipe (or be an admin), same as `GET /api/recipe/[uid]` and `DELETE` on this route.
  */
-export async function GET({ params, url, request }) {
+export async function GET({ params, url, request, locals }) {
 	const photo = await prisma.recipePhoto.findUnique({ where: { id: params.id } })
 	if (!photo?.fileType) return noContent()
+
+	const recipe = await prisma.recipe.findUnique({ where: { uid: photo.recipeUid } })
+	requireAccessOrPublic(locals, recipe, { allowAdmin: true })
 
 	const width = Number(url.searchParams.get('w'))
 	const thumbnail = THUMBNAIL_WIDTHS.includes(width) ? await photoThumbnailPath(photo, width) : null
