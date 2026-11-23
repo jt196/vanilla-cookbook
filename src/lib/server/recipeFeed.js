@@ -31,8 +31,8 @@ export function mainPhoto(photos = []) {
 }
 
 /**
- * Fields needed for a feed card plus client-side search/sort. Full directions, times and
- * categories are loaded by the recipe detail page instead. `ingredients` stays until search
+ * Fields needed for a feed card plus client-side search/sort/time filter. Full directions,
+ * time text and categories are loaded by the recipe detail page instead. `ingredients` stays until search
  * moves server-side, so client-side ingredient search keeps working.
  */
 const FEED_SELECT = {
@@ -44,6 +44,9 @@ const FEED_SELECT = {
 	rating: true,
 	created: true,
 	on_favorites: true,
+	prep_minutes: true,
+	cook_minutes: true,
+	total_minutes: true,
 	parentRecipeId: true,
 	userId: true,
 	auth_user: { select: { username: true } },

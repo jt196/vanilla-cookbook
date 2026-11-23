@@ -3,6 +3,7 @@ import { fileTypeFromStream } from 'file-type'
 import { promises as fsPromises } from 'fs'
 import { promisify } from 'util'
 import { prisma } from '$lib/server/prisma'
+import { recipeTimeFields } from '$lib/utils/recipeTime'
 import { fileURLToPath } from 'url'
 import fs from 'fs'
 import path from 'path'
@@ -103,6 +104,7 @@ export async function addRecipesToDB(recipes, userId) {
 		const createdRecipe = await prisma.recipe.create({
 			data: {
 				...recipe,
+				...recipeTimeFields(recipe),
 				userId: userId
 			}
 		})

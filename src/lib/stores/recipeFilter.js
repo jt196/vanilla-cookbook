@@ -9,3 +9,5 @@ export const searchString = writable('')
 export const searchFields = writable([])
 export const cookedFilter = writable(false)
 export const favouriteFilter = writable(false)
+/** Longest time (minutes) a listed recipe may take, or null for any. */
+export const timeFilter = writable(/** @type {number|null} */ (null))

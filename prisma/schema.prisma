@@ -44,6 +44,9 @@ model Recipe {
   photo_large          String?
   image_url            String?
   prep_time            String?
+  prep_minutes         Int?
+  cook_minutes         Int?
+  total_minutes        Int?
   servings             String?
   nutritional_info     String?
   embedding            Bytes?

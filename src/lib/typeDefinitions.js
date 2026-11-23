@@ -25,6 +25,9 @@
  * @property {(string|null)} photo_large
  * @property {(string|null)} image_url
  * @property {(string|null)} prep_time
+ * @property {(number|null)} [prep_minutes] - Parsed from prep_time; null when it isn't a duration.
+ * @property {(number|null)} [cook_minutes] - Parsed from cook_time.
+ * @property {(number|null)} [total_minutes] - Parsed from total_time, else prep + cook.
  * @property {(string|null)} servings
  * @property {(string|null)} nutritional_info
  * @property {(string|null)} equipment - Equipment/tools, one per line

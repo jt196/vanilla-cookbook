@@ -2,6 +2,7 @@
 import PrismaClientPkg from '@prisma/client'
 import { PrismaLibSql } from '@prisma/adapter-libsql'
 import { seedIngredients } from './seedIng.js' // adjust the path appropriately
+import { backfillRecipeTimes } from './backfillRecipeTimes.js'
 
 const { PrismaClient } = PrismaClientPkg
 
@@ -56,6 +57,9 @@ async function runSeed() {
 
 		// Now seed ingredients
 		await seedIngredients(prisma)
+
+		// Parse recipe times saved before they were stored as ISO 8601 + minutes
+		await backfillRecipeTimes(prisma)
 	} catch (error) {
 		console.error('Seeding failed:', error)
 	} finally {

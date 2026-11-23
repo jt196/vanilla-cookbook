@@ -1,6 +1,7 @@
 import { prisma } from '$lib/server/prisma'
 import { requireAuth, jsonSuccess, jsonError } from '$lib/server/authHelpers'
 import { normalizeToString } from '$lib/utils/normalize'
+import { recipeTimeFields } from '$lib/utils/recipeTime'
 import {
 	queueEmbeddingUpdate,
 	requestLogger,
@@ -26,7 +27,7 @@ export async function POST({ request, locals }) {
 		return jsonError(400, { error: 'Invalid recipe payload', code: 'recipe.msg.invalidPayload' })
 	}
 
-	const { cook_time, prep_time, total_time, servings, image_url, saveImageUrl = true } = recipeData
+	const { servings, image_url, saveImageUrl = true } = recipeData
 
 	let recipe
 	try {
@@ -47,9 +48,7 @@ export async function POST({ request, locals }) {
 				directions_original: recipeData.directions_original || null,
 				nutritional_info: recipeData.nutritional_info,
 				is_public: recipeData.is_public,
-				cook_time: normalizeToString(cook_time),
-				prep_time: normalizeToString(prep_time),
-				total_time: normalizeToString(total_time),
+				...recipeTimeFields(recipeData),
 				servings: normalizeToString(servings),
 				created: new Date(),
 				userId: user.userId
