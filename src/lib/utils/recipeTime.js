@@ -326,6 +326,201 @@ const ONE_AFTER_RE = new RegExp(
 	`${NOT_AFTER_LETTER}(${UNITS})\\s+(?:واحدة|واحد)${NOT_LETTER}`,
 	'giu'
 )
+/** Number words, so "six minutes" or "zwanzig Minuten" read like "6 minutes". */
+const NUMBER_WORDS = {
+	// English
+	zero: 0,
+	two: 2,
+	three: 3,
+	four: 4,
+	five: 5,
+	six: 6,
+	seven: 7,
+	eight: 8,
+	nine: 9,
+	ten: 10,
+	eleven: 11,
+	twelve: 12,
+	thirteen: 13,
+	fourteen: 14,
+	fifteen: 15,
+	sixteen: 16,
+	seventeen: 17,
+	eighteen: 18,
+	nineteen: 19,
+	twenty: 20,
+	thirty: 30,
+	forty: 40,
+	fifty: 50,
+	sixty: 60,
+	ninety: 90,
+	// German
+	zwei: 2,
+	drei: 3,
+	vier: 4,
+	fünf: 5,
+	sechs: 6,
+	sieben: 7,
+	acht: 8,
+	neun: 9,
+	zehn: 10,
+	elf: 11,
+	zwölf: 12,
+	fünfzehn: 15,
+	zwanzig: 20,
+	dreißig: 30,
+	vierzig: 40,
+	fünfundvierzig: 45,
+	fünfzig: 50,
+	sechzig: 60,
+	neunzig: 90,
+	// French
+	deux: 2,
+	trois: 3,
+	quatre: 4,
+	cinq: 5,
+	sept: 7,
+	huit: 8,
+	neuf: 9,
+	dix: 10,
+	onze: 11,
+	douze: 12,
+	quinze: 15,
+	vingt: 20,
+	trente: 30,
+	quarante: 40,
+	cinquante: 50,
+	soixante: 60,
+	// Spanish
+	dos: 2,
+	tres: 3,
+	cuatro: 4,
+	cinco: 5,
+	seis: 6,
+	siete: 7,
+	ocho: 8,
+	nueve: 9,
+	diez: 10,
+	doce: 12,
+	quince: 15,
+	veinte: 20,
+	treinta: 30,
+	cuarenta: 40,
+	cincuenta: 50,
+	sesenta: 60,
+	// Italian
+	due: 2,
+	tre: 3,
+	quattro: 4,
+	cinque: 5,
+	sei: 6,
+	sette: 7,
+	otto: 8,
+	nove: 9,
+	dieci: 10,
+	dodici: 12,
+	quindici: 15,
+	venti: 20,
+	trenta: 30,
+	quaranta: 40,
+	sessanta: 60,
+	// Portuguese
+	dois: 2,
+	duas: 2,
+	três: 3,
+	sete: 7,
+	oito: 8,
+	dez: 10,
+	doze: 12,
+	vinte: 20,
+	trinta: 30,
+	quarenta: 40,
+	cinquenta: 50,
+	sessenta: 60,
+	// Dutch
+	twee: 2,
+	drie: 3,
+	vijf: 5,
+	zes: 6,
+	zeven: 7,
+	negen: 9,
+	tien: 10,
+	twaalf: 12,
+	vijftien: 15,
+	twintig: 20,
+	dertig: 30,
+	veertig: 40,
+	vijftig: 50,
+	zestig: 60,
+	// Russian
+	два: 2,
+	две: 2,
+	три: 3,
+	четыре: 4,
+	пять: 5,
+	шесть: 6,
+	семь: 7,
+	восемь: 8,
+	девять: 9,
+	десять: 10,
+	пятнадцать: 15,
+	двадцать: 20,
+	тридцать: 30,
+	сорок: 40,
+	пятьдесят: 50
+}
+const NUMBER_WORD_RE = new RegExp(
+	`${NOT_AFTER_LETTER}(${alternation(Object.keys(NUMBER_WORDS))})${NOT_LETTER}`,
+	'giu'
+)
+// "twenty-five", "thirty five"
+const EN_COMPOUND_RE =
+	/(?<![\p{L}])(twenty|thirty|forty|fifty)[\s-]+(one|two|three|four|five|six|seven|eight|nine)(?![\p{L}])/giu
+
+/** Halves and quarters said in words: "half an hour", "an hour and a half", "anderthalb Stunden". */
+const HALF_PHRASES = /** @type {Array<[RegExp, string]>} */ ([
+	[/(?<![\p{L}])(?:a\s+)?half\s+an?\s+hour(?![\p{L}])/giu, '30 min'],
+	[/(?<![\p{L}])(?:a\s+)?quarter\s+of\s+an\s+hour(?![\p{L}])/giu, '15 min'],
+	[/(?<![\p{L}])(?:eine\s+)?(?:halbe|halben)\s+stunde(?![\p{L}])/giu, '30 min'],
+	[/(?<![\p{L}])(?:une\s+)?demi[\s-]heure(?![\p{L}])/giu, '30 min'],
+	[/(?<![\p{L}])media\s+hora(?![\p{L}])/giu, '30 min'],
+	[/(?<![\p{L}])meia\s+hora(?![\p{L}])/giu, '30 min'],
+	[/(?<![\p{L}])mezz['’]?\s?ora(?![\p{L}])/giu, '30 min'],
+	[/(?<![\p{L}])(?:een\s+)?half\s+uur(?![\p{L}])/giu, '30 min'],
+	[/(?<![\p{L}])полчаса(?![\p{L}])/giu, '30 min'],
+	[/(?<![\p{L}])(?:anderthalb|eineinhalb|anderhalf|полтора|полторы)(?![\p{L}])/giu, '1.5'],
+	// "1 and a half hours", "1 hour and a half", "une heure et demie", "hora y media"
+	[/(\d+)\s+(?:and\s+a\s+half|und\s+eine?\s+halbe?)(?![\p{L}])/giu, '$1.5'],
+	[
+		/(\d+)\s+([\p{L}]+)\s+(?:and\s+a\s+half|et\s+demie?|y\s+media|e\s+meia|e\s+mezzo|e\s+mezza|en\s+een\s+half)(?![\p{L}])/giu,
+		'$1.5 $2'
+	]
+])
+
+/**
+ * Turn number words and spoken halves into digits ("six minutes" → "6 minutes").
+ * @param {string} text - Already normalised text.
+ * @returns {string}
+ */
+function wordsToNumbers(text) {
+	// Halves first, before "an hour" becomes "1 hour"; again after, for "1 hour and a half"
+	let out = HALF_PHRASES.reduce(
+		(acc, [pattern, replacement]) => acc.replace(pattern, replacement),
+		text
+	)
+	out = out.replace(
+		EN_COMPOUND_RE,
+		(_, tens, unit) =>
+			` ${NUMBER_WORDS[/** @type {keyof typeof NUMBER_WORDS} */ (tens)] + NUMBER_WORDS[/** @type {keyof typeof NUMBER_WORDS} */ (unit)]} `
+	)
+	out = out.replace(ONE_BEFORE_RE, '1 $1').replace(ONE_AFTER_RE, '1 $1')
+	out = out.replace(NUMBER_WORD_RE, (word) =>
+		String(NUMBER_WORDS[/** @type {keyof typeof NUMBER_WORDS} */ (word.toLowerCase())])
+	)
+	for (const [pattern, replacement] of HALF_PHRASES) out = out.replace(pattern, replacement)
+	return out.trim()
+}
+
 const BARE_RE = new RegExp(String.raw`^(?<from>${NUM})(?:${RANGE_SEP}(?<to>${NUM}))?$`, 'iu')
 const CLOCK_RE = /^(\d{1,2}):([0-5]\d)$/
 const ISO_RE = /^P(?:\d+(?:\.\d+)?[YMWD])*(?:T(?:\d+(?:\.\d+)?[HMS])+)?$/
@@ -440,7 +635,7 @@ export function parseRecipeTime(value) {
 		return { text: iso, minutes: toMinutes(parseIsoDuration(iso) / 1000), lossless: true }
 	}
 
-	const text = normalise(raw).replace(ONE_BEFORE_RE, '1 $1').replace(ONE_AFTER_RE, '1 $1')
+	const text = wordsToNumbers(normalise(raw))
 	const notDuration = { text: raw, minutes: null, lossless: false }
 
 	const clock = text.match(CLOCK_RE)

@@ -177,13 +177,13 @@
 
 		<DropdownMenu
 			align="end"
-			summaryClass={`btn btn-md btn-outline btn-warning shrink-0 tooltip ${$timeFilter != null ? 'opacity-100' : 'opacity-60'} hover:opacity-100`}
+			summaryClass={`btn btn-md btn-outline btn-info shrink-0 tooltip ${$timeFilter != null ? 'opacity-100' : 'opacity-60'} hover:opacity-100`}
 			summaryAriaLabel={$t('filter.filterTime')}
 			contentClass="menu dropdown-content bg-base-100 rounded-box z-50 w-48 p-2 shadow-sm">
 			{#snippet trigger()}
 				<Clock width="18px" height="18px" />
 				{#if $timeFilter != null}
-					<span class="badge badge-warning badge-xs" aria-hidden="true"></span>
+					<span class="badge badge-info badge-xs" aria-hidden="true"></span>
 				{/if}
 			{/snippet}
 			<Button
@@ -191,7 +191,7 @@
 				style={$timeFilter == null ? 'standard' : 'ghost'}
 				class="justify-start"
 				size="sm"
-				color="warning"
+				color="info"
 				onclick={() => ($timeFilter = null)}>
 				{$t('filter.timeAny')}
 			</Button>
@@ -201,7 +201,7 @@
 					style={$timeFilter === minutes ? 'standard' : 'ghost'}
 					class="justify-start"
 					size="sm"
-					color="warning"
+					color="info"
 					onclick={() => ($timeFilter = minutes)}>
 					{timeLimitLabel(minutes)}
 				</Button>

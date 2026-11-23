@@ -15,6 +15,8 @@
 	import Spinner from '$lib/components/ui/Spinner.svelte'
 	import Bolt from '$lib/components/svg/Bolt.svelte'
 	import Undo from '$lib/components/svg/Undo.svelte'
+	import TickRound from '$lib/components/svg/TickRound.svelte'
+	import Warning from '$lib/components/svg/Warning.svelte'
 	import { t, langStore } from '$lib/stores/locale.js'
 	import { langToBcp47 } from '$lib/i18n/index.js'
 	import { durationToText } from '$lib/utils/parse/parseHelpers'
@@ -66,16 +68,16 @@
 	})
 
 	/**
-	 * Hint under a time field: how the typed text will be read.
+	 * How a typed time will be read, for the icon inside its field; null when empty.
 	 * @param {unknown} value
-	 * @returns {string}
+	 * @returns {{ ok: boolean, hint: string } | null}
 	 */
-	function timeHint(value) {
+	function timeStatus(value) {
 		const { text, minutes } = parseRecipeTime(value)
-		if (!text) return ''
-		if (minutes == null) return $t('recipeForm.timeNotRead')
+		if (!text) return null
+		if (minutes == null) return { ok: false, hint: $t('recipeForm.timeNotRead') }
 		const time = durationToText(minutesToIso(minutes), langToBcp47($langStore))
-		return $t('recipeForm.timeReadAs', { time })
+		return { ok: true, hint: $t('recipeForm.timeReadAs', { time }) }
 	}
 
 	let cleaningIngredients = $state(false)
@@ -541,6 +543,40 @@
 	}
 </script>
 
+<!-- Time input with an icon inside showing how the text will be read (tooltip on hover/tap) -->
+{#snippet timeField(
+	/** @type {'prep_time' | 'cook_time' | 'total_time'} */ field,
+	/** @type {string} */ label
+)}
+	{@const status = timeStatus(recipe[field])}
+	<div class="relative">
+		<Input
+			type="text"
+			id={field}
+			name={field}
+			class="pr-10"
+			placeholder={$t(`recipeForm.${label}Placeholder`)}
+			bind:value={recipe[field]}
+			aria-describedby={status ? `${field}_status` : undefined}
+			label={$t(`recipeForm.${label}`)} />
+		{#if status}
+			<span
+				id={`${field}_status`}
+				role="img"
+				tabindex="0"
+				aria-label={status.hint}
+				data-tip={status.hint}
+				class={`tooltip tooltip-left absolute right-3 top-1/2 -translate-y-1/2 z-10 ${status.ok ? 'text-success' : 'text-warning'}`}>
+				{#if status.ok}
+					<TickRound width="16px" height="16px" />
+				{:else}
+					<Warning width="16px" height="16px" />
+				{/if}
+			</span>
+		{/if}
+	</div>
+{/snippet}
+
 <InfoText class="my-4">
 	{$t('recipeForm.markdownNote')}
 </InfoText>
@@ -630,36 +666,9 @@
 			</div>
 
 			<div class="form-col">
-				<Input
-					type="text"
-					id="prep_time"
-					name="prep_time"
-					placeholder={$t('recipeForm.prepTimePlaceholder')}
-					bind:value={recipe.prep_time}
-					label={$t('recipeForm.prepTime')} />
-				{#if timeHint(recipe.prep_time)}
-					<InfoText class="-mt-2 mb-2">{timeHint(recipe.prep_time)}</InfoText>
-				{/if}
-				<Input
-					type="text"
-					id="cook_time"
-					name="cook_time"
-					placeholder={$t('recipeForm.cookTimePlaceholder')}
-					bind:value={recipe.cook_time}
-					label={$t('recipeForm.cookTime')} />
-				{#if timeHint(recipe.cook_time)}
-					<InfoText class="-mt-2 mb-2">{timeHint(recipe.cook_time)}</InfoText>
-				{/if}
-				<Input
-					type="text"
-					id="total_time"
-					name="total_time"
-					placeholder={$t('recipeForm.totalTimePlaceholder')}
-					bind:value={recipe.total_time}
-					label={$t('recipeForm.totalTime')} />
-				{#if timeHint(recipe.total_time)}
-					<InfoText class="-mt-2 mb-2">{timeHint(recipe.total_time)}</InfoText>
-				{/if}
+				{@render timeField('prep_time', 'prepTime')}
+				{@render timeField('cook_time', 'cookTime')}
+				{@render timeField('total_time', 'totalTime')}
 				<Input
 					type="text"
 					id="servings"
