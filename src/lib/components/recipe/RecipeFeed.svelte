@@ -14,8 +14,10 @@
 		searchString,
 		searchFields,
 		cookedFilter,
-		favouriteFilter
+		favouriteFilter,
+		timeFilter
 	} from '$lib/stores/recipeFilter'
+	import { recipeReadyMinutes } from '$lib/utils/recipeTime'
 
 	/** @type {{recipes?: any[], viewMode?: 'owner' | 'social', title?: string | null, viewerUserId?: string | null, ownerUserId?: string | null, ownerUsername?: string | null, feedKind?: 'all' | 'user', semanticEnabled?: boolean, header?: import('svelte').Snippet}} */
 	let {
@@ -267,6 +269,15 @@
 			categoryFilteredRecipes = categoryFilteredRecipes.filter(
 				(recipe) => recipe.on_favorites === true
 			)
+		}
+
+		// Filtering by how long the recipe takes; recipes without a readable time drop out
+		const maxMinutes = $timeFilter
+		if (maxMinutes != null) {
+			categoryFilteredRecipes = categoryFilteredRecipes.filter((recipe) => {
+				const minutes = recipeReadyMinutes(recipe)
+				return minutes != null && minutes <= maxMinutes
+			})
 		}
 
 		if (!hasSearchQuery) {

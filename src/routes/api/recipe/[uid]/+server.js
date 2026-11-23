@@ -1,4 +1,5 @@
 import { prisma } from '$lib/server/prisma'
+import { recipeTimeFields } from '$lib/utils/recipeTime'
 import { deleteSinglePhotoFile } from '$lib/utils/image/imageBackend.js'
 import {
 	requireAuth,
@@ -84,7 +85,7 @@ const UPDATABLE_FIELDS = [
 	'on_grocery_list',
 	'parentRecipeId'
 ]
-const STRING_FIELDS = ['cook_time', 'prep_time', 'total_time', 'servings']
+const STRING_FIELDS = ['servings']
 
 /**
  * Update a recipe. Multipart body: recipe JSON under `recipe`, new image files under
@@ -111,6 +112,8 @@ export async function PUT({ request, locals, params }) {
 	for (const field of STRING_FIELDS) {
 		updates[field] = recipeData[field] ? recipeData[field].toString() : null
 	}
+	// Times are always sent with the form; store them as ISO 8601 + minutes
+	Object.assign(updates, recipeTimeFields(recipeData))
 
 	try {
 		const recipe = await prisma.recipe.findUnique({ where: { uid } })

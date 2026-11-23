@@ -1,5 +1,4 @@
 import { nutritionProcess } from '$lib/utils/filters'
-import { durationToText } from '$lib/utils/parse/parseHelpers'
 
 // Long enough for the server's AI fallback, which can take a minute or more
 const SCRAPE_TIMEOUT_MS = 120000
@@ -230,6 +229,7 @@ export async function handleHTMLFile(event = null, file) {
 
 /**
  * Formats parsed recipe data (from the scraper or AI) into the recipe form's fields.
+ * Times stay as scraped (usually ISO 8601); the form shows them in the user's language.
  *
  * @param {Object} raw - The parsed recipe data.
  * @returns {Object} The formatted recipe data.
@@ -240,13 +240,13 @@ export function formatScrapedRecipe(raw) {
 		name: raw.name,
 		source: raw.author,
 		source_url: raw.sourceUrl,
-		cook_time: durationToText(raw.cookTime),
+		cook_time: raw.cookTime,
 		image_url: raw.imageUrl,
-		prep_time: durationToText(raw.prepTime),
+		prep_time: raw.prepTime,
 		ingredients: lines(raw.ingredients, '\n'),
 		directions: lines(raw.instructions, '\n\n'),
 		description: lines(raw.description, '\n\n'),
-		total_time: durationToText(raw.totalTime),
+		total_time: raw.totalTime,
 		servings: Array.isArray(raw.servings) ? raw.servings[0] : raw.servings,
 		nutritional_info: nutritionProcess(raw.nutrition),
 		equipment: lines(raw.equipment, '\n') || ''

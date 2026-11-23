@@ -3,6 +3,7 @@
 	import Favourite from '$lib/components/svg/Favourite.svelte'
 	import Check from '$lib/components/svg/Check.svelte'
 	import Settings from '$lib/components/svg/Settings.svelte'
+	import Clock from '$lib/components/svg/Clock.svelte'
 	import Input from '$lib/components/ui/Form/Input.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Spinner from '$lib/components/ui/Spinner.svelte'
@@ -13,9 +14,25 @@
 		searchString,
 		searchFields,
 		cookedFilter,
-		favouriteFilter
+		favouriteFilter,
+		timeFilter
 	} from '$lib/stores/recipeFilter'
-	import { t } from '$lib/stores/locale.js'
+	import { t, langStore } from '$lib/stores/locale.js'
+	import { langToBcp47 } from '$lib/i18n/index.js'
+	import { durationToText } from '$lib/utils/parse/parseHelpers'
+	import { minutesToIso } from '$lib/utils/recipeTime'
+
+	const TIME_LIMITS = [15, 30, 60, 120]
+
+	/**
+	 * "Up to 30 minutes" in the user's language.
+	 * @param {number} minutes
+	 * @returns {string}
+	 */
+	function timeLimitLabel(minutes) {
+		const time = durationToText(minutesToIso(minutes), langToBcp47($langStore))
+		return $t('filter.timeUpTo', { time })
+	}
 
 	let { viewOnly, username, viewMode = 'owner', searchPending = false } = $props()
 
@@ -157,6 +174,39 @@
 			data-tip={$t('filter.filterFavourites')}>
 			<Favourite favourite={$favouriteFilter} width="20px" height="20px" fill="currentColor" />
 		</Button>
+
+		<DropdownMenu
+			align="end"
+			summaryClass={`btn btn-md btn-outline btn-warning shrink-0 tooltip ${$timeFilter != null ? 'opacity-100' : 'opacity-60'} hover:opacity-100`}
+			summaryAriaLabel={$t('filter.filterTime')}
+			contentClass="menu dropdown-content bg-base-100 rounded-box z-50 w-48 p-2 shadow-sm">
+			{#snippet trigger()}
+				<Clock width="18px" height="18px" />
+				{#if $timeFilter != null}
+					<span class="badge badge-warning badge-xs" aria-hidden="true"></span>
+				{/if}
+			{/snippet}
+			<Button
+				type="button"
+				style={$timeFilter == null ? 'standard' : 'ghost'}
+				class="justify-start"
+				size="sm"
+				color="warning"
+				onclick={() => ($timeFilter = null)}>
+				{$t('filter.timeAny')}
+			</Button>
+			{#each TIME_LIMITS as minutes (minutes)}
+				<Button
+					type="button"
+					style={$timeFilter === minutes ? 'standard' : 'ghost'}
+					class="justify-start"
+					size="sm"
+					color="warning"
+					onclick={() => ($timeFilter = minutes)}>
+					{timeLimitLabel(minutes)}
+				</Button>
+			{/each}
+		</DropdownMenu>
 
 		{#if viewMode === 'owner'}
 			<Button

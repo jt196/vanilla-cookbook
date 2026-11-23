@@ -15,7 +15,10 @@
 	import Spinner from '$lib/components/ui/Spinner.svelte'
 	import Bolt from '$lib/components/svg/Bolt.svelte'
 	import Undo from '$lib/components/svg/Undo.svelte'
-	import { t } from '$lib/stores/locale.js'
+	import { t, langStore } from '$lib/stores/locale.js'
+	import { langToBcp47 } from '$lib/i18n/index.js'
+	import { durationToText } from '$lib/utils/parse/parseHelpers'
+	import { isIsoDuration, minutesToIso, parseRecipeTime } from '$lib/utils/recipeTime'
 	import { applyEdit } from '$lib/utils/markdownEditing'
 	import { ingredientProcess } from '$lib/utils/filters'
 	import {
@@ -49,6 +52,31 @@
 			recipe.is_public = false
 		}
 	})
+
+	const TIME_FIELDS = /** @type {const} */ (['prep_time', 'cook_time', 'total_time'])
+
+	// Times are stored as ISO 8601 when they parse cleanly; show them as text in the user's language
+	$effect(() => {
+		if (!recipe) return
+		for (const field of TIME_FIELDS) {
+			if (isIsoDuration(recipe[field])) {
+				recipe[field] = durationToText(recipe[field].trim(), langToBcp47($langStore))
+			}
+		}
+	})
+
+	/**
+	 * Hint under a time field: how the typed text will be read.
+	 * @param {unknown} value
+	 * @returns {string}
+	 */
+	function timeHint(value) {
+		const { text, minutes } = parseRecipeTime(value)
+		if (!text) return ''
+		if (minutes == null) return $t('recipeForm.timeNotRead')
+		const time = durationToText(minutesToIso(minutes), langToBcp47($langStore))
+		return $t('recipeForm.timeReadAs', { time })
+	}
 
 	let cleaningIngredients = $state(false)
 	let cleaningDirections = $state(false)
@@ -609,6 +637,9 @@
 					placeholder={$t('recipeForm.prepTimePlaceholder')}
 					bind:value={recipe.prep_time}
 					label={$t('recipeForm.prepTime')} />
+				{#if timeHint(recipe.prep_time)}
+					<InfoText class="-mt-2 mb-2">{timeHint(recipe.prep_time)}</InfoText>
+				{/if}
 				<Input
 					type="text"
 					id="cook_time"
@@ -616,6 +647,9 @@
 					placeholder={$t('recipeForm.cookTimePlaceholder')}
 					bind:value={recipe.cook_time}
 					label={$t('recipeForm.cookTime')} />
+				{#if timeHint(recipe.cook_time)}
+					<InfoText class="-mt-2 mb-2">{timeHint(recipe.cook_time)}</InfoText>
+				{/if}
 				<Input
 					type="text"
 					id="total_time"
@@ -623,6 +657,9 @@
 					placeholder={$t('recipeForm.totalTimePlaceholder')}
 					bind:value={recipe.total_time}
 					label={$t('recipeForm.totalTime')} />
+				{#if timeHint(recipe.total_time)}
+					<InfoText class="-mt-2 mb-2">{timeHint(recipe.total_time)}</InfoText>
+				{/if}
 				<Input
 					type="text"
 					id="servings"
