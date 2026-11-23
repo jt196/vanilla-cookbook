@@ -6,13 +6,12 @@ import { visibleRecipesWhere } from '$lib/server/recipeFeed'
 import { getEmbedding, deserializeEmbedding, cosineSimilarity } from '$lib/utils/embeddings'
 
 /**
- * Semantic recipe search endpoint (scaffold).
+ * Semantic recipe search: ranks the recipes the viewer can see by embedding similarity to
+ * the query `q`. Returns an empty result (not an error) when semantic search is disabled or
+ * no embedding provider answers, so the feed falls back to fuzzy/text search.
  *
- * Current behavior:
- * - Returns empty result set when semantic is disabled
- * - Validates input and returns empty result set when enabled
- *
- * This allows frontend integration to land without introducing overhead.
+ * @param {import('./$types').RequestEvent} event
+ * @returns {Promise<Response>}
  */
 export async function GET({ url, locals }) {
 	const query = (url.searchParams.get('q') || '').trim()

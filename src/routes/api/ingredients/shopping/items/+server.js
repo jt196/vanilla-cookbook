@@ -29,7 +29,8 @@ export async function DELETE({ locals }) {
 }
 
 /**
- * Mark every unpurchased item on the current user's shopping list as purchased.
+ * Mark every unpurchased item on the current user's shopping list as purchased, logging a
+ * purchase for each.
  *
  * @param {import('./$types').RequestEvent} event
  * @returns {Promise<Response>}
@@ -38,14 +39,27 @@ export async function PATCH({ locals }) {
 	const user = requireAuth(locals)
 
 	try {
-		const updatedItems = await prisma.shoppingListItem.updateMany({
-			where: {
-				userId: user.userId,
-				purchased: false
-			},
-			data: {
-				purchased: true
-			}
+		const updatedItems = await prisma.$transaction(async (tx) => {
+			const toMark = await tx.shoppingListItem.findMany({
+				where: { userId: user.userId, purchased: false },
+				select: { uid: true, name: true, quantity: true, unit: true }
+			})
+			if (toMark.length === 0) return { count: 0 }
+			const result = await tx.shoppingListItem.updateMany({
+				where: { userId: user.userId, purchased: false },
+				data: { purchased: true }
+			})
+			// Log each purchase, as ticking items one by one does, so purchase counts stay right
+			await tx.purchaseLog.createMany({
+				data: toMark.map((item) => ({
+					userId: user.userId,
+					shoppingItemUid: item.uid,
+					itemName: item.name,
+					quantity: item.quantity,
+					unit: item.unit
+				}))
+			})
+			return result
 		})
 
 		return jsonSuccess({

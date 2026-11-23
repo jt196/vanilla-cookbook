@@ -210,6 +210,19 @@ export const addIngredientToShoppingList = (ingredient) =>
 	)
 
 /**
+ * Adds several ingredients to the shopping list in one request, merging any that match
+ * items already on it.
+ * @param {object[]} items
+ * @returns {Promise<{ success: boolean, data?: any, error?: string, code?: string | null }>}
+ */
+export const addIngredientsToShoppingList = (items) =>
+	asResult(
+		'/api/ingredients/shopping',
+		jsonInit('POST', { items }),
+		'Error adding items to the shopping list'
+	)
+
+/**
  * Updates a shopping list item.
  * @param {object} item - Must include `uid`.
  * @returns {Promise<object>} The updated item.

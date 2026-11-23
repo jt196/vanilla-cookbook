@@ -1,5 +1,6 @@
 <script>
 	import { addIngredientToShoppingList } from '$lib/utils/crud'
+	import { shoppingItemFromIngredient } from '$lib/utils/shopping'
 	import {
 		formatScaledQuantity,
 		formatUnit,
@@ -37,8 +38,9 @@
 	}
 
 	async function handleAddToShoppingList(ingredient) {
-		let updatedIngredient = { ...ingredient, recipeUid }
-		let response = await addIngredientToShoppingList(updatedIngredient)
+		// Send the amount as shown: scaled and in the selected unit system
+		const item = shoppingItemFromIngredient(ingredient, scaleIng, recipeUid)
+		let response = await addIngredientToShoppingList(item)
 
 		if (response.success) {
 			isHighlighted = true
