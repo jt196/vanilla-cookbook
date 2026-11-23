@@ -867,8 +867,10 @@ export default {
 	},
 
 	recipeView: {
-		addAllToShopping: 'Add all to shopping list',
-		addAllHint: 'Untick anything you already have. Items already on your list are merged.',
+		addAllToShopping: 'Add to shopping list',
+		addAllHint:
+			'Untick anything you already have and adjust amounts. Items already on your list are merged.',
+		selectAll: 'Select all',
 		addSelectedToShopping: 'Add to list ({count})',
 		description: 'Description',
 		directions: 'Directions',

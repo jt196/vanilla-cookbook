@@ -10,9 +10,8 @@
 	import FeedbackMessage from '$lib/components/ui/FeedbackMessage.svelte'
 	import Shopping from '$lib/components/svg/Shopping.svelte'
 	import { addIngredientsToShoppingList } from '$lib/utils/crud'
-	import { formatIngredientAmount, normalizeScale } from '$lib/utils/ingredientAmount'
-	import { shoppingItemFromIngredient } from '$lib/utils/shopping'
-	import { decodeHTMLEntities } from '$lib/utils/filters'
+	import { normalizeScale } from '$lib/utils/ingredientAmount'
+	import { shoppingItemFromIngredient, shoppingUnitLabel } from '$lib/utils/shopping'
 	import { t } from '$lib/stores/locale.js'
 
 	/** @type {{ingredients: any, sanitizedIngredients: any, scale: any, selectedSystem: any, measurementSystem: any, recipeUid: any, user: any, onScaleChange?: (scale: number) => void, onSelectedSystemChange?: (system: string) => void, baseServings?: number }} */
@@ -54,10 +53,11 @@
 		return langData.badgeLabels ?? i18nMap.eng.badgeLabels
 	})
 
-	// "Add all to shopping list": a checklist of the recipe's ingredients, scaled and in the
-	// selected unit system, so the user can untick what they already have
+	// Shopping overlay: the recipe's ingredients, scaled and in the selected unit system, with
+	// editable amounts, so the user picks what to add and how much
+	/** @typedef {{ selected: boolean, name: string, quantity: string, unit: string }} ShoppingRow */
 	let isAddAllOpen = $state(false)
-	let addAllSelected = $state(/** @type {boolean[]} */ ([]))
+	let addAllRows = $state(/** @type {ShoppingRow[]} */ ([]))
 	let addAllSaving = $state(false)
 	let addAllFeedbackCode = $state(/** @type {string|null} */ (null))
 	let addAllFeedbackVars = $state({})
@@ -69,26 +69,40 @@
 		sanitizedIngredients.filter((ing) => ing?.ingredient?.trim() && !isHeadingLine(ing))
 	)
 
-	const amountFor = (/** @type {any} */ ing) =>
-		formatIngredientAmount(ing, {
-			scale: normalizeScale(scale),
-			system: selectedSystem,
-			useSymbol: user?.ingSymbol,
-			lang: user?.language || 'eng'
-		})
+	const selectedCount = $derived(addAllRows.filter((row) => row.selected).length)
+	const allSelected = $derived(addAllRows.length > 0 && selectedCount === addAllRows.length)
 
 	function openAddAll() {
-		addAllSelected = addAllCandidates.map((ing) => !ing.optional)
+		const scaleValue = normalizeScale(scale)
+		const lang = user?.language || 'eng'
+		addAllRows = addAllCandidates.map((ing) => {
+			const item = shoppingItemFromIngredient(ing, scaleValue)
+			return {
+				selected: !ing.optional,
+				name: item.ingredient,
+				quantity: item.quantity === null ? '' : String(item.quantity),
+				unit: shoppingUnitLabel(item.unit, item.quantity, lang)
+			}
+		})
 		addAllFeedbackCode = null
 		addAllFeedbackVars = {}
 		isAddAllOpen = true
 	}
 
+	function toggleAll() {
+		const select = !allSelected
+		addAllRows = addAllRows.map((row) => ({ ...row, selected: select }))
+	}
+
 	async function confirmAddAll() {
-		const scaleValue = normalizeScale(scale)
-		const items = addAllCandidates
-			.filter((_, index) => addAllSelected[index])
-			.map((ing) => shoppingItemFromIngredient(ing, scaleValue, recipeUid))
+		const items = addAllRows
+			.filter((row) => row.selected && row.name.trim())
+			.map((row) => ({
+				ingredient: row.name.trim(),
+				quantity: row.quantity.trim() === '' ? null : row.quantity.trim().replace(',', '.'),
+				unit: row.unit.trim() || null,
+				recipeUid
+			}))
 		if (items.length === 0) {
 			isAddAllOpen = false
 			return
@@ -108,24 +122,30 @@
 </script>
 
 <div>
-	<h3 class="text-2xl font-bold mb-4">{$t('recipeView.ingredients')}</h3>
+	<div class="flex items-center justify-between gap-2 mb-4">
+		<h3 class="text-2xl font-bold">{$t('recipeView.ingredients')}</h3>
+		{#if user?.userId && addAllCandidates.length > 0}
+			<Button
+				style="ghost"
+				color="primary"
+				size="sm"
+				class="btn-circle tooltip tooltip-left"
+				data-tip={$t('recipeView.addAllToShopping')}
+				aria-label={$t('recipeView.addAllToShopping')}
+				onclick={openAddAll}>
+				<Shopping width="20px" fill="currentColor" />
+			</Button>
+		{/if}
+	</div>
+	{#if !isAddAllOpen && addAllFeedbackCode}
+		<FeedbackMessage messageCode={addAllFeedbackCode} messageVars={addAllFeedbackVars} />
+	{/if}
 
 	{#if ingredients.length > 0}
 		{#if sanitizedIngredients.some((item) => item.ingredient)}
 			<div class="mb-4">
 				<Scale {scale} {onScaleChange} {baseServings} />
 			</div>
-			{#if user?.userId && addAllCandidates.length > 0}
-				<div class="mb-4">
-					<Button style="soft" color="primary" size="sm" onclick={openAddAll}>
-						<Shopping width="14px" fill="currentColor" />
-						{$t('recipeView.addAllToShopping')}
-					</Button>
-					{#if !isAddAllOpen}
-						<FeedbackMessage messageCode={addAllFeedbackCode} messageVars={addAllFeedbackVars} />
-					{/if}
-				</div>
-			{/if}
 		{/if}
 	{:else}
 		<p class="text-base-content/70">{$t('recipeView.loading')}</p>
@@ -257,34 +277,49 @@
 	<Dialog bind:isOpen={isAddAllOpen}>
 		<h3 class="font-bold text-lg">{$t('recipeView.addAllToShopping')}</h3>
 		<p class="text-sm opacity-70 mb-3">{$t('recipeView.addAllHint')}</p>
-		<ul class="space-y-1 max-h-[60vh] overflow-y-auto">
-			{#each addAllCandidates as ing, index (index)}
-				<li>
-					<Checkbox
-						bind:checked={addAllSelected[index]}
-						name={`add-all-${index}`}
-						color="primary"
-						size="sm"
-						fullWidth={false}>
-						<span>
-							{#if amountFor(ing)}
-								<span class="font-semibold">{amountFor(ing)}</span>
-							{/if}
-							{decodeHTMLEntities(ing.ingredient)}
-						</span>
-					</Checkbox>
+		<Checkbox
+			checked={allSelected}
+			name="add-all-toggle"
+			color="primary"
+			size="sm"
+			class="mb-2 font-semibold"
+			onchange={toggleAll}>
+			{$t('recipeView.selectAll')}
+		</Checkbox>
+		<ul class="space-y-2 max-h-[60vh] overflow-y-auto">
+			{#each addAllRows as row, index (index)}
+				<li class="flex items-center gap-2">
+					<input
+						type="checkbox"
+						class="checkbox checkbox-primary checkbox-sm"
+						aria-label={row.name}
+						bind:checked={row.selected} />
+					<span class={`flex-1 min-w-0 break-words ${row.selected ? '' : 'opacity-50'}`}>
+						{row.name}
+					</span>
+					<input
+						type="text"
+						inputmode="decimal"
+						class="input input-sm w-16 shrink-0"
+						aria-label={$t('shopping.quantity')}
+						disabled={!row.selected}
+						bind:value={row.quantity} />
+					<input
+						type="text"
+						class="input input-sm w-20 shrink-0"
+						aria-label={$t('shopping.unit')}
+						disabled={!row.selected}
+						bind:value={row.unit} />
 				</li>
 			{/each}
 		</ul>
-		{#if isAddAllOpen && addAllFeedbackCode}
+		{#if addAllFeedbackCode}
 			<FeedbackMessage messageCode={addAllFeedbackCode} messageVars={addAllFeedbackVars} />
 		{/if}
 		<div class="modal-action">
 			<Button style="outline" onclick={() => (isAddAllOpen = false)}>{$t('common.cancel')}</Button>
-			<Button disabled={addAllSaving || !addAllSelected.some(Boolean)} onclick={confirmAddAll}>
-				{$t('recipeView.addSelectedToShopping', {
-					count: addAllSelected.filter(Boolean).length
-				})}
+			<Button disabled={addAllSaving || selectedCount === 0} onclick={confirmAddAll}>
+				{$t('recipeView.addSelectedToShopping', { count: selectedCount })}
 			</Button>
 		</div>
 	</Dialog>
